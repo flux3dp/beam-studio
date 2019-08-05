@@ -698,7 +698,7 @@ define([
                     };
                 }
                 return (
-                    <div className="top-btn" onClick={onClick} style={style}>
+                    <div className="top-btn" onClick={onClick} style={style} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${iconName}.png`}} />
                         <div className="btn-label">
                             {label}
