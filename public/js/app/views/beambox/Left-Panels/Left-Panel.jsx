@@ -6,7 +6,6 @@ define([
     'app/stores/beambox-store',
     'jsx!views/beambox/Left-Panels/Insert-Object-Submenu',
     'jsx!views/beambox/Left-Panels/Preview-Button',
-    'jsx!views/beambox/Left-Panels/Advanced-Panel',
     'helpers/api/inter-process',
     'helpers/i18n'
 ], function(
@@ -17,7 +16,6 @@ define([
     BeamboxStore,
     InsertObjectSubmenu,
     PreviewButton,
-    AdvancedPanel,
     InterProcessApi,
     i18n
 ) {
@@ -128,19 +126,6 @@ _
                         </div>
                         {this.state.isInsertObjectMenuOpen ? insertObjectPanel : ''}
                     </div>
-                </div>
-            );
-        }
-
-        _renderAdvanced() {
-            const advancedPanel = <AdvancedPanel onClose={() => this._toggleAdvanced(false)}/>;
-
-            return (
-                <div>
-                    <div className='option' onClick={() => this._toggleAdvanced(true)} style={{display: 'inline-block', width: 'unset'}}>
-                        {LANG.advanced}
-                    </div>
-                    {this.state.isAdvancedPanelOpen ? advancedPanel : ''}
                 </div>
             );
         }
