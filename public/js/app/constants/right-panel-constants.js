@@ -5,12 +5,12 @@ define(function() {
         // progress dialog types
         BEAMO: {
             wood_3mm_cutting: {
-                power: 70,
-                speed: 6
+                power: 55,
+                speed: 5
             },
             wood_5mm_cutting: {
-                power: 70,
-                speed: 3
+                power: 55,
+                speed: 4
             },
             wood_bw_engraving: {
                 power: 30,
@@ -21,12 +21,12 @@ define(function() {
                 speed: 80
             },
             acrylic_3mm_cutting: {
-                power: 70,
-                speed: 8
+                power: 55,
+                speed: 4
             },
             acrylic_5mm_cutting: {
-                power: 70,
-                speed: 4
+                power: 55,
+                speed: 3
             },
             acrylic_bw_engraving: {
                 power: 30,
@@ -37,11 +37,11 @@ define(function() {
                 speed: 80
             },
             leather_3mm_cutting: {
-                power: 80,
+                power: 60,
                 speed: 3
             },
             leather_5mm_cutting: {
-                power: 80,
+                power: 60,
                 speed: 1
             },
             leather_bw_engraving: {
@@ -53,11 +53,11 @@ define(function() {
                 speed: 80
             },
             fabric_3mm_cutting: {
-                power: 60,
+                power: 50,
                 speed: 20
             },
             fabric_5mm_cutting: {
-                power: 60,
+                power: 50,
                 speed: 20
             },
             fabric_bw_engraving: {
@@ -84,11 +84,11 @@ define(function() {
 
         BEAMBOX: {
             wood_3mm_cutting: {
-                power: 70,
+                power: 60,
                 speed: 6
             },
             wood_5mm_cutting: {
-                power: 70,
+                power: 60,
                 speed: 3
             },
             wood_bw_engraving: {
@@ -100,11 +100,11 @@ define(function() {
                 speed: 80
             },
             acrylic_3mm_cutting: {
-                power: 70,
+                power: 60,
                 speed: 8
             },
             acrylic_5mm_cutting: {
-                power: 70,
+                power: 60,
                 speed: 4
             },
             acrylic_bw_engraving: {
@@ -116,11 +116,11 @@ define(function() {
                 speed: 80
             },
             leather_3mm_cutting: {
-                power: 80,
+                power: 65,
                 speed: 3
             },
             leather_5mm_cutting: {
-                power: 80,
+                power: 65,
                 speed: 1
             },
             leather_bw_engraving: {

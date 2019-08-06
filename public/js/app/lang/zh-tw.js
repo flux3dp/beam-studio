@@ -1131,9 +1131,9 @@ define(function() {
                         fabric_5mm_cutting: '布料 - 5mm 切割',
                         fabric_bw_engraving: '布料 - 雙色刻印',
                         fabric_shading_engraving: '布料 - 漸層刻印',
-                        rubber_engraving: '印章墊 - 刻印',
-                        glass_engraving:  '玻璃 - 刻印',
-                        metal_engraving: '不鏽鋼噴劑 - 刻印',
+                        rubber_engraving: '印章墊 - 雙色刻印',
+                        glass_engraving:  '玻璃 - 雙色刻印',
+                        metal_engraving: '不鏽鋼噴劑 - 雙色刻印',
                         save: '儲存參數',
                         more: '管理',
                         parameters: '選擇參數'
