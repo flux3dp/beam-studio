@@ -20,7 +20,7 @@
     "jquery": "^1.11.0",
     "jsdom-global": "^1.6.2",
     "nan": "^2.4.0",
-    "sharp": "^0.23.0",
+    "net-ping": "^1.2.3",
     "socket.io-client": "^1.4.6",
     "squirejs": "^0.2.1",
     "text-to-svg": "jeffontheground/text-to-svg#e4fb3dc1ac9c8e5a2440373e7e018f07653ad574",

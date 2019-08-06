@@ -1174,7 +1174,7 @@ define(function() {
                 cancel: '取消',
                 next: '下一步',
                 sharpen: '銳化',
-                sharpen_radius: '半徑 (px)',
+                sharpen_radius: '強度',
                 crop: '裁剪',
                 start: '開始',
                 processing: '處理中',
@@ -1215,6 +1215,9 @@ define(function() {
                 array_interval: '陣列間隔',
                 dx: '寬',
                 dy: '高',
+            },
+            network_testing_panel:{
+                network_testing: '網路檢測',
             },
             svg_editor: {
                 unnsupported_file_type: 'Beam Studio 不直接支援此檔案格式。請先輸出成圖片檔或 SVG 格式',

@@ -11,7 +11,8 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
     var acceptableTypes = [
         ProgressConstants.WAITING,
         ProgressConstants.STEPPING,
-        ProgressConstants.NONSTOP
+        ProgressConstants.NONSTOP,
+        ProgressConstants.NONSTOP_WITH_MESSAGE
     ];
 
     return React.createClass({

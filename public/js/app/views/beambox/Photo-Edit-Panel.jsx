@@ -36,7 +36,7 @@ define([
                 threshold: $(this.props.element).attr('data-threshold'),
                 shading: ($(this.props.element).attr('data-shading') === 'true')
             };
-            this.sharpenSigma = 1;
+            this.sharpenIntensity = 1;
             let tempImg = new Image();
             const self = this;
             tempImg.src = this.state.src;
@@ -116,8 +116,8 @@ define([
         }
 
         _handleParameterChange(id, val) {
-            if (id === 'sharpen-sigma'){
-                this.sharpenSigma = parseInt(val);
+            if (id === 'sharpen-intensity'){
+                this.sharpenIntensity = parseInt(val);
             } 
 
         }
@@ -181,11 +181,11 @@ define([
                 <div className='sub-functions with-slider'> 
                     <div className='title'>{LANG.sharpen}</div>
                     <SliderControl
-                        id='sharpen-sigma'
-                        key='sharpen-sigma'
+                        id='sharpen-intensity'
+                        key='sharpen-intensity'
                         label={LANG.sharpen_radius}
                         min={1}
-                        max={20}
+                        max={10}
                         step={1}
                         default={1}
                         onChange={(id, val) => this._handleParameterChange(id, val)}
@@ -196,10 +196,14 @@ define([
         }
 
         _handleSharpen() {
-            const sharp = require('sharp');
+            const jimp = require('jimp');
             const d = $.Deferred();
             let imgBlobUrl = this.state.src;
             let imageFile;
+            const k_edge = -this.sharpenIntensity / 2;
+            const k_corner = -this.sharpenIntensity / 4;
+            const k_m = -4 * (k_edge + k_corner) + 1;
+            const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
             fetch(imgBlobUrl)
                 .then(res => res.blob())
                 .then((blob) => {
@@ -208,14 +212,16 @@ define([
                         imageFile = e.target.result;
                         imageFile = new Buffer.from(imageFile);
                         ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                        sharp(imageFile).sharpen(this.sharpenSigma).toBuffer()
-                            .then((data) => {
-                                ProgressActions.close();
-                                data = new Buffer.from(data);;
-                                const newBlob = new Blob([data]);
-                                const src = URL.createObjectURL(newBlob);
-                                this.state.srcHistory.push(this.state.src);
-                                this.setState({src: src});
+                        jimp.read(imageFile)
+                            .then((image) => {
+                                image.convolute(kernal);
+                                image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+                                    const newBlob = new Blob([buffer]);
+                                    const src = URL.createObjectURL(newBlob);
+                                    ProgressActions.close();
+                                    this.state.srcHistory.push(this.state.src);
+                                    this.setState({src: src});
+                                });
                             })
                             .catch((err) => {console.log(err);});
                     };
@@ -261,16 +267,16 @@ define([
         }
 
         _handleCrop() {
-            const cropData = cropper.getData();
-            const extractPara = {
-                left: parseInt(cropData.x),
-                top: parseInt(cropData.y),
-                height: parseInt(cropData.height),
-                width: parseInt(cropData.width)
-            };
-            this.state.wRatio *= extractPara.width / this.sizeBeforeCrop.width;
-            this.state.hRatio *= extractPara.height / this.sizeBeforeCrop.height;
-            const sharp = require('sharp');
+            const cropData = cropper.getData();;
+            const x = Math.max(0, cropData.x);
+            const y = Math.max(0, cropData.y);
+            const w = Math.min(this.sizeBeforeCrop.width - x, cropData.width);
+            const h = Math.min(this.sizeBeforeCrop.height - y, cropData.height);
+            this.state.wRatio *= w / this.sizeBeforeCrop.width;
+            this.state.hRatio *= h / this.sizeBeforeCrop.height;
+
+            const jimp = require('jimp');
+            const d = $.Deferred();
             let imgBlobUrl = this.state.src;
             let imageFile;
             fetch(imgBlobUrl)
@@ -281,19 +287,21 @@ define([
                         imageFile = e.target.result;
                         imageFile = new Buffer.from(imageFile);
                         ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                        sharp(imageFile).extract(extractPara).toBuffer()
-                            .then((data) => {
-                                ProgressActions.close();
-                                data = new Buffer.from(data);;
-                                const newBlob = new Blob([data]);
-                                const src = URL.createObjectURL(newBlob);
-                                this.state.srcHistory.push(this.state.src);
-                                this._destroyCropper();
-                                this.setState({
-                                    src: src,
-                                    isCropping: false,
-                                    imagewidth: cropData.width,
-                                    imageheight: cropData.height
+                        jimp.read(imageFile)
+                            .then((image) => {
+                                image.crop(x, y, w, h);
+                                image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+                                    const newBlob = new Blob([buffer]);
+                                    const src = URL.createObjectURL(newBlob);
+                                    ProgressActions.close();
+                                    this.state.srcHistory.push(this.state.src);
+                                    this._destroyCropper();
+                                    this.setState({
+                                        src: src,
+                                        isCropping: false,
+                                        imagewidth: cropData.width,
+                                        imageheight: cropData.height
+                                    });
                                 });
                             })
                             .catch((err) => {console.log(err);});
@@ -361,8 +369,8 @@ define([
         }
 
         _renderPhotoEditFooter() {
-            const disableGoBack = (this.state.srcHistory.length === 0);
-            const disableComplete = (this.state.srcHistory.length === 0);
+            const disableGoBack = (this.state.srcHistory.length === 0 || this.state.isCropping);
+            const disableComplete = (this.state.srcHistory.length === 0 || this.state.isCropping);
             return (
                 <div className='footer'>
                     {this._renderFooterButton(LANG.okay, this._handleComplete.bind(this), disableComplete)}
@@ -380,6 +388,7 @@ define([
             }
             return(
                 <button
+                        key={label}
                         className={`btn btn-default pull-right ${disable}`}
                         onClick={() => {onClick()}}
                     >

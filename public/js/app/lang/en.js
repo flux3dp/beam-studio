@@ -1177,7 +1177,7 @@ define(function() {
                 cancel: 'Cancel',
                 next: 'Next',
                 sharpen: 'Sharpen',
-                sharpen_radius: 'Radius (px)',
+                sharpen_intensity: 'Intensity',
                 crop: 'Crop',
                 start: 'Start',
                 processing: 'Processing',
@@ -1219,6 +1219,9 @@ define(function() {
                 dx: 'X',
                 dy: 'Y',
 
+            },
+            network_testing_panel:{
+                network_testing: 'Network Testing',
             },
             svg_editor: {
                 unnsupported_file_type: 'The file type is not directly supported. Please convert the file into SVG or bitmap',
