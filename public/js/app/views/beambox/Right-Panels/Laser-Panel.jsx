@@ -67,9 +67,9 @@ define([
         'fabric_5mm_cutting',
         'fabric_bw_engraving',
         'fabric_shading_engraving',
-        'rubber_engraving',
-        'glass_engraving',
-        'metal_engraving'
+        'rubber_bw_engraving',
+        'glass_bw_engraving',
+        'metal_bw_engraving'
     ];
 
     const functionalLaserOptions = [
