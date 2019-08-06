@@ -1134,6 +1134,9 @@ define(function() {
                         fabric_5mm_cutting: 'Fabric - 5mm Cutting',
                         fabric_bw_engraving: 'Fabric - BW Engraving',
                         fabric_shading_engraving: 'Fabric - Shading Engraving',
+                        rubber_engraving: 'Rubber - Engraving',
+                        glass_engraving:  'Glass - Engraving',
+                        metal_engraving: 'Metal - Engraving',
                         save: 'Save',
                         more: 'More...',
                         parameters: 'Parameters...'

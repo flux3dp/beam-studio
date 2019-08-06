@@ -66,7 +66,10 @@ define([
         'fabric_3mm_cutting',
         'fabric_5mm_cutting',
         'fabric_bw_engraving',
-        'fabric_shading_engraving'
+        'fabric_shading_engraving',
+        'rubber_engraving',
+        'glass_engraving',
+        'metal_engraving'
     ];
 
     const functionalLaserOptions = [
@@ -209,6 +212,19 @@ define([
                 const model = BeamboxPreference.read('model');
                 switch(model) {
                     case 'fbm1':
+                        this.setState({
+                            original: value,
+                            speed: RightPanelConstants.BEAMO[value].speed,
+                            strength: RightPanelConstants.BEAMO[value].power,
+                            repeat: 1
+                        });
+
+                        this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
+                        this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
+                        this.props.funcs.writeRepeat(this.props.layerName, 1);
+                        this.props.funcs.writeConfigName(this.props.layerName, value);
+
+                        break;
                     case 'fbb1b':
                         this.setState({
                             original: value,
