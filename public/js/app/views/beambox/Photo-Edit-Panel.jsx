@@ -28,6 +28,7 @@ define([
         constructor(props) {
             super(props);
             this.state = {
+                origSrc: this.props.src,
                 src: this.props.src,
                 srcHistory: [],
                 isCropping: false,
@@ -36,14 +37,16 @@ define([
                 threshold: $(this.props.element).attr('data-threshold'),
                 shading: ($(this.props.element).attr('data-shading') === 'true')
             };
-            this.sharpenIntensity = 1;
+            this.sharpenIntensity = 0;
             let tempImg = new Image();
             const self = this;
             tempImg.src = this.state.src;
             tempImg.onload = function() {
                 self.state.origImage = tempImg;
                 self.state.imagewidth = tempImg.naturalWidth;
+                self.state.origWidth = tempImg.naturalWidth;
                 self.state.imageheight = tempImg.naturalHeight;
+                self.state.origHeight = tempImg.naturalHeight;
             };
         }
 
@@ -67,13 +70,20 @@ define([
             this.batchCmd = new svgedit.history.BatchCommand('Photo edit');
             let elem = this.props.element;
             this._handleSetAttribute('origImage', this.state.src);
-            if (this.state.wRatio < 1) {
-                this._handleSetAttribute('width', $(elem).attr('width') * this.state.wRatio);
+            if (this.props.mode === 'crop') {
+                const image = document.getElementById('original-image');
+                if (this.state.origWidth !== image.naturalWidth) {
+                    let ratio = image.naturalWidth / this.state.origWidth;
+                    this._handleSetAttribute('width', $(elem).attr('width') * ratio);
+                }
+                if (this.state.origHeight !== image.naturalHeight) {
+                    let ratio = image.naturalHeight / this.state.origHeight;
+                    this._handleSetAttribute('height', $(elem).attr('height') * ratio);
+                }
             }
-            if (this.state.hRatio < 1) {
-                this._handleSetAttribute('height', $(elem).attr('height') * this.state.hRatio);
+            if (this.props.mode === 'invert') {
+                this._handleSetAttribute('data-threshold', this.state.threshold);
             }
-            this._handleSetAttribute('data-threshold', this.state.threshold);
 
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             ImageData(
@@ -88,6 +98,7 @@ define([
                         self._handleSetAttribute('xlink:href', result.canvas.toDataURL());
                         svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
                         svgCanvas.selectOnly([elem], true);
+
                         ProgressActions.close();
                     }
                 }
@@ -97,7 +108,6 @@ define([
                 URL.revokeObjectURL(src);
                 src = this.state.srcHistory.pop();
             }
-
             this.props.unmount();
         }
 
@@ -110,44 +120,47 @@ define([
         }
 
         _handleGoBack() {
+            if (this.state.isCropping) {
+                this._destroyCropper();
+            }
             URL.revokeObjectURL(this.state.src);
             const src = this.state.srcHistory.pop();
-            this.setState({src: src});
-        }
-
-        _handleParameterChange(id, val) {
-            if (id === 'sharpen-intensity'){
-                this.sharpenIntensity = parseInt(val);
-            } 
-
+            this.setState({src: src, isCropping: false});
         }
 
         _renderPhotoEditeModal() {
             if (this.state.src !== this.lastSrc) {
                 this._handleGrayScale();
-                this.lastSrc = this.state.src;
             }
-            const maxAllowableWidth = $('.top-menu').width() - 390;
+            let panelContent;
+            let rightWidth = 40;
+            if (this.props.mode === 'sharpen') {
+                panelContent = this._renderSharpenPanel();
+                rightWidth = 390;
+            }
+            const maxAllowableWidth = $('.top-menu').width() - rightWidth;
             const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 120;
             const containerStyle = (this.state.imagewidth / maxAllowableWidth > this.state.imageheight / maxAllowableHieght) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
             const footer = this._renderPhotoEditFooter();
-            
+            const onImgLoad = (this.props.mode === 'crop' && !this.state.isCropping) ? this._handleStartCrop.bind(this) : () => {};
+            if (this.state.grayScaleUrl && this.state.grayScaleUrl === this.lastGrayScale && this.state.src === this.lastSrc && !this.state.isCropping) {
+                onImgLoad();
+            }
+            this.lastSrc = this.state.src;
+            this.lastGrayScale =this.state.grayScaleUrl;
             return (
                 <Modal>
                     <div className='photo-edit-panel'>
                         <div className='main-content'>
                             <div className='image-container' style={containerStyle} >
-                                <img id='original-image' style={containerStyle} src={this.state.grayScaleUrl} />
+                                <img 
+                                    id='original-image'
+                                    style={containerStyle}
+                                    src={this.state.grayScaleUrl}
+                                    onLoad={()=>{onImgLoad()}}/>
                             </div>
-                            <div className='right-part'>
-                                <div className='scroll-bar-container'>
-                                    <div className='title'>{LANG.phote_edit}</div>
-                                    {this._renderSharpenPanel()}
-                                    {this._renderCropPanel()}
-                                    {this._renderInvertPanel()}
-                                </div>
-                            </div>
+                            {panelContent}
                         </div>
                         {footer}
                     </div>
@@ -176,104 +189,98 @@ define([
         }
 
         _renderSharpenPanel() {
-            const isDisable = this.state.isCropping;
             return (
-                <div className='sub-functions with-slider'> 
-                    <div className='title'>{LANG.sharpen}</div>
-                    <SliderControl
-                        id='sharpen-intensity'
-                        key='sharpen-intensity'
-                        label={LANG.sharpen_radius}
-                        min={1}
-                        max={10}
-                        step={1}
-                        default={1}
-                        onChange={(id, val) => this._handleParameterChange(id, val)}
-                    />
-                    {this._renderFooterButton(LANG.apply, this._handleSharpen.bind(this), isDisable)}
-                </div>
+                <div className='right-part'>
+                    <div className={`scroll-bar-container ${this.props.mode}`}>
+                        <div className='sub-functions with-slider'> 
+                        <div className='title'>{LANG.sharpen}</div>
+                        <SliderControl
+                            id='sharpen-intensity'
+                            key='sharpen-intensity'
+                            label={LANG.sharpness}
+                            min={0}
+                            max={20}
+                            step={1}
+                            default={0}
+                            onChange={(id, val) => this._handleParameterChange(id, val)}
+                        />
+                        </div>
+                    </div>
+                </div>    
             );
         }
 
-        _handleSharpen() {
-            const jimp = require('jimp');
-            const d = $.Deferred();
-            let imgBlobUrl = this.state.src;
-            let imageFile;
-            const k_edge = -this.sharpenIntensity / 2;
-            const k_corner = -this.sharpenIntensity / 4;
-            const k_m = -4 * (k_edge + k_corner) + 1;
-            const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-            fetch(imgBlobUrl)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = (e) => {
-                        imageFile = e.target.result;
-                        imageFile = new Buffer.from(imageFile);
-                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                        jimp.read(imageFile)
-                            .then((image) => {
-                                image.convolute(kernal);
-                                image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                    const newBlob = new Blob([buffer]);
-                                    const src = URL.createObjectURL(newBlob);
+        _handleParameterChange(id, val) {
+            if (id === 'sharpen-intensity'){
+                const sharpenIntensity = parseInt(val);
+                const jimp = require('jimp');
+                const d = $.Deferred();
+                let imgBlobUrl = this.state.origSrc;
+                let imageFile;
+                const k_edge = -sharpenIntensity / 2;
+                const k_corner = -sharpenIntensity / 4;
+                const k_m = -4 * (k_edge + k_corner) + 1;
+                const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
+                fetch(imgBlobUrl)
+                    .then(res => res.blob())
+                    .then((blob) => {
+                        var fileReader = new FileReader();
+                        fileReader.onloadend = (e) => {
+                            imageFile = e.target.result;
+                            imageFile = new Buffer.from(imageFile);
+                            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                            jimp.read(imageFile)
+                                .then((image) => {
+                                    image.convolute(kernal);
+                                    image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+                                        const newBlob = new Blob([buffer]);
+                                        const src = URL.createObjectURL(newBlob);
+                                        if (this.state.src !== this.state.origSrc) {
+                                            URL.revokeObjectURL(this.state.src);
+                                        }
+                                        this.setState({src: src});
+                                        ProgressActions.close();
+                                    });
+                                })
+                                .catch((err) => {
+                                    console.log(err);
                                     ProgressActions.close();
-                                    this.state.srcHistory.push(this.state.src);
-                                    this.setState({src: src});
                                 });
-                            })
-                            .catch((err) => {console.log(err);});
-                    };
-                    fileReader.readAsArrayBuffer(blob);
-                })
-                .catch((err) => {
-                    d.reject(err);
-                });
-        }
-
-        _renderCropPanel() {
-            let buttons = []
-            if (this.state.isCropping) {
-                buttons.push(this._renderFooterButton(LANG.apply, this._handleCrop.bind(this)));
-                buttons.push(this._renderFooterButton(LANG.cancel, this._handleCancelCrop.bind(this)));
-            } else {
-                buttons = this._renderFooterButton(LANG.start, this._handleStartCrop.bind(this));
-            }
-            return (
-                <div className='sub-functions'> 
-                    <div className='title'>{LANG.crop}</div>
-                    {buttons}
-                </div>
-            );
+                        };
+                        fileReader.readAsArrayBuffer(blob);
+                    })
+                    .catch((err) => {
+                        d.reject(err);
+                        ProgressActions.close();
+                    });
+            } 
         }
 
         _handleStartCrop() {
-            this.setState({isCropping: true});
-            const image = document.getElementById('original-image');
-            this.sizeBeforeCrop = {
-                width: image.naturalWidth,
-                height: image.naturalHeight
+            if (this.state.isCropping) {
+                return;
             }
+            const image = document.getElementById('original-image');
             cropper = new Cropper(
                 image,
                 {
+                    autoCropArea: 1,
                     zoomable: false,
                     viewMode: 0,
                     targetWidth: image.width,
                     targetHeight: image.height
                 }
             );
+            this.setState({isCropping: true});
         }
 
-        _handleCrop() {
+        _handleCrop(complete=false) {
+            const image = document.getElementById('original-image');
             const cropData = cropper.getData();;
             const x = Math.max(0, cropData.x);
             const y = Math.max(0, cropData.y);
-            const w = Math.min(this.sizeBeforeCrop.width - x, cropData.width);
-            const h = Math.min(this.sizeBeforeCrop.height - y, cropData.height);
-            this.state.wRatio *= w / this.sizeBeforeCrop.width;
-            this.state.hRatio *= h / this.sizeBeforeCrop.height;
+            const w = Math.min(image.naturalWidth - x, cropData.width);
+            const h = Math.min(image.naturalHeight - y, cropData.height);
 
             const jimp = require('jimp');
             const d = $.Deferred();
@@ -293,7 +300,6 @@ define([
                                 image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
                                     const newBlob = new Blob([buffer]);
                                     const src = URL.createObjectURL(newBlob);
-                                    ProgressActions.close();
                                     this.state.srcHistory.push(this.state.src);
                                     this._destroyCropper();
                                     this.setState({
@@ -302,14 +308,23 @@ define([
                                         imagewidth: cropData.width,
                                         imageheight: cropData.height
                                     });
+                                    ProgressActions.close();
+                                    if (complete) {
+                                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                                        let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
+                                    }
                                 });
                             })
-                            .catch((err) => {console.log(err);});
+                            .catch((err) => {
+                                console.log(err);
+                                ProgressActions.close();
+                            });
                     };
                     fileReader.readAsArrayBuffer(blob);
                 })
                 .catch((err) => {
                     d.reject(err);
+                    ProgressActions.close();
                 });
         }
 
@@ -324,22 +339,11 @@ define([
             }
         }
 
-        _renderInvertPanel() {
-            const isDisable = this.state.isCropping;
-            return (
-                <div className='sub-functions'> 
-                    <div className='title'>{LANG.invert}</div>
-                    {this._renderFooterButton(LANG.apply, this._handleInvert.bind(this), isDisable)}
-                </div>
-            );
-        }
-
         _handleInvert() {
             const jimp = require('jimp');
             const d = $.Deferred();
             let imgBlobUrl = this.state.src;
             let imageFile;
-            this.state.threshold = 256 - this.state.threshold;
             fetch(imgBlobUrl)
                 .then(res => res.blob())
                 .then((blob) => {
@@ -354,30 +358,48 @@ define([
                                 image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
                                     const newBlob = new Blob([buffer]);
                                     const src = URL.createObjectURL(newBlob);
-                                    ProgressActions.close();
+                                    if (!this.state.shading) {
+                                        this.state.threshold = 256 - this.state.threshold;
+                                    }
                                     this.state.srcHistory.push(this.state.src);
-                                    this.setState({src: src});
+                                    this.state.src = src;
+                                    ProgressActions.close();
                                 });
                             })
-                            .catch((err) => {console.log(err);});
+                            .catch((err) => {
+                                console.log(err);
+                                ProgressActions.close();
+                            });
                     };
                     fileReader.readAsArrayBuffer(blob);
                 })
                 .catch((err) => {
                     d.reject(err);
+                    ProgressActions.close();
                 });
         }
 
         _renderPhotoEditFooter() {
-            const disableGoBack = (this.state.srcHistory.length === 0 || this.state.isCropping);
-            const disableComplete = (this.state.srcHistory.length === 0 || this.state.isCropping);
-            return (
+            if (this.props.mode === 'sharpen') {
+                return (
                 <div className='footer'>
-                    {this._renderFooterButton(LANG.okay, this._handleComplete.bind(this), disableComplete)}
-                    {this._renderFooterButton(LANG.back, this._handleGoBack.bind(this), disableGoBack)}
+                    {this._renderFooterButton(LANG.okay, this._handleComplete.bind(this))}
                     {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
                 </div>
-            );
+                );
+            } else if (this.props.mode === 'crop') {
+                const disableGoBack = (this.state.srcHistory.length === 0);
+                return (
+                    <div className='footer'>
+                        {this._renderFooterButton(LANG.okay, () => {
+                                this._handleCrop.bind(this)(true);
+                            })}
+                        {this._renderFooterButton(LANG.apply, this._handleCrop.bind(this))}
+                        {this._renderFooterButton(LANG.back, this._handleGoBack.bind(this), disableGoBack)}
+                        {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
+                    </div>
+                );
+            }
         }
 
         _renderFooterButton(label, onClick, isDisable) {
@@ -398,7 +420,17 @@ define([
         }
 
         render() {
-            const renderContent = this._renderPhotoEditeModal();
+            let renderContent;
+            if (this.props.mode === 'sharpen') {
+                renderContent = this._renderPhotoEditeModal();
+            } else if (this.props.mode === 'crop') {
+                renderContent = this._renderPhotoEditeModal();
+            } else if (this.props.mode === 'invert') {
+                this._handleInvert();
+                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                let timeout = window.setTimeout(this._handleComplete.bind(this) , 200);
+                renderContent = (<div/>)
+            }
             return renderContent;
         }
     };

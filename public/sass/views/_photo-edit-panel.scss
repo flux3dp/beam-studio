@@ -331,14 +331,18 @@
             display: inline-block;
         }
         .scroll-bar-container {
-            width: 290px;
+            width: 140px;
             display: inline-block;
             padding-left: 20px;
+            &.sharpen {
+                width: 290px;
+            }
             .sub-functions {
                 margin-top: 10px;
                 height: 55px;
                 &.with-slider {
                     height: 120px;
+                    width: 270px;
                     .controls {
                         padding-top: 10px;
                         padding-bottom: 5px;
@@ -364,10 +368,25 @@
                         width: 120px;
                     }
                 }
+                .icon {
+                    float: right;
+                    opacity: 0.3;
+                    width: 34px;
+                    height: 34px;
+                    margin-top: 10px;
+                    margin-left: 7px;
+                    &:hover {
+                        opacity: 0.8;
+                    }
+                    img {
+                        width: 30px;
+                        height: 30px;
+                    }
+                }
             }
             .btn {
-                height: 26px;
-                line-height: 26px;
+                margin-top: 10px;
+                line-height: 30px;
                 &.disabled {
                     &:hover {
                         border: 2px solid #C0C0C0;

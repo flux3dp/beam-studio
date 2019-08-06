@@ -369,7 +369,7 @@ define([
         },
 
         //menubar
-        photoEdit: function() {
+        photoEdit: function(mode) {
             const selectedElements = window.svgCanvas.getSelectedElems();
             let len = selectedElements.length;
             for (let i = 0; i < selectedElements.length; ++i) {
@@ -383,6 +383,7 @@ define([
             }
             elem = selectedElements[0];
             PhotoEditPanelController.setElememt(elem);
+            PhotoEditPanelController.setMode(mode);
             PhotoEditPanelController.render();
         },
 

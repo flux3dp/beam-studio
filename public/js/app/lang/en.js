@@ -1177,7 +1177,7 @@ define(function() {
                 cancel: 'Cancel',
                 next: 'Next',
                 sharpen: 'Sharpen',
-                sharpen_intensity: 'Intensity',
+                sharpness: 'Sharpness',
                 crop: 'Crop',
                 start: 'Start',
                 processing: 'Processing',

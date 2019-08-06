@@ -32,6 +32,10 @@ define([
             this.src = element.getAttribute('origImage');
         }
 
+        setMode(mode) {
+            this.mode = mode;
+        }
+
         unmount() {
             this.element = null;
             ReactDOM.unmountComponentAtNode(document.getElementById(this.reactRoot));
@@ -40,6 +44,7 @@ define([
         _render() {
             ReactDOM.render(
                 <PhotoEditPanel
+                    mode={this.mode}
                     element={this.element}
                     src={this.src}
                     unmount={this.unmount}

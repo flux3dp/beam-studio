@@ -1174,7 +1174,7 @@ define(function() {
                 cancel: '取消',
                 next: '下一步',
                 sharpen: '銳化',
-                sharpen_radius: '強度',
+                sharpness: '鋭化強度',
                 crop: '裁剪',
                 start: '開始',
                 processing: '處理中',

@@ -54,7 +54,9 @@ define([
                 'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
                 'UNDO': () => FnWrapper.undo(),
                 'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
-                'PHOTO_EDIT': () => FnWrapper.photoEdit(),
+                'IMAGE_SHARPEN': () => FnWrapper.photoEdit('sharpen'),
+                'IMAGE_CROP': () => FnWrapper.photoEdit('crop'),
+                'IMAGE_INVERT': () => FnWrapper.photoEdit('invert'),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {}

@@ -83,6 +83,15 @@ define([
             });
         },
 
+        _renderThresholdPanel: function() {
+            return this.props.shading ? null : (
+                <div className="control">
+                    <span className="text-center header">{LANG.threshold}</span>
+                    <input type="range" min={0} max={255} value={this.state.threshold} onChange={(e) => this.handleThresholdChange(e)} />
+                </div>
+            );
+        },
+
         render: function() {
             const { shading, threshold } = this.state;
 
@@ -101,10 +110,7 @@ define([
                                     <i className={shading ? "fa fa-toggle-on" : "fa fa-toggle-off"}></i>
                                 </label>
                             </div>
-                            <div className="control">
-                                <span className="text-center header">{LANG.threshold}</span>
-                                <input type="range" min={0} max={255} value={threshold} onChange={(e) => this.handleThresholdChange(e)} />
-                            </div>
+                            {this._renderThresholdPanel()}
                         </label>
                     </label>
                 </div>
