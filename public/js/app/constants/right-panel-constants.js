@@ -68,15 +68,15 @@ define(function() {
                 power: 15,
                 speed: 80
             },
-            rubber_engraving: {
+            rubber_bw_engraving: {
                 power: 50,
                 speed: 140
             },
-            glass_engraving: {
+            glass_bw_engraving: {
                 power: 35,
                 speed: 150
             },
-            metal_engraving: {
+            metal_bw_engraving: {
                 power: 50,
                 speed: 80
             }
@@ -147,15 +147,15 @@ define(function() {
                 power: 15,
                 speed: 80
             },
-            rubber_engraving: {
+            rubber_bw_engraving: {
                 power: 45,
                 speed: 130
             },
-            glass_engraving: {
+            glass_bw_engraving: {
                 power: 30,
                 speed: 150
             },
-            metal_engraving: {
+            metal_bw_engraving: {
                 power: 50,
                 speed: 120
             }
@@ -226,15 +226,15 @@ define(function() {
                 power: 12,
                 speed: 80
             },
-            rubber_engraving: {
+            rubber_bw_engraving: {
                 power: 40,
                 speed: 150
             },
-            glass_engraving: {
+            glass_bw_engraving: {
                 power: 25,
                 speed: 150
             },
-            metal_engraving: {
+            metal_bw_engraving: {
                 power: 50,
                 speed: 140
             }
