@@ -72,6 +72,8 @@ define([
                 this._writeThreshold(threshold);
                 this._refreshImage();
             });
+
+            this.forceUpdate();
         },
 
         handleThresholdChange: function(event) {
