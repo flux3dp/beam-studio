@@ -27,7 +27,7 @@ define([
                 show: false,
                 ip: ''
             };
-            this.TEST_TIME = 10000;
+            this.TEST_TIME = 30000;
         }
 
         componentDidMount() {
