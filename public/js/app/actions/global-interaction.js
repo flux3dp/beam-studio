@@ -2,7 +2,7 @@ define([
 ], function() {
     let MENU_ITEMS = ["IMPORT", "EXPORT_FLUX_TASK", "SAVE_SCENE",
                       "UNDO", "DUPLICATE", 'PHOTO_EDIT', 'DOCUMENT_SETTING', "CLEAR_SCENE",
-                      "TUTORIAL", 'NETWORK_TESTING']
+                      "TUTORIAL", 'NETWORK_TESTING', 'ABOUT_BEAM_STUDIO']
 
     var ipc, events, defaultAction, currentHandler;
 

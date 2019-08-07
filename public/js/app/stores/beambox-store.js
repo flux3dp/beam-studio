@@ -59,6 +59,11 @@ define([
             return beamboxStore;
         },
 
+        onShowAboutBeambox: function(callback) {
+            this.on(Constants.SHOW_ABOUT_BEAM_STUDIO, callback);
+            return beamboxStore;
+        },
+
         removeUpdateLaserPanelListener: function(callback) {
             this.removeListener(Constants.UPDATE_LASER_PANEL, callback);
             return beamboxStore;

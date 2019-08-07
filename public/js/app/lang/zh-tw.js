@@ -98,6 +98,7 @@ define(function() {
         },
         topmenu: {
             version: '版本',
+            ok: '確定',
             sure_to_quit: '確定要結束 Beam Studio?',
             flux: {
                 label: 'Flux',

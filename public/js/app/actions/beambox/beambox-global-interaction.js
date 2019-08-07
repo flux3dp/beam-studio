@@ -62,11 +62,12 @@ define([
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {},
-                'NETWORK_TESTING': () => {BeamboxAction.showNetworkTestingPanel()}
+                'NETWORK_TESTING': () => {BeamboxAction.showNetworkTestingPanel()},
+                'ABOUT_BEAM_STUDIO': () => {BeamboxAction.showAboutBeamStudio()}
             };
         }
         attach() {
-            super.attach(['IMPORT', 'SAVE_SCENE', 'UNDO', 'EXPORT_FLUX_TASK', 'DOCUMENT_SETTING', 'CLEAR_SCENE', 'NETWORK_TESTING']);
+            super.attach(['IMPORT', 'SAVE_SCENE', 'UNDO', 'EXPORT_FLUX_TASK', 'DOCUMENT_SETTING', 'CLEAR_SCENE', 'NETWORK_TESTING', 'ABOUT_BEAM_STUDIO']);
         }
         onObjectFocus() {
             this.enableMenuItems(['DUPLICATE']);

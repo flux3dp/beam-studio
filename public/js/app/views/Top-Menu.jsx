@@ -13,7 +13,7 @@ define([
     'helpers/output-error',
     'plugins/classnames/index',
     'app/constants/device-constants',
-    'jsx!views/toolbox/Toolbox',
+    'jsx!views/beambox/About-Beam-Studio',
     'app/actions/alert-actions',
     'app/stores/alert-store',
     'app/actions/global-actions',
@@ -44,7 +44,7 @@ define([
     OutputError,
     ClassNames,
     DeviceConstants,
-    Toolbox,
+    AboutBeamStudio,
     AlertActions,
     AlertStore,
     GlobalActions,
@@ -802,6 +802,7 @@ define([
                                 </div>
                             </div>
                         </div>
+                        <AboutBeamStudio/>
                     </div>
                 );
             }

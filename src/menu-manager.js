@@ -40,6 +40,7 @@ function _buildFileMenu(fnKey, callback) {
     if(process.platform !== 'darwin') {
         menuItems.push({ id: 'PREFERENCE',  label: r.preferences, accelerator: `${fnKey}+,`, click: callback });
         menuItems.push({ id: 'RELOAD_APP' ,label: r.reload_app, accelerator: `${fnKey}+R`, click: callback});
+        menuItems.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
     }
 
     return {

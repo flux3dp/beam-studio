@@ -57,6 +57,11 @@ define([
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.SHOW_NETWORK_TESTING_PANEL, device
             });
+        },
+        showAboutBeamStudio: function() {
+            Dispatcher.dispatch({
+                actionType: BeamboxConstants.SHOW_ABOUT_BEAM_STUDIO
+            });
         }
     };
 });

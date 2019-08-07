@@ -98,6 +98,7 @@ define(function() {
         },
         topmenu: {
             version: 'Version',
+            ok: 'OK',
             sure_to_quit: 'Are you sure you want to quit?',
             flux: {
                 label: 'FLUX',
