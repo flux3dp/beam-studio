@@ -139,7 +139,7 @@ define([
                 rightWidth = 390;
             }
             const maxAllowableWidth = $('.top-menu').width() - rightWidth;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 120;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 180;
             const containerStyle = (this.state.imagewidth / maxAllowableWidth > this.state.imageheight / maxAllowableHieght) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
             const footer = this._renderPhotoEditFooter();

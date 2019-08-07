@@ -373,7 +373,7 @@ define([
             const sourceWidth = (coordinates.maxX - coordinates.minX) + 465.17;
             const sourceHeight = (coordinates.maxY - coordinates.minY) + 465.17;
             const maxAllowableWidth = $('.top-menu').width() - 100;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 80;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 120;
             const ratio = Math.min(maxAllowableHieght / sourceHeight, maxAllowableWidth / sourceWidth);
             const destWidth = sourceWidth * ratio;
             const destHeight = sourceHeight * ratio;
@@ -500,7 +500,7 @@ define([
             const footer = this._renderImageTraceFooter();
             const it = ((currentStep === STEP_APPLY) && (imageTrace!=='')) ? this._getImageTraceDom() : null;
             const maxAllowableWidth = $('.top-menu').width() - 390;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 120;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 160;
             const containerStyle = (TESTING_IT || (cropData.width / maxAllowableWidth > cropData.height / maxAllowableHieght)) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
 
