@@ -206,14 +206,15 @@ define([
             }
 
             const resp = await DeviceMaster.getDeviceSetting('camera_offset');
+            console.log("Resp = ", resp.value);
             this.cameraOffset = {
                 x:          Number(/X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
                 y:          Number(/Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
                 angle:      Number(/R:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
-                scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || (/S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1])),
-                scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || (/S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1])),
+                scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
+                scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
             };
-
+            console.log("Got camera_offset = ", this.cameraOffset);
             if ((this.cameraOffset.x === 0) && (this.cameraOffset.y === 0)) {
                 this.cameraOffset = {
                     x: Constant.camera.offsetX_ideal,
