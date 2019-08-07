@@ -52,6 +52,11 @@ define([
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.RESET_PREVIEW_BUTTON
             });
+        },
+        showNetworkTestingPanel: function(device) {
+            Dispatcher.dispatch({
+                actionType: BeamboxConstants.SHOW_NETWORK_TESTING_PANEL, device
+            });
         }
     };
 });

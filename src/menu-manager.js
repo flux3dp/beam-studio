@@ -84,6 +84,7 @@ function buildMenu(callback) {
         label: r.machines || 'Machines',
         submenu: [
             { 'id': 'ADD_NEW_MACHINE', label: r.add_new_machine || 'Add New Machine', 'accelerator': `${fnKey}+N`, click: callback},
+            { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
             {type: 'separator'}
         ]
     });

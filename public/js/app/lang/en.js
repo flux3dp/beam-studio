@@ -1225,6 +1225,20 @@ define(function() {
             },
             network_testing_panel:{
                 network_testing: 'Network Testing',
+                local_ip: 'Local Ip address:',
+                insert_ip: 'Target device IP address:',
+                empty_ip: 'Please enter target device IP first.',
+                start: 'Start',
+                end: 'End',
+                testing: 'Testing Network...',
+                invalid_ip: 'Invalid IP address',
+                network_healthiness: 'Network Healthiness',
+                average_response: 'Average Response Time:',
+                test_completed: 'Test Completed',
+                test_fail: 'Test Failed',
+                cannot_connect_1: 'Fail to connect to target IP.',
+                cannot_connect_2: 'Fail to connect to target IP. Please make sure that the target is in the same network.',
+                cannot_get_local: 'Access to local IP address failed.'
             },
             svg_editor: {
                 unnsupported_file_type: 'The file type is not directly supported. Please convert the file into SVG or bitmap',

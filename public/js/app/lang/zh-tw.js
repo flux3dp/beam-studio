@@ -1221,6 +1221,20 @@ define(function() {
             },
             network_testing_panel:{
                 network_testing: '網路檢測',
+                local_ip: '本機 IP 位置：',
+                insert_ip: '目標 IP 位置：',
+                empty_ip: '請先輸入目標 IP 位置',
+                start: '檢測',
+                end: '結束',
+                testing: '網路檢測中...',
+                invalid_ip: '錯誤的 IP 位置',
+                network_healthiness: '連線健康度',
+                average_response: '平均回覆時間',
+                test_completed: '檢測完成',
+                test_fail: '檢測失敗',
+                cannot_connect_1: '無法與目標 IP 建立連線',
+                cannot_connect_2: '無法與目標 IP 建立連線，請確認是否與目標 IP 在同一網路',
+                cannot_get_local: '無法取得本地 IP 位置'
             },
             svg_editor: {
                 unnsupported_file_type: 'Beam Studio 不直接支援此檔案格式。請先輸出成圖片檔或 SVG 格式',

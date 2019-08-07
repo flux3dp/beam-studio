@@ -1,9 +1,11 @@
 define([
     'app/actions/global-interaction',
+    'app/actions/beambox',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
     GlobalInteraction,
+    BeamboxAction,
     BottomRightFuncs,
     FnWrapper
 ){
@@ -59,11 +61,12 @@ define([
                 'IMAGE_INVERT': () => FnWrapper.photoEdit('invert'),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
-                'TUTORIAL': () => {}
+                'TUTORIAL': () => {},
+                'NETWORK_TESTING': () => {BeamboxAction.showNetworkTestingPanel()}
             };
         }
         attach() {
-            super.attach(['IMPORT', 'SAVE_SCENE', 'UNDO', 'EXPORT_FLUX_TASK', 'DOCUMENT_SETTING', 'CLEAR_SCENE']);
+            super.attach(['IMPORT', 'SAVE_SCENE', 'UNDO', 'EXPORT_FLUX_TASK', 'DOCUMENT_SETTING', 'CLEAR_SCENE', 'NETWORK_TESTING']);
         }
         onObjectFocus() {
             this.enableMenuItems(['DUPLICATE']);

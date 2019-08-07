@@ -54,6 +54,11 @@ define([
             return beamboxStore;
         },
 
+        onShowNetworkTestingPanel: function(callback) {
+            this.on(Constants.SHOW_NETWORK_TESTING_PANEL, callback);
+            return beamboxStore;
+        },
+
         removeUpdateLaserPanelListener: function(callback) {
             this.removeListener(Constants.UPDATE_LASER_PANEL, callback);
             return beamboxStore;

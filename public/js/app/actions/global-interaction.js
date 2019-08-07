@@ -2,7 +2,7 @@ define([
 ], function() {
     let MENU_ITEMS = ["IMPORT", "EXPORT_FLUX_TASK", "SAVE_SCENE",
                       "UNDO", "DUPLICATE", 'PHOTO_EDIT', 'DOCUMENT_SETTING', "CLEAR_SCENE",
-                      "TUTORIAL"]
+                      "TUTORIAL", 'NETWORK_TESTING']
 
     var ipc, events, defaultAction, currentHandler;
 

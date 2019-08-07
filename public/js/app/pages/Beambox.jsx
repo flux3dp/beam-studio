@@ -4,6 +4,7 @@ define([
     'app/actions/beambox/beambox-global-interaction',
     'app/actions/beambox/beambox-preference',
     'jsx!views/beambox/Left-Panels/Left-Panel',
+    'jsx!views/beambox/Network-Testing-Panel',
     'jsx!pages/svg-editor',
 ], function (
     React,
@@ -11,6 +12,7 @@ define([
     BeamboxGlobalInteraction,
     BeamboxPreference,
     LeftPanel,
+    NetworkTestingPanel,
     SvgEditor
 ) {
     BeamboxInit.init();
@@ -33,6 +35,7 @@ define([
                 <div className="studio-container beambox-studio">
                     <LeftPanel />
                     <SvgEditor />
+                    <NetworkTestingPanel />
                     <div id='advanced-panel-placeholder' />
                     <div id='object-panels-placeholder' />
                     <div id='tool-panels-placeholder' />
