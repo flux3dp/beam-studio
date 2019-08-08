@@ -48,6 +48,7 @@ define([
                             <img src='icon.png'/>
                             <div className='app-name'>{'Beam Studio'}</div>
                             <div className='version'>{`${LANG.version} ${window.FLUX.version}`}</div>
+                            <div className='copyright'>{'Copyright ⓒ 2019 FLUX Inc.'}</div>
                             <button
                                 className='btn btn-default'
                                 onClick={() => this._close()}
