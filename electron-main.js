@@ -269,25 +269,42 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         });
 
         // array of used family which are in the text
-        const familyList = (function(){
-            const originPostscriptName = originFont.postscriptName;
-            const list = Array.from(text).map(char =>
-                FontManager.substituteFontSync(originPostscriptName, char).family
-            );
-            // make unique
-            return [...new Set(list)];
-        })();
+        
+        const originPostscriptName = originFont.postscriptName;
+        const fontList = Array.from(text).map(char =>
+            FontManager.substituteFontSync(originPostscriptName, char)
+        );
+        let familyList = fontList.map(font => font.family);
+        let postscriptList = fontList.map(font => font.postscriptName)
+        // make unique
+        familyList = [...new Set(familyList)];
+        postscriptList = [...new Set(postscriptList)];
 
         if (familyList.length === 1) {
             return familyList[0];
-        } else if (familyList.length === 2) {
-            // consider mixing Chinese with English. For example: '甲乙丙ABC' with font Arial.
-            // we choose to use Chinese font instead of English font, which make English characters differ form what it should be.
-            // This is not the best solution, just a quick fix.
-            return (familyList.filter(family => family !== fontFamily))[0];
         } else {
-            console.log('Unexpected case in convert text to path: text contain more than 2 font-family!');
-            return familyList[0];
+            // Test all found fonts if they contain all 
+            
+            let fontIndex;
+            for (let i = 0; i < postscriptList.length; ++i) {
+                let allFit = true;
+                for (let j = 0; j < text.length; ++j) {
+                    if (fontList[j].postscriptName === postscriptList[i]) {
+                        continue;
+                    }
+                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]).family;
+                    if (familyList[i] !== foundfont) {
+                        allFit = false;
+                        break;
+                    }
+                }
+                if (allFit) {
+                    console.log(`Find ${familyList[i]} fit for all char`);
+                    return familyList[i];
+                }
+            }
+            console.log('Cannot find a font fit for all')
+            return (familyList.filter(family => family !== fontFamily))[0];
         }
     })();
 
