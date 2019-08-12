@@ -597,10 +597,10 @@ svgedit.utilities.getPathDFromElement = function(elem) {
 			break;
 		case 'rect':
 			var r = $(elem).attr(['rx', 'ry']);
-			rx = r.rx;
-			ry = r.ry;
 			var b = elem.getBBox();
 			var x = b.x, y = b.y, w = b.width, h = b.height;
+			rx = Math.min(w/2, r.rx);
+			ry = Math.min(h/2, r.ry || rx);
 			num = 4 - num; // Why? Because!
 
 			if (!rx && !ry) {
