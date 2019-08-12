@@ -449,6 +449,28 @@
                             font-weight: normal;
                         }
 
+                        .layerlock {
+                            width: 19px;
+                            height: 14px;
+                            padding: 13px 5px 13px 0px;
+                            cursor: pointer;
+                            img {
+                                display: none;
+                                height: 13px;
+                                filter: brightness(0%)
+                            }
+                        }
+                        &.layersel .layerlock {
+                            img {
+                                filter: brightness(0%) invert(100%);
+                            }
+                        }
+                        &.lock .layerlock {
+                            img {
+                                display: block;
+                            }
+                        }
+
                         &.mark, &.mark:hover {
                             color: white;
                             border: 1px solid #666 !important;

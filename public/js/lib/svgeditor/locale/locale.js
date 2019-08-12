@@ -160,7 +160,7 @@ var svgEditor = (function($, editor) {'use strict';
 			opts['#cmenu_canvas a[href="#' + this + '"]'] = tools[this];
 		});
 
-		$.each(['dupe','merge_down', 'merge_all'], function() {
+		$.each(['dupe', 'lock', 'merge_down', 'merge_all'], function() {
 			opts['#cmenu_layers a[href="#' + this + '"]'] = layers[this];
 		});
 

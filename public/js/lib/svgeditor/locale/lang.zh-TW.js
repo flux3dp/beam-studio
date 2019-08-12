@@ -155,6 +155,7 @@ svgEditor.readLang({
         'rename': '重新命名圖層',
         'move_up': '向上移動圖層',
         'dupe': '複製圖層',
+        'lock': '鎖定圖層',
         'merge_down': '向下合併圖層',
         'merge_all': '合併全部圖層',
         'move_elems_to': '移動物件',

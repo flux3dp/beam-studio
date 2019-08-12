@@ -25,6 +25,9 @@
 	cursor: move;
 }
 
+#svg_editor g.lock{
+	cursor: default;
+}
 
 #svg_editor {
 	font-size: 10pt;

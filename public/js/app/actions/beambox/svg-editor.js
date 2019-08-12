@@ -1047,11 +1047,14 @@ define([
                 let layer = layerCount - 1;
                 while (layer >= 0) {
                     var name = drawing.getLayerName(layer);
+                    const lay = drawing.getLayerByName(name);
                     var layerTr = $('<tr class="layer">').toggleClass('layersel', name === currentLayerName);
+                    layerTr.toggleClass('lock', 'true' === lay.getAttribute('data-lock'))
+                    let layerLock = $('<td class="layerlock">')
                     var layerVis = $('<td class="layervis">').toggleClass('layerinvis', !drawing.getLayerVisibility(name));
                     var layerColor = $('<td class="layercolor"><div style="background:' + drawing.getLayerColor(name) + '"></div></td>');
                     var layerName = $('<td class="layername">' + name + '</td>');
-                    layerlist.append(layerTr.append(layerColor, layerName, layerVis));
+                    layerlist.append(layerTr.append(layerColor, layerName, layerLock, layerVis));
                     selLayerNames.append('<option value="' + name + '">' + name + '</option>');
                     layer--;
                 }
@@ -1059,6 +1062,7 @@ define([
                 displayChangeLayerBlock(true);
 
                 $('td.layervis', layerlist).append('<i class="fa fa-eye"></i>');
+                $('td.layerlock', layerlist).append('<img src=img/icon-lock.svg>');
 
                 renderLayerLaserConfigs();
 
@@ -1084,6 +1088,22 @@ define([
                     var vis = $(this).hasClass('layerinvis');
                     svgCanvas.setLayerVisibility(name, vis);
                     $(this).toggleClass('layerinvis');
+                });
+
+                $('#layerlist td.layerlock').click(function (evt) {
+                    if ($(this.parentNode).hasClass('lock')) {
+                        const layerName = $(this).parent().find('.layername').text();
+                        const layer = drawing.getLayerByName(layerName);
+                        $(this.parentNode).removeClass('lock');
+                        svgCanvas.unlockLayer(layer);
+                    } else {
+                        $('#layerlist tr.layer').removeClass('layersel');
+                        $(this.parentNode).addClass('layersel');
+                        svgCanvas.setCurrentLayer(this.textContent);
+                        renderLayerLaserConfigs();
+                        svgCanvas.selectAllInCurrentLayer();
+                        evt.preventDefault();
+                    }
                 });
 
                 $('#layerlist td.layercolor').click(function (e) {
@@ -5306,6 +5326,9 @@ define([
                 switch (action) {
                     case 'dupe':
                         cloneLayer();
+                        break;
+                    case 'lock':
+                        svgCanvas.lockLayer();
                         break;
                     case 'merge_down':
                         mergeLayer();

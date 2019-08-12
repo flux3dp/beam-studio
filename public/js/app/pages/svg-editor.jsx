@@ -1464,6 +1464,9 @@ define([
                             <a href="#dupe" onClick={this._handleDisableHref}>Duplicate Layer...</a>
                         </li>
                         <li>
+                            <a href="#lock" onClick={this._handleDisableHref}>Lock Layer</a>
+                        </li>
+                        <li>
                             <a href="#merge_down" onClick={this._handleDisableHref}>Merge Down</a>
                         </li>
                         <li>

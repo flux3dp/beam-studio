@@ -1371,8 +1371,8 @@ define([
                         if ($('#selectorGroup0').css('display') === 'inline') {
                             justClearSelection = true;
                         }
-
-                        if (mouse_target !== svgroot) {
+                        //console.log(svgCanvas.getObjectLayer(mouse_target).elem);
+                        if (mouse_target !== svgroot && !svgCanvas.getObjectLayer(mouse_target).elem.getAttribute('data-lock')) {
                             // if this element is not yet selected, clear selection and select it
                             if (selectedElements.indexOf(mouse_target) === -1) {
                                 // only clear selection if shift is not pressed (otherwise, add
@@ -1800,6 +1800,10 @@ define([
                             var intElem = newList[i];
                             // Found an element that was not selected before, so we should add it.
                             if (selectedElements.indexOf(intElem) === -1) {
+                                const layer = svgCanvas.getObjectLayer(intElem).elem;
+                                if (layer.getAttribute('data-lock')) {
+                                    continue;
+                                }
                                 elemsToAdd.push(intElem);
                             }
                             // Found an element that was already selected, so we shouldn't remove it.
@@ -5857,6 +5861,23 @@ define([
             return true;
         };
 
+        this.lockLayer = function (hrService) {
+            const currentLayer = getCurrentDrawing().getCurrentLayer();
+            currentLayer.setAttribute('data-lock', true);
+            currentLayer.setAttribute('class', 'layer lock');
+            $('.layersel').addClass('lock');
+            getCurrentDrawing().setCurrentLayerPosition(0);
+            window.populateLayers();
+            clearSelection();
+            leaveContext();
+        };
+
+        this.unlockLayer = function (layer, hrService) {
+            layer.removeAttribute('data-lock');
+            layer.setAttribute('class', 'layer');
+            clearSelection();
+            leaveContext();
+        };
 
         this.mergeLayer = function (hrService) {
             getCurrentDrawing().mergeLayer(historyRecordingService(hrService));

@@ -155,6 +155,7 @@ svgEditor.readLang({
 		"rename": "Rename Layer",
 		"move_up": "Move Layer Up",
 		"dupe": "Duplicate Layer",
+		"lock": "Lock Layer",
 		"merge_down": "Merge Down",
 		"merge_all": "Merge All",
 		"move_elems_to": "Move elements to:",
