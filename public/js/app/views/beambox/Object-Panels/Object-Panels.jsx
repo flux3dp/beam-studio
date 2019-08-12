@@ -40,6 +40,18 @@ define([
         'use':      ['position', 'size', 'rotation']
     };
 
+    const defaultHeight = {
+        'unknown':  0,
+        'path': 340,
+        'polygon': 340,
+        'rect': 372,
+        'ellipse': 340,
+        'line': 340,
+        'image': 340,
+        'text': 321,
+        'use': 308
+    }
+
     const ObjectPanel = React.createClass({
         propTypes: {
             type: PropTypes.oneOf(Object.keys(validPanelsMap)).isRequired,
@@ -76,6 +88,7 @@ define([
         },
 
         _findPositionStyle: function() {
+            const self = this;
             const angle = (function(){
                 const A = $('#selectorGrip_resize_w').offset();
                 const B = $('#selectorGrip_resize_e').offset();
@@ -111,8 +124,10 @@ define([
                     input = Math.max(input, min);
                     return input;
                 }
+                const type = self.props.type || 'unknown';
+                const height = ($('#beamboxObjPanel').height() || defaultHeight[type]) || 0;
                 const left = _between(thePoint.left, 0, $(window).width()-240);
-                const top = _between(thePoint.top, 100, $('#svg_editor').height()-$('#beamboxObjPanel').height());
+                const top = _between(thePoint.top, 100, $('#svg_editor').height() - height);
                 return {
                     left: left,
                     top: top

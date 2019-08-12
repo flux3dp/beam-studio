@@ -72,8 +72,6 @@ define([
                 this._writeThreshold(threshold);
                 this._refreshImage();
             });
-
-            this.forceUpdate();
         },
 
         handleThresholdChange: function(event) {
@@ -86,7 +84,7 @@ define([
         },
 
         _renderThresholdPanel: function() {
-            return this.props.shading ? null : (
+            return this.state.shading ? null : (
                 <div className="control">
                     <span className="text-center header">{LANG.threshold}</span>
                     <input type="range" min={0} max={255} value={this.state.threshold} onChange={(e) => this.handleThresholdChange(e)} />
