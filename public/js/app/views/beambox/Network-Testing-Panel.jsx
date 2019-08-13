@@ -39,6 +39,12 @@ define([
         }
 
         _initAndShow(payload) {
+            console.log(payload);
+            let ip = '';
+            if (payload.device) {
+                ip = payload.device;
+                this.defaultValue = ip;
+            }
             let local_ips = [];
             const os = require('os');
             let ifaces = os.networkInterfaces();
@@ -62,7 +68,7 @@ define([
                 });
             });
             this.setState({
-                ip: '',
+                ip: ip,
                 show: true,
                 localIp: local_ips
             });
@@ -178,6 +184,7 @@ define([
                                 <div className='right-part'>
                                     <input
                                         ref='textInput'
+                                        value={this.defaultValue}
                                         onBlur={this._onInputBlur.bind(this)}
                                         >    
                                     </input>

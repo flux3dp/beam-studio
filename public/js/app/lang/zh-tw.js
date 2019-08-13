@@ -163,7 +163,8 @@ define(function() {
                 },
                 finish: '完成',
                 cancel: '取消',
-                turn_on_head_temperature: '設定列印工具頭溫度'
+                turn_on_head_temperature: '設定列印工具頭溫度',
+                network_test: '網路檢測'
             },
             window: {
                 label: '視窗',

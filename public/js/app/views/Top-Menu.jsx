@@ -18,6 +18,7 @@ define([
     'app/stores/alert-store',
     'app/actions/global-actions',
     'app/stores/global-store',
+    'app/actions/beambox',
     'helpers/device-list',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -49,6 +50,7 @@ define([
     AlertStore,
     GlobalActions,
     GlobalStore,
+    BeamboxAction,
     DeviceList,
     ProgressActions,
     ProgressConstants,
@@ -284,7 +286,14 @@ define([
 
                 _action['MACHINE_INFO'] = (device) => {
                     let info = `${lang.device.model_name}: ${device.model.toUpperCase()}\n${lang.device.IP}: ${device.ipaddr}\n${lang.device.serial_number}: ${device.serial}\n${lang.device.firmware_version}: ${device.version}\n${lang.device.UUID}: ${device.uuid}`;
-                    AlertActions.showPopupInfo('', info);
+                    //AlertActions.showPopupInfo('', info);
+                    
+                    AlertActions.showPopupCustomGroup('', info, [lang.topmenu.device.network_test, lang.topmenu.ok], '', '',
+                        [
+                            () => {BeamboxAction.showNetworkTestingPanel(device.ipaddr)},
+                            () => {}
+                        ]
+                    );
                 };
 
                 _action['CALIBRATE_BEAMBOX_CAMERA'] = (device) => {

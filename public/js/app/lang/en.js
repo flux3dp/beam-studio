@@ -163,7 +163,8 @@ define(function() {
                 },
                 finish: 'FINISH',
                 cancel: 'CANCEL',
-                turn_on_head_temperature: 'Set Toolhead Temperature'
+                turn_on_head_temperature: 'Set Toolhead Temperature',
+                network_test: 'Test Network'
             },
             window: {
                 label: 'Window',
