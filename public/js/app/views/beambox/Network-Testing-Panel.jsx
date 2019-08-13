@@ -39,7 +39,6 @@ define([
         }
 
         _initAndShow(payload) {
-            console.log(payload);
             let ip = '';
             if (payload.device) {
                 ip = payload.device;
