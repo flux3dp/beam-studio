@@ -70,7 +70,7 @@
     "test": "mocha '_test/unit/slicer.js' --compilers js:babel-core/register",
     "start": "electron .",
     "start-server": "electron . --server",
-    "afterSign": "scripts/notarize.js",
+    "afterSign": "./scripts/notarize.js",
     "postinstall": "electron-rebuild",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
