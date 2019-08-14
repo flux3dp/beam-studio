@@ -16,4 +16,5 @@ exports.default = async function notarizing(context) {
     appleIdPassword: process.env.APPLEIDPASS,
   });
   console.log("==== Notarize Done. ====");
+  return result;
 };
