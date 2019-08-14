@@ -207,9 +207,10 @@ define([
 
             const resp = await DeviceMaster.getDeviceSetting('camera_offset');
             console.log("Resp = ", resp.value);
+            resp.value = ` ${resp.value}`;
             this.cameraOffset = {
-                x:          Number(/X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
-                y:          Number(/Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                x:          Number(/ X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                y:          Number(/ Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
                 angle:      Number(/R:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
                 scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
                 scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
