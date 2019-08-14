@@ -18,6 +18,7 @@ define([
             getValue: PropTypes.func.isRequired,
             defaultValue: PropTypes.number.isRequired,
             className: PropTypes.object,
+            type: PropTypes.string,
             unit: PropTypes.string,
             min: PropTypes.number,
             max: PropTypes.number,
@@ -32,6 +33,7 @@ define([
                 getValue: function(NewValue) {},
                 defaultValue: 0,
                 className: {},
+                type: 'text',
                 unit: '',
                 min: Number.MIN_SAFE_INTEGER,
                 max: Number.MAX_SAFE_INTEGER,
@@ -100,6 +102,10 @@ define([
             this.setState({displayValue: e.target.value});
         },
 
+        _handleInput: function(e) {
+            this._updateValue(e.target.value);
+        },
+
         _handleKeyDown: function(e) {
             const step = Math.abs(this.props.step);
 
@@ -163,11 +169,13 @@ define([
             return (
                 <div className={ClassNames(className)}>
                     <input
-                        type="text"
+                        type={this.props.type}
+                        step={this.props.step}
                         value={this.state.displayValue}
                         onBlur={this._handleBlur}
                         onKeyDown={this._handleKeyDown}
                         onChange={this._handleChange}
+                        onInput={this._handleInput}
                         disabled={this.props.disabled}
                     />
                     {_renderUnit}

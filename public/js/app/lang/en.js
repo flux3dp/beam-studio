@@ -1608,13 +1608,20 @@ define(function() {
                 beambox: 'Kindly adjust the platform to the focal point (the height of turned down acrylic)',
                 beamo: 'Kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
             },
+            dx: 'X',
+            dy: 'Y',
+            rotation_angle: 'Rotation',
+            x_ratio: 'X Ratio',
+            y_ratio: 'Y Ratio',
             taking_picture: 'Taking Picture...',
             start_engrave: 'START ENGRAVE',
             analyze_result_fail: 'Fail to analyze captured image.<br/>Please make sure:<br/>1. Captured picture fully coverd with white paper.<br/>2. The platform is focus properly.',
             no_lines_detected: 'Fail to detect lines from captured image.<br/>Please make sure:<br/>1. Captured picture fully coverd with white paper.<br/>2. The platform is focus properly.',
             drawing_calibration_image: 'Drawing calibration image...',
             please_confirm_image: '<div><div class="img-center" style="background:url(%s)"></div></div>Please make sure:<br/>1. Captured picture fully coverd with white paper.<br/>2. The platform is focus properly.',
-            calibrate_done: 'Calibration done. Better camera accurency is given when focus precisely.'
+            calibrate_done: 'Calibration done. Better camera accurency is given when focus precisely.',
+            hint_red_square: 'Please align the red square with cut square',
+            hint_adjust_parameters: 'Use these parameters to adjust the red square'
         },
         input_machine_password: {
             require_password: '"%s" requires a password',

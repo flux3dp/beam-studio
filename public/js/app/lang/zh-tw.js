@@ -1610,13 +1610,20 @@ define(function() {
                     beamo: '請轉開焦距固定環，調整雷射頭至雕刻平面輕觸焦距尺，完成對焦',
                 },
             },
+            dx: '水平位移',
+            dy: '垂直位移',
+            rotation_angle: '旋轉角度',
+            x_ratio: '水平比例',
+            y_ratio: '垂直比例',
             taking_picture: '擷取圖片中...',
             start_engrave: '開始繪製校正圖片',
             analyze_result_fail: '校正失敗<br/>請確認:<br/>1. 校正圖片完整畫在 A4 紙上<br/>2. 已旋轉升降平台旋鈕，直到輕觸焦距螺絲，完成對焦',
             no_lines_detected: '無法從校正圖片上偵測到線段<br/>請確認:<br/>1. 校正圖片完整畫在 A4 紙上<br/>2. 已旋轉升降平台旋鈕，直到輕觸焦距螺絲，完成對焦',
             drawing_calibration_image: '繪製校正圖片中...',
             please_confirm_image: '<div><div class="img-center" style="background:url(%s)"></div>請確認:<br/>1. 校正圖片完整畫在 A4 紙上<br/>2. 已旋轉升降平台旋鈕，直到輕觸焦距螺絲，完成對焦。',
-            calibrate_done: '校正相機完成<br/>使用時請正確對焦以取得良好的預覽效果。'
+            calibrate_done: '校正相機完成<br/>使用時請正確對焦以取得良好的預覽效果。',
+            hint_red_square: '請將紅框對齊切割出來的方塊',
+            hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小'
         },
         input_machine_password: {
             require_password: '"%s" 需要密碼',

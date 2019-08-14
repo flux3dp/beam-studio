@@ -60,8 +60,9 @@ define([
 
             this.state = {
                 currentStep: STEP_REFOCUS,
-                currentOffset: {},
-                imgBlobUrl: ''
+                currentOffset: {X: 15, Y: 30, R: 0, SX: 1.625, SY: 1.625},
+                imgBlobUrl: '',
+                showHint: false
             };
 
             this.updateCurrentStep = this.updateCurrentStep.bind(this);
@@ -90,6 +91,10 @@ define([
             this.setState(data);
         }
 
+        updateShowHint(show) {
+            this.setState({showHint: show});
+        }
+
         render() {
             const stepsMap = {
                 [STEP_REFOCUS]:
@@ -114,6 +119,9 @@ define([
                         onClose={this.onClose}
                         imgBlobUrl={this.state.imgBlobUrl}
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
+                        showHint={this.state.showHint}
+                        updateShowHint={this.updateShowHint.bind(this)}
+
                     />,
                 [STEP_FINISH]:
                     <StepFinish
@@ -337,7 +345,7 @@ define([
         }
     };
 
-    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, imgBlobUrl, gotoNextStep, onClose}) => {
+    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint}) => {
         const imageScale = 200 / 280;
         const mmToImage = 10 * imageScale;
         let imgBackground = {
@@ -358,72 +366,88 @@ define([
             currentOffset[key] = val;
             updateOffsetDataCb(currentOffset);
         };
+
+        let hint_modal = showHint ? renderHintModal(updateShowHint) : null;
         let manual_calibration = (
             <div>
                 <div className="img-center" style={imgBackground}>
                     <div className="virtual-square" style={squareStyle} />
                 </div>
+                <div className="hint-icon" onClick={()=>{updateShowHint(true)}}>
+                    ?
+                </div>
                 <div className="controls">
                     <div className="control">
-                        <label>水平位移</label>
+                        <label>{LANG.dx}</label>
                         <UnitInput
+                            type={'number'}
                             min={-50}
                             max={50}
                             unit="mm"
                             defaultValue={currentOffset.X - 15}
                             getValue={(val) => handleValueChange('X', val + 15)}
-                            decimal={3}
+                            decimal={1}
+                            step={0.1}
                         />
                     </div>
 
                     <div className="control">
-                        <label>垂直位移</label>
+                        <label>{LANG.dy}</label>
                         <UnitInput
+                            type={'number'}
                             min={-50}
                             max={50}
                             unit="mm"
                             defaultValue={currentOffset.Y - 30}
                             getValue={(val) => handleValueChange('Y', val + 30)}
-                            decimal={3}
+                            decimal={1}
+                            step={0.1}
                         />
                     </div>
 
                     <div className="control">
-                        <label>旋轉角度</label>
+                        <label>{LANG.rotation_angle}</label>
                         <UnitInput
+                            type={'number'}
                             min={-180}
                             max={180}
                             unit="deg"
                             defaultValue={currentOffset.R * 180 / Math.PI}
                             getValue={(val) => handleValueChange('R', val * Math.PI / 180)}
-                            decimal={3}
+                            decimal={1}
+                            step={0.1}
                         />
                     </div>
 
                     <div className="control">
-                        <label>水平比例</label>
+                        <label>{LANG.x_ratio}</label>
                         <UnitInput
+                            type={'number'}
                             min={30}
                             max={250}
                             unit="%"
                             defaultValue={100 * currentOffset.SX / 1.625}
                             getValue={(val) => handleValueChange('SX', val * 1.625 / 100)}
-                            decimal={2}
+                            decimal={1}
+                            step={1}
                         />
                     </div>
 
                     <div className="control">
-                        <label>垂直比例</label>
+                        <label>{LANG.y_ratio}</label>
                         <UnitInput
+                            type={'number'}
                             min={30}
                             max={250}
                             unit="%"
                             defaultValue={100 * currentOffset.SY / 1.625}
                             getValue={(val) => handleValueChange('SY', val * 1.625 / 100)}
-                            decimal={2}
+                            decimal={1}
+                            step={1}
                         />
                     </div>
                 </div>
+                {hint_modal}
             </div>
         );
 
@@ -458,6 +482,32 @@ define([
                     }]
                 }
             />
+        );
+    };
+
+    const renderHintModal = (updateShowHint) => {
+        const virtual_square = $('.modal-camera-calibration .virtual-square');
+        let position1 = virtual_square.offset();
+        position1.top += virtual_square.height() + 5;
+        const controls = $('.modal-camera-calibration .controls');
+        let position2 = controls.offset();
+        position2.left += 30;
+        position2.top -= 45;
+        return (
+            <div className="hint-modal-background" onClick={()=>{updateShowHint(false)}}>
+                <div className="hint-box"  style={position1}>
+                    <div className="arrowup"></div>
+                    <div className="hint-body">
+                        {LANG.hint_red_square}
+                    </div>
+                </div>
+                <div className="hint-box" style={position2}>
+                    <div className="hint-body">
+                        {LANG.hint_adjust_parameters}
+                    </div>
+                    <div className="arrowdown"></div>
+                </div>
+            </div>
         );
     };
 
