@@ -3,7 +3,7 @@ exports.default = async function notarizing(context) {
   if (electronPlatformName !== 'darwin') {
     return;
   }
-
+  console.log("Begin Notarizing!!!");
   require('dotenv').config();
   const { notarize } = require('electron-notarize');
 
