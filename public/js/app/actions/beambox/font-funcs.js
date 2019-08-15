@@ -124,6 +124,9 @@ define([
         const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
 
         const isFill = (function(){
+            if ($textElement.attr('fill-opacity') === 0) {
+                return false;
+            }
             const fillAttr = $textElement.attr('fill');
             if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
                 return false;
@@ -133,14 +136,16 @@ define([
                 return false;
             }
         })();
+        let color = $textElement.attr('stroke');
+        color = color !== 'none' ? color : $textElement.attr('fill');
 
         $(path).attr({
             'id': svgCanvas.getNextId(),
             'd': pathD,
             'transform': transform,
-            'fill': isFill ? '#000' : '#fff',
+            'fill': isFill ? color : '#fff',
             'fill-opacity': isFill ? 1 : 0,
-            'stroke': '#000',
+            'stroke': color,
             'stroke-width': 1,
             'stroke-opacity': 1,
             'stroke-dasharray': 'none',

@@ -62,12 +62,33 @@ define([
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {},
-                'NETWORK_TESTING': () => {BeamboxAction.showNetworkTestingPanel()},
-                'ABOUT_BEAM_STUDIO': () => {BeamboxAction.showAboutBeamStudio()}
+                'ZOOM_IN': () => svgEditor.zoomIn(),
+                'ZOOM_OUT': () => svgEditor.zoomOut(),
+                'FITS_TO_WINDOW': () => svgEditor.resetView(),
+                'ZOOM_WITH_WINDOW': () => svgEditor.setZoomWithWindow(),
+                'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
+                'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
+                'NETWORK_TESTING': () => BeamboxAction.showNetworkTestingPanel(),
+                'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio()
             };
         }
         attach() {
-            super.attach(['IMPORT', 'SAVE_SCENE', 'UNDO', 'EXPORT_FLUX_TASK', 'DOCUMENT_SETTING', 'CLEAR_SCENE', 'NETWORK_TESTING', 'ABOUT_BEAM_STUDIO']);
+            super.attach([
+                'IMPORT',
+                'SAVE_SCENE',
+                'UNDO',
+                'EXPORT_FLUX_TASK',
+                'DOCUMENT_SETTING',
+                'CLEAR_SCENE',
+                'ZOOM_IN',
+                'ZOOM_OUT',
+                'ZOOM_WITH_WINDOW',
+                'FITS_TO_WINDOW',
+                'SHOW_GRIDS',
+                'SHOW_LAYER_COLOR',
+                'NETWORK_TESTING',
+                'ABOUT_BEAM_STUDIO'
+            ]);
         }
         onObjectFocus() {
             this.enableMenuItems(['DUPLICATE']);

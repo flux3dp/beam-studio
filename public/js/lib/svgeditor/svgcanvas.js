@@ -560,6 +560,9 @@ define([
             // Rotary Mode
             rotaryMode = BeamboxPreference.read('rotary_mode');
 
+        this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
+        require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+        .submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
 
@@ -849,7 +852,7 @@ define([
         this.getObjectLayer = function(elem) {
             while (elem) {
                 elem = elem.parentNode;
-                if (elem && elem.getAttribute && elem.getAttribute('class') === 'layer') {
+                if (elem && elem.getAttribute && elem.getAttribute('class').indexOf('layer') >= 0) {
                     var title = $(elem).find('title')[0];
                     if (title) {
                         return { elem: elem, title: title.innerHTML };
@@ -1551,7 +1554,7 @@ define([
                         started = true;
                         start_x = x;
                         start_y = y;
-                        addSvgElementFromJson({
+                        const newRect = addSvgElementFromJson({
                             element: 'rect',
                             curStyles: false,
                             attr: {
@@ -1565,6 +1568,9 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
+                        if (canvas.isUseLayerColor) {
+                            canvas.updateElementColor(newRect);
+                        }
                         break;
                     case 'line':
                         started = true;
@@ -1606,7 +1612,7 @@ define([
                         break;
                     case 'ellipse':
                         started = true;
-                        addSvgElementFromJson({
+                        const newElli = addSvgElementFromJson({
                             element: 'ellipse',
                             curStyles: false,
                             attr: {
@@ -1620,6 +1626,9 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
+                        if (canvas.isUseLayerColor) {
+                            canvas.updateElementColor(newElli);
+                        }
                         break;
                     case 'text':
                         started = true;
@@ -1641,6 +1650,9 @@ define([
                             }
                         });
                         //					newText.textContent = 'text';
+                        if (canvas.isUseLayerColor) {
+                            canvas.updateElementColor(newText);
+                        }
                         break;
                     case 'path':
                         // Fall through
@@ -3262,6 +3274,9 @@ define([
                                     opacity: cur_shape.opacity / 2
                                 }
                             });
+                            if (canvas.isUseLayerColor) {
+                                canvas.updateElementColor(drawn_path);
+                            }
                             // set stretchy line to first point
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
@@ -5133,6 +5148,10 @@ define([
 
                 addCommandToHistory(batchCmd);
                 call('changed', [svgcontent]);
+                const layers = $('#svgcontent > g.layer').toArray();
+                layers.forEach(layer => {
+                    this.updateLayerColor(layer);
+                });
             } catch (e) {
                 console.log(e);
                 return false;
@@ -5853,6 +5872,9 @@ define([
                 // TODO: this is pretty brittle!
                 var oldLayer = elem.parentNode;
                 layer.appendChild(elem);
+                if (this.isUseLayerColor) {
+                    this.updateElementColor(elem);
+                }
                 batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldLayer));
             }
 
@@ -5892,6 +5914,57 @@ define([
             leaveContext();
             call('changed', [svgcontent]);
         };
+
+        this.toggleUseLayerColor = () => {
+            this.isUseLayerColor = !(this.isUseLayerColor);
+            BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
+            const layers = $('#svgcontent > g.layer').toArray();
+            layers.forEach(layer => {
+                this.updateLayerColor(layer);
+            });
+        };
+
+        this.updateLayerColor = function(layer) {
+            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            let ascendents = [...layer.childNodes];
+            while (ascendents.length > 0) {
+                const elem = ascendents.pop();
+                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(elem.tagName)) {
+                    if ($(elem).attr('stroke') !== 'none') {
+                        $(elem).attr('stroke', color); 
+                    }
+                    if ($(elem).attr('fill') !== 'none') {
+                        $(elem).attr('fill', color); 
+                    }
+
+                } else if (elem.tagName === 'g') {
+                    ascendents.push(...elem.childNodes);
+                } else {
+                    console.log(`updateLayerColor: unsupported element type ${elem.tagName}`);
+                }
+            }
+        };
+
+        this.updateElementColor = function(elem) {
+            const color = this.isUseLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
+            let ascendents = [elem];
+            while (ascendents.length > 0) {
+                const topElem = ascendents.pop();
+                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(topElem.tagName)) {
+                    if ($(topElem).attr('stroke') !== 'none') {
+                        $(topElem).attr('stroke', color); 
+                    }
+                    if ($(topElem).attr('fill') !== 'none') {
+                        $(topElem).attr('fill', color); 
+                    }
+
+                } else if (topElem.tagName === 'g') {
+                    ascendents.push(...topElem.childNodes);
+                } else {
+                    console.log(`updatetopElementColor: unsupported element type ${elem.tagName}`);
+                }
+            }
+        } 
 
         // Function: leaveContext
         // Return from a group context to the regular kind, make any previously
@@ -6927,6 +7000,9 @@ define([
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 const fillAttr = selected.getAttribute('fill');
+                if (selected.getAttribute('fill-opacity') === '0') {
+                    return false;
+                }
                 if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
                     return false;
                 } else if(fillAttr || fillAttr === null) {
@@ -6942,9 +7018,10 @@ define([
             var selected = selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
-                changeSelectedAttribute('fill', isFill ? '#000' : '#fff');
+                const color = this.isUseLayerColor ? $(this.getObjectLayer(selected).elem).attr('data-color') : '#000';
+                changeSelectedAttribute('fill', isFill ? color : '#fff');
                 changeSelectedAttribute('fill-opacity', isFill ? 1 : 0);
-                changeSelectedAttribute('stroke', isFill ? 'none' : '#000');
+                changeSelectedAttribute('stroke', isFill ? 'none' : color);
             }
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
@@ -7729,6 +7806,10 @@ define([
             }
             if (!batchCmd.isEmpty()) {
                 addCommandToHistory(batchCmd);
+            }
+
+            if (canvas.isUseLayerColor) {
+                canvas.updateElementColor(g);
             }
 
             // update selection
@@ -8561,6 +8642,9 @@ define([
                         opacity: cur_shape.opacity
                     }
                 });
+                if (this.isUseLayerColor) {
+                    this.updateElementColor(element);
+                }
             } else {
                 console.log('Clipper not succeeded');
                 return;
@@ -9284,6 +9368,13 @@ define([
 
             window.updateContextPanel();
         };
+
+        this.toggleGrid = function() {
+            const showGrid = !(svgEditor.curConfig.showGrid || false);
+            svgEditor.curConfig.showGrid = showGrid;
+            const canvasGridDisplay = showGrid ? 'inline' : 'none';
+            $('#canvasGrid').attr('style', `display: ${canvasGridDisplay}`);
+        }
 
         this.setRotaryMode = function(val) {
             // True or false

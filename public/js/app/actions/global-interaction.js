@@ -2,6 +2,7 @@ define([
 ], function() {
     let MENU_ITEMS = ["IMPORT", "EXPORT_FLUX_TASK", "SAVE_SCENE",
                       "UNDO", "DUPLICATE", 'PHOTO_EDIT', 'DOCUMENT_SETTING', "CLEAR_SCENE",
+                      "ZOOM_IN", "ZOOM_OUT", "FITS_TO_WINDOW", "ZOOM_WITH_WINDOW", "SHOW_GRIDS", "SHOW_LAYER_COLOR",
                       "TUTORIAL", 'NETWORK_TESTING', 'ABOUT_BEAM_STUDIO']
 
     var ipc, events, defaultAction, currentHandler;

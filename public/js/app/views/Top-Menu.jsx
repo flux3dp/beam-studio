@@ -706,7 +706,24 @@ define([
                 }
                 return (
                     <div className="top-btn" onClick={onClick} style={style} key={id}>
-                        <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${iconName}.png`}} />
+                        <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
+                        <div className="btn-label">
+                            {label}
+                        </div>
+                    </div>
+                );
+            },
+
+            _renderZoomBtn: function(id, label, onClick) {
+                let style;
+                if (process.platform === 'win32') {
+                    style = { 
+                        paddingTop: '15px'
+                    };
+                }
+                return (
+                    <div className="top-btn zoom" onClick={onClick} style={style} key={id}>
+                        <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
                         </div>
@@ -770,7 +787,9 @@ define([
                         <div className="top-btns" onScroll={()=>{this.setState(this.state)}}>
                             <div className="top-btn-container">
                                 <div className="top-controls zoom-controls">
+                                    {this._renderZoomBtn('zoomout', 'out', ()=>{svgEditor.zoomOut()})}
                                     {this._renderTopBtn('zoom', lang.topbar.zoom)}
+                                    {this._renderZoomBtn('zoomin', 'in', ()=>{svgEditor.zoomIn()})}
                                 </div>
                                 <div className="top-controls group-controls">
                                     {this._renderTopBtn('group', lang.topbar.group, () => {FnWrapper.groupSelected();})}

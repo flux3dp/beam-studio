@@ -79,6 +79,9 @@ define([
         onApply() {
             const hexColor = this.pickr.getColor().toHEXA().toString()
             $(this.layer).attr('data-color', hexColor);
+            if (svgCanvas.isUseLayerColor) {
+                svgCanvas.updateLayerColor(this.layer);
+            }
             this.$me.find('div').css('background', hexColor);
             this.unmount();
         }

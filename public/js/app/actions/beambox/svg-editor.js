@@ -5930,12 +5930,13 @@ define([
             //$('#fit_to_canvas').mouseup();
             let windowScale = Math.min((($(window).width() - 268) / 1000), (($(window).height() - 105) / 600));
             let workspaceScale = 1 / Math.max(svgEditor.dimensions[0] / 4000, svgEditor.dimensions[1] / 3750);
+            const zoomLevel = 0.2 * windowScale * workspaceScale;
             zoomChanged(window, {
-                zoomLevel: 0.2 * windowScale * workspaceScale
+                zoomLevel: zoomLevel
             });
             svgCanvas.defaultScroll = {
-                x: workarea[0].scrollLeft,
-                y: workarea[0].scrollTop
+                x: ($('#canvasBackground').attr('x') - 10) / zoomLevel,
+                y: ($('#canvasBackground').attr('y') - 10) / zoomLevel
             };
 
             //greyscale all svgContent
@@ -5965,12 +5966,23 @@ define([
         editor.resetView = function() {
             let windowScale = Math.min((($(window).width() - 268) / 1000), (($(window).height() - 105) / 600));
             let workspaceScale = 1 / Math.max(svgEditor.dimensions[0] / 4000, svgEditor.dimensions[1] / 3750);
+            const zoomLevel = 0.2 * windowScale * workspaceScale;
             editor.zoomChanged(window, {
-                zoomLevel: 0.2 * windowScale * workspaceScale
+                zoomLevel: zoomLevel
             });
-            $('#workarea')[0].scrollLeft = svgCanvas.defaultScroll.x;
-            $('#workarea')[0].scrollTop = svgCanvas.defaultScroll.y;
+            $('#workarea')[0].scrollLeft = svgCanvas.defaultScroll.x * zoomLevel;
+            $('#workarea')[0].scrollTop = svgCanvas.defaultScroll.y * zoomLevel;
         };
+
+        editor.setZoomWithWindow = function() {
+            const isZoomWithWindow = !(svgCanvas.isZoomWithWindow || false);
+            svgCanvas.isZoomWithWindow = isZoomWithWindow;
+            if (isZoomWithWindow) {
+                window.addEventListener('resize', editor.resetView);
+            } else {
+                window.removeEventListener('resize', editor.resetView);
+            }
+        }
 
         editor.zoomIn = function() {
             editor.zoomChanged(window, {
