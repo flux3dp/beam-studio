@@ -70,13 +70,13 @@
     "test": "mocha '_test/unit/slicer.js' --compilers js:babel-core/register",
     "start": "electron .",
     "start-server": "electron . --server",
-    "afterSign": "scripts/notarize.js",
     "postinstall": "electron-rebuild",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
   "build": {
     "appId": "com.flux3dp.beam-studio",
+    "afterSign": "./scripts/notarize.js",
     "extraResources": [
       "backend"
     ],
