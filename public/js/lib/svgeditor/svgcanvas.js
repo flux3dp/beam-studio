@@ -5926,45 +5926,39 @@ define([
 
         this.updateLayerColor = function(layer) {
             const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
-            let ascendents = [...layer.childNodes];
-            while (ascendents.length > 0) {
-                const elem = ascendents.pop();
-                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(elem.tagName)) {
-                    if ($(elem).attr('stroke') !== 'none') {
-                        $(elem).attr('stroke', color); 
-                    }
-                    if ($(elem).attr('fill') !== 'none') {
-                        $(elem).attr('fill', color); 
-                    }
-
-                } else if (elem.tagName === 'g') {
-                    ascendents.push(...elem.childNodes);
-                } else {
-                    console.log(`updateLayerColor: unsupported element type ${elem.tagName}`);
-                }
-            }
+            this.setElementsColor(layer.childNodes, color);
         };
 
         this.updateElementColor = function(elem) {
             const color = this.isUseLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
-            let ascendents = [elem];
-            while (ascendents.length > 0) {
-                const topElem = ascendents.pop();
-                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(topElem.tagName)) {
-                    if ($(topElem).attr('stroke') !== 'none') {
-                        $(topElem).attr('stroke', color); 
-                    }
-                    if ($(topElem).attr('fill') !== 'none') {
-                        $(topElem).attr('fill', color); 
-                    }
+            this.setElementsColor([elem], color);
+        }
 
-                } else if (topElem.tagName === 'g') {
-                    ascendents.push(...topElem.childNodes);
+        this.setElementsColor = function(elems, color) {
+            let ascendents = [...elems];
+            while (ascendents.length > 0) {
+                const elem = ascendents.pop();
+                const attrStroke = $(elem).attr('stroke');
+                const attrFill = $(elem).attr('fill');
+                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(elem.tagName)) {
+                    if (attrStroke && attrStroke !== 'none') {
+                        $(elem).attr('stroke', color);
+                    }
+                    if (attrFill && attrFill !== 'none') {
+                        $(elem).attr('fill', color); 
+                    }
+                } else if (['g', 'svg', 'symbol'].includes(elem.tagName)) {
+                    ascendents.push(...elem.childNodes);
+                } else if (elem.tagName === 'use') {
+                    ascendents.push(...elem.childNodes);
+                    const href = $(elem).attr('href') || $(elem).attr('xlink:href');
+                    const shadow_root = $(href).toArray();
+                    ascendents.push(...shadow_root);
                 } else {
-                    console.log(`updatetopElementColor: unsupported element type ${elem.tagName}`);
+                    //console.log(`setElementsColor: unsupported element type ${elem.tagName}`);
                 }
             }
-        } 
+        }
 
         // Function: leaveContext
         // Return from a group context to the regular kind, make any previously
