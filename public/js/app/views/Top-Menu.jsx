@@ -435,15 +435,14 @@ define([
 
             componentDidMount: function () {
                 this._toggleDeviceListBind = this._toggleDeviceList.bind(null, false);
-
-                AlertStore.onCancel(this._toggleDeviceListBind);
+                //AlertStore.onCancel(this._toggleDeviceListBind);
                 AlertStore.onRetry(this._waitForPrinters);
                 GlobalStore.onMonitorClosed(this._toggleDeviceListBind);
 
             },
 
             componentWillUnmount: function () {
-                AlertStore.removeCancelListener(this._toggleDeviceListBind);
+                //AlertStore.removeCancelListener(this._toggleDeviceListBind);
                 AlertStore.removeRetryListener(this._waitForPrinters);
                 GlobalStore.removeMonitorClosedListener(this._toggleDeviceListBind);
                 // unregisterEvents();
