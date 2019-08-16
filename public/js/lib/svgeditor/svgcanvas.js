@@ -5936,20 +5936,38 @@ define([
 
         this.setElementsColor = function(elems, color) {
             let ascendents = [...elems];
+            let svg_by_color = 0;
+            let svg_by_layer = false;
             while (ascendents.length > 0) {
                 const elem = ascendents.pop();
+                if (elem === 'end datacolor') {
+                    svg_by_color -= 1;
+                    continue;
+                }
+                if (elem === 'end by_layer') {
+                    svg_by_layer = false;
+                    continue;
+                }
                 const attrStroke = $(elem).attr('stroke');
                 const attrFill = $(elem).attr('fill');
                 if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(elem.tagName)) {
-                    if (attrStroke && attrStroke !== 'none') {
+                    if (((svg_by_layer && svg_by_color === 0) || attrStroke) && attrStroke !== 'none') {
                         $(elem).attr('stroke', color);
                     }
                     if (attrFill && attrFill !== 'none') {
                         $(elem).attr('fill', color); 
                     }
                 } else if (['g', 'svg', 'symbol'].includes(elem.tagName)) {
+                    if ($(elem).data('color')) {
+                        ascendents.push('end datacolor');
+                        svg_by_color += 1;
+                    }
                     ascendents.push(...elem.childNodes);
                 } else if (elem.tagName === 'use') {
+                    if ($(elem).data('wireframe')) {
+                    ascendents.push('end by_layer');
+                    svg_by_layer = true;
+                    }
                     ascendents.push(...elem.childNodes);
                     const href = $(elem).attr('href') || $(elem).attr('xlink:href');
                     const shadow_root = $(href).toArray();
