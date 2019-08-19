@@ -7263,17 +7263,8 @@ define([
                     break;
                 }
                 const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
-                if (elem.tagName === 'path') {
-                    const d = $(elem).attr('d');
-                    const matchM = d.match(/M/ig);
-                    const matchZ = d.match(/z/ig);
-                    if (matchZ && matchM.length === matchZ.length) {
-                        const color = $(elem).attr('stroke');
-                        this.setElementFill(elem, color);
-                    } else {
-                        console.log('Not a closed path')
-                    }
-                } else if (availableType.indexOf(elem.tagName) >= 0) {
+
+                if (availableType.indexOf(elem.tagName) >= 0) {
                     const color = $(elem).attr('stroke');
                     this.setElementFill(elem, color);
                 } else {
@@ -7294,33 +7285,28 @@ define([
         }
 
         this.setSelectedUnfill = function () {
+            console.log(selectedElements);
             for (let i = 0; i < selectedElements.length; ++i) {
                 elem = selectedElements[i];
                 if (elem == null) {
                     break;
                 }
                 const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
-                if (elem.tagName === 'path') {
-                    const d = $(elem).attr('d');
-                    const matchM = d.match(/M/ig);
-                    const matchZ = d.match(/z/ig);
-                    if (matchZ && matchM.length === matchZ.length) {
-                        this.setElementUnfill(elem);
-                    } else {
-                        console.log('Not a closed path')
-                    }
-                } else if (availableType.indexOf(elem.tagName) >= 0) {
-                    this.setElementUnfill(elem);
+
+                if (availableType.indexOf(elem.tagName) >= 0) {
+                    const color = $(elem).attr('fill');
+                    console.log(color)
+                    this.setElementUnfill(elem, color);
                 } else {
                     console.log(`Not support type: ${elem.tagName}`)
                 }
             }
         }
 
-        this.setElementUnfill = function (elem) {
+        this.setElementUnfill = function (elem, color) {
             let batchCmd = new svgedit.history.BatchCommand('set unfill');
-            canvas.undoMgr.beginUndoableChange('fill', [elem]);
-            elem.setAttribute('fill', '#FFFFFF');
+            canvas.undoMgr.beginUndoableChange('stroke', [elem]);
+            elem.setAttribute('stroke', color);
             batchCmd.addSubCommand(canvas.undoMgr.finishUndoableChange());
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 0);
@@ -8027,6 +8013,61 @@ define([
             }
         };
 
+        this.disassembleUse2Group = function(elems = null) {
+            if (!elems) {
+                elems = selectedElements;
+            }
+            for (let i = 0; i < elems.length; ++i) {
+                elem = elems[i];
+                if (!elem || elem.tagName !== 'use') {
+                    continue;
+                }
+
+                const layer = this.getObjectLayer(elem).elem;
+                const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+
+                const wireframe = $(elem).data('wireframe');
+                let transform = $(elem).attr('transform') || '';
+                const translate = `translate(${$(elem).attr('x') || 0},${$(elem).attr('y') || 0})`
+                transform = `${transform} ${translate}`;
+                const href = this.getHref(elem);
+                const svg = $(href).toArray()[0];
+                let children = [...Array.from($(svg)[0].childNodes).reverse()];
+                let g = addSvgElementFromJson({
+                    'element': 'g',
+                    'attr': {
+                        'id': getNextId(),
+                        'transform': transform,
+                    }   
+                });
+                while (children.length > 0) {
+                    topChild = children.pop();
+                    if (topChild.tagName !== 'defs') {
+                        g.appendChild(topChild);
+                    }
+                }
+                // apply style
+                let ascendents = [...g.childNodes];
+                while (ascendents.length > 0) {
+                    const topChild = ascendents.pop();
+                    if (topChild.tagName === 'g') {
+                        ascendents.push(...topChild.childNodes);
+                    } else {
+                        if (wireframe) {
+                            $(topChild).attr('stroke', color);
+                            $(topChild).attr('fill-opacity', 0);
+                            $(topChild).attr('fill', '#FFF');
+                        }
+                    }
+                    $(topChild).attr('vector-effect', 'non-scaling-stroke');
+                    $(topChild).attr('id', getNextId())
+                }
+                //svg.parentNode.removeChild(svg);
+                elem.parentNode.removeChild(elem);
+                selectOnly([g], true);
+            }
+        }
+
         this.gridArraySelectedElement = (gridDistanceXY, arrayNumberXY) => {
             const originElements = selectedElements;
             if (originElements.length == 0) {
@@ -8083,18 +8124,17 @@ define([
             if (!g) {
                 return;
             }
+
+            if (g.tagName === 'use') {
+                // Somehow doesn't have data set, so retrieve
+                this.disassembleUse2Group([g]);
+                return;
+            }
             if ($(g).data('gsvg') || $(g).data('symbol')) {
                 // Is svg, so actually convert to group
                 convertToGroup(g);
                 return;
-            }
-            if (g.tagName === 'use') {
-                // Somehow doesn't have data set, so retrieve
-                var symbol = svgedit.utilities.getElem(getHref(g).substr(1));
-                $(g).data('symbol', symbol).data('ref', symbol);
-                convertToGroup(g);
-                return;
-            }
+            } 
             var parents_a = $(g).parents('a');
             if (parents_a.length) {
                 g = parents_a[0];

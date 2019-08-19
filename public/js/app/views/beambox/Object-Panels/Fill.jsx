@@ -19,9 +19,23 @@ define([
             this._handleClick = this._handleClick.bind(this);
             if (props.type === 'path') {
                 const d = props.$me.attr('d');
-                const matchM = d.match(/M/ig);
-                const matchZ = d.match(/z/ig);
-                if (!matchZ || matchM.length != matchZ.length) {
+                const matchLetters = d.match(/[a-z]/ig);
+                let isDrawing = 0;
+                this.closed = true;
+                for (let i = 0; i < matchLetters.length; ++i) {
+                    if (isDrawing === 0) {
+                        if (!['M', 'm', 'Z', 'z'].includes(matchLetters[i])) {
+                            isDrawing = 1;
+                        }
+                    } else {
+                        if (['M', 'm'].includes(matchLetters[i])) {
+                            break;
+                        } else if (['Z', 'z'].includes(matchLetters[i])){
+                            isDrawing = 0;
+                        }
+                    }
+                }
+                if (isDrawing === 1) {
                     this.closed = false;
                 }
             }

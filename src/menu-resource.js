@@ -85,7 +85,8 @@ module.exports = {
         fit_to_window: 'Fit to Window Size',
         zoom_with_window: 'Auto Fit to Window Size',
         show_grids: 'Show Grids',
-        show_layer_color: 'Use Layer Color'
+        show_layer_color: 'Use Layer Color',
+        disassemble_use: 'Disassemble SVG'
     },
     'zh-tw': {
         preferences: '偏好設定',
@@ -176,6 +177,7 @@ module.exports = {
         fit_to_window: '配合視窗尺寸',
         zoom_with_window: '自動配合視窗尺寸',
         show_grids: '顯示格線',
-        show_layer_color: '顯示圖層顏色'
+        show_layer_color: '顯示圖層顏色',
+        disassemble_use: '解散圖檔'
     }
 };

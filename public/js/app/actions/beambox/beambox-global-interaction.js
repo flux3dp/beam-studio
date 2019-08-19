@@ -59,6 +59,7 @@ define([
                 'IMAGE_SHARPEN': () => FnWrapper.photoEdit('sharpen'),
                 'IMAGE_CROP': () => FnWrapper.photoEdit('crop'),
                 'IMAGE_INVERT': () => FnWrapper.photoEdit('invert'),
+                'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {},
@@ -95,9 +96,12 @@ define([
             if (svgCanvas.getSelectedElems()[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
             }
+            else if (svgCanvas.getSelectedElems()[0].tagName ==='use') {
+                this.enableMenuItems(['DISASSEMBLE_USE']);
+            }
         }
         onObjectBlur() {
-            this.disableMenuItems(['DUPLICATE', 'PHOTO_EDIT']);
+            this.disableMenuItems(['DUPLICATE', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
         }
     }
     const instance = new BeamboxGlobalInteraction();
