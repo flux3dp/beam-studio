@@ -311,6 +311,42 @@ define([
                         });
                 };
 
+                _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = (device) => {
+                    if (location.hash !== '#studio/beambox') {
+                        AlertActions.showPopupInfo('', lang.camera_calibration.please_goto_beambox_first);
+                        return;
+                    }
+                    let isAvailableVersion = function(version, targetVersion) {
+                        version = version.split('.').map(i => parseInt(i));
+                        targetVersion = targetVersion.split('.').map(i => parseInt(i));
+                        for (let i = 0; i < Math.min(version.length, targetVersion.length); ++i) {
+                            if(version[i] > targetVersion[i]) {
+                                return true;
+                            } else if (targetVersion[i] > version[i]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }(device.version, '2.5.1');
+                    if (isAvailableVersion) {
+                        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                        DeviceMaster.select(device)
+                            .done(() => {
+                                ProgressActions.close();
+                                const borderless = true;
+                                AlertActions.showCameraCalibration(device, borderless);
+                            })
+                            .fail(() => {
+                                ProgressActions.close();
+                                AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                            });
+                    } else {
+                        const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`
+                        AlertActions.showPopupInfo('', message)
+                    }
+                    
+                };
+
                 _action['UPDATE_FIRMWARE'] = (device) => {
                     checkDeviceStatus(device).then(() => {
                         executeFirmwareUpdate(device, 'firmware');

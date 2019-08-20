@@ -121,6 +121,7 @@ define([
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
                         showHint={this.state.showHint}
                         updateShowHint={this.updateShowHint.bind(this)}
+                        self={this}
 
                     />,
                 [STEP_FINISH]:
@@ -228,10 +229,10 @@ define([
         );
     };
 
-    const sendPictureThenSetConfig = async (result, imgBlobUrl) => {
-        console.log("Setting camera_offset", result);
+    const sendPictureThenSetConfig = async (result, imgBlobUrl, borderless) => {
+        console.log("Setting camera_offset", borderless ? 'borderless' : '', result);
         if (result) {
-            await _doSetConfigTask(result.X, result.Y, result.R, result.SX, result.SY);
+            await _doSetConfigTask(result.X, result.Y, result.R, result.SX, result.SY, borderless);
         } else {
             throw new Error(LANG.analyze_result_fail);
         }
@@ -335,17 +336,18 @@ define([
         updateOffsetCb({currentOffset: sdata});
     };
 
-    const _doSetConfigTask = async (X, Y, R, SX, SY) => {
+    const _doSetConfigTask = async (X, Y, R, SX, SY, borderless) => {
+        const parameterName = borderless ? 'camera_offset_borderless' : 'camera_offset';
         const deviceInfo = await DeviceMaster.getDeviceInfo();
         const vc = VersionChecker(deviceInfo.version);
         if(vc.meetRequirement('BEAMBOX_CAMERA_CALIBRATION_XY_RATIO')) {
-            await DeviceMaster.setDeviceSetting('camera_offset', `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2} SX:${SX} SY:${SY}`);
+            await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2} SX:${SX} SY:${SY}`);
         } else {
-            await DeviceMaster.setDeviceSetting('camera_offset', `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2}`);
+            await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2}`);
         }
     };
 
-    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint}) => {
+    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, self}) => {
         const imageScale = 200 / 280;
         const mmToImage = 10 * imageScale;
         let imgBackground = {
@@ -461,7 +463,7 @@ define([
                         className: 'btn-default btn-alone-right-1',
                         onClick: async () => {
                             try {
-                                await sendPictureThenSetConfig(currentOffset, imgBlobUrl);
+                                await sendPictureThenSetConfig(currentOffset, imgBlobUrl, self.props.borderless);
                                 gotoNextStep(STEP_FINISH);
                             } catch (error) {
                                 console.log(error);

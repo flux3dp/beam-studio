@@ -1594,6 +1594,8 @@ define(function() {
             attach_toolhead: 'Please connect the printing toolhead'
         },
         camera_calibration: {
+            update_firmware_msg1: 'Your firmware does not support this function. Please update firmware to v',
+            update_firmware_msg2: 'or above to continue。 (Menu > Machine > [Your Machine] > Update Firmware)',
             camera_calibration: 'Camera Calibration',
             next: 'NEXT',
             cancel: 'CANCEL',

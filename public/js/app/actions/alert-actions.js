@@ -156,10 +156,11 @@ define([
             });
         },
 
-        showCameraCalibration: function(device) {
+        showCameraCalibration: function(device, borderless) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_CAMERA_CALIBRATION,
-                device: device
+                device: device,
+                borderless: borderless
             });
         },
 

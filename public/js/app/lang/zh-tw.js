@@ -1590,6 +1590,8 @@ define(function() {
             attach_toolhead: '請插上列印工具頭'
         },
         camera_calibration: {
+            update_firmware_msg1: '您的韌體版本不支援此功能。請先更新 Beambox 的韌體至 v',
+            update_firmware_msg2: '以上以繼續。 (主選單 > 機器 > [ Your Beambox ] > 韌體更新',
             camera_calibration: '相機校正',
             next: '下一步',
             cancel: '取消',

@@ -289,7 +289,8 @@ define([
                 this.setState({
                     cameraCalibration: {
                         open: true,
-                        device: payload.device
+                        device: payload.device,
+                        borderless: payload.borderless
                     }
                 });
             },
@@ -625,11 +626,13 @@ define([
                     <CameraCalibration
                         model="beambox"
                         device={this.state.cameraCalibration.device}
+                        borderless={this.state.cameraCalibration.borderless}
                         onClose={()=>{
                             this.setState({
                                 cameraCalibration: {
                                     open: false,
-                                    device: {}
+                                    device: {},
+                                    borderless: false
                                 }
                             });
                         }}
