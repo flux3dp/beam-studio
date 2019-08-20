@@ -5594,7 +5594,16 @@ define([
                 const importSvg = file => {
                     svgCanvas.setLatestImportFileName(file.name.split('.')[0]);
                     async function importAs(type) {
-                        await svgWebSocket.uploadPlainSVG(file);
+                        const result = await svgWebSocket.uploadPlainSVG(file);
+                        if (result !== 'ok') {
+                            $('#dialog_box').hide();
+                            switch (result) {
+                                case 'invalid_path':
+                                    AlertActions.showPopupError('', LANG.popup.import_file_contain_invalid_path);
+                                    break;
+                            }
+                            return;
+                        }
                         const outputs = await svgWebSocket.divideSVG();
 
                         if (type === 'color') {

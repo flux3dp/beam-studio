@@ -1051,7 +1051,8 @@ define(function() {
                 more_than_two_object: '太多物件，只支援兩物件操作',
                 not_support_object_type: '不支援的物件類型',
                 select_first: '請先選取物件以繼續',
-                select_at_least_two: '請選取兩個物件以繼續'
+                select_at_least_two: '請選取兩個物件以繼續',
+                import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。'
             },
             left_panel: {
                 insert_object: '插入物件',

@@ -384,7 +384,7 @@ define([
                             ws.send(file);
                             break;
                         case 'ok':
-                            $deferred.resolve();
+                            $deferred.resolve('ok');
                             break;
                         case 'warning':
                             warningCollection.push(data.message);
@@ -403,20 +403,48 @@ define([
                 var reader = new FileReader();
                 reader.onloadend = function (e) {
                     let svgString = e.target.result;
-                    if (file.path) {
-                        svgString = svgString.replace('xlink:href="../', 'xlink:href="' + getBasename(file.path) + '/../');
-                        svgString = svgString.replace('xlink:href="./', 'xlink:href="' + getBasename(file.path) + '/');
+                    const matchImages = svgString.match(/<image[^>]+>/g);
+                    let allImageValid = true;
+                    if (matchImages) {
+                        const fs = require('fs');
+                        const path = require('path');
+                        const basename = getBasename(file.path);
+                        for (let i = 0; i < matchImages.length; i++) {
+                            let origPath = matchImages[i].match(/xlink:href="[^"]+"/)[0];
+                            origPath = origPath.substring(12, origPath.length - 1);
+                            if (origPath.substring(0, 10) === 'data:image') {
+                                continue;
+                            }
+                            let newPath = origPath.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+                            // Test Abosulte Path
+                            if (fs.existsSync(newPath)) {
+                                continue;
+                            }
+                            // Test Relative Path
+                            if (file.path) {
+                                newPath = path.join(basename, newPath);
+                                if (fs.existsSync(newPath)) {
+                                    newPath = newPath.replace(/&/g, '&amp;').replace(/'/g, '&apos;').replace(/"/g, '&quot;').replace(/>/g, '&gt;').replace(/</g, '&lt;');
+                                    svgString = svgString.replace(`xlink:href="${origPath}"`, `xlink:href="${newPath}"`);
+                                    continue;
+                                }
+                            }
+                            allImageValid = false;
+                            $deferred.resolve('invalid_path');
+                        }
                     }
 
-                    file = new Blob([svgString], {
-                        type: 'text/plain'
-                    });
+                    if (allImageValid) {
+                        file = new Blob([svgString], {
+                            type: 'text/plain'
+                        });
 
-                    ws.send([
-                        'upload_plain_svg',
-                        encodeURIComponent(file.name),
-                        file.size
-                    ].join(' '));
+                        ws.send([
+                            'upload_plain_svg',
+                            encodeURIComponent(file.name),
+                            file.size
+                        ].join(' '));
+                    }
                 };
                 reader.readAsText(file);
 

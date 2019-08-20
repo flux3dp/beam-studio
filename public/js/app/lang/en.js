@@ -1054,7 +1054,8 @@ define(function() {
                 more_than_two_object: 'Too many objects. Only support for 2 objects',
                 not_support_object_type: 'Not support object type',
                 select_first: 'Select an object first.',
-                select_at_least_two: 'Select two objects to proceed'
+                select_at_least_two: 'Select two objects to proceed',
+                import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file'
             },
             left_panel: {
                 insert_object: 'Insert Object',
