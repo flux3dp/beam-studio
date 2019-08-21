@@ -324,7 +324,7 @@ define([
 
     const _doGetOffsetFromPicture = async function(imgBlobUrl, updateOffsetCb) {
         let sdata = await _doSendPictureTask(imgBlobUrl);
-        if (sdata == null) {
+        if (!sdata) {
             sdata = {
                 X: 20,
                 Y: 30,
