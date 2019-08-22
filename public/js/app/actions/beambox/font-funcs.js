@@ -80,13 +80,13 @@ define([
         });
         return font;
     };
-    const requestToConvertTextToPath = async ($textElement) => {
+    const requestToConvertTextToPath = async ($textElement, family, weight, style) => {
         const d = $.Deferred();
 
         const fontStyle = requestFontByFamilyAndStyle({
-            family: $textElement.attr('font-family'),
-            weight: $textElement.attr('font-weight'),
-            style:  $textElement.attr('font-style'),
+            family: family,
+            weight: weight,
+            style:  style,
             italic: ($textElement.attr('font-style') === 'italic')
         }).style;
 

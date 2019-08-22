@@ -212,14 +212,22 @@ function findFontsSync(arg) {
 }
 
 function findFontSync(arg) {
+    console.log(arg);
     arg.style = arg.style || 'Regular';
     const availableFonts = FontManager.getAvailableFontsSync();
-    const matchFamily = availableFonts.filter(font => font.family === arg.family);
-    const matchItalic = matchFamily.filter(font => font.italic === arg.italic);
-    const matchStyle = matchItalic.filter(font => font.style === arg.style);
-    const match = matchStyle.filter(font => font.weight === arg.weight);
-    const font = match[0] || (matchStyle[0] || (matchItalic[0] || (matchFamily[0] || availableFonts[0])));
-    console.log(font);
+    let font = availableFonts[0];
+    let match = availableFonts.filter(font => font.family === arg.family);
+    font = match[0] || font;
+    if (arg.italic != null) {
+        match = match.filter(font => font.italic === arg.italic);
+        font = match[0] || font;
+    }
+    match = match.filter(font => font.style === arg.style);
+    font = match[0] || font;
+    if (arg.weight != null) {
+        match = match.filter(font => font.weight === arg.weight);
+    }
+    font = match[0] || font;
     return font;
 };
 
@@ -351,12 +359,12 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
                 break;
         }
     }
-
+    console.log('fontstyle', fontStyle);
     let font = findFontSync({
         family: substitutedFamily,
         style: fontStyle
     });
-    console.log(font);
+    console.log('font', font);
     let fontPath = font.path;
 	if (fontFamily.indexOf("華康") >= 0 && (fontPath.toLowerCase().indexOf("arial") > 0 || fontPath.toLowerCase().indexOf("meiryo") > 0)) {
 		// This is a hotfix for 華康系列 fonts, because fontmanager does not support

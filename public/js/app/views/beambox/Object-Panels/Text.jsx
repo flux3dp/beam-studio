@@ -125,7 +125,7 @@ define([
             //delay FontFuncs.requestToConvertTextToPath() to ensure ProgressActions has already popup
             await new Promise(resolve => {
                 setTimeout(async () => {
-                    await FontFuncs.requestToConvertTextToPath(this.props.$me);
+                    await FontFuncs.requestToConvertTextToPath(this.props.$me, this.state.fontFamily, this.props.fontWeight, this.state.fontStyle);
                     resolve();
                 }, 50);
             });
