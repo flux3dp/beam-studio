@@ -1170,7 +1170,7 @@ define(function() {
                 next: '下一步',
                 brightness: '曝光',
                 contrast: '對比',
-                threshold: '閾值',
+                threshold: '臨界值',
                 okay: '完成',
                 tuning: '描圖參數'
             },
@@ -1208,7 +1208,7 @@ define(function() {
                 wait_for_parsing_font: '解析字體中... 請稍待 10 秒',
                 laser_config: '雷射設定',
                 shading: '漸層',
-                threshold: '曝光閾值',
+                threshold: '臨界值',
                 lock_desc: '縮放時固定比例 (SHIFT)'
             },
             tool_panels:{
