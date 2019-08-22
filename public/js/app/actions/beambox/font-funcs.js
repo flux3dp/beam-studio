@@ -86,6 +86,7 @@ define([
         const fontStyle = requestFontByFamilyAndStyle({
             family: $textElement.attr('font-family'),
             weight: $textElement.attr('font-weight'),
+            style:  $textElement.attr('font-style'),
             italic: ($textElement.attr('font-style') === 'italic')
         }).style;
 
