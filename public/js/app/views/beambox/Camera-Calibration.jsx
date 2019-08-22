@@ -390,6 +390,7 @@ define([
                             getValue={(val) => handleValueChange('X', val + 15)}
                             decimal={1}
                             step={0.1}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -404,6 +405,7 @@ define([
                             getValue={(val) => handleValueChange('Y', val + 30)}
                             decimal={1}
                             step={0.1}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -418,6 +420,7 @@ define([
                             getValue={(val) => handleValueChange('R', val * Math.PI / 180)}
                             decimal={1}
                             step={0.1}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -432,6 +435,7 @@ define([
                             getValue={(val) => handleValueChange('SX', val * 1.625 / 100)}
                             decimal={1}
                             step={1}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -446,6 +450,7 @@ define([
                             getValue={(val) => handleValueChange('SY', val * 1.625 / 100)}
                             decimal={1}
                             step={1}
+                            isDoOnInput={true}
                         />
                     </div>
                 </div>

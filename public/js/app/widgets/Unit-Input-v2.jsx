@@ -25,7 +25,8 @@ define([
             step: PropTypes.number,
             decimal: PropTypes.number,
             disabled: PropTypes.bool,
-            abbr: PropTypes.bool
+            abbr: PropTypes.bool,
+            isDoOnInput: PropTypes.bool
         },
 
         getDefaultProps: function() {
@@ -41,6 +42,7 @@ define([
                 decimal: 2,
                 disabled: false,
                 abbr: false,
+                isDoOnInput: false
             };
         },
 
@@ -103,7 +105,9 @@ define([
         },
 
         _handleInput: function(e) {
-            this._updateValue(e.target.value);
+            if (this.props.isDoOnInput) {
+                this._updateValue(e.target.value);
+            }
         },
 
         _handleKeyDown: function(e) {
