@@ -186,9 +186,9 @@ define([
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
 
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
-
-                const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
-                const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
+                const machineOffset = PreviewModeController._getCameraOffset();
+                const movementX = Constant.camera.calibrationPicture.centerX - machineOffset.x;
+                const movementY = Constant.camera.calibrationPicture.centerY - machineOffset.y;
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
                 cameraOffset = PreviewModeController.getCameraOffset();
                 updateImgBlobUrl(blobUrl);
