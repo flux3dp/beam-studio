@@ -196,15 +196,44 @@ ipcMain.on(events.GET_AVAILABLE_FONTS , (event, arg) => {
     event.returnValue = fonts;
 });
 
+function findFontsSync(arg) {
+    const availableFonts = FontManager.getAvailableFontsSync();
+    const match = availableFonts.filter(font => {
+        result = true
+        Object.getOwnPropertyNames(arg).forEach(a => {
+            if (arg[a] !== font[a]) {
+                result = false;
+            }
+        });
+        return result;
+    });
+    return match;
+}
+
+function findFontSync(arg) {
+    const availableFonts = FontManager.getAvailableFontsSync();
+    const match = availableFonts.filter(font => {
+        result = true
+        Object.getOwnPropertyNames(arg).forEach(a => {
+            if (arg[a] !== font[a]) {
+                result = false;
+            }
+        });
+        return result;
+    });
+    const font = match[0] || availableFonts[0];
+    return font;
+};
+
 ipcMain.on(events.FIND_FONTS , (event, arg) => {
     // FontManager.findFontsSync({ family: 'Arial' });
-    const fonts = FontManager.findFontsSync(arg);
+    const fonts = findFontsSync(arg);
     event.returnValue = fonts;
 });
 
 ipcMain.on(events.FIND_FONT , (event, arg) => {
     // FontManager.findFontSync({ family: 'Arial', weight: 700 })
-    const font = FontManager.findFontSync(arg);
+    const font = findFontSync(arg);
     event.returnValue = font;
 });
 
@@ -263,7 +292,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
             return fontFamily;
         }
 
-        const originFont = FontManager.findFontSync({
+        const originFont = findFontSync({
             family: fontFamily,
             style: fontStyle
         });
@@ -325,7 +354,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         }
     }
 
-    let font = FontManager.findFontSync({
+    let font = findFontSync({
         family: substitutedFamily,
         style: fontStyle
     });

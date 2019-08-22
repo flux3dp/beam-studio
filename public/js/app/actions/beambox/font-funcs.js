@@ -66,10 +66,7 @@ define([
         });
     })();
     const requestFontStylesOfTheFontFamily = memoize((family) => {
-        // if you don't specify italic, it will just return fonts that are not italic
-        const fontsNoItalic = ipc.sendSync(events.FIND_FONTS, { family: family, italic: false });
-        const fontsItalic = ipc.sendSync(events.FIND_FONTS, { family: family, italic: true });
-        const fonts = fontsNoItalic.concat(fontsItalic);
+        const fonts = ipc.sendSync(events.FIND_FONTS, { family: family});
         const fontStyles = Array.from(fonts).map(font => font.style);
 
         return fontStyles;
