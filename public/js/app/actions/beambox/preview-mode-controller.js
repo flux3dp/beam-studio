@@ -12,6 +12,7 @@ define([
     'helpers/firmware-version-checker',
     'helpers/i18n',
     'app/actions/beambox/constant',
+    'app/actions/beambox/beambox-preference',
     'app/actions/beambox'
 ], function (
     Rx,
@@ -27,6 +28,7 @@ define([
     FirmwareVersionChecker,
     i18n,
     Constant,
+    BeamboxPreference,
     BeamboxActions
 ) {
 
@@ -204,9 +206,10 @@ define([
                     console.log(error);
                 }
             }
-
-            const resp = await DeviceMaster.getDeviceSetting('camera_offset');
-            console.log("Resp = ", resp.value);
+            const borderless = BeamboxPreference.read('borderless') || false;
+            const configName = borderless ? 'camera_offset_borderless' : 'camera_offset';
+            const resp = await DeviceMaster.getDeviceSetting(configName);
+            console.log(`Reading ${configName}\nResp = ${resp.value}`);
             resp.value = ` ${resp.value}`;
             this.cameraOffset = {
                 x:          Number(/ X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
@@ -215,7 +218,7 @@ define([
                 scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
                 scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
             };
-            console.log("Got camera_offset = ", this.cameraOffset);
+            console.log(`Got ${configName}`, this.cameraOffset);
             if ((this.cameraOffset.x === 0) && (this.cameraOffset.y === 0)) {
                 this.cameraOffset = {
                     x: Constant.camera.offsetX_ideal,

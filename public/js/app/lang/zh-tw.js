@@ -1052,7 +1052,8 @@ define(function() {
                 not_support_object_type: '不支援的物件類型',
                 select_first: '請先選取物件以繼續',
                 select_at_least_two: '請選取兩個物件以繼續',
-                import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。'
+                import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
+                or_turn_off_borderless_mode: '或是關閉開蓋模式'
             },
             left_panel: {
                 insert_object: '插入物件',
@@ -1062,6 +1063,7 @@ define(function() {
                 suggest_calibrate_camera_first: '提醒您：\n第一次使用相機，請先進行相機校正。並在每次使用時將平台對焦，以取得最好的效果。',
                 end_preview: '結束預覽模式',
                 unpreviewable_area: '非相機預覽範圍',
+                borderless_preview: '開蓋模式相機預覽',
                 rectangle: '長方形',
                 ellipse: '橢圓形',
                 line: '線段',

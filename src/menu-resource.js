@@ -84,6 +84,7 @@ module.exports = {
         zoom_out: 'Zoom Out',
         fit_to_window: 'Fit to Window Size',
         zoom_with_window: 'Auto Fit to Window Size',
+        borderless_mode: 'Borderless Mode',
         show_grids: 'Show Grids',
         show_layer_color: 'Use Layer Color',
         disassemble_use: 'Disassemble SVG'
@@ -176,6 +177,7 @@ module.exports = {
         zoom_out: '縮小',
         fit_to_window: '配合視窗尺寸',
         zoom_with_window: '自動配合視窗尺寸',
+        borderless_mode: '開蓋模式',
         show_grids: '顯示格線',
         show_layer_color: '顯示圖層顏色',
         disassemble_use: '解散圖檔'

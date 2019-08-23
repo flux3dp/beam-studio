@@ -142,6 +142,22 @@ define([
                     AlertActions.showPopupError('', i18n.lang.beambox.popup.should_update_firmware_to_continue);
                 };
 
+                const isFirmwareBorderlessAvailable = (device) => {
+                    const isAvailableVersion = function(version, targetVersion) {
+                        version = version.split('.').map(i => parseInt(i));
+                        targetVersion = targetVersion.split('.').map(i => parseInt(i));
+                        for (let i = 0; i < Math.min(version.length, targetVersion.length); ++i) {
+                            if(version[i] > targetVersion[i]) {
+                                return true;
+                            } else if (targetVersion[i] > version[i]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }(device.version, '2.5.1');
+                    return isAvailableVersion;
+                }
+
                 // return device or false
                 const getDeviceToUse = async () => {
                     const d = $.Deferred();
@@ -211,6 +227,15 @@ define([
                 if (!device) {
                     return;
                 };
+
+                if (BeamboxPreference.read('borderless')) {
+                    if (!isFirmwareBorderlessAvailable(device)) {
+                        const message = `${i18n.lang.camera_calibration.update_firmware_msg1} 2.5.1 ${i18n.lang.camera_calibration.update_firmware_msg2} ${i18n.lang.beambox.popup.or_turn_off_borderless_mode}`;
+                        const caption = i18n.lang.beambox.left_panel.borderless_preview;
+                        AlertActions.showPopupError('', message, caption);
+                        return;
+                    }
+                }
 
                 ProgressActions.open(ProgressConstants.NONSTOP, i18n.lang.message.tryingToConenctMachine);
 

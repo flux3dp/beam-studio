@@ -563,6 +563,8 @@ define([
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
         require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
         .submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+        require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+        .submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = BeamboxPreference.read('borderless') || false;
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
 
@@ -6120,6 +6122,13 @@ define([
         // strs - Object with strings (see uiStrings for examples)
         this.setUiStrings = function (strs) {
             $.extend(uiStrings, strs.notification);
+        };
+
+        this.toggleBorderless = function () {
+            let borderless = BeamboxPreference.read('borderless') || false;
+            borderless = !borderless;
+            BeamboxPreference.write('borderless', borderless);
+            console.log(BeamboxPreference.read('borderless'), typeof(BeamboxPreference.read('borderless')));
         };
 
         // Function: setConfig

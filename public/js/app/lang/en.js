@@ -1055,7 +1055,8 @@ define(function() {
                 not_support_object_type: 'Not support object type',
                 select_first: 'Select an object first.',
                 select_at_least_two: 'Select two objects to proceed',
-                import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file'
+                import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
+                or_turn_off_borderless_mode: ' Or turn off borderless mode.'
             },
             left_panel: {
                 insert_object: 'Insert Object',
@@ -1065,6 +1066,7 @@ define(function() {
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
                 end_preview: 'End Preview Mode',
                 unpreviewable_area: 'The area is not allowed to preview',
+                borderless_preview: 'Borderless Mode Camera Preview',
                 rectangle: 'Rectangle',
                 ellipse: 'Ellipse',
                 line: 'Line',
