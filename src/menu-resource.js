@@ -79,7 +79,7 @@ module.exports = {
             forum: 'https://forum.flux3dp.com/',
             downloads: 'https://flux3dp.com/downloads/'
         },
-        view: 'view',
+        view: 'View',
         zoom_in: 'Zoom In',
         zoom_out: 'Zoom Out',
         fit_to_window: 'Fit to Window Size',
