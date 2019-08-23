@@ -542,7 +542,6 @@ define([
                 const imageElems = document.querySelectorAll('image');
 
                 let isSpeedTooHigh = false;
-
                 for (let i = 1; i < imageElems.length; i++) {
                     if (imageElems[i].getAttribute('data-shading') && (
                             (dpi === 'medium' && imageElems[i].parentNode.getAttribute('data-speed') > 135) ||
@@ -553,12 +552,25 @@ define([
                     }
                 }
 
+                let isTooFastForPath = false;
+                for (let i = 0; i < layers.length; ++i) {
+                    const layer = layers[i];
+                    if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
+                        if ($(layer).find('path').length > 0) {
+                            isTooFastForPath = true;
+                            break;
+                        }
+                    }
+                }
+
                 if (isPowerTooHigh && isSpeedTooHigh) {
                     AlertActions.showPopupWarning('', lang.beambox.popup.both_power_and_speed_too_high);
                 } else if (isPowerTooHigh) {
                     AlertActions.showPopupWarning('', lang.beambox.popup.power_too_high_damage_laser_tube);
                 } else if (isSpeedTooHigh) {
                     AlertActions.showPopupWarning('', lang.beambox.popup.speed_too_high_lower_the_quality);
+                } else if (isTooFastForPath) {
+                    AlertActions.showPopupWarning('', lang.beambox.popup.too_fast_for_path);
                 }
 
                 Discover(

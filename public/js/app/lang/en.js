@@ -1050,6 +1050,7 @@ define(function() {
                 power_too_high_damage_laser_tube: 'Using lower laser power will extends laser tube\'s lifetime.' ,
                 speed_too_high_lower_the_quality: 'Using too high speed at this resolution may result in the lower quality of shading engraving.',
                 both_power_and_speed_too_high: 'Using lower laser power will extends laser tube\'s lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.',
+                too_fast_for_path: 'Using too high speed in layers containing path objects may result in lower precision when cutting.',
                 should_update_firmware_to_continue: 'Your firmware does not support some improvements of FLUX Studio. For better performance and user experience, please update firmware to continue. (Menu > Machine > [Your Machine] > Update Firmware)',
                 more_than_two_object: 'Too many objects. Only support for 2 objects',
                 not_support_object_type: 'Not support object type',
