@@ -1513,7 +1513,7 @@ define(function() {
             new_app_download_canceled: 'FLUX Studio download has been canceled',
             new_app_downloaded: 'Newest FLUX Studio has been downloaded',
             ask_for_upgrade: 'Do you wish to upgrade now?',
-            please_enter_dpi: 'Please enter the DPI of your file',
+            please_enter_dpi: 'Please enter the Unit of your file',
             need_1_1_7_above: 'Please update firmware to v1.1.7+',
             gcode_area_too_big: 'Imported GCode exceed the printable area.',
             empty_file: 'File is empty',
