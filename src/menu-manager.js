@@ -30,7 +30,11 @@ function _buildFileMenu(fnKey, callback) {
         { type: 'separator' },
         { 'id': 'SAMPLES', label: r.samples || 'Samples', submenu: [
             { 'id': 'IMPORT_EXAMPLE', label: r.import_beamo_sample || 'Example of beamo', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING', label: r.import_material_testing || 'Material Testing Suite', click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut || 'Material Testing Suite - Cut (Simple)', click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut || 'Material Testing Suite - Cut', click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave || 'Material Testing Suite - Engraving', click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line || 'Material Testing Suite - Line', click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old || 'Material Testing Suite (Old)', click: callback },
         ]},
         { type: 'separator' },
         { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task || 'Export', click: callback, 'accelerator': `${fnKey}+E` },

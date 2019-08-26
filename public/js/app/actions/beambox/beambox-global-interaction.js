@@ -12,46 +12,36 @@ define([
     class BeamboxGlobalInteraction extends GlobalInteraction {
         constructor() {
             super();
+            const loadExampleFile = function(path) {
+                var fileEntry = {
+                    name: path,
+                    toURL: function() {
+                        return path;
+                    }
+                }
+                var oReq = new XMLHttpRequest();
+                oReq.open('GET', path, true);
+                oReq.responseType = 'blob';
+
+                oReq.onload = function(oEvent) {
+                    svgEditor.importBvg(oReq.response);
+                };
+
+                oReq.send();
+            }
             this._actions = {
+
                 'IMPORT': () => {
                     if(electron) {
                         electron.trigger_file_input_click('import_image');
                     }
                 },
-                'IMPORT_EXAMPLE': () => {
-                    var fileEntry = {
-                        name: 'examples/badge.bvg',
-                        toURL: function() {
-                            return 'examples/badge.bvg';
-                        }
-                    }
-                    var oReq = new XMLHttpRequest();
-                    oReq.open('GET', 'examples/badge.bvg', true);
-                    oReq.responseType = 'blob';
-
-                    oReq.onload = function(oEvent) {
-                        svgEditor.importBvg(oReq.response);
-                    };
-
-                    oReq.send();
-                },
-                'IMPORT_MATERIAL_TESTING': () => {
-                    var fileEntry = {
-                        name: 'examples/mat_test.bvg',
-                        toURL: function() {
-                            return 'examples/mat_test.bvg';
-                        }
-                    }
-                    var oReq = new XMLHttpRequest();
-                    oReq.open('GET', 'examples/mat_test.bvg', true);
-                    oReq.responseType = 'blob';
-
-                    oReq.onload = function(oEvent) {
-                        svgEditor.importBvg(oReq.response);
-                    };
-
-                    oReq.send();
-                },
+                'IMPORT_EXAMPLE': () => {loadExampleFile('examples/badge.bvg')},
+                'IMPORT_MATERIAL_TESTING_OLD': () => {loadExampleFile('examples/mat_test_old.bvg')},
+                'IMPORT_MATERIAL_TESTING_SIMPLECUT': () => {loadExampleFile('examples/mat_test_simple_cut.bvg')},
+                'IMPORT_MATERIAL_TESTING_CUT': () => {loadExampleFile('examples/mat_test_cut.bvg')},
+                'IMPORT_MATERIAL_TESTING_ENGRAVE': () => {loadExampleFile('examples/mat_test_engrave.bvg')},
+                'IMPORT_MATERIAL_TESTING_LINE': () => {loadExampleFile('examples/mat_test_line.bvg')},
                 'SAVE_SCENE': () => FnWrapper.saveFile(),
                 'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
                 'UNDO': () => FnWrapper.undo(),
