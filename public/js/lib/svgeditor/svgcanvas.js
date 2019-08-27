@@ -182,6 +182,7 @@ define([
         // Array with all the currently selected elements
         // default size of 1 until it needs to grow bigger
         var selectedElements = [];
+        let tempGroup = false;
 
         // Function: addSvgElementFromJson
         // Create a new SVG element based on the given object keys/values and add it to the current layer
@@ -975,6 +976,11 @@ define([
                         break;
                     }
                     selectorManager.releaseSelector(elem);
+                    if (tempGroup) {
+                        tempGroup = false;
+                        svgCanvas.ungroupTempGroup();
+                    }
+
                     selectedElements[i] = null;
                 }
                 //		selectedBBoxes[0] = null;
@@ -2206,6 +2212,14 @@ define([
                 started = false;
                 var attrs, t;
 
+                selectedElems = selectedElements.filter((e) => e !== null);
+
+                if (selectedElems.length > 1) {
+                    svgCanvas.tempGroupSelectedElements();
+                    tempGroup = true;
+                    window.updateContextPanel();
+                    console.log('temp group created');
+                }
 
                 switch (current_mode) {
                     case 'preview':
@@ -6119,6 +6133,12 @@ define([
             return selectedElements;
         };
 
+        // Function: getTempGroup
+        // Returns flag denoted the state of temp group
+        this.getTempGroup = function () {
+            return tempGroup;
+        };
+
         // Function: getResolution
         // Returns the current dimensions and zoom level in an object
         var getResolution = this.getResolution = function () {
@@ -8004,6 +8024,10 @@ define([
         // Parameters:
         // type - type of element to group into, defaults to <g>
         this.groupSelectedElements = function (type, urlArg) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             if (!type) {
                 type = 'g';
             }
@@ -8048,6 +8072,9 @@ define([
                 if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
                     elem = elem.parentNode;
                 }
+
+                const original_layer = this.getObjectLayer(elem).title;
+                $(elem).attr('data-original-layer', original_layer);
 
                 var oldNextSibling = elem.nextSibling;
                 var oldParent = elem.parentNode;
@@ -8320,6 +8347,196 @@ define([
             }
         }
 
+        // Function: ungroupSelectedElement
+        // Unwraps all the elements in a selected group (g) element. This requires
+        // significant recalculations to apply group's transforms, etc to its children
+        this.ungroupSelectedElement = function () {
+            var g = selectedElements[0];
+            if (!g) {
+                return;
+            }
+
+            if (g.tagName === 'use') {
+                this.disassembleUse2Group([g]);
+                return;
+            }
+            if ($(g).data('gsvg') || $(g).data('symbol')) {
+                // Is svg, so actually convert to group
+                convertToGroup(g);
+                return;
+            } 
+            var parents_a = $(g).parents('a');
+            if (parents_a.length) {
+                g = parents_a[0];
+            }
+
+            // Look for parent "a"
+            if (g.tagName === 'g' || g.tagName === 'a') {
+
+                var batchCmd = new svgedit.history.BatchCommand('Ungroup Elements');
+                var cmd = pushGroupProperties(g, true);
+                if (cmd) {
+                    batchCmd.addSubCommand(cmd);
+                }
+
+                var parent = g.parentNode;
+                var anchor = g.nextSibling;
+                var children = new Array(g.childNodes.length);
+
+                var i = 0;
+
+                while (g.firstChild) {
+                    var elem = g.firstChild;
+                    var oldNextSibling = elem.nextSibling;
+                    var oldParent = elem.parentNode;
+
+                    // Remove child title elements
+                    if (elem.tagName === 'title') {
+                        var nextSibling = elem.nextSibling;
+                        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, oldParent));
+                        oldParent.removeChild(elem);
+                        continue;
+                    }
+
+                    const original_layer = getCurrentDrawing().getLayerByName($(elem).data('original-layer'));
+                    if (original_layer) {
+                        original_layer.appendChild(elem);
+                        if (this.isUseLayerColor) {
+                            this.updateElementColor(elem);
+                        }
+                    } else {
+                        elem = parent.insertBefore(elem, anchor);
+                    }
+                    children[i++] = elem;
+                    batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldParent));
+                }
+
+                // remove the group from the selection
+                clearSelection();
+
+                // delete the group element (but make undo-able)
+                var gNextSibling = g.nextSibling;
+                g = parent.removeChild(g);
+                batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(g, gNextSibling, parent));
+
+                if (!batchCmd.isEmpty()) {
+                    addCommandToHistory(batchCmd);
+                }
+
+                // update selection
+                addToSelection(children);
+            }
+        };
+
+        this.tempGroupSelectedElements = function () {
+            const type = 'g';
+
+            // create and insert the group element
+            let g = addSvgElementFromJson({
+                'element': type,
+                'attr': {
+                    'id': getNextId(),
+                    'data-tempgroupp': true
+                }
+            });
+
+            // now move all children into the group
+            var i = selectedElements.length;
+            while (i--) {
+                var elem = selectedElements[i];
+                if (elem == null) {
+                    continue;
+                }
+
+                if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
+                    elem = elem.parentNode;
+                }
+                const original_layer = this.getObjectLayer(elem).title;
+                $(elem).attr('data-original-layer', original_layer);
+
+                g.appendChild(elem);
+            }
+
+            // update selection
+            selectOnly([g], true);
+        };
+
+        // Function: ungroupTempGroup
+        // Unwraps all the elements in a selected group (g) element. This requires
+        // significant recalculations to apply group's transforms, etc to its children
+        this.ungroupTempGroup = function () {
+
+            var g = selectedElements[0];
+            if (!g) {
+                return;
+            }
+            if ($(g).data('gsvg') || $(g).data('symbol')) {
+                // Is svg, so actually convert to group
+                convertToGroup(g);
+                return;
+            }
+            if (g.tagName === 'use') {
+                // Somehow doesn't have data set, so retrieve
+                var symbol = svgedit.utilities.getElem(getHref(g).substr(1));
+                $(g).data('symbol', symbol).data('ref', symbol);
+                convertToGroup(g);
+                return;
+            }
+            var parents_a = $(g).parents('a');
+            if (parents_a.length) {
+                g = parents_a[0];
+            }
+
+            // Look for parent "a"
+            if (g.tagName === 'g' || g.tagName === 'a') {
+
+                let batchCmd = new svgedit.history.BatchCommand('Ungroup Temp Group');
+                let cmd = pushGroupProperties(g, true);
+                if (cmd) {
+                    batchCmd.addSubCommand(cmd);
+                }
+                var parent = g.parentNode;
+                var anchor = g.nextSibling;
+                var children = new Array(g.childNodes.length);
+
+                var i = 0;
+
+                while (g.firstChild) {
+                    var elem = g.firstChild;
+                    var oldNextSibling = elem.nextSibling;
+                    var oldParent = elem.parentNode;
+
+                    // Remove child title elements
+                    if (elem.tagName === 'title') {
+                        var nextSibling = elem.nextSibling;
+                        oldParent.removeChild(elem);
+                        continue;
+                    }
+                    
+                    const original_layer = getCurrentDrawing().getLayerByName($(elem).data('original-layer'));
+                    if (original_layer) {
+                        original_layer.appendChild(elem);
+                        if (this.isUseLayerColor) {
+                            this.updateElementColor(elem);
+                        }
+                    } else {
+                        elem = parent.insertBefore(elem, anchor);
+                    }
+                    children[i++] = elem;
+                }
+
+                if (!batchCmd.isEmpty()) {
+                    addCommandToHistory(batchCmd);
+                }
+
+                tempGroup = false;
+                // remove the group from the selection
+                clearSelection();
+                g = parent.removeChild(g);
+            }
+            return children;
+        };
+
         this.gridArraySelectedElement = (gridDistanceXY, arrayNumberXY) => {
             const originElements = selectedElements;
             if (originElements.length == 0) {
@@ -8367,79 +8584,6 @@ define([
                 call('changed', pastedElements);
             }
         }
-
-        // Function: ungroupSelectedElement
-        // Unwraps all the elements in a selected group (g) element. This requires
-        // significant recalculations to apply group's transforms, etc to its children
-        this.ungroupSelectedElement = function () {
-            var g = selectedElements[0];
-            if (!g) {
-                return;
-            }
-
-            if (g.tagName === 'use') {
-                // Somehow doesn't have data set, so retrieve
-                this.disassembleUse2Group([g]);
-                return;
-            }
-            if ($(g).data('gsvg') || $(g).data('symbol')) {
-                // Is svg, so actually convert to group
-                convertToGroup(g);
-                return;
-            } 
-            var parents_a = $(g).parents('a');
-            if (parents_a.length) {
-                g = parents_a[0];
-            }
-
-            // Look for parent "a"
-            if (g.tagName === 'g' || g.tagName === 'a') {
-
-                var batchCmd = new svgedit.history.BatchCommand('Ungroup Elements');
-                var cmd = pushGroupProperties(g, true);
-                if (cmd) {
-                    batchCmd.addSubCommand(cmd);
-                }
-
-                var parent = g.parentNode;
-                var anchor = g.nextSibling;
-                var children = new Array(g.childNodes.length);
-
-                var i = 0;
-
-                while (g.firstChild) {
-                    var elem = g.firstChild;
-                    var oldNextSibling = elem.nextSibling;
-                    var oldParent = elem.parentNode;
-
-                    // Remove child title elements
-                    if (elem.tagName === 'title') {
-                        var nextSibling = elem.nextSibling;
-                        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, oldParent));
-                        oldParent.removeChild(elem);
-                        continue;
-                    }
-
-                    children[i++] = elem = parent.insertBefore(elem, anchor);
-                    batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldParent));
-                }
-
-                // remove the group from the selection
-                clearSelection();
-
-                // delete the group element (but make undo-able)
-                var gNextSibling = g.nextSibling;
-                g = parent.removeChild(g);
-                batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(g, gNextSibling, parent));
-
-                if (!batchCmd.isEmpty()) {
-                    addCommandToHistory(batchCmd);
-                }
-
-                // update selection
-                addToSelection(children);
-            }
-        };
 
         // Function: moveToTopSelectedElement
         // Repositions the selected element to the bottom in the DOM to appear on top of
