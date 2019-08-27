@@ -1661,6 +1661,11 @@ define([
                     case 'pathedit':
                         start_x *= current_zoom;
                         start_y *= current_zoom;
+                        if (canvas.isBezierPathAlignToEdge) {
+                            let {xMatchPoint, yMatchPoint} = canvas.findMatchPoint(mouse_x, mouse_y);
+                            start_x = xMatchPoint ? xMatchPoint.x * current_zoom : start_x;
+                            start_y = yMatchPoint ? yMatchPoint.y * current_zoom : start_y;
+                        }
                         pathActions.mouseDown(evt, mouse_target, start_x, start_y);
                         started = true;
                         break;
@@ -1697,13 +1702,11 @@ define([
             // in this function we do not record any state changes yet (but we do update
             // any elements that are still being created, moved or resized on the canvas)
             var mouseMove = function (evt) {
-                if (!started) {
-                    return;
-                }
                 if (evt.button === 1 || canvas.spaceKey) {
                     return;
                 }
 
+                root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
                 var i, xya, c, cx, cy, dx, dy, len, angle, box,
                     selected = selectedElements[0],
                     pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
@@ -1715,6 +1718,18 @@ define([
                 x = real_x;
                 var real_y = mouse_y / current_zoom;
                 y = real_y;
+
+                if (!started) {
+                    if (canvas.isBezierPathAlignToEdge) {
+                        if (current_mode === 'path') {
+                            let {xMatchPoint, yMatchPoint} = canvas.findMatchPoint(mouse_x, mouse_y);
+                            let x = xMatchPoint ? xMatchPoint.x * current_zoom : mouse_x;
+                            let y = yMatchPoint ? yMatchPoint.y * current_zoom : mouse_y;
+                            canvas.drawAlignLine(x, y, xMatchPoint, yMatchPoint);
+                        }
+                    }
+                    return;
+                }
 
                 if (curConfig.gridSnapping) {
                     x = svgedit.utilities.snapToGrid(x);
@@ -2102,6 +2117,12 @@ define([
                                 'height': Math.abs(real_y - r_start_y * current_zoom)
                             }, 100);
                         }
+                        if (canvas.isBezierPathAlignToEdge) {
+                            let {xMatchPoint, yMatchPoint} = canvas.findMatchPoint(mouse_x, mouse_y);
+                            x = xMatchPoint ? xMatchPoint.x * current_zoom : x;
+                            y = yMatchPoint ? yMatchPoint.y * current_zoom : y;
+                            canvas.drawAlignLine(x, y, xMatchPoint, yMatchPoint);
+                        }
                         pathActions.mouseMove(x, y);
 
                         break;
@@ -2416,6 +2437,8 @@ define([
                         element = null;
                         // continue to be set to true so that mouseMove happens
                         started = true;
+                        $('#x_align_line').remove();
+                        $('#y_align_line').remove();
 
                         var res = pathActions.mouseUp(evt, element, mouse_x, mouse_y);
                         element = res.element;
@@ -2424,6 +2447,8 @@ define([
                     case 'pathedit':
                         keep = true;
                         element = null;
+                        $('#x_align_line').remove();
+                        $('#y_align_line').remove();
                         pathActions.mouseUp(evt);
                         break;
                     case 'textedit':
@@ -3233,6 +3258,8 @@ define([
             return {
                 mouseDown: function (evt, mouse_target, start_x, start_y) {
                     var id;
+                    $('#x_align_line').remove();
+                    $('#y_align_line').remove();
                     if (current_mode === 'path') {
                         mouse_x = start_x;
                         mouse_y = start_y;
@@ -3241,7 +3268,9 @@ define([
                             y = mouse_y / current_zoom,
                             stretchy = svgedit.utilities.getElem('path_stretch_line');
                         newPoint = [x, y];
-
+                        if (canvas.isBezierPathAlignToEdge) {
+                            canvas.addAlignPoint(x, y);
+                        }
                         if (curConfig.gridSnapping) {
                             x = svgedit.utilities.snapToGrid(x);
                             y = svgedit.utilities.snapToGrid(y);
@@ -3285,19 +3314,29 @@ define([
                             svgedit.path.addPointGrip(index, mouse_x, mouse_y);
                             shortcuts.off(['esc']);
                             shortcuts.on(['esc'], function() {
+                                $('#x_align_line').remove();
+                                $('#y_align_line').remove();
                                 id = getId();
                                 svgedit.path.removePath_(id);
                                 let element = svgedit.utilities.getElem(id);
                                 $(stretchy).remove();
+                                let len = drawn_path.pathSegList.numberOfItems;
                                 drawn_path = null;
                                 started = false;
-
-                                element.setAttribute('opacity', cur_shape.opacity);
-                                element.setAttribute('style', 'pointer-events:inherit');
-                                cleanupElement(element);
-                                pathActions.toEditMode(element);
-                                addCommandToHistory(new svgedit.history.InsertElementCommand(element));
-                                call('changed', [element]);
+                                if (len > 1) {
+                                    element.setAttribute('opacity', cur_shape.opacity);
+                                    element.setAttribute('style', 'pointer-events:inherit');
+                                    cleanupElement(element);
+                                    pathActions.toEditMode(element);
+                                    addCommandToHistory(new svgedit.history.InsertElementCommand(element));
+                                    call('changed', [element]);
+                                } else {
+                                    $(element).remove();
+                                    $('#pathpointgrip_container').remove();
+                                    current_mode = 'select';
+                                    $('.tool-btn').removeClass('active');
+                                    $('#left-Cursor').addClass('active');
+                                }
 
                                 shortcuts.off(['esc']);
                                 shortcuts.on(['esc'], svgEditor.clickSelect);
@@ -3360,9 +3399,9 @@ define([
                                     var endseg = drawn_path.createSVGPathSegClosePath();
                                     seglist.appendItem(newseg);
                                     seglist.appendItem(endseg);
-                                } else if (len < 3) {
+                                } else if (len < 2) {
                                     keep = false;
-                                    //return keep;
+                                    return keep;
                                 }
                                 $(stretchy).remove();
 
@@ -6413,6 +6452,210 @@ define([
             textActions.clear();
             cur_properties = (selectedElements[0] && selectedElements[0].nodeName === 'text') ? cur_text : cur_shape;
             current_mode = name;
+            if (name === 'path') {
+                this.collectAlignPoints();
+            }
+        };
+
+        this.toggleBezierPathAlignToEdge = () => {
+            isBezierPathAlignToEdge = !(this.isBezierPathAlignToEdge || false);
+            this.isBezierPathAlignToEdge = isBezierPathAlignToEdge;
+            $('#x_align_line').remove();
+            $('#y_align_line').remove();
+        }
+
+        this.drawAlignLine = function (x, y, xMatchPoint, yMatchPoint) {
+            let xAlignLine = svgedit.utilities.getElem('x_align_line');
+            if (xMatchPoint) {
+                if (!xAlignLine) {
+                    xAlignLine = document.createElementNS(NS.SVG, 'path');
+                    svgedit.utilities.assignAttributes(xAlignLine, {
+                        id: 'x_align_line',
+                        stroke: '#FA6161',
+                        'stroke-width': '5',
+                        fill: 'none'
+                    });
+                    svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
+                } 
+                xAlignLine.setAttribute('d', `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${yMatchPoint ? yMatchPoint.y : y / current_zoom}`)
+                xAlignLine.setAttribute('display', 'inline');
+            } else {
+                if (xAlignLine) {
+                    xAlignLine.setAttribute('display', 'none');
+                }
+            }
+            let yAlignLine = svgedit.utilities.getElem('y_align_line');
+            if (yMatchPoint) {    
+                if (!yAlignLine) {
+                    yAlignLine = document.createElementNS(NS.SVG, 'path');
+                    svgedit.utilities.assignAttributes(yAlignLine, {
+                        id: 'y_align_line',
+                        stroke: '#FA6161',
+                        'stroke-width': '5',
+                        fill: 'none'
+                    });
+                    svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
+                } 
+                yAlignLine.setAttribute('d', `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / current_zoom} ${yMatchPoint.y}`)
+                yAlignLine.setAttribute('display', 'inline');
+            } else {
+                if (yAlignLine) {
+                    yAlignLine.setAttribute('display', 'none');
+                }
+            }
+        }
+
+        this.findMatchPoint = function(x, y) {
+            const FUZZY_RANGE = 7;
+            const bsFindNearest = function(array ,val) {
+                let l = 0,
+                    u = array.length - 1;
+                if (val <= array[l]) {
+                    return l;
+                } else if (val >= array[u]) {
+                    return u;
+                }
+                let m;
+                while (u > l) {
+                    m = parseInt(l + 0.5 * (u-l));
+                    if (array[m] === val) {
+                        return m;
+                    } else if (array[m] > val) {
+                        u = m - 1;
+                    } else {
+                        if (m === array.length - 1) {
+                            return m;
+                        } else if (array[m+1] > val) {
+                            return array[m+1] + array[m] > 2 * val ? m : m+1
+                        } else {
+                            l = m + 1;
+                        }
+                    }
+                }
+                if (u ===  array.length - 1) {
+                    return u;
+                } else {
+                    return array[u+1] + array[u] > 2 * val ? u : u+1
+                }
+            }
+            let nearestX = bsFindNearest(this.pathAlignPointsSortByX.map(p => p.x), x / current_zoom);
+            nearestX = this.pathAlignPointsSortByX[nearestX];
+            let xMatchPoint = nearestX ? (Math.abs(nearestX.x * current_zoom - x) < FUZZY_RANGE ? nearestX : null) : null;
+            let nearestY = bsFindNearest(this.pathAlignPointsSortByY.map(p => p.y), y / current_zoom);
+            nearestY = this.pathAlignPointsSortByY[nearestY];
+            let yMatchPoint = nearestY ? (Math.abs(nearestY.y * current_zoom - y) < FUZZY_RANGE ? nearestY : null): null;
+            return {xMatchPoint, yMatchPoint};
+        }
+
+        this.collectAlignPoints = () => {
+            let elems = []; 
+            const layers = $('#svgcontent > g.layer').toArray();
+            layers.forEach(layer => {
+                elems.push(...layer.childNodes);
+            });
+            let points = [];
+            while (elems.length > 0){
+                const elem = elems.pop();
+                points.push(...this.getElemAlignPoints(elem));
+            }
+            this.pathAlignPointsSortByX = points.sort(function (a, b) {
+                return a.x > b.x ? 1 : -1;
+            });
+            this.pathAlignPointsSortByY = [...points].sort(function (a, b) {
+                return a.y > b.y ? 1 : -1;
+            });
+        };
+
+        this.addAlignPoint = function(x, y) {
+            const newPoint = {x, y};
+            let p = 0;
+            for (let i = 0; i < this.pathAlignPointsSortByX.length; ++i) {
+                if (x <= this.pathAlignPointsSortByX[i].x) {
+                    break;
+                }
+                p += 1;
+            }
+            this.pathAlignPointsSortByX.splice(p, 0, newPoint);
+            p = 0;
+            for (let i = 0; i < this.pathAlignPointsSortByY.length; ++i) {
+                if (y <= this.pathAlignPointsSortByY[i].y) {
+                    break;
+                }
+                p += 1;
+            }
+            this.pathAlignPointsSortByY.splice(p, 0, newPoint);
+        };
+
+        this.getElemAlignPoints = function(elem) {
+            if (['rect', 'ellipse', 'polygon', 'path', 'image', 'use'].includes(elem.tagName)) {
+                let bbox;
+                if (elem.tagName === 'use') {
+                    bbox = this.getSvgRealLocation(elem);
+                } else {
+                    bbox = elem.getBBox();
+                }
+                const center = {x: bbox.x + 0.5 * bbox.width, y: bbox.y + 0.5 * bbox.height};
+                const angle = svgedit.utilities.getRotationAngle(elem, true);
+                let points = [];
+                switch (elem.tagName) {
+                    case 'rect':
+                    case 'image':
+                    case 'use':
+                        points = [
+                            {x: bbox.x, y: bbox.y},
+                            {x: bbox.x + bbox.width, y: bbox.y},
+                            {x: bbox.x, y: bbox.y + bbox.height},
+                            {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
+                            {x: bbox.x, y: bbox.y + 0.5 * bbox.height},
+                            {x: bbox.x + bbox.width, y: bbox.y + 0.5 * bbox.height},
+                            {x: bbox.x + 0.5 * bbox.width, y: bbox.y + bbox.height},
+                            {x: bbox.x + 0.5 * bbox.width, y: bbox.y + bbox.height},
+                        ];
+                        break;
+                    case 'ellipse':
+                        points = [];
+                        let a = 0.5 * bbox.width;
+                        let b = 0.5 * bbox.height;
+                        let theta = Math.atan2(-b * Math.tan(angle), a);
+                        points.push({x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta)});
+                        theta = Math.atan2(b * Math.tan(angle), -a);
+                        points.push({x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta)});
+                        theta = Math.atan2(b * Math.cos(angle), a * Math.sin(angle));
+                        points.push({x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta)});
+                        theta = Math.atan2(-b * Math.cos(angle), -a * Math.sin(angle));
+                        points.push({x: center.x + a * Math.cos(theta), y: center.y + b * Math.sin(theta)});
+                        points.push(center);
+                        break;
+                    case 'polygon':
+                        points = elem.getAttribute('points').split(' ');
+                        points = points.slice(0, points.length-1);
+                        points = points.map(i => {
+                            i = i.split(',');
+                            return {x: parseFloat(i[0]), y: parseFloat(i[1])};
+                        });
+                        break;
+                    case 'path':
+                        points = [];
+                        elem.pathSegList._list.forEach(seg => {
+                            if (seg.x) {
+                                points.push({x: parseFloat(seg.x), y: parseFloat(seg.y)})
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+                
+                points.forEach(p => {
+                    const newX = center.x + (p.x - center.x) * Math.cos(angle) - (p.y - center.y) * Math.sin(angle);
+                    const newY = center.y + (p.x - center.x) * Math.sin(angle) + (p.y - center.y) * Math.cos(angle);
+                    p.x = newX;
+                    p.y = newY;
+                });
+                return points;
+            } else {
+                return [];
+            }
         };
 
         // Group: Element Styling

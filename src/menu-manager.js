@@ -77,6 +77,7 @@ function buildMenu(callback) {
                 { 'id': 'IMAGE_CROP', label: r.image_crop, click: callback },
                 { 'id': 'IMAGE_INVERT', label: r.image_invert, click: callback },
             ]},
+            { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges || 'Align To Edges', enabled: false, click: callback, type:'checkbox'},
             { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', enabled: false, click: callback },
             { type:'separator'},
             { 'id': 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback},

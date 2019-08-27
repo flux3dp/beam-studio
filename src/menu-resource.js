@@ -124,6 +124,7 @@ module.exports = {
         image_sharpen: '鋭化',
         image_crop: '裁剪',
         image_invert: '色彩反轉',
+        align_to_edges: '對齊端點',
         document_setting: '文件設定',
         clear_scene: '清除場景',
         machines: '機器',
