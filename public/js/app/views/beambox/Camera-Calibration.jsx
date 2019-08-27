@@ -168,6 +168,11 @@ define([
         const _doCuttingTask = async function() {
             await DeviceMaster.select(device);
             const laserPower = Number((await DeviceMaster.getLaserPower()).value);
+            const fanSpeed = Number((await DeviceMaster.getFan()).value);
+
+            if (fanSpeed > 100) {
+                await DeviceMaster.setFan(100); // 10%
+            }
 
             if (laserPower !== 1) {
                 await DeviceMaster.setLaserPower(1);

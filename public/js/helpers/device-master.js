@@ -849,12 +849,20 @@ define([
         return SocketMaster.addTask('getLaserSpeed');
     }
 
+    function getFan() {
+        return SocketMaster.addTask('getFan');
+    }
+
     function setLaserPower(power) {
         return SocketMaster.addTask('setLaserPower', power);
     }
 
     function setLaserSpeed(speed) {
         return SocketMaster.addTask('setLaserSpeed', speed);
+    }
+
+    function setFan(fan) {
+        return SocketMaster.addTask('setFan', fan);
     }
 
     function reconnect() {
@@ -1603,6 +1611,7 @@ define([
             this.getHeadStatus = getHeadStatus;
             this.getLaserPower = getLaserPower;
             this.getLaserSpeed = getLaserSpeed;
+            this.getFan = getFan;
             this.getPreviewInfo = getPreviewInfo;
             this.getReport = getReport;
             this.getSelectedDevice = getSelectedDevice;
@@ -1632,6 +1641,7 @@ define([
             this.setHeadTemperatureDuringPause = setHeadTemperatureDuringPause;
             this.setLaserPower = setLaserPower;
             this.setLaserSpeed = setLaserSpeed;
+            this.setFan = setFan;
             this.showOutline = showOutline;
             this.startMonitoringUsb = startMonitoringUsb;
             this.startToolheadOperation = startToolheadOperation;
