@@ -7529,6 +7529,10 @@ define([
         };
 
         this.setSelectedFill = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             for (let i = 0; i < selectedElements.length; ++i) {
                 elem = selectedElements[i];
                 if (elem == null) {
@@ -7557,7 +7561,10 @@ define([
         }
 
         this.setSelectedUnfill = function () {
-            console.log(selectedElements);
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             for (let i = 0; i < selectedElements.length; ++i) {
                 elem = selectedElements[i];
                 if (elem == null) {
@@ -7567,7 +7574,6 @@ define([
 
                 if (availableType.indexOf(elem.tagName) >= 0) {
                     const color = $(elem).attr('fill');
-                    console.log(color)
                     this.setElementUnfill(elem, color);
                 } else {
                     console.log(`Not support type: ${elem.tagName}`)
@@ -8363,6 +8369,10 @@ define([
         // Unwraps all the elements in a selected group (g) element. This requires
         // significant recalculations to apply group's transforms, etc to its children
         this.ungroupSelectedElement = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var g = selectedElements[0];
             if (!g) {
                 return;
@@ -8549,7 +8559,16 @@ define([
             return children;
         };
 
+        this.getTempGroup = () => {
+            return tempGroup;
+        }
+
         this.gridArraySelectedElement = (gridDistanceXY, arrayNumberXY) => {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+
             const originElements = selectedElements;
             if (originElements.length == 0) {
                 return;
@@ -8601,6 +8620,10 @@ define([
         // Repositions the selected element to the bottom in the DOM to appear on top of
         // other elements
         this.moveToTopSelectedElement = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var selected = selectedElements[0];
             if (selected != null) {
                 var t = selected;
@@ -8620,6 +8643,10 @@ define([
         // Repositions the selected element to the top in the DOM to appear under
         // other elements
         this.moveToBottomSelectedElement = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var selected = selectedElements[0];
             if (selected != null) {
                 var t = selected;
@@ -8651,6 +8678,10 @@ define([
         // Parameters:
         // dir - String that's either 'Up' or 'Down'
         this.moveUpDownSelected = function (dir) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var selected = selectedElements[0];
             if (!selected) {
                 return;
@@ -8834,6 +8865,10 @@ define([
         };
 
         this.distHori = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             const centerXs = [];
             let minX = Number.MAX_VALUE,
                 maxX = Number.MIN_VALUE;
@@ -8887,6 +8922,10 @@ define([
         };
 
         this.distVert = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             const centerYs = [];
             let minY = Number.MAX_VALUE,
                 maxY = Number.MIN_VALUE;
@@ -8940,6 +8979,10 @@ define([
         };
 
         this.distEven = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             const centerXs = [];
             const centerYs = [];
             let minX = Number.MAX_VALUE,
@@ -9306,6 +9349,10 @@ define([
         // relative_to - String that must be one of the following:
         // "selected", "largest", "smallest", "page"
         this.alignSelectedElements = function (type, relative_to) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var i, elem;
             var bboxes = [];
             var minx = Number.MAX_VALUE,
@@ -9514,6 +9561,10 @@ define([
         // next - Boolean where true = next and false = previous element
         this.cycleElement = function (next) {
             var num;
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var cur_elem = selectedElements[0];
             var elem = false;
             var all_elems = getVisibleElements(current_group || getCurrentDrawing().getCurrentLayer());

@@ -31,6 +31,10 @@ define([
     };
 
     let _align = function(types) {
+        if (svgCanvas.getTempGroup()) {
+            const childeren = svgCanvas.ungroupTempGroup();
+            svgCanvas.selectOnly(childeren, false);
+        }
         const selectedElements = window.svgCanvas.getSelectedElems();
         const len = selectedElements.filter(e => e).length;
         const mode = len > 1 ? 'selected' : 'page';
