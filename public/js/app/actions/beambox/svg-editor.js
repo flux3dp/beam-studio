@@ -5993,6 +5993,8 @@ define([
         editor.setZoomWithWindow = function() {
             const isZoomWithWindow = !(svgCanvas.isZoomWithWindow || false);
             svgCanvas.isZoomWithWindow = isZoomWithWindow;
+            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+            .submenu.items.filter(i => i.id === 'ZOOM_WITH_WINDOW')[0].checked = isZoomWithWindow;
             if (isZoomWithWindow) {
                 window.addEventListener('resize', editor.resetView);
             } else {

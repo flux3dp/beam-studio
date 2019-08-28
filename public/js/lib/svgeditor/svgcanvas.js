@@ -5972,6 +5972,8 @@ define([
         this.toggleUseLayerColor = () => {
             this.isUseLayerColor = !(this.isUseLayerColor);
             BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
+            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+            .submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
             const layers = $('#svgcontent > g.layer').toArray();
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
@@ -6186,6 +6188,8 @@ define([
             let borderless = BeamboxPreference.read('borderless') || false;
             borderless = !borderless;
             BeamboxPreference.write('borderless', borderless);
+            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+            .submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = borderless;
             //console.log(BeamboxPreference.read('borderless'), typeof(BeamboxPreference.read('borderless')));
         };
 
@@ -6479,6 +6483,8 @@ define([
         this.toggleBezierPathAlignToEdge = () => {
             isBezierPathAlignToEdge = !(this.isBezierPathAlignToEdge || false);
             this.isBezierPathAlignToEdge = isBezierPathAlignToEdge;
+            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_edit')[0]
+            .submenu.items.filter(i => i.id === 'ALIGN_TO_EDGES')[0].checked = this.isBezierPathAlignToEdge;
             $('#x_align_line').remove();
             $('#y_align_line').remove();
         }
@@ -9895,6 +9901,8 @@ define([
         this.toggleGrid = function() {
             const showGrid = !(svgEditor.curConfig.showGrid || false);
             svgEditor.curConfig.showGrid = showGrid;
+            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
+            .submenu.items.filter(i => i.id === 'SHOW_GRIDS')[0].checked = showGrid;
             const canvasGridDisplay = showGrid ? 'inline' : 'none';
             $('#canvasGrid').attr('style', `display: ${canvasGridDisplay}`);
         }
