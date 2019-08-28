@@ -60,6 +60,12 @@
                     height: 16px;
                     filter: brightness(0) invert(100%);
                 }
+                &.borderless {
+                    width: 165px;
+                    .text {
+                        width: 135px;
+                    }
+                }
             }
 
             #image-trace-button {
@@ -89,6 +95,9 @@
                     margin: 4px 0px 0px 15px;
                     height: 16px;
                     filter: brightness(0) invert(100%);
+                }
+                &.borderless {
+                    left: 265px; 
                 }
             }
         }

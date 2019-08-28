@@ -1062,6 +1062,7 @@ define(function() {
             left_panel: {
                 insert_object: 'Insert Object',
                 preview: 'Preview',
+                borderless: '(Borderless)',
                 advanced: 'Advanced',
                 image_trace: 'Image Trace',
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',

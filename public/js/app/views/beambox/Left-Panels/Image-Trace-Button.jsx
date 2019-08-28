@@ -7,6 +7,7 @@ define([
     'helpers/i18n',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
     'app/actions/beambox',
+    'app/actions/beambox/beambox-preference',
     'app/actions/beambox/preview-mode-background-drawer',
     'app/actions/beambox/preview-mode-controller',
     'app/stores/beambox-store',
@@ -19,6 +20,7 @@ define([
     i18n,
     ImageTracePanelController,
     BeamboxActions,
+    BeamboxPreference,
     PreviewModeBackgroundDrawer,
     PreviewModeController,
     BeamboxStore,
@@ -50,10 +52,11 @@ define([
 
         render() {
             const active = this.props.active && !(PreviewModeBackgroundDrawer.isClean());
+            const borderless = BeamboxPreference.read('borderless') || false; 
             return (
                 <div
                     id='image-trace-button'
-                    className={classNames({'active': active}, {'hide': !this.props.show})}
+                    className={classNames({'active': active}, {'hide': !this.props.show}, {'borderless': borderless})}
                     onClick={() => this._handleClick()}
                 >
                     <div className={'text'}>{LANG.image_trace}</div>

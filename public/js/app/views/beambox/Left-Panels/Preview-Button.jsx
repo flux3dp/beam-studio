@@ -318,7 +318,8 @@ define([
                 isDrawn
             } = this.state;
             const imageTraceActive = !(PreviewModeBackgroundDrawer.isClean() || isDrawing);
-            const imageTraceShow = (isPreviewMode || !PreviewModeBackgroundDrawer.isClean())
+            const imageTraceShow = (isPreviewMode || !PreviewModeBackgroundDrawer.isClean());
+            const borderless = BeamboxPreference.read('borderless') || false;
             const ImageTrace = (<ImageTraceButton
                 onClick={imageTraceActive ? () => this.handleImageTraceClick() : () => {}}
                 active={imageTraceActive}
@@ -336,11 +337,11 @@ define([
                     <span id='printer-selector-placeholder' />
                     <div
                         id='clear-preview-graffiti-button-placeholder'
-                        className={'hide'}
+                        className={`hide  ${borderless ? 'borderless' : ''}`}
                         onClick={this.endPreviewMode.bind(this)}
                     >
                         <img src={'img/left-bar/icon-camera.svg'}/>
-                        <div className={'text'}>{LANG.preview}&nbsp;&nbsp;×</div>
+                        <div className={`text`}>{`${LANG.preview} ${borderless ? LANG.borderless : ''}`}&nbsp;&nbsp;×</div>
                     </div>
                     {ImageTrace}
                 </div>
