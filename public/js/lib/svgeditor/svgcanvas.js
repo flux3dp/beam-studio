@@ -7813,6 +7813,10 @@ define([
         // Removes all selected elements from the DOM and adds the change to the
         // history stack
         this.deleteSelectedElements = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var i;
             var batchCmd = new svgedit.history.BatchCommand('Delete Elements');
             var len = selectedElements.length;
@@ -7863,6 +7867,10 @@ define([
 
         // TODO: Combine similar code with deleteSelectedElements
         this.cutSelectedElements = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var i;
             var batchCmd = new svgedit.history.BatchCommand('Cut Elements');
             var len = selectedElements.length;
@@ -7913,6 +7921,10 @@ define([
         // Function: copySelectedElements
         // Remembers the current selected elements on the clipboard
         this.copySelectedElements = function () {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             var layerDict = {}, layerCount = 0;
 
             for (var i = 0; i < selectedElements.length && selectedElements[i]; ++i) {
@@ -9010,6 +9022,10 @@ define([
         };
 
         this.booleanOperationSelectedElements = function(mode) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             let len = selectedElements.length;
             for (let i = 0; i < selectedElements.length; ++i) {
                 if (!selectedElements[i]) {
@@ -9108,6 +9124,10 @@ define([
         }
 
         this.flipSelectedElements = function (horizon=1, vertical=1) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
             let len = selectedElements.length;
             for (let i = 0; i < selectedElements.length; ++i) {
                 if (!selectedElements[i]) {
@@ -9237,6 +9257,11 @@ define([
         // Create deep DOM copies (clones) of all selected elements and move them slightly
         // from their originals
         this.cloneSelectedElements = function (x, y) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+
             var i, elem;
             var batchCmd = new svgedit.history.BatchCommand('Clone Elements');
             // find all the elements selected (stop at first null)
