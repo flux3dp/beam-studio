@@ -1949,8 +1949,15 @@ define([
                             //$('#container_panel').show();
                         }
                     }
-                    menu_items[(el_name === 'g' ? 'en' : 'dis') + 'ableContextMenuItems']('#ungroup');
-                    menu_items[((el_name === 'g' || !multiselected) ? 'dis' : 'en') + 'ableContextMenuItems']('#group');
+                    
+                    if (svgCanvas.getTempGroup()) {
+                        menu_items
+                            .enableContextMenuItems('#group')
+                            .disableContextMenuItems('#ungroup');
+                    } else {
+                        menu_items[(el_name === 'g' ? 'en' : 'dis') + 'ableContextMenuItems']('#ungroup');
+                        menu_items[((el_name === 'g' || !multiselected) ? 'dis' : 'en') + 'ableContextMenuItems']('#group');
+                    }
 
                     ObjectPanelsController.render();
                 } // if (elem != null)
