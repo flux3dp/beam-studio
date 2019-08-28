@@ -1118,7 +1118,7 @@ define(function() {
                     times: 'times',
                     cut: 'Cut',
                     engrave: 'Engrave',
-                    more: 'More',
+                    more: 'Manage',
                     delete: 'DELETE',
                     apply: 'APPLY',
                     cancel: 'CANCEL',
@@ -1145,7 +1145,7 @@ define(function() {
                         glass_bw_engraving:  'Glass - BW Engraving',
                         metal_bw_engraving: 'Metal - BW Engraving',
                         save: 'Save',
-                        more: 'More...',
+                        more: 'Manage',
                         parameters: 'Parameters...'
                     },
                     laser_speed: {
