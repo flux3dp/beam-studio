@@ -2213,12 +2213,6 @@ define([
 
                 selectedElems = selectedElements.filter((e) => e !== null);
 
-                if (selectedElems.length > 1) {
-                    svgCanvas.tempGroupSelectedElements();
-                    tempGroup = true;
-                    window.updateContextPanel();
-                    console.log('temp group created');
-                }
 
                 switch (current_mode) {
                     case 'preview':
@@ -2330,6 +2324,13 @@ define([
                                 }
                             }
 
+                        }
+
+                        if (selectedElems.length > 1) {
+                            svgCanvas.tempGroupSelectedElements();
+                            tempGroup = true;
+                            window.updateContextPanel();
+                            console.log('temp group created');
                         }
 
                         return;
@@ -2486,6 +2487,13 @@ define([
                     default:
                         // This could occur in an extension
                         break;
+                }
+
+                if (selectedElems.length > 1) {
+                    svgCanvas.tempGroupSelectedElements();
+                    tempGroup = true;
+                    window.updateContextPanel();
+                    console.log('temp group created');
                 }
 
                 var ext_result = runExtensions('mouseUp', {
