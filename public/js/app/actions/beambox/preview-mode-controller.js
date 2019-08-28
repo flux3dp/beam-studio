@@ -135,8 +135,8 @@ define([
                     // overlap a little bit to fix empty area between pictures
                     // (some machine will have it, maybe due to cameraOffset.angle).
                     // it seems like something wrong handling image rotation.
-                    return c * s - 2;
-                })();
+                    return c * s * 0.95;
+                })()
 
                 const {left, right, top, bottom} = (() => {
                     const l = Math.min(x1, x2) + size/2;
