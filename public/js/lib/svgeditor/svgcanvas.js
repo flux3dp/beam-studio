@@ -36,6 +36,7 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'helpers/shortcuts',
+    'lib/svgeditor/imagetracer'
 ], function (
     i18n,
     BeamboxPreference,
@@ -44,7 +45,8 @@ define([
     PreviewModeController,
     BeamboxActions,
     Constant,
-    shortcuts
+    shortcuts,
+    ImageTracer
 ) {
     const LANG = i18n.lang.beambox;
     // Class: SvgCanvas
@@ -7619,6 +7621,56 @@ define([
         this.removeHyperlink = function () {
             canvas.ungroupSelectedElement();
         };
+
+        // Function: imageToSVG
+        // tracing an image file, convert it to svg object
+        // using ImageTracer https://github.com/jankovicsandras/imagetracerjs
+        this.imageToSVG = function (img) {
+            if (img == null) {
+                img = selectedElements[0];
+            }
+            let batchCmd = new svgedit.history.BatchCommand('Vectorize Image');
+            const imgUrl = $(img).attr('xlink:href');
+            ImageTracer.imageToSVG(imgUrl, svgstr => {
+                const id = getNextId();
+                let g = addSvgElementFromJson({
+                    'element': 'g',
+                    'attr': {
+                        'id': id
+                    }
+                });
+                svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
+                ImageTracer.appendSVGString(svgstr, id);
+                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+                if (this.isUseLayerColor) {
+                    this.updateElementColor(g);
+                }
+                const imgBBox = img.getBBox();
+                const angle = svgedit.utilities.getRotationAngle(img);
+                let cmd = this.deleteSelectedElements();
+                batchCmd.addSubCommand(cmd);
+                this.selectOnly([g], true);
+                let gBBox = g.getBBox();
+                if (imgBBox.width !== gBBox.width) {
+                    this.setSvgElemSize('width', imgBBox.width);
+                }
+                if (imgBBox.height !== gBBox.height) {
+                    this.setSvgElemSize('height', imgBBox.height);
+                }
+                gBBox = g.getBBox();
+                dx = (imgBBox.x + 0.5  * imgBBox.width) - (gBBox.x + 0.5  * gBBox.width);
+                dy = (imgBBox.y + 0.5  * imgBBox.height) - (gBBox.y + 0.5  * gBBox.height);
+                this.moveElements([dx], [dy], [g], false);
+                this.setRotationAngle(angle, true, g);
+                g.childNodes.forEach(child => {
+                    $(child).attr('id', getNextId());
+                    $(child).attr('vector-effect', "non-scaling-stroke");
+                })
+                selectorManager.requestSelector(g).resize();
+                
+                addCommandToHistory(batchCmd);
+            });
+        }
 
         // Group: Element manipulation
 
