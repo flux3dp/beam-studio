@@ -863,8 +863,8 @@ define([
                         </div>
                         {right_scroll_cue}
 
-                        <div title={lang.print.deviceTitle} className="device" onClick={this._handleExportClick} style={device_style}>
-                            <p className="device-icon">
+                        <div title={lang.print.deviceTitle} className="device" style={device_style}>
+                            <p className="device-icon" onClick={this._handleExportClick}>
                                 <img src="img/top-menu/icon-export.svg" draggable="false" />
                                 <div>{lang.topbar.export}</div>
                             </p>
