@@ -540,10 +540,9 @@ define([
 
                 const isPowerTooHigh = layers.map(layer => layer.getAttribute('data-strength')).some(strength => Number(strength) > 80);
                 const imageElems = document.querySelectorAll('image');
-
                 let isSpeedTooHigh = false;
                 for (let i = 1; i < imageElems.length; i++) {
-                    if (imageElems[i].getAttribute('data-shading') && (
+                    if (imageElems[i].getAttribute('data-shading') === 'true' && (
                             (dpi === 'medium' && imageElems[i].parentNode.getAttribute('data-speed') > 135) ||
                             (dpi === 'high' && imageElems[i].parentNode.getAttribute('data-speed') > 90)
                     )) {
