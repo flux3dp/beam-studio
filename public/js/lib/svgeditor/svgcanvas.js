@@ -3340,6 +3340,7 @@ define([
                                 $('#x_align_line').remove();
                                 $('#y_align_line').remove();
                                 id = getId();
+                                firstCtrl = null;
                                 svgedit.path.removePath_(id);
                                 let element = svgedit.utilities.getElem(id);
                                 $(stretchy).remove();
@@ -5166,16 +5167,6 @@ define([
                     });
                 }
 
-                // identify layers
-                identifyLayers();
-
-                // Give ID for any visible layer children missing one
-                content.children().find(visElems).each(function () {
-                    if (!this.id) {
-                        this.id = getNextId();
-                    }
-                });
-
                 // Percentage width/height, so let's base it on visible elements
                 if (percs) {
                     var bb = getStrokedBBox();
@@ -5191,6 +5182,20 @@ define([
                 if (attrs.height <= 0) {
                     attrs.height = 100;
                 }
+
+                // Keep workarea size after loading external svg
+                attrs.width = svgEditor.dimensions[0];
+                attrs.height = svgEditor.dimensions[1];
+
+                // identify layers
+                identifyLayers();
+
+                // Give ID for any visible layer children missing one
+                content.children().find(visElems).each(function () {
+                    if (!this.id) {
+                        this.id = getNextId();
+                    }
+                });
 
                 content.attr(attrs);
                 this.contentW = attrs.width;
