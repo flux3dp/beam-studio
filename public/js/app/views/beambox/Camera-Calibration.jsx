@@ -78,6 +78,7 @@ define([
 
         onClose() {
             this.props.onClose();
+            DeviceMaster.setFan(this.origFanSpeed);
         }
 
         updateImgBlobUrl(val) {
@@ -111,6 +112,7 @@ define([
                         updateImgBlobUrl={this.updateImgBlobUrl}
                         model={this.props.model}
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
+                        self={this}
                     />,
                 [STEP_BEFORE_ANALYZE_PICTURE]:
                     <StepBeforeAnalyzePicture
@@ -159,16 +161,17 @@ define([
         />
     );
 
-    const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb}) => {
-        const cutThenCapture = async function(updateOffsetDataCb) {
-            await _doCuttingTask();
+    const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, self}) => {
+        const cutThenCapture = async function(updateOffsetDataCb, self) {
+            await _doCuttingTask(self);
             let blobUrl = await _doCaptureTask();
             await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
         };
-        const _doCuttingTask = async function() {
+        const _doCuttingTask = async function(self) {
             await DeviceMaster.select(device);
             const laserPower = Number((await DeviceMaster.getLaserPower()).value);
             const fanSpeed = Number((await DeviceMaster.getFan()).value);
+            self.origFanSpeed = fanSpeed;
 
             if (fanSpeed > 100) {
                 await DeviceMaster.setFan(100); // 10%
@@ -184,6 +187,7 @@ define([
             if (laserPower !== 1) {
                 await DeviceMaster.setLaserPower(Number(laserPower));
             }
+            await DeviceMaster.setFan(fanSpeed);
         };
         const _doCaptureTask = async () => {
             let blobUrl;
@@ -215,7 +219,7 @@ define([
                         className: 'btn-default btn-alone-right',
                         onClick: async ()=>{
                             try {
-                                await cutThenCapture(updateOffsetDataCb);
+                                await cutThenCapture(updateOffsetDataCb, self);
                                 gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                             } catch (error) {
                                 console.log(error);
