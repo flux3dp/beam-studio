@@ -585,9 +585,9 @@ define([
 
             _handleSelectDevice: async function (device, e) {
                 const self = this;
+                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
                 device = DeviceMaster.usbDefaultDeviceCheck(device);
                 AlertStore.removeCancelListener(this._toggleDeviceListBind);
-                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
                 DeviceMaster.selectDevice(device).then(function (status) {
                     if (status === DeviceConstants.CONNECTED) {
                         const next = () => {
