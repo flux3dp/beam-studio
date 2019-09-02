@@ -93,7 +93,7 @@ define([
             '<feMergeNode in="SourceGraphic"/>' +
             '</feMerge>' +
             '</filter>' +
-            /*'<clipPath id="scene_mask"><rect x="0" y="0" width="2700" height="2000" /></clipPath>' +*/
+            (BeamboxPreference.read('enable_mask') ? ('<clipPath id="scene_mask"><rect x="0" y="0" width="' + dimensions[0] + '" height="' + dimensions[1] + '" /></clipPath>') : '') + 
             '</defs>' +
             '</svg>').documentElement, true);
         container.appendChild(svgroot);

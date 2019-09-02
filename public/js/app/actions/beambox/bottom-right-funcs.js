@@ -120,6 +120,7 @@ define([
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
             model: BeamboxPreference.read('model'),
             engraveDpi: BeamboxPreference.read('engrave_dpi'),
+            enableMask: BeamboxPreference.read('enable_mask'),
             onProgressing: (data) => {
                 ProgressActions.open(ProgressConstants.STEPPING, '', data.message, false);
                 ProgressActions.updating(data.message, data.percentage * 100);

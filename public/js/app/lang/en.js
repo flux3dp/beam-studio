@@ -367,6 +367,7 @@ define(function() {
             default_beambox_model: 'Default Model',
             guides_origin: 'Guides Origin',
             guides: 'Guides',
+            mask: 'Workarea Clipping',
             none: 'None',
             close: 'Close',
             cancel: 'CANCEL',
@@ -375,7 +376,8 @@ define(function() {
                 general: 'General',
                 connection: 'Connection',
                 editor: 'Editor',
-                path: 'Path'
+                path: 'Path',
+                mask: 'Workarea Clipping'
             },
             connect_printer: {
                 title: 'Connect with your printer'

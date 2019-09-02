@@ -248,6 +248,19 @@ define([
                 }
             ];
 
+            const maskOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('enable_mask') === true
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: !BeamboxPreference.read('enable_mask')
+                }
+            ];
+
             if (printer.name !== undefined) {
                 default_machine_button = (
                     <a className='font3'
@@ -359,6 +372,17 @@ define([
                             defaultValue={Number(localStorage.getItem('loop_compensation') || '0') / 10}
                             getValue={val => localStorage.setItem('loop_compensation', Number(val) * 10)}
                             className={{half: true}}
+                        />
+                    </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.mask}</div>
+
+                    <Controls label={lang.settings.mask}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={maskOptions}
+                            onChange={e => this._updateBeamboxPreference('enable_mask', e.target.value)}
                         />
                     </Controls>
 

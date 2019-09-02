@@ -494,10 +494,16 @@ define([
                             file.size,
                             file.thumbnailSize
                         ];
-                        if (opts && opts.model === 'fbb1p') {
-                            args.push('-pro');
-                        }
+
                         if (opts) {
+                            switch (opts.model) {
+                                case 'fbb1p':
+                                    args.push('-pro');
+                                    break;
+                                case 'fbm1':
+                                    args.push('-beamo');
+                                    break;
+                            }
                             switch (opts.engraveDpi) {
                                 case 'low':
                                     args.push('-ldpi');
@@ -508,6 +514,9 @@ define([
                                 case 'high':
                                     args.push('-hdpi');
                                     break;
+                            }
+                            if (opts.enableMask) {
+                                args.push('-mask');
                             }
                         }
                         ws.send(args.join(' '));

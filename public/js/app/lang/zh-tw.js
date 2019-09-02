@@ -366,13 +366,15 @@ define(function() {
             default_beambox_model: '預設型號',
             guides_origin: '參考線座標',
             guides: '參考線',
+            mask: '工作範圍剪裁',
             none: '無',
             close: '關閉',
             groups: {
                 general: '一般',
                 connection: '連線',
                 editor: '編輯器',
-                path: '路徑'
+                path: '路徑',
+                mask: '工作範圍剪裁'
             },
             printer: {
                 new_printer: '新增成型機',
