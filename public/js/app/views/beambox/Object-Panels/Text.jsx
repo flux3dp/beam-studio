@@ -88,7 +88,7 @@ define([
             // set fontFamily and change fontStyle
             this.setState({
                 fontFamily: newFamily
-            }, this.handleFontStyleChange(newStyle));
+            }, () => {this.handleFontStyleChange(newStyle)});
         }
         handleFontStyleChange(val) {
             const font = FontFuncs.requestFontByFamilyAndStyle({

@@ -8528,7 +8528,7 @@ define([
                 'element': type,
                 'attr': {
                     'id': getNextId(),
-                    'data-tempgroupp': true
+                    'data-tempgroup': true
                 }
             });
 

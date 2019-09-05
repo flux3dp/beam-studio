@@ -212,7 +212,6 @@ function findFontsSync(arg) {
 }
 
 function findFontSync(arg) {
-    console.log(arg);
     arg.style = arg.style || 'Regular';
     const availableFonts = FontManager.getAvailableFontsSync();
     let font = availableFonts[0];
@@ -364,7 +363,6 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         family: substitutedFamily,
         style: fontStyle
     });
-    console.log('font', font);
     let fontPath = font.path;
 	if (fontFamily.indexOf("華康") >= 0 && (fontPath.toLowerCase().indexOf("arial") > 0 || fontPath.toLowerCase().indexOf("meiryo") > 0)) {
 		// This is a hotfix for 華康系列 fonts, because fontmanager does not support
