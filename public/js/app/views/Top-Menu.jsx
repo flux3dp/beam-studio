@@ -555,8 +555,17 @@ define([
                 for (let i = 0; i < layers.length; ++i) {
                     const layer = layers[i];
                     if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
-                        if ($(layer).find('path').length > 0) {
-                            isTooFastForPath = true;
+                        const paths = $(layer).find('path');
+                        for (let j = 0; j < paths.length; j++) {
+                            const path = paths[j],
+                                  fill = $(path).attr('fill'),
+                                  fill_op = $(path).attr('fill-opacity');
+                            if (!fill || fill == '#FFF' || fill == '#FFFFFF' || fill_op == 0) {
+                                isTooFastForPath = true;
+                                break;
+                            }
+                        }
+                        if (isTooFastForPath) {
                             break;
                         }
                     }
