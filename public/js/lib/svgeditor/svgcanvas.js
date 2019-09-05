@@ -4676,6 +4676,9 @@ define([
         // Returns:
         // The current drawing as raw SVG XML text.
         this.getSvgString = function () {
+            if (tempGroup) {
+                this.ungroupTempGroup();
+            }
             save_options.apply = false;
             return this.svgCanvasToString();
         };
