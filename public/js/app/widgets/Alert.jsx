@@ -8,6 +8,7 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
             return {
                 lang: {},
                 caption: '',
+                checkbox: '',
                 message: '',
                 buttons: [],
                 images: [],
@@ -31,6 +32,33 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
                 return typeof this.props.message === 'string' ?
                             <pre className="message" dangerouslySetInnerHTML={{__html: this.props.message}}></pre> :
                             <pre className="message">{this.props.message}</pre>
+            }
+        },
+
+        _renderCheckbox: function() {
+            const self = this;
+            const _handleCheckboxClick = function(e) {
+                if (e.target.checked) {
+                    self.props.buttons[0].onClick = () => {
+                        self.props.checkedCallback();
+                        self.props.onClose();
+                    }
+                } else {
+                    self.props.buttons[0].onClick = () => {
+                        self.props.onClose();
+                    }
+                }
+                self.setState(self.state);
+            }
+
+            if (this.props.checkbox) {
+                return (
+                    <div className="modal-checkbox">
+                        <input type="checkbox" onClick={_handleCheckboxClick}></input>{this.props.checkbox}
+                    </div>
+                );
+            } else {
+                return null
             }
         },
 
@@ -68,6 +96,7 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
                     ''
                 ),
                 html = this._renderMessage(),
+                checkbox = this._renderCheckbox(),
                 buttons = this._renderButtons(),
                 className = 'modal-alert';
 
@@ -79,6 +108,7 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
                 <div className={className}>
                     {caption}
                     {html}
+                    {checkbox}
                     {buttons}
                 </div>
             );

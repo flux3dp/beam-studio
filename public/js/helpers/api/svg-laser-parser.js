@@ -4,16 +4,22 @@
  */
 define([
     'jquery',
+    'app/actions/alert-actions',
+    'app/actions/beambox/beambox-preference',
     'helpers/websocket',
     'helpers/convertToTypedArray',
     'helpers/data-history',
-    'helpers/api/set-params'
+    'helpers/api/set-params',
+    'helpers/i18n'
 ], function(
     $,
+    AlertActions,
+    BeamboxPreference,
     Websocket,
     convertToTypedArray,
     history,
-    setParams
+    setParams,
+    i18n
 ) {
     'use strict';
 
@@ -410,7 +416,11 @@ define([
                         const path = require('path');
                         const basename = getBasename(file.path);
                         for (let i = 0; i < matchImages.length; i++) {
-                            let origPath = matchImages[i].match(/xlink:href="[^"]+"/)[0];
+                            let origPath = matchImages[i].match(/xlink:href="[^"]+"/);
+                            if (!origPath) {
+                                continue;
+                            }
+                            origPath = origPath[0];
                             origPath = origPath.substring(12, origPath.length - 1);
                             if (origPath.substring(0, 10) === 'data:image') {
                                 continue;
@@ -431,6 +441,24 @@ define([
                             }
                             allImageValid = false;
                             $deferred.resolve('invalid_path');
+                        }
+                    }
+                    let version;
+                    const LANG = i18n.lang.beambox.popup;
+                    if (BeamboxPreference.read('svg_version_warning') !== false) {
+                        const matchSVG = svgString.match(/<svg[^>]+>/g)[0];
+                        version = matchSVG.match(/version="[^"]+"/);
+                        if (version) {
+                            version = version[0].substring(9, version[0].length -1);
+                            if (version === '1.1') {
+                                AlertActions.showPopupCheckboxWarning(
+                                    'svg 1.1 warning',
+                                    LANG.svg_1_1_waring,
+                                    '',
+                                    LANG.dont_show_again,
+                                    () => {BeamboxPreference.write('svg_version_warning', false)}
+                                );
+                            }
                         }
                     }
 

@@ -5660,6 +5660,21 @@ define([
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = evt => {
+                            if (BeamboxPreference.read('dxf_version_warning') !== false) {
+                                let autoCadVersion = evt.target.result.match(/AC\d+/);
+                                if (autoCadVersion) {
+                                    autoCadVersion = autoCadVersion[0].substring(2 ,autoCadVersion[0].length);
+                                    if (autoCadVersion !== '1015')
+                                    AlertActions.showPopupCheckboxWarning(
+                                        'dxf version warning',
+                                        LANG.popup.dxf_version_waring,
+                                        '',
+                                        LANG.popup.dont_show_again,
+                                        () => {BeamboxPreference.write('dxf_version_warning', false)}
+                                    );
+                                }
+                            }
+
                             const parsed = Dxf2Svg.parseString(evt.target.result);
                             if (parsed.header.insunits == '1') {
                                 defaultDpiValue = 72;

@@ -4,6 +4,7 @@ define(function(){
     return {
         INFO                        : 'INFO',
         WARNING                     : 'WARNING',
+        WARNING_WITH_CHECKBOX       : 'WARNING_WITH_CHECKBOX',
         ERROR                       : 'ERROR',
         YES_NO                      : 'YES_NO',
         RETRY_CANCEL                : 'RETRY_CANCEL',
@@ -16,6 +17,7 @@ define(function(){
         SHOW_ERROR                  : 'SHOW_ERROR',
         SHOW_POPUP_INFO             : 'SHOW_POPUP_INFO',
         SHOW_POPUP_WARNING          : 'SHOW_POPUP_WARNING',
+        SHOW_POPUP_CHECKBOX_WARNING : 'SHOW_POPUP_CHECKBOX_WARNING',
         SHOW_POPUP_ERROR            : 'SHOW_POPUP_ERROR',
         SHOW_POPUP_RETRY            : 'SHOW_POPUP_RETRY',
         SHOW_POPUP_RETRY_ABORT      : 'SHOW_POPUP_RETRY_ABORT',
