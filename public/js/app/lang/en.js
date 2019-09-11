@@ -1532,7 +1532,7 @@ define(function() {
             camera_fail_to_transmit_image: 'Something went wrong with image transmission. Please try restarting your Beambox or contact us.'
         },
         machine_status: {
-            '-10': 'Raw mode',
+            '-10': 'Maintain mode',
             '-2': 'Scanning',
             '-1': 'Maintaining',
             0: 'Idle',

@@ -1529,7 +1529,7 @@ define(function() {
             camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。'
         },
         machine_status: {
-            '-10': '原生模式',
+            '-10': '動作模式',
             '-2': '掃描中',
             '-1': '維護中',
             0: '待命中',
