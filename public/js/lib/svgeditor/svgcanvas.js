@@ -2224,15 +2224,14 @@ define([
                         };
                         if (justClearSelection) {
                             justClearSelection = false;
-                        } else {
-                            BeamboxActions.startDrawingPreviewBlob();
+                        } 
+                        BeamboxActions.startDrawingPreviewBlob();
 
-                            if (start_x === real_x && start_y === real_y) {
-                                PreviewModeController.preview(real_x, real_y, true);
-                            } else {
-                                PreviewModeController.previewRegion(start_x, start_y, real_x, real_y);
-                            }
-                        };
+                        if (start_x === real_x && start_y === real_y) {
+                            PreviewModeController.preview(real_x, real_y, true);
+                        } else {
+                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y);
+                        }
                         current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
