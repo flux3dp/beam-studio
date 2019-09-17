@@ -1126,6 +1126,9 @@ define(function() {
                     cancel: '取消',
                     save: '儲存參數',
                     name: '名稱',
+                    default: '預設',
+                    customized: '自訂參數清單',
+                    inuse: '使用中',
                     dropdown: {
                         wood_3mm_cutting: '木板 - 3mm 切割',
                         wood_5mm_cutting: '木板 - 5mm 切割',
@@ -1166,7 +1169,10 @@ define(function() {
                         min: 1,
                         max: 100,
                         step: 0.1
-                    }
+                    },
+                    para_in_use: '此參數已在使用中。',
+                    do_not_adjust_default_para: '無法調整預設參數。',
+                    existing_name: '已存在此名稱的自訂參數。'
                 },
             },
             bottom_right_panel: {

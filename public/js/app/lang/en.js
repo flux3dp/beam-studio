@@ -1129,6 +1129,9 @@ define(function() {
                     cancel: 'CANCEL',
                     save: 'SAVE',
                     name: 'Name',
+                    default: 'Default',
+                    customized: 'Customized list',
+                    inuse: 'Using',
                     dropdown: {
                         wood_3mm_cutting: 'Wood - 3mm Cutting',
                         wood_5mm_cutting: 'Wood - 5mm Cutting',
@@ -1169,7 +1172,10 @@ define(function() {
                         min: 1,
                         max: 100,
                         step: 0.1
-                    }
+                    },
+                    para_in_use: 'This parameter is being used.',
+                    do_not_adjust_default_para: 'Default parameter can not be adjusted.',
+                    existing_name: 'This parameter name has been used.'
                 },
             },
             bottom_right_panel: {
