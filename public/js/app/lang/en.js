@@ -1061,7 +1061,7 @@ define(function() {
                 import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
                 or_turn_off_borderless_mode: ' Or turn off borderless mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
-                dxf_version_waring: 'The version of this Dxf file is not 2000, there might be potential incompatibility problems.',
+                dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
                 dont_show_again: 'Don\'t Show Again'
             },
             left_panel: {

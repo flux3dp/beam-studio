@@ -5665,7 +5665,7 @@ define([
                                 let autoCadVersion = evt.target.result.match(/AC\d+/);
                                 if (autoCadVersion) {
                                     autoCadVersion = autoCadVersion[0].substring(2 ,autoCadVersion[0].length);
-                                    if (autoCadVersion !== '1015')
+                                    if (autoCadVersion !== '1027')
                                     AlertActions.showPopupCheckboxWarning(
                                         'dxf version warning',
                                         LANG.popup.dxf_version_waring,

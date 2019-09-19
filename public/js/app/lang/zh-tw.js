@@ -1058,7 +1058,7 @@ define(function() {
                 import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
                 or_turn_off_borderless_mode: '或是關閉開蓋模式',
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
-                dxf_version_waring: '此 Dxf 檔版本非 2000 版，可能有潛在的不相容風險。',
+                dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
                 dont_show_again: '別再顯示此提醒'
             },
             left_panel: {
