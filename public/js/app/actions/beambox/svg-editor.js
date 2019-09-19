@@ -5657,19 +5657,31 @@ define([
                 };
                 const importDxf = async file => {
                     let defaultDpiValue = 25.4;
+                    let parsed = null;
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = evt => {
-                            const parsed = Dxf2Svg.parseString(evt.target.result);
+                            parsed = Dxf2Svg.parseString(evt.target.result);
                             if (parsed.header.insunits == '1') {
-                                defaultDpiValue = 72;
+                                defaultDpiValue = 25.4;
                             }
-                            const svg = Dxf2Svg.toSVG(parsed);
-                            resolve(svg);
+                            if (parsed.header.insunits == '2') {
+                                defaultDpiValue = 304.8;
+                            }
+                            if (parsed.header.insunits == '4') {
+                                defaultDpiValue = 1;
+                            }
+                            if (parsed.header.insunits == '5') {
+                                defaultDpiValue = 10;
+                            }
+                            if (parsed.header.insunits == '6') {
+                                defaultDpiValue = 100;
+                            }
+                            resolve();
                         };
                         reader.readAsText(file);
                     });
-                    const dpi = await new Promise((resolve, reject) => {
+                    const unitLength = await new Promise((resolve, reject) => {
                         // I would like to use jsx expression, but I don't know how to make jsx compatible with requirejs's shim and dep feature
                         Announcement.post(
                             React.createElement(
@@ -5689,22 +5701,20 @@ define([
                             ), 'DXF_DPI_SELECTOR',
                             null
                         );
-                    });
+                    })
 
                     const resizedSvg = (function(){
-                        const xml = (new window.DOMParser()).parseFromString(parsedSvg, 'text/xml');
-                        const $svgBase = $(xml).find('svg');
-                        const originWidth = $svgBase.attr('width');
-                        const originHeight = $svgBase.attr('height');
-
-                        // 72 is default dpi which is the same as svgcanvas.importSvgString()
-                        $svgBase.attr('width', originWidth * 72 / dpi);
-                        $svgBase.attr('height', originHeight * 72 / dpi);
-
-                        return new XMLSerializer().serializeToString($svgBase.get(0));
+                        if (!parsed) {
+                            alert("DXF Parsing Error");
+                            $('#dialog_box').hide();
+                            return;
+                        }
+                        const svg = Dxf2Svg.toSVG(parsed, unitLength * 10);
+                        return svg;
                     })();
-
-                    const newElement = svgCanvas.importSvgString(resizedSvg, 'layer');
+                    console.log("Resized svg", resizedSvg);
+                    importBvgString(resizedSvg);
+                    /* const newElement = svgCanvas.importSvgString(resizedSvg, 'layer');
 
                     svgCanvas.ungroupSelectedElement();
                     svgCanvas.ungroupSelectedElement();
@@ -5719,55 +5729,59 @@ define([
                     }
 
                     svgCanvas.setSvgElemPosition('x', 0);
-                    svgCanvas.setSvgElemPosition('y', 0);
+                    svgCanvas.setSvgElemPosition('y', 0);*/
                     // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
                     $('#dialog_box').hide();
                 };
+
+                const importBvgString = (str) => {
+                    editor.loadFromString(str.replace(/STYLE>/g, 'style>'));
+                    // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
+                    if (typeof(str) === 'string') {
+                        let tmp = str.substr(str.indexOf('<use')).split('<use');
+
+                        for(let i = 1; i < tmp.length; ++i) {
+                            let elem, match, id, wireframe, xform;
+
+                            tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
+                            match = tmp[i].match(/id="svg_\d+"/)[0];
+                            id = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/data-xform="[^"]*"/)[0];
+                            xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/data-wireframe="[a-z]*"/);
+                            if (match) {
+                                match = match[0];
+                                wireframe = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            }
+
+                            elem = document.getElementById(id);
+                            elem.setAttribute('data-xform', xform);
+                            elem.setAttribute('data-wireframe', wireframe === 'true');
+                        }
+                        match = str.match(/data-rotary_mode="[a-zA-Z]+"/);
+                        if (match) {
+                            let rotaryMode = match[0].substring(18, match[0].length - 1);
+                            rotaryMode = rotaryMode === 'true';
+                            svgCanvas.setRotaryMode(rotaryMode);
+                            svgCanvas.runExtensions('updateRotaryAxis');
+                            BeamboxPreference.write('rotary_mode', rotaryMode);
+                        }
+                        match = str.match(/data-engrave_dpi="[a-zA-Z]+"/);
+                        if (match) {
+                            let engraveDpi = match[0].substring(18, match[0].length - 1);
+                            BeamboxPreference.write('engrave_dpi', engraveDpi);
+                        } else {
+                            BeamboxPreference.write('engrave_dpi', 'medium');
+                        }
+                    }
+                }
 
                 const importBvg = async (file) => {
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {
                             let str = evt.target.result;
-                            editor.loadFromString(str.replace(/STYLE>/g, 'style>'));
-                            // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
-                            if (typeof(str) === 'string') {
-                                let tmp = str.substr(str.indexOf('<use')).split('<use');
-
-                                for(let i = 1; i < tmp.length; ++i) {
-                                    let elem, match, id, wireframe, xform;
-
-                                    tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
-                                    match = tmp[i].match(/id="svg_\d+"/)[0];
-                                    id = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                                    match = tmp[i].match(/data-xform="[^"]*"/)[0];
-                                    xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                                    match = tmp[i].match(/data-wireframe="[a-z]*"/);
-                                    if (match) {
-                                        match = match[0];
-                                        wireframe = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                                    }
-
-                                    elem = document.getElementById(id);
-                                    elem.setAttribute('data-xform', xform);
-                                    elem.setAttribute('data-wireframe', wireframe === 'true');
-                                }
-                                match = str.match(/data-rotary_mode="[a-zA-Z]+"/);
-                                if (match) {
-                                    let rotaryMode = match[0].substring(18, match[0].length - 1);
-                                    rotaryMode = rotaryMode === 'true';
-                                    svgCanvas.setRotaryMode(rotaryMode);
-                                    svgCanvas.runExtensions('updateRotaryAxis');
-                                    BeamboxPreference.write('rotary_mode', rotaryMode);
-                                }
-                                match = str.match(/data-engrave_dpi="[a-zA-Z]+"/);
-                                if (match) {
-                                    let engraveDpi = match[0].substring(18, match[0].length - 1);
-                                    BeamboxPreference.write('engrave_dpi', engraveDpi);
-                                } else {
-                                    BeamboxPreference.write('engrave_dpi', 'medium');
-                                }
-                            }
+                            importBvgString(str);
                         };
                         reader.readAsText(file);
                     });

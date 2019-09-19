@@ -1669,6 +1669,9 @@
     exports.entityToPolyline = _entityToPolyline2.default;
     },{"./BoundingBox":1,"./config":2,"./denormalise":3,"./entityToPolyline":4,"./groupEntitiesByLayer":5,"./handlers/blocks":6,"./handlers/entities":7,"./handlers/header":21,"./handlers/tables":22,"./toSVG":24,"./util/colors":25}],24:[function(require,module,exports){
     'use strict';
+    /****************************
+     * This is packed "toSVG" function for replacing the required module
+     * *************************************/
 
     Object.defineProperty(exports, "__esModule", {
       value: true
@@ -1717,14 +1720,17 @@
         return acc;
       }, '');
 
-      return `<path fill="transparent" stroke="#000" stroke-width="1px" vector-effect="non-scaling-stroke" d="${d}"/>`;
+      return `<path fill="none" stroke="#000000" stroke-width="1px" vector-effect="non-scaling-stroke" d="${d}"/>`;
     };
 
     /**
      * Convert the interpolate polylines to SVG
      */
 
-    exports.default = function (parsed) {
+    exports.default = function (parsed, scale) {
+      if (scale == null) {
+        scale = 1;
+      }
       var entities = (0, _denormalise2.default)(parsed);
       var polylines = entities.map(function (e) {
         return (0, _entityToPolyline2.default)(e);
@@ -1733,15 +1739,13 @@
       var bbox = new _BoundingBox2.default();
       polylines.forEach(function (polyline) {
         polyline.forEach(function (point) {
-          bbox.expandByPoint(point[0], point[1]);
+          bbox.expandByPoint(point[0] * scale, point[1] * scale);
         });
       });
 
       var paths = [];
-      polylines.forEach(function (polyline, i) {
-        var entity = entities[i];
-        var layerTable = null;
-
+      var outputLayers = {};
+      function getLayerColor(entity) {
         try {
             var layerTable = parsed.tables.layers[entity.layer];
         } catch (e) {
@@ -1755,19 +1759,41 @@
           _logger2.default.warn('Color index', colorNumber, 'invalid, defaulting to black');
           rgb = [0, 0, 0];
         }
+        return rgb;
+      }
+      polylines.forEach(function (polyline, i) {
+        var entity = entities[i];
+        let rgb = getLayerColor(entity);
 
         var p2 = polyline.map(function (p) {
-          return [p[0], bbox.maxY - p[1]];
+          return [p[0] * scale, bbox.maxY - p[1] * scale];
         });
-        paths.push(polylineToPath(rgb, p2));
+        let polylinePathContent = polylineToPath(rgb, p2);
+        if (!outputLayers[entity.layer]) {
+          outputLayers[entity.layer] = {
+            entity: entity,
+            paths: []
+          };
+        }
+        outputLayers[entity.layer].paths.push(polylinePathContent);
+        paths.push(polylinePathContent);
       });
-
+      let groupContents = [];
+      for (var i in outputLayers) {
+        let layer = outputLayers[i];
+        let rgbCode = '#' + getLayerColor(layer.entity).map(x => x.toString(16).padStart(2,'0')).join('').toUpperCase();
+        if (rgbCode == '#FFFFFF') {
+          rgbCode = '#000000';
+        }
+        let layerContent = `<g data-wireframe="1" data-repeat="1" data-strength="20" data-speed="20" data-color="${rgbCode}" class="layer"><title>${i}</title>${layer.paths.join('')}</g>`;
+        groupContents.push(layerContent);
+      }
       var svgString = '<?xml version="1.0"?>';
       svgString += '<svg xmlns="http://www.w3.org/2000/svg"';
       svgString += ' xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"';
       svgString += ' preserveAspectRatio="xMinYMin meet"';
       svgString += ' viewBox="' + (-1 + bbox.minX) + ' ' + -1 + ' ' + (bbox.width + 2) + ' ' + (bbox.height + 2) + '"';
-      svgString += ' width="' + (bbox.width + 2) + '" height="' + (bbox.height + 2) + '">' + paths.join('') + '</svg>';
+      svgString += ' width="' + (bbox.width + 2) + '" height="' + (bbox.height + 2) + '">' + groupContents.join('') + '</svg>';
       return _prettyData.pd.xml(svgString);
     };
     },{"./BoundingBox":1,"./denormalise":3,"./entityToPolyline":4,"./util/colors":25,"./util/logger":27,"pretty-data":41}],25:[function(require,module,exports){
