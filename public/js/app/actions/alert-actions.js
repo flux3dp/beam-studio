@@ -54,6 +54,12 @@ define([
             });
         },
 
+        showPopupCheckboxWarning: function(id, message, caption, checkbox, args) {
+            AlertDispatcher.dispatch({
+                actionType: AlertConstants.SHOW_POPUP_CHECKBOX_WARNING, caption, message, id, checkbox, args
+            });
+        },
+
         showPopupError: function(id, message, caption) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_ERROR, caption, message, id

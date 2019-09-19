@@ -1250,6 +1250,8 @@ svgedit.utilities.convertPath = function(path, toRel) {
 
 		switch (type) {
 			case 1: // z,Z closepath (Z/z)
+				curx = last_m ? last_m[0] : 0;
+				cury = last_m ? last_m[1] : 0;
 				d += 'z';
 				break;
 			case 12: // absolute horizontal line (H)
@@ -1303,7 +1305,7 @@ svgedit.utilities.convertPath = function(path, toRel) {
 					curx = x;
 					cury = y;
 				}
-				if (type === 3) {last_m = [curx, cury];}
+				if (type === 2 || type === 3) {last_m = [curx, cury];}
 
 				d += pathDSegment(letter,[[x, y]]);
 				break;

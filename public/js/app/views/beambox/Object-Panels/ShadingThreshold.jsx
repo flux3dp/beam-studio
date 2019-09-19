@@ -26,7 +26,7 @@ define([
 
         componentWillReceiveProps: function(nextProps) {
             this.setState({
-                shading: nextProps.shading,
+                shading: this.props.$me.attr('data-shading') === 'true',
                 threshold: nextProps.threshold
             });
         },

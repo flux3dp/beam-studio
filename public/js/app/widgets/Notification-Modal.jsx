@@ -13,6 +13,7 @@ define([
         acceptableTypes = [
             AlertConstants.INFO,
             AlertConstants.WARNING,
+            AlertConstants.WARNING_WITH_CHECKBOX,
             AlertConstants.ERROR,
             AlertConstants.YES_NO,
             AlertConstants.RETRY_CANCEL,
@@ -110,12 +111,13 @@ define([
 
             _getTypeTitle: function() {
                 var types = {};
-                types[AlertConstants.INFO]               = lang.info;
-                types[AlertConstants.WARNING]            = lang.warning;
-                types[AlertConstants.ERROR]              = lang.error;
-                types[AlertConstants.RETRY_CANCEL]       = lang.error;
-                types[AlertConstants.RETRY_ABORT_CANCEL] = lang.error;
-                types[AlertConstants.CUSTOM_CANCEL]      = lang.error;
+                types[AlertConstants.INFO]                  = lang.info;
+                types[AlertConstants.WARNING]               = lang.warning;
+                types[AlertConstants.WARNING_WITH_CHECKBOX] = lang.warning;
+                types[AlertConstants.ERROR]                 = lang.error;
+                types[AlertConstants.RETRY_CANCEL]          = lang.error;
+                types[AlertConstants.RETRY_ABORT_CANCEL]    = lang.error;
+                types[AlertConstants.CUSTOM_CANCEL]         = lang.error;
 
                 return this.props.caption || types[this.props.type] || '';
             },
@@ -129,6 +131,7 @@ define([
                     break;
                 case AlertConstants.INFO:
                 case AlertConstants.WARNING:
+                case AlertConstants.WARNING_WITH_CHECKBOX:
                 case AlertConstants.ERROR:
                     caption = lang.ok;
                     break;
@@ -230,17 +233,27 @@ define([
                 return buttons;
             },
 
+            _getCheckbox: function() {
+                if (this.props.type === AlertConstants.WARNING_WITH_CHECKBOX) {
+                    return this.props.customText;
+                }
+                return null;
+            },
+
             render: function() {
                 if(!this.props.open) {
                     return (<div/>);
                 }
                 var typeTitle = this._getTypeTitle(),
                     buttons = this._getButtons(),
+                    checkbox = this._getCheckbox(),
                     content = (
                         <Alert
                             lang={lang}
                             caption={typeTitle}
                             message={this.props.message}
+                            checkbox={checkbox}
+                            checkedCallback={this.props.checkedCallback}
                             buttons={buttons}
                             imgClass={this.props.imgClass}
                             images={this.props.images}

@@ -158,6 +158,10 @@ define([
                     AlertStore.emit(POPUP_EVENT, AlertConstants.WARNING, payload.id, payload.caption, payload.message);
                 },
 
+                'SHOW_POPUP_CHECKBOX_WARNING': function() {
+                    AlertStore.emit(POPUP_EVENT, AlertConstants.WARNING_WITH_CHECKBOX, payload.id, payload.caption, payload.message, payload.checkbox, payload.args);
+                },
+
                 'SHOW_POPUP_ERROR': function() {
                     AlertStore.emit(POPUP_EVENT, AlertConstants.ERROR, payload.id, payload.caption, payload.message);
                 },

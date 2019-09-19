@@ -287,6 +287,7 @@ define([
             svgCanvas.setMode('preview');
         },
         saveFile: function() {
+            svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
             const defaultFileName = svgCanvas.getLatestImportFileName() || 'untitled';
             const langFile = i18n.lang.topmenu.file;

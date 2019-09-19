@@ -634,7 +634,7 @@
                 border-radius: 2px;
                 background: #FFF;
                 padding: 20px 20px 0;
-                width: 440px;
+                width: 640px;
 
                 .title {
                     color: #626262;
@@ -642,23 +642,56 @@
                     font-weight: 600;
                     line-height: 18px;
                 }
-
-                .config-list {
-                    border: 2px solid #E0E0DF;
-                    height: 110px;
-                    margin-top: 20px;
-                    overflow-y: auto;
+                .config-list-columns {
                     width: 100%;
+                    margin-top: 15px;
+                    display: inline-flex;
+                }
+
+                .operation-buttons {
+                    width: 10%;
+                    font-size: 16px;
+                    color: #E0E0DF;
+                    padding-top: 58px;
+                    .operation-button {
+                        text-align: center;
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+                        &:hover {
+                            color: #888888;
+                        }
+                    }
+                }
+                .config-list-column {
+                    width: 45%;
+                    .title {
+                        color: #888888;
+                        font-weight: 500;
+                    }
+                }
+                .config-list {
+                    margin-top: 5px;
+                    border: 2px solid #E0E0DF;
+                    height: 160px;
+                    overflow-y: auto;
 
                     .config-entry {
                         border-bottom: 1px solid #E0E0DF;
                         color: $primaryColor;
                         cursor: pointer;
-                        height: 40px;
-                        line-height: 40px;
+                        height: 20px;
+                        line-height: 20px;
 
                         span {
                             margin-left: 10px;
+                        }
+                        .sub-text {
+                            margin-left: 0px;
+                            margin-right: 5px;
+                            float: right;
+                            font-style: italic;
+                            font-size: 10px;
+                            font-weight: 300;
                         }
                     }
                     .selected {
@@ -669,6 +702,9 @@
 
                 .controls {
                     padding: 20px 0;
+                    &.disable {
+                        opacity: 0.5;
+                    }
 
                     .control {
                         color: #888;
@@ -686,10 +722,22 @@
                             width: 100px;
                             align-self: center;
                         }
-
+                        .ui-control-unit-input-v2 {
+                            margin: 0px 0px 0px 5px;
+                            width: 110px;
+                            input {
+                                height: 28px;
+                                width: 100%;
+                                font-size: 13px;
+                                padding: 3px 0px 3px 5px;
+                            }
+                            .unit {
+                                margin-left: -30px;
+                            }
+                        }
                         .value-text {
                             width: 120px;
-                            margin: 5px 0 5px 5px;
+                            margin: 5px 0 5px 2px;
                             padding: 0 5px;
 
                             &::after {
@@ -728,15 +776,15 @@
                         border-radius: 0;
                         font-size: 15px;
                         line-height: 30px;
-                        margin: 0;
+                        margin: 0 10px 0 0;
                         &:hover {
                             border: 2px solid #424242;
                             color: #424242;
                         }
                     }
 
-                    .btn:first-child {
-                        margin: 0 10px 0 0;
+                    .btn:last-child {
+                        margin: 0;
                     }
                 }
             }

@@ -77,7 +77,7 @@ define([
         args = args || {};
         var _id = 'TopMenu',
             lang = args.state.lang,
-            
+
             getLog = async function (printer, log) {
                 await DeviceMaster.select(printer);
                 ProgressActions.open(ProgressConstants.WAITING, '');
@@ -344,7 +344,7 @@ define([
                         const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`
                         AlertActions.showPopupInfo('', message)
                     }
-                    
+
                 };
 
                 _action['UPDATE_FIRMWARE'] = (device) => {
@@ -532,7 +532,7 @@ define([
                 };
 
                 if (PreviewModeController.isPreviewMode()) {
-                    await PreviewModeController.end(); 
+                    await PreviewModeController.end();
                 }
 
                 const layers = $('#svgcontent > g.layer').toArray();
@@ -555,8 +555,17 @@ define([
                 for (let i = 0; i < layers.length; ++i) {
                     const layer = layers[i];
                     if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
-                        if ($(layer).find('path').length > 0) {
-                            isTooFastForPath = true;
+                        const paths = $(layer).find('path');
+                        for (let j = 0; j < paths.length; j++) {
+                            const path = paths[j],
+                                  fill = $(path).attr('fill'),
+                                  fill_op = $(path).attr('fill-opacity');
+                            if (!fill || fill == '#FFF' || fill == '#FFFFFF' || fill_op == 0) {
+                                isTooFastForPath = true;
+                                break;
+                            }
+                        }
+                        if (isTooFastForPath) {
                             break;
                         }
                     }
@@ -593,7 +602,7 @@ define([
                         const next = () => {
                             ProgressActions.close();
                             self._onSuccessConnected(device, e);
-                        } 
+                        }
                         ProgressActions.open(ProgressConstants.NONSTOP);
                         checkDeviceStatus(device).then(next);
                     }
@@ -627,7 +636,7 @@ define([
                     return;
                 } else {
                     this.setState({ showDeviceList: false });
-                    BottomRightFuncs.uploadFcode(device);   
+                    BottomRightFuncs.uploadFcode(device);
                 }
             },
 
@@ -721,7 +730,7 @@ define([
                 }
                 let style;
                 if (process.platform === 'win32') {
-                    style = { 
+                    style = {
                         paddingTop: '15px'
                     };
                 }
@@ -746,7 +755,7 @@ define([
             _renderTopBtn: function(id, label, onClick) {
                 let style;
                 if (process.platform === 'win32') {
-                    style = { 
+                    style = {
                         paddingTop: '15px'
                     };
                 }
@@ -763,7 +772,7 @@ define([
             _renderZoomBtn: function(id, label, onClick) {
                 let style;
                 if (process.platform === 'win32') {
-                    style = { 
+                    style = {
                         paddingTop: '15px'
                     };
                 }
@@ -809,7 +818,6 @@ define([
 
                 let {left_scroll_cue, right_scroll_cue}  = this._renderScrollCue();
                 let lang = i18n.get();
-                console.log("Props...", this.props);
                 let barTitle = lang.topbar.titles[this.props.page] || this.props.page;
 
                 menuClass = ClassNames('menu', { show: this.state.showDeviceList });

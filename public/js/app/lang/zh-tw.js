@@ -1056,7 +1056,10 @@ define(function() {
                 select_first: '請先選取物件以繼續',
                 select_at_least_two: '請選取兩個物件以繼續',
                 import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
-                or_turn_off_borderless_mode: '或是關閉開蓋模式'
+                or_turn_off_borderless_mode: '或是關閉開蓋模式',
+                svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
+                dxf_version_waring: '此 Dxf 檔版本非 2000 版，可能有潛在的不相容風險。',
+                dont_show_again: '別再顯示此提醒'
             },
             left_panel: {
                 insert_object: '插入物件',
@@ -1123,6 +1126,9 @@ define(function() {
                     cancel: '取消',
                     save: '儲存參數',
                     name: '名稱',
+                    default: '預設',
+                    customized: '自訂參數清單',
+                    inuse: '使用中',
                     dropdown: {
                         wood_3mm_cutting: '木板 - 3mm 切割',
                         wood_5mm_cutting: '木板 - 5mm 切割',
@@ -1163,7 +1169,10 @@ define(function() {
                         min: 1,
                         max: 100,
                         step: 0.1
-                    }
+                    },
+                    para_in_use: '此參數已在使用中。',
+                    do_not_adjust_default_para: '無法調整預設參數。',
+                    existing_name: '已存在此名稱的自訂參數。'
                 },
             },
             bottom_right_panel: {
@@ -1188,6 +1197,7 @@ define(function() {
                 sharpen: '銳化',
                 sharpness: '鋭化強度',
                 crop: '裁剪',
+                curve: '曲線',
                 start: '開始',
                 processing: '處理中',
                 invert: '色彩反轉',
@@ -1526,7 +1536,7 @@ define(function() {
             camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。'
         },
         machine_status: {
-            '-10': '原生模式',
+            '-10': '動作模式',
             '-2': '掃描中',
             '-1': '維護中',
             0: '待命中',

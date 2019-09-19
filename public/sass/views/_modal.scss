@@ -118,6 +118,15 @@
         .message {
             width: 100%;
         }
+        .modal-checkbox {
+            width: 100%;
+            text-align: left;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            input {
+                margin: 0 5px 0 0;
+            }
+        }
 
         .btn {
             min-width: 50px;

@@ -1059,7 +1059,10 @@ define(function() {
                 select_first: 'Select an object first.',
                 select_at_least_two: 'Select two objects to proceed',
                 import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
-                or_turn_off_borderless_mode: ' Or turn off borderless mode.'
+                or_turn_off_borderless_mode: ' Or turn off borderless mode.',
+                svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
+                dxf_version_waring: 'The version of this Dxf file is not 2000, there might be potential incompatibility problems.',
+                dont_show_again: 'Don\'t Show Again'
             },
             left_panel: {
                 insert_object: 'Insert Object',
@@ -1126,6 +1129,9 @@ define(function() {
                     cancel: 'CANCEL',
                     save: 'SAVE',
                     name: 'Name',
+                    default: 'Default',
+                    customized: 'Customized list',
+                    inuse: 'Using',
                     dropdown: {
                         wood_3mm_cutting: 'Wood - 3mm Cutting',
                         wood_5mm_cutting: 'Wood - 5mm Cutting',
@@ -1166,7 +1172,10 @@ define(function() {
                         min: 1,
                         max: 100,
                         step: 0.1
-                    }
+                    },
+                    para_in_use: 'This parameter is being used.',
+                    do_not_adjust_default_para: 'Default parameter can not be adjusted.',
+                    existing_name: 'This parameter name has been used.'
                 },
             },
             bottom_right_panel: {
@@ -1191,6 +1200,7 @@ define(function() {
                 sharpen: 'Sharpen',
                 sharpness: 'Sharpness',
                 crop: 'Crop',
+                curve: 'Curve',
                 start: 'Start',
                 processing: 'Processing',
                 invert: 'Invert Color',
@@ -1529,7 +1539,7 @@ define(function() {
             camera_fail_to_transmit_image: 'Something went wrong with image transmission. Please try restarting your Beambox or contact us.'
         },
         machine_status: {
-            '-10': 'Raw mode',
+            '-10': 'Maintain mode',
             '-2': 'Scanning',
             '-1': 'Maintaining',
             0: 'Idle',

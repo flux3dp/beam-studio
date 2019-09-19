@@ -1364,7 +1364,7 @@ define(function() {
             camera_fail_to_transmit_image: '相机传输照片异常，请将 Beambox 重新开机。如果问题持续发生，请与我们联系。'
         },
         machine_status: {
-            '-10': '原生模式',
+            '-10': '動作模式',
             '-2': '扫描中',
             '-1': '维护中',
             0: '待命中',

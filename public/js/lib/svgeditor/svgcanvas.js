@@ -2224,15 +2224,14 @@ define([
                         };
                         if (justClearSelection) {
                             justClearSelection = false;
-                        } else {
-                            BeamboxActions.startDrawingPreviewBlob();
+                        } 
+                        BeamboxActions.startDrawingPreviewBlob();
 
-                            if (start_x === real_x && start_y === real_y) {
-                                PreviewModeController.preview(real_x, real_y, true);
-                            } else {
-                                PreviewModeController.previewRegion(start_x, start_y, real_x, real_y);
-                            }
-                        };
+                        if (start_x === real_x && start_y === real_y) {
+                            PreviewModeController.preview(real_x, real_y, true);
+                        } else {
+                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y);
+                        }
                         current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
@@ -4676,6 +4675,9 @@ define([
         // Returns:
         // The current drawing as raw SVG XML text.
         this.getSvgString = function () {
+            if (tempGroup) {
+                this.ungroupTempGroup();
+            }
             save_options.apply = false;
             return this.svgCanvasToString();
         };
@@ -8528,7 +8530,7 @@ define([
                 'element': type,
                 'attr': {
                     'id': getNextId(),
-                    'data-tempgroupp': true
+                    'data-tempgroup': true
                 }
             });
 
@@ -9256,8 +9258,9 @@ define([
                 if (elem.tagName === 'use') {
                     bbox = this.getSvgRealLocation(elem);
                 } else {
-                    bbox = elem.getBBox();
+                    bbox = this.calculateTransformedBBox(elem);
                 }
+
                 const center = {x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2};
                 const flipPara = {horizon, vertical};
                 startTransform = elem.getAttribute('transform'); //???maybe non need
@@ -9303,6 +9306,8 @@ define([
 
             const angle = svgedit.utilities.getRotationAngle(elem);
             canvas.undoMgr.beginUndoableChange('transform', [elem]);
+            canvas.setRotationAngle(0, true, elem);
+            svgedit.recalculate.recalculateDimensions(elem);
             canvas.setRotationAngle(-angle, true, elem);
             let cmd = canvas.undoMgr.finishUndoableChange();
             if (!cmd.isEmpty()) {
@@ -9722,7 +9727,7 @@ define([
 
 
         this.getSvgRealLocation = function (elem) {
-            if (elem.tagName === 'path' || elem.tagName === 'polygon') {
+            if (elem.tagName === 'polygon' || elem.tagName === 'polygon') {
                 return elem.getBBox();
             }
             const ts = $(elem).attr('transform') || '';
@@ -9768,6 +9773,40 @@ define([
                 width: width,
                 height: height
             };
+        };
+
+        this.calculateTransformedBBox = function(elem) {
+            const tlist = svgedit.transformlist.getTransformList(elem);
+            const bbox = elem.getBBox();
+            points = [
+                {x: bbox.x, y: bbox.y},
+                {x: bbox.x + bbox.width, y: bbox.y},
+                {x: bbox.x, y: bbox.y + bbox.height},
+                {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
+            ]
+            for (let i = tlist.numberOfItems-1; i >= 0; i--) {
+                const t = tlist.getItem(i);
+                if (t.type === 4) {
+                    break;
+                }
+                points = points.map(p => {
+                    const x = t.matrix.a * p.x + t.matrix.c * p.y + t.matrix.e;
+                    const y = t.matrix.b * p.x + t.matrix.d * p.y + t.matrix.f;
+                    return {x, y};
+                });
+            };
+            console.log(points);
+            let minX = points[0].x;
+            let minY = points[0].y;
+            let maxX = points[0].x;
+            let maxY = points[0].y;
+            points.forEach(p => {
+                minX = Math.min(p.x, minX);
+                maxX = Math.max(p.x, maxX);
+                minY = Math.min(p.y, minY);
+                maxY = Math.max(p.y, maxY);
+            });
+            return {x: minX, y:minY, width: maxX - minX, height: maxY - minY};
         };
 
         String.prototype.format = function () {
