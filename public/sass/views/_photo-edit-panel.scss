@@ -401,6 +401,25 @@
             font-weight: 500;
             letter-spacing: 0.5px;
         }
+        .curve-panel {
+            margin-left: 20px;
+            .curve-control-container {
+                width: 260px;
+                height: 260px;
+                overflow: hidden;
+            }
+            .curve-control-svg {
+                border: 2px solid #B3B3B3;
+                width: 260px;
+                height: 260px;
+                rect {
+                    cursor: crosshair;
+                }
+                path {
+                    cursor: crosshair;
+                }
+            }
+        }
     }
     .footer {
         background: #fff;

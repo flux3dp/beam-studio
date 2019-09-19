@@ -8,6 +8,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'jsx!widgets/Modal',
+    'jsx!widgets/Curve-Control',
     'jsx!widgets/Slider-Control',
     'lib/cropper'
 ], function(
@@ -18,6 +19,7 @@ define([
     ProgressActions,
     ProgressConstants,
     Modal,
+    CurveControl,
     SliderControl,
     Cropper
 ) {
@@ -27,8 +29,10 @@ define([
     class PhotoEditPanel extends React.Component {
         constructor(props) {
             super(props);
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             this.state = {
                 origSrc: this.props.src,
+                previewSrc: this.props.src,
                 src: this.props.src,
                 srcHistory: [],
                 isCropping: false,
@@ -51,9 +55,63 @@ define([
         }
 
         componentDidMount() {
+            switch(this.props.mode) {
+                case 'sharpen':
+                case 'curve':
+                    this._handleDownSampling();
+                    break;
+                default:
+                    break;
+            }
         }
 
         componentWillUnmount() {
+        }
+
+        _handleDownSampling() {
+            const jimp = require('jimp');
+            let imgBlobUrl = this.state.origSrc;
+            let imageFile;
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            fetch(imgBlobUrl)
+                .then(res => res.blob())
+                .then((blob) => {
+                    var fileReader = new FileReader();
+                    fileReader.onloadend = (e) => {
+                        imageFile = e.target.result;
+                        imageFile = new Buffer.from(imageFile);
+                        
+                        jimp.read(imageFile)
+                            .then((image) => {
+                                if(Math.max(image.bitmap.width, image.bitmap.height) > 600) {
+                                    if (image.bitmap.width >= image.bitmap.height) {
+                                        image.resize(600, jimp.AUTO);
+                                    } else {
+                                        image.resize(jimp.AUTO, 600);
+                                    }
+                                    image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+                                        const newBlob = new Blob([buffer]);
+                                        const src = URL.createObjectURL(newBlob);
+                                        if (this.state.src !== this.state.origSrc) {
+                                            URL.revokeObjectURL(this.state.src);
+                                        }
+                                        this.state.previewSrc= src;
+                                        this.setState({src: src});
+                                        ProgressActions.close();
+                                    });
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                ProgressActions.close();
+                            });
+                    };
+                    fileReader.readAsArrayBuffer(blob);
+                })
+                .catch((err) => {
+                    d.reject(err);
+                    ProgressActions.close();
+                });
         }
 
         _handleCancel() {
@@ -108,6 +166,9 @@ define([
                 URL.revokeObjectURL(src);
                 src = this.state.srcHistory.pop();
             }
+            if (this.state.previewSrc !== this.state.origSrc) {
+                URL.revokeObjectURL(this.state.previewSrc);
+            }
             this.props.unmount();
         }
 
@@ -134,9 +195,17 @@ define([
             }
             let panelContent;
             let rightWidth = 40;
-            if (this.props.mode === 'sharpen') {
-                panelContent = this._renderSharpenPanel();
-                rightWidth = 390;
+            switch (this.props.mode) {
+                case 'sharpen':
+                    panelContent = this._renderSharpenPanel();
+                    rightWidth = 390;
+                    break;
+                case 'curve':
+                    panelContent = this._renderCurvePanel();
+                    rightWidth = 390;
+                    break;
+                default:
+                    break;
             }
             const maxAllowableWidth = $('.top-menu').width() - rightWidth;
             const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 180;
@@ -158,7 +227,10 @@ define([
                                     id='original-image'
                                     style={containerStyle}
                                     src={this.state.grayScaleUrl}
-                                    onLoad={()=>{onImgLoad()}}/>
+                                    onLoad={() => {
+                                        onImgLoad();
+                                        ProgressActions.close();
+                                    }}/>
                             </div>
                             {panelContent}
                         </div>
@@ -188,6 +260,7 @@ define([
             );
         }
 
+        // SHARPEN
         _renderSharpenPanel() {
             return (
                 <div className='right-part'>
@@ -256,6 +329,7 @@ define([
             } 
         }
 
+        // CROP
         _handleStartCrop() {
             if (this.state.isCropping) {
                 return;
@@ -339,6 +413,7 @@ define([
             }
         }
 
+        // INVERT
         _handleInvert() {
             const jimp = require('jimp');
             const d = $.Deferred();
@@ -379,6 +454,81 @@ define([
                 });
         }
 
+        // CURVE
+        _renderCurvePanel() {
+            return (
+                <div className='right-part'>
+                    <div className='curve-panel'>
+                        <div className='title'>{LANG.curve}</div>
+                        <CurveControl
+                            updateCurveFunction={this._updateCurveFunction.bind(this)}
+                            updateImage={this._handleCurve.bind(this)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        _updateCurveFunction(curvefunction) {
+            this.curvefunction = curvefunction;
+        }
+
+        _handleCurve(mode) {
+            const jimp = require('jimp');
+            const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
+            let imgBlobUrl;
+            if (mode === 'preview') {
+                imgBlobUrl = this.state.previewSrc;
+            } else {
+                imgBlobUrl = this.state.origSrc;
+            }
+            let imageFile;
+            fetch(imgBlobUrl)
+            .then(res => res.blob())
+            .then((blob) => {
+                var fileReader = new FileReader();
+                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                fileReader.onloadend = (e) => {
+                    imageFile = e.target.result;
+                    imageFile = new Buffer.from(imageFile);
+                    jimp.read(imageFile)
+                        .then((image) => {
+                            for (let i = 0; i < image.bitmap.data.length; i++) {
+                                if (i % 4 != 3) {
+                                    image.bitmap.data[i] =  curveFunc[image.bitmap.data[i]];
+                                }
+                            }
+                            image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
+                                const newBlob = new Blob([buffer]);
+                                const src = URL.createObjectURL(newBlob);
+                                if (this.state.src !== this.state.previewSrc) {
+                                    URL.revokeObjectURL(this.state.src);
+                                }
+                                if (mode === 'preview') {
+                                    this.setState({src: src});
+                                } else {
+                                    this.setState({src: src}, this._handleComplete);
+                                }
+                                ProgressActions.close();
+                            });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            ProgressActions.close();
+                        });
+                };
+                fileReader.readAsArrayBuffer(blob);
+            })
+            .catch((err) => {
+                console.log(err)
+                ProgressActions.close();
+            });
+        }
+
+        _handleCurveComplete() {
+            this._handleCurve('complete');
+        }
+
         _renderPhotoEditFooter() {
             if (this.props.mode === 'sharpen') {
                 return (
@@ -387,7 +537,8 @@ define([
                     {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
                 </div>
                 );
-            } else if (this.props.mode === 'crop') {
+            } 
+            if (this.props.mode === 'crop') {
                 const disableGoBack = (this.state.srcHistory.length === 0);
                 return (
                     <div className='footer'>
@@ -396,6 +547,14 @@ define([
                             })}
                         {this._renderFooterButton(LANG.apply, this._handleCrop.bind(this))}
                         {this._renderFooterButton(LANG.back, this._handleGoBack.bind(this), disableGoBack)}
+                        {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
+                    </div>
+                );
+            }
+            if (this.props.mode === 'curve') {
+                return (
+                    <div className='footer'>
+                        {this._renderFooterButton(LANG.okay, this._handleCurveComplete.bind(this))}
                         {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
                     </div>
                 );
@@ -421,15 +580,21 @@ define([
 
         render() {
             let renderContent;
-            if (this.props.mode === 'sharpen') {
-                renderContent = this._renderPhotoEditeModal();
-            } else if (this.props.mode === 'crop') {
-                renderContent = this._renderPhotoEditeModal();
-            } else if (this.props.mode === 'invert') {
-                this._handleInvert();
-                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                let timeout = window.setTimeout(this._handleComplete.bind(this) , 200);
-                renderContent = (<div/>)
+            switch (this.props.mode) {
+                case 'sharpen':
+                case 'crop':
+                case 'curve':
+                    renderContent = this._renderPhotoEditeModal();
+                    break;
+                case 'invert':
+                    this._handleInvert();
+                    ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                    let timeout = window.setTimeout(this._handleComplete.bind(this) , 200);
+                    renderContent = (<div/>)
+                    break;
+                default:
+                    renderContent = (<div/>)
+                    break;
             }
             return renderContent;
         }

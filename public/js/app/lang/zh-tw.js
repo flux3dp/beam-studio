@@ -1197,6 +1197,7 @@ define(function() {
                 sharpen: '銳化',
                 sharpness: '鋭化強度',
                 crop: '裁剪',
+                curve: '曲線',
                 start: '開始',
                 processing: '處理中',
                 invert: '色彩反轉',

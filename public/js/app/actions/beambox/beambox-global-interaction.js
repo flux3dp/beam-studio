@@ -50,6 +50,7 @@ define([
                 'IMAGE_CROP': () => FnWrapper.photoEdit('crop'),
                 'IMAGE_INVERT': () => FnWrapper.photoEdit('invert'),
                 'IMAGE_VECTORIZE': () => svgCanvas.imageToSVG(),
+                'IMAGE_CURVE': () => FnWrapper.photoEdit('curve'),
                 'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
                 'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),

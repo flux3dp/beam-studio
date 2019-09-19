@@ -1200,6 +1200,7 @@ define(function() {
                 sharpen: 'Sharpen',
                 sharpness: 'Sharpness',
                 crop: 'Crop',
+                curve: 'Curve',
                 start: 'Start',
                 processing: 'Processing',
                 invert: 'Invert Color',
