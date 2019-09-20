@@ -237,14 +237,16 @@ define([
                 let newSpeed = ReactDOM.findDOMNode(this.refs.configSpeed).value;
                 let newPower = ReactDOM.findDOMNode(this.refs.configPower).value;
                 const index = customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
-                customizedLaserConfigs[index].speed = newSpeed;
-                customizedLaserConfigs[index].power = newPower;
-                LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
+                if (!customizedLaserConfigs[index].isDefault) {
+                    customizedLaserConfigs[index].speed = newSpeed;
+                    customizedLaserConfigs[index].power = newPower;
+                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
+                }
             }
         },
 
         _handleApply: function() {
-            if (this.state.selectedItem != '') {
+            if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
                 this._handleSave();
                 document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
                 const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
@@ -624,7 +626,6 @@ define([
             });
 
             const disableControl = Boolean(!this.state.isSelectingCustomized) || Boolean(!selectedConfig) || Boolean(selectedConfig.isDefault);
-            console.log(disableControl);
 
             this.state.displaySpeed = this.state.displaySpeed || (selectedConfig ? selectedConfig.speed : 0);
             this.state.displayPower = this.state.displayPower || (selectedConfig ? selectedConfig.power : 0);
