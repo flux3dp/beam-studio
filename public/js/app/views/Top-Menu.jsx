@@ -214,7 +214,7 @@ define([
                     };
 
 
-                DeviceMaster.select(printer).then(function (status) {
+                DeviceMaster.select(printer).then((status) => {
                     checkStatus();
                 }).fail((resp) => {
                     AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);

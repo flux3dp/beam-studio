@@ -73,12 +73,14 @@ define([
         let d = $.Deferred();
         selectDevice(device).then((result) => {
             if (result == DeviceConstants.CONNECTED) {
-                d.resolve();
+                d.resolve(DeviceConstants.CONNECTED);
             } else {
                 d.reject(lang.message.connectionTimeout);
             }
         }, (error) => {
             console.error('Selection error in DeviceMaster. Should handle error here', error);
+        }).fail(() => {
+            d.reject();
         });
 
         return d.promise();
@@ -290,6 +292,7 @@ define([
                         }
                         else {
                             console.log('create device action failed');
+                            d.resolve();
                         }
                     }
                 });
