@@ -624,6 +624,10 @@ define([
         return SocketMaster.addTask('ls', path);
     }
 
+    function lsusb() {
+        return SocketMaster.addTask('lsusb');
+    }
+
     function downloadLog(log) {
         return _device.controller.downloadLog(log);
     }
@@ -1623,6 +1627,7 @@ define([
             this.kickChangeFilament = kickChangeFilament;
             this.killSelf = killSelf;
             this.ls = ls;
+            this.lsusb = lsusb;
             this.maintainCloseFan = maintainCloseFan;
             this.maintainMove = maintainMove;
             this.pause = pause;

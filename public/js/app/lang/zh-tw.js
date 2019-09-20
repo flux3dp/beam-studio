@@ -156,6 +156,7 @@ define(function() {
                     hardware: 'Hardware',
                     discover: 'Discover',
                     usb: 'USB',
+                    usblist: 'USB 清單',
                     camera: 'Camera',
                     cloud: 'Cloud',
                     player: 'Player',

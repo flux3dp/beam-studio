@@ -186,6 +186,8 @@ define([
                 return d.promise();
             },
 
+            lsusb: () => { return useDefaultResponse('file lsusb'); },
+
             fileInfo: (path, fileName) => {
                 let d = $.Deferred(),
                     data = [],

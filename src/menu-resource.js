@@ -70,10 +70,11 @@ module.exports = {
             hardware: 'Hardware',
             discover: 'Discover',
             usb: 'USB',
+            usblist: 'USB List',
             camera: 'Camera',
             cloud: 'Cloud',
             player: 'Player',
-            robot: 'robot'
+            robot: 'Robot'
         },
         link: {
             help_center: 'https://helpcenter.flux3dp.com/',
@@ -170,10 +171,11 @@ module.exports = {
             hardware: 'Hardware',
             discover: 'Discover',
             usb: 'USB',
+            usblist: 'USB List',
             camera: 'Camera',
             cloud: 'Cloud',
             player: 'Player',
-            robot: 'robot'
+            robot: 'Robot'
         },
         link: {
             help_center: 'http://helpcenter.flux3dp.com/',

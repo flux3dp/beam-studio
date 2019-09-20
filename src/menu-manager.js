@@ -179,6 +179,7 @@ function buildDeviceMenu(callback, uuid, data) {
                 { id: 'LOG_HARDWARE', label: r.log.hardware, uuid, serial, source, click: callback },
                 { id: 'LOG_DISCOVER', label: r.log.discover, uuid, serial, source, click: callback },
                 { id: 'LOG_USB', label: r.log.usb, uuid, serial, source, click: callback },
+                { id: 'LOG_USBLIST', label: r.log.usblist, uuid, serial, source, click: callback },
                 { id: 'LOG_CAMERA', label: r.log.camera, uuid, serial, source, click: callback },
                 { id: 'LOG_CLOUD', label: r.log.cloud, uuid, serial, source, click: callback },
                 { id: 'LOG_PLAYER', label: r.log.player, uuid, serial, source, click: callback },

@@ -375,6 +375,15 @@ define([
                     getLog(device, 'fluxusbd.log');
                 };
 
+                _action['LOG_USBLIST'] = (device) => {
+                    DeviceMaster.selectDevice(device).then(status => {
+                        if (status === DeviceConstants.CONNECTED) {}
+                        DeviceMaster.lsusb().then( res => {
+                            AlertActions.showPopupInfo('', res.usbs.join('\n'), lang.topmenu.device.log.usblist);
+                        });
+                    });
+                };
+
                 _action['LOG_CAMERA'] = (device) => {
                     getLog(device, 'fluxcamerad.log');
                 };
