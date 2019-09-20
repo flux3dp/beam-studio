@@ -157,8 +157,12 @@ _
         }
 
         render() {
+            let leftPanelClass = 'left-toolbar';
+            if (process.platform === 'win32') {
+                leftPanelClass += ' windows';
+            }
             return (
-                <div className="left-toolbar">
+                <div className={leftPanelClass}>
                     {this._renderToolButton('cursor','Cursor', LANG.label.cursor, FnWrapper.useSelectTool, true)}
                     {this._renderToolButton('photo','Photo', LANG.label.photo, FnWrapper.importImage)}
                     {this._renderToolButton('text','Text', LANG.label.text, FnWrapper.insertText)}

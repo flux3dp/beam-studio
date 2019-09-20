@@ -12,6 +12,9 @@
         border: 1px solid #E0E0E0;
         position: absolute;
         top: 85px;
+        &.windows {
+            top: 70px;
+        }
         left: 0px;
         height: 100%;
         .tool-btn {
