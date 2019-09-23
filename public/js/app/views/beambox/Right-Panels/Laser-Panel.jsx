@@ -568,7 +568,13 @@ define([
                 const name = $(this.draggingEntry).children('span').first().text();
                 const index = customizedLaserConfigs.findIndex((e) => e.name === name);
                 this.draggingIndex = index;
-                this.setState({isSelectingCustomized: true, selectedItem: name});
+                const selectedConfig = customizedLaserConfigs.find((e) => e.name === name);
+                this.setState({ 
+                    isSelectingCustomized: true,
+                    selectedItem: name,
+                    displaySpeed: selectedConfig.speed,
+                    displayPower: selectedConfig.power
+                });
             };
 
             const onEntryDragOver = (e) => {
@@ -661,7 +667,7 @@ define([
                                     min={LANG.power.min}
                                     max={LANG.power.max}
                                     step={LANG.power.step}
-                                    defaultValue={this.state.displayPower}
+                                    value={this.state.displayPower}
                                     onChange={(e) => {this.setState({displayPower: e.target.value})}}
                                 />
                                 <UnitInput
