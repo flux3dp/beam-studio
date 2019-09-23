@@ -446,7 +446,7 @@ define([
                     let version;
                     const LANG = i18n.lang.beambox.popup;
                     if (BeamboxPreference.read('svg_version_warning') !== false) {
-                        const matchSVG = svgString.match(/<svg[^>]+>/g)[0];
+                        const matchSVG = svgString.match(/<svg[^>]*>/g)[0];
                         version = matchSVG.match(/version="[^"]+"/);
                         if (version) {
                             version = version[0].substring(9, version[0].length -1);
