@@ -108,7 +108,7 @@ module.exports = {
         help: '說明',
         import: '匯入',
         samples: '範例',
-        import_beamo_sample: 'beamo 範例檔',
+        import_first_engrave: '初次雕刻',
         import_material_testing_old: '材質測試檔 (舊)', 
         import_material_testing_simple_cut: '材質測試檔 - 簡易切割',
         import_material_testing_cut: '材質測試檔 - 切割',

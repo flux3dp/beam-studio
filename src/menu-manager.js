@@ -29,7 +29,7 @@ function _buildFileMenu(fnKey, callback) {
         { 'id': 'IMPORT', label: r.import || 'Import', click: callback, 'accelerator': `${fnKey}+I` },
         { type: 'separator' },
         { 'id': 'SAMPLES', label: r.samples || 'Samples', submenu: [
-            { 'id': 'IMPORT_EXAMPLE', label: r.import_beamo_sample || 'Example of beamo', click: callback },
+            { 'id': 'IMPORT_EXAMPLE', label: r.import_first_engrave || 'First Engraving', click: callback },
             { 'id': 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut || 'Material Testing Suite - Cut (Simple)', click: callback },
             { 'id': 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut || 'Material Testing Suite - Cut', click: callback },
             { 'id': 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave || 'Material Testing Suite - Engraving', click: callback },
