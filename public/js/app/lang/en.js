@@ -1253,7 +1253,7 @@ define(function() {
                 testing: 'Testing Network...',
                 invalid_ip: 'Invalid IP address',
                 network_healthiness: 'Network Healthiness',
-                average_response: 'Average Response Time:',
+                average_response: 'Average Response Time',
                 test_completed: 'Test Completed',
                 test_fail: 'Test Failed',
                 cannot_connect_1: 'Fail to connect to target IP.',
