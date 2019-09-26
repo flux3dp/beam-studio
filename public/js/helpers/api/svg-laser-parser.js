@@ -374,6 +374,9 @@ define([
                         }
                     } else if (data.status === 'ok') {
                         $deferred.resolve(finalBlobs);
+                    } else if (data.status === 'Error') {
+                        $('#dialog_box').hide();
+                        AlertActions.showPopupError('', data.message);
                     }
 
                 };
