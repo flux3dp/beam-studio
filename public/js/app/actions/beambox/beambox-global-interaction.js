@@ -1,9 +1,11 @@
 define([
+    'helpers/i18n',
     'app/actions/global-interaction',
     'app/actions/beambox',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
+    i18n,
     GlobalInteraction,
     BeamboxAction,
     BottomRightFuncs,
@@ -36,7 +38,7 @@ define([
                         electron.trigger_file_input_click('import_image');
                     }
                 },
-                'IMPORT_EXAMPLE': () => {loadExampleFile('examples/badge.bvg')},
+                'IMPORT_EXAMPLE': () => {loadExampleFile(`examples/badge_${i18n.getActiveLang()}.bvg`)},
                 'IMPORT_MATERIAL_TESTING_OLD': () => {loadExampleFile('examples/mat_test_old.bvg')},
                 'IMPORT_MATERIAL_TESTING_SIMPLECUT': () => {loadExampleFile('examples/mat_test_simple_cut.bvg')},
                 'IMPORT_MATERIAL_TESTING_CUT': () => {loadExampleFile('examples/mat_test_cut.bvg')},
