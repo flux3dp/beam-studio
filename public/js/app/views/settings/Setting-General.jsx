@@ -261,6 +261,19 @@ define([
                 }
             ];
 
+            const textToPathOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('TextbyFluxsvg') !== false
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: !BeamboxPreference.read('TextbyFluxsvg')
+                }
+            ];
+
             if (printer.name !== undefined) {
                 default_machine_button = (
                     <a className='font3'
@@ -383,6 +396,17 @@ define([
                             className='font3'
                             options={maskOptions}
                             onChange={e => this._updateBeamboxPreference('enable_mask', e.target.value)}
+                        />
+                    </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.text_to_path}</div>
+
+                    <Controls label={lang.settings.optimization}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={textToPathOptions}
+                            onChange={e => this._updateBeamboxPreference('TextbyFluxsvg', e.target.value)}
                         />
                     </Controls>
 

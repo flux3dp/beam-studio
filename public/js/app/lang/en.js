@@ -369,6 +369,7 @@ define(function() {
             guides_origin: 'Guides Origin',
             guides: 'Guides',
             mask: 'Workarea Clipping',
+            optimization: 'Optimization',
             none: 'None',
             close: 'Close',
             cancel: 'CANCEL',
@@ -378,7 +379,8 @@ define(function() {
                 connection: 'Connection',
                 editor: 'Editor',
                 path: 'Path',
-                mask: 'Workarea Clipping'
+                mask: 'Workarea Clipping',
+                text_to_path: 'Text to Path'
             },
             connect_printer: {
                 title: 'Connect with your printer'
@@ -1063,7 +1065,8 @@ define(function() {
                 or_turn_off_borderless_mode: ' Or turn off borderless mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
                 dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
-                dont_show_again: 'Don\'t Show Again'
+                dont_show_again: 'Don\'t Show Again',
+                convert_to_path_fail: 'Failed to convert to path.'
             },
             left_panel: {
                 insert_object: 'Insert Object',

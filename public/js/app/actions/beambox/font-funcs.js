@@ -1,11 +1,17 @@
 define([
     'app/actions/beambox/svgeditor-function-wrapper',
+    'helpers/api/svg-laser-parser',
+    'app/actions/alert-actions',
+    'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
     FnWrapper,
+    SvgLaserParser,
+    AlertActions,
+    BeamboxPreference,
     i18n
 ) {
-
+    const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
     if (!window.electron) {
         console.log('font is not supported in web browser');
         return {
@@ -15,6 +21,7 @@ define([
     const ipc = electron.ipc;
     const events = electron.events;
     const activeLang = i18n.getActiveLang();
+    const FontManager = require('font-manager');
 
     // a simple memoize function that takes in a function
     // and returns a memoized function
@@ -80,6 +87,102 @@ define([
         });
         return font;
     };
+
+    function findFontSync(arg) {
+        arg.style = arg.style || 'Regular';
+        const availableFonts = FontManager.getAvailableFontsSync();
+        let font = availableFonts[0];
+        let match = availableFonts.filter(font => font.family === arg.family);
+        font = match[0] || font;
+        if (arg.italic != null) {
+            match = match.filter(font => font.italic === arg.italic);
+            font = match[0] || font;
+        }
+        match = match.filter(font => font.style === arg.style);
+        font = match[0] || font;
+        if (arg.weight != null) {
+            match = match.filter(font => font.weight === arg.weight);
+        }
+        font = match[0] || font;
+        return font;
+    };
+
+    const substitutedFamily = function($textElement){
+        const fontFamily = $textElement.attr('font-family');
+        const fontStyle = $textElement.attr('font-style');
+        const text = $textElement.text();
+        //if only contain basic character (123abc!@#$...), don't substitute.
+        //because my Mac cannot substituteFont properly handing font like 'Windings'
+        //but we have to subsittue text if text contain both English and Chinese
+        const textOnlyContainBasicLatin = Array.from(text).every(char => {
+            return char.charCodeAt(0) <= 0x007F;
+        });
+        if (textOnlyContainBasicLatin) {
+            return fontFamily;
+        }
+        const originFont = findFontSync({
+            family: fontFamily,
+            style: fontStyle
+        });
+        // array of used family which are in the text
+        
+        const originPostscriptName = originFont.postscriptName;
+        const fontList = Array.from(text).map(char =>
+            FontManager.substituteFontSync(originPostscriptName, char)
+        );
+        let familyList = fontList.map(font => font.family);
+        let postscriptList = fontList.map(font => font.postscriptName)
+        // make unique
+        familyList = [...new Set(familyList)];
+        postscriptList = [...new Set(postscriptList)];
+
+        if (familyList.length === 1) {
+            return familyList[0];
+        } else {
+            // Test all found fonts if they contain all 
+            
+            for (let i = 0; i < postscriptList.length; ++i) {
+                let allFit = true;
+                for (let j = 0; j < text.length; ++j) {
+                    if (fontList[j].postscriptName === postscriptList[i]) {
+                        continue;
+                    }
+                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]).family;
+                    if (familyList[i] !== foundfont) {
+                        allFit = false;
+                        break;
+                    }
+                }
+                if (allFit) {
+                    console.log(`Find ${familyList[i]} fit for all char`);
+                    return familyList[i];
+                }
+            }
+            console.log('Cannot find a font fit for all')
+            return (familyList.filter(family => family !== fontFamily))[0];
+        }
+    };
+
+    const convertTextToPathFluxsvg = async ($textElement, bbox) => {
+        const d = $.Deferred();
+        const newFontFamily = substitutedFamily($textElement);
+        $textElement.attr('font-family', newFontFamily);
+        console.log($textElement.attr('font-family'))
+        $textElement.removeAttr('stroke-width');
+        await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
+        const outputs = await svgWebSocket.divideSVG();
+        console.log(outputs)
+        //await svgEditor.readSVG(outputs['strokes'], 'color');
+        const result =  await svgEditor.readSVG(outputs['colors'], 'color');
+        if (result) {
+            $textElement.remove();
+        } else {
+            const LANG = i18n.lang.beambox.popup;
+            AlertActions.showPopupError('text to path fail', LANG.convert_to_path_fail)
+        }
+        return;
+    }
+
     const requestToConvertTextToPath = async ($textElement, family, weight, style) => {
         const d = $.Deferred();
 
@@ -155,6 +258,7 @@ define([
 
         return;
     };
+
     const convertTextToPathAmoungSvgcontent = async () => {
         FnWrapper.reset_select_mode();
         const allPromises = $('#svgcontent')
@@ -276,6 +380,7 @@ define([
         requestFontStylesOfTheFontFamily: requestFontStylesOfTheFontFamily,
         requestFontByFamilyAndStyle: requestFontByFamilyAndStyle,
         requestToConvertTextToPath: requestToConvertTextToPath,
+        convertTextToPathFluxsvg: convertTextToPathFluxsvg,
         convertTextToPathAmoungSvgcontent: convertTextToPathAmoungSvgcontent
     };
 });

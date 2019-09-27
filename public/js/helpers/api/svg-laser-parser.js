@@ -481,6 +481,42 @@ define([
 
                 return $deferred.promise();
             },
+            uploadPlainTextSVG: function($textElement, bbox) {
+                var $deferred = $.Deferred();
+
+                events.onMessage = function(data) {
+                switch (data.status) {
+                    case 'continue':
+                        ws.send(file);
+                        break;
+                    case 'ok':
+                        $deferred.resolve('ok');
+                        break;
+                    case 'warning':
+                        warningCollection.push(data.message);
+                        break;
+                    }
+                };
+
+                events.onError = function(data) {
+                    alert(data);
+                };
+                const textString = $textElement.prop('outerHTML');
+                let svgString = `<svg viewBox="${0} ${0} ${bbox.x + 300} ${bbox.y + 0.3 * bbox.height + 300}">
+                    ${textString}
+                </svg>`
+                console.log(svgString)
+                let file = new Blob([svgString], {
+                    type: 'text/plain'
+                });
+                ws.send([
+                    'upload_plain_svg',
+                    encodeURIComponent(file.name),
+                    file.size
+                ].join(' '));
+                return $deferred.promise();
+            },
+                
             uploadToSvgeditorAPI: function(files, opts) {
                 var $deferred = $.Deferred(),
                     currIndex = 0,

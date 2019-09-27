@@ -1650,7 +1650,7 @@ define([
                                 id: getNextId(),
                                 fill: cur_text.fill,
                                 'fill-opacity': cur_text.fill_opacity,
-                                'stroke-width': cur_text.stroke_width,
+                                'stroke-width': 2,
                                 'font-size': cur_text.font_size,
                                 'font-family': cur_text.font_family,
                                 'text-anchor': cur_text.text_anchor,

@@ -10,6 +10,7 @@ define([
     'jsx!views/beambox/Object-Panels/text/FontSize',
     'jsx!views/beambox/Object-Panels/text/LetterSpacing',
     'jsx!views/beambox/Object-Panels/text/FontFill',
+    'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
     React,
@@ -23,6 +24,7 @@ define([
     FontSizeInput,
     LetterSpacingInput,
     IsFillCheckbox,
+    BeamboxPreference,
     i18n
 ) {
     if (!window.electron) {
@@ -122,13 +124,21 @@ define([
 
         async convertToPath() {
             ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
-            //delay FontFuncs.requestToConvertTextToPath() to ensure ProgressActions has already popup
-            await new Promise(resolve => {
-                setTimeout(async () => {
-                    await FontFuncs.requestToConvertTextToPath(this.props.$me, this.state.fontFamily, this.props.fontWeight, this.state.fontStyle);
-                    resolve();
-                }, 50);
-            });
+            const bbox = svgCanvas.calculateTransformedBBox(this.props.$me[0]);
+            
+            const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
+
+            if (convertByFluxsvg) {
+                await FontFuncs.convertTextToPathFluxsvg(this.props.$me, bbox);
+            } else {
+                //delay FontFuncs.requestToConvertTextToPath() to ensure ProgressActions has already popup
+                await new Promise(resolve => {
+                    setTimeout(async () => {
+                        await FontFuncs.requestToConvertTextToPath(this.props.$me, this.state.fontFamily, this.props.fontWeight, this.state.fontStyle);
+                        resolve();
+                    }, 50);
+                });
+            }
             ProgressActions.close();
 
             FnWrapper.reset_select_mode();

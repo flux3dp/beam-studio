@@ -5590,14 +5590,16 @@ define([
                                 svgCanvas.selectOnly([newElement]);
                             } catch(e) {
                                 console.warn('Reading empty SVG');
+                                resolve(false);
                             }
                             // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
                             $('#dialog_box').hide();
-                            resolve();
+                            resolve(true);
                         };
                         reader.readAsText(blob);
                     });
                 }
+                editor.readSVG = readSVG;
                 const importSvg = file => {
                     svgCanvas.setLatestImportFileName(file.name.split('.')[0]);
                     async function importAs(type) {

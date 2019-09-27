@@ -368,6 +368,7 @@ define(function() {
             guides_origin: '參考線座標',
             guides: '參考線',
             mask: '工作範圍剪裁',
+            optimization: '優化',
             none: '無',
             close: '關閉',
             groups: {
@@ -375,7 +376,8 @@ define(function() {
                 connection: '連線',
                 editor: '編輯器',
                 path: '路徑',
-                mask: '工作範圍剪裁'
+                mask: '工作範圍剪裁',
+                text_to_path: '文字轉路徑'
             },
             printer: {
                 new_printer: '新增成型機',
@@ -1060,7 +1062,8 @@ define(function() {
                 or_turn_off_borderless_mode: '或是關閉開蓋模式',
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
                 dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
-                dont_show_again: '別再顯示此提醒'
+                dont_show_again: '別再顯示此提醒',
+                convert_to_path_fail: '轉換成路徑失敗。'
             },
             left_panel: {
                 insert_object: '插入物件',
