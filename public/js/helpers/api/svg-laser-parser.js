@@ -450,9 +450,9 @@ define([
                     const LANG = i18n.lang.beambox.popup;
                     if (BeamboxPreference.read('svg_version_warning') !== false) {
                         const matchSVG = svgString.match(/<svg[^>]*>/g)[0];
-                        version = matchSVG.match(/version="[^"]+"/);
+                        version = matchSVG.match(/ version="[^"]+"/);
                         if (version) {
-                            version = version[0].substring(9, version[0].length -1);
+                            version = version[0].substring(10, version[0].length -1);
                             if (version === '1.1') {
                                 AlertActions.showPopupCheckboxWarning(
                                     'svg 1.1 warning',
