@@ -1084,6 +1084,7 @@ define(function() {
                     cursor: '選取',
                     photo: '圖片',
                     text: '文字',
+                    line: '線段',
                     rect: '方塊',
                     oval: '橢圓',
                     polygon: '多邊形',

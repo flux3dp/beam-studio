@@ -1087,6 +1087,7 @@ define(function() {
                     cursor: 'Select',
                     photo: 'Image',
                     text: 'Text',
+                    line: 'Line',
                     rect: 'Rectangle',
                     oval: 'Oval',
                     polygon: 'Polygon',
