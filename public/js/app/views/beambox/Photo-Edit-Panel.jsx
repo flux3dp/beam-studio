@@ -60,6 +60,9 @@ define([
                 case 'curve':
                     this._handleDownSampling();
                     break;
+                case 'invert':
+                    this._handleInvert(this._handleComplete.bind(this));
+                    break;
                 default:
                     break;
             }
@@ -414,7 +417,7 @@ define([
         }
 
         // INVERT
-        _handleInvert() {
+        _handleInvert(callback) {
             const jimp = require('jimp');
             const d = $.Deferred();
             let imgBlobUrl = this.state.src;
@@ -439,6 +442,7 @@ define([
                                     this.state.srcHistory.push(this.state.src);
                                     this.state.src = src;
                                     ProgressActions.close();
+                                    callback();
                                 });
                             })
                             .catch((err) => {
@@ -587,9 +591,7 @@ define([
                     renderContent = this._renderPhotoEditeModal();
                     break;
                 case 'invert':
-                    this._handleInvert();
                     ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                    let timeout = window.setTimeout(this._handleComplete.bind(this) , 200);
                     renderContent = (<div/>)
                     break;
                 default:
