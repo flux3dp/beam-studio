@@ -24,7 +24,7 @@ define([
 
         componentWillUnmount() {
             shortcuts.off(['del']);
-            shortcuts.on(['del'], svgCanvas.deleteSelectedElements);
+            shortcuts.on(['del'], () => {svgCanvas.deleteSelectedElements()});
         }
 
         _cubicSplinesInterpolation(x) {
