@@ -502,7 +502,7 @@ define([
                     alert(data);
                 };
                 const textString = $textElement.prop('outerHTML');
-                let svgString = `<svg viewBox="${0} ${0} ${bbox.x + 300} ${bbox.y + 0.3 * bbox.height + 300}">
+                let svgString = `<svg viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">
                     ${textString}
                 </svg>`
                 console.log(svgString)

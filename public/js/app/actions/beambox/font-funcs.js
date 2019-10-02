@@ -175,6 +175,7 @@ define([
         //await svgEditor.readSVG(outputs['strokes'], 'color');
         const result =  await svgEditor.readSVG(outputs['colors'], 'color');
         if (result) {
+            svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
             $textElement.remove();
         } else {
             const LANG = i18n.lang.beambox.popup;

@@ -5594,7 +5594,7 @@ define([
                             }
                             // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
                             $('#dialog_box').hide();
-                            resolve(true);
+                            resolve(newElement);
                         };
                         reader.readAsText(blob);
                     });
