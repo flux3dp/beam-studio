@@ -17,6 +17,7 @@ tmp/*
 !backend/
 backend/*
 !backend/monitorexe-osx
+!backend/monitorexe-win64
 
 fluxhald.pid
 fluxrobot.pid

@@ -392,7 +392,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
 const sudo = require('sudo-prompt');
 let monitor_cmd = null;
-const execFail = false;
+let execFail = false;
 const sudo_options = {
     name: 'Beam Studio',
     icns: 'public/icon.png'
@@ -402,7 +402,13 @@ const sudo_options = {
 if (process.platform === 'darwin') {
     monitor_cmd = './backend/monitorexe-osx/monitorexe';
 } else if (process.platform === 'win32' && process.arch === 'x64') {
-    exec('.monitorexe-win64/cygrunsrv', ['-S', ''])
+    monitor_cmd = '.\\backend\\monitorexe-win64\\monitorexe.exe';
+    exec('.\\backend\\monitorexe-win64\\cygserver.exe', (err, data) => {
+        if (err) {
+            console.log('cygserver err:', err);
+        }
+        console.log('cygserver data:', data);
+    });
 }
 
 if (monitor_cmd) {
@@ -469,5 +475,21 @@ app.on('activate', function () {
 });
 
 app.on('before-quit', function() {
+    if (process.platform === 'darwin') {
+        //monitor_cmd = './backend/monitorexe-osx/monitorexe';
+    } else if (process.platform === 'win32' && process.arch === 'x64') {
+        exec('taskkill /F /IM cygserver.exe', (err, data) => {
+            if (err) {
+                console.log('kill cygserver err:', err);
+            }
+            console.log('kill cygserver data:', data);
+        });
+        exec('taskkill /F /IM monitorexe.exe', (err, data) => {
+            if (err) {
+                console.log('kill monitorexe err:', err);
+            }
+            console.log('kill monitorexe data:', data);
+        });
+    }
     backendManager.stop();
 });
