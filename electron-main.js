@@ -14,6 +14,7 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const os = require('os');
+const exec = require('child_process').exec;
 
 let mainWindow;
 let menuManager;
@@ -128,7 +129,7 @@ function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1080,
-        height: 610,
+        height: 650,
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : null,
         frame: process.platform === 'win32' ? false : null,
         title: `Beam Studio - ${app.getVersion()}`,
@@ -388,6 +389,43 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
     event.sender.send(events.RESOLVE_PATH_D_OF_TEXT + key, pathD);
 });
+
+const sudo = require('sudo-prompt');
+let monitor_cmd = null;
+const execFail = false;
+const sudo_options = {
+    name: 'Beam Studio',
+    icns: 'public/icon.png'
+};
+
+//Run monitorexe api
+if (process.platform === 'darwin') {
+    monitor_cmd = './backend/monitorexe-osx/monitorexe';
+} else if (process.platform === 'win32' && process.arch === 'x64') {
+    exec('.monitorexe-win64/cygrunsrv', ['-S', ''])
+}
+
+if (monitor_cmd) {
+    // Try without sudo-prompt first
+    exec(monitor_cmd, (err, data) => {
+        if (err) {
+            console.log('monitorexe err:', err);
+            execFail = true;
+        } else {
+            console.log('monitorexe data:');
+            console.log(data);
+        }
+    });
+    if (execFail) {
+        sudo.exec(monitor_cmd, sudo_options, (err, stdout, stderr) => {
+            if (err) {
+                console.log('sudo monitorexe err:', err);
+            }
+            console.log('sudo monitor out:');
+            console.log(stdout);
+        });
+    }
+}
 
 console.log('Running Beam Studio on ', os.arch());
 

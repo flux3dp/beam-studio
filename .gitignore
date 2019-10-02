@@ -10,9 +10,18 @@ public/lib
 public/js/jsx
 public/css/main.css
 public/node_modules/*
-backend
 dist
 tmp/*
+
+
+!backend/
+backend/*
+!backend/monitorexe-osx
+
+fluxhald.pid
+fluxrobot.pid
+fluxupnpd.pid
+fluxusbd.pid
 
 osx-cache
 win-x86-cache
