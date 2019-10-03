@@ -482,19 +482,24 @@ app.on('activate', function () {
 
 app.on('before-quit', function() {
     if (process.platform === 'darwin') {
-        //monitor_cmd = './backend/monitorexe-osx/monitorexe';
+        exec('pkill monitorexe', (err, data) => {
+        if (err) {
+            console.log('kill monitorexe err:', err);
+        }
+        console.log('kill monitorexe succeed');
+    });
     } else if (process.platform === 'win32' && process.arch === 'x64') {
         exec('taskkill /F /IM cygserver.exe', (err, data) => {
             if (err) {
                 console.log('kill cygserver err:', err);
             }
-            console.log('kill cygserver data:', data);
+            console.log('kill cygserver succeed');
         });
         exec('taskkill /F /IM monitorexe.exe', (err, data) => {
             if (err) {
                 console.log('kill monitorexe err:', err);
             }
-            console.log('kill monitorexe data:', data);
+            console.log('kill monitorexe succeed');
         });
     }
     backendManager.stop();
