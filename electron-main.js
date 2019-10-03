@@ -409,6 +409,12 @@ if (process.platform === 'darwin') {
         }
         console.log('cygserver data:', data);
     });
+    if(!fs.existsSync('./backend/tmp')) {
+        fs.mkdirSync('./backend/tmp')
+    }
+    if(!fs.existsSync('./backend/var')) {
+        fs.mkdirSync('./backend/var')
+    }
 }
 
 if (monitor_cmd) {
