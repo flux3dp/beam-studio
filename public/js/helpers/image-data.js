@@ -24,6 +24,13 @@ function(grayScale, convertToTypedArray) {
                     imageBinary,
                     imageData;
 
+                //DownSampling
+                if (!opts.isFullResolution) {
+                    const downRatio = Math.min(1, 1.5 * $(window).width() / Math.max(size.width, size.height));
+                    size.width = Math.round(size.width * downRatio);
+                    size.height = Math.round(size.height * downRatio);
+                }
+ 
                 canvas.width = size.width;
                 canvas.height = size.height;
                 ctx.drawImage(

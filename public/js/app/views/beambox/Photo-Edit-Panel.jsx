@@ -244,6 +244,7 @@ define([
         }
 
         _handleGrayScale() {
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             ImageData(
                 this.state.src,
                 {
@@ -254,6 +255,7 @@ define([
                         is_svg: false
                     },
                     onComplete: (result) => {
+                        ProgressActions.close();
                         if (this.state.grayScaleUrl) {
                             URL.revokeObjectURL(this.state.grayScaleUrl);
                         }
