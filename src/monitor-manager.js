@@ -16,7 +16,7 @@ class MonitorManager {
     _killProcSync = () => {
         if (process.platform === 'darwin') {
             try {
-                exec('pkill monitorexe');
+                execSync('pkill monitorexe');
             } catch(e) {
                 //console.log(e);
             }
