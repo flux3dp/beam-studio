@@ -2,6 +2,7 @@ const {app, ipcMain, BrowserWindow, dialog} = require('electron');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 const BackendManager = require('./src/backend-manager.js');
+const MonitorManager = require('./src/monitor-manager.js');
 const MenuManager = require('./src/menu-manager.js');
 const UglyNotify = require('./src/ugly-notify.js');
 const events = require('./src/ipc-events');
@@ -390,54 +391,11 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
     event.sender.send(events.RESOLVE_PATH_D_OF_TEXT + key, pathD);
 });
 
-const sudo = require('sudo-prompt');
-let monitor_cmd = null;
-let execFail = false;
-const sudo_options = {
-    name: 'Beam Studio',
-    icns: 'public/icon.png'
-};
-
 //Run monitorexe api
-if (process.platform === 'darwin') {
-    monitor_cmd = './backend/monitorexe-osx/monitorexe';
-} else if (process.platform === 'win32' && process.arch === 'x64') {
-    monitor_cmd = '.\\backend\\monitorexe-win64\\monitorexe.exe';
-    exec('.\\backend\\monitorexe-win64\\cygserver.exe', (err, data) => {
-        if (err) {
-            console.log('cygserver err:', err);
-        }
-        console.log('cygserver data:', data);
-    });
-    if(!fs.existsSync('./backend/tmp')) {
-        fs.mkdirSync('./backend/tmp')
-    }
-    if(!fs.existsSync('./backend/var')) {
-        fs.mkdirSync('./backend/var')
-    }
-}
-
-if (monitor_cmd) {
-    // Try without sudo-prompt first
-    exec(monitor_cmd, (err, data) => {
-        if (err) {
-            console.log('monitorexe err:', err);
-            execFail = true;
-        } else {
-            console.log('monitorexe data:');
-            console.log(data);
-        }
-    });
-    if (execFail) {
-        sudo.exec(monitor_cmd, sudo_options, (err, stdout, stderr) => {
-            if (err) {
-                console.log('sudo monitorexe err:', err);
-            }
-            console.log('sudo monitor out:');
-            console.log(stdout);
-        });
-    }
-}
+const monitorManager = new MonitorManager();
+//kill process first, in case last time shut down
+monitorManager.killProcSync();
+monitorManager.startProc();
 
 console.log('Running Beam Studio on ', os.arch());
 
@@ -481,26 +439,6 @@ app.on('activate', function () {
 });
 
 app.on('before-quit', function() {
-    if (process.platform === 'darwin') {
-        exec('pkill monitorexe', (err, data) => {
-        if (err) {
-            console.log('kill monitorexe err:', err);
-        }
-        console.log('kill monitorexe succeed');
-    });
-    } else if (process.platform === 'win32' && process.arch === 'x64') {
-        exec('taskkill /F /IM cygserver.exe', (err, data) => {
-            if (err) {
-                console.log('kill cygserver err:', err);
-            }
-            console.log('kill cygserver succeed');
-        });
-        exec('taskkill /F /IM monitorexe.exe', (err, data) => {
-            if (err) {
-                console.log('kill monitorexe err:', err);
-            }
-            console.log('kill monitorexe succeed');
-        });
-    }
+    monitorManager.killProc();
     backendManager.stop();
 });
