@@ -173,7 +173,7 @@ define([
         const outputs = await svgWebSocket.divideSVG();
         console.log(outputs)
         //await svgEditor.readSVG(outputs['strokes'], 'color');
-        const result =  await svgEditor.readSVG(outputs['colors'], 'color');
+        const result =  await svgEditor.readSVG(outputs['colors'], 'text');
         if (result) {
             svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
             $textElement.remove();

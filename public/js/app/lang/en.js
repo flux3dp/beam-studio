@@ -1184,7 +1184,8 @@ define(function() {
                 },
             },
             bottom_right_panel: {
-                convert_text_to_path_before_export: 'Convert Text to Path...'
+                convert_text_to_path_before_export: 'Convert Text to Path...',
+                retreive_image_data: 'Retrieve Image Data...'
             },
             image_trace_panel: {
                 apply: 'Apply',

@@ -5447,6 +5447,7 @@ define([
                         };
 
                     case 'nolayer':
+                    case 'text':
                         return {
                             symbols: _parseSvgByNolayer(svg),
                             confirmedType: 'nolayer'
@@ -9263,6 +9264,7 @@ define([
                 }
 
                 const center = {x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2};
+                const centers = [center];
                 const flipPara = {horizon, vertical};
                 startTransform = elem.getAttribute('transform'); //???maybe non need
 
@@ -9271,7 +9273,7 @@ define([
                 while (stack.length > 0) {
                     ({elem: topElem, originalAngle} = stack.pop());
                     if (topElem.tagName !== 'g') {
-                        cmd = this.flipElementWithRespectToCenter(topElem, center, flipPara);
+                        cmd = this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
                         if (!cmd.isEmpty()) {
                             batchCmd.addSubCommand(cmd);
                         }
@@ -9287,10 +9289,26 @@ define([
                                 }
                                 stack.push({elem: topElem, originalAngle: angle});
                             }
+                            // if g has tlist, inverse to flip element inside
+                            const tlist = svgedit.transformlist.getTransformList(topElem);
+                            ({x, y} = centers[centers.length - 1]);
+                            for (let i = 0; i < tlist.numberOfItems; i++) {
+                                const t = tlist.getItem(i);
+                                //type 4 does not matter
+                                if (t.type === 4) {
+                                    continue;
+                                }
+                                ({a, b, c, d, e, f} = t.matrix);
+                                const delta = a * d - b * c;
+                                x = (d * x - c * y + c * f - d * e) / delta;
+                                y = (-b * x + a * y - a * f + b * e) / delta;
+                            };
+                            centers.push({x, y});
                             topElem.childNodes.forEach((e) => {
                                 stack.push({elem: e});
                             }); 
                         } else {
+                            centers.pop();
                             canvas.setRotationAngle(-originalAngle, true, topElem);
                         }
                     }
@@ -9318,7 +9336,7 @@ define([
             if (elem.tagName === 'use') {
                 bbox = this.getSvgRealLocation(elem);
             } else {
-                bbox = elem.getBBox();
+                bbox = this.calculateTransformedBBox(elem);
             }
             const cx = bbox.x + bbox.width / 2;
             const cy = bbox.y + bbox.height / 2;
@@ -9796,7 +9814,6 @@ define([
                     return {x, y};
                 });
             };
-            console.log(points);
             let minX = points[0].x;
             let minY = points[0].y;
             let maxX = points[0].x;

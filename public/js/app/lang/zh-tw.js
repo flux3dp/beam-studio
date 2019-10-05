@@ -1181,7 +1181,8 @@ define(function() {
                 },
             },
             bottom_right_panel: {
-                convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...'
+                convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
+                retreive_image_data: '擷取影像資料中...'
             },
             image_trace_panel: {
                 apply: '套用',

@@ -1,6 +1,7 @@
 define([
     'helpers/device-master',
     'helpers/i18n',
+    'helpers/image-data',
     'app/actions/beambox/beambox-preference',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -12,6 +13,7 @@ define([
 ], function (
     DeviceMaster,
     i18n,
+    ImageData,
     BeamboxPreference,
     ProgressActions,
     ProgressConstants,
@@ -81,9 +83,46 @@ define([
         });
     };
 
+    const updateImageResolution = () => {
+        return new Promise((resolve) => {
+            const imgs = $('#svgcontent image').toArray();
+            const numImgs = imgs.length;
+            let done = 0;
+            if (0 === numImgs) {
+                resolve();
+            } else {
+                imgs.forEach(img => {
+                    ImageData(
+                        img.getAttribute('origImage'), {
+                            width: $(img).width(),
+                            height: $(img).height(),
+                            grayscale: {
+                                is_rgba: true,
+                                is_shading: $(img).attr('data-shading') === 'true',
+                                threshold: parseInt($(img).attr('data-threshold')),
+                                is_svg: false
+                            },
+                            isFullResolution: true,
+                            onComplete: function (result) {
+                                $(img).attr('xlink:href', result.canvas.toDataURL());
+                                done += 1;
+                                if (done === numImgs) {
+                                    resolve();
+                                }
+                            }
+                        }
+                    );
+                });
+            }
+        });
+    }
+
     //return {uploadFile, thumbnailBlobURL}
     const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
         const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
+        ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.retreive_image_data);
+        await updateImageResolution();
+        ProgressActions.close();
         const svgString = svgCanvas.getSvgString();
         const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
         const reader = new FileReader();
