@@ -10,14 +10,9 @@ public/lib
 public/js/jsx
 public/css/main.css
 public/node_modules/*
+backend
 dist
 tmp/*
-
-
-!backend/
-backend/*
-!backend/monitorexe-osx
-!backend/monitorexe-win64
 
 fluxhald.pid
 fluxrobot.pid
