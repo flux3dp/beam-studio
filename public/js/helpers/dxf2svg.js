@@ -1716,7 +1716,7 @@
 
       var d = polyline.reduce(function (acc, point, i) {
         acc += i === 0 ? 'M' : 'L';
-        acc += point[0] + ',' + point[1];
+        acc += (Math.round(point[0]*10000)/10000) + ',' + (Math.round(point[1]*10000)/10000);
         return acc;
       }, '');
 
