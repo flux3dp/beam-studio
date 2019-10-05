@@ -5447,6 +5447,7 @@ define([
                         };
 
                     case 'nolayer':
+                    case 'text':
                         return {
                             symbols: _parseSvgByNolayer(svg),
                             confirmedType: 'nolayer'
