@@ -124,7 +124,13 @@ const backendManager = new BackendManager({
     c: console
 });
 backendManager.start();
-
+//Run monitorexe api
+const monitorManager = new MonitorManager({
+    location: process.env.BACKEND
+});
+//kill process first, in case last time shut down
+monitorManager.killProcSync();
+monitorManager.startProc();
 
 function createWindow () {
     // Create the browser window.
@@ -390,12 +396,6 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
     event.sender.send(events.RESOLVE_PATH_D_OF_TEXT + key, pathD);
 });
-
-//Run monitorexe api
-const monitorManager = new MonitorManager();
-//kill process first, in case last time shut down
-monitorManager.killProcSync();
-monitorManager.startProc();
 
 console.log('Running Beam Studio on ', os.arch());
 

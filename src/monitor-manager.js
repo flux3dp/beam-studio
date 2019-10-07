@@ -1,7 +1,9 @@
 const fs = require('fs');
 const os = require('os');
+const path = require('path');
 
 const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
 const execSync = require('child_process').execSync;
 
 const sudo = require('sudo-prompt');
@@ -11,6 +13,7 @@ class MonitorManager {
         this.killProcSync = this._killProcSync.bind(this);
         this.killProc = this._killProc.bind(this);
         this.startProc = this._startProc.bind(this);
+        this._backendLocation = path.join(options.location, '../..');
     }
 
     _killProcSync = () => {
@@ -37,11 +40,11 @@ class MonitorManager {
     _killProc = () => {
         if (process.platform === 'darwin') {
             exec('pkill monitorexe', (err, data) => {
-            if (err) {
-                console.log('kill monitorexe err:', err);
-            }
-            console.log('kill monitorexe succeed');
-        });
+                if (err) {
+                    console.log('kill cygserver err:', err);
+                }
+                console.log('kill cygserver succeed');
+            });
         } else if (process.platform === 'win32' && process.arch === 'x64') {
             exec('taskkill /F /IM cygserver.exe', (err, data) => {
                 if (err) {
@@ -67,23 +70,23 @@ class MonitorManager {
         };
 
         if (process.platform === 'darwin') {
-            monitor_cmd = './backend/monitorexe-osx/monitorexe';
+            monitor_cmd = path.join(this._backendLocation, 'monitorexe-osx/monitorexe');
         } else if (process.platform === 'win32' && process.arch === 'x64') {
-            monitor_cmd = '.\\backend\\monitorexe-win64\\monitorexe.exe';
-            exec('.\\backend\\monitorexe-win64\\cygserver.exe', (err, data) => {
+            monitor_cmd = path.join(this._backendLocation, 'monitorexe-win64/monitorexe.exe');
+            exec(path.join(this._backendLocation, 'monitorexe-win64/cygserver.exe'), (err, stdout) => {
                 if (err) {
-                    console.log('cygserver err:', err);
+                    console.log(err);
                 }
-                console.log('cygserver data:', data);
+                console.log(stdout);
             });
-            if(!fs.existsSync('./backend/tmp')) {
-                fs.mkdirSync('./backend/tmp')
+            if(!fs.existsSync(path.join(this._backendLocation, 'tmp'))) {
+                fs.mkdirSync(path.join(this._backendLocation, 'tmp'))
             }
-            if(!fs.existsSync('./backend/var')) {
-                fs.mkdirSync('./backend/var')
+            if(!fs.existsSync(path.join(this._backendLocation, 'var'))) {
+                fs.mkdirSync(path.join(this._backendLocation, 'var'))
             }
         }
-        
+
         if (monitor_cmd) {
             // Try without sudo-prompt first
             exec(monitor_cmd, (err, data) => {
