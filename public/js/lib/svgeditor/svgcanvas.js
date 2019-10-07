@@ -4285,8 +4285,13 @@ define([
             rotaryMode= BeamboxPreference.read('rotary_mode');
             svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
             svgcontent.setAttribute('data-rotary_mode', rotaryMode);
+            const x = $('#workarea').scrollLeft() / current_zoom - Constant.dimension.width;
+            const y = $('#workarea').scrollTop() / current_zoom - Constant.dimension.height;
+            svgcontent.setAttribute('data-zoom', (Math.round(current_zoom * 1000) / 1000));
+            svgcontent.setAttribute('data-left', Math.round(x));
+            svgcontent.setAttribute('data-top', Math.round(y));
             var output = this.svgToString(svgcontent, 0);
-
+            
             // Rewrap gsvg
             if (naked_svgs.length) {
                 $(naked_svgs).each(function () {
