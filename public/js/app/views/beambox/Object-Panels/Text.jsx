@@ -138,10 +138,9 @@ define([
                         resolve();
                     }, 50);
                 });
+                FnWrapper.reset_select_mode();
             }
             ProgressActions.close();
-
-            FnWrapper.reset_select_mode();
 
         }
 

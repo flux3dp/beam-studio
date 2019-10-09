@@ -176,6 +176,10 @@ define([
         const result =  await svgEditor.readSVG(outputs['colors'], 'text');
         if (result) {
             svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
+            //ungroup text path from <use>
+            for (let i = 0; i < 4; ++i) {
+                svgCanvas.ungroupSelectedElement();
+            }
             $textElement.remove();
         } else {
             const LANG = i18n.lang.beambox.popup;
