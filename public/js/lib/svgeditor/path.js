@@ -967,10 +967,13 @@ svgedit.path.recalcRotatedPath = function() {
 
 		var rvals = getRotVals(seg.x, seg.y),
 			points = [rvals.x, rvals.y];
-		if (seg.x1 != null && seg.x2 != null) {
+		if (seg.x1 != null) {
 			var c_vals1 = getRotVals(seg.x1, seg.y1);
+			points.splice(points.length, 0, c_vals1.x, c_vals1.y);
+		}
+		if (seg.x2 != null) {
 			var c_vals2 = getRotVals(seg.x2, seg.y2);
-			points.splice(points.length, 0, c_vals1.x , c_vals1.y, c_vals2.x, c_vals2.y);
+			points.splice(points.length, 0, c_vals2.x, c_vals2.y);
 		}
 		svgedit.path.replacePathSeg(type, i, points);
 	} // loop for each point
