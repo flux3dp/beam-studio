@@ -172,13 +172,19 @@ define([
         }
         const newFontFamily = substitutedFamily($textElement);
         $textElement.attr('font-family', newFontFamily);
-        console.log($textElement.attr('font-family'))
+        console.log($textElement.attr('font-family'));
         $textElement.removeAttr('stroke-width');
         await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
         const outputs = await svgWebSocket.divideSVG();
         //console.log(outputs)
         const layerName = $textElement.closest('.layer').find('title').text();
-        const result =  await svgEditor.readSVG(outputs['colors'], 'text', layerName);
+        const fill = $textElement.attr('fill-opacity') > 0;
+        let result;
+        if (fill) {
+            result =  await svgEditor.readSVG(outputs['colors'], 'text', layerName);
+        } else {
+            result =  await svgEditor.readSVG(outputs['strokes'], 'text', layerName);
+        }
         if (result) {
             svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
             //ungroup text path from <use>
