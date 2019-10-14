@@ -5252,7 +5252,7 @@ define([
         // arbitrary transform lists, but makes some assumptions about how the transform list
         // was obtained
         // * import should happen in top-left of current zoomed viewport
-        this.importSvgString = function (xmlString, _type) {
+        this.importSvgString = function (xmlString, _type, layerName) {
             const batchCmd = new svgedit.history.BatchCommand('Import Image');
 
             function parseSvg(svg, type) {
@@ -5479,7 +5479,7 @@ define([
                         };
                 }
             }
-            function appendUseElement(symbol, type) {
+            function appendUseElement(symbol, type, layerName) {
                 // create a use element
                 const use_el = svgdoc.createElementNS(NS.SVG, 'use');
                 use_el.id = getNextId();
@@ -5488,13 +5488,16 @@ define([
                 if ((type === 'layer' && symbol.getAttribute('data-id')) || (type === 'color' && symbol.getAttribute('data-color') || (type === 'image-trace'))) {
 
                     const color = symbol.getAttribute('data-color');
-                    const layerName = (type === 'image-trace') ? 'Traced Path' : symbol.getAttribute('data-id') || rgbToHex(color);
+                    layerName = (type === 'image-trace') ? 'Traced Path' : symbol.getAttribute('data-id') || rgbToHex(color);
 
                     const isLayerExist = svgCanvas.setCurrentLayer(layerName);
                     if (!isLayerExist) {
                         const layer = svgCanvas.createLayer(layerName);
                         layer.color = color;
                     }
+                }
+                if (type === 'text') {
+                    svgCanvas.setCurrentLayer(layerName);
                 }
 
                 getCurrentDrawing().getCurrentLayer().appendChild(use_el);
@@ -5591,7 +5594,7 @@ define([
             const svg = svgdoc.adoptNode(newDoc.documentElement);
             const {symbols, confirmedType} = parseSvg(svg, _type);
 
-            const use_elements = symbols.map(symbol => appendUseElement(symbol, _type));
+            const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
             use_elements.map(element => setDataXform(element, _type === 'image-trace'));
 
             removeDefaultLayerIfEmpty();

@@ -5487,7 +5487,7 @@ define([
                     if (pathMatch[1]) return pathMatch[1];
                     return "";
                 }
-                function readSVG(blob, type) {
+                function readSVG(blob, type, layerName) {
                     return new Promise((resolve, reject) => {
                         var reader = new FileReader();
                         reader.onloadend = function (e) {
@@ -5578,7 +5578,7 @@ define([
                             }
 
                             const modifiedSvgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;').replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
-                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type);
+                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName);
 
                             svgCanvas.ungroupSelectedElement();
                             svgCanvas.ungroupSelectedElement();

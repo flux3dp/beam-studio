@@ -165,15 +165,20 @@ define([
 
     const convertTextToPathFluxsvg = async ($textElement, bbox) => {
         const d = $.Deferred();
+        if (!$textElement.text()) {
+            svgCanvas.clearSelection();
+            $textElement.remove();
+            return;
+        }
         const newFontFamily = substitutedFamily($textElement);
         $textElement.attr('font-family', newFontFamily);
         console.log($textElement.attr('font-family'))
         $textElement.removeAttr('stroke-width');
         await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
         const outputs = await svgWebSocket.divideSVG();
-        console.log(outputs)
-        //await svgEditor.readSVG(outputs['strokes'], 'color');
-        const result =  await svgEditor.readSVG(outputs['colors'], 'text');
+        //console.log(outputs)
+        const layerName = $textElement.closest('.layer').find('title').text();
+        const result =  await svgEditor.readSVG(outputs['colors'], 'text', layerName);
         if (result) {
             svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
             //ungroup text path from <use>
@@ -265,14 +270,25 @@ define([
     };
 
     const convertTextToPathAmoungSvgcontent = async () => {
-        FnWrapper.reset_select_mode();
-        const allPromises = $('#svgcontent')
-            .find('text')
-            .toArray()
-            .map(
-                el => requestToConvertTextToPath($(el))
-            );
-        return await Promise.all(allPromises);
+        //FnWrapper.reset_select_mode();
+        const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
+        if (convertByFluxsvg) {
+            const texts = $('#svgcontent').find('text').toArray()
+            for (let i = 0; i < texts.length; ++i) {
+                let el = texts[i];
+                let bbox = svgCanvas.calculateTransformedBBox($(el)[0]);
+                await convertTextToPathFluxsvg($(el), bbox);
+            }
+            return;
+        } else {
+            const allPromises = $('#svgcontent')
+                .find('text')
+                .toArray()
+                .map(
+                    el => requestToConvertTextToPath($(el))
+                );
+            return await Promise.all(allPromises);
+        }
     };
 
     // <Map> family -> fullName
