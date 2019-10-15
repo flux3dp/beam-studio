@@ -411,6 +411,16 @@ define([
                 pageX: 0,
                 pageY: 0
             });
+        },
+
+        reset_object_panel: function() {
+            const elem = svgCanvas.getSelectedElems()[0];
+            $(elem).trigger({
+                type: 'mousedown'
+            });
+            $(elem).trigger({
+                type: 'mouseup'
+            });
         }
     };
 
