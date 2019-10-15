@@ -144,6 +144,7 @@ svgEditor.addExtension('polygon', function (S) {
                 if (svgCanvas.isUseLayerColor) {
                     svgCanvas.updateElementColor(newPoly);
                 }
+                svgCanvas.clearSelection();
                 return {
                     started: true
                 };
@@ -177,14 +178,24 @@ svgEditor.addExtension('polygon', function (S) {
                     x = opts.mouse_x / zoom,
                     y = opts.mouse_y / zoom;
                 let c = $(newPoly).attr(['cx', 'cy']);
+                const angle = (180 * (polygonSides - 2)) / polygonSides / 2;
                 let cx = c.cx,
                     cy = c.cy,
-                    edg = (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))) / 1.5,
+                    edg = (2 * Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))* Math.cos(angle * Math.PI / 180)),
                     sides = polygonSides,
                     angle_offset = Math.atan2(y - cy, x - cx);
                 newPoly.setAttributeNS(null, 'edge', edg);
                 newPoly.setAttributeNS(null, 'angle_offset', angle_offset);
                 polygonExt.renderPolygon();
+                if (!opts.selected) {
+                    svgCanvas.selectOnly([newPoly], true);
+                } else {
+                    svgCanvas.selectorManager.requestSelector(opts.selected).resize();
+                    const bbox = newPoly.getBBox();
+                    opts.ObjectPanelsController.setPosition(bbox.x, bbox.y);
+                    opts.ObjectPanelsController.setWidth(bbox.width);
+                    opts.ObjectPanelsController.setHeight(bbox.height);
+                }
                 return {
                     started: true
                 };

@@ -93,7 +93,7 @@ define([
             '<feMergeNode in="SourceGraphic"/>' +
             '</feMerge>' +
             '</filter>' +
-            (BeamboxPreference.read('enable_mask') ? ('<clipPath id="scene_mask"><rect x="0" y="0" width="' + dimensions[0] + '" height="' + dimensions[1] + '" /></clipPath>') : '') + 
+            //(BeamboxPreference.read('enable_mask') ? ('<clipPath id="scene_mask"><rect x="0" y="0" width="' + dimensions[0] + '" height="' + dimensions[1] + '" /></clipPath>') : '') + 
             '</defs>' +
             '</svg>').documentElement, true);
         container.appendChild(svgroot);
@@ -1580,10 +1580,11 @@ define([
                         if (canvas.isUseLayerColor) {
                             canvas.updateElementColor(newRect);
                         }
+                        selectOnly([newRect], true);
                         break;
                     case 'line':
                         started = true;
-                        addSvgElementFromJson({
+                        const newLine = addSvgElementFromJson({
                             element: 'line',
                             curStyles: false,
                             attr: {
@@ -1603,6 +1604,10 @@ define([
                                 style: 'pointer-events:none'
                             }
                         });
+                        if (canvas.isUseLayerColor) {
+                            canvas.updateElementColor(newLine);
+                        }
+                        selectOnly([newLine], true);
                         break;
                     case 'circle':
                         started = true;
@@ -1638,6 +1643,7 @@ define([
                         if (canvas.isUseLayerColor) {
                             canvas.updateElementColor(newElli);
                         }
+                        selectOnly([newElli], true);
                         break;
                     case 'text':
                         started = true;
@@ -1935,7 +1941,6 @@ define([
                             }
                         }
                         scale.setScale(sx, sy);
-
                         translateBack.setTranslate(left + tx, top + ty);
                         if (hasMatrix) {
                             var diff = angle ? 1 : 0;
@@ -1949,8 +1954,40 @@ define([
                             tlist.replaceItem(translateOrigin, N - 1);
                         }
 
+                        //Bounding box calculation
+                        //const oldCx = left + width / 2;
+                        //const oldCy = top + height / 2;
+                        switch (selected.tagName) {
+                            case 'rect':
+                            case 'path':
+                            case 'use':
+                            case 'polygon':
+                            case 'image':
+                            case 'ellipse':
+                                const dCx = tx === 0 ? 0.5 * width * (sx - 1) : 0.5 * width * (1 - sx);
+                                const dCy = ty === 0 ? 0.5 * height * (sy - 1): 0.5 * height * (1 - sy);
+                                theta = angle * Math.PI / 180;
+                                const newCx = left + width / 2 + dCx * Math.cos(theta) - dCy * Math.sin(theta);
+                                const newCy = top + height / 2 + dCx * Math.sin(theta) + dCy * Math.cos(theta);
+                                const newWidth = Math.abs(width * sx);
+                                const newHeight = Math.abs(height * sy);
+                                const newLeft = newCx - 0.5 * newWidth;
+                                const newTop = newCy - 0.5 * newHeight;
+                                
+                                if (selected.tagName === 'ellipse') {
+                                    ObjectPanelsController.setEllipsePositionX(newCx);
+                                    ObjectPanelsController.setEllipsePositionY(newCy);
+                                    ObjectPanelsController.setEllipseRadiusX(newWidth / 2);
+                                    ObjectPanelsController.setEllipseRadiusY(newHeight / 2);
+                                } else {
+                                    ObjectPanelsController.setPosition(newLeft, newTop);
+                                    ObjectPanelsController.setWidth(newWidth);
+                                    ObjectPanelsController.setHeight(newHeight);
+                                }
+                                break;
+                        }
+                        
                         selectorManager.requestSelector(selected).resize();
-
                         call('transition', selectedElements);
                         ObjectPanelsController.setEditable(false);
                         if (svgedit.utilities.getElem('text_cursor')) {
@@ -1987,9 +2024,11 @@ define([
                             x2 = xya.x;
                             y2 = xya.y;
                         }
-
+                        selectorManager.requestSelector(selected).resize();
                         shape.setAttributeNS(null, 'x2', x2);
                         shape.setAttributeNS(null, 'y2', y2);
+                        ObjectPanelsController.setLineX2(x2);
+                        ObjectPanelsController.setLineY2(y2);
                         break;
                     case 'foreignObject':
                         // fall through
@@ -2024,7 +2063,10 @@ define([
                             'x': new_x,
                             'y': new_y
                         }, 1000);
-
+                        ObjectPanelsController.setPosition(new_x, new_y);
+                        ObjectPanelsController.setWidth(w);
+                        ObjectPanelsController.setHeight(h);
+                        selectorManager.requestSelector(selected).resize();
                         break;
                     case 'circle':
                         c = $(shape).attr(['cx', 'cy']);
@@ -2045,6 +2087,9 @@ define([
                         var ry = Math.abs(evt.shiftKey ? (x - cx) : (y - cy));
                         shape.setAttributeNS(null, 'ry', ry);
 
+                        ObjectPanelsController.setEllipseRadiusX(Math.abs(x - cx));
+                        ObjectPanelsController.setEllipseRadiusY(ry);
+                        selectorManager.requestSelector(selected).resize();
                         break;
                     case 'fhellipse':
                     case 'fhrect':
@@ -2167,6 +2212,7 @@ define([
 
                         canvas.setRotationAngle(angle < -180 ? (360 + angle) : angle, true);
                         call('transition', selectedElements);
+                        ObjectPanelsController.setRotation(angle < -180 ? (360 + angle) : angle);
                         ObjectPanelsController.setEditable(false);
                         break;
                     default:
@@ -2177,7 +2223,8 @@ define([
                     event: evt,
                     mouse_x: mouse_x,
                     mouse_y: mouse_y,
-                    selected: selected
+                    selected: selected,
+                    ObjectPanelsController: ObjectPanelsController
                 });
 
             }; // mouseMove()
@@ -6033,7 +6080,7 @@ define([
                 }
                 const attrStroke = $(elem).attr('stroke');
                 const attrFill = $(elem).attr('fill');
-                if (['rect', 'ellipse', 'path', 'polygon', 'text'].includes(elem.tagName)) {
+                if (['rect', 'ellipse', 'path', 'polygon', 'text', 'line'].includes(elem.tagName)) {
                     if (((svg_by_layer && svg_by_color === 0) || attrStroke) && attrStroke !== 'none') {
                         $(elem).attr('stroke', color);
                     }

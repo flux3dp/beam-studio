@@ -27,6 +27,7 @@ define([
         constructor() {
             this.reactRoot = '';
             this.isVisible = false;
+            this.isEditable = true;
             this.type = 'unknown';
             this.$me = $();
             this.data = {
