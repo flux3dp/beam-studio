@@ -61,6 +61,7 @@ define([
         },
 
         handleShadingClick: function(event) {
+            event.stopPropagation();
             const { shading } = this.state;
             const threshold = (shading ? 128 : 255);
 
@@ -87,7 +88,7 @@ define([
             return this.state.shading ? null : (
                 <div className="control">
                     <span className="text-center header">{LANG.threshold}</span>
-                    <input type="range" min={0} max={255} value={this.state.threshold} onChange={(e) => this.handleThresholdChange(e)} />
+                    <input type="range" min={0} max={255} value={this.state.threshold} onChange={(e) => this.handleThresholdChange(e)} onClick={e => {e.stopPropagation();}}/>
                 </div>
             );
         },
