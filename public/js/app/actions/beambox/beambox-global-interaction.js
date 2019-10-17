@@ -48,6 +48,7 @@ define([
                 'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
                 'UNDO': () => FnWrapper.undo(),
                 'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
+                'OFFSET': () => svgEditor.triggerOffsetTool(),
                 'IMAGE_SHARPEN': () => FnWrapper.photoEdit('sharpen'),
                 'IMAGE_CROP': () => FnWrapper.photoEdit('crop'),
                 'IMAGE_INVERT': () => FnWrapper.photoEdit('invert'),
@@ -90,7 +91,7 @@ define([
             ]);
         }
         onObjectFocus() {
-            this.enableMenuItems(['DUPLICATE']);
+            this.enableMenuItems(['DUPLICATE', 'OFFSET']);
             if (svgCanvas.getSelectedElems()[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
             }
@@ -99,7 +100,7 @@ define([
             }
         }
         onObjectBlur() {
-            this.disableMenuItems(['DUPLICATE', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
+            this.disableMenuItems(['DUPLICATE', 'OFFSET', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
         }
     }
     const instance = new BeamboxGlobalInteraction();

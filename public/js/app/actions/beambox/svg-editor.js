@@ -3726,6 +3726,19 @@ define([
                 } 
             }
 
+            let triggerOffsetTool = function () {
+                if (selectedElement != null || multiselected) {
+                    ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
+                    ToolPanelsController.setType('offset');
+                    ToolPanelsController.render();
+                    ObjectPanelsController.setVisibility(false);
+                    ObjectPanelsController.render();
+                } else {
+                    AlertActions.showPopupError('Select First', LANG.popup.select_first, LANG.left_panel.label.offset);
+                }
+            }
+            editor.triggerOffsetTool = triggerOffsetTool;
+
                 // Delete is a contextual tool that only appears in the ribbon if
                 // an element has been selected
             var deleteSelected = function () {

@@ -856,7 +856,7 @@ define([
         this.getObjectLayer = function(elem) {
             while (elem) {
                 elem = elem.parentNode;
-                if (elem && elem.getAttribute && elem.getAttribute('class').indexOf('layer') >= 0) {
+                if (elem && elem.getAttribute && elem.getAttribute('class') && elem.getAttribute('class').indexOf('layer') >= 0) {
                     var title = $(elem).find('title')[0];
                     if (title) {
                         return { elem: elem, title: title.innerHTML };
@@ -1843,7 +1843,7 @@ define([
                             // Found an element that was not selected before, so we should add it.
                             if (selectedElements.indexOf(intElem) === -1) {
                                 const layer = svgCanvas.getObjectLayer(intElem).elem;
-                                if (layer.getAttribute('data-lock')) {
+                                if (layer.getAttribute('data-lock') || layer.getAttribute('display') === 'none') {
                                     continue;
                                 }
                                 elemsToAdd.push(intElem);
@@ -8726,7 +8726,7 @@ define([
                             copy.id = elem.id;
                         }
                         const layerName = $(elem.parentNode).find('title').text();
-                        const layer =drawing.getLayerByName(layerName);
+                        const layer = drawing.getLayerByName(layerName);
                         layer.appendChild(copy);
                         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
                         restoreRefElems(copy);
@@ -8743,6 +8743,100 @@ define([
             if (pastedElements.length > 0) {
                 call('changed', pastedElements);
             }
+        }
+
+        // Function: offsetElements
+        // Create offset of elements
+        // dir: direction 0: inward 1: outward; dist: offset distance; cornerType: cornerType; elem: target, selected if not passed;
+        this.offsetElements = (dir, dist, cornerType, elems) => {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+            elems = elems || selectedElements;
+            let batchCmd = new svgedit.history.BatchCommand('Create Offset Elements');
+            let solution_paths = [];
+            const scale = 100;
+
+            if (dir === 0) {
+                dist *= -1
+            }; 
+            let newElem;
+            let isContainNotSupportTag = false;
+            let co = new svgedit.ClipperLib.ClipperOffset(2 , 0.25);
+            elems.forEach(elem => {
+                if (!elem) {
+                    return;
+                }
+                if (['g', 'use', 'image', 'text'].indexOf(elem.tagName) >= 0) {
+                    isContainNotSupportTag = true;
+                    console.log(elem.tagName);
+                    return;
+                }
+                const dpath = svgedit.utilities.getPathDFromElement(elem);
+                const bbox = svgedit.utilities.getBBox(elem);
+                let rotation = {
+                    angle: svgedit.utilities.getRotationAngle(elem),
+                    cx: bbox.x + bbox.width / 2,
+                    cy: bbox.y + bbox.height / 2
+                };
+
+                const paths = svgedit.ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+                let closed = true;
+                for (let j = 0; j < paths.length; ++j) {
+                    if (!(paths[j][0].X === paths[j][paths[j].length - 1].X && paths[j][0].Y === paths[j][paths[j].length - 1].Y)) {
+                        closed = false;
+                        break;
+                    }
+                }
+                if (cornerType === 'round') {
+                    co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtRound, svgedit.ClipperLib.EndType.etOpenRound);
+                } else if (cornerType === 'sharp') {
+                    if (closed) {
+                        co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtMiter, svgedit.ClipperLib.EndType.etClosedLine);
+                    } else {
+                        co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtMiter, svgedit.ClipperLib.EndType.etOpenSquare);
+                    }
+                }
+            });
+            co.Execute(solution_paths, Math.abs(dist * scale));
+            solution_paths = (dir === 1) ? [solution_paths[0]] : solution_paths.slice(1);
+            if (solution_paths.length === 0 || !solution_paths[0]) {
+                if (isContainNotSupportTag) {
+                    AlertActions.showPopupWarning('Offset', LANG.tool_panels._offset.not_support_message)
+                } else {
+                    AlertActions.showPopupError('Offset', LANG.tool_panels._offset.fail_message);
+                }
+                console.log('clipper.co failed');
+                return;
+            }
+            if (isContainNotSupportTag) {
+                AlertActions.showPopupWarning('Offset', LANG.tool_panels._offset.not_support_message)
+            }
+            let d = '';
+            for (let i = 0; i < solution_paths.length; ++i) {
+                d += 'M';
+                d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                d += ' Z'
+            }
+            newElem = addSvgElementFromJson({
+                element: 'path',
+                curStyles: false,
+                attr: {
+                    id: getNextId(),
+                    d: d,
+                    stroke: '#000',
+                    'fill-opacity': 0,
+                    opacity: cur_shape.opacity
+                }
+            });
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(newElem));
+            if (this.isUseLayerColor) {
+                this.updateElementColor(newElem);
+            }
+
+            selectOnly([newElem], true);
+            addCommandToHistory(batchCmd);
         }
 
         // Function: moveToTopSelectedElement
@@ -9226,7 +9320,7 @@ define([
             for (let i = len - 1; i >= 0; --i) {
                 let clipper = new svgedit.ClipperLib.Clipper();
                 const elem =selectedElements[i];
-                if (!(elem.tagName === 'rect' || elem.tagName === 'path' || elem.tagName === 'polygon' || elem.tagName === 'ellipse')) {
+                if (!(elem.tagName === 'rect' || elem.tagName === 'path' || elem.tagName === 'polygon' || elem.tagName === 'ellipse' || elem.tagName === 'line')) {
                     tagNameMap = {
                         'g': LANG.tag.g,
                         'use': LANG.tag.use,

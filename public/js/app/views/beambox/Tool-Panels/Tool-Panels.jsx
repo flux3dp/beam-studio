@@ -6,6 +6,9 @@ define([
     'helpers/i18n',
     'jsx!views/beambox/Tool-Panels/RowColumn',
     'jsx!views/beambox/Tool-Panels/Interval',
+    'jsx!views/beambox/Tool-Panels/OffsetDir',
+    'jsx!views/beambox/Tool-Panels/OffsetCorner',
+    'jsx!views/beambox/Tool-Panels/OffsetDist',
 ], function(
     React,
     PropTypes,
@@ -13,7 +16,10 @@ define([
     Constant,
     i18n,
     RowColumnPanel,
-    IntervalPanel
+    IntervalPanel,
+    OffsetDirPanel,
+    OffsetCornerPanel,
+    OffsetDistPanel
 ) {
     const LANG = i18n.lang.beambox.tool_panels;
 
@@ -24,7 +30,8 @@ define([
 
     const validPanelsMap = {
         'unknown':  [],
-        'gridArray': ['rowColumn', 'distance', 'button']
+        'gridArray': ['rowColumn', 'distance'],
+        'offset': ['offsetDir', 'offsetCorner', 'offsetDist']
     };
 
     class ToolPanel extends React.Component {
@@ -32,7 +39,15 @@ define([
         constructor(props) {
             super(props);
             this._setArrayRowColumn = this._setArrayRowColumn.bind(this);
-            this._setDistance = this._setDistance.bind(this);
+            this._setArrayDistance = this._setArrayDistance.bind(this);
+            this._setOffsetDir = this._setOffsetDir.bind(this);
+            this._setOffsetCorner = this._setOffsetCorner.bind(this);
+            this._setOffsetDist = this._setOffsetDist.bind(this);
+            this.offset = {
+                dir: 1, // 1 for outward, 0 for inward
+                distance: 5,
+                cornerType: 'sharp' // 0 for sharp, 1 for round
+            }
         }
 
         _setArrayRowColumn(rowcolumn) {
@@ -41,11 +56,23 @@ define([
             this.setState({rowcolumn: rc});
         };
 
-        _setDistance(distance) {
+        _setArrayDistance(distance) {
             this.props.data.distance = distance;
             let d = distance;
             this.setState({distance: d});
         };
+
+        _setOffsetDir(dir) {
+            this.offset.dir = dir;
+        };
+
+        _setOffsetDist(val) {
+            this.offset.distance = val;
+        };
+
+        _setOffsetCorner(val) {
+            this.offset.cornerType = val;
+        }
 
         _renderPanels() {
             const data = this.props.data;
@@ -58,14 +85,27 @@ define([
                 switch (panelName) {
                     case 'rowColumn':
                         panel = <RowColumnPanel
-                            key={panelName} {...data.rowcolumn}
-                            onValueChange={this._setArrayRowColumn}
+                            key={panelName} {...data.rowcolumn} onValueChange={this._setArrayRowColumn}
                             />;
                         break;
                     case 'distance':
                         panel = <IntervalPanel
-                            key={panelName} {...data.distance}
-                            onValueChange={this._setDistance}
+                            key={panelName} {...data.distance} onValueChange={this._setArrayDistance}
+                            />;
+                        break;
+                    case 'offsetDir':
+                        panel = <OffsetDirPanel
+                            key={panelName} dir={this.offset.dir} onValueChange={this._setOffsetDir}
+                            />;
+                        break;
+                    case 'offsetCorner':
+                        panel = <OffsetCornerPanel
+                            key={panelName} cornerType={this.offset.cornerType} onValueChange={this._setOffsetCorner}
+                            />;
+                        break;
+                    case 'offsetDist':
+                        panel = <OffsetDistPanel
+                            key={panelName} distance={this.offset.distance} onValueChange={this._setOffsetDist}
                             />;
                         break;
                     //case 'button':          panel = <div; break;
@@ -79,6 +119,7 @@ define([
             const type = this.props.type;
             const titleMap = {
                 'gridArray': LANG.grid_array,
+                'offset': LANG.offset,
             }
             const title = titleMap[type];
             return(
@@ -102,19 +143,29 @@ define([
             };
             let _onYes = () => {this.props.unmount()};
             const type = this.props.type;
+            switch (type) {
+                case 'gridArray':
+                    _onYes = () => {
+                        let data = this.props.data;
+                        let distance = {};
+                        distance.dx = _mm2pixel(data.distance.dx);
+                        distance.dy = _mm2pixel(data.distance.dy);
+                        svgCanvas.gridArraySelectedElement(distance, data.rowcolumn);
+                        this.props.unmount();
+                        svgCanvas.setMode('select');
+                        $('.tool-btn').removeClass('active');
+                        $('#left-Cursor').addClass('active');
+                    }
+                    break;
+                case 'offset':
+                    _onYes = () => {
+                        svgCanvas.offsetElements(this.offset.dir, _mm2pixel(this.offset.distance), this.offset.cornerType);
 
-            if (type === 'gridArray') {
-                _onYes = () => {
-                    let data = this.props.data;
-                    let distance = {};
-                    distance.dx = _mm2pixel(data.distance.dx);
-                    distance.dy = _mm2pixel(data.distance.dy);
-                    svgCanvas.gridArraySelectedElement(distance, data.rowcolumn);
-                    this.props.unmount();
-                    svgCanvas.setMode('select');
-                    $('.tool-btn').removeClass('active');
-                    $('#left-Cursor').addClass('active');
-                }
+                        this.props.unmount();
+                        svgCanvas.setMode('select');
+                        $('.tool-btn').removeClass('active');
+                        $('#left-Cursor').addClass('active');
+                    }
             }
             return (
                 <div className="tool-block">

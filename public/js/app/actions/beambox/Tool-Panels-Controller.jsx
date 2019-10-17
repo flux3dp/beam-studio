@@ -86,6 +86,7 @@ define([
         }
 
         unmount() {
+            this.isVisible = false;
             ReactDOM.unmountComponentAtNode(document.getElementById(this.reactRoot));
         }
 

@@ -226,7 +226,6 @@
         border-radius: 2px;
         transition: left .1s ease, top .1s ease, opacity .1s ease;
         &.unselectable {
-            opacity: 0.5;
             user-select: none;
             pointer-events: none;
         }
@@ -288,6 +287,17 @@
                     margin-left: 17px;
                     font-size: 22px;
                     cursor: pointer;
+                }
+                .offset-dist {
+                    input {
+                        margin: 0;
+                    }
+                }
+                .offset-dir,
+                .offset-corner {
+                    select {
+                        line-height: 14px;
+                    }
                 }
             }
             .caption {

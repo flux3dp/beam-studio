@@ -20,12 +20,6 @@ define([
                 height: props.height,
                 isRatioPreserve: (props.type !== 'rect')
             };
-
-            this.propTypes = {
-                width: PropTypes.number.isRequired,
-                height: PropTypes.number.isRequired,
-                type: PropTypes.oneOf(['rect', 'image', 'use']).isRequired
-            };
         }
 
         componentWillReceiveProps(nextProps) {

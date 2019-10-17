@@ -1246,7 +1246,18 @@ define(function() {
                 array_interval: 'Array Interval',
                 dx: 'X',
                 dy: 'Y',
-
+                offset: 'Offset',
+                _offset: {
+                    direction: 'Offset Direction',
+                    inward: 'Inward',
+                    outward: 'Outward',
+                    dist: 'Offset Distance',
+                    corner_type: 'Corner',
+                    sharp: 'Sharp',
+                    round: 'Round',
+                    fail_message: 'Failed to Offset Objects.',
+                    not_support_message: 'Selected elements containing unsupported SVG tag：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;\nThese objects will be skipped.',
+                },
             },
             network_testing_panel:{
                 network_testing: 'Network Testing',

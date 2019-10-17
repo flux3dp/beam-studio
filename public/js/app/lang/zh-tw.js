@@ -1090,6 +1090,7 @@ define(function() {
                     polygon: '多邊形',
                     pen: '鋼筆',
                     array: '陣列',
+                    offset: '偏移',
                     preview: '相機預覽'
                 },
                 insert_object_submenu: {
@@ -1243,6 +1244,18 @@ define(function() {
                 array_interval: '陣列間隔',
                 dx: '寬',
                 dy: '高',
+                offset: '偏移物件',
+                _offset: {
+                    direction: '偏移方向',
+                    inward: '向內',
+                    outward: '向外',
+                    dist: '偏移距離',
+                    corner_type: '邊角',
+                    sharp: '尖角',
+                    round: '圓角',
+                    fail_message: '生成偏移物件失敗',
+                    not_support_message: '選取物件中含有不支援的類型：\n圖片、群組、文字、匯入圖檔\n這些類型的物件將被忽略。',
+                },
             },
             network_testing_panel:{
                 network_testing: '網路檢測',

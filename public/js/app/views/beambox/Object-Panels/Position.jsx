@@ -15,7 +15,6 @@ define([
         propTypes: {
             x: PropTypes.number.isRequired,
             y: PropTypes.number.isRequired,
-            type: PropTypes.oneOf(['rect', 'image', 'use']).isRequired
         },
 
         getInitialState: function() {

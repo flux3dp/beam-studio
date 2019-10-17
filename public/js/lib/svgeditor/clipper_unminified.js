@@ -7629,9 +7629,12 @@
 		const commands  = ClipperLib.dPathSpliter(dPath);
 		let resultPaths = [];
 		let currentPath = [];
+		let startPoint, controlPoints, cPath;
+		let lastControlPoint = null;
 		for (let i = 0; i < commands.length; ++i) {
 			let points = commands[i].points;
 			if (commands[i].command === 'Z') {
+				currentPath.push(currentPath[0]);
 				resultPaths.push(currentPath);
 				currentPath = [];
 				continue;
@@ -7640,14 +7643,30 @@
 				ClipperLib.rotationPoints(rotation, points);
 			}
 			points = points.map(p => ({X: p.X * scale, Y: p.Y * scale}));
-			if (commands[i].command === 'M' || commands[i].command === 'L') {
-				currentPath.push(...points);
-			} else if (commands[i].command === 'C') {
-				const startPoint = currentPath[currentPath.length - 1];
-				const controlPoints = points;
-				const cPath = ClipperLib.generatePointPathFromC(startPoint, controlPoints);
-				currentPath.push(...cPath); 
+			switch (commands[i].command) {
+				case 'M':
+				case 'L':
+					currentPath.push(...points);
+					break;
+				case 'C':
+					startPoint = currentPath[currentPath.length - 1];
+					controlPoints = points;
+					lastControlPoint = controlPoints[1];
+					cPath = ClipperLib.generatePointPathFromC(startPoint, controlPoints);
+					currentPath.push(...cPath);
+					break;
+				case 'S':
+					startPoint = currentPath[currentPath.length - 1];
+					let p1 = lastControlPoint ? {X: 2 * startPoint.X - lastControlPoint.X, Y: 2 * startPoint.Y - lastControlPoint.Y} : startPoint;
+					controlPoints = [p1, ...points];
+					lastControlPoint = controlPoints[1];
+					cPath = ClipperLib.generatePointPathFromC(startPoint, controlPoints);
+					currentPath.push(...cPath);
+					break;
 			}
+		}
+		if (currentPath.length > 1) {
+			resultPaths.push(currentPath);
 		}
 		return resultPaths;
 	}
@@ -7664,6 +7683,9 @@
 				commands.push({command: dPath[lastCommand].toUpperCase(), points: []})
 			}
 		}
+		const pointsString = dPath.substring(lastCommand+1);
+		const point = ClipperLib.pointStringHandler(pointsString);
+		commands[commands.length-1].points = point;
 		return commands
 	}
 	ClipperLib.pointStringHandler = function (pString) {
