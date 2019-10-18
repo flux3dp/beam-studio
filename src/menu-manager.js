@@ -26,7 +26,7 @@ function _buildOSXAppMenu(callback) {
 
 function _buildFileMenu(fnKey, callback) {
     let menuItems = [
-        { 'id': 'IMPORT', label: r.import || 'Import', click: callback, 'accelerator': `${fnKey}+I` },
+        { 'id': 'IMPORT', label: r.import || 'Import', click: callback, 'accelerator': `${fnKey}+O` },
         { type: 'separator' },
         { 'id': 'SAMPLES', label: r.samples || 'Samples', submenu: [
             { 'id': 'IMPORT_EXAMPLE', label: r.import_first_engrave || 'First Engraving', click: callback },
