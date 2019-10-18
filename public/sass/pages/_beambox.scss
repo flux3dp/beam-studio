@@ -19,13 +19,13 @@
         height: 100%;
         .tool-btn {
             text-align: center;
-            line-height: 26px;
+            line-height: 24px;
             img {
-                height: 26px;
+                height: 24px;
             }
-            margin: 15px 7px;
-            height: 40px;
-            width: 40px;
+            margin: 13px 6px;
+            height: 36px;
+            width: 36px;
             opacity: 0.5;
             &.active {
                 opacity: 1.0;
