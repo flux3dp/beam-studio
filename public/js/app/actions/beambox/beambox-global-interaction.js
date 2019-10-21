@@ -33,7 +33,7 @@ define([
             }
             this._actions = {
 
-                'IMPORT': () => {
+                'OPEN': () => {
                     if(electron) {
                         electron.trigger_file_input_click('import_image');
                     }
