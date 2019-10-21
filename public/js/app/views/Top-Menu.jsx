@@ -820,6 +820,24 @@ define([
                 return {left_scroll_cue, right_scroll_cue};
             },
 
+            _renderFileTitle: function () {
+                if (process.platform === 'win32') {
+                    return null;
+                } else {
+                    let fileTitle;
+                    try {
+                        fileTitle = svgCanvas.currentFileName;
+                    } catch (e) {
+                    }
+                    fileTitle = fileTitle || lang.topbar.untitled;
+                    return (
+                        <div className="file-title">
+                            {fileTitle}
+                        </div>
+                    );
+                }
+            },
+
             render: function () {
                 let deviceList = this._renderDeviceList(),
                     menuClass,
@@ -843,17 +861,10 @@ define([
                         top: '14px'
                     };
                 }
-                let fileTitle;
-                try {
-                    fileTitle = svgCanvas.currentFileName;
-                } catch (e) {
-                }
-                fileTitle = fileTitle || lang.topbar.untitled;
+
                 return (
                     <div>
-                        <div className="file-title">
-                            {fileTitle}
-                        </div>
+                        {this._renderFileTitle()}
                         {left_scroll_cue}
                         <div className="top-btns" onScroll={()=>{this.setState(this.state)}}>
                             <div className="top-btn-container">

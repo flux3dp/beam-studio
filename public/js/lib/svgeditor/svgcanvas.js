@@ -8155,10 +8155,14 @@ define([
 
         // Function: getLatestImportFileName
         // Get latest imported file name
-        this.setLatestImportFileName = function(fileName) {
+        this.setLatestImportFileName = (fileName) => {
             this.latestImportFileName = fileName;
             this.currentFileName = fileName;
-            $('#svgcanvas').trigger('mouseup'); //update file title
+            if (process.platform === 'win32') {
+                window.titlebar.updateTitle(fileName);
+            } else {
+                $('#svgcanvas').trigger('mouseup'); //update file title
+            }
         }
 
         // Function: getLatestImportFileName

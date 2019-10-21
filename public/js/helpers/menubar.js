@@ -26,5 +26,6 @@ function(
             icon: 'win-title-icon.png'
         });
         titlebar.updateTitle(' ');
+        window.titlebar = titlebar;
     }
 });
