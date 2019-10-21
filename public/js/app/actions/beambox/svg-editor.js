@@ -5614,7 +5614,6 @@ define([
                 }
                 editor.readSVG = readSVG;
                 const importSvg = file => {
-                    svgCanvas.setLatestImportFileName(file.name.split('.')[0]);
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file);
                         if (result !== 'ok') {
@@ -5667,7 +5666,6 @@ define([
                     );
                 };
                 const importBitmap = file => {
-                    svgCanvas.setLatestImportFileName(file.name.split('.')[0]);
                     readImage(file);
                 };
                 const importDxf = async file => {
@@ -5809,13 +5807,13 @@ define([
                             let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
                             zoomChanged(window, {zoomLevel: zoom, staticPoint: {x: 0, y: 0}});
                         }
-                        match = str.match(/data-left="[0-9]+"/);
+                        match = str.match(/data-left="[-0-9]+"/);
                         if (match) {
                             let left = parseInt(match[0].substring(11, match[0].length - 1));
                             left = Math.round((left + Constant.dimension.width) * svgCanvas.getZoom());
                             $('#workarea').scrollLeft(left);
                         }
-                        match = str.match(/data-top="[0-9]+"/);
+                        match = str.match(/data-top="[-0-9]+"/);
                         if (match) {
                             let top = parseInt(match[0].substring(10, match[0].length - 1));
                             top = Math.round((top + Constant.dimension.height) * svgCanvas.getZoom());
@@ -5886,6 +5884,21 @@ define([
                             break;
                         case 'unknown':
                             $.alert(LANG.svg_editor.unnsupported_file_type);
+                            break;
+                    }
+                    let fileName = file.name.slice(0, file.name.lastIndexOf('.')).replace(':', "/");
+                    switch (fileType) {
+                        case 'bvg':
+                            svgCanvas.setLatestImportFileName(fileName);
+                            svgCanvas.currentFilePath = file.path;
+                            break;
+                        case 'svg':
+                        case 'bitmap':
+                        case 'dxf':
+                        case 'ai':
+                            if (!svgCanvas.getLatestImportFileName()) {
+                                svgCanvas.setLatestImportFileName(fileName);
+                            }
                             break;
                     }
 
