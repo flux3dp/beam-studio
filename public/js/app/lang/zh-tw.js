@@ -9,6 +9,7 @@ define(function() {
             next: '下一步'
         },
         topbar: {
+            untitled: '無標題',
             titles: {
                 settings: '偏好設定'
             },

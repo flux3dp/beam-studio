@@ -287,12 +287,39 @@ define([
             svgCanvas.setMode('preview');
         },
         saveFile: function() {
+            if (!svgCanvas.currentFilePath) {
+                this.saveAsFile();
+            } else {
+                svgCanvas.clearSelection();
+                const output = svgCanvas.getSvgString();
+                const fs = require('fs');
+                fs.writeFile(svgCanvas.currentFilePath, output, function(err) {
+                    if (err) {
+                        console.log('Save Err', err);
+                        return;
+                    }
+                    console.log('saved');
+                });
+            }
+        },
+        saveAsFile: function() {
             svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
-            const defaultFileName = svgCanvas.getLatestImportFileName() || 'untitled';
+            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
-
-            window.electron.ipc.send('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
+            let currentFilePath = window.electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
+            if (currentFilePath) {
+                let currentFileName;
+                if (process.platform === 'win32') {
+                    currentFileName = currentFilePath.split('\\');
+                } else {
+                    currentFileName = currentFilePath.split('/');
+                }
+                currentFileName = currentFileName[currentFileName.length -1];
+                currentFileName = currentFileName.slice(0, currentFileName.lastIndexOf('.')).replace(':', "/");
+                svgCanvas.setLatestImportFileName(currentFileName);
+                svgCanvas.currentFilePath = currentFilePath;
+            }
         },
 
         //top panel
@@ -411,6 +438,10 @@ define([
                 pageX: 0,
                 pageY: 0
             });
+        },
+
+        getLatestImportFileName: function() {
+            return svgCanvas.getLatestImportFileName();
         },
 
         reset_object_panel: function() {

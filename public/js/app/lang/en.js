@@ -9,6 +9,7 @@ define(function() {
             next: 'NEXT'
         },
         topbar: {
+            untitled: 'Untitled',
             titles: {
                 settings: 'Preferences'
             },

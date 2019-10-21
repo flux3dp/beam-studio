@@ -263,6 +263,7 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
 
     dialog.showSaveDialog(options, function (filePath) {
         if (!filePath) {
+            event.returnValue = false;
             return;
         }
 
@@ -271,7 +272,7 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
                 fs.writeFile(filePath, file, function(err) {
                     if (err) {
                         dialog.showErrorBox('Error', err);
-
+                        event.returnValue = false;
                         return;
                     }
                 });
@@ -280,15 +281,17 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
                 fs.writeFileSync(filePath, file, function(err) {
                     if(err) {
                         dialog.showErrorBox('Error', err);
-
+                        event.returnValue = false;
                         return;
                     }
                 });
                 break;
             default:
+                event.returnValue = false;
                 dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
                 break;
         }
+        event.returnValue = filePath;
     })
 })
 

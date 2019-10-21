@@ -8157,6 +8157,8 @@ define([
         // Get latest imported file name
         this.setLatestImportFileName = function(fileName) {
             this.latestImportFileName = fileName;
+            this.currentFileName = fileName;
+            $('#svgcanvas').trigger('mouseup'); //update file title
         }
 
         // Function: getLatestImportFileName

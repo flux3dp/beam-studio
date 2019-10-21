@@ -36,9 +36,10 @@ function _buildFileMenu(fnKey, callback) {
             { 'id': 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line || 'Material Testing Suite - Line', click: callback },
             { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old || 'Material Testing Suite (Old)', click: callback },
         ]},
+        { 'id': 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` },
+        { 'id': 'SAVE_AS', label: r.save_as, click: callback, 'accelerator': `Shift+${fnKey}+S` },
         { type: 'separator' },
-        { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task || 'Export', click: callback, 'accelerator': `${fnKey}+E` },
-        { 'id': 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` }
+        { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task || 'Export', click: callback, 'accelerator': `${fnKey}+E` }
     ];
 
     if(process.platform !== 'darwin') {
