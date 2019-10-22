@@ -5891,6 +5891,7 @@ define([
                         case 'bvg':
                             svgCanvas.setLatestImportFileName(fileName);
                             svgCanvas.currentFilePath = file.path;
+                            svgCanvas.updateRecentFiles(file.path);
                             break;
                         case 'svg':
                         case 'bitmap':

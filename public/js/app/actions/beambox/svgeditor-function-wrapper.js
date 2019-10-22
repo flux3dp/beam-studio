@@ -319,6 +319,7 @@ define([
                 currentFileName = currentFileName.slice(0, currentFileName.lastIndexOf('.')).replace(':', "/");
                 svgCanvas.setLatestImportFileName(currentFileName);
                 svgCanvas.currentFilePath = currentFilePath;
+                svgCanvas.updateRecentFiles(currentFilePath);
             }
         },
 

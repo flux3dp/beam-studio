@@ -116,7 +116,9 @@ define(function() {
                 bvg_files: 'Beambox Scene',
                 fcode_files: 'FLUX Code',
                 fsc_files: '3D Printing Scene',
-                confirmReset: 'Are you sure you want to reset all settings?'
+                confirmReset: 'Are you sure you want to reset all settings?',
+                clear_recent: 'Clear Recently Opened',
+                path_not_exit: 'This path does not seem to exist anymore on desk.'
             },
             edit: {
                 label: 'Edit',
@@ -1052,6 +1054,7 @@ define(function() {
                 layer_by_layer: 'Layer',
                 layer_by_color: 'Color',
                 nolayer: 'Single Layer',
+                loading_image: 'Loading image, please wait...',
                 no_support_text: 'FLUX Studio does not support text tag currently. Please transfer text to path before importing.',
                 power_too_high_damage_laser_tube: 'Using lower laser power will extends laser tube\'s lifetime.' ,
                 speed_too_high_lower_the_quality: 'Using too high speed at this resolution may result in the lower quality of shading engraving.',

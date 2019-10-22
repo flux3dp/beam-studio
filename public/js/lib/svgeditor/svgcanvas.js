@@ -35,6 +35,7 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
+    'helpers/local-storage',
     'helpers/shortcuts',
     'lib/svgeditor/imagetracer'
 ], function (
@@ -45,6 +46,7 @@ define([
     PreviewModeController,
     BeamboxActions,
     Constant,
+    LocalStorage,
     shortcuts,
     ImageTracer
 ) {
@@ -563,9 +565,9 @@ define([
             // Rotary Mode
             rotaryMode = BeamboxPreference.read('rotary_mode');
 
+        const { Menu, MenuItem } = require('electron').remote;
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
-        require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-        .submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
         BeamboxPreference.write('borderless', false);
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
@@ -6046,8 +6048,7 @@ define([
         this.toggleUseLayerColor = () => {
             this.isUseLayerColor = !(this.isUseLayerColor);
             BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
-            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-            .submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
             const layers = $('#svgcontent > g.layer').toArray();
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
@@ -6262,8 +6263,7 @@ define([
             let borderless = BeamboxPreference.read('borderless') || false;
             borderless = !borderless;
             BeamboxPreference.write('borderless', borderless);
-            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-            .submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = borderless;
+            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = borderless;
             //console.log(BeamboxPreference.read('borderless'), typeof(BeamboxPreference.read('borderless')));
         };
 
@@ -6557,8 +6557,7 @@ define([
         this.toggleBezierPathAlignToEdge = () => {
             isBezierPathAlignToEdge = !(this.isBezierPathAlignToEdge || false);
             this.isBezierPathAlignToEdge = isBezierPathAlignToEdge;
-            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_edit')[0]
-            .submenu.items.filter(i => i.id === 'ALIGN_TO_EDGES')[0].checked = this.isBezierPathAlignToEdge;
+            Menu.getApplicationMenu().items.filter(i => i.id === '_edit')[0].submenu.items.filter(i => i.id === 'ALIGN_TO_EDGES')[0].checked = this.isBezierPathAlignToEdge;
             $('#x_align_line').remove();
             $('#y_align_line').remove();
         }
@@ -8170,6 +8169,76 @@ define([
         this.getLatestImportFileName = function() {
             return this.latestImportFileName;
         }
+
+        this.loadRecentFile = async (filePath) => {
+            const fs = require('fs');
+            if (fs.existsSync(filePath)) {
+                let fileName;
+                if (process.platform === 'win32') {
+                    fileName = filePath.split('\\');
+                } else {
+                    fileName = filePath.split('/');
+                }
+                AlertActions.showPopupInfo('read recent', LANG.popup.loading_image, ' ');
+                fileName = fileName[fileName.length -1];
+                fileName = fileName.slice(0, fileName.lastIndexOf('.')).replace(':', "/");
+                this.setLatestImportFileName(fileName);
+                this.currentFilePath = filePath;
+                this.updateRecentFiles(filePath);
+                let res = await fetch(filePath);
+                res = await res.blob();
+                try {
+                    svgEditor.importBvg(res);
+                } finally {
+                    AlertActions.closePopup();
+                }
+            } else {
+                AlertActions.showPopupError('Recent', i18n.lang.topmenu.file.path_not_exit);
+            }
+        }
+
+        this.cleanRecentFiles = () => {
+            LocalStorage.set('recent_files', []);
+            this.updateRecentMenu();
+        }
+
+        this.updateRecentMenu = () => {
+            const recentFiles = LocalStorage.get('recent_files') || [];
+            let recentMenu = Menu.getApplicationMenu().items.filter(i => i.id === '_file')[0].submenu.items.filter(i => i.id === 'RECENT')[0].submenu;
+            recentMenu.items = [];
+            recentMenu.clear();
+            recentFiles.forEach(filePath => {
+                let label = filePath
+                if (process.platform !== 'win32') {
+                    label = filePath.replace(':', '/');
+                }
+                recentMenu.append(new MenuItem({'id': label, label: label, click: () => {this.loadRecentFile(filePath)}}));
+            });
+            recentMenu.append(new MenuItem({ type: 'separator' }));
+            recentMenu.append(new MenuItem({'id': 'CLEAR_RECENT', label: i18n.lang.topmenu.file.clear_recent, click: () => {this.cleanRecentFiles()}}));
+            Menu.setApplicationMenu(Menu.getApplicationMenu());
+            if (process.platform === 'win32') {
+                window.titlebar.updateMenu(Menu.getApplicationMenu());
+            }
+        }
+
+        this.updateRecentFiles = (filePath) => {
+            let recentFiles = LocalStorage.get('recent_files') || [];
+            const i = recentFiles.indexOf(filePath);
+            if (i > 0) {
+                recentFiles.splice(i, 1);
+                recentFiles.unshift(filePath);
+            } else if (i < 0) {
+                let l = recentFiles.unshift(filePath);
+                if (l > 10) {
+                    recentFiles.pop();
+                }
+            }
+            LocalStorage.set('recent_files', recentFiles);
+            this.updateRecentMenu();
+        }
+
+        this.updateRecentMenu();
 
         // Function: groupSelectedElements
         // Wraps all the selected elements in a group (g) element
@@ -10178,8 +10247,7 @@ define([
         this.toggleGrid = function() {
             const showGrid = !(svgEditor.curConfig.showGrid || false);
             svgEditor.curConfig.showGrid = showGrid;
-            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-            .submenu.items.filter(i => i.id === 'SHOW_GRIDS')[0].checked = showGrid;
+            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_GRIDS')[0].checked = showGrid;
             const canvasGridDisplay = showGrid ? 'inline' : 'none';
             $('#canvasGrid').attr('style', `display: ${canvasGridDisplay}`);
         }

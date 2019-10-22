@@ -116,7 +116,9 @@ define(function() {
                 bvg_files: 'Beambox 雷雕場景',
                 fcode_files: 'FLUX Code',
                 fsc_files: 'Delta 列印場景',
-                confirmReset: '是否確定要重置所有設定?'
+                confirmReset: '是否確定要重置所有設定?',
+                clear_recent: '清除歷史紀錄',
+                path_not_exit: '此路徑似乎已不存在於電腦中，請確認是否有更改檔案位置。'
             },
             edit: {
                 label: '編輯',
@@ -1049,6 +1051,7 @@ define(function() {
                 layer_by_layer: '依圖層分層',
                 layer_by_color: '依顏色分層',
                 nolayer: '不分層',
+                loading_image: '載入圖片中，請稍候...',
                 no_support_text: 'Beam Studio 目前不支援由外部匯入文字標籤，請由向量繪圖軟體將文字轉成路徑後再匯入。',
                 power_too_high_damage_laser_tube: '雷射管在高功率下耗損較快，使用低功率可以延長雷試管使用壽命。',
                 speed_too_high_lower_the_quality: '在此雕刻解析度使用過快的速度，可能導致漸層雕刻的品質較差。',
