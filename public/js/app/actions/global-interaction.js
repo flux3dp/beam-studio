@@ -1,5 +1,9 @@
 define([
-], function() {
+    'app/actions/beambox/svgeditor-function-wrapper'
+],
+function(
+    FnWrapper,
+) {
     let MENU_ITEMS = ["IMPORT", "EXPORT_FLUX_TASK", "SAVE_SCENE",
                       "UNDO", "DUPLICATE", 'PHOTO_EDIT', 'DOCUMENT_SETTING', "CLEAR_SCENE",
                       "ZOOM_IN", "ZOOM_OUT", "FITS_TO_WINDOW", "ZOOM_WITH_WINDOW", "SHOW_GRIDS", "SHOW_LAYER_COLOR",
@@ -13,7 +17,9 @@ define([
 
         defaultAction = {
             PREFERENCE: () => {
-                location.hash = '#studio/settings';
+                FnWrapper.toggleUnsavedChangedDialog(() => {
+                    location.hash = '#studio/settings';
+                });   
             },
             ADD_NEW_MACHINE: () => {
                 location.hash = '#initialize/wifi/select-machine-type';
@@ -30,6 +36,13 @@ define([
             } else if(currentHandler) {
                 currentHandler.trigger(menuItem.id, ...args);
             }
+        });
+
+        ipc.on('WINDOW_CLOSE', (event, e) => {
+            const ipc = electron.ipc;
+            FnWrapper.toggleUnsavedChangedDialog(() => {
+                ipc.send('CLOSE_REPLY', true);
+            });
         });
     }
 

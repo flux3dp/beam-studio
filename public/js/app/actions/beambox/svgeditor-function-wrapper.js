@@ -1,5 +1,6 @@
 define([
     'app/actions/beambox/constant',
+    'app/actions/alert-actions',
     'helpers/image-data',
     'lib/cropper',
     'jsx!app/actions/beambox/Advanced-Panel-Controller',
@@ -7,6 +8,7 @@ define([
     'helpers/i18n'
 ], function(
     Constant,
+    AlertActions,
     ImageData,
     Cropper,
     AdvancedPanelController,
@@ -301,7 +303,9 @@ define([
                     console.log('saved');
                 });
             }
+            svgCanvas.changed = false;
         },
+
         saveAsFile: function() {
             svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
@@ -320,6 +324,39 @@ define([
                 svgCanvas.setLatestImportFileName(currentFileName);
                 svgCanvas.currentFilePath = currentFilePath;
                 svgCanvas.updateRecentFiles(currentFilePath);
+            }
+            svgCanvas.changed = false;
+        },
+
+        exportAsSVG: function() {
+            svgCanvas.clearSelection();
+            const output = svgCanvas.getSvgString();
+            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
+            const langFile = i18n.lang.topmenu.file;
+            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
+        },
+
+        toggleUnsavedChangedDialog: function (callback) {
+            if (!svgCanvas.changed) {
+                callback();
+            } else {
+                AlertActions.showPopupCustomGroup(
+                    'unsaved change dialog',
+                    LANG.popup.save_unsave_changed,
+                    [i18n.lang.alert.dont_save, i18n.lang.alert.cancel, i18n.lang.alert.save],
+                    '',
+                    '',
+                    [
+                        () => {
+                            callback();
+                        },
+                        () => {},
+                        () => {
+                            this.saveFile();
+                            callback();
+                        }
+                    ]
+                );
             }
         },
 

@@ -112,7 +112,9 @@ define(function() {
                 import: '匯入',
                 save_fcode: '匯出工作',
                 save_scene: '匯出場景',
+                save_svg: '匯出 SVG',
                 all_files: '所有檔案',
+                svg_files: 'SVG',
                 bvg_files: 'Beambox 雷雕場景',
                 fcode_files: 'FLUX Code',
                 fsc_files: 'Delta 列印場景',
@@ -1067,7 +1069,8 @@ define(function() {
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
                 dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
                 dont_show_again: '別再顯示此提醒',
-                convert_to_path_fail: '轉換成路徑失敗。'
+                convert_to_path_fail: '轉換成路徑失敗。',
+                save_unsave_changed: '請問是否要儲存未儲存的變更，否則變更將會遺失？'
             },
             left_panel: {
                 insert_object: '插入物件',
@@ -1487,7 +1490,9 @@ define(function() {
             ok: '確定',
             yes: ' 是',
             no: '否',
-            stop: '停止'
+            stop: '停止',
+            save: '儲存',
+            dont_save: '不要儲存'
         },
         caption: {
             connectionTimeout: '連線逾時'

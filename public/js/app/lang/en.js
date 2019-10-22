@@ -112,7 +112,9 @@ define(function() {
                 import: 'Import',
                 save_fcode: 'Export FLUX Task',
                 save_scene: 'Save Scene',
+                save_svg: 'Export SVG',
                 all_files: 'All Files',
+                svg_files: 'SVG Files',
                 bvg_files: 'Beambox Scene',
                 fcode_files: 'FLUX Code',
                 fsc_files: '3D Printing Scene',
@@ -1070,7 +1072,8 @@ define(function() {
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
                 dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
                 dont_show_again: 'Don\'t Show Again',
-                convert_to_path_fail: 'Failed to convert to path.'
+                convert_to_path_fail: 'Failed to convert to path.',
+                save_unsave_changed: 'Do you want to save unsaved changes?'
             },
             left_panel: {
                 insert_object: 'Insert Object',
@@ -1488,7 +1491,9 @@ define(function() {
             ok: 'OK',
             yes: 'YES',
             no: 'NO',
-            stop: 'Stop'
+            stop: 'Stop',
+            save: 'Save',
+            dont_save: 'Don\'t Save'
         },
         caption: {
             connectionTimeout: 'Connection timeout'

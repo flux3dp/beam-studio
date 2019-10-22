@@ -154,6 +154,20 @@ function createWindow () {
         slashes: true,
     }));
 
+    let isCloseConfirm = false;
+    mainWindow.on('close', function(e) {
+        if (!isCloseConfirm) {
+            e.preventDefault(); 
+            mainWindow.webContents.send('WINDOW_CLOSE', e);
+            ipcMain.once('CLOSE_REPLY', (event, reply) => {
+                if (reply) {
+                    isCloseConfirm = true;
+                    mainWindow.close();
+                }
+            })
+        }
+    });
+
     mainWindow.on('closed', function () {
         mainWindow = null;
 

@@ -572,6 +572,9 @@ define([
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
 
+        // State for save before close warning
+        canvas.changed = false;
+
         // Should this return an array by default, so extension results aren't overwritten?
         var runExtensions = this.runExtensions = function (action, vars, returnArray) {
             var result = returnArray ? [] : false;
@@ -1712,6 +1715,7 @@ define([
                         started = true;
                     }
                 });
+                canvas.changed = true;
             };
 
             // in this function we do not record any state changes yet (but we do update

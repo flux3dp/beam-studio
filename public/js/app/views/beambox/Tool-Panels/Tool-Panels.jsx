@@ -155,6 +155,7 @@ define([
                         svgCanvas.setMode('select');
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
+                        svgCanvas.changed = true;
                     }
                     break;
                 case 'offset':
@@ -165,6 +166,7 @@ define([
                         svgCanvas.setMode('select');
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
+                        svgCanvas.changed = true;
                     }
             }
             return (
