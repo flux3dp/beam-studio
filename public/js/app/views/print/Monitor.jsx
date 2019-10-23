@@ -604,7 +604,7 @@ define([
             else {
                 let { Monitor, Device } = store.getState();
                 if(this._isAbortedOrCompleted()) {
-                    DeviceMaster.quit();
+                    //DeviceMaster.quit();
                     store.dispatch(MonitorActionCreator.showWait());
                 }
                 else if(this._isPaused()) {
@@ -687,7 +687,7 @@ define([
         _processReport: function(report) {
             if(!report.error) {
                 if(this._isAbortedOrCompleted() && openedFrom !== GlobalConstants.DEVICE_LIST) {
-                    DeviceMaster.quit();
+                    //DeviceMaster.quit();
                 }
                 if(showingPopup) {
                     showingPopup = false;
@@ -745,7 +745,7 @@ define([
                 }
 
                 if(this._isAbortedOrCompleted()) {
-                    DeviceMaster.quit();
+                    //DeviceMaster.quit();
                     store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
                 }
             }
