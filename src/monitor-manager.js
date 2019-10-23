@@ -41,9 +41,9 @@ class MonitorManager {
         if (process.platform === 'darwin') {
             exec('pkill monitorexe', (err, data) => {
                 if (err) {
-                    console.log('kill cygserver err:', err);
+                    console.log('kill monitorexe err:', err);
                 }
-                console.log('kill cygserver succeed');
+                console.log('kill monitorexe succeed');
             });
         } else if (process.platform === 'win32' && process.arch === 'x64') {
             exec('taskkill /F /IM cygserver.exe', (err, data) => {
