@@ -1272,6 +1272,7 @@ define([
             };
 
             var clickSelect = editor.clickSelect = function () {
+                svgCanvas.clearSelection();
                 if (toolButtonClick('#tool_select')) {
                     svgCanvas.setMode('select');
                     $('#styleoverrides').text('#svgcanvas svg *{cursor:move;pointer-events:all;stroke-width:1px;vector-effect:non-scaling-stroke;}, #svgcanvas svg{cursor:default}');
@@ -5642,7 +5643,7 @@ define([
                                 svgCanvas.createLayer(layerName);
                             }
 
-                            await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']);
+                            await readImage(outputs['bitmap'], 72 / 254, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
                     }
 
@@ -5831,6 +5832,7 @@ define([
                         };
                         reader.readAsText(file);
                     });
+                    svgCanvas.changed = false;
                 };
 
                 editor.importBvg = importBvg;
@@ -5892,14 +5894,20 @@ define([
                             svgCanvas.setLatestImportFileName(fileName);
                             svgCanvas.currentFilePath = file.path;
                             svgCanvas.updateRecentFiles(file.path);
+                            svgCanvas.changed = false;
+                            break;
+                        case 'dxf':
+                            svgCanvas.setLatestImportFileName(fileName);
+                            svgCanvas.currentFilePath = null;
+                            svgCanvas.changed = true;
                             break;
                         case 'svg':
                         case 'bitmap':
-                        case 'dxf':
                         case 'ai':
                             if (!svgCanvas.getLatestImportFileName()) {
                                 svgCanvas.setLatestImportFileName(fileName);
                             }
+                            svgCanvas.changed = true;
                             break;
                     }
 

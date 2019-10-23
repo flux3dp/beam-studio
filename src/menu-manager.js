@@ -41,7 +41,12 @@ function _buildFileMenu(fnKey, callback) {
             { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old || 'Material Testing Suite (Old)', click: callback },
         ]},
         { type: 'separator' },
-        { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task || 'Export', click: callback, 'accelerator': `${fnKey}+E` }
+        { 'id': 'EXPORT_TO', label: r.export_to || 'Export to', submenu: [
+            { 'id': 'EXPORT_SVG', label: r.export_SVG, click: callback},
+            { 'id': 'EXPORT_PNG', label: 'PNG', click: callback},
+            { 'id': 'EXPORT_JPG', label: 'JPG', click: callback},
+            { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task, click: callback, 'accelerator': `${fnKey}+E` }
+        ]}
     ];
 
     if(process.platform !== 'darwin') {

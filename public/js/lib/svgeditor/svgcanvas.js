@@ -4740,6 +4740,58 @@ define([
             return this.svgCanvasToString();
         };
 
+        // Function: svgStringToImage
+        // Parameters: type: canvas to dataurl type: image/png, image/jpeg...
+        // Returns:
+        // The image for svg from string.
+        this.svgStringToImage = function (type, svgString) {
+            return new Promise( (resolve, reject) => {
+                try {
+                    const [width, height] = dimensions;
+                    let canvas = document.createElement("canvas");
+                    canvas.width = width;
+                    canvas.height = height;
+                    let ctx = canvas.getContext('2d');
+
+                    let svgBlob = new Blob([svgString], {
+                        type: "image/svg+xml;charset=utf-8"
+                    });
+                    const svgUrl = URL.createObjectURL(svgBlob);
+                    
+                    let img = new Image();
+                    img.onload = function () {
+                        ctx.drawImage(this, 0, 0);
+                        URL.revokeObjectURL(svgUrl);
+                        switch (type) {
+                            case 'png':
+                                resolve(canvas.toDataURL('image/png'));
+                                break;
+                            case 'jpg':
+                                let imgData = ctx.getImageData(0, 0, width, height);
+                                let data = imgData.data;
+                                for(let i = 0; i < data.length; i += 4){
+                                    if(data[i+3] == 0){
+                                        data[i]=255;
+                                        data[i+1]=255;
+                                        data[i+2]=255;
+                                        data[i+3]=255;
+                                    }
+                                }
+                                ctx.putImageData(imgData,0,0);
+                                resolve(canvas.toDataURL('image/jpeg', 1.0));
+                                break;
+                            default:
+                                resolve(false);
+                                break;
+                        }
+                    }
+                    img.src = svgUrl;
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        };
+
         // Function: randomizeIds
         // This function determines whether to use a nonce in the prefix, when
         // generating IDs for future documents in SVG-Edit.

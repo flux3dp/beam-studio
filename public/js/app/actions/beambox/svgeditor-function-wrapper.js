@@ -1,6 +1,8 @@
 define([
     'app/actions/beambox/constant',
     'app/actions/alert-actions',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'helpers/image-data',
     'lib/cropper',
     'jsx!app/actions/beambox/Advanced-Panel-Controller',
@@ -9,6 +11,8 @@ define([
 ], function(
     Constant,
     AlertActions,
+    ProgressActions,
+    ProgressConstants,
     ImageData,
     Cropper,
     AdvancedPanelController,
@@ -290,7 +294,8 @@ define([
         },
         saveFile: function() {
             if (!svgCanvas.currentFilePath) {
-                this.saveAsFile();
+                const result = this.saveAsFile();
+                return result;
             } else {
                 svgCanvas.clearSelection();
                 const output = svgCanvas.getSvgString();
@@ -302,8 +307,9 @@ define([
                     }
                     console.log('saved');
                 });
+                svgCanvas.changed = false;
+                return true;
             }
-            svgCanvas.changed = false;
         },
 
         saveAsFile: function() {
@@ -324,16 +330,11 @@ define([
                 svgCanvas.setLatestImportFileName(currentFileName);
                 svgCanvas.currentFilePath = currentFilePath;
                 svgCanvas.updateRecentFiles(currentFilePath);
+                svgCanvas.changed = false;
+                return true;
+            } else {
+                return false;
             }
-            svgCanvas.changed = false;
-        },
-
-        exportAsSVG: function() {
-            svgCanvas.clearSelection();
-            const output = svgCanvas.getSvgString();
-            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-            const langFile = i18n.lang.topmenu.file;
-            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
         },
 
         toggleUnsavedChangedDialog: function (callback) {
@@ -352,11 +353,39 @@ define([
                         },
                         () => {},
                         () => {
-                            this.saveFile();
-                            callback();
+                            if (this.saveFile()) {
+                                callback();
+                            }
                         }
                     ]
                 );
+            }
+        },
+
+        exportAsSVG: function() {
+            svgCanvas.clearSelection();
+            const output = svgCanvas.getSvgString();
+            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
+            const langFile = i18n.lang.topmenu.file;
+            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
+        },
+
+        exportAsImage: async (type) => {
+            svgCanvas.clearSelection();
+            const output = svgCanvas.getSvgString();
+            const langFile = i18n.lang.topmenu.file;
+            ProgressActions.open(ProgressConstants.NONSTOP, langFile.converting);
+            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
+            let image = await svgCanvas.svgStringToImage(type, output);
+            image = image.replace(/^data:image\/\w+;base64,/, "");
+            const buf = new Buffer.from(image, 'base64');
+            ProgressActions.close();
+            switch (type) {
+                case 'png':
+                    window.electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));
+                    break;
+                case 'jpg':
+                    window.electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
             }
         },
 
