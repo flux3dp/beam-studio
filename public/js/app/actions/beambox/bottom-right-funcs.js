@@ -88,30 +88,39 @@ define([
             const imgs = $('#svgcontent image').toArray();
             const numImgs = imgs.length;
             let done = 0;
+            console.log(numImgs);
             if (0 === numImgs) {
                 resolve();
             } else {
                 imgs.forEach(img => {
-                    ImageData(
-                        img.getAttribute('origImage'), {
-                            width: $(img).width(),
-                            height: $(img).height(),
-                            grayscale: {
-                                is_rgba: true,
-                                is_shading: $(img).attr('data-shading') === 'true',
-                                threshold: parseInt($(img).attr('data-threshold')),
-                                is_svg: false
-                            },
-                            isFullResolution: true,
-                            onComplete: function (result) {
-                                $(img).attr('xlink:href', result.canvas.toDataURL());
-                                done += 1;
-                                if (done === numImgs) {
-                                    resolve();
+                    if (img.getAttribute('origImage')) {
+                        ImageData(
+                            img.getAttribute('origImage'), {
+                                width: $(img).width(),
+                                height: $(img).height(),
+                                grayscale: {
+                                    is_rgba: true,
+                                    is_shading: $(img).attr('data-shading') === 'true',
+                                    threshold: parseInt($(img).attr('data-threshold')),
+                                    is_svg: false
+                                },
+                                isFullResolution: true,
+                                onComplete: function (result) {
+                                    $(img).attr('xlink:href', result.canvas.toDataURL());
+                                    done += 1;
+                                    if (done === numImgs) {
+                                        resolve();
+                                    }
                                 }
                             }
+                        );
+                    } else {
+                        done += 1;
+                        if (done === numImgs) {
+                            resolve();
                         }
-                    );
+
+                    }
                 });
             }
         });
