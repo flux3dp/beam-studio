@@ -8584,6 +8584,7 @@ define([
 
                 const layer = this.getObjectLayer(elem).elem;
                 const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+                const drawing = getCurrentDrawing();
 
                 const wireframe = $(elem).data('wireframe');
                 let transform = $(elem).attr('transform') || '';
@@ -8597,12 +8598,13 @@ define([
                     'attr': {
                         'id': getNextId(),
                         'transform': transform,
-                    }   
+                    }
                 });
                 while (children.length > 0) {
                     topChild = children.pop();
+                    let copy = drawing.copyElem(topChild);
                     if (topChild.tagName !== 'defs') {
-                        g.appendChild(topChild);
+                        g.appendChild(copy);
                     }
                 }
                 // apply style
