@@ -991,6 +991,7 @@ define([
                 }
                 //		selectedBBoxes[0] = null;
             }
+            selectedElements = [];
             if (!noCall) {
                 call('selected', selectedElements);
             }
@@ -1005,7 +1006,7 @@ define([
         // Parameters:
         // elemsToAdd - an array of DOM elements to add to the selection
         // showGrips - a boolean flag indicating whether the resize grips should be shown
-        var addToSelection = this.addToSelection = function (elemsToAdd, showGrips) {
+        var addToSelection = this.addToSelection = function (elemsToAdd, showGrips, noCall) {
             if (elemsToAdd.length === 0) {
                 return;
             }
@@ -1051,8 +1052,9 @@ define([
                     }
                 }
             }
-            call('selected', selectedElements);
-
+            if (!noCall) {
+                call('selected', selectedElements);
+            }
             if (showGrips || selectedElements.length === 1) {
                 selectorManager.requestSelector(selectedElements[0]).showGrips(true);
             } else {
@@ -1866,7 +1868,7 @@ define([
                         }
 
                         if (elemsToAdd.length > 0) {
-                            canvas.addToSelection(elemsToAdd);
+                            canvas.addToSelection(elemsToAdd, false, true);
                         }
 
                         break;
