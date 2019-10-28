@@ -64,6 +64,11 @@ define([
             return beamboxStore;
         },
 
+        onShowNounProjectPanel: function(callback) {
+            this.on(Constants.SHOW_NOUN_PROJECT_PANEL, callback);
+            return beamboxStore;
+        },
+
         removeUpdateLaserPanelListener: function(callback) {
             this.removeListener(Constants.UPDATE_LASER_PANEL, callback);
             return beamboxStore;

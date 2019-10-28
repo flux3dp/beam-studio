@@ -5496,6 +5496,8 @@ define([
                         reader.readAsArrayBuffer(file);
                     });
                 }
+                editor.readImage = readImage;
+
                 function getBasename(path) {
                     const pathMatch = path.match(/(.+)[\/\\].+/);
                     if (pathMatch[1]) return pathMatch[1];
@@ -5666,6 +5668,7 @@ define([
                         ]
                     );
                 };
+                editor.importSvg = importSvg;
                 const importBitmap = file => {
                     readImage(file);
                 };

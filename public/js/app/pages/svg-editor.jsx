@@ -139,6 +139,7 @@ requirejs.config({
 define([
     'react',
     'helpers/i18n',
+    'jsx!views/beambox/Noun-Project-Panel',
 
     'jsHotkeys',
     'jquerybbq',
@@ -185,7 +186,8 @@ define([
 
 ], function (
     React,
-    i18n
+    i18n,
+    NounProjectPanel
 ) {
     let LANG = i18n.lang.beambox;
 
@@ -206,6 +208,7 @@ define([
             // HIDE ALMOST ALL TOOLS USING CSS
             return (
                 <div>
+                    <NounProjectPanel />
                     <div id="svg_editor">
                         <div id="rulers">
                             <div id="ruler_corner" />

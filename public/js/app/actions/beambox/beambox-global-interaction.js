@@ -71,7 +71,8 @@ define([
                 'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
                 'NETWORK_TESTING': () => BeamboxAction.showNetworkTestingPanel(),
-                'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio()
+                'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio(),
+                'NOUN_PROJECT': () => BeamboxAction.showNounProjectPanel()
             };
         }
         attach() {

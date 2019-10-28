@@ -62,6 +62,11 @@ define([
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.SHOW_ABOUT_BEAM_STUDIO
             });
+        },
+        showNounProjectPanel: function() {
+            Dispatcher.dispatch({
+                actionType: BeamboxConstants.SHOW_NOUN_PROJECT_PANEL
+            });
         }
     };
 });
