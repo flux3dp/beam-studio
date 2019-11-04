@@ -110,6 +110,29 @@ define([
                 });
                 LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+            } else {
+                let customized = LocalStorage.get('customizedLaserConfigs');
+                const model = BeamboxPreference.read('model');
+                for (let i = 0; i < customized.length; i++) {
+                    if (customized[i].isDefault) {
+                        customized[i].name = LANG.dropdown[customized[i].key];
+                        switch(model) {
+                            case 'fbm1':
+                                customized[i].speed = RightPanelConstants.BEAMO[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMO[customized[i].key].power;
+                                break;
+                            case 'fbb1b':
+                                customized[i].speed = RightPanelConstants.BEAMBOX[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMBOX[customized[i].key].power;
+                                break;
+                            case 'fbb1p':
+                                customized[i].speed = RightPanelConstants.BEAMBOX_PRO[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMBOX_PRO[customized[i].key].power;
+                                break;
+                        }
+                    }
+                }
+                LocalStorage.set('customizedLaserConfigs', customized);
             }
 
             return {
