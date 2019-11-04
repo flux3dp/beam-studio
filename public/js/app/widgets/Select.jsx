@@ -48,6 +48,7 @@ define(['react', 'reactPropTypes'], function(React, PropTypes){
             }, this);
 
             return  <select
+                        disabled={this.props.disabled}
                         defaultValue={defaultValue}
                         value={defaultValue}
                         multiple={this.props.multiple}
