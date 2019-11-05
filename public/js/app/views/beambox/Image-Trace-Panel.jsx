@@ -13,7 +13,8 @@ define([
     'helpers/api/image-tracer',
     'jsx!widgets/Modal',
     'jsx!widgets/Slider-Control',
-    'lib/cropper'
+    'lib/cropper',
+    'lib/svgeditor/imagetracer'
 ], function(
     $,
     React,
@@ -27,7 +28,8 @@ define([
     ImageTracerApi,
     Modal,
     SliderControl,
-    Cropper
+    Cropper,
+    ImageTracer
 ) {
     const LANG = i18n.lang.beambox.image_trace_panel;
 
@@ -144,7 +146,7 @@ define([
                     this.setState({ currentStep: STEP_CROP });
                     break;
                 case STEP_CROP:
-                    this.setState({ currentStep: STEP_TUNE });
+                    this.setState({ currentStep: STEP_APPLY });
                     this._destroyCropper();
                     break;
                 case STEP_TUNE:
@@ -165,7 +167,7 @@ define([
                     this.setState({ currentStep: STEP_CROP })
                     break;
                 case STEP_APPLY:
-                    this.setState({ currentStep: STEP_TUNE })
+                    this.setState({ currentStep: STEP_CROP })
                     break;
                 default:
                     break;
@@ -192,26 +194,9 @@ define([
             } = this.state;
             const d = $.Deferred();
             const img = document.getElementById('tunedImage');
-
-            fetch(grayscaleCroppedImg)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = (e) => {
-                        imageTracerWebSocket.upload(e.target.result, { threshold })
-                            .done((res)=>{
-                                d.resolve(res);
-                                this._getImageTrace(res.svg);
-                            })
-                            .fail((res)=>{
-                                d.reject(res.toString());
-                            });
-                    };
-                    fileReader.readAsArrayBuffer(blob);
-                })
-                .catch((err) => {
-                    d.reject(err);
-                });
+            if(this.state.currentStep === STEP_TUNE) {
+                this.next();
+            }
         }
 
         _handleCropping() {
@@ -229,7 +214,6 @@ define([
                         height: 0,
                         width: 0,
                         grayscale: {
-                            is_binary: true,
                             is_rgba: true,
                             is_shading: false,
                             threshold: 128,
@@ -264,7 +248,6 @@ define([
                             height: 0,
                             width: 0,
                             grayscale: {
-                                is_binary: true,
                                 is_rgba: true,
                                 is_shading: false,
                                 threshold: parseInt(value),
@@ -333,10 +316,10 @@ define([
                 }
 
                 FnWrapper.insertImage(croppedBlobUrl, testingCropData, testingPreCrop, 1, threshold, true);
-                FnWrapper.insertSvg(imageTrace, 'image-trace', testingCropData, testingPreCrop);
+                //FnWrapper.insertSvg(imageTrace, 'image-trace', testingCropData, testingPreCrop);
             } else {
+                await this._traceImageAndAppend(grayscaleCroppedImg, cropData, preCrop);
                 FnWrapper.insertImage(croppedBlobUrl, cropData, preCrop, 1, threshold, true);
-                FnWrapper.insertSvg(imageTrace, 'image-trace', cropData, preCrop);
             }
 
             URL.revokeObjectURL(grayscaleCroppedImg);
@@ -351,6 +334,32 @@ define([
                 threshold: 128
             });
             BeamboxActions.endImageTrace();
+        }
+
+        _traceImageAndAppend (imgUrl, cropData, preCrop) {
+            return new Promise ((resolve, reject) => {
+                ImageTracer.imageToSVG(imgUrl, svgstr => {
+                    const id = svgCanvas.getNextId();
+                    const g = svgCanvas.addSvgElementFromJson({
+                        'element': 'g',
+                        'attr': {
+                            'id': id
+                        }
+                    });
+                    svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
+                    ImageTracer.appendSVGString(svgstr, id);
+                    //for (let i = 0; i < g.childNodes.length; i++) {
+                    g.childNodes.forEach(child => {
+                        $(child).attr('fill-opacity', 0);
+                        $(child).attr('id', svgCanvas.getNextId());
+                        $(child).attr('vector-effect', "non-scaling-stroke");
+                    });
+                    let dx = cropData.x + preCrop.offsetX;
+                    let dy = cropData.y + preCrop.offsetY;
+                    svgCanvas.moveElements([dx], [dy], [g], false);
+                    resolve(true);
+                });
+            });
         }
 
         _renderImageToCrop() {
@@ -575,13 +584,7 @@ define([
                         </button>
                         <button
                             className='btn btn-default pull-right'
-                            onClick={() => this._calculateImageTrace()}
-                        >
-                            {LANG.apply}
-                        </button>
-                        <button
-                            className='btn btn-default pull-right'
-                            onClick={() => this._backToTune()}
+                            onClick={() => this.prev()}
                         >
                             {LANG.back}
                         </button>
