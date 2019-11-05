@@ -92,12 +92,12 @@ define([
 
             if (!LocalStorage.get('defaultLaserConfigsInUse')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
-                    const {speed, power} = this._getDefaultParameters(e);
+                    const {speed, power, repeat} = this._getDefaultParameters(e);
                     return {
                         name: LANG.dropdown[e],
                         speed,
                         power,
-                        repeat: 1,
+                        repeat,
                         isDefault: true,
                         key: e
                     }
@@ -120,14 +120,17 @@ define([
                             case 'fbm1':
                                 customized[i].speed = RightPanelConstants.BEAMO[customized[i].key].speed;
                                 customized[i].power = RightPanelConstants.BEAMO[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMO[customized[i].key].repeat || 1;
                                 break;
                             case 'fbb1b':
                                 customized[i].speed = RightPanelConstants.BEAMBOX[customized[i].key].speed;
                                 customized[i].power = RightPanelConstants.BEAMBOX[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMBOX[customized[i].key].repeat || 1;
                                 break;
                             case 'fbb1p':
                                 customized[i].speed = RightPanelConstants.BEAMBOX_PRO[customized[i].key].speed;
                                 customized[i].power = RightPanelConstants.BEAMBOX_PRO[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMBOX_PRO[customized[i].key].repeat || 1;
                                 break;
                         }
                     }
@@ -276,13 +279,16 @@ define([
                 const selectedConfig = customizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
                 const speed = selectedConfig.speed;
                 const power = selectedConfig.power;
+                const repeat = selectedConfig.repeat || 1;
                 this.props.funcs.writeSpeed(this.props.layerName, speed);
                 this.props.funcs.writeStrength(this.props.layerName, power);
+                this.props.funcs.writeRepeat(this.props.layerName, repeat);
 
                 this.setState({ 
                     modal: '',
                     speed: speed,
-                    strength: power
+                    strength: power,
+                    repeat: repeat
                 });
             } else {
                 this.setState({ modal: '' })
@@ -302,12 +308,12 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMO[value].speed,
                             strength: RightPanelConstants.BEAMO[value].power,
-                            repeat: 1
+                            repeat: RightPanelConstants.BEAMO[value].repeat || 1
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, 1);
+                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -316,12 +322,12 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMBOX[value].speed,
                             strength: RightPanelConstants.BEAMBOX[value].power,
-                            repeat: 1
+                            repeat: RightPanelConstants.BEAMBOX[value].repeat || 1
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, 1);
+                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -330,12 +336,12 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMBOX_PRO[value].speed,
                             strength: RightPanelConstants.BEAMBOX_PRO[value].power,
-                            repeat: 1
+                            repeat: RightPanelConstants.BEAMBOX_PRO[value].repeat || 1
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, 1);
+                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -492,22 +498,25 @@ define([
 
         _getDefaultParameters: function(para_name) {
             const model = BeamboxPreference.read('model');
-            let speed, power;
+            let speed, power, repeat;
             switch(model) {
                 case 'fbm1':
                     speed = RightPanelConstants.BEAMO[para_name].speed;
                     power = RightPanelConstants.BEAMO[para_name].power;
+                    repeat = RightPanelConstants.BEAMO[para_name].repeat || 1;
                     break;
                 case 'fbb1b':
                     speed = RightPanelConstants.BEAMBOX[para_name].speed;
                     power = RightPanelConstants.BEAMBOX[para_name].power;
+                    repeat = RightPanelConstants.BEAMBOX[para_name].repeat || 1;
                     break;
                 case 'fbb1p':
                     speed = RightPanelConstants.BEAMBOX_PRO[para_name].speed;
                     power = RightPanelConstants.BEAMBOX_PRO[para_name].power;
+                    repeat = RightPanelConstants.BEAMBOX_PRO[para_name].repeat || 1;
                     break;
             }
-            return {speed, power};
+            return {speed, power, repeat};
         },
 
         _renderMoreModal: function() {
@@ -529,7 +538,7 @@ define([
             }
 
             const handleDefaultEntryClick = (name) => {
-                const {speed, power} = this._getDefaultParameters(name);
+                const {speed, power, repeat} = this._getDefaultParameters(name);
                 this.setState({ 
                     isSelectingCustomized: false,
                     selectedItem: name,
@@ -546,13 +555,13 @@ define([
                             isSelectingCustomized: true});
                         return;
                     }
-                    const {speed, power} = this._getDefaultParameters(this.state.selectedItem);
+                    const {speed, power, repeat} = this._getDefaultParameters(this.state.selectedItem);
                     defaultLaserConfigsInUse[this.state.selectedItem] = true;
                     customizedLaserConfigs.push({
                         name: LANG.dropdown[this.state.selectedItem],
                         speed: speed,
                         power: power,
-                        repeat: 1,
+                        repeat: repeat,
                         isDefault: true,
                         key: this.state.selectedItem
                     });

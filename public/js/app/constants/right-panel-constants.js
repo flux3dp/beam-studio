@@ -10,7 +10,8 @@ define(function() {
             },
             wood_5mm_cutting: {
                 power: 55,
-                speed: 4
+                speed: 4,
+                repeat: 2
             },
             wood_bw_engraving: {
                 power: 30,
@@ -26,7 +27,8 @@ define(function() {
             },
             acrylic_5mm_cutting: {
                 power: 55,
-                speed: 3
+                speed: 5,
+                repeat: 2
             },
             acrylic_bw_engraving: {
                 power: 30,
@@ -42,7 +44,8 @@ define(function() {
             },
             leather_5mm_cutting: {
                 power: 60,
-                speed: 1
+                speed: 3,
+                repeat: 2
             },
             leather_bw_engraving: {
                 power: 30,
