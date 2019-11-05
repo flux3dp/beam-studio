@@ -111,6 +111,11 @@ define([
         const fontFamily = $textElement.attr('font-family');
         const fontStyle = $textElement.attr('font-style');
         const text = $textElement.text();
+        
+        // Escape for MS 標楷體
+        if (fontFamily === '標楷體') {
+            return fontFamily;
+        }
         //if only contain basic character (123abc!@#$...), don't substitute.
         //because my Mac cannot substituteFont properly handing font like 'Windings'
         //but we have to subsittue text if text contain both English and Chinese
@@ -131,7 +136,7 @@ define([
             FontManager.substituteFontSync(originPostscriptName, char)
         );
         let familyList = fontList.map(font => font.family);
-        let postscriptList = fontList.map(font => font.postscriptName)
+        let postscriptList = fontList.map(font => font.postscriptName);
         // make unique
         familyList = [...new Set(familyList)];
         postscriptList = [...new Set(postscriptList)];

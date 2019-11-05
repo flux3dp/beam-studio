@@ -312,6 +312,10 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
 ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily, fontSize, fontStyle, letterSpacing, key}) => {
     const substitutedFamily = (function(){
 
+        // Escape for MS 標楷體
+        if (fontFamily === '標楷體') {
+            return fontFamily;
+        }
         //if only contain basic character (123abc!@#$...), don't substitute.
         //because my Mac cannot substituteFont properly handing font like 'Windings'
         //but we have to subsittue text if text contain both English and Chinese
