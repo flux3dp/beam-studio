@@ -1766,7 +1766,7 @@
         let rgb = getLayerColor(entity);
 
         var p2 = polyline.map(function (p) {
-          return [p[0] * scale, bbox.maxY - p[1] * scale];
+          return [bbox.maxX - p[0] * scale, bbox.maxY - p[1] * scale];
         });
         let polylinePathContent = polylineToPath(rgb, p2);
         if (!outputLayers[entity.layer]) {
@@ -1792,7 +1792,7 @@
       svgString += '<svg xmlns="http://www.w3.org/2000/svg"';
       svgString += ' xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"';
       svgString += ' preserveAspectRatio="xMinYMin meet"';
-      svgString += ' viewBox="' + (-1 + bbox.minX) + ' ' + -1 + ' ' + (bbox.width + 2) + ' ' + (bbox.height + 2) + '"';
+      svgString += ' viewBox="' + (-1) + ' ' + -1 + ' ' + (bbox.width + 2) + ' ' + (bbox.height + 2) + '"';
       svgString += ' width="' + (bbox.width + 2) + '" height="' + (bbox.height + 2) + '">' + groupContents.join('') + '</svg>';
       return _prettyData.pd.xml(svgString);
     };
