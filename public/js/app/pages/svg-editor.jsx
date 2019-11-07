@@ -29,6 +29,7 @@ requirejs.config({
         layer: 'lib/svgeditor/layer',
         path: 'lib/svgeditor/path',
         svgcanvas: 'lib/svgeditor/svgcanvas',
+        beameasyapi: 'lib/svgeditor/beam-easy-api',
         locale: 'lib/svgeditor/locale/locale',
         contextmenu: 'lib/svgeditor/contextmenu',
         clipper_unminified: 'lib/svgeditor/clipper_unminified',
@@ -115,8 +116,11 @@ requirejs.config({
         svgcanvas: {
             deps: ['path']
         },
-        svgEditor: {
+        beameasyapi: {
             deps: ['svgcanvas']
+        },
+        svgEditor: {
+            deps: ['beameasyapi']
         },
         locale: {
             deps: ['svgEditor']
@@ -139,6 +143,7 @@ requirejs.config({
 define([
     'react',
     'helpers/i18n',
+    'jsx!views/beambox/Task-Interpreter-Panel',
 
     'jsHotkeys',
     'jquerybbq',
@@ -185,7 +190,8 @@ define([
 
 ], function (
     React,
-    i18n
+    i18n,
+    TaskInterpreterPanel
 ) {
     let LANG = i18n.lang.beambox;
 
@@ -206,6 +212,7 @@ define([
             // HIDE ALMOST ALL TOOLS USING CSS
             return (
                 <div>
+                    <TaskInterpreterPanel />
                     <div id="svg_editor">
                         <div id="rulers">
                             <div id="ruler_corner" />
