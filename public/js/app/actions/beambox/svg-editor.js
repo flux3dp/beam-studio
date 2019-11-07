@@ -5501,7 +5501,7 @@ define([
                     if (pathMatch[1]) return pathMatch[1];
                     return "";
                 }
-                function readSVG(blob, type, layerName) {
+                function readSVG(blob, type, layerName, unit) {
                     return new Promise((resolve, reject) => {
                         var reader = new FileReader();
                         reader.onloadend = function (e) {
@@ -5592,7 +5592,7 @@ define([
                             }
 
                             const modifiedSvgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;').replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
-                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName);
+                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName, unit);
 
                             svgCanvas.ungroupSelectedElement();
                             svgCanvas.ungroupSelectedElement();
@@ -5615,8 +5615,25 @@ define([
                 }
                 editor.readSVG = readSVG;
                 const importSvg = file => {
+                    let getSvgUnit = file => {
+                        return new Promise(resolve => {
+                            let unit;
+                            let fileReader = new FileReader();
+                            fileReader.onloadend = function (e) {
+                                let svgString = e.target.result;
+                                const matchX = svgString.match(/\bx="[^"]*/);
+                                if (matchX) {
+                                    unit = matchX[0].substring(3).match(/[^0-9]{2}/);
+                                }
+                                resolve(unit ? unit[0] : 'pt');
+                            }
+                            fileReader.readAsText(file);
+                        });
+                        
+                    }
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file);
+                        const unit = await getSvgUnit(file);
                         if (result !== 'ok') {
                             $('#dialog_box').hide();
                             switch (result) {
@@ -5629,9 +5646,9 @@ define([
                         const outputs = await svgWebSocket.divideSVG();
 
                         if (type === 'color') {
-                            await readSVG(outputs['strokes'], type);
+                            await readSVG(outputs['strokes'], type, null, unit);
 
-                            await readSVG(outputs['colors'], type);
+                            await readSVG(outputs['colors'], type, null, unit);
                         } else {
                             await readSVG(file, type);
                         }
@@ -5822,6 +5839,7 @@ define([
                         }
                     }
                 }
+                editor.importBvgString = importBvgString;
 
                 const importBvg = async (file) => {
                     const parsedSvg = await new Promise(resolve => {
@@ -5836,6 +5854,14 @@ define([
                 };
 
                 editor.importBvg = importBvg;
+
+                const importJsScript = async (file) => {
+                    $('#dialog_box').hide();
+                    if (require.cache[file.path]) {
+                        delete require.cache[file.path];
+                    }
+                    require(file.path);
+                };
 
                 var importImage = function (e) {
                     $.process_cancel(uiStrings.notification.loadingImage);
@@ -5862,6 +5888,9 @@ define([
                         if (file.name.toLowerCase().includes('.dxf')) {
                             return 'dxf';
                         }
+                        if (file.name.toLowerCase().includes('.js')) {
+                            return 'js';
+                        }
                         if (file.name.toLowerCase().endsWith('.ai') || (file.path && file.path.toLowerCase().endsWith('.ai'))) {
                             return 'ai';
                         }
@@ -5883,6 +5912,9 @@ define([
                             break;
                         case 'ai':
                             $.alert(LANG.svg_editor.unnsupport_ai_file_directly);
+                            break;
+                        case 'js':
+                            importJsScript(file);
                             break;
                         case 'unknown':
                             $.alert(LANG.svg_editor.unnsupported_file_type);
@@ -5942,7 +5974,7 @@ define([
                 $('#tool_open').show().prepend(open);
 
                 // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
-                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf" data-file-input="import_image">').change(importImage);
+                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js" data-file-input="import_image">').change(importImage);
                 $('#tool_import').show().prepend(imgImport);
 
                 window.populateLayers = populateLayers;

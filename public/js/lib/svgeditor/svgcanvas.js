@@ -1868,7 +1868,8 @@ define([
                         }
 
                         if (elemsToAdd.length > 0) {
-                            canvas.addToSelection(elemsToAdd, false, true);
+                            //Call change Only when first element added
+                            canvas.addToSelection(elemsToAdd, false, selectedElements.length !== 0);
                         }
 
                         break;
@@ -5359,10 +5360,10 @@ define([
         // arbitrary transform lists, but makes some assumptions about how the transform list
         // was obtained
         // * import should happen in top-left of current zoomed viewport
-        this.importSvgString = function (xmlString, _type, layerName) {
+        this.importSvgString = function (xmlString, _type, layerName, unit) {
             const batchCmd = new svgedit.history.BatchCommand('Import Image');
 
-            function parseSvg(svg, type) {
+            function parseSvg(svg, type, unit) {
                 function _removeSvgText() {
                     if($(svg).find('text').length) {
                         AlertActions.showPopupInfo('', LANG.popup.no_support_text);
@@ -5378,10 +5379,10 @@ define([
                         }
                     });
                 }
-                function _symbolWrapper(symbolContents) {
+                function _symbolWrapper(symbolContents, unit) {
                     const rootViewBox = svg.getAttribute('viewBox');
-                    const rootWidth = unit2Pixel(svg.getAttribute('width'));
-                    const rootHeight = unit2Pixel(svg.getAttribute('height'));
+                    const rootWidth = unit2Pixel(svg.getAttribute('width'), unit);
+                    const rootHeight = unit2Pixel(svg.getAttribute('height'), unit);
                     const rootTransform = svg.getAttribute('transform') || '';
 
                     const transformList = [];
@@ -5451,7 +5452,7 @@ define([
 
                     return symbols;
                 }
-                function _parseSvgByColor() {
+                function _parseSvgByColor(svg, unit) {
                     function getColorOfElement(node) {
                         let color;
                         color = node.getAttribute('stroke');
@@ -5524,7 +5525,7 @@ define([
                     const coloredLayerNodes = Object.values(groupColorMap);
 
                     const symbols = coloredLayerNodes.map(node => {
-                        const wrappedSymbolContent = _symbolWrapper(node);
+                        const wrappedSymbolContent = _symbolWrapper(node, unit);
                         const color = node.getAttribute('data-color');
                         if (color) {
                             wrappedSymbolContent.setAttribute('data-color', color);
@@ -5554,7 +5555,7 @@ define([
                 switch (type) {
                     case 'color':
                         return {
-                            symbols: _parseSvgByColor(svg),
+                            symbols: _parseSvgByColor(svg, unit),
                             confirmedType: 'color'
                         };
 
@@ -5661,7 +5662,7 @@ define([
                 use_el.setAttribute('data-xform', dataXform);
                 return use_el;
             }
-            function unit2Pixel(val) {
+            function unit2Pixel(val, unit) {
                 if ( (val === false) || (val === undefined) || (val === null) ) {
                     return false;
                 }
@@ -5686,7 +5687,7 @@ define([
                     return val * unitMap['px'];
                 }
 
-                const unit = val.substr(-2);
+                unit = unit || val.substr(-2);
                 const num = val.substr(0, val.length-2);
                 if (!unitMap[unit]) {
                     console.log('unsupported unit', unit, 'for', val, ' use pixel instead');
@@ -5699,7 +5700,7 @@ define([
             const newDoc = svgedit.utilities.text2xml(xmlString);
             svgCanvas.prepareSvg(newDoc);
             const svg = svgdoc.adoptNode(newDoc.documentElement);
-            const {symbols, confirmedType} = parseSvg(svg, _type);
+            const {symbols, confirmedType} = parseSvg(svg, _type, unit);
 
             const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
             use_elements.map(element => setDataXform(element, _type === 'image-trace'));
@@ -6139,7 +6140,7 @@ define([
                 }
                 const attrStroke = $(elem).attr('stroke');
                 const attrFill = $(elem).attr('fill');
-                if (['rect', 'ellipse', 'path', 'polygon', 'text', 'line'].includes(elem.tagName)) {
+                if (['rect', 'circle', 'ellipse', 'path', 'polygon', 'text', 'line'].includes(elem.tagName)) {
                     if (((svg_by_layer && svg_by_color === 0) || attrStroke) && attrStroke !== 'none') {
                         $(elem).attr('stroke', color);
                     }
@@ -7786,7 +7787,7 @@ define([
                 g.childNodes.forEach(child => {
                     $(child).attr('id', getNextId());
                     $(child).attr('vector-effect', "non-scaling-stroke");
-                })
+                });
                 selectorManager.requestSelector(g).resize();
                 
                 addCommandToHistory(batchCmd);
