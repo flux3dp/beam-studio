@@ -1,0 +1,127 @@
+.task-interpreter-panel {
+    width: 85vw;
+    padding: 20px 20px 20px 20px;
+    background: #F8F8F8;
+    text-align: center;
+    box-shadow: 0 7px 15px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, 0.05);
+    .btn {
+        height: 31px;
+        padding: 3px 5px 3px 5px;
+        line-height: 23px;
+        &.disabled {
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+    }
+    .select-port {
+        margin: 0px 0px 20px 0px;
+        height: 31px;
+        .pull-right {
+            margin: 0px 0px 0px 10px;
+        }
+        select {
+            width: 70%;
+            line-height: 23px;
+            font-size: 15px;
+            padding: 3px 3px 3px 7px;
+            margin: 0px;
+            float: left;
+            border: 1px solid #CCC;
+            border-radius: 2px;
+        }
+    }
+    .file-input {
+        margin: 0px 0px 20px 0px;
+        height: 31px;
+        input {
+            width: 70%;
+            border: 2px solid #CCC;
+            padding: 3px;
+            float: left;
+        }
+        .pull-right {
+            margin: 0px 0px 0px 10px;
+        }
+    }
+    .command-input {
+        margin: 0px 0px 20px 0px;
+        height: 31px;
+        input {
+            width: 70%;
+            border: 2px solid #CCC;
+            padding: 3px;
+            float: left;
+        }
+        .pull-right {
+            margin: 0px 0px 0px 10px;
+        }
+    }
+    .main-content {
+        height: 200px;
+        margin: 0px 0px 20px 0px;
+        .left-part {
+            float: left;
+            width: 50%;
+            height: 100%;
+        }
+        .right-part {
+            float: left;
+            width: 50%;
+            height: 100%;
+        }
+        .gcode-command-list {
+            overflow: scroll;
+            width: calc(100% - 20px);
+            float: left;
+            height: 100%;
+            border: 2px solid #CCC;
+            .gcode-command-container {
+                height: 20px;
+                line-height: 15px;
+                font-size: 15px;
+                border-bottom: solid 1px #CCC;
+                &.current{
+                    background: #EEEEEE;
+                }
+                .line-index {
+                    border-right: solid 1px #CCC;
+                    padding: 2px 2px 2px 0px;
+                    font-size: 11px;
+                    font-weight: 300;
+                    float: left;
+                    width: 45px;
+                    text-align: right;
+                    color: #777777;
+                }
+                .gcode-command {
+                    overflow: scroll;
+                    white-space: nowrap;
+                    padding: 2px 10px 2px 10px;
+                    text-align: left;
+                    color: #777777;
+                }
+            }
+        }       
+    }
+    .scroll-bar {
+        width: 20px;
+        height: 100%;
+        float: right;
+        border: 2px solid #CCC;
+        border-left: 0px;
+        .slider {
+            width: 100%;
+            background: #DDD;
+            position: relative;
+            &:hover {
+                background: #BFBFBF;
+                
+            }
+        }
+    }
+    .gcode-player {
+        margin: 0px 0px 20px 0px;
+        height: 31px;  
+    }
+}

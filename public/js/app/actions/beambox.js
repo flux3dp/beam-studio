@@ -62,6 +62,11 @@ define([
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.SHOW_ABOUT_BEAM_STUDIO
             });
+        },
+        showTaskInterpreter: function() {
+            Dispatcher.dispatch({
+                actionType: BeamboxConstants.SHOW_TASK_INTERPRETER
+            });
         }
     };
 });

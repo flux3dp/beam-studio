@@ -28,6 +28,7 @@ function _buildFileMenu(fnKey, callback) {
     let menuItems = [
         { 'id': 'OPEN', label: r.open || 'Open', click: callback, 'accelerator': `${fnKey}+O` },
         { 'id': 'RECENT', label: r.recent || 'Open Recent', submenu: []},
+        //{ 'id': 'TASK_INTERPRETER', label: 'Task Interpreter', click: callback},
         { type: 'separator' },
         { 'id': 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` },
         { 'id': 'SAVE_AS', label: r.save_as, click: callback, 'accelerator': `Shift+${fnKey}+S` },

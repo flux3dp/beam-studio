@@ -88,7 +88,6 @@ define([
             const imgs = $('#svgcontent image').toArray();
             const numImgs = imgs.length;
             let done = 0;
-            console.log(numImgs);
             if (0 === numImgs) {
                 resolve();
             } else {
@@ -160,7 +159,8 @@ define([
         };
     };
 
-    const fetchFcode = async () => {
+    // fetchTaskCode: send svg string calculate taskcode, default output Fcode if isOutputGcode === true output gcode
+    const fetchTaskCode = async (isOutputGcode) => {
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
         await FontFuncs.convertTextToPathAmoungSvgcontent();
         ProgressActions.close();
@@ -177,8 +177,9 @@ define([
                 ProgressActions.updating(lang.message.uploading_fcode, 100);
             }
         });
-        const fcodeBlob = await new Promise((resolve) => {
+        const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
             const names = []; //don't know what this is for
+            const codeType = isOutputGcode ? 'gcode' : 'fcode';
             svgeditorParser.getTaskCode(
                 names,
                 {
@@ -186,26 +187,37 @@ define([
                         ProgressActions.open(ProgressConstants.STEPPING, '', data.message, false);
                         ProgressActions.updating(data.message, data.percentage * 100);
                     },
-                    onFinished: function (blob, fileName, fileTimeCost) {
+                    onFinished: function (taskCodeBlob, fileName, fileTimeCost) {
                         GlobalActions.sliceComplete({ time: fileTimeCost });
                         ProgressActions.updating(lang.message.uploading_fcode, 100);
-                        resolve(blob);
+                        resolve({taskCodeBlob, fileTimeCost});
                     },
                     fileMode: '-f',
+                    codeType,
                     model: BeamboxPreference.read('model')
                 }
             );
         });
-        return {
-            fcodeBlob: fcodeBlob,
-            thumbnailBlobURL: thumbnailBlobURL
-        };
+        if (!isOutputGcode) {
+            return {
+                fcodeBlob: taskCodeBlob,
+                thumbnailBlobURL: thumbnailBlobURL,
+                fileTimeCost: fileTimeCost
+            };
+        } else {
+            return {
+                gcodeBlob: taskCodeBlob,
+                thumbnailBlobURL: thumbnailBlobURL,
+                fileTimeCost: fileTimeCost
+            };
+        }
+        
     };
 
 
     return {
         uploadFcode: async function (device) {
-            const { fcodeBlob, thumbnailBlobURL } = await fetchFcode();
+            const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode();
             await DeviceMaster.select(device)
                 .done(() => {
                     GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
@@ -218,11 +230,10 @@ define([
         },
 
         exportFcode: async function () {
-            const { fcodeBlob } = await fetchFcode();
+            const { fcodeBlob, _, fileTimeCost } = await fetchTaskCode();
             const defaultFCodeName = svgCanvas.getLatestImportFileName() || 'untitled';
             const langFile = i18n.lang.topmenu.file;
             const fileReader = new FileReader();
-
             ProgressActions.close();
 
             fileReader.onload = function () {
@@ -231,5 +242,13 @@ define([
 
             fileReader.readAsArrayBuffer(fcodeBlob);
         },
+
+        getGcode: async function () {
+            const { gcodeBlob } = await fetchTaskCode(true);
+            const fileReader = new FileReader();
+            ProgressActions.close();
+
+            return gcodeBlob;
+        }
     };
 });

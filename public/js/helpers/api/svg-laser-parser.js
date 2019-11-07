@@ -314,6 +314,10 @@ define([
                     args.push('-pro');
                 }
 
+                if (opts.codeType === 'gcode') {
+                    args.push('-gc')
+                }
+
                 if (window.svgCanvas && svgCanvas.getRotaryMode()) {
                     args.push('-spin');
                     args.push(svgCanvas.runExtensions('getRotaryAxisAbsoluteCoord'));
@@ -325,7 +329,7 @@ define([
                         opts.onProgressing(data);
                     } else if ('complete' === data.status) {
                         total_length = data.length;
-                        duration = data.time + 1;
+                        duration = Math.floor(data.time) + 1;
                     } else if (true === data instanceof Blob) {
                         blobs.push(data);
                         blob = new Blob(blobs);

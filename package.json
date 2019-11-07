@@ -21,6 +21,7 @@
     "jsdom-global": "^1.6.2",
     "nan": "^2.4.0",
     "net-ping": "^1.2.3",
+    "serialport": "^8.0.5",
     "socket.io-client": "^1.4.6",
     "squirejs": "^0.2.1",
     "sudo-prompt": "^9.0.0",

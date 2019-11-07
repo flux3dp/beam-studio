@@ -64,6 +64,11 @@ define([
             return beamboxStore;
         },
 
+        onShowTaskInterpreter: function(callback) {
+            this.on(Constants.SHOW_TASK_INTERPRETER, callback);
+            return beamboxStore;
+        },
+
         removeUpdateLaserPanelListener: function(callback) {
             this.removeListener(Constants.UPDATE_LASER_PANEL, callback);
             return beamboxStore;
