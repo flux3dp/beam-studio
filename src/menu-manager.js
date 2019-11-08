@@ -81,7 +81,9 @@ function buildMenu(callback) {
             { 'id': 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
             { type:'separator'},
             { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
-            { 'id': 'OFFSET', label: r.offset || 'Offset', enabled: false, click: callback},
+            { 'id': 'OBJECT', label: r.object, enabled: false, submenu: [
+                { 'id': 'OFFSET', label: r.offset || 'Offset', click: callback},
+            ]},
             { 'id': 'PHOTO_EDIT', label: r.photo_edit || 'Edit Photo', enabled: false, submenu: [
                 { 'id': 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
                 { 'id': 'IMAGE_CROP', label: r.image_crop, click: callback },

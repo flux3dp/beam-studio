@@ -96,7 +96,7 @@ define([
             ]);
         }
         onObjectFocus() {
-            this.enableMenuItems(['DUPLICATE', 'OFFSET']);
+            this.enableMenuItems(['DUPLICATE', 'OBJECT']);
             if (svgCanvas.getSelectedElems()[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
             }
@@ -105,7 +105,7 @@ define([
             }
         }
         onObjectBlur() {
-            this.disableMenuItems(['DUPLICATE', 'OFFSET', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
+            this.disableMenuItems(['DUPLICATE', 'OBJECT', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
         }
     }
     const instance = new BeamboxGlobalInteraction();
