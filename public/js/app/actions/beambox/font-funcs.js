@@ -112,9 +112,17 @@ define([
         const fontStyle = $textElement.attr('font-style');
         const text = $textElement.text();
         
-        // Escape for MS 標楷體
-        if (fontFamily === '標楷體') {
+        // Escape for Whitelists
+        const whiteList = ['標楷體'];
+        const whiteKeyWords = ['華康'];
+        if (whiteList.indexOf(fontFamily) >= 0) {
             return fontFamily;
+        }
+        for (let i = 0; i < whiteKeyWords.length; i++) {
+            let keyword = whiteKeyWords[i];
+            if (fontFamily.indexOf(keyword) >= 0) {
+                return fontFamily;
+            }
         }
         //if only contain basic character (123abc!@#$...), don't substitute.
         //because my Mac cannot substituteFont properly handing font like 'Windings'
