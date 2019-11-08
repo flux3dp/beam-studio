@@ -9525,7 +9525,7 @@ define([
             //console.log(canvas.undoMgr);
         }
 
-        this.flipSelectedElements = function (horizon=1, vertical=1) {
+        this.flipSelectedElements = async function (horizon=1, vertical=1) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9558,7 +9558,7 @@ define([
                 while (stack.length > 0) {
                     ({elem: topElem, originalAngle} = stack.pop());
                     if (topElem.tagName !== 'g') {
-                        cmd = this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
+                        cmd = await this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
                         if (!cmd.isEmpty()) {
                             batchCmd.addSubCommand(cmd);
                         }
@@ -9605,7 +9605,7 @@ define([
             addCommandToHistory(batchCmd);
         }
 
-        this.flipElementWithRespectToCenter = function(elem, center, flipPara) {
+        this.flipElementWithRespectToCenter = async function(elem, center, flipPara) {
             let batchCmd = new svgedit.history.BatchCommand('Flip Single Element');
 
             const angle = svgedit.utilities.getRotationAngle(elem);
@@ -9649,7 +9649,7 @@ define([
                 }
                 cmd = svgedit.recalculate.recalculateDimensions(elem);
             } else {
-                cmd = this._flipImage(elem, flipPara.horizon, flipPara.vertical);
+                cmd = await this._flipImage(elem, flipPara.horizon, flipPara.vertical);
             }
             if (!cmd.isEmpty()) {
                 batchCmd.addSubCommand(cmd);
@@ -9659,7 +9659,31 @@ define([
             return batchCmd;
         }
 
-        this._flipImage = function(image, horizon=1, vertical=1) {
+        this._flipImage = async function(image, horizon=1, vertical=1) {
+            let batchCmd = new svgedit.history.BatchCommand('Flip image');
+            if (horizon === 1 && vertical === 1) {
+                return;
+            }
+            let cmd;
+            const origImage = $(image).attr('origImage');
+            if (origImage) {
+                const jimp = require('jimp');
+                let imageData = await fetch(origImage);
+                imageData = await imageData.blob();
+                imageData = await new Response(imageData).arrayBuffer(); 
+                imageData = await jimp.read(imageData);
+                imageData.flip(horizon === -1, vertical === -1);
+                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                imageData = new Blob([imageData]);
+                const src = URL.createObjectURL(imageData);
+                canvas.undoMgr.beginUndoableChange('origImage', [image]);
+                image.setAttribute('origImage', src);
+                cmd = canvas.undoMgr.finishUndoableChange();
+                if (!cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
+                }
+            }
+
             const flipCanvas = document.createElement('canvas');
             const flipContext = flipCanvas.getContext('2d');
             flipCanvas.width = $(image).attr('width');
@@ -9670,9 +9694,11 @@ define([
 
             canvas.undoMgr.beginUndoableChange('xlink:href', [image]);
             image.setAttribute('xlink:href', flipCanvas.toDataURL());
-            const cmd = canvas.undoMgr.finishUndoableChange();
-
-            return cmd;
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (!cmd.isEmpty()) {
+                batchCmd.addSubCommand(cmd);
+            }
+            return batchCmd;
         };
 
         // Function: cloneSelectedElements
