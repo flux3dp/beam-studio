@@ -288,50 +288,35 @@ define([
             );
         }
 
-        _handleParameterChange(id, val) {
+        async _handleParameterChange(id, val) {
             if (id === 'sharpen-intensity'){
                 const sharpenIntensity = parseInt(val);
                 const jimp = require('jimp');
-                const d = $.Deferred();
                 let imgBlobUrl = this.state.origSrc;
-                let imageFile;
                 const k_edge = -sharpenIntensity / 2;
                 const k_corner = -sharpenIntensity / 4;
                 const k_m = -4 * (k_edge + k_corner) + 1;
                 const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-                fetch(imgBlobUrl)
-                    .then(res => res.blob())
-                    .then((blob) => {
-                        var fileReader = new FileReader();
-                        fileReader.onloadend = (e) => {
-                            imageFile = e.target.result;
-                            imageFile = new Buffer.from(imageFile);
-                            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                            jimp.read(imageFile)
-                                .then((image) => {
-                                    image.convolute(kernal);
-                                    image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                        const newBlob = new Blob([buffer]);
-                                        const src = URL.createObjectURL(newBlob);
-                                        if (this.state.src !== this.state.origSrc) {
-                                            URL.revokeObjectURL(this.state.src);
-                                        }
-                                        this.setState({src: src});
-                                        ProgressActions.close();
-                                    });
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                    ProgressActions.close();
-                                });
-                        };
-                        fileReader.readAsArrayBuffer(blob);
-                    })
-                    .catch((err) => {
-                        d.reject(err);
-                        ProgressActions.close();
-                    });
-            } 
+                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                try {
+                    let imageData = await fetch(imgBlobUrl);
+                    imageData = await imageData.blob();
+                    imageData = await new Response(imageData).arrayBuffer(); 
+                    imageData = await jimp.read(imageData);
+                    imageData.convolute(kernal);
+                    imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                    imageData = new Blob([imageData]);
+                    const src = URL.createObjectURL(imageData);
+                    if (this.state.src !== this.state.origSrc) {
+                        URL.revokeObjectURL(this.state.src);
+                    }
+                    this.setState({src: src});
+                    ProgressActions.close();
+                } catch(e) {
+                    console.error(e);
+                    ProgressActions.close();
+                }
+            }
         }
 
         // CROP
@@ -353,7 +338,7 @@ define([
             this.setState({isCropping: true});
         }
 
-        _handleCrop(complete=false) {
+        async _handleCrop(complete=false) {
             const image = document.getElementById('original-image');
             const cropData = cropper.getData();;
             const x = Math.max(0, cropData.x);
@@ -362,49 +347,36 @@ define([
             const h = Math.min(image.naturalHeight - y, cropData.height);
 
             const jimp = require('jimp');
-            const d = $.Deferred();
             let imgBlobUrl = this.state.src;
-            let imageFile;
-            fetch(imgBlobUrl)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = (e) => {
-                        imageFile = e.target.result;
-                        imageFile = new Buffer.from(imageFile);
-                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                        jimp.read(imageFile)
-                            .then((image) => {
-                                image.crop(x, y, w, h);
-                                image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                    const newBlob = new Blob([buffer]);
-                                    const src = URL.createObjectURL(newBlob);
-                                    this.state.srcHistory.push(this.state.src);
-                                    this._destroyCropper();
-                                    this.setState({
-                                        src: src,
-                                        isCropping: false,
-                                        imagewidth: cropData.width,
-                                        imageheight: cropData.height
-                                    });
-                                    ProgressActions.close();
-                                    if (complete) {
-                                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                                        let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
-                                    }
-                                });
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                ProgressActions.close();
-                            });
-                    };
-                    fileReader.readAsArrayBuffer(blob);
-                })
-                .catch((err) => {
-                    d.reject(err);
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            try {
+                let imageData = await fetch(imgBlobUrl);
+                imageData = await imageData.blob();
+                imageData = await new Response(imageData).arrayBuffer(); 
+                imageData = await jimp.read(imageData);
+                imageData.crop(x, y, w, h);
+                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                imageData = new Blob([imageData]);
+                const src = URL.createObjectURL(imageData);
+                this.state.srcHistory.push(this.state.src);
+                this._destroyCropper();
+                this.setState({
+                    src: src,
+                    isCropping: false,
+                    imagewidth: cropData.width,
+                    imageheight: cropData.height
+                }, () => {
                     ProgressActions.close();
+                    if (complete) {
+                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                        let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
+                    }
                 });
+                
+            } catch(e) {
+                console.error(e);
+                ProgressActions.close();
+            }
         }
 
         _handleCancelCrop() {
@@ -419,45 +391,30 @@ define([
         }
 
         // INVERT
-        _handleInvert(callback) {
+        async _handleInvert(callback) {
             const jimp = require('jimp');
             const d = $.Deferred();
             let imgBlobUrl = this.state.src;
-            let imageFile;
-            fetch(imgBlobUrl)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = (e) => {
-                        imageFile = e.target.result;
-                        imageFile = new Buffer.from(imageFile);
-                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                        jimp.read(imageFile)
-                            .then((image) => {
-                                image.invert();
-                                image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                    const newBlob = new Blob([buffer]);
-                                    const src = URL.createObjectURL(newBlob);
-                                    if (!this.state.shading) {
-                                        this.state.threshold = 256 - this.state.threshold;
-                                    }
-                                    this.state.srcHistory.push(this.state.src);
-                                    this.state.src = src;
-                                    ProgressActions.close();
-                                    callback();
-                                });
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                ProgressActions.close();
-                            });
-                    };
-                    fileReader.readAsArrayBuffer(blob);
-                })
-                .catch((err) => {
-                    d.reject(err);
-                    ProgressActions.close();
-                });
+            try {
+                let imageData = await fetch(imgBlobUrl);
+                imageData = await imageData.blob();
+                imageData = await new Response(imageData).arrayBuffer(); 
+                imageData = await jimp.read(imageData);
+                imageData.invert();
+                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                imageData = new Blob([imageData]);
+                const src = URL.createObjectURL(imageData);
+                if (!this.state.shading) {
+                    this.state.threshold = 256 - this.state.threshold;
+                }
+                this.state.srcHistory.push(this.state.src);
+                this.state.src = src;
+                ProgressActions.close();
+                callback();
+            } catch(e) {
+                console.error(e);
+                ProgressActions.close();
+            }
         }
 
         // CURVE
@@ -479,7 +436,7 @@ define([
             this.curvefunction = curvefunction;
         }
 
-        _handleCurve(mode) {
+        async _handleCurve(mode) {
             const jimp = require('jimp');
             const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
             let imgBlobUrl;
@@ -489,46 +446,33 @@ define([
                 imgBlobUrl = this.state.origSrc;
             }
             let imageFile;
-            fetch(imgBlobUrl)
-            .then(res => res.blob())
-            .then((blob) => {
-                var fileReader = new FileReader();
-                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                fileReader.onloadend = (e) => {
-                    imageFile = e.target.result;
-                    imageFile = new Buffer.from(imageFile);
-                    jimp.read(imageFile)
-                        .then((image) => {
-                            for (let i = 0; i < image.bitmap.data.length; i++) {
-                                if (i % 4 != 3) {
-                                    image.bitmap.data[i] =  curveFunc[image.bitmap.data[i]];
-                                }
-                            }
-                            image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                const newBlob = new Blob([buffer]);
-                                const src = URL.createObjectURL(newBlob);
-                                if (this.state.src !== this.state.previewSrc) {
-                                    URL.revokeObjectURL(this.state.src);
-                                }
-                                if (mode === 'preview') {
-                                    this.setState({src: src});
-                                } else {
-                                    this.setState({src: src}, this._handleComplete);
-                                }
-                                ProgressActions.close();
-                            });
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            ProgressActions.close();
-                        });
-                };
-                fileReader.readAsArrayBuffer(blob);
-            })
-            .catch((err) => {
-                console.log(err)
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            try {
+                let imageData = await fetch(imgBlobUrl);
+                imageData = await imageData.blob();
+                imageData = await new Response(imageData).arrayBuffer(); 
+                imageData = await jimp.read(imageData);
+                for (let i = 0; i < imageData.bitmap.data.length; i++) {
+                    if (i % 4 != 3) {
+                        imageData.bitmap.data[i] =  curveFunc[imageData.bitmap.data[i]];
+                    }
+                }
+                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                imageData = new Blob([imageData]);
+                const src = URL.createObjectURL(imageData);
+                if (this.state.src !== this.state.previewSrc) {
+                    URL.revokeObjectURL(this.state.src);
+                }
+                if (mode === 'preview') {
+                    this.setState({src: src});
+                } else {
+                    this.setState({src: src}, this._handleComplete);
+                }
                 ProgressActions.close();
-            });
+            } catch(e) {
+                console.error(e);
+                ProgressActions.close();
+            }
         }
 
         _handleCurveComplete() {
