@@ -42,21 +42,24 @@ class MonitorManager {
             exec('pkill monitorexe', (err, data) => {
                 if (err) {
                     console.log('kill monitorexe err:', err);
+                } else {
+                    console.log('kill monitorexe succeed');
                 }
-                console.log('kill monitorexe succeed');
             });
         } else if (process.platform === 'win32' && process.arch === 'x64') {
             exec('taskkill /F /IM cygserver.exe', (err, data) => {
                 if (err) {
                     console.log('kill cygserver err:', err);
+                } else {
+                    console.log('kill cygserver succeed');
                 }
-                console.log('kill cygserver succeed');
             });
             exec('taskkill /F /IM monitorexe.exe', (err, data) => {
                 if (err) {
                     console.log('kill monitorexe err:', err);
+                } else {
+                    console.log('kill monitorexe succeed');
                 }
-                console.log('kill monitorexe succeed');
             });
         }
     }
