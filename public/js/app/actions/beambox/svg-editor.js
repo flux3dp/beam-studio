@@ -5622,9 +5622,14 @@ define([
                             fileReader.onloadend = function (e) {
                                 let svgString = e.target.result;
                                 const matchX = svgString.match(/\bx="[^"]*/);
+                                const matchWidth = svgString.match(/\bwidth="[^"]*/);
                                 if (matchX) {
                                     unit = matchX[0].substring(3).match(/[^0-9]{2}/);
                                 }
+                                if (!unit && matchWidth) {
+                                    unit = matchWidth[0].substring(7).match(/[^0-9]{2}/);
+                                }
+                                console.log(unit);
                                 resolve(unit ? unit[0] : 'pt');
                             }
                             fileReader.readAsText(file);
