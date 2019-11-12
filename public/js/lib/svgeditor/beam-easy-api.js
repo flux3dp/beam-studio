@@ -4,14 +4,14 @@ define([
     'helpers/device-master',
     'helpers/api/discover',
     'helpers/api/svg-laser-parser',
+    'app/actions/beambox/bottom-right-funcs',
 ], function (
     BeamboxPreference,
     DeviceMaster,
     Discover,
-    svgLaserParser
+    svgLaserParser,
+    BottomRightFuncs,
 ) {
-    const THUMBNAIL_DOWNSCALE = 2;
-    const GRID_SPACING = 100;
     const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
     const MACHINE_STATUS = {
         '-10': 'Maintain mode',
@@ -47,81 +47,6 @@ define([
             );
         }
     };
-
-    const svgStringToImg = async (svgString) => {
-        return await new Promise((resolve)=>{
-            const img  = new Image();
-            let isSuc = false;
-            img.onload = () => {
-                isSuc = true;
-                resolve(img)
-            };
-            img.src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgString);
-            window.setTimeout(() => {
-                if(!isSuc) {
-                    resolve(false);
-                }
-            }, 15000)
-        });
-    };
-
-    const fetchThumbnail = async (bvgString) => {
-        let img = await svgStringToImg(bvgString);
-        if (!img) {
-            return [false, false];
-        }
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = img.width / THUMBNAIL_DOWNSCALE;
-        canvas.height = img.height / THUMBNAIL_DOWNSCALE;
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        for (i = GRID_SPACING / THUMBNAIL_DOWNSCALE; i < Math.max(canvas.width, canvas.height); i += GRID_SPACING / THUMBNAIL_DOWNSCALE) {
-            ctx.beginPath();
-            ctx.lineWidth = 0.3;
-            if (i % (10 * GRID_SPACING / THUMBNAIL_DOWNSCALE) === 0) {
-                ctx.lineWidth = 0.9;
-            } 
-            if (i < canvas.width) {
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-            }
-            if (i < canvas.height) {
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-            }
-            ctx.stroke();
-        }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        return await new Promise((resolve)=>{
-            canvas.toBlob(function (blob) {
-                resolve([canvas.toDataURL(), URL.createObjectURL(blob)]);
-            });
-        });
-    }
-
-    const prepareUploadFile = async (thumbnail, thumbnailBlobURL, svgString) => {
-        const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
-        const reader = new FileReader();
-        const uploadFile = await new Promise((resolve) => {
-            reader.onload = () => {
-                const file = {
-                    data: reader.result,
-                    name: 'svgeditor.svg',
-                    uploadName: thumbnailBlobURL.split('/').pop(),
-                    extension: 'svg',
-                    type: 'application/octet-stream',
-                    size: blob.size,
-                    thumbnailSize: thumbnail.length,
-                    index: 0,
-                    totalFiles: 1
-                };
-                resolve(file);
-            };
-            reader.readAsArrayBuffer(blob);
-        });
-        return uploadFile;
-    }
 
     // Core
     EasyManipulator = class EasyManipulator extends Emitter {
@@ -197,13 +122,8 @@ define([
                     <rect fill="black" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_1" stroke="#333333" height="913.57312" width="713.4571" y="196.98372" x="201.85626"/>
                 </g>
             </svg>`;*/
-            const [thumbnail, thumbnailBlobURL] = await fetchThumbnail(this.bvg);
-            if (!thumbnail) {
-                let error = 'Fetch Thumbnail Timeout';
-                this.dispatchEvent(new CustomEvent('ERROR', {detail: {error}}));
-                return false;
-            }
-            const uploadFile = await prepareUploadFile(thumbnail, thumbnailBlobURL, this.bvg);
+            svgEditor.importBvgString(this.bvg);
+            let { uploadFile, thumbnailBlobURL } = await BottomRightFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
             let r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
                 model: this.device ? this.device.model : BeamboxPreference.read('model'),
                 engraveDpi: BeamboxPreference.read('engrave_dpi'),
@@ -213,7 +133,6 @@ define([
                     this.dispatchEvent(new CustomEvent('LOAD'));
                 }
             });
-            svgEditor.importBvgString(bvgString);
             if (!r) {
                 return true;
             } else {

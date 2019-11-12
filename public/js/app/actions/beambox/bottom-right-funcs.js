@@ -249,6 +249,12 @@ define([
             ProgressActions.close();
 
             return gcodeBlob;
+        },
+
+        prepareFileWrappedFromSvgStringAndThumbnail: async () => {
+            await FontFuncs.convertTextToPathAmoungSvgcontent();
+            const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
+            return { uploadFile, thumbnailBlobURL };
         }
     };
 });
