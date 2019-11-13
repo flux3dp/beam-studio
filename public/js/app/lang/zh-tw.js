@@ -69,9 +69,15 @@ define(function() {
                 update_fail: '更新失敗'
             },
             software: {
+                checking: '檢查更新中',
+                check_update: '檢查更新',
                 caption: 'Beam Studio 有新的軟體更新',
+                downloading: '下載更新中...',
+                install_or_not: '已完成下載新的軟體更新，是否重新啟動已套用更新？',
                 message_pattern_1: 'Beam Studio 有新的軟體更新。',
-                message_pattern_2: 'FLUX Software v%s 可使用 - 你的版本為 v%s.'
+                message_pattern_2: 'FLUX Software v%s 可使用 - 你的版本為 v%s.',
+                available_update: '現可提供下載，是否要下載更新？',
+                not_found: 'Beam Studio 已是最新版本。'
             },
             toolhead: {
                 caption: 'FLUX 工具頭有新的韌體更新',

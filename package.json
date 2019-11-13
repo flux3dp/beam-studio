@@ -14,6 +14,7 @@
     "bufferpack": "^0.0.6",
     "cropperjs": "^1.4.1",
     "custom-electron-titlebar": "^3.0.10",
+    "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
     "fontkit": "^1.7.7",
     "jimp": "^0.6.4",
@@ -89,7 +90,7 @@
       {
         "provider": "s3",
         "bucket": "beamstudio",
-        "path": "${os}${env.PUBLISH_PATH}"
+        "path": "/${os}${env.PUBLISH_PATH}"
       }
     ],
     "mac": {
@@ -111,7 +112,7 @@
     "win": {
       "icon": "app-icons/win-icon.ico",
       "certificateSubjectName": "FLUX TECHNOLOGY INC.",
-      "publisherName": "FLUX Inc."
+      "publisherName": "FLUX TECHNOLOGY INC."
     },
     "dmg": {
       "artifactName": "Beam Studio ${version}.${ext}"

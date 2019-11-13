@@ -69,9 +69,15 @@ define(function() {
                 update_fail: 'Update Fail'
             },
             software: {
+                checking: 'Checking for Update',
+                check_update: 'Check for Update',
                 caption: 'A Software Update to FLUX Studio is available',
+                downloading: 'Downloading Updates...',
+                install_or_not: 'Updates have been downloaded. Would you like restart and install now?',
                 message_pattern_1: 'FLUX Studio is now ready for software update.',
-                message_pattern_2: 'FLUX Software v%s is now available - You have v%s.'
+                message_pattern_2: 'FLUX Software v%s is now available - You have v%s.',
+                available_update: 'is available now. Do you want to download the update?',
+                not_found: 'You are using the latest version Beam Studio.'
             },
             toolhead: {
                 caption: 'A Firmware Update to FLUX Toolhead is available',

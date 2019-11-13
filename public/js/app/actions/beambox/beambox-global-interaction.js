@@ -1,13 +1,19 @@
 define([
     'helpers/i18n',
+    'app/actions/alert-actions',
     'app/actions/global-interaction',
     'app/actions/beambox',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
     i18n,
+    AlertActions,
     GlobalInteraction,
     BeamboxAction,
+    ProgressActions,
+    ProgressConstants,
     BottomRightFuncs,
     FnWrapper
 ){
@@ -31,6 +37,47 @@ define([
 
                 oReq.send();
             }
+            const LANG = i18n.lang.update.software;
+            let ipc = electron.ipc;
+            let events = electron.events;
+            const checkForUpdate = () => {
+                ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+                ipc.send(events.CHECK_FOR_UPDATE);
+                ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
+                    console.log(res.info);
+                    ProgressActions.close();
+                    if (res.error) {
+                        console.log(res.error);
+                        AlertActions.showPopupInfo('update-check-error', `Error: ${res.error.code} `, LANG.check_update);
+                    } else if (res.isUpdateAvailable) {
+                        let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
+                        AlertActions.showPopupYesNo('updateavailable', msg, LANG.check_update, null, {
+                            yes: () => {
+                                    ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
+                                        console.log('info:', info);
+                                        ProgressActions.close();
+                                        AlertActions.showPopupYesNo('update-downloaded', LANG.install_or_not, LANG.check_update, null, {
+                                            yes: () => {
+                                                ipc.send(events.QUIT_AND_INSTALL);
+                                            },
+                                            no: ()=> {}
+                                        });
+                                    });
+                                    //ProgressActions.open(ProgressConstants.NONSTOP, LANG.downloading);
+                                    ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.downloading} - 0%`, false);
+                                    ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
+                                        console.log('progress:', progress);
+                                    });
+                                    ipc.send(events.DOWNLOAD_UPDATE);
+                                },
+                            no: () => {} 
+                        });
+                    } else {
+                        AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
+                    }
+                });
+            };
+            
             this._actions = {
 
                 'OPEN': () => {
@@ -72,7 +119,8 @@ define([
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
                 'NETWORK_TESTING': () => BeamboxAction.showNetworkTestingPanel(),
                 'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio(),
-                'TASK_INTERPRETER': () => BeamboxAction.showTaskInterpreter()
+                'TASK_INTERPRETER': () => BeamboxAction.showTaskInterpreter(),
+                'UPDATE_BS': checkForUpdate
             };
         }
         attach() {

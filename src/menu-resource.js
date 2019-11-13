@@ -1,6 +1,7 @@
 module.exports = {
     'en': {
         preferences: 'Preferences',
+        update: 'Check Update',
         about: 'About Beam Studio',
         hide: 'Hide Beam Studio',
         hideothers: 'Hide Others',
@@ -102,6 +103,7 @@ module.exports = {
     },
     'zh-tw': {
         preferences: '偏好設定',
+        update: '檢查更新',
         about: '關於 Beam Studio',
         hide: '隱藏 Beam Studio',
         hideothers: '隱藏其他',

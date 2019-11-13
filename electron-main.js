@@ -4,6 +4,7 @@ app.commandLine.appendSwitch('ignore-gpu-blacklist');
 const BackendManager = require('./src/backend-manager.js');
 const MonitorManager = require('./src/monitor-manager.js');
 const MenuManager = require('./src/menu-manager.js');
+const UpdateManager = require('./src/update-manager.js');
 const UglyNotify = require('./src/ugly-notify.js');
 const events = require('./src/ipc-events');
 
@@ -113,6 +114,7 @@ function onDeviceUpdated(deviceInfo) {
 
 require('./src/bootstrap.js');
 
+const updateManager = new UpdateManager();
 const backendManager = new BackendManager({
     location: process.env.BACKEND,
     trace_pid: process.pid,
