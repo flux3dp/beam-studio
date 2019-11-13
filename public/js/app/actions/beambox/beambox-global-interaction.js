@@ -67,6 +67,7 @@ define([
                                     ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.downloading} - 0%`, false);
                                     ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
                                         console.log('progress:', progress);
+                                        ProgressActions.updating(`${LANG.downloading} - ${progress.percent}%`, progress.percent);
                                     });
                                     ipc.send(events.DOWNLOAD_UPDATE);
                                 },

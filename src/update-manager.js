@@ -28,8 +28,8 @@ class AutoUpdateManager {
             console.log('Update Downloaded, Info:', info);
             BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_DOWNLOADED, info);
         });
-        autoUpdater.on('download-progress', (progress, bytesPerSecond, percent, total, transferred) => {
-            console.log(progress, bytesPerSecond, percent, total, transferred);
+        autoUpdater.on('download-progress', (progress) => {
+            console.log(progress);
             BrowserWindow.getFocusedWindow().webContents.send(events.DOWNLOAD_PROGRESS, progress);
         });
         ipcMain.on(events.CHECK_FOR_UPDATE, () => {
