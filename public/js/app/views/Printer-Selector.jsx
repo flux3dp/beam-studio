@@ -167,7 +167,7 @@ define([
                         selectDefaultDevice = function() {
                             if (self.state.hasDefaultPrinter) {
                                 if (currentPrinter) {
-                                    self._selectPrinter(selectedPrinter);
+                                    self._selectPrinter(currentPrinter);
                                     clearInterval(timer);
                                 }
                                 else {
