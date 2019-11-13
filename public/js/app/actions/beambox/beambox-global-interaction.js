@@ -40,6 +40,17 @@ define([
             const LANG = i18n.lang.update.software;
             let ipc = electron.ipc;
             let events = electron.events;
+            ipc.on(events.UPDATE_DOWNLOADED, (event, info) => {
+                ProgressActions.close();
+                svgCanvas.changed = false;
+                let msg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
+                AlertActions.showPopupYesNo('update-downloaded', msg, LANG.check_update, null, {
+                    yes: () => {
+                        ipc.send(events.QUIT_AND_INSTALL);
+                    },
+                    no: ()=> {}
+                });
+            });
             const checkForUpdate = () => {
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
                 ipc.send(events.CHECK_FOR_UPDATE);
@@ -53,24 +64,28 @@ define([
                         let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
                         AlertActions.showPopupYesNo('updateavailable', msg, LANG.check_update, null, {
                             yes: () => {
-                                    ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
-                                        //console.log('info:', info);
+                                    ProgressActions.open(ProgressConstants.NONSTOP, LANG.downloading);
+                                    ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
+                                        console.log('progress:', progress.percent);
+                                    });
+                                    ipc.on(events.UPDATE_DOWNLOADED, (event, info) => {
                                         ProgressActions.close();
-                                        AlertActions.showPopupYesNo('update-downloaded', LANG.install_or_not, LANG.check_update, null, {
+                                        svgCanvas.changed = false;
+                                        let msg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
+                                        AlertActions.showPopupYesNo('update-downloaded', msg, LANG.check_update, null, {
                                             yes: () => {
                                                 ipc.send(events.QUIT_AND_INSTALL);
                                             },
                                             no: ()=> {}
                                         });
                                     });
-                                    //ProgressActions.open(ProgressConstants.NONSTOP, LANG.downloading);
-                                    ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
-                                        console.log('progress:', progress);
-                                    });
-                                    ipc.send(events.DOWNLOAD_UPDATE);
+                                    //ipc.send(events.DOWNLOAD_UPDATE);
                                 },
-                            no: () => {} 
-                        });
+                            no: () => {
+                                ipc.on(events.UPDATE_DOWNLOADED, (event, info) => {});
+                                }
+                            } 
+                        );
                     } else {
                         AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
                     }

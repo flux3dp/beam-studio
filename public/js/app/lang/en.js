@@ -73,7 +73,7 @@ define(function() {
                 check_update: 'Check for Update',
                 caption: 'A Software Update to FLUX Studio is available',
                 downloading: 'Downloading Updates...',
-                install_or_not: 'Updates have been downloaded. Would you like restart and install now?',
+                install_or_not: 'is ready for update. Would you like restart and update now?',
                 message_pattern_1: 'FLUX Studio is now ready for software update.',
                 message_pattern_2: 'FLUX Software v%s is now available - You have v%s.',
                 available_update: 'is available now. Do you want to download the update?',
