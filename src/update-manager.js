@@ -5,7 +5,7 @@ const { autoUpdater, UpdaterSignal } = require("electron-updater");
 
 class AutoUpdateManager {
     constructor () {
-        autoUpdater.autoDownload = false;
+        this.mainWindow = null;
         autoUpdater.on('checking-for-update', () => {
         });
         autoUpdater.on('update-available', info => {
@@ -14,7 +14,11 @@ class AutoUpdateManager {
                 info,
                 isUpdateAvailable: true
             }
-            BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+            if (this.mainWindow) {
+                this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
+            } else {
+                BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+            }
         });
         autoUpdater.on('update-not-available', info => {
             console.log('Update Not Available, Info:', info);
@@ -22,15 +26,27 @@ class AutoUpdateManager {
                 info,
                 isUpdateAvailable: false
             };
-            BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+            if (this.mainWindow) {
+                this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
+            } else {
+                BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+            }
         });
         autoUpdater.on('update-downloaded', info => {
             console.log('Update Downloaded, Info:', info);
-            BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_DOWNLOADED, info);
+            if (this.mainWindow) {
+                this.mainWindow.webContents.send(events.UPDATE_DOWNLOADED, info);
+            } else {
+                BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_DOWNLOADED, info);
+            }
         });
         autoUpdater.on('download-progress', (progress) => {
             console.log(progress);
-            BrowserWindow.getFocusedWindow().webContents.send(events.DOWNLOAD_PROGRESS, progress);
+            if (this.mainWindow) {
+                this.mainWindow.webContents.send(events.DOWNLOAD_PROGRESS, progress);
+            } else {
+                BrowserWindow.getFocusedWindow().webContents.send(events.DOWNLOAD_PROGRESS, progress);
+            }
         });
         ipcMain.on(events.CHECK_FOR_UPDATE, () => {
             this.checkForUpdates();
@@ -54,7 +70,15 @@ class AutoUpdateManager {
                 isUpdateAvailable: true
             }
         }
-        BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+        if (this.mainWindow) {
+            this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
+        } else {
+            BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+        }
+    }
+
+    setMainWindow = (mainWindow) => {
+        this.mainWindow = mainWindow;
     }
 }
 

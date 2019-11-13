@@ -201,6 +201,8 @@ function createWindow () {
     if(process.defaultApp || DEBUG) {
         mainWindow.webContents.openDevTools();
     }
+    updateManager.setMainWindow(mainWindow);
+    updateManager.checkForUpdates();
 }
 
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {

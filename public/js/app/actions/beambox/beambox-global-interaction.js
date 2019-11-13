@@ -54,7 +54,7 @@ define([
                         AlertActions.showPopupYesNo('updateavailable', msg, LANG.check_update, null, {
                             yes: () => {
                                     ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
-                                        console.log('info:', info);
+                                        //console.log('info:', info);
                                         ProgressActions.close();
                                         AlertActions.showPopupYesNo('update-downloaded', LANG.install_or_not, LANG.check_update, null, {
                                             yes: () => {
@@ -64,10 +64,8 @@ define([
                                         });
                                     });
                                     //ProgressActions.open(ProgressConstants.NONSTOP, LANG.downloading);
-                                    ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.downloading} - 0%`, false);
                                     ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
                                         console.log('progress:', progress);
-                                        ProgressActions.updating(`${LANG.downloading} - ${progress.percent}%`, progress.percent);
                                     });
                                     ipc.send(events.DOWNLOAD_UPDATE);
                                 },
@@ -86,7 +84,13 @@ define([
                         electron.trigger_file_input_click('import_image');
                     }
                 },
-                'IMPORT_EXAMPLE': () => {loadExampleFile(`examples/badge_${i18n.getActiveLang()}.bvg`)},
+                'IMPORT_EXAMPLE': () => {
+                    if (i18n.getActiveLang() === 'zh-tw') {
+                        loadExampleFile(`examples/badge_zh-tw.bvg`);
+                    } else {
+                        loadExampleFile(`examples/badge_en.bvg`);
+                    }
+                },
                 'IMPORT_MATERIAL_TESTING_OLD': () => {loadExampleFile('examples/mat_test_old.bvg')},
                 'IMPORT_MATERIAL_TESTING_SIMPLECUT': () => {loadExampleFile('examples/mat_test_simple_cut.bvg')},
                 'IMPORT_MATERIAL_TESTING_CUT': () => {loadExampleFile('examples/mat_test_cut.bvg')},
