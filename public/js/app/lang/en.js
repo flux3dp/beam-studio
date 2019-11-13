@@ -314,31 +314,31 @@ define(function() {
                 select: 'Yes'
             },
             set_password: {
-                line1: '請輸入「',
-                line2: '」無線網路的連線密碼',
-                password_placeholder: '請輸入 Wi-Fi 密碼',
+                line1: 'Please Enter"',
+                line2: '"Password of Wi-Fi Network.',
+                password_placeholder: 'Enter Wi-Fi Password Here',
                 back: 'Back',
                 join: 'Join',
                 connecting: 'Connecting'
             },
             success: {
-                caption: '太棒了，連線成功!',
-                line1: '接下來，我們將為你的機器做一些簡單的設定。',
-                next: '下一步'
+                caption: 'Great! Connected Successfully!',
+                line1: 'Now, We will set some simple setting for your machine.',
+                next: 'Next'
             },
             failure: {
-                caption: '連線失敗',
-                line1: '請確認你的 Wi-Fi 是否正常運作後，再重新連線',
-                next: '重新連線'
+                caption: 'Failed to Connect.',
+                line1: 'Please check your Wi-Fi work properly, and then reconnect.',
+                next: 'Reconnect'
             },
             set_printer: {
-                caption: '為你的 FLUX3D Printer 設定名稱與密碼',
-                printer_name: '名稱',
-                printer_name_placeholder: '設定名稱',
-                password: '密碼',
-                password_placeholder: '設定密碼',
-                notice: '設定密碼，可以確保你的 FLUX Delta 只有知道密碼的人可以操作',
-                next: '下一步'
+                caption: 'Set name and password for your FLUX3D Printer.',
+                printer_name: 'Name',
+                printer_name_placeholder: 'Set name',
+                password: 'Password',
+                password_placeholder: 'Set password',
+                notice: 'Set password, making only who knows the password can use FLUX Delta.',
+                next: 'Next'
             }
         },
         menu: {
