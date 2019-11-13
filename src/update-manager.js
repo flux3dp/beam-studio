@@ -6,6 +6,8 @@ const { autoUpdater, UpdaterSignal } = require("electron-updater");
 class AutoUpdateManager {
     constructor () {
         this.mainWindow = null;
+        this.isDownloading = false;
+        autoUpdater.autoInstallOnAppQuit = false;
         autoUpdater.on('checking-for-update', () => {
         });
         autoUpdater.on('update-available', info => {
@@ -22,6 +24,7 @@ class AutoUpdateManager {
         });
         autoUpdater.on('update-not-available', info => {
             console.log('Update Not Available, Info:', info);
+            this.isDownloading = false;
             let res = {
                 info,
                 isUpdateAvailable: false
@@ -34,6 +37,7 @@ class AutoUpdateManager {
         });
         autoUpdater.on('update-downloaded', info => {
             console.log('Update Downloaded, Info:', info);
+            this.isDownloading = false;
             if (this.mainWindow) {
                 this.mainWindow.webContents.send(events.UPDATE_DOWNLOADED, info);
             } else {
@@ -61,7 +65,9 @@ class AutoUpdateManager {
 
     checkForUpdates = async () => {
         let res;
+        autoUpdater.autoDownload = !this.isDownloading;
         try {
+            this.isDownloading = true;
             res = await autoUpdater.checkForUpdates();
         } catch (error) {
             console.log(error)
@@ -69,6 +75,7 @@ class AutoUpdateManager {
                 error,
                 isUpdateAvailable: true
             }
+            this.isDownloading = false;
         }
         if (this.mainWindow) {
             this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
