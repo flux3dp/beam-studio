@@ -56,7 +56,9 @@ class AutoUpdateManager {
             this.checkForUpdates();
         });
         ipcMain.on(events.DOWNLOAD_UPDATE, ()=> {
-            autoUpdater.downloadUpdate();
+            if (!this.isDownloading) {
+                autoUpdater.downloadUpdate();
+            }
         });
         ipcMain.on(events.QUIT_AND_INSTALL, ()=> {
             autoUpdater.quitAndInstall();

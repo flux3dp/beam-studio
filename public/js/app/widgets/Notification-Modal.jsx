@@ -105,8 +105,8 @@ define([
                 this._onClose.apply(null, [e, reactid, 'custom']);
             },
             _onCustomGroup: function(idx) {
-                this.props.onCustomGroup[idx]();
                 this.props.onClose();
+                this.props.onCustomGroup[idx]();
             },
 
             _getTypeTitle: function() {
