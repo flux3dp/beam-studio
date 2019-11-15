@@ -360,6 +360,8 @@ define(function() {
         settings: {
             on: 'On',
             off: 'Off',
+            low: 'Low',
+            high: 'Normal',
             caption: 'Settings',
             tabs: {
                 general: 'General',
@@ -377,6 +379,7 @@ define(function() {
             confirm_reset: 'Confirm reset Beam Studio?',
             language: 'Language',
             notifications: 'Notifications',
+            check_updates: 'Auto Check',
             updates_version: 'Versions',
             default_app: 'Default App',
             default_units: 'Default Units',
@@ -387,6 +390,7 @@ define(function() {
             default_beambox_model: 'Default Model',
             guides_origin: 'Guides Origin',
             guides: 'Guides',
+            image_downsampling: 'Photo Displaying Quality',
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
             none: 'None',

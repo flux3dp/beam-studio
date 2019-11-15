@@ -360,6 +360,8 @@ define(function() {
         settings: {
             on: '開',
             off: '關',
+            low: '低',
+            high: '正常',
             caption: '設定',
             tabs: {
                 general: '一般',
@@ -377,6 +379,7 @@ define(function() {
             confirm_reset: '確認要重置 Beam Studio?',
             language: '語言',
             notifications: '通知',
+            check_updates: '自動檢查',
             updates_version: '版本',
             default_app: '預設功能',
             default_units: '預設單位',
@@ -386,6 +389,7 @@ define(function() {
             default_beambox_model: '預設型號',
             guides_origin: '參考線座標',
             guides: '參考線',
+            image_downsampling: '圖片顯示品質',
             mask: '工作範圍剪裁',
             optimization: '優化',
             none: '無',

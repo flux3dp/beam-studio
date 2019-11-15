@@ -20,11 +20,9 @@ define([
 
     const checkForUpdate = (isAutoCheck) => {
         let version = Config().read('update_version') || 'latest';
-        console.log(version);
         ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
             ipc.send(events.CHECK_FOR_UPDATE, version);
             ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
-                console.log(res.info);
                 ProgressActions.close();
                 if (res.error) {
                     console.log(res.error);
@@ -66,7 +64,7 @@ define([
         },
 
         autoCheck: function() {
-            let isAutoCheck = Config().read('update_notification') === '1';
+            let isAutoCheck = Config().read('auto_check_update') === '1';
             if (isAutoCheck) {
                 checkForUpdate(isAutoCheck);
             }

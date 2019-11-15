@@ -157,12 +157,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: Config().read('update_notification') === '0' || !Config().read('update_notification')
+                    selected: Config().read('auto_check_update') === '0' || !Config().read('auto_check_update')
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: Config().read('update_notification') === '1'
+                    selected: Config().read('auto_check_update') === '1'
                 }
             ];
 
@@ -235,6 +235,19 @@ define([
                     value: 'true',
                     label: lang.settings.on,
                     selected: BeamboxPreference.read('show_guides') !== false
+                }
+            ];
+
+            const imageDownsamplingOptions = [
+                {
+                    value: 'false',
+                    label: lang.settings.high,
+                    selected: BeamboxPreference.read('image_downsampling') === false
+                },
+                {
+                    value: 'true',
+                    label: lang.settings.low,
+                    selected: BeamboxPreference.read('image_downsampling') !== false
                 }
             ];
 
@@ -333,11 +346,11 @@ define([
                     </Controls>
 
                     <div className='subtitle'>{lang.settings.groups.update}</div>
-                    <Controls label={lang.settings.notifications}>
+                    <Controls label={lang.settings.check_updates}>
                         <SelectView
                             className='font3'
                             options={updateNotificationOptions}
-                            onChange={this._updateOptions.bind(null, 'update_notification')}
+                            onChange={this._updateOptions.bind(null, 'auto_check_update')}
                         />
                     </Controls>
 
@@ -415,6 +428,14 @@ define([
                             defaultValue={BeamboxPreference.read('guide_y0')}
                             getValue={val => this._updateBeamboxPreference('guide_y0', val)}
                             className={{half: true}}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.image_downsampling}>
+                        <SelectView
+                            className='font3'
+                            options={imageDownsamplingOptions}
+                            onChange={e => this._updateBeamboxPreference('image_downsampling', e.target.value)}
                         />
                     </Controls>
 
