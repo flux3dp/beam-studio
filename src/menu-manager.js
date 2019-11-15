@@ -10,7 +10,6 @@ function _buildOSXAppMenu(callback) {
         label: 'Beam Studio',
         submenu: [
             { label: r.about, role: 'about'},
-            { id: 'UPDATE_BS',  label: r.update, click: callback },
             { id: 'PREFERENCE',  label: r.preferences, accelerator: 'Cmd+,', click: callback },
             { type: 'separator' },
             { label: r.service, role: 'services', submenu: [] },
@@ -55,7 +54,6 @@ function _buildFileMenu(fnKey, callback) {
         menuItems.push({ id: 'PREFERENCE',  label: r.preferences, accelerator: `${fnKey}+,`, click: callback });
         menuItems.push({ id: 'RELOAD_APP' ,label: r.reload_app, accelerator: `${fnKey}+R`, click: callback});
         menuItems.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
-        menuItems.push({ id: 'UPDATE_BS',  label: r.update, click: callback });
     }
 
     return {
@@ -149,7 +147,8 @@ function buildMenu(callback) {
             { type: 'separator' },
             { id: 'FORUM', label: r.forum || 'Forum', click() { shell.openExternal(r.link.forum); } },
             { type: 'separator' },
-            { id: 'SOFTWARE_UPDATE', label: r.software_update || 'Software Update', click() { shell.openExternal(r.link.downloads); } },
+            //{ id: 'SOFTWARE_UPDATE', label: r.software_update || 'Software Update', click() { shell.openExternal(r.link.downloads); } },
+            { id: 'UPDATE_BS',  label: r.update, click: callback },
             { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
             { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()} }
         ]
