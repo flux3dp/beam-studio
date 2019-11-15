@@ -3,9 +3,15 @@
  */
 define([
     'helpers/grayscale',
-    'helpers/convertToTypedArray'
+    'helpers/convertToTypedArray',
+    'app/actions/beambox/beambox-preference',
 ],
-function(grayScale, convertToTypedArray) {
+function(
+    grayScale,
+    convertToTypedArray,
+    BeamboxPreference,
+
+) {
     'use strict';
 
     return function(source, opts) {
@@ -25,10 +31,13 @@ function(grayScale, convertToTypedArray) {
                     imageData;
 
                 //DownSampling
-                if (!opts.isFullResolution) {
-                    const downRatio = Math.min(1, 1.5 * $(window).width() / Math.max(size.width, size.height));
-                    size.width = Math.round(size.width * downRatio);
-                    size.height = Math.round(size.height * downRatio);
+                let isSettingDownsampling = BeamboxPreference.read('image_downsampling') || (BeamboxPreference.read('image_downsampling') === undefined);
+                if (isSettingDownsampling) {
+                    if (!opts.isFullResolution) {
+                        const downRatio = Math.min(1, 1.5 * $(window).width() / Math.max(size.width, size.height));
+                        size.width = Math.round(size.width * downRatio);
+                        size.height = Math.round(size.height * downRatio);
+                    }
                 }
  
                 canvas.width = size.width;

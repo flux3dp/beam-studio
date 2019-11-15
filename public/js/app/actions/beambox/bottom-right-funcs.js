@@ -85,6 +85,9 @@ define([
 
     const updateImageResolution = () => {
         return new Promise((resolve) => {
+            if (BeamboxPreference.read('image_downsampling') === false) {
+                resolve();
+            }
             const imgs = $('#svgcontent image').toArray();
             const numImgs = imgs.length;
             let done = 0;
