@@ -100,14 +100,14 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
-      "target": "dmg",
+      "target": ["dmg", "zip"],
       "icon": "public/logo.icns"
     },
     "linux": {
       "category": "Graphics",
       "description": "Beam Studio",
       "vendor": "FLUX Inc.",
-      "target": "deb",
+      "target": ["deb", "AppImage"],
       "icon": "app-icons"
     },
     "win": {
