@@ -79,6 +79,7 @@
   },
   "build": {
     "appId": "com.flux3dp.beam-studio",
+    "generateUpdatesFilesForAllChannels": true,
     "afterSign": "./scripts/notarize.js",
     "extraResources": [
       "backend"
