@@ -153,6 +153,32 @@ define([
                 }
             ];
 
+            const updateNotificationOptions = [
+                {
+                    value: 0,
+                    label: lang.settings.notification_off,
+                    selected: Config().read('update_notification') === '0' || !Config().read('update_notification')
+                },
+                {
+                    value: 1,
+                    label: lang.settings.notification_on,
+                    selected: Config().read('update_notification') === '1'
+                }
+            ];
+
+            const updateVersionOptions = [
+                {
+                    value: 'latest',
+                    label: lang.settings.update_latest,
+                    selected: Config().read('update_version') === 'latest' || !Config().read('update_version')
+                },
+                {
+                    value: 'beta',
+                    label: lang.settings.update_beta,
+                    selected: Config().read('update_version') === 'beta'
+                }
+            ];
+
             const defaultAppOptions = [
                 {
                     value: 'print',
@@ -303,6 +329,23 @@ define([
                             className='font3'
                             options={notificationOptions}
                             onChange={this._updateOptions.bind(null, 'notification')}
+                        />
+                    </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.update}</div>
+                    <Controls label={lang.settings.notifications}>
+                        <SelectView
+                            className='font3'
+                            options={updateNotificationOptions}
+                            onChange={this._updateOptions.bind(null, 'update_notification')}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.updates_version}>
+                        <SelectView
+                            className='font3'
+                            options={updateVersionOptions}
+                            onChange={this._updateOptions.bind(null, 'update_version')}
                         />
                     </Controls>
 

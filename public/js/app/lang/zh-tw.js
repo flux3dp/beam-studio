@@ -377,6 +377,7 @@ define(function() {
             confirm_reset: '確認要重置 Beam Studio?',
             language: '語言',
             notifications: '通知',
+            updates_version: '版本',
             default_app: '預設功能',
             default_units: '預設單位',
             loop_compensation: '封閉路徑補償',
@@ -391,6 +392,7 @@ define(function() {
             close: '關閉',
             groups: {
                 general: '一般',
+                update: '軟體更新',
                 connection: '連線',
                 editor: '編輯器',
                 path: '路徑',
@@ -417,6 +419,8 @@ define(function() {
             },
             notification_on: '開啟',
             notification_off: '關閉',
+            update_latest: '穩定版',
+            update_beta: 'Beta',
             engine_change_fail: {
                 'caption': '無法變更切片引擎',
                 '1': '檢查時發生錯誤',

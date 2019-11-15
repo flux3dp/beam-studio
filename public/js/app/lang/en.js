@@ -377,6 +377,7 @@ define(function() {
             confirm_reset: 'Confirm reset Beam Studio?',
             language: 'Language',
             notifications: 'Notifications',
+            updates_version: 'Versions',
             default_app: 'Default App',
             default_units: 'Default Units',
             loop_compensation: 'Loop Compensation',
@@ -394,6 +395,7 @@ define(function() {
             done: 'DONE',
             groups: {
                 general: 'General',
+                update: 'Software Updates',
                 connection: 'Connection',
                 editor: 'Editor',
                 path: 'Path',
@@ -405,6 +407,8 @@ define(function() {
             },
             notification_on: 'On',
             notification_off: 'Off',
+            update_latest: 'Latest',
+            update_beta: 'Beta',
             engine_change_fail: {
                 'caption': 'unable to change engine ',
                 '1': 'error during checking',

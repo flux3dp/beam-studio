@@ -1,19 +1,15 @@
 define([
     'helpers/i18n',
-    'app/actions/alert-actions',
+    'app/actions/electron-updater',
     'app/actions/global-interaction',
     'app/actions/beambox',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
     i18n,
-    AlertActions,
+    ElectronUpdater,
     GlobalInteraction,
     BeamboxAction,
-    ProgressActions,
-    ProgressConstants,
     BottomRightFuncs,
     FnWrapper
 ){
@@ -37,45 +33,8 @@ define([
 
                 oReq.send();
             }
-            const LANG = i18n.lang.update.software;
-            let ipc = electron.ipc;
-            let events = electron.events;
             
-            ipc.on(events.UPDATE_DOWNLOADED, (event, info) => {
-                let msg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
-                AlertActions.showPopupCustomGroup('update-downloaded', msg, [LANG.no, LANG.yes], LANG.check_update, null, [
-                    () => {},
-                    () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
-                ]);
-            });
-            const checkForUpdate = () => {
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
-                ipc.send(events.CHECK_FOR_UPDATE);
-                ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
-                    console.log(res.info);
-                    ProgressActions.close();
-                    if (res.error) {
-                        console.log(res.error);
-                        AlertActions.showPopupInfo('update-check-error', `Error: ${res.error.code} `, LANG.check_update);
-                    } else if (res.isUpdateAvailable) {
-                        let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
-                        AlertActions.showPopupCustomGroup('updateavailable', msg, [LANG.no, LANG.yes], LANG.check_update, null, [
-                            () => {
-                                ipc.on(events.UPDATE_DOWNLOADED, (event, info) => {});
-                            },
-                            () => {
-                                    ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
-                                        console.log('progress:', progress.percent);
-                                    });
-                                    AlertActions.showPopupInfo('download-update', LANG.downloading, LANG.check_update);
-                                    //ipc.send(events.DOWNLOAD_UPDATE);
-                            }
-                        ]);
-                    } else {
-                        AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
-                    }
-                });
-            };
+            ElectronUpdater.autoCheck();
             
             this._actions = {
 
@@ -125,7 +84,7 @@ define([
                 'NETWORK_TESTING': () => BeamboxAction.showNetworkTestingPanel(),
                 'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio(),
                 'TASK_INTERPRETER': () => BeamboxAction.showTaskInterpreter(),
-                'UPDATE_BS': checkForUpdate
+                'UPDATE_BS': () => ElectronUpdater.checkForUpdate()
             };
         }
         attach() {
