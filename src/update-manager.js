@@ -52,7 +52,7 @@ class AutoUpdateManager {
                 BrowserWindow.getFocusedWindow().webContents.send(events.DOWNLOAD_PROGRESS, progress);
             }
         });
-        ipcMain.on(events.CHECK_FOR_UPDATE, (channel) => {
+        ipcMain.on(events.CHECK_FOR_UPDATE, (event, channel) => {
             if (channel) {
                 autoUpdater.channel = channel;
             }

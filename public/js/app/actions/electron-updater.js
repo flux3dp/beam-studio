@@ -18,8 +18,9 @@ define([
     let ipc = electron.ipc;
     let events = electron.events;
 
-    const checkForUpdate = () => {
+    const checkForUpdate = (isAutoCheck) => {
         let version = Config().read('update_version') || 'latest';
+        console.log(version);
         ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
             ipc.send(events.CHECK_FOR_UPDATE, version);
             ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
@@ -27,7 +28,9 @@ define([
                 ProgressActions.close();
                 if (res.error) {
                     console.log(res.error);
-                    AlertActions.showPopupInfo('update-check-error', `Error: ${res.error.code} `, LANG.check_update);
+                    if (!isAutoCheck) {
+                        AlertActions.showPopupInfo('update-check-error', `Error: ${res.error.code} `, LANG.check_update);
+                    }
                 } else if (res.isUpdateAvailable) {
                     let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
                     AlertActions.showPopupCustomGroup('updateavailable', msg, [LANG.no, LANG.yes], LANG.check_update, null, [
@@ -50,20 +53,22 @@ define([
                         }
                     ]);
                 } else {
-                    AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
+                    if (!isAutoCheck){
+                        AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
+                    }
                 }
             });
     };
 
     return {
         checkForUpdate: function() {
-            checkForUpdate();
+            checkForUpdate(false);
         },
 
         autoCheck: function() {
             let isAutoCheck = Config().read('update_notification') === '1';
             if (isAutoCheck) {
-                checkForUpdate();
+                checkForUpdate(isAutoCheck);
             }
         }
     }
