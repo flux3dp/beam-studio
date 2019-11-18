@@ -5594,6 +5594,9 @@ define([
                             const modifiedSvgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;').replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
                             const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName, unit);
 
+                            //Apply style
+                            svgCanvas.svgToString($('#svgcontent')[0], 0);
+
                             svgCanvas.ungroupSelectedElement();
                             svgCanvas.ungroupSelectedElement();
                             svgCanvas.groupSelectedElements();
@@ -5630,7 +5633,9 @@ define([
                                     unit = matchWidth[0].substring(7).match(/[^0-9]{2}/);
                                 }
                                 console.log(unit);
-                                resolve(unit ? unit[0] : 'pt');
+                                // if unit is given backend will calculate unit for us, output unit will be px,
+                                // else we assume unit is 1:1, using pt.
+                                resolve(unit ? 'px' : 'pt');
                             }
                             fileReader.readAsText(file);
                         });
