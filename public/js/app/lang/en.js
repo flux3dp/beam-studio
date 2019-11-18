@@ -1289,7 +1289,7 @@ define(function() {
             },
             network_testing_panel:{
                 network_testing: 'Network Testing',
-                local_ip: 'Local Ip address:',
+                local_ip: 'Local IP address:',
                 insert_ip: 'Target device IP address:',
                 empty_ip: 'Please enter target device IP first.',
                 start: 'Start',
