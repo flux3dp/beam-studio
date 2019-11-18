@@ -389,7 +389,7 @@ define(function() {
             default_beambox_model: '預設型號',
             guides_origin: '參考線座標',
             guides: '參考線',
-            image_downsampling: '圖片顯示品質',
+            image_downsampling: '點陣圖畫質',
             mask: '工作範圍剪裁',
             optimization: '優化',
             none: '無',

@@ -390,7 +390,7 @@ define(function() {
             default_beambox_model: 'Default Model',
             guides_origin: 'Guides Origin',
             guides: 'Guides',
-            image_downsampling: 'Photo Displaying Quality',
+            image_downsampling: 'Bitmap Image Quality',
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
             none: 'None',
