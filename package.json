@@ -14,6 +14,7 @@
     "bufferpack": "^0.0.6",
     "cropperjs": "^1.4.1",
     "custom-electron-titlebar": "^3.0.10",
+    "electron-notarize": "^0.2.0",
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
     "fontkit": "^1.7.7",
@@ -100,14 +101,20 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "public/logo.icns"
     },
     "linux": {
       "category": "Graphics",
       "description": "Beam Studio",
       "vendor": "FLUX Inc.",
-      "target": ["deb", "AppImage"],
+      "target": [
+        "deb",
+        "AppImage"
+      ],
       "icon": "app-icons"
     },
     "win": {
@@ -116,7 +123,8 @@
       "publisherName": "FLUX TECHNOLOGY INC."
     },
     "dmg": {
-      "artifactName": "Beam Studio ${version}.${ext}"
+      "artifactName": "Beam Studio ${version}.${ext}",
+      "sign": false
     },
     "deb": {
       "depends": [
