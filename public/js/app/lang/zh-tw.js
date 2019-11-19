@@ -72,7 +72,7 @@ define(function() {
                 checking: '檢查更新中',
                 check_update: '檢查更新',
                 caption: 'Beam Studio 有新的軟體更新',
-                downloading: '正在背景下載更新中。',
+                downloading: '正在背景下載更新中，您可以按確定以繼續您的工作。',
                 install_or_not: '已準備好更新，是否重新啟動以套用更新？',
                 message_pattern_1: 'Beam Studio 有新的軟體更新。',
                 message_pattern_2: 'FLUX Software v%s 可使用 - 你的版本為 v%s.',

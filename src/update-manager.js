@@ -7,6 +7,7 @@ class AutoUpdateManager {
     constructor () {
         this.mainWindow = null;
         this.isDownloading = false;
+        autoUpdater.autoDownload = false;
         autoUpdater.autoInstallOnAppQuit = false;
         autoUpdater.on('checking-for-update', () => {
         });
@@ -61,6 +62,7 @@ class AutoUpdateManager {
         ipcMain.on(events.DOWNLOAD_UPDATE, ()=> {
             if (!this.isDownloading) {
                 autoUpdater.downloadUpdate();
+                this.isDownloading = true;
             }
         });
         ipcMain.on(events.QUIT_AND_INSTALL, ()=> {
@@ -70,9 +72,7 @@ class AutoUpdateManager {
 
     checkForUpdates = async () => {
         let res;
-        autoUpdater.autoDownload = !this.isDownloading;
         try {
-            this.isDownloading = true;
             res = await autoUpdater.checkForUpdates();
         } catch (error) {
             console.log(error)
@@ -80,7 +80,6 @@ class AutoUpdateManager {
                 error,
                 isUpdateAvailable: true
             }
-            this.isDownloading = false;
         }
         if (this.mainWindow) {
             this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
