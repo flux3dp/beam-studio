@@ -5602,6 +5602,27 @@ define([
                     if (!isLayerExist) {
                         const layer = svgCanvas.createLayer(layerName);
                         layer.color = color;
+
+                        if (type === 'layer' && layerName) {
+                            let matchPara = layerName.match(/(?<=#)[-SP0-9\.]*\b/i);
+                            if (matchPara) {
+                                let matchPower = matchPara[0].match(/(?<=P)[-0-9\.]*/i);
+                                let matchSpeed = matchPara[0].match(/(?<=S)[-0-9\.]*/i);
+                                let parsePower = matchPower ? parseFloat(matchPower) : NaN;
+                                let parseSpeed = matchSpeed ? parseFloat(matchSpeed) : NaN;
+                                let laserConst = LANG.right_panel.laser_panel;
+                                if (!isNaN(parsePower)) {
+                                    parsePower = Math.round(parsePower * 10) / 10;
+                                    parsePower = Math.max(Math.min(parsePower, laserConst.power.max), laserConst.power.min);
+                                    $(layer).attr('data-strength', parsePower);
+                                }
+                                if (!isNaN(parseSpeed)) {
+                                    parseSpeed = Math.round(parseSpeed * 10) / 10;
+                                    parseSpeed = Math.max(Math.min(parseSpeed, laserConst.laser_speed.max), laserConst.laser_speed.min);
+                                    $(layer).attr('data-speed', parseSpeed);
+                                }
+                            }
+                        }
                     }
                 }
                 if (type === 'text') {
