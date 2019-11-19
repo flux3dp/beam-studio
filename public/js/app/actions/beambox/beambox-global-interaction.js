@@ -9,7 +9,7 @@ define([
     i18n,
     ElectronUpdater,
     GlobalInteraction,
-    BeamboxAction,
+    BeamboxActions,
     BottomRightFuncs,
     FnWrapper
 ){
@@ -81,9 +81,9 @@ define([
                 'BORDERLESS_MODE': () => svgCanvas.toggleBorderless(),
                 'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
-                'NETWORK_TESTING': () => BeamboxAction.showNetworkTestingPanel(),
-                'ABOUT_BEAM_STUDIO': () => BeamboxAction.showAboutBeamStudio(),
-                'TASK_INTERPRETER': () => BeamboxAction.showTaskInterpreter(),
+                'NETWORK_TESTING': () => BeamboxActions.showNetworkTestingPanel(),
+                'ABOUT_BEAM_STUDIO': () => BeamboxActions.showAboutBeamStudio(),
+                'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
                 'UPDATE_BS': () => ElectronUpdater.checkForUpdate()
             };
         }
