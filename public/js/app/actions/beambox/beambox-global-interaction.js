@@ -1,6 +1,6 @@
 define([
     'helpers/i18n',
-    'app/actions/electron-updater',
+    'helpers/electron-updater',
     'app/actions/global-interaction',
     'app/actions/beambox',
     'app/actions/beambox/bottom-right-funcs',
