@@ -144,6 +144,7 @@ define([
     'react',
     'helpers/i18n',
     'jsx!views/beambox/Task-Interpreter-Panel',
+    'jsx!views/beambox/Layer-Color-Config',
 
     'jsHotkeys',
     'jquerybbq',
@@ -191,7 +192,8 @@ define([
 ], function (
     React,
     i18n,
-    TaskInterpreterPanel
+    TaskInterpreterPanel,
+    LayerColorConfigPanel
 ) {
     let LANG = i18n.lang.beambox;
 
@@ -245,6 +247,7 @@ define([
                                 }}
                             />
                         </div>
+                        <LayerColorConfigPanel />
                         <div id="sidepanels">
                             <div id="layerpanel">
                                 <fieldset id="layerbuttons">

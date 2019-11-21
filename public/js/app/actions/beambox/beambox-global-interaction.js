@@ -71,6 +71,7 @@ define([
                 'IMAGE_CURVE': () => FnWrapper.photoEdit('curve'),
                 'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
                 'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
+                'LAYER_COLOR_CONFIG': () => BeamboxActions.showLayerColorConfig(),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {},

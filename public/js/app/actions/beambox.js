@@ -67,6 +67,11 @@ define([
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.SHOW_TASK_INTERPRETER
             });
+        },
+        showLayerColorConfig: function() {
+            Dispatcher.dispatch({
+                actionType: BeamboxConstants.SHOW_LAYER_COLOR_CONFIG
+            });
         }
     };
 });

@@ -5622,6 +5622,15 @@ define([
                                     $(layer).attr('data-speed', parseSpeed);
                                 }
                             }
+                        } else if (type === 'color') {
+                            let layerColorConfig = LocalStorage.get('layer-color-config');
+                            let index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
+                            let laserConst = LANG.right_panel.laser_panel;
+                            if (index !== undefined) {
+                                $(layer).attr('data-strength', Math.max(Math.min(layerColorConfig.array[index].power, laserConst.power.max), laserConst.power.min));
+                                $(layer).attr('data-speed', Math.max(Math.min(layerColorConfig.array[index].speed, laserConst.laser_speed.max), laserConst.laser_speed.min));
+                                $(layer).attr('data-repeat', layerColorConfig.array[index].repeat);
+                            }
                         }
                     }
                 }

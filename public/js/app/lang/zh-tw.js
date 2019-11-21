@@ -1285,7 +1285,7 @@ define(function() {
                     not_support_message: '選取物件中含有不支援的類型：\n圖片、群組、文字、匯入圖檔\n這些類型的物件將被忽略。',
                 },
             },
-            network_testing_panel:{
+            network_testing_panel: {
                 network_testing: '網路檢測',
                 local_ip: '本機 IP 位置：',
                 insert_ip: '目標 IP 位置：',
@@ -1301,6 +1301,22 @@ define(function() {
                 cannot_connect_1: '無法與目標 IP 建立連線',
                 cannot_connect_2: '無法與目標 IP 建立連線，請確認是否與目標 IP 在同一網路',
                 cannot_get_local: '無法取得本地 IP 位置'
+            },
+            layer_color_config_panel: {
+                layer_color_config: '圖層顏色參數設定',
+                color: '顏色',
+                power: '功率',
+                speed: '連線',
+                repeat: '執行次數',
+                add: '新增',
+                save: '儲存',
+                cancel: '取消',
+                default: '回復預設',
+                add_config: '新增顏色',
+                in_use: '此顏色已在使用中。',
+                no_input: '請輸入顏色色碼。',
+                sure_to_reset: '您將會失去所有自訂顏色參數，確定要回復到預設值？',
+                sure_to_delete: '確定要刪除這項顏色參數。'
             },
             svg_editor: {
                 unnsupported_file_type: 'Beam Studio 不直接支援此檔案格式。請先輸出成圖片檔或 SVG 格式',

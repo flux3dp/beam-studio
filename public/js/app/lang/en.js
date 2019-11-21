@@ -1287,7 +1287,7 @@ define(function() {
                     not_support_message: 'Selected elements containing unsupported SVG tag：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;\nThese objects will be skipped.',
                 },
             },
-            network_testing_panel:{
+            network_testing_panel: {
                 network_testing: 'Network Testing',
                 local_ip: 'Local IP address:',
                 insert_ip: 'Target device IP address:',
@@ -1303,6 +1303,22 @@ define(function() {
                 cannot_connect_1: 'Fail to connect to target IP.',
                 cannot_connect_2: 'Fail to connect to target IP. Please make sure that the target is in the same network.',
                 cannot_get_local: 'Access to local IP address failed.'
+            },
+            layer_color_config_panel: {
+                layer_color_config: 'Layer Color Configurations',
+                color: 'Color',
+                power: 'Power',
+                speed: 'Speed',
+                repeat: 'Execute',
+                add: 'Add',
+                save: 'Save',
+                cancel: 'Cancel',
+                default: 'Reset To Default',
+                add_config: 'Add Color',
+                in_use: 'This color is in use.',
+                no_input: 'Please input valid hex color code.',
+                sure_to_reset: 'You will lose all customized parameters, are you sure to reset to default ?',
+                sure_to_delete: 'Are you sure to delete this color setting ?'
             },
             svg_editor: {
                 unnsupported_file_type: 'The file type is not directly supported. Please convert the file into SVG or bitmap',
