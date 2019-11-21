@@ -34,7 +34,7 @@ define([
         render: function() {
             return (
                 <div className="object-panel">
-                    <label className="controls accordion" onClick={() => {FnWrapper.reset_object_panel()}}>
+                    <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
                         <input type="checkbox" className="accordion-switcher"/>
                         <p className="caption">
                             {LANG.rotation}

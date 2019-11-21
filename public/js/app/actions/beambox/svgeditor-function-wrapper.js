@@ -511,7 +511,7 @@ define([
             return svgCanvas.getLatestImportFileName();
         },
 
-        reset_object_panel: function() {
+        resetObjectPanel: function() {
             const elem = svgCanvas.getSelectedElems()[0];
             $(elem).trigger({
                 type: 'mousedown'
