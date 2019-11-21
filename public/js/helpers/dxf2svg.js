@@ -1785,7 +1785,7 @@
         if (rgbCode == '#FFFFFF') {
           rgbCode = '#000000';
         }
-        let layerContent = `<g data-wireframe="1" data-repeat="1" data-strength="20" data-speed="20" data-color="${rgbCode}" class="layer"><title>${i}</title>${layer.paths.join('')}</g>`;
+        let layerContent = `<g data-wireframe="1" data-repeat="1" data-strength="20" data-speed="20" data-color="${rgbCode}" class="layer"><title>${i}</title><g>${layer.paths.join('')}</g></g>`;
         groupContents.push(layerContent);
       }
       var svgString = '<?xml version="1.0"?>';
