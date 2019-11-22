@@ -1099,7 +1099,10 @@ define(function() {
                 dont_show_again: 'Don\'t Show Again',
                 convert_to_path_fail: 'Failed to convert to path.',
                 save_unsave_changed: 'Do you want to save unsaved changes?',
-                dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD softwate, or make sure that the unit is set correctly.'
+                dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD softwate, or make sure that the unit is set correctly.',
+                progress: {
+                    uploading: 'Uploading'
+                }
             },
             left_panel: {
                 insert_object: 'Insert Object',

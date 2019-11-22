@@ -21,7 +21,7 @@ define([
                 return;   
             }
 
-            ProgressActions.open(ProgressConstants.NONSTOP, 'Uploading');
+            ProgressActions.open(ProgressConstants.NONSTOP, LANG.popup.progress.uploading);
             $.ajax({
                 url: `https://beamstudio-bug-report.s3.amazonaws.com/${new Date().toString()}-${process.platform}-v${window.FLUX.version}-${fileName}`,
                 type: 'PUT',
