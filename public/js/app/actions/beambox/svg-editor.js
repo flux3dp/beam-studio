@@ -5784,7 +5784,10 @@ define([
                             $('#dialog_box').hide();
                             return;
                         }
-                        const svg = Dxf2Svg.toSVG(parsed, unitLength * 10);
+                        const {svg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
+                        if (bbox.width > Constant.dimension.width || bbox.height > Constant.dimension.height) {
+                            AlertActions.showPopupWarning('dxf size over workarea', LANG.popup.dxf_bounding_box_size_over);
+                        }
                         return svg;
                     })();
                     console.log("Resized svg", resizedSvg);

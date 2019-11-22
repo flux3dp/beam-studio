@@ -1098,7 +1098,8 @@ define(function() {
                 dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
                 dont_show_again: 'Don\'t Show Again',
                 convert_to_path_fail: 'Failed to convert to path.',
-                save_unsave_changed: 'Do you want to save unsaved changes?'
+                save_unsave_changed: 'Do you want to save unsaved changes?',
+                dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD softwate, or make sure that the unit is set correctly.'
             },
             left_panel: {
                 insert_object: 'Insert Object',

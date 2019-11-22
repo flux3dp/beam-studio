@@ -1794,7 +1794,7 @@
       svgString += ' preserveAspectRatio="xMinYMin meet"';
       svgString += ' viewBox="' + (-1) + ' ' + -1 + ' ' + (bbox.width + 2) + ' ' + (bbox.height + 2) + '"';
       svgString += ' width="' + (bbox.width + 2) + '" height="' + (bbox.height + 2) + '">' + groupContents.join('') + '</svg>';
-      return _prettyData.pd.xml(svgString);
+      return {svg: _prettyData.pd.xml(svgString), bbox};
     };
     },{"./BoundingBox":1,"./denormalise":3,"./entityToPolyline":4,"./util/colors":25,"./util/logger":27,"pretty-data":41}],25:[function(require,module,exports){
     "use strict";

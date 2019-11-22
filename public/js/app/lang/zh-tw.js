@@ -1095,7 +1095,8 @@ define(function() {
                 dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
                 dont_show_again: '別再顯示此提醒',
                 convert_to_path_fail: '轉換成路徑失敗。',
-                save_unsave_changed: '請問是否要儲存未儲存的變更，否則變更將會遺失？'
+                save_unsave_changed: '請問是否要儲存未儲存的變更，否則變更將會遺失？',
+                dxf_bounding_box_size_over: '圖像超出工作範圍，請在 CAD 軟體中將圖像放置於原點附近，或確定圖檔單位是否正確設定。'
             },
             left_panel: {
                 insert_object: '插入物件',
