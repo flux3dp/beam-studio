@@ -33,6 +33,7 @@ define([
     'jsx!app/views/beambox/Color-Picker-Panel',
     'app/actions/alert-actions',
     'app/actions/topbar',
+    'helpers/aws-helper',
     'helpers/image-data',
     'helpers/shortcuts',
     'helpers/i18n',
@@ -52,6 +53,7 @@ define([
     ColorPickerPanel,
     AlertActions,
     TopbarActions,
+    AwsHelper,
     ImageData,
     Shortcuts,
     i18n,
@@ -5653,7 +5655,23 @@ define([
                             }
                             return;
                         }
-                        const outputs = await svgWebSocket.divideSVG();
+                        let outputs = await svgWebSocket.divideSVG();
+                        if (!outputs.res) {
+                            AlertActions.showPopupYesNo('import-svg-error', `${outputs.data}\n${LANG.popup.import_file_error_ask_for_upload}`, i18n.lang.alert.error, null, {
+                                yes: () => {
+                                    let fileReader = new FileReader();
+                                    fileReader.onloadend = function (e) {
+                                        let svgString = e.target.result;
+                                        AwsHelper.uploadToS3(file.name, svgString);
+                                    }
+                                    fileReader.readAsText(file);
+                                },
+                                no: () => {}
+                            });
+                            return;
+                        } else {
+                            outputs = outputs.data;
+                        }
 
                         if (type === 'color') {
                             await readSVG(outputs['strokes'], type, null, unit);

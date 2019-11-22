@@ -1086,6 +1086,10 @@ define(function() {
                 select_first: '請先選取物件以繼續',
                 select_at_least_two: '請選取兩個物件以繼續',
                 import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
+                import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
+                upload_file_too_large: '檔案大小過大，請聯絡客服。',
+                successfully_uploaded: '檔案已成功上傳。',
+                upload_failed: '檔案上傳失敗。',
                 or_turn_off_borderless_mode: '或是關閉開蓋模式',
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
                 dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
@@ -1211,7 +1215,8 @@ define(function() {
             },
             bottom_right_panel: {
                 convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
-                retreive_image_data: '擷取影像資料中...'
+                retreive_image_data: '擷取影像資料中...',
+                export_file_error_ask_for_upload: '匯出工作時發生錯誤，是否願意上傳工作場景回報錯誤給開發團隊？',
             },
             image_trace_panel: {
                 apply: '套用',

@@ -1089,6 +1089,10 @@ define(function() {
                 select_first: 'Select an object first.',
                 select_at_least_two: 'Select two objects to proceed',
                 import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
+                import_file_error_ask_for_upload: 'Failed to Imported SVG file. Are you willing to provide file to develop team for bug report ?',
+                upload_file_too_large: 'File is too large for upload.',
+                successfully_uploaded: 'File upload successed.',
+                upload_failed: 'File upload failed.',
                 or_turn_off_borderless_mode: ' Or turn off borderless mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
                 dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
@@ -1213,7 +1217,8 @@ define(function() {
             },
             bottom_right_panel: {
                 convert_text_to_path_before_export: 'Convert Text to Path...',
-                retreive_image_data: 'Retrieve Image Data...'
+                retreive_image_data: 'Retrieve Image Data...',
+                export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
             },
             image_trace_panel: {
                 apply: 'Apply',

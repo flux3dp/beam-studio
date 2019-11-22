@@ -1,4 +1,5 @@
 define([
+    'helpers/aws-helper',
     'helpers/device-master',
     'helpers/i18n',
     'helpers/image-data',
@@ -11,6 +12,7 @@ define([
     'app/actions/beambox',
     'app/actions/global-actions',
 ], function (
+    AwsHelper,
     DeviceMaster,
     i18n,
     ImageData,
@@ -164,6 +166,7 @@ define([
 
     // fetchTaskCode: send svg string calculate taskcode, default output Fcode if isOutputGcode === true output gcode
     const fetchTaskCode = async (isOutputGcode) => {
+        let isErrorOccur = false;
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
         await FontFuncs.convertTextToPathAmoungSvgcontent();
         ProgressActions.close();
@@ -178,8 +181,23 @@ define([
             },
             onFinished: () => {
                 ProgressActions.updating(lang.message.uploading_fcode, 100);
-            }
+            },
+            onError: (message) => {
+                isErrorOccur = true;
+                ProgressActions.close();
+                AlertActions.showPopupYesNo('get-taskcode-error', `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`, lang.alert.error, null, {
+                    yes: () => {
+                        const svgString = svgCanvas.getSvgString();
+                        AwsHelper.uploadToS3('output.bvg', svgString);
+                    },
+                    no: () => {}
+                });
+            },
         });
+        if (isErrorOccur) {
+            return {fcodeBlob: null};
+        }
+
         const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
             const names = []; //don't know what this is for
             const codeType = isOutputGcode ? 'gcode' : 'fcode';
@@ -195,12 +213,25 @@ define([
                         ProgressActions.updating(lang.message.uploading_fcode, 100);
                         resolve({taskCodeBlob, fileTimeCost});
                     },
+                    onError: (message) => {
+                        ProgressActions.close();
+                        AlertActions.showPopupYesNo('get-taskcode-error', `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`, lang.alert.error, null, {
+                            yes: () => {
+                                const svgString = svgCanvas.getSvgString();
+                                AwsHelper.uploadToS3('output.bvg', svgString);
+                            },
+                            no: () => {}
+                        });
+                        isErrorOccur = true;
+                        resolve({});
+                    },
                     fileMode: '-f',
                     codeType,
                     model: BeamboxPreference.read('model')
                 }
             );
         });
+
         if (!isOutputGcode) {
             return {
                 fcodeBlob: taskCodeBlob,
@@ -221,6 +252,9 @@ define([
     return {
         uploadFcode: async function (device) {
             const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode();
+            if (!fcodeBlob) {
+                return;
+            }
             await DeviceMaster.select(device)
                 .done(() => {
                     GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
@@ -234,6 +268,9 @@ define([
 
         exportFcode: async function () {
             const { fcodeBlob, _, fileTimeCost } = await fetchTaskCode();
+            if (!fcodeBlob) {
+                return;
+            }
             const defaultFCodeName = svgCanvas.getLatestImportFileName() || 'untitled';
             const langFile = i18n.lang.topmenu.file;
             const fileReader = new FileReader();
@@ -248,7 +285,9 @@ define([
 
         getGcode: async function () {
             const { gcodeBlob } = await fetchTaskCode(true);
-            const fileReader = new FileReader();
+            if (!gcodeBlob) {
+                return;
+            }
             ProgressActions.close();
 
             return gcodeBlob;

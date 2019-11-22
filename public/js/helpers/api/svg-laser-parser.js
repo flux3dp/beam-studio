@@ -337,8 +337,9 @@ define([
                         if (total_length === blob.size) {
                             opts.onFinished(blob, args[2], duration);
                         }
+                    } else if ('Error' === data.status) {
+                        opts.onError(data.message);
                     }
-
                 };
 
                 let loop_compensation = Number(localStorage.getItem('loop_compensation') || '0');
@@ -377,10 +378,10 @@ define([
                             finalBlobs[currentName] = blob;
                         }
                     } else if (data.status === 'ok') {
-                        $deferred.resolve(finalBlobs);
+                        $deferred.resolve({res: true, data: finalBlobs});
                     } else if (data.status === 'Error') {
                         $('#dialog_box').hide();
-                        AlertActions.showPopupError('', data.message);
+                        $deferred.resolve({res: false, data: data.message});
                     }
 
                 };
@@ -550,6 +551,10 @@ define([
                                     break;
                                 case 'warning':
                                     warningCollection.push(data.message);
+                                    break;
+                                case 'Error':
+                                    opts.onError(data.message);
+                                    $deferred.resolve();
                                     break;
                             }
                         };
