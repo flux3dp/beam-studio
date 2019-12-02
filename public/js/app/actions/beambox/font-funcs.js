@@ -194,9 +194,9 @@ define([
         const fill = $textElement.attr('fill-opacity') > 0;
         let result;
         if (fill) {
-            result =  await svgEditor.readSVG(outputs['colors'], 'text', layerName);
+            result =  await svgEditor.readSVG(outputs.data['colors'], 'text', layerName);
         } else {
-            result =  await svgEditor.readSVG(outputs['strokes'], 'text', layerName);
+            result =  await svgEditor.readSVG(outputs.data['strokes'], 'text', layerName);
         }
         if (result) {
             svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
