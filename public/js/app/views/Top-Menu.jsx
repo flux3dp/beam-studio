@@ -564,7 +564,7 @@ define([
                 for (let i = 0; i < layers.length; ++i) {
                     const layer = layers[i];
                     if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
-                        const paths = $(layer).find('path, rect, ellipse, polygon');
+                        const paths = $(layer).find('path, rect, ellipse, polygon, line');
                         for (let j = 0; j < paths.length; j++) {
                             const path = paths[j],
                                   fill = $(path).attr('fill'),
