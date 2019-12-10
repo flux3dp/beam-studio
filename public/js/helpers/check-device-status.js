@@ -6,6 +6,7 @@ define([
     'helpers/i18n',
     'helpers/device-master',
     'app/constants/device-constants',
+    'app/actions/beambox/preview-mode-controller',
     'app/actions/alert-actions',
     'app/stores/alert-store',
     'app/actions/progress-actions',
@@ -15,6 +16,7 @@ define([
     i18n,
     DeviceMaster,
     DeviceConstants,
+    PreviewModeController,
     AlertActions,
     AlertStore,
     ProgressActions,
@@ -29,6 +31,9 @@ define([
 
         const onYes = async (id) => {
             let timer;
+            if (PreviewModeController.isPreviewMode()) {
+                await PreviewModeController.end();
+            }
             await DeviceMaster.selectDevice(printer);
             switch (id) {
                 case 'kick':

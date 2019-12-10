@@ -181,7 +181,6 @@ define([
                 await DeviceMaster.setLaserPower(1);
             }
 
-            await CheckDeviceStatus(device);
             await DeviceMaster.runBeamboxCameraTest();
 
             if (laserPower !== 1) {
@@ -218,6 +217,7 @@ define([
                         className: 'btn-default btn-alone-right',
                         onClick: async ()=>{
                             try {
+                                await CheckDeviceStatus(device);
                                 await cutThenCapture(updateOffsetDataCb, self);
                                 gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                             } catch (error) {
@@ -397,7 +397,7 @@ define([
                             defaultValue={currentOffset.X - 15}
                             getValue={(val) => handleValueChange('X', val + 15)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
                             isDoOnInput={true}
                         />
                     </div>
@@ -412,7 +412,7 @@ define([
                             defaultValue={currentOffset.Y - 30}
                             getValue={(val) => handleValueChange('Y', val + 30)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
                             isDoOnInput={true}
                         />
                     </div>
@@ -436,13 +436,13 @@ define([
                         <label>{LANG.x_ratio}</label>
                         <UnitInput
                             type={'number'}
-                            min={30}
-                            max={250}
+                            min={10}
+                            max={200}
                             unit="%"
-                            defaultValue={100 * currentOffset.SX / 1.625}
-                            getValue={(val) => handleValueChange('SX', val * 1.625 / 100)}
+                            defaultValue={100 * (3.25 - currentOffset.SX) / 1.625}
+                            getValue={(val) => handleValueChange('SX', (200 - val) * 1.625 / 100)}
                             decimal={1}
-                            step={1}
+                            step={0.5}
                             isDoOnInput={true}
                         />
                     </div>
@@ -451,13 +451,13 @@ define([
                         <label>{LANG.y_ratio}</label>
                         <UnitInput
                             type={'number'}
-                            min={30}
-                            max={250}
+                            min={10}
+                            max={200}
                             unit="%"
-                            defaultValue={100 * currentOffset.SY / 1.625}
-                            getValue={(val) => handleValueChange('SY', val * 1.625 / 100)}
+                            defaultValue={100 * (3.25 - currentOffset.SY) / 1.625}
+                            getValue={(val) => handleValueChange('SY', (200 - val) * 1.625 / 100)}
                             decimal={1}
-                            step={1}
+                            step={0.5}
                             isDoOnInput={true}
                         />
                     </div>
