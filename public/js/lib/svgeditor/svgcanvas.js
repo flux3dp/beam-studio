@@ -5446,7 +5446,7 @@ define([
                     }
 
                     const symbols = layerNodes.map(node => {
-                        const symbol = svgCanvas.makeSymbol(_symbolWrapper(node), [], batchCmd, defChildren);
+                        const symbol = svgCanvas.makeSymbol(_symbolWrapper(node), [], batchCmd, defChildren, 'layer');
                         return symbol;
                     });
 
@@ -5530,12 +5530,12 @@ define([
                         if (color) {
                             wrappedSymbolContent.setAttribute('data-color', color);
                         }
-                        const symbol = svgCanvas.makeSymbol(wrappedSymbolContent, [], batchCmd, defChildren);
+                        const symbol = svgCanvas.makeSymbol(wrappedSymbolContent, [], batchCmd, defChildren, 'color');
                         return symbol;
                     });
                     return symbols;
                 }
-                function _parseSvgByNolayer() {
+                function _parseSvgByNolayer(svg, isText) {
                     //this is same as parseByLayer .....
                     const defNodes = Array.from(svg.childNodes).filter(node => 'defs' === node.tagName);
                     let defChildren = [];
@@ -5544,8 +5544,8 @@ define([
                     });
 
                     const layerNodes = Array.from(svg.childNodes).filter(node => !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName));
-
-                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren);
+                    const type = isText ? 'text' : 'nolayer';
+                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren, type);
 
                     return [symbol];
                 }
@@ -5560,9 +5560,13 @@ define([
                         };
 
                     case 'nolayer':
+                        return {
+                            symbols: _parseSvgByNolayer(svg, false),
+                            confirmedType: 'nolayer'
+                        };
                     case 'text':
                         return {
-                            symbols: _parseSvgByNolayer(svg),
+                            symbols: _parseSvgByNolayer(svg, true),
                             confirmedType: 'nolayer'
                         };
 
@@ -5576,7 +5580,7 @@ define([
                         } else {
                             console.log('Not valid layer. Use nolayer parsing option instead');
                             return {
-                                symbols: _parseSvgByNolayer(svg),
+                                symbols: _parseSvgByNolayer(svg, false),
                                 confirmedType: 'nolayer'
                             };
                         }
@@ -5745,7 +5749,7 @@ define([
 
         };
 
-        this.makeSymbol = function (elem, attrs, batchCmd, defs) {
+        this.makeSymbol = function (elem, attrs, batchCmd, defs, type) {
             const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');
             const symbol_defs = svgdoc.createElementNS(NS.SVG, 'defs');
             const oldLinkMap = new Map();
@@ -5765,10 +5769,13 @@ define([
             symbol.appendChild(symbol_defs);
 
             symbol.appendChild(elem);
-
+            console.log(type);
             function traverseForRemappingId(node) {
                 if (!node.attributes) {
                     return;
+                }
+                if (type === 'nolayer') {
+                    node.setAttribute('data-wireframe', true);
                 }
                 for (let attr of node.attributes) {
                     const re = /url\(#([^)]+)\)/g;
