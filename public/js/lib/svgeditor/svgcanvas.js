@@ -568,7 +568,8 @@ define([
         const { Menu, MenuItem } = require('electron').remote;
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
         Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
-        BeamboxPreference.write('borderless', false);
+        this.isBorderlessMode = BeamboxPreference.read('borderless');
+        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = this.isBorderlessMode;
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
 
@@ -6355,9 +6356,19 @@ define([
             $.extend(uiStrings, strs.notification);
         };
 
-        this.toggleBorderless = function () {
-            let borderless = BeamboxPreference.read('borderless') || false;
-            borderless = !borderless;
+        // Function: toggleBorderless
+        // switch Borderless mode if no input, set to turnOnBorderless if passed
+        // 
+        // Parameters:
+        // turnOnBorderless - turn on borderless mode or not
+        this.toggleBorderless = function (turnOnBorderless) {
+            let borderless;
+            if (turnOnBorderless === undefined) {
+                borderless = BeamboxPreference.read('borderless') || false;
+                borderless = !borderless;
+            } else {
+                borderless = turnOnBorderless;
+            }
             BeamboxPreference.write('borderless', borderless);
             Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = borderless;
             //console.log(BeamboxPreference.read('borderless'), typeof(BeamboxPreference.read('borderless')));

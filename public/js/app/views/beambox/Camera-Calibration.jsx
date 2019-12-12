@@ -536,6 +536,7 @@ define([
                     className: 'btn-default btn-alone-right',
                     onClick: () => {
                         BeamboxPreference.write('should_remind_calibrate_camera', false);
+                        svgCanvas.toggleBorderless(true);
                         onClose();
                     }
                 }]
