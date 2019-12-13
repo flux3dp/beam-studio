@@ -10131,11 +10131,12 @@ define([
 
             const matr = matrix ? matrix[0].substring(7, matrix[0].length - 1) : '1,0,0,1,0,0';
             [a, b, c, d, e, f] = matr.split(',').map(parseFloat);
-            let x = a * obj.x + c * obj.y + e + a * elemX;
-            let y = b * obj.x + d * obj.y + f + d * elemY;
-
-            let width = obj.width * a;
-            let height = obj.height * d;
+            obj.x += elemX;
+            obj.y += elemY;
+            let x = a * obj.x + c * obj.y + e;
+            let y = b * obj.x + d * obj.y + f;
+            let width = obj.width * a + obj.height * c;
+            let height = obj.width * b + obj.height * d;
             
             if (width < 0) {
                 x += width;
