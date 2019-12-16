@@ -133,7 +133,7 @@ define([
                     // overlap a little bit to fix empty area between pictures
                     // (some machine will have it, maybe due to cameraOffset.angle).
                     // it seems like something wrong handling image rotation.
-                    return c * s * 0.95;
+                    return c * s;
                 })()
 
                 const {left, right, top, bottom} = (() => {
@@ -152,10 +152,11 @@ define([
 
                 let pointsArray = [];
                 let shouldRowReverse = false; // let camera 走Ｓ字型
-                for(let curY = top; curY < (bottom + size); curY += size) {
+                const step = 0.95 * size;
+                for(let curY = top; curY < (bottom + size); curY += step) {
 
                     const row = [];
-                    for(let curX = left; curX < (right + size); curX += size) {
+                    for(let curX = left; curX < (right + size); curX += step) {
                         row.push([curX, curY]);
                     }
 
