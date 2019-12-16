@@ -1787,14 +1787,15 @@
         }
         let layerContent = `<g data-wireframe="1" data-repeat="1" data-strength="20" data-speed="20" data-color="${rgbCode}" class="layer"><title>${i}</title><g>${layer.paths.join('')}</g></g>`;
         groupContents.push(layerContent);
+        layer.rgbCode = rgbCode;
       }
       var svgString = '<?xml version="1.0"?>';
       svgString += '<svg xmlns="http://www.w3.org/2000/svg"';
       svgString += ' xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"';
       svgString += ' preserveAspectRatio="xMinYMin meet"';
-      svgString += ' viewBox="' + (-1) + ' ' + -1 + ' ' + (bbox.width + 2) + ' ' + (bbox.height + 2) + '"';
+      svgString += ' viewBox="' + -1 + ' ' + -1 + ' ' + (bbox.width + 1) + ' ' + (bbox.height + 1) + '"';
       svgString += ' width="' + (bbox.width + 2) + '" height="' + (bbox.height + 2) + '">' + groupContents.join('') + '</svg>';
-      return {svg: _prettyData.pd.xml(svgString), bbox};
+      return {svg: _prettyData.pd.xml(svgString), outputLayers, bbox};
     };
     },{"./BoundingBox":1,"./denormalise":3,"./entityToPolyline":4,"./util/colors":25,"./util/logger":27,"pretty-data":41}],25:[function(require,module,exports){
     "use strict";

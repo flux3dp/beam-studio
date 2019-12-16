@@ -28,11 +28,13 @@ function(
 
         const buttons = [
             {
+                key: 'cancel',
                 label: lang.alert.cancel,
                 right: true,
                 onClick: () => onCancel()
             },
             {
+                key: 'ok',
                 label: lang.alert.ok,
                 right: true,
                 onClick: () => submitValue()

@@ -5924,12 +5924,14 @@ define([
         //
         // Parameters:
         // name - The given name
-        this.createLayer = function (name, hrService) {
+        this.createLayer = function (name, hrService, hexCode) {
             let drawing = getCurrentDrawing();
             let new_layer = drawing.createLayer(name, historyRecordingService(hrService));
             if (drawing.layer_map[name]) {
                 if (name && name.indexOf('#') === 0) {
                     drawing.layer_map[name].setColor(name);
+                } else if (hexCode) {
+                    drawing.layer_map[name].setColor(hexCode);
                 } else {
                     drawing.layer_map[name].setColor(getRandomLayerColor());
                 }

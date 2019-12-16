@@ -41,7 +41,8 @@ define([
     'app/actions/beambox/constant',
     'helpers/dxf2svg',
     'app/constants/keycode-constants',
-    'helpers/api/svg-laser-parser'
+    'helpers/api/svg-laser-parser',
+    'lib/svgeditor/imagetracer'
 ], function (
     React,
     ObjectPanelsController,
@@ -61,7 +62,8 @@ define([
     Constant,
     Dxf2Svg,
     KeycodeConstants,
-    SvgLaserParser
+    SvgLaserParser,
+    ImageTracer
 ) {
     const LANG = i18n.lang.beambox;
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
@@ -5776,22 +5778,40 @@ define([
                             ), 'DXF_DPI_SELECTOR',
                             null
                         );
-                    })
+                    });
+                    if (!parsed) {
+                        alert("DXF Parsing Error");
+                        $('#dialog_box').hide();
+                        return;
+                    }
+                    const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
+                    if (bbox.width > Constant.dimension.width || bbox.height > Constant.dimension.height) {
+                        AlertActions.showPopupWarning('dxf size over workarea', LANG.popup.dxf_bounding_box_size_over);
+                    }
 
-                    const resizedSvg = (function(){
-                        if (!parsed) {
-                            alert("DXF Parsing Error");
-                            $('#dialog_box').hide();
-                            return;
+                    for (let i in outputLayers) {
+                        let layerName = i;
+                        let layer = outputLayers[i];
+                        const isLayerExist = svgCanvas.setCurrentLayer(layerName);
+                        if (!isLayerExist) {
+                            const drawing = svgCanvas.getCurrentDrawing();
+                            const newLayer = svgCanvas.createLayer(layerName, null, layer.rgbCode);
                         }
-                        const {svg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
-                        if (bbox.width > Constant.dimension.width || bbox.height > Constant.dimension.height) {
-                            AlertActions.showPopupWarning('dxf size over workarea', LANG.popup.dxf_bounding_box_size_over);
-                        }
-                        return svg;
-                    })();
-                    console.log("Resized svg", resizedSvg);
-                    importBvgString(resizedSvg);
+                        const id = svgCanvas.getNextId();
+                        let g = svgCanvas.addSvgElementFromJson({
+                            'element': 'g',
+                            'attr': {
+                                'id': id
+                            }
+                        });
+                        ImageTracer.appendSVGString(layer.paths.join(''), id);
+                        g.childNodes.forEach(child => {
+                            $(child).attr('id', svgCanvas.getNextId());
+                            $(child).attr('vector-effect', "non-scaling-stroke");
+                        });
+                    }
+                    //importBvgString(resizedSvg);
+
                     /* const newElement = svgCanvas.importSvgString(resizedSvg, 'layer');
 
                     svgCanvas.ungroupSelectedElement();
