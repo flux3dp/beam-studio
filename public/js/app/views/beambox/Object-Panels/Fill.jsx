@@ -11,36 +11,45 @@ define([
 
         constructor(props) {
             super(props);
-            this.closed = true;
+            this.isClosed = true;
             const isFill = ((props.$me.attr('fill-opacity') === 1) && (props.$me.attr('fill') !== 'none'));
             this.state = {
                 isFill: isFill
             };
             this._handleClick = this._handleClick.bind(this);
             if (props.type === 'path') {
-                const d = props.$me.attr('d');
-                if (d) {
-                    const matchLetters = d.match(/[a-z]/ig);
-                    let isDrawing = 0;
-                    this.closed = true;
-                    for (let i = 0; i < matchLetters.length; ++i) {
-                        if (isDrawing === 0) {
-                            if (!['M', 'm', 'Z', 'z'].includes(matchLetters[i])) {
-                                isDrawing = 1;
+                let segList = props.$me[0].pathSegList._list;
+                let [startX, startY, currentX, currentY, isDrawing] = [0, 0, 0, 0, false];
+                for (let i = 0; i < segList.length; i++) {
+                    let seg = segList[i];
+                    switch (seg.pathSegType) {
+                        case 1:
+                            [currentX, currentY] = [startX, startY];
+                            isDrawing = false;
+                            break;
+                        case 2:
+                        case 3:
+                            if (isDrawing) {
+                                if (seg.x !== currentX || seg.y !== currentY) {
+                                    this.isClosed = false;
+                                } else {
+                                    [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
+                                }
+                            } else {
+                                [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
                             }
-                        } else {
-                            if (['M', 'm'].includes(matchLetters[i])) {
-                                break;
-                            } else if (['Z', 'z'].includes(matchLetters[i])){
-                                isDrawing = 0;
-                            }
-                        }
+                            break;
+                        default:
+                            isDrawing = true;
+                            [currentX, currentY] = [seg.x, seg.y];
+                            break;
                     }
-                    if (isDrawing === 1) {
-                        this.closed = false;
+                    if (!this.isClosed) {
+                        break;
                     }
-                } else {
-                    this.closed = false;
+                }
+                if (isDrawing && (startX !== currentX || startY !== currentY)) {
+                    this.isClosed = false;
                 }
             }
         }
@@ -55,7 +64,7 @@ define([
         }
 
         render() {
-            return this.closed ? (
+            return this.isClosed ? (
                 <div className='object-panel'>
                     <label className='controls accordion' onClick={this._handleClick}>
                         <p className='caption'>
