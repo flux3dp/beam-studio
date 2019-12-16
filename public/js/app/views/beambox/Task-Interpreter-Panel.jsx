@@ -3,24 +3,33 @@ define([
     'reactDOM',
     'jsx!widgets/Modal',
     'jsx!widgets/Select',
+    'jsx!widgets/Vertical-Slider-Control',
     'app/stores/beambox-store',
     'app/actions/beambox/bottom-right-funcs',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'helpers/i18n'
 ], function(
     React,
     ReactDOM,
     Modal,
     SelectView,
+    VerticalSlider,
     BeamboxStore,
     BottomRightFuncs,
+    ProgressActions,
+    ProgressConstants,
     i18n
 ) {
     const LANG = i18n.lang.topmenu;
     const SerialPort = require('serialport');
     const LINES_PER_PAGE = 100;
-    const MockBinding = require('@serialport/binding-mock')
+    const TAB_GCODE = 0;
+    const TAB_CONSOLE = 1;
+    const TAB_MOVE = 2;
+    //const MockBinding = require('@serialport/binding-mock');
     //SerialPort.Binding = MockBinding
-    MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
+    //MockBinding.createPort('/dev/ROBOT', { echo: true, record: true });
     
     class TaskInterpreterPanel extends React.Component {
         constructor(props) {
@@ -30,19 +39,41 @@ define([
                 file: null,
                 firstIndex: 0,
                 currentIndex: 0,
-                connecting: false
+                connecting: false,
+                tab: TAB_GCODE,
+                consoleText: ""
             };
-            this._ln = 0;
+            //Serial Port
             this.file = null;
             this.port = null;
-            this.playerState = 'idle';
             this.portOptions = [];
-            this.gcodelist = [];
             this._ondataCB = () => {};
+            //GCode Tab
+            this._ln = 0;
+            this.playerState = 'idle';
+            this.gcodelist = [];
+            //Move Tab
+            this.moveDistance = 10;
+            this.moveFeedrate = 3000;
+
+            this.canvas = document.createElement('canvas');
         }
 
         componentDidMount() {
             BeamboxStore.onShowTaskInterpreter(this._show.bind(this));
+        }
+
+        componentDidUpdate() {
+            let gcodeCanvas = this.refs.gcodeCanvas;
+            if (gcodeCanvas) {
+                let scale = Math.min(($(this.refs.rightPart).width() - 4) / svgCanvas.contentW, ($(this.refs.rightPart).height() - 4) / svgCanvas.contentH);
+                gcodeCanvas.width = svgCanvas.contentW * scale;
+                gcodeCanvas.height = svgCanvas.contentH * scale;
+                if (this.canvas) {
+                    let gcodeCtx = gcodeCanvas.getContext('2d');
+                    gcodeCtx.drawImage(this.canvas, 0, 0);
+                }
+            }
         }
 
         componentWillUnmount() {
@@ -51,7 +82,9 @@ define([
         _show() {
             this._updateSerialPortList();
             this.setState({
-                show: true
+                show: true,
+                tab: TAB_GCODE,
+                consoleText: ""
             });
         }
 
@@ -109,6 +142,16 @@ define([
                 
                 this.port.on('data', data => {
                     console.log('Port:', data.toString());
+                    this.state.consoleText += data.toString();
+                    if (!data.toString().endsWith('\n')) {
+                        this.state.consoleText += '\n';
+                    }
+                    if (this.state.tab === TAB_CONSOLE) {
+                        this.setState({consoleText: this.state.consoleText}, () => {
+                            $('.console').scrollTop(Number.MAX_SAFE_INTEGER);
+                        });
+                    }
+                        
                     this._ondataCB(data.toString());
                 });
             }
@@ -149,12 +192,16 @@ define([
             const fileReader = new FileReader();
             fileReader.onloadend = (e) => {
                 let gcodeList = e.target.result.split('\n');
+                let start = new Date();
                 this.gcodelist = gcodeList;
+                this._renderGcodeCanvas();
+                console.log('4 canvas:', new Date() - start);
                 this.setState({
                     file: 'Current Scene',
                     firstIndex: 0,
                     currentIndex: 0
                 });
+                
             }
             fileReader.readAsText(gcodeBlob);
         }
@@ -165,17 +212,71 @@ define([
                 reader.onloadend = (e) => {
                     let str = e.target.result;
                     str = str.split('\n');
-                    this.gcodelist = str.slice(0, 3000);
+                    this.gcodelist = str;
                     this.setState({
                         file: this.file,
                         firstIndex: 0,
                         currentIndex: 0
                     });
+                    this._renderGcodeCanvas();
                 };
                 reader.readAsText(this.file);
             } else {
                 console.log('No File Read');
             }
+        }
+
+        _renderGcodeCanvas() {
+            let scale = Math.min(($(this.refs.rightPart).width() - 4) / svgCanvas.contentW, ($(this.refs.rightPart).height() - 4) / svgCanvas.contentH);
+            const gcodeCanvas = this.refs.gcodeCanvas;
+            let gcodeCtx = gcodeCanvas.getContext("2d");
+            this.canvas.width = svgCanvas.contentW * scale;
+            this.canvas.height = svgCanvas.contentH * scale;
+            gcodeCanvas.width = svgCanvas.contentW * scale;
+            gcodeCanvas.height = svgCanvas.contentH * scale;
+            gcodeCtx.clearRect(0, 0, gcodeCanvas.width, gcodeCanvas.height);
+
+            let ctx = this.canvas.getContext("2d");
+            let [x, y, p1, p2, power] = [0, 0, 0, 0, 0];
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            scale *= 10;
+            console.log(this.gcodelist.length);
+            for (let i = 0; i < this.gcodelist.length; i++) {
+                if (i % 10000 === 0) {
+                    console.log(i);
+                }
+                let command = this.gcodelist[i];
+                if (command.startsWith('G1 ')) {
+                    let X = command.match(/(?<=X)[0-9\.]*/);
+                    let Y = command.match(/(?<=Y)[0-9\.]*/);
+                    x = X ? scale * parseFloat(X[0]) : x;
+                    y = Y ? scale * parseFloat(Y[0]) : y;
+                    if (power > 0) {
+                        ctx.lineTo(x, y);
+                    } else {
+                        ctx.moveTo(x, y);
+                    }
+                } else if (command.indexOf('X2O') >= 0) {
+                    let p = command.match(/(?<=X2O)[-0-9\.]*/);
+                    try {
+                        p = parseInt(p);
+                        if (p >= 0) {
+                            p1 = p / 255;
+                        } else {
+                            p2 = Math.round(-p / 2.55);
+                        }
+                        power = p1 * p2;
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+            }
+
+            ctx.stroke();
+            ctx.closePath();
+            gcodeCtx.drawImage(this.canvas, 0, 0);
+            ProgressActions.close();
         }
 
         _onListWheel(e) {
@@ -240,15 +341,19 @@ define([
             const command = ReactDOM.findDOMNode(this.refs.command).value;
             if (this.port && this.port.isOpen) {
                 let suc = this.port.write(`${command}\n`);
+                this.state.consoleText += `> ${command}\n`;
+                this.setState({consoleText: this.state.consoleText}, () => {
+                    $('.console').scrollTop(Number.MAX_SAFE_INTEGER);
+                });
                 if (suc) {
                     console.log(`Successfully write:\n${command}`)
                 }
                 ReactDOM.findDOMNode(this.refs.command).value = '';
-                ReactDOM.findDOMNode(this.refs.command).focus();
+                //ReactDOM.findDOMNode(this.refs.command).focus();
             }
         }
 
-        _onKeyDown(e) {
+        _onConsoleKeyDown(e) {
             if (e.ctrlKey && e.key === 'x') {
                 this._sendCtrlX();
             } else if (e.key === 'Enter') {
@@ -402,7 +507,6 @@ define([
                 if (!homeResult) {
                     return;
                 }
-                console.log('1');
                 this.port.write('$@\n');
                 await this._waitForResponse('CTRL LINECHECK_ENABLED');
                 this._ln = 0;
@@ -437,13 +541,70 @@ define([
 
         _renderConnectButton() {
             if (this.state.connecting) {
-                return this._renderButton('btn btn-default pull-right', () => this._handleDisconnect(), '斷');
+                return this._renderButton('pull-right', () => this._handleDisconnect(), '斷');
             } else {
-                return this._renderButton('btn btn-default pull-right', () => this._handleConnect(), 'Connect');
+                return this._renderButton('pull-right', () => this._handleConnect(), 'Connect');
             }
         }
 
-        _renderCommandList() {
+        _renderLeftPart() {
+            let tabContent;
+            switch (this.state.tab) {
+                case TAB_GCODE:
+                    tabContent = this._renderGCodeTab();
+                    break;
+                case TAB_CONSOLE:
+                    tabContent = this._renderConsoleTab();
+                    break;
+                case TAB_MOVE:
+                    tabContent = this._renderMoveTab();
+                    break;
+                default:
+                    break;
+            }
+            return (
+                <div className="left-part">
+                    {this._renderTabControl()}
+                    {tabContent}
+                </div>
+            );
+        }
+
+        _renderTabControl(){
+            return (
+            <div className="tab-control">
+                {this._renderTabButton(TAB_GCODE, 'GCODE')}
+                {this._renderTabButton(TAB_CONSOLE, 'CONSOLE')}
+                {this._renderTabButton(TAB_MOVE, 'MOVE')}
+            </div>
+            );
+        }
+
+        _renderTabButton(tab, label) {
+            let className = tab === this.state.tab ? 'selected pull-left tab-button' : 'pull-left tab-button';
+            return this._renderButton(className, () => {this.setState({tab})}, label)
+        }
+
+        _renderGCodeTab() {
+            let sliderHeight = Math.max($('.scroll-bar').height() * ((this.gcodelist.length > 10 )? (10 / this.gcodelist.length) : 1), 1);
+            let ret = [
+                <div className="gcode-command-list" onWheel={e => {this._onListWheel(e)}} onScroll={e => {this._onListScroll(e)}} key={'list'}>
+                    {this._renderGCodeList()}
+                </div>,
+                <div className="scroll-bar"
+                    key={'scroll-bar'}
+                    onMouseDown={e => {this._onScrollbarMouseDown(e)}}
+                    onMouseMove={e => {this._onScrollbarMouseMove(e)}}
+                    onMouseUp={e => {this._onScrollbarMouseUp(e)}}
+                    onMouseLeave={e => {this._onScrollbarMouseUp(e)}}>
+                    <div className="slider" style={{ height: sliderHeight}}>
+                    </div>
+                </div>
+            ];
+            return ret;
+        }
+
+        _renderGCodeList() {
             let cmds = [];
             for (let i = this.state.firstIndex; i < Math.min(this.gcodelist.length, this.state.firstIndex + LINES_PER_PAGE); i++) {
                 let current = this.state.currentIndex === i ? 'current': '';
@@ -461,7 +622,104 @@ define([
             return cmds;
         }
 
+        _renderConsoleTab() {
+            let {connecting, consoleText} = this.state;
+            return (
+                <div className="console-tab">
+                    <textarea className="console" disabled value={consoleText} />
+                    <input type="text"
+                        className={connecting ? "console-input" : "console-input disabled"}
+                        disabled={!connecting}
+                        maxLength="255"
+                        ref="command"
+                        onKeyDown={e => {this._onConsoleKeyDown(e)}}
+                        placeholder={connecting ? "Type command here" : "Waiting for connection"}
+                    />
+                </div>
+            );
+        }
+
+        _renderMoveTab() {
+            let {connecting} = this.state;
+            return (
+                <div className="move-tab">
+                    <div className="speed-container">
+                        <div className="title">
+                            {"Feedrate"}
+                        </div>
+                        <VerticalSlider
+                            id={'feedrate'}
+                            max={7500}
+                            min={500}
+                            step={100}
+                            defaultValue={this.moveFeedrate}
+                            onChange={this._onFeedrateChange.bind(this)}
+                        />
+                    </div>
+                    <div className="move-buttons">
+                        <div className="row">
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick()}, '1', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick('up')}, '2', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick()}, '3', !connecting)}
+                        </div >
+                        <div className="row">
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick('left')}, '4', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick('home')}, '5', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick('right')}, '6', !connecting)}
+                        </div>
+                        <div className="row">
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick()}, '7', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick('down')}, '8', !connecting)}
+                            {this._renderButton("pull-left", ()=>{this._handleMoveButtonClick()}, '9', !connecting)}
+                        </div>
+                    </div>
+                    <div className="distance-container">
+                        <div className="title">
+                            {"Distance"}
+                        </div>
+                        <VerticalSlider
+                            id={'distance'}
+                            max={50}
+                            min={1}
+                            step={1}
+                            defaultValue={this.moveDistance}
+                            onChange={this._onDistanceChange.bind(this)}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        _onFeedrateChange(val) {
+            this.moveFeedrate = val;
+        }
+
+        _onDistanceChange(val) {
+            this.moveDistance = val;
+        }
+
+        _handleMoveButtonClick(dir) {
+            switch(dir) {
+                case 'up':
+                    console.log(`TODO: Send G1 F${this.moveFeedrate} V${-this.moveDistance}`);
+                    break;
+                case 'down':
+                    console.log(`TODO: Send G1 F${this.moveFeedrate} V${this.moveDistance}`);
+                    break;
+                case 'left':
+                    console.log(`TODO: Send G1 F${this.moveFeedrate} U${-this.moveDistance}`);
+                    break;
+                case 'right':
+                    console.log(`TODO: Send G1 F${this.moveFeedrate} U${this.moveDistance}`);
+                    break;
+                case 'home':
+                    console.log(`TODO: Send G28 (does it work?) maybe $H`);
+                    break;
+            }
+        }
+
         _renderButton(className, onClick, label, disabled) {
+            className = `btn btn-default ${className}`;
             if (disabled) {
                 className += ' disabled';
             }
@@ -477,7 +735,7 @@ define([
 
         render() {
             if (this.state.show) {
-                let sliderHeight = Math.max($('.scroll-bar').height() * ((this.gcodelist.length > 10 )? (10 / this.gcodelist.length) : 1), 1);
+                let leftPart = this._renderLeftPart();
                 let {connecting} = this.state;
                 return (
                     <Modal onClose={() => {this._close()}}>
@@ -493,44 +751,21 @@ define([
                             </div>
                             <div className='file-input'>
                                 <input type="file" accept=".gcode,.fc,.g" maxLength="255" ref="taskInput"/>
-                                {this._renderButton('btn btn-default pull-right', () => this._openFile(), 'Open')}
-                                {this._renderButton('btn btn-default pull-right', () => this._fromScene(), 'Scene')}
-                            </div>
-                            <div className='command-input'>
-                                <input type="text"
-                                    className={connecting ? "" : "disabled"}
-                                    disabled={!connecting}
-                                    maxLength="255"
-                                    ref="command"
-                                    onKeyDown={e => {this._onKeyDown(e)}}
-                                    placeholder="Command to Machine"
-                                />
-                                {this._renderButton('btn btn-default pull-right', () => this._sendCommand(), 'Send', !connecting)}
-                                {this._renderButton('btn btn-default pull-right', () => this._sendCtrlX(), 'CtrlX', !connecting)}
+                                {this._renderButton('pull-right', () => this._openFile(), 'Open')}
+                                {this._renderButton('pull-right', () => this._fromScene(), 'Scene')}
                             </div>
                             <div className="main-content">
-                                <div className="left-part">
-                                    <div className="gcode-command-list" onWheel={e => {this._onListWheel(e)}} onScroll={e => {this._onListScroll(e)}}>
-                                        {this._renderCommandList()}
-                                    </div>
-                                    <div className="scroll-bar"
-                                        onMouseDown={e => {this._onScrollbarMouseDown(e)}}
-                                        onMouseMove={e => {this._onScrollbarMouseMove(e)}}
-                                        onMouseUp={e => {this._onScrollbarMouseUp(e)}}
-                                        onMouseLeave={e => {this._onScrollbarMouseUp(e)}}>
-                                            <div className="slider" style={{ height: sliderHeight}}>
-                                            </div>
-                                    </div>
-                                </div>
-                                <div className="right-part">
+                                    {leftPart}
+                                <div ref="rightPart" className="right-part">
+                                    <canvas ref="gcodeCanvas"/>
                                 </div>
                             </div>
-                            <div className="gcode-player">
-                                {this._renderButton('btn btn-default pull-left', () => this._play(), 'Play')}
-                                {this._renderButton('btn btn-default pull-left', () => this._nextStep(), 'Next Step')}
-                                {this._renderButton('btn btn-default pull-left', () => this._pause(), 'Pause')}
-                                {this._renderButton('btn btn-default pull-left', () => this._stop(), 'Stop')}
-                                {this._renderButton('btn btn-default pull-right', () => this._close(), 'Close')}
+                            <div className="footer">
+                                {this._renderButton('pull-left', () => this._play(), 'Play')}
+                                {this._renderButton('pull-left', () => this._nextStep(), 'Next Step')}
+                                {this._renderButton('pull-left', () => this._pause(), 'Pause')}
+                                {this._renderButton('pull-left', () => this._stop(), 'Stop')}
+                                {this._renderButton('pull-right', () => this._close(), 'Close')}
                             </div>
                         </div>
                     </Modal>
@@ -540,7 +775,6 @@ define([
                     null
                 );
             }
-            
         }
     };
 

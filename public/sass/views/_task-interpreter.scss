@@ -8,9 +8,29 @@
         height: 31px;
         padding: 3px 5px 3px 5px;
         line-height: 23px;
+        &.tab-button {
+            outline-offset: -2px;
+            height: 20px;
+            padding: 2px 3px;
+            line-height: 14px;
+            margin: 0px;
+            border-width: 2px 1px 0px 1px;
+            font-size: 11px;
+            &:first-child {
+                border-left-width: 2px;
+            }
+            &:last-child {
+                border-right-width: 2px;
+            }
+            &.selected {
+                color: #333333;
+                border-color: #333333;
+            }
+        }
         &.disabled {
             &:hover {
-                opacity: 0.5;
+                color: #B3B3B3;
+                border-color: #C0C0C0;
             }
         }
     }
@@ -44,21 +64,8 @@
             margin: 0px 0px 0px 10px;
         }
     }
-    .command-input {
-        margin: 0px 0px 20px 0px;
-        height: 31px;
-        input {
-            width: 70%;
-            border: 2px solid #CCC;
-            padding: 3px;
-            float: left;
-        }
-        .pull-right {
-            margin: 0px 0px 0px 10px;
-        }
-    }
     .main-content {
-        height: 200px;
+        height: 240px;
         margin: 0px 0px 20px 0px;
         .left-part {
             float: left;
@@ -67,14 +74,21 @@
         }
         .right-part {
             float: left;
-            width: 50%;
+            width: calc(50% - 20px);
             height: 100%;
+            margin: 0px 0px 0px 20px;
+            canvas {
+                border: 2px solid #CCC;
+            }
+        }
+        .tab-control {
+            height: 20px;
         }
         .gcode-command-list {
             overflow: scroll;
             width: calc(100% - 20px);
             float: left;
-            height: 100%;
+            height: 220px;
             border: 2px solid #CCC;
             .gcode-command-container {
                 height: 20px;
@@ -102,26 +116,127 @@
                     color: #777777;
                 }
             }
-        }       
-    }
-    .scroll-bar {
-        width: 20px;
-        height: 100%;
-        float: right;
-        border: 2px solid #CCC;
-        border-left: 0px;
-        .slider {
+        }
+        .scroll-bar {
+            width: 20px;
+            height: 220px;
+            float: right;
+            border: 2px solid #CCC;
+            border-left: 0px;
+            .slider {
+                width: 100%;
+                background: #DDD;
+                position: relative;
+                &:hover {
+                    background: #BFBFBF;
+                }
+            }
+        }
+        .console-tab {
             width: 100%;
-            background: #DDD;
-            position: relative;
-            &:hover {
-                background: #BFBFBF;
-                
+            height: 220px;
+            border: 2px solid #CCC;
+            display: grid;
+            .console {
+                width: 100%;
+                height: 196px;
+                border: 0px;
+                font-size: 13px;
+                line-height: 15px;
+                resize: none;
+            }
+            .console-input {
+                height: 20px;
+                padding: 3px;
+                font-size: 14px;
+                line-height: 14px;
+                border-radius: 0px;
+                border-width: 1px 0px 0px 0px;
+            }
+        }
+    .move-tab {
+            width: 100%;
+            height: 220px;
+            border: 2px solid #CCC;
+            .speed-container,
+            .distance-container {
+                width: 20%;
+                height: 100%;
+                float: left;
+                .title {
+                    height: 24px;
+                    line-height: 24px;
+                    font-size: 13px;
+                    color: #333333;
+                }
+                .vertical-slider {
+                    padding: 0px 10px;
+                }
+                .slider-track {
+                    margin: 0px;
+                    position: relative;
+                    height: 156px;
+                    width: 6px;
+                    left: calc(50% - 3px);
+                    background: #D0D0D0;
+                }
+                .slider-bar {
+                    background: #777777;
+                    border: 6px solid #A0A0A0;
+                    border-radius: 12px;
+                    padding-top: -3px;
+                    margin-left: -3px;
+                    position: relative;
+                }
+                .input-value {
+                    padding-top: 8px;
+                    width: 100%;
+                    height: 36px;
+                    input {
+                        padding: 3px;
+                        width: 50px;
+                        font-size: 14px;
+                        line-height: 14px;
+                        height: 22px;
+                        text-align: center;
+                        border: 1px #E0E0E0 solid;
+                        border-radius: 2px;
+                    }
+                }
+            }
+            .move-buttons {
+                float: left;
+                width: 60%;
+                height: 100%;
+                .row {
+                    height: 50px;
+                    width: 100%;
+                    margin-bottom: 13px;
+                    &:first-child {
+                        margin-top: 20px;
+                    }
+                    &:last-child {
+                        margin-bottom: 20px;
+                    }
+                }
+                .btn {
+                    width: 24%;
+                    height: 50px;
+                }
+                .pull-left {
+                    margin-right: 5%;
+                    &:first-child {
+                        margin-left: 9%;
+                    }
+                    &:last-child {
+                        margin-right: 9%;
+                    }
+                }
             }
         }
     }
-    .gcode-player {
-        margin: 0px 0px 20px 0px;
+    .footer {
+        margin: 0px;
         height: 31px;  
     }
 }
