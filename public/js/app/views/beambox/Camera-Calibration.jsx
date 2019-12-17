@@ -128,6 +128,7 @@ define([
                     />,
                 [STEP_FINISH]:
                     <StepFinish
+                        self={this}
                         onClose={this.onClose}
                     />
             };
@@ -521,7 +522,7 @@ define([
         );
     };
 
-    const StepFinish = ({onClose}) => (
+    const StepFinish = ({self, onClose}) => (
         <Alert
             caption={LANG.camera_calibration}
             message={LANG.calibrate_done}
@@ -531,7 +532,7 @@ define([
                     className: 'btn-default btn-alone-right',
                     onClick: () => {
                         BeamboxPreference.write('should_remind_calibrate_camera', false);
-                        svgCanvas.toggleBorderless(true);
+                        svgCanvas.toggleBorderless(self.props.borderless);
                         onClose();
                     }
                 }]
