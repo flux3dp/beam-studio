@@ -79,7 +79,7 @@
     "dist": "electron-builder"
   },
   "build": {
-    "appId": "com.flux3dp.beam-studio",
+    "appId": "com.flux3dp.beam-studio-flux",
     "generateUpdatesFilesForAllChannels": true,
     "afterSign": "./scripts/notarize.js",
     "extraResources": [
@@ -96,7 +96,7 @@
       }
     ],
     "mac": {
-      "category": "com.flux3dp.beam-studio",
+      "category": "com.flux3dp.beam-studio-flux",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
