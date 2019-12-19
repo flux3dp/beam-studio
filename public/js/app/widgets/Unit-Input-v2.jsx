@@ -130,10 +130,10 @@ define([
                     this.setState({displayValue: this.getTransformedValue(this.state.savedValue)});
                     return;
                 case keyCodeConstants.KEY_UP:
-                    this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step + step);
+                    if (!this.props.isDoOnInput) this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step + step);
                     return;
                 case keyCodeConstants.KEY_DOWN:
-                    this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step - step);
+                    if (!this.props.isDoOnInput) this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step - step);
                     return;
                 default:
                     return;

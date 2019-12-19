@@ -398,7 +398,8 @@ define([
                             defaultValue={currentOffset.X - 15}
                             getValue={(val) => handleValueChange('X', val + 15)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -412,7 +413,8 @@ define([
                             defaultValue={currentOffset.Y - 30}
                             getValue={(val) => handleValueChange('Y', val + 30)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -427,6 +429,7 @@ define([
                             getValue={(val) => handleValueChange('R', val * Math.PI / 180)}
                             decimal={1}
                             step={0.1}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -440,7 +443,8 @@ define([
                             defaultValue={100 * (3.25 - currentOffset.SX) / 1.625}
                             getValue={(val) => handleValueChange('SX', (200 - val) * 1.625 / 100)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
+                            isDoOnInput={true}
                         />
                     </div>
 
@@ -454,7 +458,8 @@ define([
                             defaultValue={100 * (3.25 - currentOffset.SY) / 1.625}
                             getValue={(val) => handleValueChange('SY', (200 - val) * 1.625 / 100)}
                             decimal={1}
-                            step={0.1}
+                            step={0.5}
+                            isDoOnInput={true}
                         />
                     </div>
                 </div>
