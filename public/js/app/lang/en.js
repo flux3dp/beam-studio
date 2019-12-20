@@ -236,7 +236,7 @@ define(function() {
             requires_wifi_password: 'requires a password.',
             connecting: 'Connecting...',
 
-            set_connection: 'Beambox Connection Setup',
+            set_connection: '%s Connection Setup',
             please_goto_touchpad: 'Please go to Beambox touchpad',
             tutorial: '1. Click touchpad "Setting" > "Internet" > "Setting."\n2. Select your WiFi and enter the password.\n3. Wait 10 seconds, the Wireless IP Address would show at "Setting" > "Internet".\n4. If WiFi is unavailable, you connect with the ethernet port, with routers which enabled DHCP.\n5. Enter Machine IP here  ',
             please_see_tutorial_video: 'Tutorial Video',
