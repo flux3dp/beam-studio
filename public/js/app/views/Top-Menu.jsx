@@ -303,7 +303,8 @@ define([
                     DeviceMaster.select(device)
                         .done(() => {
                             ProgressActions.close();
-                            AlertActions.showCameraCalibration(device);
+                            const isBorderless = false;
+                            AlertActions.showCameraCalibration(device, isBorderless);
                         })
                         .fail(() => {
                             ProgressActions.close();
@@ -333,8 +334,8 @@ define([
                         DeviceMaster.select(device)
                             .done(() => {
                                 ProgressActions.close();
-                                const borderless = true;
-                                AlertActions.showCameraCalibration(device, borderless);
+                                const isBorderless = true;
+                                AlertActions.showCameraCalibration(device, isBorderless);
                             })
                             .fail(() => {
                                 ProgressActions.close();
