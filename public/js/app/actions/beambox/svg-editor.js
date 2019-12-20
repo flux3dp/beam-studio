@@ -5690,7 +5690,7 @@ define([
                                 svgCanvas.createLayer(layerName);
                             }
 
-                            await readImage(outputs['bitmap'], 72 / 254, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
+                            await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
                     }
 
