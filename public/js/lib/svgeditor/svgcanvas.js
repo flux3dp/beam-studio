@@ -5738,6 +5738,13 @@ define([
             const {symbols, confirmedType} = parseSvg(svg, _type, unit);
 
             const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
+
+            if (_type === 'nolayer') {
+                use_elements.forEach(elem => {
+                    this.updateElementColor(elem);
+                });
+            }
+
             use_elements.map(element => setDataXform(element, _type === 'image-trace'));
 
             removeDefaultLayerIfEmpty();
@@ -5770,13 +5777,14 @@ define([
             symbol.appendChild(symbol_defs);
 
             symbol.appendChild(elem);
-            console.log(type);
             function traverseForRemappingId(node) {
                 if (!node.attributes) {
                     return;
                 }
                 if (type === 'nolayer') {
                     node.setAttribute('data-wireframe', true);
+                    node.setAttribute('stroke', '#000');
+                    node.removeAttribute('fill');
                 }
                 for (let attr of node.attributes) {
                     const re = /url\(#([^)]+)\)/g;
@@ -5833,7 +5841,10 @@ define([
             }).remove();
 
             //add prefix(which constrain css selector to symbol's id) to prevent class style pollution
-            const originStyle = $(symbol).find('style').text();
+            let originStyle = $(symbol).find('style').text();
+            if (type === 'nolayer') {
+                originStyle = originStyle.replace(/stroke[^a-zA-Z]*:[^;]*;/g,'');
+            }
             //the regex indicate the css selector, but the selector may contain comma, so we replace it again.
             let prefixedStyle = originStyle.replace(/([^{}]+){/g, function replacer(match, p1, offset, string) {
                 const prefix = '#' + symbol.id + ' ';
@@ -5857,7 +5868,6 @@ define([
 
                 *[data-wireframe] {
                     fill-opacity: 0 !important;
-                    stroke: #000 !important;
                     stroke-width: 1px !important;
                     stroke-opacity: 1.0 !important;
                     stroke-dasharray: 0 !important;

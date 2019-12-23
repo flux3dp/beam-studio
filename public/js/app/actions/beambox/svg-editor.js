@@ -5631,10 +5631,10 @@ define([
                                 const matchX = svgString.match(/\bx="[^"]*/);
                                 const matchWidth = svgString.match(/\bwidth="[^"]*/);
                                 if (matchX) {
-                                    unit = matchX[0].substring(3).match(/[^0-9]{2}/);
+                                    unit = matchX[0].substring(3).match(/[A-Za-z]+/);
                                 }
                                 if (!unit && matchWidth) {
-                                    unit = matchWidth[0].substring(7).match(/[^0-9]{2}/);
+                                    unit = matchWidth[0].substring(7).match(/[A-Za-z]+/);
                                 }
                                 console.log(unit);
                                 // if unit is given backend will calculate unit for us, output unit will be px,
