@@ -923,7 +923,9 @@ define([
                 // we need to undo it, then redo it so it can be undo-able! :)
                 // TODO: figure out how to make changes to transform list undo-able cross-browser?
                 var newTransform = elem.getAttribute('transform');
-                elem.setAttribute('transform', oldTransform);
+                if (oldTransform) {
+                    elem.setAttribute('transform', oldTransform);
+                }
                 changeSelectedAttribute('transform', newTransform, [elem]);
                 call('changed', [elem]);
             }
@@ -1617,6 +1619,7 @@ define([
                             canvas.updateElementColor(newRect);
                         }
                         selectOnly([newRect], true);
+                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'line':
                         started = true;
@@ -1644,6 +1647,7 @@ define([
                             canvas.updateElementColor(newLine);
                         }
                         selectOnly([newLine], true);
+                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'circle':
                         started = true;
@@ -1659,6 +1663,7 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
+                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'ellipse':
                         started = true;
@@ -1680,6 +1685,7 @@ define([
                             canvas.updateElementColor(newElli);
                         }
                         selectOnly([newElli], true);
+                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'text':
                         started = true;
@@ -1849,9 +1855,10 @@ define([
                                     // update our internal bbox that we're tracking while dragging
                                     selectorManager.requestSelector(selected).resize();
                                 }
-
-                                canvas.sensorAreaInfo.dx = dx * current_zoom;
-                                canvas.sensorAreaInfo.dy = dy * current_zoom;
+                                if (canvas.sensorAreaInfo) {
+                                    canvas.sensorAreaInfo.dx = dx * current_zoom;
+                                    canvas.sensorAreaInfo.dy = dy * current_zoom;
+                                }
 
                                 call('transition', selectedElements);
                                 ObjectPanelsController.setEditable(false);
@@ -2015,6 +2022,7 @@ define([
                             case 'polygon':
                             case 'image':
                             case 'ellipse':
+                            case 'g':
                                 const dCx = tx === 0 ? 0.5 * width * (sx - 1) : 0.5 * width * (1 - sx);
                                 const dCy = ty === 0 ? 0.5 * height * (sy - 1): 0.5 * height * (1 - sy);
                                 theta = angle * Math.PI / 180;
@@ -2422,12 +2430,12 @@ define([
                                     });
                                 }
                             }
-
-                            canvas.sensorAreaInfo.x += canvas.sensorAreaInfo.dx;
-                            canvas.sensorAreaInfo.y += canvas.sensorAreaInfo.dy;
-                            canvas.sensorAreaInfo.dx = 0;
-                            canvas.sensorAreaInfo.dy = 0;
-
+                            if (canvas.sensorAreaInfo) {
+                                canvas.sensorAreaInfo.x += canvas.sensorAreaInfo.dx;
+                                canvas.sensorAreaInfo.y += canvas.sensorAreaInfo.dy;
+                                canvas.sensorAreaInfo.dx = 0;
+                                canvas.sensorAreaInfo.dy = 0;
+                            }
                         }
 
                         if (selectedElems.length > 1) {
@@ -10166,7 +10174,7 @@ define([
 
 
         this.getSvgRealLocation = function (elem) {
-            if (elem.tagName === 'polygon' || elem.tagName === 'polygon') {
+            if (elem.tagName !== 'use') {
                 return elem.getBBox();
             }
             const ts = $(elem).attr('transform') || '';
