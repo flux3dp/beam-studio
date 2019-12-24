@@ -242,6 +242,7 @@ define([
                     shape.appendChild(addSvgElementFromJson(child));
                 });
             }
+            $(shape).mouseover(canvas.handleMouseoverElement);
 
             return shape;
         };
@@ -1160,6 +1161,17 @@ define([
             }
             var mouse_target = evt.target;
 
+            const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
+            let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
+                mouse_x = pt.x * current_zoom,
+                mouse_y = pt.y * current_zoom;
+            if (canvas.sensorAreaInfo) {
+                let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
+                if (dist < 5) {
+                    mouse_target = canvas.sensorAreaInfo.elem;
+                }
+            }
+
             // if it was a <use>, Opera and WebKit return the SVGElementInstance
             if (mouse_target.correspondingUseElement) {
                 mouse_target = mouse_target.correspondingUseElement;
@@ -1210,6 +1222,22 @@ define([
 
             return mouse_target;
         };
+
+        // Function: handleMouseoverElement
+        // handle for pure contour elements, enlarge sensor area;
+        this.handleMouseoverElement = (evt) => {
+            // if dx or dy !== 0, then we are moving elements. Don't update sensor area info.
+            if (!this.sensorAreaInfo || (this.sensorAreaInfo.dx === 0 && this.sensorAreaInfo.dy === 0)) {
+                if (evt.target.id.includes('selector')) {
+                    return;
+                }
+                const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
+                let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
+                    mouse_x = pt.x * current_zoom,
+                    mouse_y = pt.y * current_zoom;
+                this.sensorAreaInfo = {x: mouse_x, y: mouse_y, dx: 0, dy: 0, elem: evt.target};
+            }
+        }
 
         // Mouse events
         (function () {
@@ -1750,6 +1778,16 @@ define([
                             canvas.drawAlignLine(x, y, xMatchPoint, yMatchPoint);
                         }
                     }
+
+                    if (canvas.sensorAreaInfo) {
+                        let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
+                        if (dist < 5) {
+                            $('#workarea').css('cursor', 'move');
+                        } else {
+                            $('#workarea').css('cursor', 'default');
+                        }
+                    }
+
                     return;
                 }
 
@@ -1811,6 +1849,9 @@ define([
                                     // update our internal bbox that we're tracking while dragging
                                     selectorManager.requestSelector(selected).resize();
                                 }
+
+                                canvas.sensorAreaInfo.dx = dx * current_zoom;
+                                canvas.sensorAreaInfo.dy = dy * current_zoom;
 
                                 call('transition', selectedElements);
                                 ObjectPanelsController.setEditable(false);
@@ -2381,6 +2422,11 @@ define([
                                     });
                                 }
                             }
+
+                            canvas.sensorAreaInfo.x += canvas.sensorAreaInfo.dx;
+                            canvas.sensorAreaInfo.y += canvas.sensorAreaInfo.dy;
+                            canvas.sensorAreaInfo.dx = 0;
+                            canvas.sensorAreaInfo.dy = 0;
 
                         }
 
@@ -5739,11 +5785,12 @@ define([
 
             const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
 
-            if (_type === 'nolayer') {
-                use_elements.forEach(elem => {
+            use_elements.forEach(elem => {
+                if (_type === 'nolayer' && this.isUseLayerColor) {
                     this.updateElementColor(elem);
-                });
-            }
+                }
+                $(use_elements).mouseover(this.handleMouseoverElement);
+            });
 
             use_elements.map(element => setDataXform(element, _type === 'image-trace'));
 
@@ -5784,7 +5831,7 @@ define([
                 if (type === 'nolayer') {
                     node.setAttribute('data-wireframe', true);
                     node.setAttribute('stroke', '#000');
-                    node.removeAttribute('fill');
+                    node.setAttribute('fill', false);
                 }
                 for (let attr of node.attributes) {
                     const re = /url\(#([^)]+)\)/g;
@@ -7847,6 +7894,7 @@ define([
                 g.childNodes.forEach(child => {
                     $(child).attr('id', getNextId());
                     $(child).attr('vector-effect', "non-scaling-stroke");
+                    $(child).mouseover(this.handleMouseoverElement);
                 });
                 selectorManager.requestSelector(g).resize();
                 
@@ -8682,7 +8730,8 @@ define([
                         }
                     }
                     $(topChild).attr('vector-effect', 'non-scaling-stroke');
-                    $(topChild).attr('id', getNextId())
+                    $(topChild).attr('id', getNextId());
+                    $(topChild).mouseover(this.handleMouseoverElement);
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
