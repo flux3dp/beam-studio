@@ -1744,7 +1744,8 @@ define([
                     event: evt,
                     start_x: start_x,
                     start_y: start_y,
-                    selectedElements: selectedElements
+                    selectedElements: selectedElements,
+                    ObjectPanelsController: ObjectPanelsController
                 }, true);
 
                 $.each(ext_result, function (i, r) {

@@ -145,6 +145,7 @@ svgEditor.addExtension('polygon', function (S) {
                     svgCanvas.updateElementColor(newPoly);
                 }
                 svgCanvas.clearSelection();
+                opts.ObjectPanelsController.setEditable(false);
                 return {
                     started: true
                 };
