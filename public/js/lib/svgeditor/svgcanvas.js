@@ -242,7 +242,7 @@ define([
                     shape.appendChild(addSvgElementFromJson(child));
                 });
             }
-            $(shape).mouseover(canvas.handleMouseoverElement);
+            $(shape).mouseover(canvas.handleGenerateSensorArea).mouseleave(canvas.handleGenerateSensorArea);
 
             return shape;
         };
@@ -1225,12 +1225,12 @@ define([
             return mouse_target;
         };
 
-        // Function: handleMouseoverElement
+        // Function: handleGenerateSensorArea
         // handle for pure contour elements, enlarge sensor area;
-        this.handleMouseoverElement = (evt) => {
+        this.handleGenerateSensorArea = (evt) => {
             // if dx or dy !== 0, then we are moving elements. Don't update sensor area info.
             if (!this.sensorAreaInfo || (this.sensorAreaInfo.dx === 0 && this.sensorAreaInfo.dy === 0)) {
-                if (evt.target.id.includes('selector')) {
+                if (evt.target.id.match(/grip/i) || evt.target.id.includes('stretch')) {
                     return;
                 }
                 const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
@@ -1787,11 +1787,13 @@ define([
                     }
 
                     if (canvas.sensorAreaInfo) {
-                        let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
-                        if (dist < 5) {
-                            $('#workarea').css('cursor', 'move');
-                        } else {
-                            $('#workarea').css('cursor', 'default');
+                        if (current_mode === 'select') {
+                            let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
+                            if (dist < 5) {
+                                $('#workarea').css('cursor', 'move');
+                            } else {
+                                $('#workarea').css('cursor', 'default');
+                            }
                         }
                     }
 
@@ -5798,7 +5800,7 @@ define([
                 if (_type === 'nolayer' && this.isUseLayerColor) {
                     this.updateElementColor(elem);
                 }
-                $(use_elements).mouseover(this.handleMouseoverElement);
+                $(use_elements).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
             });
 
             use_elements.map(element => setDataXform(element, _type === 'image-trace'));
@@ -7903,7 +7905,7 @@ define([
                 g.childNodes.forEach(child => {
                     $(child).attr('id', getNextId());
                     $(child).attr('vector-effect', "non-scaling-stroke");
-                    $(child).mouseover(this.handleMouseoverElement);
+                    $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                 });
                 selectorManager.requestSelector(g).resize();
                 
@@ -8740,7 +8742,7 @@ define([
                     }
                     $(topChild).attr('vector-effect', 'non-scaling-stroke');
                     $(topChild).attr('id', getNextId());
-                    $(topChild).mouseover(this.handleMouseoverElement);
+                    $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
