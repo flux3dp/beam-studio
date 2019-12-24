@@ -293,14 +293,15 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
 
           // some children might not have a transform (<metadata>, <defs>, etc)
           if (!childTlist) {continue;}
-
           let r = null;
-          let t0 = childTlist.getItem(0);
-          if (t0.type === 4) {
-            let {a, b, e, f} = t0.matrix;
-            let x = (a * e + b * f - e) / (2 * a - 2);
-            let y = (b * e - a * f + f) / (2 - 2 * a);
-            r = { angle: t0.angle, center: {x, y}};
+          if (childTlist.numberOfItems > 0) {
+            let t0 = childTlist.getItem(0);
+            if (t0.type === 4) {
+              let {a, b, e, f} = t0.matrix;
+              let x = (a * e + b * f - e) / (2 * a - 2);
+              let y = (b * e - a * f + f) / (2 - 2 * a);
+              r = { angle: t0.angle, center: {x, y}};
+            }
           }
 
           var m = svgedit.math.transformListToTransform(childTlist).matrix;
@@ -326,17 +327,23 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           var childxforms = [];
           context_.setStartTransform(child.getAttribute('transform'));
           if (angle || svgedit.math.hasMatrixTransform(childTlist)) {
-            let newCenter = svgedit.math.transformPoint(r.center.x, r.center.y, svgedit.math.transformListToTransform(tlist).matrix);
-            let rotationBack = svgroot.createSVGTransform();
-            rotationBack.setRotate(-r.angle, newCenter.x, newCenter.y);
             var e2t = svgroot.createSVGTransform();
-            e2t.setMatrix(svgedit.math.matrixMultiply(rotationBack.matrix, tm, sm, tmn, m));
-            let rotation = svgroot.createSVGTransform();
-            rotation.setRotate(r.angle, newCenter.x, newCenter.y);
-            childTlist.clear();
-            childTlist.appendItem(rotation);
+            if (r) {
+              let newCenter = svgedit.math.transformPoint(r.center.x, r.center.y, svgedit.math.transformListToTransform(tlist).matrix);
+              let rotationBack = svgroot.createSVGTransform();
+              rotationBack.setRotate(-r.angle, newCenter.x, newCenter.y);
+              
+              e2t.setMatrix(svgedit.math.matrixMultiply(rotationBack.matrix, tm, sm, tmn, m));
+              let rotation = svgroot.createSVGTransform();
+              rotation.setRotate(r.angle, newCenter.x, newCenter.y);
+              childTlist.clear();
+              childTlist.appendItem(rotation);
+              childxforms.push(rotation);
+            } else {
+              e2t.setMatrix(svgedit.math.matrixMultiply(tm, sm, tmn, m));
+              childTlist.clear();
+            }
             childTlist.appendItem(e2t);
-            childxforms.push(rotation);
             childxforms.push(e2t);
           }
           // if not rotated or skewed, push the [T][S][-T] down to the child
