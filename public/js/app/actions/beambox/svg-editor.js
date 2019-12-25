@@ -5628,13 +5628,13 @@ define([
                             let fileReader = new FileReader();
                             fileReader.onloadend = function (e) {
                                 let svgString = e.target.result;
-                                const matchX = svgString.match(/\bx="[^"]*/);
-                                const matchWidth = svgString.match(/\bwidth="[^"]*/);
+                                const matchX = svgString.match(/ x="[^"]*/);
+                                const matchWidth = svgString.match(/ width="[^"]*/);
                                 if (matchX) {
-                                    unit = matchX[0].substring(3).match(/[A-Za-z]+/);
+                                    unit = matchX[0].substring(4).match(/[A-Za-z]+/);
                                 }
                                 if (!unit && matchWidth) {
-                                    unit = matchWidth[0].substring(7).match(/[A-Za-z]+/);
+                                    unit = matchWidth[0].substring(8).match(/[A-Za-z]+/);
                                 }
                                 console.log(unit);
                                 // if unit is given backend will calculate unit for us, output unit will be px,
