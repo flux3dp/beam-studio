@@ -5842,7 +5842,7 @@ define([
                 if (type === 'nolayer') {
                     node.setAttribute('data-wireframe', true);
                     node.setAttribute('stroke', '#000');
-                    node.setAttribute('fill', false);
+                    node.setAttribute('fill-opacity', '0');
                 }
                 for (let attr of node.attributes) {
                     const re = /url\(#([^)]+)\)/g;
@@ -5925,7 +5925,6 @@ define([
                 }
 
                 *[data-wireframe] {
-                    fill-opacity: 0 !important;
                     stroke-width: 1px !important;
                     stroke-opacity: 1.0 !important;
                     stroke-dasharray: 0 !important;
