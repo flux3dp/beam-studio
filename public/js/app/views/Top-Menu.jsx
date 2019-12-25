@@ -594,7 +594,7 @@ define([
                 Discover(
                     'top-menu',
                     function (machines) {
-                        machines = Object.values(machines).filter(m => m.model.startsWith('fb'));
+                        //machines = Object.values(machines).filter(m => ['fbm1', 'fbb1b', 'fbb1p', 'laser-b1'].includes(m.model));
                         machines = DeviceList(machines);
                         refreshOption(machines);
                     }
