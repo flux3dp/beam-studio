@@ -7783,68 +7783,170 @@ define([
             }
         };
 
-        this.setSelectedFill = function () {
-            if (tempGroup) {
-                let children = this.ungroupTempGroup();
-                this.selectOnly(children, false);
+        this.isElemFillable = (elem) => {
+            let fillableTags = ['rect', 'ellipse', 'path', 'text', 'polygon', 'g'];
+            if (!fillableTags.includes(elem.tagName)) {
+                return false;
+            };
+            if (elem.tagName === 'g') {
+                let childNodes = elem.childNodes;
+                for (let i = 0; i < childNodes.length; i++) {
+                    if (!this.isElemFillable(childNodes[i])) {
+                        return false;
+                    }
+                }
+                return true;
             }
-            for (let i = 0; i < selectedElements.length; ++i) {
-                elem = selectedElements[i];
+
+            return elem.tagName === 'path' ? this.calcPathClosed(elem) : true ;
+        }
+
+        this.calcPathClosed = (pathElem) => {
+            let segList = pathElem.pathSegList._list;
+            let [startX, startY, currentX, currentY, isDrawing, isClosed] = [0, 0, 0, 0, false, true];
+            for (let i = 0; i < segList.length; i++) {
+                let seg = segList[i];
+                switch (seg.pathSegType) {
+                    case 1:
+                        [currentX, currentY] = [startX, startY];
+                        isDrawing = false;
+                        break;
+                    case 2:
+                    case 3:
+                        if (isDrawing) {
+                            if (seg.x !== currentX || seg.y !== currentY) {
+                                isClosed = false;
+                            } else {
+                                [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
+                            }
+                        } else {
+                            [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
+                        }
+                        break;
+                    default:
+                        isDrawing = true;
+                        [currentX, currentY] = [seg.x, seg.y];
+                        break;
+                }
+                if (!isClosed) {
+                    break;
+                }
+            }
+            if (isDrawing && (startX !== currentX || startY !== currentY)) {
+                isClosed = false;
+            }
+            return isClosed;
+        }
+
+        this.calcElemFilledInfo = (elem) => {
+            let fillableTags = ['rect', 'ellipse', 'path', 'text', 'polygon', 'g'];
+            if (!fillableTags.includes(elem.tagName)) {
+                return {
+                    isAnyFilled: false,
+                    isAllFilled: false
+                };
+            };
+            if (elem.tagName === 'g') {
+                let childNodes = elem.childNodes;
+                let isAnyFilled;
+                let isAllFilled = true;
+                for (let i = 0; i < childNodes.length; i++) {
+                    let childFilledInfo = this.calcElemFilledInfo(childNodes[i]);
+                    if (childFilledInfo.isAnyFilled) {
+                        isAnyFilled = true;
+                    }
+                    if (!childFilledInfo.isAllFilled) {
+                        isAllFilled = false;
+                    }
+                    if (isAnyFilled && isAllFilled === false) {
+                        break;
+                    }
+                }
+                return {isAnyFilled, isAllFilled};
+            }
+            let isFilled = ($(elem).attr('fill-opacity') !== 0) && $(elem).attr('fill') !== 'none';
+            return {
+                isAnyFilled: isFilled,
+                isAllFilled: isFilled
+            };
+        }
+
+        this.setElemsFill = function (elems) {
+            let batchCmd = new svgedit.history.BatchCommand('set elems fill');
+            for (let i = 0; i < elems.length; ++i) {
+                elem = elems[i];
                 if (elem == null) {
                     break;
                 }
-                const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
 
-                if (availableType.indexOf(elem.tagName) >= 0) {
-                    const color = $(elem).attr('stroke');
-                    this.setElementFill(elem, color);
+                const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
+                if (availableType.includes(elem.tagName)) {
+                    if (this.calcElemFilledInfo(elem).isAllFilled) {
+                        continue;
+                    }
+                    const color = $(elem).attr('stroke') || '#333';
+                    let cmd = this.setElementFill(elem, color);
+                    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+                } else if (elem.tagName === 'g') {
+                    this.setElemsFill(elem.childNodes);
                 } else {
                     console.log(`Not support type: ${elem.tagName}`)
                 }
             }
+            if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
         }
 
         this.setElementFill = function (elem, color) {
-            let batchCmd = new svgedit.history.BatchCommand('set fill');
+            let batchCmd = new svgedit.history.BatchCommand('set elem fill');
+            let cmd;
             canvas.undoMgr.beginUndoableChange('fill', [elem]);
             elem.setAttribute('fill', color);
-            batchCmd.addSubCommand(canvas.undoMgr.finishUndoableChange());
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 1);
-            batchCmd.addSubCommand(canvas.undoMgr.finishUndoableChange());
-            canvas.undoMgr.addCommandToHistory(batchCmd);
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            return batchCmd;
         }
 
-        this.setSelectedUnfill = function () {
-            if (tempGroup) {
-                let children = this.ungroupTempGroup();
-                this.selectOnly(children, false);
-            }
-            for (let i = 0; i < selectedElements.length; ++i) {
-                elem = selectedElements[i];
+        this.setElemsUnfill = function (elems) {
+            let batchCmd = new svgedit.history.BatchCommand('set elems unfill');
+            for (let i = 0; i < elems.length; ++i) {
+                elem = elems[i];
                 if (elem == null) {
                     break;
                 }
                 const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
 
-                if (availableType.indexOf(elem.tagName) >= 0) {
-                    const color = $(elem).attr('fill');
-                    this.setElementUnfill(elem, color);
+                if (availableType.includes(elem.tagName)) {
+                    if (!this.calcElemFilledInfo(elem).isAllFilled) {
+                        continue;
+                    }
+                    const color = $(elem).attr('fill') || '#333';
+                    let cmd = this.setElementUnfill(elem, color);
+                    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+                } else if (elem.tagName ==='g') {
+                    this.setElemsUnfill(elem.childNodes);
                 } else {
                     console.log(`Not support type: ${elem.tagName}`)
                 }
             }
+            if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
         }
 
         this.setElementUnfill = function (elem, color) {
-            let batchCmd = new svgedit.history.BatchCommand('set unfill');
+            let batchCmd = new svgedit.history.BatchCommand('set elem unfill');
+            let cmd;
             canvas.undoMgr.beginUndoableChange('stroke', [elem]);
             elem.setAttribute('stroke', color);
-            batchCmd.addSubCommand(canvas.undoMgr.finishUndoableChange());
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 0);
-            batchCmd.addSubCommand(canvas.undoMgr.finishUndoableChange());
-            canvas.undoMgr.addCommandToHistory(batchCmd);
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            return batchCmd;
         }
 
         // Function: makeHyperlink

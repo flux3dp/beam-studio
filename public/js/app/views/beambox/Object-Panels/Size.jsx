@@ -39,8 +39,7 @@ define([
                     break;
                 case 'polygon':
                 case 'path':
-                    svgCanvas.setSvgElemSize('width', val * Constant.dpmm);
-                    break;
+                case 'g':
                 case 'use':
                     svgCanvas.setSvgElemSize('width', val * Constant.dpmm);
                     break;
@@ -59,8 +58,7 @@ define([
                     break;
                 case 'polygon':
                 case 'path':
-                    svgCanvas.setSvgElemSize('height', val * Constant.dpmm);
-                    break;
+                case 'g':
                 case 'use':
                     svgCanvas.setSvgElemSize('height', val * Constant.dpmm);
                     break;

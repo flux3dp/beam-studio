@@ -161,7 +161,7 @@ define([
         }
 
         isResizeFixed() {
-            const useSizePanel = ['rect', 'image', 'use'];
+            const useSizePanel = ['rect', 'image', 'use', 'g'];
             const useRadiusPanel = ['ellipse'];
 
             if(useSizePanel.includes(this.type) || useRadiusPanel.includes(this.type)) {

@@ -11,66 +11,38 @@ define([
 
         constructor(props) {
             super(props);
-            this.isClosed = true;
-            const isFill = ((props.$me.attr('fill-opacity') === 1) && (props.$me.attr('fill') !== 'none'));
+            let isFillable = svgCanvas.isElemFillable(props.$me[0]);
+            let {isAnyFilled, isAllFilled} = svgCanvas.calcElemFilledInfo(props.$me[0]);
             this.state = {
-                isFill: isFill
+                isAnyFilled,
+                isAllFilled,
+                isFillable
             };
             this._handleClick = this._handleClick.bind(this);
-            if (props.type === 'path') {
-                let segList = props.$me[0].pathSegList._list;
-                let [startX, startY, currentX, currentY, isDrawing] = [0, 0, 0, 0, false];
-                for (let i = 0; i < segList.length; i++) {
-                    let seg = segList[i];
-                    switch (seg.pathSegType) {
-                        case 1:
-                            [currentX, currentY] = [startX, startY];
-                            isDrawing = false;
-                            break;
-                        case 2:
-                        case 3:
-                            if (isDrawing) {
-                                if (seg.x !== currentX || seg.y !== currentY) {
-                                    this.isClosed = false;
-                                } else {
-                                    [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
-                                }
-                            } else {
-                                [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
-                            }
-                            break;
-                        default:
-                            isDrawing = true;
-                            [currentX, currentY] = [seg.x, seg.y];
-                            break;
-                    }
-                    if (!this.isClosed) {
-                        break;
-                    }
-                }
-                if (isDrawing && (startX !== currentX || startY !== currentY)) {
-                    this.isClosed = false;
-                }
-            }
         }
 
         _handleClick() {
-            if (this.state.isFill) {
-                svgCanvas.setSelectedUnfill();
+            if (this.state.isAnyFilled) {
+                svgCanvas.setElemsUnfill(this.props.$me);
             } else {
-                svgCanvas.setSelectedFill();
+                svgCanvas.setElemsFill(this.props.$me);
             }
-            this.setState({isFill: !this.state.isFill});
+            this.setState({
+                isAnyFilled: !this.state.isAnyFilled,
+                isAllFilled: !this.state.isAnyFilled
+            });
         }
 
         render() {
-            return this.isClosed ? (
+            let isPartiallyFilled = this.state.isAnyFilled && !this.state.isAllFilled;
+            let checkBoxClassName = `${this.state.isAnyFilled ? 'fa fa-toggle-on' : 'fa fa-toggle-off'} ${(this.props.type === 'g' && isPartiallyFilled) ? 'partially-filled' : ''}`
+            return this.state.isFillable ? (
                 <div className='object-panel'>
                     <label className='controls accordion' onClick={this._handleClick}>
                         <p className='caption'>
                             {LANG.fill}
                             <label className='shading-checkbox' onClick={this._handleClick}>
-                                <i className={this.state.isFill ? 'fa fa-toggle-on' : 'fa fa-toggle-off'} />
+                                <i className={checkBoxClassName} />
                             </label>
                         </p>
                     </label>

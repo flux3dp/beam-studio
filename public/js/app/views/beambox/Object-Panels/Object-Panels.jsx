@@ -30,6 +30,7 @@ define([
 
     const validPanelsMap = {
         'unknown':  [],
+        'g':     ['position', 'size', 'fill', 'rotation'],
         'path':     ['position', 'size', 'fill', 'rotation'],
         'polygon':     ['position', 'size', 'fill', 'rotation'],
         'rect':     ['position', 'size', 'fill', 'rotation', 'rectRoundedCorner'],
@@ -42,6 +43,7 @@ define([
 
     const defaultHeight = {
         'unknown':  0,
+        'g': 340,
         'path': 340,
         'polygon': 340,
         'rect': 372,

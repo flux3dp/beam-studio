@@ -1768,7 +1768,7 @@ define([
                                 if (bb) {
                                     x = bb.x;
                                     y = bb.y;
-                                    if (elname === 'path' || elname === 'polygon') {
+                                    if (elname !== 'polyline') {
                                         let bbox = elem.getBBox();
                                         ObjectPanelsController.setWidth(bbox.width);
                                         ObjectPanelsController.setHeight(bbox.height);
