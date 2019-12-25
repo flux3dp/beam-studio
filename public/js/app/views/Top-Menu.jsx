@@ -866,13 +866,12 @@ define([
 
                 return (
                     <div>
-                        {this._renderFileTitle()}
                         {left_scroll_cue}
                         <div className="top-btns" onScroll={()=>{this.setState(this.state)}}>
                             <div className="top-btn-container">
                                 <div className="top-controls zoom-controls">
                                     {this._renderZoomBtn('zoomout', 'out', ()=>{svgEditor.zoomOut()})}
-                                    {this._renderTopBtn('zoom', lang.topbar.zoom)}
+                                    {this._renderTopBtn('zoom', lang.topbar.zoom, ()=>{svgEditor.resetView()})}
                                     {this._renderZoomBtn('zoomin', 'in', ()=>{svgEditor.zoomIn()})}
                                 </div>
                                 <div className="top-controls group-controls">
@@ -899,6 +898,7 @@ define([
                             </div>
                         </div>
                         {right_scroll_cue}
+                        {this._renderFileTitle()}
 
                         <div title={lang.print.deviceTitle} className="device" style={device_style}>
                             <p className="device-icon" onClick={this._handleExportClick}>
