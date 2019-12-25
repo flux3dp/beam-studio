@@ -307,6 +307,9 @@
                 .shading-checkbox {
                     cursor: pointer;
                     font-size: 18px;
+                    .partially-filled {
+                        opacity: 0.5;
+                    }
                 }
             }
             .accordion .caption .value {
