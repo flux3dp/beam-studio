@@ -3934,6 +3934,8 @@ define([
                     if (svgedit.path.path) {
                         svgedit.path.path.init().show(false);
                     }
+                    $('#x_align_line').remove();
+                    $('#y_align_line').remove();
                 },
                 resetOrientation: function (path) {
                     if (path == null || path.nodeName !== 'path') {
@@ -6746,8 +6748,9 @@ define([
                     svgedit.utilities.assignAttributes(xAlignLine, {
                         id: 'x_align_line',
                         stroke: '#FA6161',
-                        'stroke-width': '5',
-                        fill: 'none'
+                        'stroke-width': '0.5',
+                        fill: 'none',
+                        'vector-effect': "non-scaling-stroke"
                     });
                     svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
                 } 
@@ -6765,8 +6768,9 @@ define([
                     svgedit.utilities.assignAttributes(yAlignLine, {
                         id: 'y_align_line',
                         stroke: '#FA6161',
-                        'stroke-width': '5',
-                        fill: 'none'
+                        'stroke-width': '0.5',
+                        fill: 'none',
+                        'vector-effect': "non-scaling-stroke"
                     });
                     svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
                 } 
