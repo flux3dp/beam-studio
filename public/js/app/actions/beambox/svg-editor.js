@@ -6147,9 +6147,8 @@ define([
         };
 
         editor.resetView = function() {
-            let windowScale = Math.min((($(window).width() - 268) / 1000), (($(window).height() - 105) / 600));
-            let workspaceScale = 1 / Math.max(svgEditor.dimensions[0] / 4000, svgEditor.dimensions[1] / 3750);
-            const zoomLevel = 0.2 * windowScale * workspaceScale;
+            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 20) / svgEditor.dimensions[0], ($('#workarea').height() - 20) / svgEditor.dimensions[1]);
+            const zoomLevel = workareaToDimensionRatio;
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
