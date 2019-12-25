@@ -1477,6 +1477,7 @@ define([
                                 'height': 0,
                                 'display': 'inline'
                             }, 100);
+                            ObjectPanelsController.setEditable(false);
                         }
                         break;
                     case 'zoom':
