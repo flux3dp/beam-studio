@@ -81,8 +81,9 @@ function buildMenu(callback) {
             { 'id': 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
             { type:'separator'},
             { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
-            { 'id': 'OBJECT', label: r.object, enabled: false, submenu: [
+            { 'id': 'PATH', label: r.path, enabled: false, submenu: [
                 { 'id': 'OFFSET', label: r.offset || 'Offset', click: callback},
+                { 'id': 'DECOMPOSE_PATH', label: r.decompose_path, enabled: false, click: callback},
             ]},
             { 'id': 'PHOTO_EDIT', label: r.photo_edit || 'Edit Photo', enabled: false, submenu: [
                 { 'id': 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
@@ -330,15 +331,16 @@ class MenuManager extends EventEmitter {
     }
     toggleMenu(ids, enabled) {
         ids = Array.isArray(ids) ? ids : [ids];
-
-        this._appmenu.items.forEach(mainMenu => {
-            mainMenu.submenu.items.forEach(submenu => {
-                if(ids.indexOf(submenu.id) >= 0) {
-                    submenu.enabled = enabled;
-                }
-            });
-        });
-
+        let iterStack = [...this._appmenu.items];
+        while (iterStack.length > 0) {
+            let item = iterStack.pop();
+            if (item.submenu) {
+                iterStack.push(...item.submenu.items);
+            }
+            if(ids.indexOf(item.id) >= 0) {
+                item.enabled = enabled;
+            }
+        }
         Menu.setApplicationMenu(this._appmenu);
     }
     _on_menu_click(event) {

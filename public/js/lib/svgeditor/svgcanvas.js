@@ -2443,9 +2443,7 @@ define([
 
                         if (selectedElems.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
-                            tempGroup = true;
                             window.updateContextPanel();
-                            console.log('temp group created');
                         }
 
                         return;
@@ -2606,9 +2604,7 @@ define([
 
                 if (selectedElems.length > 1) {
                     svgCanvas.tempGroupSelectedElements();
-                    tempGroup = true;
                     window.updateContextPanel();
-                    console.log('temp group created');
                 }
 
                 var ext_result = runExtensions('mouseUp', {
@@ -8422,6 +8418,76 @@ define([
             addCommandToHistory(batchCmd);
         }
 
+        this.decomposePath = (elems) => {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+            let allNewPaths = [];
+            let batchCmd = new svgedit.history.BatchCommand('Decompose Image');
+            elems = elems || selectedElements;
+            elems.forEach(elem => {
+                if (elem.tagName != 'path') {
+                    return;
+                }
+                let newPaths = [];
+                const angle = svgedit.utilities.getRotationAngle(elem);
+                this.setRotationAngle(0, true, elem);
+                const layer = this.getObjectLayer(elem).elem;
+                const attrs = {
+                    'stroke': $(elem).attr('stroke') || '',
+                    'fill': $(elem).attr('fill') || '',
+                    'transform': $(elem).attr('transform') || '',
+                    'stroke-opacity': $(elem).attr('stroke-opacity') || '',
+                    'fill-opacity': $(elem).attr('fill-opacity') || '',
+                }
+                const dAbs = svgedit.utilities.convertPath(elem);
+                // Make sure all pathseg is abs
+                const segList = elem.pathSegList._parsePath(dAbs);
+
+                let startIndex = 0;
+                for (let i = 0; i < segList.length + 1; i++) {
+                    if (i === segList.length || segList[i].pathSegType === 2) {
+                        if (i > startIndex + 1) {
+                            const d = SVGPathSegList._pathSegArrayAsString(segList.slice(startIndex, i));
+                            const id = getNextId();
+                            const path = addSvgElementFromJson({
+                                'element': 'path',
+                                'attr': {
+                                    ...attrs,
+                                    'id': id,
+                                    'd': d,
+                                    'vector-effect': 'non-scaling-stroke'
+                                }
+                            });
+                            layer.appendChild(path);
+                            newPaths.push(path);
+                            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
+                        }
+                        startIndex = i;
+                    }
+                }
+                const parent = elem.parentNode;
+                const nextSibling = elem.nextSibling;
+                parent.removeChild(elem);
+                batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+                if (newPaths.length > 0) {
+                    selectOnly(newPaths, false);
+                    let g = this.tempGroupSelectedElements();
+                    this.setRotationAngle(angle, true, g);
+                    allNewPaths.push(...newPaths);
+                }
+            });
+            if (!batchCmd.isEmpty()) {
+                addCommandToHistory(batchCmd);
+            }
+            if (allNewPaths.length > 0) {
+                selectOnly(allNewPaths, false);
+                let g = this.tempGroupSelectedElements();
+            }
+        }
+
         // Function: imageToSVG
         // tracing an image file, convert it to svg object
         // using ImageTracer https://github.com/jankovicsandras/imagetracerjs
@@ -9126,6 +9192,9 @@ define([
 
             // update selection
             selectOnly([g], true);
+            tempGroup = true;
+            console.log('temp group created');
+            return g;
         };
 
         // Function: ungroupTempGroup

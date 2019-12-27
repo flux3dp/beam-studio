@@ -71,6 +71,7 @@ define([
                 'IMAGE_CURVE': () => FnWrapper.photoEdit('curve'),
                 'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
                 'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
+                'DECOMPOSE_PATH': () => svgCanvas.decomposePath(),
                 'LAYER_COLOR_CONFIG': () => BeamboxActions.showLayerColorConfig(),
                 'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
@@ -109,16 +110,17 @@ define([
             ]);
         }
         onObjectFocus() {
-            this.enableMenuItems(['DUPLICATE', 'OBJECT']);
+            this.enableMenuItems(['DUPLICATE', 'PATH']);
             if (svgCanvas.getSelectedElems()[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
-            }
-            else if (svgCanvas.getSelectedElems()[0].tagName ==='use') {
+            } else if (svgCanvas.getSelectedElems()[0].tagName ==='use') {
                 this.enableMenuItems(['DISASSEMBLE_USE']);
+            } else if (svgCanvas.getSelectedElems()[0].tagName ==='path') {
+                this.enableMenuItems(['DECOMPOSE_PATH']);
             }
         }
         onObjectBlur() {
-            this.disableMenuItems(['DUPLICATE', 'OBJECT', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
+            this.disableMenuItems(['DUPLICATE', 'PATH', 'DECOMPOSE_PATH', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
         }
     }
     const instance = new BeamboxGlobalInteraction();
