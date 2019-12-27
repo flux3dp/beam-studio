@@ -244,7 +244,12 @@ svgedit.sanitize.sanitizeSvg = function(node) {
     // FIXME: in the case of animation elements this will hardly ever be correct
     var children = [];
     while (node.hasChildNodes()) {
-      children.push(parent.insertBefore(node.firstChild, node));
+      //Only insert not text elements
+      if (node.firstChild.nodeType !== 3) {
+        children.push(parent.insertBefore(node.firstChild, node));
+      } else {
+        node.removeChild(node.firstChild);
+      }
     }
 
     // remove this node from the document altogether
