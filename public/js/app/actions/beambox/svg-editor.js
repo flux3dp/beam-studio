@@ -5516,13 +5516,9 @@ define([
                                 svgString = svgString.replace('xlink:href="./', 'xlink:href="' + getBasename(blob.path) + '/');
                             }
 
-                            if (svgString.indexOf('<![CDATA[') > -1) {
-                                const indexLeft = svgString.indexOf('<![CDATA[');
-                                const indexRight = svgString.indexOf(']]>');
-
-                                svgString = svgString.substr(0, indexLeft) + svgString.substring(indexLeft+9, indexRight) + svgString.substr(indexRight + 3);
-                            }
-
+                            svgString = svgString.replace(/<!\[CDATA\[([^\]]*)\]\]>/g, (match, p1) => {
+                                return p1;
+                            });
 
                             if (svgString.indexOf('<switch>') > -1) {
                                 const indexLeft = svgString.indexOf('<switch>');
