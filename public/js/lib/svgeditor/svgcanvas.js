@@ -1163,6 +1163,15 @@ define([
             }
             var mouse_target = evt.target;
 
+            var $target = $(mouse_target);
+
+            // If it's a selection grip, return the grip parent
+            if ($target.closest('#selectorParentGroup').length) {
+                // While we could instead have just returned mouse_target,
+                // this makes it easier to indentify as being a selector grip
+                return selectorManager.selectorParentGroup;
+            }
+
             const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
             let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
                 mouse_x = pt.x * current_zoom,
@@ -1197,16 +1206,6 @@ define([
             if ([svgroot, container, svgcontent, current_layer].indexOf(mouse_target) >= 0) {
                 return svgroot;
             }
-
-            var $target = $(mouse_target);
-
-            // If it's a selection grip, return the grip parent
-            if ($target.closest('#selectorParentGroup').length) {
-                // While we could instead have just returned mouse_target,
-                // this makes it easier to indentify as being a selector grip
-                return selectorManager.selectorParentGroup;
-            }
-
 
             if (!mouse_target) {
                 return svgroot;
