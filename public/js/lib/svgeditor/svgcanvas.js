@@ -1176,7 +1176,7 @@ define([
             let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
                 mouse_x = pt.x * current_zoom,
                 mouse_y = pt.y * current_zoom;
-            if (canvas.sensorAreaInfo) {
+            if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
                 let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
                 if (dist < 5) {
                     mouse_target = canvas.sensorAreaInfo.elem;
@@ -1787,7 +1787,7 @@ define([
                     }
 
                     if (canvas.sensorAreaInfo) {
-                        if (current_mode === 'select') {
+                        if (current_mode === 'select' && !PreviewModeController.isPreviewMode()) {
                             let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
                             if (dist < 5) {
                                 $('#workarea').css('cursor', 'move');
