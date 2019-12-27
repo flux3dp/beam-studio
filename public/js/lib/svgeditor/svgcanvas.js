@@ -4538,7 +4538,7 @@ define([
                                 continue;
                             }
                             out.push(' ');
-                            if (attr.localName === 'd') {
+                            if (elem.tagName === 'path' && attr.localName === 'd') {
                                 attrVal = pathActions.convertPath(elem, true);
                             }
                             if (!isNaN(attrVal)) {
@@ -5705,14 +5705,24 @@ define([
 
                 getCurrentDrawing().getCurrentLayer().appendChild(use_el);
 
-                if (type === 'nolayer') {
-                    use_el.setAttribute('data-wireframe', true);
-                }
-
                 $(use_el).data('symbol', symbol).data('ref', symbol);
 
                 use_el.setAttribute('data-symbol', symbol);
                 use_el.setAttribute('data-ref', symbol);
+
+                if (type === 'nolayer') {
+                    use_el.setAttribute('data-wireframe', true);
+                    let iterationStack = [symbol];
+                    while (iterationStack.length > 0) {
+                        let node = iterationStack.pop();
+                        if (node.nodeType === 1) {
+                            node.setAttribute('data-wireframe', true);
+                            node.setAttribute('stroke', '#000');
+                            node.setAttribute('fill-opacity', '0');
+                            iterationStack.push(...Array.from(node.childNodes));   
+                        }
+                    }
+                }
 
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(use_el));
 
@@ -5841,11 +5851,6 @@ define([
             function traverseForRemappingId(node) {
                 if (!node.attributes) {
                     return;
-                }
-                if (type === 'nolayer') {
-                    node.setAttribute('data-wireframe', true);
-                    node.setAttribute('stroke', '#000');
-                    node.setAttribute('fill-opacity', '0');
                 }
                 for (let attr of node.attributes) {
                     const re = /url\(#([^)]+)\)/g;
