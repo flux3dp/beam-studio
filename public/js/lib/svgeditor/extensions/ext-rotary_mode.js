@@ -39,16 +39,36 @@ svgEditor.addExtension('rotary_axis', function () {
         'y1': currentYRatio + '%',
         'x2': '100%',
         'y2': currentYRatio + '%',
-        'stroke-width': 5,
+        'stroke-width': 1,
         'stroke': 'rgb(0,128,255)',
         'fill': 'none',
         'style': 'cursor:ns-resize',
         'display': svgCanvas.getRotaryMode() ? 'visible' : 'none'
     });
+    var transparentRotaryLine = svgdoc.createElementNS(NS.SVG, 'line');
+    assignAttributes(transparentRotaryLine, {
+        'id': 'transparentRotaryLine',
+        'x1': '0',
+        'y1': currentYRatio + '%',
+        'x2': '100%',
+        'y2': currentYRatio + '%',
+        'stroke-width': 5,
+        'stroke': 'transparent',
+        'fill': 'none',
+        'style': 'cursor:ns-resize',
+        'display': svgCanvas.getRotaryMode() ? 'visible' : 'none'
+    });
+
     $('#rotaryAxis').append(rotaryLine);
+    $('#rotaryAxis').append(transparentRotaryLine);
 
     function updateLine() {
         assignAttributes(rotaryLine, {
+            'y1': currentYRatio + '%',
+            'y2': currentYRatio + '%',
+            'display': svgCanvas.getRotaryMode() ? 'visible' : 'none'
+        });
+        assignAttributes(transparentRotaryLine, {
             'y1': currentYRatio + '%',
             'y2': currentYRatio + '%',
             'display': svgCanvas.getRotaryMode() ? 'visible' : 'none'
@@ -70,7 +90,7 @@ svgEditor.addExtension('rotary_axis', function () {
         },
         checkMouseTarget: function (evt) {
             // includes == indexOf. This comment can be removed 5 years layer...
-            if (['rotaryAxis', 'rotaryLine'].includes(evt.mouseTarget.getAttribute('id'))) {
+            if (['rotaryAxis', 'rotaryLine', 'transparentRotaryLine'].includes(evt.mouseTarget.getAttribute('id'))) {
                 console.log('setMode to dragging axis');
                 svgCanvas.clearSelection();
                 svgCanvas.setMode('adjust-rotary-axis');

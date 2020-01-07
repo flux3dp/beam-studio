@@ -406,6 +406,11 @@
             bottom: 0px;
             #svgcanvas {
                 background: $backgroundColor;
+                #rotaryAxis {
+                    #transparent {
+                        stroke-width: 5px;
+                    }
+                }
             }
         }
         #sidepanels {
