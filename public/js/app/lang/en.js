@@ -1314,7 +1314,8 @@ define(function() {
                 test_fail: 'Test Failed',
                 cannot_connect_1: 'Fail to connect to target IP.',
                 cannot_connect_2: 'Fail to connect to target IP. Please make sure that the target is in the same network.',
-                cannot_get_local: 'Access to local IP address failed.'
+                cannot_get_local: 'Access to local IP address failed.',
+                fail_to_start_network_test: 'Fail to start network testing.'
             },
             layer_color_config_panel: {
                 layer_color_config: 'Layer Color Configurations',

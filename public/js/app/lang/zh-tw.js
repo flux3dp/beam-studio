@@ -1312,7 +1312,8 @@ define(function() {
                 test_fail: '檢測失敗',
                 cannot_connect_1: '無法與目標 IP 建立連線',
                 cannot_connect_2: '無法與目標 IP 建立連線，請確認是否與目標 IP 在同一網路',
-                cannot_get_local: '無法取得本地 IP 位置'
+                cannot_get_local: '無法取得本地 IP 位置',
+                fail_to_start_network_test: '無法開始網路檢測。'
             },
             layer_color_config_panel: {
                 layer_color_config: '圖層顏色參數設定',

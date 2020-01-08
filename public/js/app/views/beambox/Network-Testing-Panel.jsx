@@ -99,11 +99,17 @@ define([
             const options = {
                 retries: 0,
             }
-            this.session = ping.createSession(options);
-            this.session.on('error', error => {
-                console.log ("session error: " + error);
-                this._createSession(options);
-            });
+            try {
+                this.session = ping.createSession(options);
+                this.session.on('error', error => {
+                    console.log ("session error: " + error);
+                    this._createSession(options);
+                });
+            }
+            catch (e) {
+                console.log(e);
+                AlertActions.showPopupError('create_sessioj_fail', `${LANG.fail_to_start_network_test} ${e}`);
+            }
         }
 
         _pingTarget() {
