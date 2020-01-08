@@ -5905,6 +5905,7 @@ define([
             let originStyle = $(symbol).find('style').text();
             if (type === 'nolayer') {
                 originStyle = originStyle.replace(/stroke[^a-zA-Z]*:[^;]*;/g,'');
+                originStyle = originStyle.replace(/stroke-width[^a-zA-Z]*:[^;]*;/g,'');
             }
             //the regex indicate the css selector, but the selector may contain comma, so we replace it again.
             let prefixedStyle = originStyle.replace(/([^{}]+){/g, function replacer(match, p1, offset, string) {
