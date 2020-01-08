@@ -83,14 +83,14 @@ define([
                 retries: 0,
             }
             this.session = ping.createSession(options);
-            this.flag = false;
+            this.stopFlag = false;
             this.pingTimes = 0;
             this.success = 0;
             this.totalRRT = 0;
             
             this.startTime = new Date();
             const raiseFlag = window.setTimeout(() =>{
-                this.flag = true;
+                this.stopFlag = true;
                 }, this.TEST_TIME
             );
             
@@ -102,40 +102,75 @@ define([
         _pingTarget() {
             const self = this;
             this.pingTimes += 1;
-            this.session.pingHost(this.state.ip, function (error, target, sent, rcvd) {
-                const elapsedTime = new Date() - self.startTime;
-                const percentage =  parseInt(100 * elapsedTime / self.TEST_TIME);
-                ProgressActions.updating(`${LANG.testing} - ${percentage}%`, percentage);
-                if (error) {
-                    console.log (target + ": " + error.toString ());
-                    let invalidIp = error.toString().match('Invalid IP address');
-                    if (invalidIp) {
-                        self.flag = true;
-                        ProgressActions.close();
-                        AlertActions.showPopupError('invalid_target_ip', `${LANG.invalid_ip}: ${self.state.ip}`);
-                        return;
+            try {
+                this.session.pingHost(this.state.ip, function (error, target, sent, rcvd) {
+                    const elapsedTime = new Date() - self.startTime;
+                    const percentage =  parseInt(100 * elapsedTime / self.TEST_TIME);
+                    ProgressActions.updating(`${LANG.testing} - ${percentage}%`, percentage);
+                    if (error) {
+                        console.log (target + ": " + error.toString ());
+                        let invalidIp = error.toString().match('Invalid IP address');
+                        if (invalidIp) {
+                            self.stopFlag = true;
+                            ProgressActions.close();
+                            AlertActions.showPopupError('invalid_target_ip', `${LANG.invalid_ip}: ${self.state.ip}`);
+                            return;
+                        }
                     }
-                }
-                else {
-                    self.success += 1;
-                    self.totalRRT += (rcvd - sent);
-                }
-                if (!self.flag) {
-                    self._pingTarget();
+                    else {
+                        self.success += 1;
+                        self.totalRRT += (rcvd - sent);
+                    }
+                    if (!self.stopFlag) {
+                        self._pingTarget();
+                    } else {
+                        console.log(`success rate: ${self.success}/${self.pingTimes}`);
+                        const avg =  parseInt(100 * (self.totalRRT/self.success)) / 100;
+                        console.log(`average rrt of success: ${avg} ms`);
+                        self.session.close ();
+                        ProgressActions.close();
+                        const healthiness = parseInt(100 * self.success / self.pingTimes);
+                        if (healthiness !== 0) {
+                            AlertActions.showPopupInfo('network_test_result', `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
+                            LANG.test_completed);
+                        } else {
+                            let match = false;
+                            const targetIpFirstThree = self.state.ip.match(/.*\./)[0];
+                            self.state.localIp.forEach (ip => {
+                                const localFirstThree = ip.match(/.*\./)[0];
+                                if (targetIpFirstThree === localFirstThree) {
+                                    match = true;
+                                }
+                            });
+                            if (match) {
+                                AlertActions.showPopupInfo('network_test_result', `${LANG.cannot_connect_1}`, LANG.test_completed);
+                            } else {
+                                AlertActions.showPopupInfo('network_test_result', `${LANG.cannot_connect_2}`, LANG.test_completed);
+                            }
+                        }
+                    }
+                });
+            } 
+            catch (e) {
+                const elapsedTime = new Date() - this.startTime;
+                const percentage =  parseInt(100 * elapsedTime / this.TEST_TIME);
+                ProgressActions.updating(`${LANG.testing} - ${percentage}%`, percentage);
+                if (!this.stopFlag) {
+                    setTimeout(() => {this._pingTarget()}, 1000);
                 } else {
-                    console.log(`success rate: ${self.success}/${self.pingTimes}`);
-                    const avg =  parseInt(100 * (self.totalRRT/self.success)) / 100;
+                    console.log(`success rate: ${this.success}/${this.pingTimes}`);
+                    const avg =  parseInt(100 * (this.totalRRT/this.success)) / 100;
                     console.log(`average rrt of success: ${avg} ms`);
-                    self.session.close ();
+                    this.session.close ();
                     ProgressActions.close();
-                    const healthiness = parseInt(100 * self.success / self.pingTimes);
+                    const healthiness = parseInt(100 * this.success / this.pingTimes);
                     if (healthiness !== 0) {
                         AlertActions.showPopupInfo('network_test_result', `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
                         LANG.test_completed);
                     } else {
                         let match = false;
-                        const targetIpFirstThree = self.state.ip.match(/.*\./)[0];
-                        self.state.localIp.forEach (ip => {
+                        const targetIpFirstThree = this.state.ip.match(/.*\./)[0];
+                        this.state.localIp.forEach (ip => {
                             const localFirstThree = ip.match(/.*\./)[0];
                             if (targetIpFirstThree === localFirstThree) {
                                 match = true;
@@ -148,7 +183,7 @@ define([
                         }
                     }
                 }
-            });
+            }
         };
 
         _onInputBlur() {
@@ -183,7 +218,7 @@ define([
                                 <div className='right-part'>
                                     <input
                                         ref='textInput'
-                                        value={this.defaultValue}
+                                        defaultValue={this.defaultValue}
                                         onBlur={this._onInputBlur.bind(this)}
                                         >    
                                     </input>
