@@ -122,7 +122,7 @@ define([
                         self.totalRRT += (rcvd - sent);
                     }
                     if (!self.stopFlag) {
-                        self._pingTarget();
+                        setTimeout(() => {self._pingTarget()}, 100);
                     } else {
                         console.log(`success rate: ${self.success}/${self.pingTimes}`);
                         const avg =  parseInt(100 * (self.totalRRT/self.success)) / 100;
@@ -156,7 +156,7 @@ define([
                 const percentage =  parseInt(100 * elapsedTime / this.TEST_TIME);
                 ProgressActions.updating(`${LANG.testing} - ${percentage}%`, percentage);
                 if (!this.stopFlag) {
-                    setTimeout(() => {this._pingTarget()}, 1000);
+                    setTimeout(() => {this._pingTarget()}, 100);
                 } else {
                     console.log(`success rate: ${this.success}/${this.pingTimes}`);
                     const avg =  parseInt(100 * (this.totalRRT/this.success)) / 100;
