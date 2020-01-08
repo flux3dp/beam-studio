@@ -114,7 +114,7 @@ define([
         
         // Escape for Whitelists
         const whiteList = ['標楷體'];
-        const whiteKeyWords = ['華康'];
+        const whiteKeyWords = ['華康', 'Adobe'];
         if (whiteList.indexOf(fontFamily) >= 0) {
             return fontFamily;
         }
