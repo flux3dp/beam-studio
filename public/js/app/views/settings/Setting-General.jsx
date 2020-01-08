@@ -251,6 +251,19 @@ define([
                 }
             ];
 
+            const precutSwitchOptions = [
+                {
+                    value: 'false',
+                    label: lang.settings.off,
+                    selected: BeamboxPreference.read('blade_precut') !== true
+                },
+                {
+                    value: 'true',
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('blade_precut') === true
+                }
+            ];
+
             const defaultModelOptions = [
                 {
                     value: '',
@@ -451,6 +464,51 @@ define([
                             className={{half: true}}
                         />
                     </Controls>
+
+                    { i18n.getActiveLang() === 'zh-tw' ?
+                        <div>
+                            <Controls label={lang.settings.blade_radius}>
+                            <UnitInput
+                                unit='mm'
+                                min={0}
+                                max={30}
+                                step={0.01}
+                                defaultValue={BeamboxPreference.read('blade_radius') || 0}
+                                getValue={val => this._updateBeamboxPreference('blade_radius', val)}
+                                className={{half: true}}
+                            />
+                            </Controls>
+
+                            <Controls label={lang.settings.blade_precut_switch}>
+                                <SelectView
+                                    className='font3'
+                                    options={precutSwitchOptions}
+                                    onChange={e => this._updateBeamboxPreference('blade_precut', e.target.value)}
+                                />
+                            </Controls>
+
+                            <Controls label={lang.settings.blade_precut_position}>
+                                <span className='font2' style={{marginRight: '10px'}}>X</span>
+                                <UnitInput
+                                    unit='mm'
+                                    min={0}
+                                    max={BeamboxConstant.dimension.width/10}
+                                    defaultValue={BeamboxPreference.read('precut_x') || 0}
+                                    getValue={val => this._updateBeamboxPreference('precut_x', val)}
+                                    className={{half: true}}
+                                />
+                                <span className='font2' style={{marginRight: '10px'}}>Y</span>
+                                <UnitInput
+                                    unit='mm'
+                                    min={0}
+                                    max={BeamboxConstant.dimension.height/10}
+                                    defaultValue={BeamboxPreference.read('precut_y')}
+                                    getValue={val => this._updateBeamboxPreference('precut_y', val) || 0}
+                                    className={{half: true}}
+                                />
+                            </Controls>
+                        </div> : null
+                    }
 
                     <div className='subtitle'>{lang.settings.groups.mask}</div>
 

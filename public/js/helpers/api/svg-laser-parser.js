@@ -314,6 +314,10 @@ define([
                     args.push('-pro');
                 }
 
+                if (opts.model === 'fbm1') {
+                    args.push('-beamo');
+                }
+
                 if (opts.codeType === 'gcode') {
                     args.push('-gc')
                 }
@@ -321,6 +325,15 @@ define([
                 if (window.svgCanvas && svgCanvas.getRotaryMode()) {
                     args.push('-spin');
                     args.push(svgCanvas.runExtensions('getRotaryAxisAbsoluteCoord'));
+                }
+
+                if (i18n.getActiveLang() === 'zh-tw' && BeamboxPreference.read('blade_radius') && BeamboxPreference.read('blade_radius') > 0) {
+                    args.push('-blade');
+                    args.push(BeamboxPreference.read('blade_radius'));
+                    if (BeamboxPreference.read('blade_precut')) {
+                        args.push('-precut');
+                        args.push(`${BeamboxPreference.read('precut_x') || 0},${BeamboxPreference.read('precut_y') || 0}`);
+                    }
                 }
 
                 events.onMessage = function(data) {
