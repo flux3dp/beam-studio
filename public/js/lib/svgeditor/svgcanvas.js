@@ -5416,10 +5416,10 @@ define([
         // arbitrary transform lists, but makes some assumptions about how the transform list
         // was obtained
         // * import should happen in top-left of current zoomed viewport
-        this.importSvgString = function (xmlString, _type, layerName, unit) {
+        this.importSvgString = function (xmlString, _type, layerName) {
             const batchCmd = new svgedit.history.BatchCommand('Import Image');
 
-            function parseSvg(svg, type, unit) {
+            function parseSvg(svg, type) {
                 function _removeSvgText() {
                     if($(svg).find('text').length) {
                         AlertActions.showPopupInfo('', LANG.popup.no_support_text);
@@ -5508,7 +5508,7 @@ define([
 
                     return symbols;
                 }
-                function _parseSvgByColor(svg, unit) {
+                function _parseSvgByColor(svg) {
                     function getColorOfElement(node) {
                         let color;
                         color = node.getAttribute('stroke');
@@ -5581,7 +5581,7 @@ define([
                     const coloredLayerNodes = Object.values(groupColorMap);
 
                     const symbols = coloredLayerNodes.map(node => {
-                        const wrappedSymbolContent = _symbolWrapper(node, unit);
+                        const wrappedSymbolContent = _symbolWrapper(node);
                         const color = node.getAttribute('data-color');
                         if (color) {
                             wrappedSymbolContent.setAttribute('data-color', color);
@@ -5601,7 +5601,7 @@ define([
 
                     const layerNodes = Array.from(svg.childNodes).filter(node => !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName));
                     const type = isText ? 'text' : 'nolayer';
-                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren, type);
+                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes, isText ? 'text' : null), [], batchCmd, defChildren, type);
 
                     return [symbol];
                 }
@@ -5611,7 +5611,7 @@ define([
                 switch (type) {
                     case 'color':
                         return {
-                            symbols: _parseSvgByColor(svg, unit),
+                            symbols: _parseSvgByColor(svg),
                             confirmedType: 'color'
                         };
 
@@ -5780,7 +5780,7 @@ define([
                     'cm': 10 * 10,
                     'mm': 10,
                     'px': svgUnitScaling,
-                    'pt': 1
+                    'text': 1
                 };
 
                 if (!isNaN(val)) {
@@ -5800,7 +5800,7 @@ define([
             const newDoc = svgedit.utilities.text2xml(xmlString);
             svgCanvas.prepareSvg(newDoc);
             const svg = svgdoc.adoptNode(newDoc.documentElement);
-            const {symbols, confirmedType} = parseSvg(svg, _type, unit);
+            const {symbols, confirmedType} = parseSvg(svg, _type);
 
             const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
 

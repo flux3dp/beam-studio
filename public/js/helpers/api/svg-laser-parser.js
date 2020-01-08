@@ -443,7 +443,7 @@ define([
                             }
                             origPath = origPath[0];
                             origPath = origPath.substring(12, origPath.length - 1);
-                            if (origPath.substring(0, 10) === 'data:image') {
+                            if (origPath.startsWith('data:')) {
                                 continue;
                             }
                             let newPath = origPath.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');

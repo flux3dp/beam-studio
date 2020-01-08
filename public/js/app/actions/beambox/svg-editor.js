@@ -5505,7 +5505,7 @@ define([
                     if (pathMatch[1]) return pathMatch[1];
                     return "";
                 }
-                function readSVG(blob, type, layerName, unit) {
+                function readSVG(blob, type, layerName) {
                     return new Promise((resolve, reject) => {
                         var reader = new FileReader();
                         reader.onloadend = function (e) {
@@ -5592,7 +5592,7 @@ define([
                             }
 
                             const modifiedSvgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;').replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
-                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName, unit);
+                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName);
 
                             //Apply style
                             svgCanvas.svgToString($('#svgcontent')[0], 0);
@@ -5618,32 +5618,8 @@ define([
                 }
                 editor.readSVG = readSVG;
                 const importSvg = file => {
-                    let getSvgUnit = file => {
-                        return new Promise(resolve => {
-                            let unit;
-                            let fileReader = new FileReader();
-                            fileReader.onloadend = function (e) {
-                                let svgString = e.target.result;
-                                const matchX = svgString.match(/ x="[^"]*/);
-                                const matchWidth = svgString.match(/ width="[^"]*/);
-                                if (matchX) {
-                                    unit = matchX[0].substring(4).match(/[A-Za-z]+/);
-                                }
-                                if (!unit && matchWidth) {
-                                    unit = matchWidth[0].substring(8).match(/[A-Za-z]+/);
-                                }
-                                console.log(unit);
-                                // if unit is given backend will calculate unit for us, output unit will be px,
-                                // else we assume unit is 1:1, using pt.
-                                resolve(unit ? 'px' : 'pt');
-                            }
-                            fileReader.readAsText(file);
-                        });
-                        
-                    }
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file);
-                        const unit = await getSvgUnit(file);
                         if (result !== 'ok') {
                             $('#dialog_box').hide();
                             switch (result) {
@@ -5672,9 +5648,9 @@ define([
                         }
 
                         if (type === 'color') {
-                            await readSVG(outputs['strokes'], type, null, unit);
+                            await readSVG(outputs['strokes'], type);
 
-                            await readSVG(outputs['colors'], type, null, unit);
+                            await readSVG(outputs['colors'], type);
                         } else {
                             await readSVG(file, type);
                         }
