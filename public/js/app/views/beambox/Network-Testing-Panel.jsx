@@ -6,6 +6,7 @@ define([
     'app/actions/alert-actions',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
+    'app/constants/keycode-constants',
     'helpers/i18n'
 ], function(
     React,
@@ -15,6 +16,7 @@ define([
     AlertActions,
     ProgressActions,
     ProgressConstants,
+    KeycodeConstants,
     i18n
 ) {
     const LANG = i18n.lang.beambox.network_testing_panel;
@@ -173,6 +175,13 @@ define([
             return;
         }
 
+        _onInputKeydown(e) {
+            if (e.keyCode === KeycodeConstants.KEY_RETURN) {
+                this._onInputBlur();
+                this._onStart();
+            }
+        }
+
         _close() {
             this.setState({show: false});
         }
@@ -201,6 +210,7 @@ define([
                                         ref='textInput'
                                         defaultValue={this.defaultValue}
                                         onBlur={this._onInputBlur.bind(this)}
+                                        onKeyDown={this._onInputKeydown.bind(this)}
                                         >    
                                     </input>
                                 </div>
