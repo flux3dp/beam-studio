@@ -78,10 +78,7 @@ define([
                 AlertActions.showPopupError('empty_ip', LANG.empty_ip);
                 return;
             }
-            let res = this._createSession();
-            if (!res) {
-                return;
-            }
+            this._createSession();
             this.stopFlag = false;
             this.pingTimes = 0;
             this.success = 0;
@@ -110,11 +107,9 @@ define([
                 });
             }
             catch (e) {
-                AlertActions.showPopupError('create_sessioj_fail', `${LANG.fail_to_start_network_test} ${e}`);
+                AlertActions.showPopupError('create_session_fail', `${LANG.fail_to_start_network_test}\n${e}`);
                 throw e;
-                return false;
             }
-            return true;
         }
 
         _pingTarget() {
