@@ -224,7 +224,7 @@ define([
         $(path).attr({
             'id': svgCanvas.getNextId(),
             'd': pathD,
-            'transform': transform,
+            'transform': transform || '',
             'fill': isFill ? color : '#fff',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,
