@@ -978,6 +978,10 @@ define([
         // noCall - Optional boolean that when true does not call the "selected" handler
         var clearSelection = this.clearSelection = function (noCall) {
             if (selectedElements[0] != null) {
+                if (tempGroup) {
+                    tempGroup = false;
+                    svgCanvas.ungroupTempGroup();
+                }
                 var i, elem,
                     len = selectedElements.length;
                 for (i = 0; i < len; ++i) {
@@ -986,10 +990,6 @@ define([
                         break;
                     }
                     selectorManager.releaseSelector(elem);
-                    if (tempGroup) {
-                        tempGroup = false;
-                        svgCanvas.ungroupTempGroup();
-                    }
 
                     selectedElements[i] = null;
                 }
@@ -9159,6 +9159,7 @@ define([
 
                 // update selection
                 addToSelection(children);
+                return children;
             }
         };
 
