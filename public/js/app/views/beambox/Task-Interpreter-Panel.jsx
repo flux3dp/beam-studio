@@ -195,7 +195,7 @@ define([
                 let start = new Date();
                 this.gcodelist = gcodeList;
                 this._renderGcodeCanvas();
-                console.log('4 canvas:', new Date() - start);
+                console.log('canvas:', new Date() - start);
                 this.setState({
                     file: 'Current Scene',
                     firstIndex: 0,
@@ -241,10 +241,8 @@ define([
             ctx.beginPath();
             ctx.lineWidth = 1;
             scale *= 10;
-            console.log(this.gcodelist.length);
             for (let i = 0; i < this.gcodelist.length; i++) {
                 if (i % 10000 === 0) {
-                    console.log(i);
                 }
                 let command = this.gcodelist[i];
                 if (command.startsWith('G1 ')) {
