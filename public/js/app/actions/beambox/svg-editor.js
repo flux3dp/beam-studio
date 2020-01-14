@@ -1919,6 +1919,7 @@ define([
                                 italic: svgCanvas.getItalic()
                             });
                             ObjectPanelsController.setLetterSpacing(svgCanvas.getLetterSpacing());
+                            ObjectPanelsController.setLineSpacing(svgCanvas.getTextLineSpacing());
                             ObjectPanelsController.setFontIsFill(svgCanvas.getFontIsFill());
                         } // text
                         else if (el_name === 'image') {

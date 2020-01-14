@@ -2851,7 +2851,7 @@ define([
             var matrix;
             var last_x, last_y;
             var allow_dbl;
-            let lineSpacing = 100;
+            let lineSpacing = 1;
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
@@ -3236,9 +3236,17 @@ define([
                     textinput = elem;
                     //			$(textinput).blur(hideCursor);
                 },
+                updateLineSpacing: (textElem) => {
+                    let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
+                    const charHeight = parseFloat(canvas.getFontSize());
+                    for (let i = 0; i < tspans.length; i++) {
+                        $(tspans[i]).attr('y', $(textElem).attr('y') + i * lineSpacing * charHeight);
+                    }
+                },
                 renderMultiLineText: (textElem, val) => {
                     let lines = val.split('\x0b');
                     let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
+                    const charHeight = parseFloat(canvas.getFontSize());
                     //console.log(lines);
                     for (let i = 0; i < Math.max(lines.length, tspans.length); i++) {
                         if (i < lines.length) {
@@ -3250,7 +3258,7 @@ define([
                                 const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
                                 $(tspan).attr({
                                     'x': $(textElem).attr('x'),
-                                    'y': $(textElem).attr('y') + i * lineSpacing,
+                                    'y': $(textElem).attr('y') + i * lineSpacing * charHeight,
                                     'vector-effect': 'non-scaling-stroke',
                                 });
                                 tspan.textContent = lines[i];
@@ -3322,7 +3330,7 @@ define([
                         if (!len) {
                             end = {
                                 x: tspanbb.x,
-                                y: tspanbb.y + i * lineSpacing,
+                                y: tspanbb.y + i * lineSpacing * charHeight,
                                 width: 0,
                                 height: charHeight
                             };
@@ -3346,7 +3354,7 @@ define([
                             // TODO: Decide if y, width and height are actually necessary
                             chardata[i].push({
                                 x: start.x,
-                                y: tspanbb.y + i * lineSpacing,
+                                y: tspanbb.y + i * lineSpacing * charHeight,
                                 width: end.x - start.x,
                                 height: charHeight
                             });
@@ -3356,7 +3364,7 @@ define([
                         if (lines[i] !== '') {
                             chardata[i].push({
                                 x: end.x,
-                                y: tspanbb.y + i * lineSpacing,
+                                y: tspanbb.y + i * lineSpacing * charHeight,
                                 width: 0,
                                 height: charHeight
                             });
@@ -7535,6 +7543,25 @@ define([
             }
         };
 
+        this.setTextLineSpacing = function (val) {
+            changeSelectedAttribute('data-line-spacing', val);
+            if (!selectedElements[0].textContent) {
+                textActions.setCursor();
+            }
+            textActions.setLineSpacing(val);
+            textActions.updateLineSpacing(selectedElements[0]);
+        };
+
+        this.getTextLineSpacing = () => {
+            let textElem = selectedElements[0];
+            if (textElem != null && textElem.tagName === 'text' &&
+                selectedElements[1] == null) {
+                let val = textElem.getAttribute('data-line-spacing') || 1;
+                textActions.setLineSpacing(val);
+                return val;
+            }
+            return false;
+        }
 
         // Function: setFontColor
         // Set the new font color
@@ -7569,6 +7596,7 @@ define([
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
             }
+            textActions.updateLineSpacing(selectedElements[0]);
         };
 
         // Function: getText
