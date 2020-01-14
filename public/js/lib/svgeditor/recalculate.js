@@ -150,6 +150,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     case 'polyline':
     case 'polygon':
     case 'path':
+    case 'g':
       break;
     default:
       if ((tlist.numberOfItems === 1 && tlist.getItem(0).type === 1) ||
@@ -514,8 +515,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           // Convert stroke
           // TODO: Find out if this should actually happen somewhere else
           var sw = child.getAttribute('stroke-width');
-          if (child.getAttribute('stroke') !== 'none' && !isNaN(sw)) {
+          if (child.getAttribute('stroke') !== 'none' && sw && !isNaN(sw)) {
             var avg = (Math.abs(em.a) + Math.abs(em.d)) / 2;
+            console.log(sw * avg);
             child.setAttribute('stroke-width', sw * avg);
           }
 

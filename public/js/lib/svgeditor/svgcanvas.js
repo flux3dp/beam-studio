@@ -8706,14 +8706,14 @@ define([
                             $(topChild).attr('fill', '#FFF');
                         }
                     }
-                    //$(topChild).removeAttr('stroke-width');
+                    $(topChild).removeAttr('stroke-width');
                     $(topChild).attr('vector-effect', 'non-scaling-stroke');
                     $(topChild).attr('id', getNextId());
                     $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
-                //svgedit.recalculate.recalculateDimensions(g);
+                svgedit.recalculate.recalculateDimensions(g);
                 selectOnly([g], true);
             }
         }
