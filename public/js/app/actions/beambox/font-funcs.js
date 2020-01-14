@@ -207,8 +207,8 @@ define([
             let fileReader = new FileReader();
             fileReader.onloadend = function (e) {
                 let svgString = e.target.result;
-                const pathD = svgString.match(/(?<= d=")[^"]+/)
-                const transform = svgString.match(/(?<= transform=")[^"]+/);
+                const pathD = svgString.match(/(?<= d=")[^"]+/g);
+                const transform = svgString.match(/(?<= transform=")[^"]+/g);
                 resolve({pathD, transform});
             }
             if (isFill) {
@@ -223,8 +223,9 @@ define([
         color = color !== 'none' ? color : $textElement.attr('fill');
         $(path).attr({
             'id': svgCanvas.getNextId(),
-            'd': pathD,
-            'transform': transform || '',
+            'd': pathD.join(''),
+            //Note: Assuming transform matrix for all d are the same
+            'transform': transform[0] || '',
             'fill': isFill ? color : '#fff',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,

@@ -2851,11 +2851,11 @@ define([
             var matrix;
             var last_x, last_y;
             var allow_dbl;
+            let lineSpacing = 100;
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
                 $(textinput).focus();
-
                 if (!arguments.length) {
                     if (empty) {
                         index = 0;
@@ -2867,12 +2867,16 @@ define([
                     }
                 }
 
-                var charbb;
-                charbb = chardata[index];
                 if (!empty) {
                     textinput.setSelectionRange(index, index);
                 }
+                let charbb;
+                let {rowIndex, index: columnIndex} = indexToRowAndIndex(index);
+                charbb = chardata[rowIndex][columnIndex];
+
+                //console.log(charbb);
                 cursor = svgedit.utilities.getElem('text_cursor');
+
                 if (!cursor) {
                     cursor = document.createElementNS(NS.SVG, 'line');
                     svgedit.utilities.assignAttributes(cursor, {
@@ -2890,9 +2894,8 @@ define([
                     }, 600);
                 }
 
-                var start_pt = ptToScreen(charbb.x, textbb.y);
-                var end_pt = ptToScreen(charbb.x, (textbb.y + textbb.height));
-
+                var start_pt = ptToScreen(charbb.x, charbb.y);
+                var end_pt = ptToScreen(charbb.x, charbb.y + charbb.height);
                 svgedit.utilities.assignAttributes(cursor, {
                     x1: start_pt.x,
                     y1: start_pt.y,
@@ -2905,6 +2908,15 @@ define([
                 if (selblock) {
                     selblock.setAttribute('d', '');
                 }
+            }
+
+            function indexToRowAndIndex(index) {
+                let rowIndex = 0;
+                while (index >= chardata[rowIndex].length) {
+                    index -= chardata[rowIndex].length;
+                    rowIndex += 1;
+                }
+                return {rowIndex, index};
             }
 
             function setSelection(start, end, skipInput) {
@@ -2930,23 +2942,36 @@ define([
                     svgedit.utilities.getElem('selectorParentGroup').appendChild(selblock);
                 }
 
-                var startbb = chardata[start];
-                var endbb = chardata[end];
+                let {rowIndex: startRowIndex, index: startIndex} = indexToRowAndIndex(start);
+                let {rowIndex: endRowIndex, index: endIndex} = indexToRowAndIndex(end);
+
+                var startbb = chardata[startRowIndex][startIndex];
+                var endbb = chardata[endRowIndex][endIndex];
 
                 cursor.setAttribute('visibility', 'hidden');
+                let dString;
+                let points = [];
+                if (startRowIndex === endRowIndex) {
+                    points.push(ptToScreen(startbb.x, startbb.y));
+                    points.push(ptToScreen(endbb.x, endbb.y));
+                    points.push(ptToScreen(endbb.x, endbb.y + endbb.height));
+                    points.push(ptToScreen(startbb.x, startbb.y + startbb.height));
+                } else {
+                    points.push(ptToScreen(startbb.x, startbb.y));
+                    points.push(ptToScreen(textbb.x + textbb.width, startbb.y));
+                    points.push(ptToScreen(textbb.x + textbb.width, endbb.y));
+                    points.push(ptToScreen(endbb.x, endbb.y));
+                    points.push(ptToScreen(endbb.x, endbb.y + endbb.height));
+                    points.push(ptToScreen(textbb.x, endbb.y + endbb.height));
+                    points.push(ptToScreen(textbb.x, startbb.y + startbb.height));
+                    points.push(ptToScreen(startbb.x, startbb.y + startbb.height));
 
-                var tl = ptToScreen(startbb.x, textbb.y),
-                    tr = ptToScreen(startbb.x + (endbb.x - startbb.x), textbb.y),
-                    bl = ptToScreen(startbb.x, textbb.y + textbb.height),
-                    br = ptToScreen(startbb.x + (endbb.x - startbb.x), textbb.y + textbb.height);
-
-                var dstr = 'M' + tl.x + ',' + tl.y +
-                    ' L' + tr.x + ',' + tr.y +
-                    ' ' + br.x + ',' + br.y +
-                    ' ' + bl.x + ',' + bl.y + 'z';
+                }
+                points = points.map(p => `${p.x},${p.y}`);
+                dString = `M ${points.join(' L ')} z`;
 
                 svgedit.utilities.assignAttributes(selblock, {
-                    d: dstr,
+                    d: dString,
                     'display': 'inline'
                 });
             }
@@ -2958,26 +2983,32 @@ define([
                 pt.y = mouse_y;
 
                 // No content, so return 0
-                if (chardata.length === 1) {
+                if (chardata.length === 1 && chardata[0].length === 1) {
                     return 0;
                 }
                 // Determine if cursor should be on left or right of character
                 var charpos = curtext.getCharNumAtPosition(pt);
+                let rowIndex = 0;
                 if (charpos < 0) {
                     // Out of text range, look at mouse coords
-                    charpos = chardata.length - 2;
-                    if (mouse_x <= chardata[0].x) {
+                    charpos = chardata[0].length - 2;
+                    if (mouse_x <= chardata[0][0].x) {
                         charpos = 0;
                     }
-                } else if (charpos >= chardata.length - 2) {
-                    charpos = chardata.length - 2;
+                } else {
+                    let index = charpos;
+                    while (index >= chardata[rowIndex].length - 1) {
+                        index -= chardata[rowIndex].length - 1;
+                        rowIndex += 1;
+                    }
+                    const charbb = chardata[rowIndex][index];
+                    const mid = charbb.x + (charbb.width / 2);
+                    if (mouse_x > mid) {
+                        charpos++;
+                    }
                 }
-                var charbb = chardata[charpos];
-                var mid = charbb.x + (charbb.width / 2);
-                if (mouse_x > mid) {
-                    charpos++;
-                }
-                return charpos;
+                //Add rowIndex because charbb = charnum + 1 in every row
+                return charpos + rowIndex;
             }
 
             function setCursorFromPoint(mouse_x, mouse_y) {
@@ -3101,16 +3132,45 @@ define([
 
                     if (
                         evt.target !== curtext &&
+                        evt.target.parentNode !== curtext &&
                         mouse_x < last_x + 2 &&
                         mouse_x > last_x - 2 &&
                         mouse_y < last_y + 2 &&
                         mouse_y > last_y - 2) {
-
                         textActions.toSelectMode(true);
                     }
 
                 },
                 setCursor: setCursor,
+                moveCursourUp: () => {
+                    let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
+                    if (rowIndex === 0) {
+                        textinput.selectionEnd = textinput.selectionStart = 0;
+                    } else {
+                        let newCursorIndex = 0;
+                        rowIndex -= 1;
+                        for (let i = 0; i < rowIndex; i++) {
+                            newCursorIndex += chardata[i].length;
+                        }
+                        newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
+                        textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
+                    }
+                },
+                moveCursourDown: () => {
+                    let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
+                    if (rowIndex === chardata.length -1) {
+                        textinput.selectionEnd += chardata[rowIndex].length - index - 1;
+                        textinput.selectionStart = textinput.selectionEnd;
+                    } else {
+                        let newCursorIndex = 0;
+                        rowIndex += 1;
+                        for (let i = 0; i < rowIndex; i++) {
+                            newCursorIndex += chardata[i].length;
+                        }
+                        newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
+                        textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
+                    }
+                },
                 toEditMode: function (x, y) {
                     allow_dbl = false;
                     current_mode = 'textedit';
@@ -3176,16 +3236,48 @@ define([
                     textinput = elem;
                     //			$(textinput).blur(hideCursor);
                 },
+                renderMultiLineText: (textElem, val) => {
+                    let lines = val.split('\x0b');
+                    let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
+                    //console.log(lines);
+                    for (let i = 0; i < Math.max(lines.length, tspans.length); i++) {
+                        if (i < lines.length) {
+                            // Add a space for empty line to render select bbox
+                            if (lines[i] === '') lines[i] = ' ';
+                            if (tspans[i]) {
+                                tspans[i].textContent = lines[i];
+                            } else {
+                                const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                                $(tspan).attr({
+                                    'x': $(textElem).attr('x'),
+                                    'y': $(textElem).attr('y') + i * lineSpacing,
+                                    'vector-effect': 'non-scaling-stroke',
+                                });
+                                tspan.textContent = lines[i];
+                                textElem.appendChild(tspan);
+                            }
+                        } else {
+                            if (tspans[i]) {
+                                tspans[i].remove();
+                            }
+                        }
+                    }
+                    //console.log(lines);
+                    selectorManager.requestSelector(textElem).resize();
+                },
+                setLineSpacing: (val) => {
+                    lineSpacing = val;
+                },
                 clear: function () {
                     if (current_mode === 'textedit') {
                         textActions.toSelectMode();
                     }
                 },
-                init: function (inputElem) {
+                init: function (textElem) {
                     if (!curtext) {
                         return;
                     }
-                    var i, end;
+                    let tspans = [];
                     //				if (svgedit.browser.supportsEditableText()) {
                     //					curtext.select();
                     //					return;
@@ -3197,58 +3289,83 @@ define([
                         selectorManager.requestSelector(curtext).showGrips(false);
                     }
 
-                    var str = curtext.textContent;
-                    var len = str.length;
+                    
+                    tspans = Array.from(curtext.childNodes).filter((child) => child.tagName === 'tspan');
 
-                    var xform = curtext.getAttribute('transform');
+                    let rowNumbers = tspans.length;
+                    chardata = [];
+
+                    const xform = curtext.getAttribute('transform');
 
                     textbb = svgedit.utilities.getBBox(curtext);
 
                     matrix = xform ? svgedit.math.getMatrix(curtext) : null;
+                    const charHeight = parseFloat(canvas.getFontSize());
 
-                    chardata = [];
-                    chardata.length = len;
-                    textinput.focus();
-
-                    $(curtext).unbind('dblclick', selectWord).dblclick(selectWord);
-
-                    if (!len) {
-                        end = {
+                    if (rowNumbers === 0) {
+                        chardata.push([{
                             x: textbb.x + (textbb.width / 2),
-                            width: 0
-                        };
+                            y: textbb.y,
+                            width: 0,
+                            height: charHeight
+                        }]);
                     }
 
-                    for (i = 0; i < len; i++) {
-                        var start = curtext.getStartPositionOfChar(i);
-                        end = curtext.getEndPositionOfChar(i);
+                    let lines = textinput.value.split('\x0b');
 
-                        if (!svgedit.browser.supportsGoodTextCharPos()) {
-                            var offset = canvas.contentW * current_zoom;
-                            start.x -= offset;
-                            end.x -= offset;
-
-                            start.x /= current_zoom;
-                            end.x /= current_zoom;
+                    for (let i = 0; i < rowNumbers; ++i) {
+                        chardata.push([]);
+                        const str = tspans[i].textContent;
+                        const len = str.length;
+                        let end;
+                        let tspanbb = svgedit.utilities.getBBox(tspans[i]);
+                        if (!len) {
+                            end = {
+                                x: tspanbb.x,
+                                y: tspanbb.y + i * lineSpacing,
+                                width: 0,
+                                height: charHeight
+                            };
                         }
 
-                        // Get a "bbox" equivalent for each character. Uses the
-                        // bbox data of the actual text for y, height purposes
+                        for (let j = 0; j < len; ++j) {
+                            let start = tspans[i].getStartPositionOfChar(j);
+                            end = tspans[i].getEndPositionOfChar(j);
 
-                        // TODO: Decide if y, width and height are actually necessary
-                        chardata[i] = {
-                            x: start.x,
-                            y: textbb.y, // start.y?
-                            width: end.x - start.x,
-                            height: textbb.height
-                        };
-                    }
+                            if (!svgedit.browser.supportsGoodTextCharPos()) {
+                                var offset = canvas.contentW * current_zoom;
+                                start.x -= offset;
+                                end.x -= offset;
+    
+                                start.x /= current_zoom;
+                                end.x /= current_zoom;
+                            }
+                            // Get a "bbox" equivalent for each character. Uses the
+                            // bbox data of the actual text for y, height purposes
 
-                    // Add a last bbox for cursor at end of text
-                    chardata.push({
-                        x: end.x,
-                        width: 0
-                    });
+                            // TODO: Decide if y, width and height are actually necessary
+                            chardata[i].push({
+                                x: start.x,
+                                y: tspanbb.y + i * lineSpacing,
+                                width: end.x - start.x,
+                                height: charHeight
+                            });
+                        }
+                        // Add a last bbox for cursor at end of text
+                        // Because we insert a space for empty line, we don't add last bbox for empty line
+                        if (lines[i] !== '') {
+                            chardata[i].push({
+                                x: end.x,
+                                y: tspanbb.y + i * lineSpacing,
+                                width: 0,
+                                height: charHeight
+                            });
+                        }
+                    };
+
+                    textinput.focus();
+                    $(curtext).unbind('dblclick', selectWord).dblclick(selectWord);
+                    
                     setSelection(textinput.selectionStart, textinput.selectionEnd, true);
                 }
             };
@@ -7470,8 +7587,9 @@ define([
         // Parameters:
         // val - String with the new text
         this.setTextContent = function (val) {
-            changeSelectedAttribute('#text', val);
-            textActions.init(val);
+            let textElement = selectedElements[0];
+            textActions.renderMultiLineText(textElement, val);
+            textActions.init(textElement);
             textActions.setCursor();
         };
 
@@ -8588,12 +8706,14 @@ define([
                             $(topChild).attr('fill', '#FFF');
                         }
                     }
+                    //$(topChild).removeAttr('stroke-width');
                     $(topChild).attr('vector-effect', 'non-scaling-stroke');
                     $(topChild).attr('id', getNextId());
                     $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
+                //svgedit.recalculate.recalculateDimensions(g);
                 selectOnly([g], true);
             }
         }

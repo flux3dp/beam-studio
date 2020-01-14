@@ -1903,7 +1903,8 @@ define([
                             }
                             $('#font_family').val(elem.getAttribute('font-family'));
                             $('#font_size').val(elem.getAttribute('font-size'));
-                            $('#text').val(elem.textContent);
+                            let multiLineTextContent = Array.from(elem.childNodes).map(child => child.textContent).join('\x0b');
+                            $('#text').val(multiLineTextContent);
                             if (svgCanvas.addedNew) {
                                 // Timeout needed for IE9
                                 setTimeout(function () {
@@ -3257,11 +3258,24 @@ define([
 
             $('#text').bind('keyup input', function (evt) {
                 evt.stopPropagation();
+                if (evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
+                    let oldSelectionStart = this.selectionStart;
+                    this.value = this.value.substring(0, this.selectionStart) + '\x0b' + this.value.substring(this.selectionEnd);
+                    this.selectionStart = oldSelectionStart + 1;
+                    this.selectionEnd = oldSelectionStart + 1;
+                }
                 svgCanvas.setTextContent(this.value);
             });
             $('#text').bind('keydown', function(evt) {
                 evt.stopPropagation();
-                if (evt.keyCode === KeycodeConstants.KEY_RETURN) {
+                if (evt.keyCode === KeycodeConstants.KEY_UP) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.moveCursourUp();
+                } else if (evt.keyCode === KeycodeConstants.KEY_DOWN) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.moveCursourDown();
+                }
+                if (!evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
                     svgCanvas.textActions.toSelectMode(true);
                 }
             });
