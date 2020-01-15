@@ -396,6 +396,7 @@ define(function() {
             image_downsampling: 'Bitmap Image Quality',
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
+            font_substitute: 'Substitute Font For Unsupported Char.',
             none: 'None',
             close: 'Close',
             cancel: 'CANCEL',

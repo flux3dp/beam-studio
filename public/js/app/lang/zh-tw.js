@@ -395,6 +395,7 @@ define(function() {
             image_downsampling: '點陣圖畫質',
             mask: '工作範圍剪裁',
             optimization: '優化',
+            font_substitute: '自動替換字體',
             none: '無',
             close: '關閉',
             groups: {
