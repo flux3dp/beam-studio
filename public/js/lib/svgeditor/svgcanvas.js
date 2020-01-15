@@ -35,6 +35,8 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'helpers/local-storage',
     'helpers/shortcuts',
     'lib/svgeditor/imagetracer'
@@ -46,6 +48,8 @@ define([
     PreviewModeController,
     BeamboxActions,
     Constant,
+    ProgressActions,
+    ProgressConstants,
     LocalStorage,
     shortcuts,
     ImageTracer
@@ -8644,6 +8648,7 @@ define([
             }
             let batchCmd = new svgedit.history.BatchCommand('Vectorize Image');
             const imgUrl = $(img).attr('xlink:href');
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.photo_edit_panel.processing);
             ImageTracer.imageToSVG(imgUrl, svgstr => {
                 const id = getNextId();
                 let g = addSvgElementFromJson({
@@ -8683,6 +8688,7 @@ define([
                 selectorManager.requestSelector(g).resize();
                 
                 addCommandToHistory(batchCmd);
+                ProgressActions.close();
             });
         }
 
