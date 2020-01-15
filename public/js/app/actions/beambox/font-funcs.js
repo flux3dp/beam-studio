@@ -182,8 +182,10 @@ define([
             $textElement.remove();
             return;
         }
-        const newFontFamily = substitutedFamily($textElement);
-        $textElement.attr('font-family', newFontFamily);
+        if (BeamboxPreference.read('font-substitute') !== false) {
+            const newFontFamily = substitutedFamily($textElement);
+            $textElement.attr('font-family', newFontFamily);
+        }
         console.log($textElement.attr('font-family'));
         $textElement.removeAttr('stroke-width');
         await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
@@ -225,7 +227,7 @@ define([
             'id': svgCanvas.getNextId(),
             'd': pathD.join(''),
             //Note: Assuming transform matrix for all d are the same
-            'transform': transform[0] || '',
+            'transform': transform ? transform[0] : '',
             'fill': isFill ? color : '#fff',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,
@@ -234,10 +236,19 @@ define([
             'stroke-dasharray': 'none',
             'vector-effect': 'non-scaling-stroke',
         });
-
+        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
+        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
         svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
-        $textElement.remove();
+        let textElem = $textElement[0];
+        let parent = textElem.parentNode;
+        let nextSibling = textElem.nextSibling;
+        let elem = parent.removeChild(textElem);
+        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+        if (!batchCmd.isEmpty()) {
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        }
     }
 
     const requestToConvertTextToPath = async ($textElement, family, weight, style) => {
@@ -310,8 +321,18 @@ define([
             'vector-effect': 'non-scaling-stroke',
         });
 
+        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
-        $textElement.remove();
+        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
+        let textElem = $textElement[0];
+        let parent = textElem.parentNode;
+        let nextSibling = textElem.nextSibling;
+        let elem = parent.removeChild(textElem);
+        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+        if (!batchCmd.isEmpty()) {
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        }
 
         return;
     };
