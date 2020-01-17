@@ -1269,6 +1269,7 @@ define(function() {
                 font_size: 'Size',
                 fill: 'Infill',
                 letter_spacing: 'Letter Spacing',
+                line_spacing: 'Line Spacing',
                 convert_to_path: 'Convert to Path',
                 convert_to_path_to_get_precise_result: 'Some fonts can\'t be parsed correctly. Please convert text to path before submitting to Beambox',
                 wait_for_parsing_font: 'Parsing font... Please wait a second',
