@@ -209,6 +209,7 @@ define([
             let fileReader = new FileReader();
             fileReader.onloadend = function (e) {
                 let svgString = e.target.result;
+                console.log(svgString);
                 const pathD = svgString.match(/(?<= d=")[^"]+/g);
                 const transform = svgString.match(/(?<= transform=")[^"]+/g);
                 resolve({pathD, transform});
@@ -219,6 +220,9 @@ define([
                 fileReader.readAsText(outputs.data['strokes']);
             }
         });
+        if (!pathD) {
+            return;
+        }
 
         const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
         let color = $textElement.attr('stroke');
