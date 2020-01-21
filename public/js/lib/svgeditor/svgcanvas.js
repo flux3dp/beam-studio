@@ -8754,7 +8754,10 @@ define([
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
+                let angle = svgedit.utilities.getRotationAngle(g);
+                if (angle) canvas.setRotationAngle(0, true, g);
                 svgedit.recalculate.recalculateDimensions(g);
+                if (angle) canvas.setRotationAngle(angle, true, g);
                 selectOnly([g], true);
             }
         }

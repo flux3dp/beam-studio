@@ -524,6 +524,27 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
         }
       }
       tlist.clear();
+    } else if (N > 1) {
+      // If not either of above, concat all transforms and pass down
+      let m = svgedit.math.transformListToTransform(tlist).matrix;
+      let children = selected.childNodes;
+      let c = children.length;
+      while (c--) {
+        let child = children.item(c);
+        if (child.nodeType == 1) {
+          let oldStartTransform = context_.getStartTransform();
+          context_.setStartTransform(child.getAttribute('transform'));
+          let childTlist = svgedit.transformlist.getTransformList(child);
+
+          let em = svgroot.createSVGTransform();
+          em.setMatrix(m);
+
+          childTlist.appendItem(em);
+          batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+          context_.setStartTransform(oldStartTransform);
+        }
+      }
+      tlist.clear();
     }
     // else it was just a rotate
     else {
