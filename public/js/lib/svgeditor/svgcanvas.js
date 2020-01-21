@@ -8681,9 +8681,16 @@ define([
                 this.moveElements([dx], [dy], [g], false);
                 this.setRotationAngle(angle, true, g);
                 g.childNodes.forEach(child => {
-                    $(child).attr('id', getNextId());
-                    $(child).attr('vector-effect', "non-scaling-stroke");
-                    $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                    console.log($(child).attr('opacity'));
+                    if ($(child).attr('opacity') === 0) {
+                        $(child).remove();
+                    } else {
+                        $(child).removeAttr('opacity');
+                        $(child).attr('id', getNextId());
+                        $(child).attr('vector-effect', "non-scaling-stroke");
+                        $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+
+                    }
                 });
                 selectorManager.requestSelector(g).resize();
                 
