@@ -3276,6 +3276,7 @@ define([
                         }
                     }
                     //console.log(lines);
+                    svgedit.recalculate.recalculateDimensions(textElem);
                     selectorManager.requestSelector(textElem).resize();
                 },
                 setLineSpacing: (val) => {

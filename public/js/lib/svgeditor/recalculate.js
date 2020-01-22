@@ -663,7 +663,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
         }
         // for text last transform matrix defined its center position before recalculate
         let lastM = tlist.getItem(tlist.numberOfItems - 1);
-        oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
+        if (lastM.type === 1) {
+          oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
+        }
 
       } else {
         var a = angle * Math.PI / 180;
@@ -829,11 +831,10 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     if (operation == 1 || operation == 2 || operation == 3) {
       svgedit.coords.remapElement(selected, changes, m);
     } // if we are remapping
-
     // if it was a translate, put back the rotate at the new center
     if (operation == 2) {
       if (angle) {
-        if (!svgedit.math.hasMatrixTransform(tlist)) {
+        if (!svgedit.math.hasMatrixTransform(tlist) && selected.tagName !== 'text') {
           newcenter = {
             x: oldcenter.x + m.e,
             y: oldcenter.y + m.f
