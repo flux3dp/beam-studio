@@ -98,7 +98,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     }
     // End here if all it has is a rotation
     if (tlist.numberOfItems === 1 &&
-        svgedit.utilities.getRotationAngle(selected)) {return null;}
+        svgedit.utilities.getRotationAngle(selected) && selected.tagName !== 'text') {return null;}
   }
 
   // if this element had no transforms, we are done
@@ -662,11 +662,12 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           }
         }
         // for text last transform matrix defined its center position before recalculate
-        let lastM = tlist.getItem(tlist.numberOfItems - 1);
-        if (lastM.type === 1) {
-          oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
+        if (tlist.numberOfItems > 0) {
+          let lastM = tlist.getItem(tlist.numberOfItems - 1);
+          if (lastM.type === 1) {
+            oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
+          }
         }
-
       } else {
         var a = angle * Math.PI / 180;
         if ( Math.abs(a) > (1.0e-10) ) {
@@ -692,7 +693,6 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     // 2 = translate, 3 = scale, 4 = rotate, 1 = matrix imposition
     var operation = 0;
     var N = tlist.numberOfItems;
-
     // Check if it has a gradient with userSpaceOnUse, in which case
     // adjust it by recalculating the matrix transform.
     // TODO: Make this work in Webkit using svgedit.transformlist.SVGTransformList
