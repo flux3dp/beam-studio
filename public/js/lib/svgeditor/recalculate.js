@@ -634,6 +634,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
 
     // FIXME: box might be null for some elements (<metadata> etc), need to handle this
     var box = svgedit.utilities.getBBox(selected);
+    let oldRotateMatrix;
 
     // Paths (and possbly other shapes) will have no BBox while still in <defs>,
     // but we still may need to recalculate them (see issue 595).
@@ -650,23 +651,38 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       var oldcenter = {x: box.x+box.width/2, y: box.y+box.height/2},
       newcenter = svgedit.math.transformPoint(box.x+box.width/2, box.y+box.height/2,
               svgedit.math.transformListToTransform(tlist).matrix);
+      if (selected.tagName === 'text') {
+        for (var i = 0; i < tlist.numberOfItems; ++i) {
+          var xform = tlist.getItem(i);
+          if (xform.type == 4) {
+            var rm = xform.matrix;
+            oldRotateMatrix = rm;
+            tlist.removeItem(i);
+            break;
+          }
+        }
+        // for text last transform matrix defined its center position before recalculate
+        let lastM = tlist.getItem(tlist.numberOfItems - 1);
+        oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
 
-      var a = angle * Math.PI / 180;
-      if ( Math.abs(a) > (1.0e-10) ) {
-        var s = Math.sin(a)/(1 - Math.cos(a));
       } else {
-        // FIXME: This blows up if the angle is exactly 0!
-        var s = 2/a;
-      }
-      for (var i = 0; i < tlist.numberOfItems; ++i) {
-        var xform = tlist.getItem(i);
-        if (xform.type == 4) {
-          // extract old center through mystical arts
-          var rm = xform.matrix;
-          oldcenter.y = (s*rm.e + rm.f)/2;
-          oldcenter.x = (rm.e - s*rm.f)/2;
-          tlist.removeItem(i);
-          break;
+        var a = angle * Math.PI / 180;
+        if ( Math.abs(a) > (1.0e-10) ) {
+          var s = Math.sin(a)/(1 - Math.cos(a));
+        } else {
+          // FIXME: This blows up if the angle is exactly 0!
+          var s = 2/a;
+        }
+        for (var i = 0; i < tlist.numberOfItems; ++i) {
+          var xform = tlist.getItem(i);
+          if (xform.type == 4) {
+            // extract old center through mystical arts
+            var rm = xform.matrix;
+            oldcenter.y = (s*rm.e + rm.f)/2;
+            oldcenter.x = (rm.e - s*rm.f)/2;
+            tlist.removeItem(i);
+            break;
+          }
         }
       }
     }
@@ -773,7 +789,29 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       operation = 4; // rotation
       if (angle) {
         var newRot = svgroot.createSVGTransform();
-        newRot.setRotate(angle, newcenter.x, newcenter.y);
+        //if text contents changes text
+        if (selected.tagName === 'text') {
+          //from [Rm][M] to [Rnew][M'] ==> [M'] = [Rnew]^-1[Rm][M]
+          let m = svgedit.math.transformListToTransform(tlist).matrix;
+          newRot.setRotate(angle, newcenter.x, newcenter.y);
+          let extrat = svgedit.math.matrixMultiply(m.inverse(), newRot.matrix.inverse(), oldRotateMatrix, m);
+
+          let children = selected.childNodes;
+          let c = children.length;
+          while (c--) {
+            var child = children.item(c);
+            if (child.tagName == 'tspan') {
+              var tspanChanges = {
+                x: $(child).attr('x') || 0,
+                y: $(child).attr('y') || 0
+              };
+              svgedit.coords.remapElement(child, tspanChanges, extrat);
+            }
+          }
+          svgedit.coords.remapElement(selected, changes, extrat);
+        } else {
+          newRot.setRotate(angle, newcenter.x, newcenter.y);
+        }
 
         if (tlist.numberOfItems) {
           tlist.insertItemBefore(newRot, 0);
@@ -842,6 +880,20 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       var m_inv = m.inverse();
       var extrat = svgedit.math.matrixMultiply(m_inv, rnew_inv, rold, m);
 
+      if (selected.tagName == 'text') {
+        var children = selected.childNodes;
+        var c = children.length;
+        while (c--) {
+          var child = children.item(c);
+          if (child.tagName == 'tspan') {
+            var tspanChanges = {
+              x: $(child).attr('x') || 0,
+              y: $(child).attr('y') || 0
+            };
+            svgedit.coords.remapElement(child, tspanChanges, extrat);
+          }
+        }
+      }
       svgedit.coords.remapElement(selected, changes, extrat);
       if (angle) {
         if (tlist.numberOfItems) {
