@@ -3222,6 +3222,7 @@ define([
 
                         call('selected', [curtext]);
                         addToSelection([curtext], true);
+                        svgedit.recalculate.recalculateDimensions(curtext);
                     }
                     if (curtext && !curtext.textContent.length) {
                         // No content, so delete
