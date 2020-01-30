@@ -348,15 +348,21 @@ define([
                     });
                     svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
                     ImageTracer.appendSVGString(svgstr, id);
-                    //for (let i = 0; i < g.childNodes.length; i++) {
-                    g.childNodes.forEach(child => {
-                        $(child).attr('fill-opacity', 0);
-                        $(child).attr('id', svgCanvas.getNextId());
-                        $(child).attr('vector-effect', "non-scaling-stroke");
-                    });
                     let dx = cropData.x + preCrop.offsetX;
                     let dy = cropData.y + preCrop.offsetY;
                     svgCanvas.moveElements([dx], [dy], [g], false);
+                    for (let i = 0; i < g.childNodes.length; i++) {
+                        let child = g.childNodes[i];
+                        if ($(child).attr('opacity') === 0) {
+                            $(child).remove();
+                            i--;
+                        } else {
+                            $(child).removeAttr('opacity');
+                            $(child).attr('fill-opacity', 0);
+                            $(child).attr('id', svgCanvas.getNextId());
+                            $(child).attr('vector-effect', "non-scaling-stroke");
+                        }
+                    }
                     resolve(true);
                 });
             });

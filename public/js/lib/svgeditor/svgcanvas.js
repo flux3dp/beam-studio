@@ -8682,18 +8682,18 @@ define([
                 dy = (imgBBox.y + 0.5  * imgBBox.height) - (gBBox.y + 0.5  * gBBox.height);
                 this.moveElements([dx], [dy], [g], false);
                 this.setRotationAngle(angle, true, g);
-                g.childNodes.forEach(child => {
-                    console.log($(child).attr('opacity'));
+                for (let i = 0; i < g.childNodes.length; i++) {
+                    let child = g.childNodes[i];
                     if ($(child).attr('opacity') === 0) {
                         $(child).remove();
+                        i--;
                     } else {
                         $(child).removeAttr('opacity');
                         $(child).attr('id', getNextId());
                         $(child).attr('vector-effect', "non-scaling-stroke");
                         $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
-
                     }
-                });
+                }
                 selectorManager.requestSelector(g).resize();
                 
                 addCommandToHistory(batchCmd);
