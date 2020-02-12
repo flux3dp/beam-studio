@@ -194,7 +194,7 @@ define([
                                     />
                                 </div>
                                 <div className='control'>
-                                    <div className='text-center header' style={{fontSize: '16px'}}>{LANG.letter_spacing}</div>
+                                    <div className='text-center header' style={{fontSize: '16px'}}>{LANG.line_spacing}</div>
                                     <LineSpacingPanel
                                         lineSpacing={this.state.lineSpacing}
                                         onChange={val => this.handleLineSpacingChange(val)}
