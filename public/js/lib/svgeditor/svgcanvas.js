@@ -261,6 +261,7 @@ define([
         var transformListToTransform = canvas.transformListToTransform = svgedit.math.transformListToTransform;
         var snapToAngle = svgedit.math.snapToAngle;
         var getMatrix = svgedit.math.getMatrix;
+        const SENSOR_AREA_RADIUS = 5;
 
         // initialize from units.js
         // send in an object implementing the ElementContainer interface (see units.js)
@@ -1182,7 +1183,7 @@ define([
                 mouse_y = pt.y * current_zoom;
             if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
                 let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
-                if (dist < 5) {
+                if (dist < SENSOR_AREA_RADIUS) {
                     mouse_target = canvas.sensorAreaInfo.elem;
                 }
             }
@@ -1793,7 +1794,7 @@ define([
                     if (canvas.sensorAreaInfo) {
                         if (current_mode === 'select' && !PreviewModeController.isPreviewMode()) {
                             let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
-                            if (dist < 5) {
+                            if (dist < SENSOR_AREA_RADIUS) {
                                 $('#workarea').css('cursor', 'move');
                             } else {
                                 $('#workarea').css('cursor', 'default');
