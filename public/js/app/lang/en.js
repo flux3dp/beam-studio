@@ -397,6 +397,7 @@ define(function() {
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
             font_substitute: 'Substitute Font For Unsupported Char.',
+            enable_autofocus_module: 'Enable Autofocus Module',
             none: 'None',
             close: 'Close',
             cancel: 'CANCEL',
@@ -408,7 +409,8 @@ define(function() {
                 editor: 'Editor',
                 path: 'Path',
                 mask: 'Workarea Clipping',
-                text_to_path: 'Text to Path'
+                text_to_path: 'Text to Path',
+                modules: 'Modules',
             },
             connect_printer: {
                 title: 'Connect with your printer'
@@ -1165,6 +1167,7 @@ define(function() {
                     strength: 'Power',
                     speed: 'Speed',
                     repeat: 'Execute',
+                    height: 'Height',
                     times: 'times',
                     cut: 'Cut',
                     engrave: 'Engrave',
@@ -1265,6 +1268,7 @@ define(function() {
                 rounded_corner: 'Rounded Corner',
                 radius: 'Radius',
                 points: 'Points',
+                length: 'Length',
                 text: 'Text',
                 font_size: 'Size',
                 fill: 'Infill',

@@ -9,6 +9,7 @@ define([
     'jsx!views/beambox/Object-Panels/EllipseRadius',
     'jsx!views/beambox/Object-Panels/RectRoundedCorner',
     'jsx!views/beambox/Object-Panels/Line',
+    'jsx!views/beambox/Object-Panels/LineLength',
     'jsx!views/beambox/Object-Panels/Fill',
     'jsx!views/beambox/Object-Panels/Text',
     'jsx!views/beambox/Object-Panels/ShadingThreshold'
@@ -23,6 +24,7 @@ define([
     EllipseRadiusPanel,
     RectRoundedCorner,
     LinePanel,
+    LineLengthPanel,
     FillPanel,
     TextPanel,
     ShadingThresholdPanel
@@ -35,7 +37,7 @@ define([
         'polygon':     ['position', 'size', 'fill', 'rotation'],
         'rect':     ['position', 'size', 'fill', 'rotation', 'rectRoundedCorner'],
         'ellipse':  ['ellipsePosition', 'ellipseRadius', 'fill', 'rotation'],
-        'line':     ['line', 'rotation'],
+        'line':     ['line', 'lineLength', 'rotation'],
         'image':    ['position', 'size', 'rotation', 'shadingThreshold'],
         'text':     ['rotation', 'text'],
         'use':      ['position', 'size', 'rotation']
@@ -80,6 +82,7 @@ define([
                     case 'ellipseRadius':       panel = <EllipseRadiusPanel key={panelName} {...data.ellipseRadius}/>; break;
                     case 'rectRoundedCorner':   panel = <RectRoundedCorner key={panelName} {...data.rectRoundedCorner}/>; break;
                     case 'line':                panel = <LinePanel key={panelName} {...data.line}/>; break;
+                    case 'lineLength':          panel = <LineLengthPanel key={panelName} {...data.line}/>; break;
                     case 'fill':                panel = <FillPanel key={panelName} $me={$me} type={type}/>; break;
                     case 'shadingThreshold':    panel = <ShadingThresholdPanel key={panelName} {...data.image} $me={$me}/>; break;
                     case 'text':                panel = <TextPanel key={panelName} {...(data.font)} $me={$me}/>; break;

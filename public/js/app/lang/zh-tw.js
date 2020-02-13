@@ -396,6 +396,7 @@ define(function() {
             mask: '工作範圍剪裁',
             optimization: '優化',
             font_substitute: '自動替換字體',
+            enable_autofocus_module: '啟用自動對焦模組',
             none: '無',
             close: '關閉',
             groups: {
@@ -405,7 +406,8 @@ define(function() {
                 editor: '編輯器',
                 path: '路徑',
                 mask: '工作範圍剪裁',
-                text_to_path: '文字轉路徑'
+                text_to_path: '文字轉路徑',
+                modules: '模組',
             },
             printer: {
                 new_printer: '新增成型機',
@@ -1163,6 +1165,7 @@ define(function() {
                     strength: '功率',
                     speed: '速度',
                     repeat: '執行次數',
+                    height: '物件高度',
                     times: '次',
                     cut: '切割',
                     engrave: '雕刻',
@@ -1263,6 +1266,7 @@ define(function() {
                 rounded_corner: '圓角',
                 radius: '半徑',
                 points: '端點',
+                length: '長度',
                 text: '文字',
                 font_size: '字級',
                 fill: '填充',
