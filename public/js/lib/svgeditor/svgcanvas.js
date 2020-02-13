@@ -8591,12 +8591,13 @@ define([
                 this.setRotationAngle(0, true, elem);
                 const layer = this.getObjectLayer(elem).elem;
                 const attrs = {
-                    'stroke': $(elem).attr('stroke') || '',
-                    'fill': $(elem).attr('fill') || '',
+                    'stroke': $(elem).attr('stroke') || '#333333',
+                    'fill': $(elem).attr('fill') || 'none',
                     'transform': $(elem).attr('transform') || '',
-                    'stroke-opacity': $(elem).attr('stroke-opacity') || '',
-                    'fill-opacity': $(elem).attr('fill-opacity') || '',
+                    'stroke-opacity': $(elem).attr('stroke-opacity') || '1',
+                    'fill-opacity': $(elem).attr('fill-opacity') || '0',
                 }
+                //console.log(attrs);
                 const dAbs = svgedit.utilities.convertPath(elem);
                 // Make sure all pathseg is abs
                 const segList = elem.pathSegList._parsePath(dAbs);
