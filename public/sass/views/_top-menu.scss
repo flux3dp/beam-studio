@@ -69,7 +69,7 @@
             height: 75px;
             width: 60px;
             text-align: center;
-            &.win {
+            &.win32 {
                 padding-top: 15px;
             }
             img {
@@ -131,9 +131,6 @@
         .top-btn {
             padding-top: 25px;
             height: 69px;
-            &.win32 {
-                padding-top: 15px;
-            }
         }
         .dropdown-block {
             left: 0px;
