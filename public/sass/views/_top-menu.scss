@@ -131,6 +131,9 @@
         .top-btn {
             padding-top: 25px;
             height: 69px;
+            &.win32 {
+                padding-top: 15px;
+            }
         }
         .dropdown-block {
             left: 0px;
@@ -184,6 +187,10 @@
         text-align: right;
         text-decoration: none;
         top: 24px;
+
+        &.win32 {
+            top: 14px;
+        }
 
         .device-icon {
             position: absolute;

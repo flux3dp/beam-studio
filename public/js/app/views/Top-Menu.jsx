@@ -739,15 +739,9 @@ define([
                 for (let i = 0; i < fns.length; ++i) {
                     items.push(this._renderTopBtn(fns[i].id, fns[i].label, fns[i].f));
                 }
-                let style;
-                if (process.platform === 'win32') {
-                    style = {
-                        paddingTop: '15px'
-                    };
-                }
 
                 return (
-                    <div className="top-btn top-dropdown-control" onMouseEnter={() => {_setTopDropDownPosition()}} style={style}>
+                    <div className={`top-btn top-dropdown-control ${process.platform}`} onMouseEnter={() => {_setTopDropDownPosition()}}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -764,14 +758,8 @@ define([
             },
 
             _renderTopBtn: function(id, label, onClick) {
-                let style;
-                if (process.platform === 'win32') {
-                    style = {
-                        paddingTop: '15px'
-                    };
-                }
                 return (
-                    <div className="top-btn" onClick={onClick} style={style} key={id}>
+                    <div className={`top-btn ${process.platform}`} onClick={onClick} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -781,14 +769,8 @@ define([
             },
 
             _renderZoomBtn: function(id, label, onClick) {
-                let style;
-                if (process.platform === 'win32') {
-                    style = {
-                        paddingTop: '15px'
-                    };
-                }
                 return (
-                    <div className="top-btn zoom" onClick={onClick} style={style} key={id}>
+                    <div className={`top-btn zoom ${process.platform}`} onClick={onClick} style={style} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -857,12 +839,6 @@ define([
                         </div>
                     );
                 }
-                let device_style;
-                if (process.platform === 'win32') {
-                    device_style = {
-                        top: '14px'
-                    };
-                }
 
                 return (
                     <div>
@@ -900,7 +876,7 @@ define([
                         {right_scroll_cue}
                         {this._renderFileTitle()}
 
-                        <div title={lang.print.deviceTitle} className="device" style={device_style}>
+                        <div title={lang.print.deviceTitle} className={`device ${process.platform}`}>
                             <p className="device-icon" onClick={this._handleExportClick}>
                                 <img src="img/top-menu/icon-export.svg" draggable="false" />
                                 <div>{lang.topbar.export}</div>
