@@ -770,7 +770,7 @@ define([
 
             _renderZoomBtn: function(id, label, onClick) {
                 return (
-                    <div className={`top-btn zoom ${process.platform}`} onClick={onClick} style={style} key={id}>
+                    <div className={`top-btn zoom ${process.platform}`} onClick={onClick} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
