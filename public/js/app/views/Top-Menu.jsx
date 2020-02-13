@@ -18,6 +18,8 @@ define([
     'app/stores/alert-store',
     'app/actions/global-actions',
     'app/stores/global-store',
+    'app/actions/topbar',
+    'app/stores/topbar-store',
     'app/actions/beambox',
     'helpers/device-list',
     'app/actions/progress-actions',
@@ -50,6 +52,8 @@ define([
     AlertStore,
     GlobalActions,
     GlobalStore,
+    TopmenuActions,
+    TopmenuStore,
     BeamboxActions,
     DeviceList,
     ProgressActions,
@@ -484,13 +488,14 @@ define([
                 //AlertStore.onCancel(this._toggleDeviceListBind);
                 AlertStore.onRetry(this._waitForPrinters);
                 GlobalStore.onMonitorClosed(this._toggleDeviceListBind);
-
+                TopmenuStore.onUpdateTopMenu(() => {this.setState(this.state)});
             },
 
             componentWillUnmount: function () {
                 //AlertStore.removeCancelListener(this._toggleDeviceListBind);
                 AlertStore.removeRetryListener(this._waitForPrinters);
                 GlobalStore.removeMonitorClosedListener(this._toggleDeviceListBind);
+                TopmenuStore.removeUpdateTopMenuListener(() => {this.setState(this.state)});
                 // unregisterEvents();
             },
 
@@ -739,9 +744,9 @@ define([
                 for (let i = 0; i < fns.length; ++i) {
                     items.push(this._renderTopBtn(fns[i].id, fns[i].label, fns[i].f));
                 }
-
+                const disabled = !this.topButtonAvailability[id];
                 return (
-                    <div className={`top-btn top-dropdown-control ${process.platform}`} onMouseEnter={() => {_setTopDropDownPosition()}}>
+                    <div className={ClassNames('top-btn top-dropdown-control', process.platform, {disabled})} onMouseEnter={() => {_setTopDropDownPosition()}}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -758,8 +763,13 @@ define([
             },
 
             _renderTopBtn: function(id, label, onClick) {
+                const disabled = !this.topButtonAvailability[id];
+                if(disabled) onClick = () => {};
                 return (
-                    <div className={`top-btn ${process.platform}`} onClick={onClick} key={id}>
+                    <div className={ClassNames('top-btn', process.platform, {disabled})} key={id} onClick={() => {
+                        onClick();
+                        this.setState(this.state);
+                    }}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -770,7 +780,7 @@ define([
 
             _renderZoomBtn: function(id, label, onClick) {
                 return (
-                    <div className={`top-btn zoom ${process.platform}`} onClick={onClick} key={id}>
+                    <div className={ClassNames('top-btn zoom', process.platform)} onClick={onClick} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
                         <div className="btn-label">
                             {label}
@@ -822,6 +832,40 @@ define([
                 }
             },
 
+            _checkButtonAvailable: function() {
+                let selectedElements = null;
+                try {
+                    selectedElements = svgCanvas.getSelectedElems().filter((elem) => elem);
+                    if (selectedElements.length > 0 && selectedElements[0].getAttribute('data-tempgroup') === 'true') {
+                        selectedElements = Array.from(selectedElements[0].childNodes);
+                    }
+                } catch (e) {
+                    if (e instanceof ReferenceError) {
+                    } else {
+                        throw e;
+                    }
+                }
+                this.topButtonAvailability = {
+                    'zoom': true,
+                    'group': (selectedElements && selectedElements.length > 0),
+                    'ungroup': (selectedElements && selectedElements.length === 1 && ['g', 'a', 'use'].includes(selectedElements[0].tagName)),
+                    'align-h': (selectedElements && selectedElements.length > 0),
+                    'align-l': (selectedElements && selectedElements.length > 0),
+                    'align-r': (selectedElements && selectedElements.length > 0),
+                    'align-v': (selectedElements && selectedElements.length > 0),
+                    'align-t': (selectedElements && selectedElements.length > 0),
+                    'align-b': (selectedElements && selectedElements.length > 0),
+                    'dist-h': (selectedElements && selectedElements.length > 1),
+                    'dist-v': (selectedElements && selectedElements.length > 1),
+                    'union': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'subtract': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'intersect': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'difference': (selectedElements && selectedElements.length === 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'h-flip': (selectedElements && selectedElements.length > 0),
+                    'v-flip': (selectedElements && selectedElements.length > 0),
+                }
+            },
+
             render: function () {
                 let deviceList = this._renderDeviceList(),
                     menuClass,
@@ -839,6 +883,8 @@ define([
                         </div>
                     );
                 }
+
+                this._checkButtonAvailable();
 
                 return (
                     <div>
