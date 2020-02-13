@@ -5238,7 +5238,7 @@ define([
             } else if ($elem.data('symbol')) {
                 elem = $elem.data('symbol');
 
-                ts = $elem.attr('transform');
+                ts = $elem.attr('transform') || '';
                 var pos = $elem.attr(['x', 'y']);
 
                 var vb = elem.getAttribute('viewBox');
@@ -5266,7 +5266,9 @@ define([
 
                 var i;
                 for (i = 0; i < childs.length; i++) {
-                    g.appendChild(childs[i].cloneNode(true));
+                    if (childs[i].tagName !== 'defs') {
+                        g.appendChild(childs[i].cloneNode(true));
+                    }
                 }
 
                 // Duplicate the gradients for Gecko, since they weren't included in the <symbol>
@@ -8754,6 +8756,7 @@ define([
                     $(topChild).attr('vector-effect', 'non-scaling-stroke');
                     $(topChild).attr('id', getNextId());
                     $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                    svgedit.recalculate.recalculateDimensions(topChild);
                 }
                 //svg.parentNode.removeChild(svg);
                 elem.parentNode.removeChild(elem);
@@ -9927,7 +9930,7 @@ define([
             for (let i = len - 1; i >= 0; --i) {
                 let clipper = new svgedit.ClipperLib.Clipper();
                 const elem =selectedElements[i];
-                if (!(elem.tagName === 'rect' || elem.tagName === 'path' || elem.tagName === 'polygon' || elem.tagName === 'ellipse' || elem.tagName === 'line')) {
+                if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
                     tagNameMap = {
                         'g': LANG.tag.g,
                         'use': LANG.tag.use,
