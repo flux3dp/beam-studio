@@ -156,6 +156,9 @@ define([
         setLetterSpacing(val) {
             this.data.font.letterSpacing = val;
         }
+        setLineSpacing(val) {
+            this.data.font.lineSpacing = val;
+        }
         setFontIsFill(val) {
             this.data.font.isFill = val;
         }

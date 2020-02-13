@@ -153,8 +153,9 @@ define([
                         is_rgba: true,
                         is_shading: this.state.shading,
                         threshold: this.state.threshold,
-                        is_svg: false
+                        is_svg: false,
                     },
+                    isFullResolution: true,
                     onComplete: function (result) {
                         self._handleSetAttribute('xlink:href', result.canvas.toDataURL());
                         svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
@@ -254,6 +255,7 @@ define([
                         threshold: this.state.threshold,
                         is_svg: false
                     },
+                    isFullResolution: true,
                     onComplete: (result) => {
                         ProgressActions.close();
                         if (this.state.grayScaleUrl) {

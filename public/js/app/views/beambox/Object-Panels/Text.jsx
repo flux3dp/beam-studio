@@ -9,6 +9,7 @@ define([
     'jsx!views/beambox/Object-Panels/text/FontStyle',
     'jsx!views/beambox/Object-Panels/text/FontSize',
     'jsx!views/beambox/Object-Panels/text/LetterSpacing',
+    'jsx!views/beambox/Object-Panels/text/LineSpacing',
     'jsx!views/beambox/Object-Panels/text/FontFill',
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
@@ -23,6 +24,7 @@ define([
     FontStyleSelector,
     FontSizeInput,
     LetterSpacingInput,
+    LineSpacingPanel,
     IsFillCheckbox,
     BeamboxPreference,
     i18n
@@ -65,6 +67,7 @@ define([
                 }).style,
                 fontSize: props.fontSize,
                 letterSpacing: props.letterSpacing,
+                lineSpacing: props.lineSpacing,
                 isFill: props.isFill
             };
             // this.state = {
@@ -115,6 +118,12 @@ define([
                 letterSpacing: val
             });
         }
+        handleLineSpacingChange(val) {
+            svgCanvas.setTextLineSpacing(val);
+            this.setState({
+                lineSpacing: val
+            });
+        }
         handleIsFillChange(val) {
             FnWrapper.update_font_is_fill(val);
             this.setState({
@@ -138,8 +147,8 @@ define([
                         resolve();
                     }, 50);
                 });
-                FnWrapper.reset_select_mode();
             }
+            FnWrapper.reset_select_mode();
             ProgressActions.close();
 
         }
@@ -182,6 +191,13 @@ define([
                                     <LetterSpacingInput
                                         currentLetterSpacing={this.state.letterSpacing}
                                         onChange={val => this.handleLetterSpacingChange(val)}
+                                    />
+                                </div>
+                                <div className='control'>
+                                    <div className='text-center header' style={{fontSize: '16px'}}>{LANG.line_spacing}</div>
+                                    <LineSpacingPanel
+                                        lineSpacing={this.state.lineSpacing}
+                                        onChange={val => this.handleLineSpacingChange(val)}
                                     />
                                 </div>
                                 <div className='control'>

@@ -395,6 +395,8 @@ define(function() {
             image_downsampling: '點陣圖畫質',
             mask: '工作範圍剪裁',
             optimization: '優化',
+            font_substitute: '自動替換字體',
+            enable_autofocus_module: '啟用自動對焦模組',
             none: '無',
             close: '關閉',
             groups: {
@@ -404,7 +406,8 @@ define(function() {
                 editor: '編輯器',
                 path: '路徑',
                 mask: '工作範圍剪裁',
-                text_to_path: '文字轉路徑'
+                text_to_path: '文字轉路徑',
+                modules: '模組',
             },
             printer: {
                 new_printer: '新增成型機',
@@ -1162,6 +1165,7 @@ define(function() {
                     strength: '功率',
                     speed: '速度',
                     repeat: '執行次數',
+                    height: '物件高度',
                     times: '次',
                     cut: '切割',
                     engrave: '雕刻',
@@ -1262,10 +1266,12 @@ define(function() {
                 rounded_corner: '圓角',
                 radius: '半徑',
                 points: '端點',
+                length: '長度',
                 text: '文字',
                 font_size: '字級',
                 fill: '填充',
                 letter_spacing: '字距',
+                line_spacing: '行距',
                 convert_to_path: '轉換為路徑',
                 convert_to_path_to_get_precise_result: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示',
                 wait_for_parsing_font: '解析字體中... 請稍待 10 秒',
@@ -1312,7 +1318,8 @@ define(function() {
                 test_fail: '檢測失敗',
                 cannot_connect_1: '無法與目標 IP 建立連線',
                 cannot_connect_2: '無法與目標 IP 建立連線，請確認是否與目標 IP 在同一網路',
-                cannot_get_local: '無法取得本地 IP 位置'
+                cannot_get_local: '無法取得本地 IP 位置',
+                fail_to_start_network_test: '無法開始網路檢測。'
             },
             layer_color_config_panel: {
                 layer_color_config: '圖層顏色參數設定',

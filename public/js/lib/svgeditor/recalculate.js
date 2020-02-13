@@ -98,7 +98,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     }
     // End here if all it has is a rotation
     if (tlist.numberOfItems === 1 &&
-        svgedit.utilities.getRotationAngle(selected)) {return null;}
+        svgedit.utilities.getRotationAngle(selected) && selected.tagName !== 'text') {return null;}
   }
 
   // if this element had no transforms, we are done
@@ -150,6 +150,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     case 'polyline':
     case 'polygon':
     case 'path':
+    case 'g':
       break;
     default:
       if ((tlist.numberOfItems === 1 && tlist.getItem(0).type === 1) ||
@@ -514,11 +515,33 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           // Convert stroke
           // TODO: Find out if this should actually happen somewhere else
           var sw = child.getAttribute('stroke-width');
-          if (child.getAttribute('stroke') !== 'none' && !isNaN(sw)) {
+          if (child.getAttribute('stroke') !== 'none' && sw && !isNaN(sw)) {
             var avg = (Math.abs(em.a) + Math.abs(em.d)) / 2;
+            console.log(sw * avg);
             child.setAttribute('stroke-width', sw * avg);
           }
 
+        }
+      }
+      tlist.clear();
+    } else if (N > 1) {
+      // If not either of above, concat all transforms and pass down
+      let m = svgedit.math.transformListToTransform(tlist).matrix;
+      let children = selected.childNodes;
+      let c = children.length;
+      while (c--) {
+        let child = children.item(c);
+        if (child.nodeType == 1) {
+          let oldStartTransform = context_.getStartTransform();
+          context_.setStartTransform(child.getAttribute('transform'));
+          let childTlist = svgedit.transformlist.getTransformList(child);
+
+          let em = svgroot.createSVGTransform();
+          em.setMatrix(m);
+
+          childTlist.appendItem(em);
+          batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+          context_.setStartTransform(oldStartTransform);
         }
       }
       tlist.clear();
@@ -611,6 +634,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
 
     // FIXME: box might be null for some elements (<metadata> etc), need to handle this
     var box = svgedit.utilities.getBBox(selected);
+    let oldRotateMatrix;
 
     // Paths (and possbly other shapes) will have no BBox while still in <defs>,
     // but we still may need to recalculate them (see issue 595).
@@ -627,23 +651,41 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       var oldcenter = {x: box.x+box.width/2, y: box.y+box.height/2},
       newcenter = svgedit.math.transformPoint(box.x+box.width/2, box.y+box.height/2,
               svgedit.math.transformListToTransform(tlist).matrix);
-
-      var a = angle * Math.PI / 180;
-      if ( Math.abs(a) > (1.0e-10) ) {
-        var s = Math.sin(a)/(1 - Math.cos(a));
+      if (selected.tagName === 'text') {
+        for (var i = 0; i < tlist.numberOfItems; ++i) {
+          var xform = tlist.getItem(i);
+          if (xform.type == 4) {
+            var rm = xform.matrix;
+            oldRotateMatrix = rm;
+            tlist.removeItem(i);
+            break;
+          }
+        }
+        // for text last transform matrix defined its center position before recalculate
+        if (tlist.numberOfItems > 0) {
+          let lastM = tlist.getItem(tlist.numberOfItems - 1);
+          if (lastM.type === 1) {
+            oldcenter = svgedit.math.transformPoint(oldcenter.x, oldcenter.y, lastM.matrix);
+          }
+        }
       } else {
-        // FIXME: This blows up if the angle is exactly 0!
-        var s = 2/a;
-      }
-      for (var i = 0; i < tlist.numberOfItems; ++i) {
-        var xform = tlist.getItem(i);
-        if (xform.type == 4) {
-          // extract old center through mystical arts
-          var rm = xform.matrix;
-          oldcenter.y = (s*rm.e + rm.f)/2;
-          oldcenter.x = (rm.e - s*rm.f)/2;
-          tlist.removeItem(i);
-          break;
+        var a = angle * Math.PI / 180;
+        if ( Math.abs(a) > (1.0e-10) ) {
+          var s = Math.sin(a)/(1 - Math.cos(a));
+        } else {
+          // FIXME: This blows up if the angle is exactly 0!
+          var s = 2/a;
+        }
+        for (var i = 0; i < tlist.numberOfItems; ++i) {
+          var xform = tlist.getItem(i);
+          if (xform.type == 4) {
+            // extract old center through mystical arts
+            var rm = xform.matrix;
+            oldcenter.y = (s*rm.e + rm.f)/2;
+            oldcenter.x = (rm.e - s*rm.f)/2;
+            tlist.removeItem(i);
+            break;
+          }
         }
       }
     }
@@ -651,7 +693,6 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     // 2 = translate, 3 = scale, 4 = rotate, 1 = matrix imposition
     var operation = 0;
     var N = tlist.numberOfItems;
-
     // Check if it has a gradient with userSpaceOnUse, in which case
     // adjust it by recalculating the matrix transform.
     // TODO: Make this work in Webkit using svgedit.transformlist.SVGTransformList
@@ -750,7 +791,29 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       operation = 4; // rotation
       if (angle) {
         var newRot = svgroot.createSVGTransform();
-        newRot.setRotate(angle, newcenter.x, newcenter.y);
+        //if text contents changes text
+        if (selected.tagName === 'text') {
+          //from [Rm][M] to [Rnew][M'] ==> [M'] = [Rnew]^-1[Rm][M]
+          let m = svgedit.math.transformListToTransform(tlist).matrix;
+          newRot.setRotate(angle, newcenter.x, newcenter.y);
+          let extrat = svgedit.math.matrixMultiply(m.inverse(), newRot.matrix.inverse(), oldRotateMatrix, m);
+
+          let children = selected.childNodes;
+          let c = children.length;
+          while (c--) {
+            var child = children.item(c);
+            if (child.tagName == 'tspan') {
+              var tspanChanges = {
+                x: $(child).attr('x') || 0,
+                y: $(child).attr('y') || 0
+              };
+              svgedit.coords.remapElement(child, tspanChanges, extrat);
+            }
+          }
+          svgedit.coords.remapElement(selected, changes, extrat);
+        } else {
+          newRot.setRotate(angle, newcenter.x, newcenter.y);
+        }
 
         if (tlist.numberOfItems) {
           tlist.insertItemBefore(newRot, 0);
@@ -768,11 +831,10 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     if (operation == 1 || operation == 2 || operation == 3) {
       svgedit.coords.remapElement(selected, changes, m);
     } // if we are remapping
-
     // if it was a translate, put back the rotate at the new center
     if (operation == 2) {
       if (angle) {
-        if (!svgedit.math.hasMatrixTransform(tlist)) {
+        if (!svgedit.math.hasMatrixTransform(tlist) && selected.tagName !== 'text') {
           newcenter = {
             x: oldcenter.x + m.e,
             y: oldcenter.y + m.f
@@ -819,6 +881,20 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
       var m_inv = m.inverse();
       var extrat = svgedit.math.matrixMultiply(m_inv, rnew_inv, rold, m);
 
+      if (selected.tagName == 'text') {
+        var children = selected.childNodes;
+        var c = children.length;
+        while (c--) {
+          var child = children.item(c);
+          if (child.tagName == 'tspan') {
+            var tspanChanges = {
+              x: $(child).attr('x') || 0,
+              y: $(child).attr('y') || 0
+            };
+            svgedit.coords.remapElement(child, tspanChanges, extrat);
+          }
+        }
+      }
       svgedit.coords.remapElement(selected, changes, extrat);
       if (angle) {
         if (tlist.numberOfItems) {

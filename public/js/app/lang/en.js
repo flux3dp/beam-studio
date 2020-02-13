@@ -396,6 +396,8 @@ define(function() {
             image_downsampling: 'Bitmap Image Quality',
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
+            font_substitute: 'Substitute Font For Unsupported Char.',
+            enable_autofocus_module: 'Enable Autofocus Module',
             none: 'None',
             close: 'Close',
             cancel: 'CANCEL',
@@ -407,7 +409,8 @@ define(function() {
                 editor: 'Editor',
                 path: 'Path',
                 mask: 'Workarea Clipping',
-                text_to_path: 'Text to Path'
+                text_to_path: 'Text to Path',
+                modules: 'Modules',
             },
             connect_printer: {
                 title: 'Connect with your printer'
@@ -1164,6 +1167,7 @@ define(function() {
                     strength: 'Power',
                     speed: 'Speed',
                     repeat: 'Execute',
+                    height: 'Height',
                     times: 'times',
                     cut: 'Cut',
                     engrave: 'Engrave',
@@ -1264,10 +1268,12 @@ define(function() {
                 rounded_corner: 'Rounded Corner',
                 radius: 'Radius',
                 points: 'Points',
+                length: 'Length',
                 text: 'Text',
                 font_size: 'Size',
                 fill: 'Infill',
                 letter_spacing: 'Letter Spacing',
+                line_spacing: 'Line Spacing',
                 convert_to_path: 'Convert to Path',
                 convert_to_path_to_get_precise_result: 'Some fonts can\'t be parsed correctly. Please convert text to path before submitting to Beambox',
                 wait_for_parsing_font: 'Parsing font... Please wait a second',
@@ -1314,7 +1320,8 @@ define(function() {
                 test_fail: 'Test Failed',
                 cannot_connect_1: 'Fail to connect to target IP.',
                 cannot_connect_2: 'Fail to connect to target IP. Please make sure that the target is in the same network.',
-                cannot_get_local: 'Access to local IP address failed.'
+                cannot_get_local: 'Access to local IP address failed.',
+                fail_to_start_network_test: 'Fail to start network testing.'
             },
             layer_color_config_panel: {
                 layer_color_config: 'Layer Color Configurations',

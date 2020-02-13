@@ -177,39 +177,81 @@ define([
     };
 
     const convertTextToPathFluxsvg = async ($textElement, bbox) => {
-        const d = $.Deferred();
         if (!$textElement.text()) {
             svgCanvas.clearSelection();
             $textElement.remove();
             return;
         }
-        const newFontFamily = substitutedFamily($textElement);
-        $textElement.attr('font-family', newFontFamily);
+        if (BeamboxPreference.read('font-substitute') !== false) {
+            const newFontFamily = substitutedFamily($textElement);
+            $textElement.attr('font-family', newFontFamily);
+        }
         console.log($textElement.attr('font-family'));
         $textElement.removeAttr('stroke-width');
         await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
-        const outputs = await svgWebSocket.divideSVG();
-        //console.log(outputs)
-        const layerName = $textElement.closest('.layer').find('title').text();
-        const fill = $textElement.attr('fill-opacity') > 0;
-        let result;
-        if (fill) {
-            result =  await svgEditor.readSVG(outputs.data['colors'], 'text', layerName);
-        } else {
-            result =  await svgEditor.readSVG(outputs.data['strokes'], 'text', layerName);
-        }
-        if (result) {
-            svgCanvas.moveElements([bbox.x], [bbox.y], [result], false);
-            //ungroup text path from <use>
-            for (let i = 0; i < 4; ++i) {
-                svgCanvas.ungroupSelectedElement();
+
+        const isFill = (() => {
+            if ($textElement.attr('fill-opacity') === 0) {
+                return false;
             }
-            $textElement.remove();
-        } else {
-            const LANG = i18n.lang.beambox.popup;
-            AlertActions.showPopupError('text to path fail', LANG.convert_to_path_fail)
+            const fillAttr = $textElement.attr('fill');
+            if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
+                return false;
+            } else if(fillAttr || fillAttr === null) {
+                return true;
+            } else {
+                return false;
+            }
+        })();
+
+        const outputs = await svgWebSocket.divideSVG();
+        let {pathD, transform} = await new Promise ((resolve, reject) => {
+            let fileReader = new FileReader();
+            fileReader.onloadend = function (e) {
+                let svgString = e.target.result;
+                console.log(svgString);
+                const pathD = svgString.match(/(?<= d=")[^"]+/g);
+                const transform = svgString.match(/(?<= transform=")[^"]+/g);
+                resolve({pathD, transform});
+            }
+            if (isFill) {
+                fileReader.readAsText(outputs.data['colors']);
+            } else {
+                fileReader.readAsText(outputs.data['strokes']);
+            }
+        });
+        if (!pathD) {
+            return;
         }
-        return;
+
+        const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
+        let color = $textElement.attr('stroke');
+        color = color !== 'none' ? color : $textElement.attr('fill');
+        $(path).attr({
+            'id': svgCanvas.getNextId(),
+            'd': pathD.join(''),
+            //Note: Assuming transform matrix for all d are the same
+            'transform': transform ? transform[0] : '',
+            'fill': isFill ? color : '#fff',
+            'fill-opacity': isFill ? 1 : 0,
+            'stroke': color,
+            'stroke-opacity': 1,
+            'stroke-dasharray': 'none',
+            'vector-effect': 'non-scaling-stroke',
+        });
+        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
+        $(path).insertAfter($textElement);
+        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
+        svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
+        let textElem = $textElement[0];
+        let parent = textElem.parentNode;
+        let nextSibling = textElem.nextSibling;
+        let elem = parent.removeChild(textElem);
+        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+        if (!batchCmd.isEmpty()) {
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        }
     }
 
     const requestToConvertTextToPath = async ($textElement, family, weight, style) => {
@@ -276,14 +318,23 @@ define([
             'fill': isFill ? color : '#fff',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,
-            'stroke-width': 1,
             'stroke-opacity': 1,
             'stroke-dasharray': 'none',
             'vector-effect': 'non-scaling-stroke',
         });
 
+        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
-        $textElement.remove();
+        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
+        let textElem = $textElement[0];
+        let parent = textElem.parentNode;
+        let nextSibling = textElem.nextSibling;
+        let elem = parent.removeChild(textElem);
+        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+        if (!batchCmd.isEmpty()) {
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        }
 
         return;
     };

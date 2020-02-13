@@ -322,7 +322,20 @@ define([
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: !BeamboxPreference.read('TextbyFluxsvg')
+                    selected: BeamboxPreference.read('TextbyFluxsvg') === false
+                }
+            ];
+
+            const fontSubstituteOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('font-substitute') !== false
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: BeamboxPreference.read('font-substitute') === false
                 }
             ];
 
@@ -529,6 +542,15 @@ define([
                             className='font3'
                             options={textToPathOptions}
                             onChange={e => this._updateBeamboxPreference('TextbyFluxsvg', e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.font_substitute}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={fontSubstituteOptions}
+                            onChange={e => this._updateBeamboxPreference('font-substitute', e.target.value)}
                         />
                     </Controls>
 

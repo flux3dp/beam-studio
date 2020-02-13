@@ -60,9 +60,9 @@ define([
                 y2 = this.state.y2,
                 units = localStorage.getItem('default-units', 'mm') ;
             if (units === 'inches') {
-                return `A (${Number(x1/25.4).toFixed(2)}, ${Number(y1/25.4).toFixed(2)}), B (${Number(x2/25.4).toFixed(2)}, ${Number(y2/25.4).toFixed(2)})`;
+                return `A (${Number(x1/25.4).toFixed(1)}, ${Number(y1/25.4).toFixed(1)}), B (${Number(x2/25.4).toFixed(1)}, ${Number(y2/25.4).toFixed(1)})`;
             } else {
-                return `A (${x1}, ${y1}), B (${x2}, ${y2})`;
+                return `A (${x1.toFixed(1)}, ${y1.toFixed(1)}), B (${x2.toFixed(1)}, ${y2.toFixed(1)})`;
             } 
         },
         render: function() {
