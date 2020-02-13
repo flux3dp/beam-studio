@@ -587,10 +587,18 @@
                 padding-left: 15px;
                 padding-right: 5px;
                 clear: both;
-
                 .ui.ui-control-unit-input-v2 {
                     width: 60%;
                     float: right;
+                }
+                .title {
+                    line-height: 32px;
+                }
+                &.without-drag {
+                    height: 32px;
+                    .title {
+                        line-height: 32px;
+                    }
                 }
             }
             .ui.ui-control-unit-input-v2 {
@@ -1024,7 +1032,7 @@
     border: 1px solid #EDEDED;
     border-radius: 5px;
     clear: both;
-    margin: 20px 15px 20px 0px;
+    margin: 10px 15px 10px 0px;
     width: calc(188px - 30px);
     .rainbow-drag {
         width: 14px;
