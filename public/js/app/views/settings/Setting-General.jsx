@@ -157,12 +157,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: Config().read('auto_check_update') === '0' || !Config().read('auto_check_update')
+                    selected: Config().read('auto_check_update') === '0'
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: Config().read('auto_check_update') === '1'
+                    selected: Config().read('auto_check_update') === '1' || !Config().read('auto_check_update')
                 }
             ];
 
@@ -336,6 +336,32 @@ define([
                     value: false,
                     label: lang.settings.off,
                     selected: BeamboxPreference.read('font-substitute') === false
+                }
+            ];
+
+            const autofocusModuleOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('enable-autofocus-module')
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: !BeamboxPreference.read('enable-autofocus-module')
+                }
+            ];
+
+            const diodeModuleOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('enable-diode-module')
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: !BeamboxPreference.read('enable-diode-module')
                 }
             ];
 
@@ -551,6 +577,26 @@ define([
                             className='font3'
                             options={fontSubstituteOptions}
                             onChange={e => this._updateBeamboxPreference('font-substitute', e.target.value)}
+                        />
+                    </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.modules}</div>
+
+                    <Controls label={lang.settings.enable_autofocus_module}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={autofocusModuleOptions}
+                            onChange={e => this._updateBeamboxPreference('enable-autofocus-module', e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.enable_diode_module}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={diodeModuleOptions}
+                            onChange={e => this._updateBeamboxPreference('enable-diode-module', e.target.value)}
                         />
                     </Controls>
 
