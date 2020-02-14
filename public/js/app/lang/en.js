@@ -1609,7 +1609,7 @@ define(function() {
             new_app_downloaded: 'Newest FLUX Studio has been downloaded',
             ask_for_upgrade: 'Do you wish to upgrade now?',
             please_enter_dpi: 'Please enter the Unit of your file',
-            need_1_1_7_above: 'Please update firmware to v1.1.7+',
+            reset_sd_card: 'Please reset machine\'s SD card',
             gcode_area_too_big: 'Imported GCode exceed the printable area.',
             empty_file: 'File is empty',
             usb_unplugged: 'USB connection is lost. Please check your USB connection',

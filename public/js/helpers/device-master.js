@@ -166,7 +166,7 @@ define([
                                         ProgressActions.close();
                                         AlertActions.showPopupError(
                                             'auth-error-with-diff-computer',
-                                            lang.message.need_1_1_7_above
+                                            lang.message.reset_sd_card
                                         );
                                     });
                             }
@@ -390,7 +390,7 @@ define([
                                 ProgressActions.close();
                                 AlertActions.showPopupError(
                                     'auth-error-with-diff-computer',
-                                    lang.message.need_1_1_7_above
+                                    lang.message.reset_sd_card
                                 );
                             });
                         }
