@@ -13,21 +13,32 @@ define([
         configName: '',
         speed: 50,
         strength: 15,
-        repeat: 1
+        repeat: 1,
+        af: 0,
+        height: 0,
+        diode: 0
     }
 
     const _tracedImageConfig = {
         configName: '',
         speed: 200,
         strength: 20,
-        repeat: 1
+        repeat: 1,
+        height: 0,
+        af: 0,
+        height: 0,
+        diode: 0
     }
 
     const _tracedPathConfig = {
         configName: '',
         speed: 5,
         strength: 70,
-        repeat: 1
+        repeat: 1,
+        height: 0,
+        af: 0,
+        height: 0,
+        diode: 0
     }
 
     const _getConfig = function(name) {
@@ -68,6 +79,18 @@ define([
         return _getData(name, 'repeat');
     }
 
+    const _getHeight = function(name) {
+        return _getData(name, 'height');
+    }
+
+    const _getDiode = function(name) {
+        return _getData(name, 'diode');
+    }
+
+    const _getAutofocus = function(name) {
+        return _getData(name, 'af');
+    }
+
     const getConfigName = function(name) {
         return _getData(name, 'configName');
     }
@@ -88,6 +111,18 @@ define([
         return _writeData(name, 'repeat', val);
     }
 
+    const writeHeight = function(name, val) {
+        return _writeData(name, 'height', val);
+    }
+
+    const writeDiode = function(name, val) {
+        return _writeData(name, 'diode', val);
+    }
+
+    const writeAutofocus = function(name, val) {
+        return _writeData(name, 'af', val);
+    }
+
     const writeConfigName = function(name, val) {
         return _writeData(name, 'configName', val);
     }
@@ -99,6 +134,8 @@ define([
                 writeSpeed: writeSpeed,
                 writeStrength: writeStrength,
                 writeRepeat: writeRepeat,
+                writeHeight: writeHeight,
+                writeDiode: writeDiode,
                 writeConfigName: writeConfigName
             }
         }
@@ -110,12 +147,16 @@ define([
             _getSpeed(name, _getConfig(name).speed);
             _getStrength(name, _getConfig(name).strength);
             _getRepeat(name, _getConfig(name).repeat);
+            _getHeight(name, _getConfig(name).height);
+            _getDiode(name, _getConfig(name).diode);
         }
 
         cloneConfig(name, baseName) {
             writeSpeed(name, _getSpeed(baseName));
             writeStrength(name, _getStrength(baseName));
             writeRepeat(name, _getRepeat(baseName));
+            writeHeight(name, _getHeight(baseName));
+            writeDiode(name, _getDiode(baseName));
             writeConfigName(name, getConfigName(baseName));
         }
 
@@ -123,6 +164,8 @@ define([
             const speed = _getSpeed(name);
             const strength = _getStrength(name);
             const repeat = _getRepeat(name);
+            const height = _getHeight(name);
+            const isDiode = _getDiode(name);
             const configName = getConfigName(name);
 
             ReactDOM.render(
@@ -132,6 +175,8 @@ define([
                     speed={speed}
                     strength={strength}
                     repeat={repeat}
+                    height={height}
+                    isDiode={isDiode}
                     funcs={this.funcs}
                 />
                 ,document.getElementById(this.reactRoot)

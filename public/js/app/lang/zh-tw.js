@@ -397,6 +397,7 @@ define(function() {
             optimization: '優化',
             font_substitute: '自動替換字體',
             enable_autofocus_module: '啟用自動對焦模組',
+            enable_diode_module: '啟用二極體雷射模組',
             none: '無',
             close: '關閉',
             groups: {
@@ -1166,6 +1167,7 @@ define(function() {
                     speed: '速度',
                     repeat: '執行次數',
                     height: '物件高度',
+                    diode: '二極體雷射',
                     times: '次',
                     cut: '切割',
                     engrave: '雕刻',

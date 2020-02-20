@@ -600,6 +600,17 @@
                         line-height: 32px;
                     }
                 }
+                &.checkbox {
+                    height: 16px;
+                    .title {
+                        line-height: 16px;
+                    }
+                    input {
+                        float: right;
+                        margin-top: 2px;
+                        margin-right: 10%;
+                    }
+                }
             }
             .ui.ui-control-unit-input-v2 {
                 margin-bottom: 7px;

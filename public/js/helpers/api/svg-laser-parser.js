@@ -336,6 +336,10 @@ define([
                     }
                 }
 
+                if (opts.enableAutoFocus) {
+                    args.push('-af');
+                }
+
                 events.onMessage = function(data) {
 
                     if ('computing' === data.status) {
