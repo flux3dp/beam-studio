@@ -4612,7 +4612,7 @@ define([
                     }
                     svgCanvas.cloneLayer(newName);
                     updateContextPanel();
-                    cloneLayerLaserConfig(oldName, newName);
+                    cloneLayerLaserConfig(newName, oldName);
                     populateLayers();
                 });
             }
