@@ -109,8 +109,18 @@ svgedit.coords.remapElement = function(selected, changes, m) {
       // therefore [T'] = [M_inv][T][M]
       var existing = svgedit.math.transformListToTransform(selected).matrix,
           t_new = svgedit.math.matrixMultiply(existing.inverse(), m, existing);
-      changes.x = parseFloat(changes.x) + t_new.e;
-      changes.y = parseFloat(changes.y) + t_new.f;
+      if (typeof changes.x === 'string') {
+        let x = changes.x.split(' ').map((e) => (parseFloat(e) + t_new.e));
+        changes.x = x.join(' ')
+      } else {
+        changes.x = parseFloat(changes.x) + t_new.e;
+      }
+      if (typeof changes.y === 'string') {
+        let y = changes.y.split(' ').map((e) => (parseFloat(e) + t_new.f));
+        changes.y = y.join(' ')
+      } else {
+        changes.y = parseFloat(changes.y) + t_new.f;
+      }
     } else {
       // we just absorb all matrices into the element and don't do any remapping
       chlist = svgedit.transformlist.getTransformList(selected);
@@ -229,6 +239,9 @@ svgedit.coords.remapElement = function(selected, changes, m) {
       }
 
       len = changes.d.length;
+      if (len === 0) {
+        break;
+      }
       var firstseg = changes.d[0],
           currentpt = remap(firstseg.x, firstseg.y);
       changes.d[0].x = currentpt.x;

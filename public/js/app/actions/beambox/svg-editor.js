@@ -5793,10 +5793,16 @@ define([
                             }
                         });
                         ImageTracer.appendSVGString(layer.paths.join(''), id);
-                        g.childNodes.forEach(child => {
-                            $(child).attr('id', svgCanvas.getNextId());
-                            $(child).attr('vector-effect', "non-scaling-stroke");
-                        });
+                        for (let j = 0; j < g.childNodes.length; j++) {
+                            let child = g.childNodes[j];
+                            if (child.tagName === 'path' && !$(child).attr('d')) {
+                                child.remove();
+                                j --;
+                            } else {
+                                $(child).attr('id', svgCanvas.getNextId());
+                                $(child).attr('vector-effect', "non-scaling-stroke");
+                            }
+                        }
                     }
                     //importBvgString(resizedSvg);
 
