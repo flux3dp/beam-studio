@@ -64,7 +64,7 @@ define([
         },
 
         autoCheck: function() {
-            let isAutoCheck = Config().read('auto_check_update') === '1';
+            let isAutoCheck = Config().read('auto_check_update') === '1' || !Config().read('auto_check_update');
             if (isAutoCheck) {
                 checkForUpdate(isAutoCheck);
             }
