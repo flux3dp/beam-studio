@@ -523,7 +523,10 @@ define([
                 events.onError = function(data) {
                     alert(data);
                 };
-                const textString = $textElement.prop('outerHTML');
+                let textString = $textElement.prop('outerHTML');
+                if ($textElement.data('verti')) {
+                    textString = textString.replace(/letter-spacing="[^"]+"/, '');
+                }
                 let svgString = `<svg viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">
                     ${textString}
                 </svg>`

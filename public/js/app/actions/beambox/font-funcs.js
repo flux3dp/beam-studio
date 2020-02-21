@@ -182,6 +182,7 @@ define([
             $textElement.remove();
             return;
         }
+        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         if (BeamboxPreference.read('font-substitute') !== false) {
             const newFontFamily = substitutedFamily($textElement);
             $textElement.attr('font-family', newFontFamily);
@@ -239,10 +240,10 @@ define([
             'stroke-dasharray': 'none',
             'vector-effect': 'non-scaling-stroke',
         });
-        let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
+        const pbbox = path.getBBox();
+        svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
         let textElem = $textElement[0];
         let parent = textElem.parentNode;
         let nextSibling = textElem.nextSibling;

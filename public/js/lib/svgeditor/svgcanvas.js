@@ -2857,6 +2857,7 @@ define([
             var last_x, last_y;
             var allow_dbl;
             let lineSpacing = 1;
+            let isVertical = false;
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
@@ -2879,7 +2880,6 @@ define([
                 let {rowIndex, index: columnIndex} = indexToRowAndIndex(index);
                 charbb = chardata[rowIndex][columnIndex];
 
-                //console.log(charbb);
                 cursor = svgedit.utilities.getElem('text_cursor');
 
                 if (!cursor) {
@@ -2898,9 +2898,8 @@ define([
                         cursor.setAttribute('display', show ? 'inline' : 'none');
                     }, 600);
                 }
-
                 var start_pt = ptToScreen(charbb.x, charbb.y);
-                var end_pt = ptToScreen(charbb.x, charbb.y + charbb.height);
+                var end_pt = isVertical ? ptToScreen(charbb.x + charbb.width, charbb.y) : ptToScreen(charbb.x, charbb.y + charbb.height);
                 svgedit.utilities.assignAttributes(cursor, {
                     x1: start_pt.x,
                     y1: start_pt.y,
@@ -2914,6 +2913,74 @@ define([
                     selblock.setAttribute('d', '');
                 }
             }
+
+            let calculateCharbb = () => {
+                let tspans = Array.from(curtext.childNodes).filter((child) => child.tagName === 'tspan');
+                let rowNumbers = tspans.length;
+                const charHeight = parseFloat(canvas.getFontSize());
+                let lines = textinput.value.split('\x0b');
+                let lastRowX = null;
+
+                // No contents
+                if (rowNumbers === 0) {
+                    let bb = isVertical ? { x: textbb.x, y: textbb.y + (textbb.height / 2), width: charHeight, height: 0 } 
+                        : { x: textbb.x + (textbb.width / 2), y: textbb.y, width: 0, height: charHeight };
+                    chardata.push([bb]);
+                    return;
+                }
+
+                // When we use the widest char as first row's width
+                let firstRowMaxWidth = 0;
+                if (isVertical && rowNumbers > 0) {
+                    for (let i = 0; i < tspans[0].textContent.length; i++) {
+                        let start = tspans[0].getStartPositionOfChar(i);
+                        let end = tspans[0].getEndPositionOfChar(i);
+                        firstRowMaxWidth = Math.max(firstRowMaxWidth, end.x - start.x);
+                    }
+                }
+
+                for (let i = 0; i < rowNumbers; ++i) {
+                    chardata.push([]);
+                    let start, end;
+                    let tspanbb = svgedit.utilities.getBBox(tspans[i]);
+                    if (lines[i] === '') {
+                        tspans[i].textContent = ' ';
+                    };
+
+                    for (let j = 0; j < tspans[i].textContent.length; ++j) {
+                        start = tspans[i].getStartPositionOfChar(j);
+                        end = tspans[i].getEndPositionOfChar(j);
+
+                        if (!svgedit.browser.supportsGoodTextCharPos()) {
+                            var offset = canvas.contentW * current_zoom;
+                            start.x -= offset;
+                            end.x -= offset;
+
+                            start.x /= current_zoom;
+                            end.x /= current_zoom;
+                        } 
+                        chardata[i].push({
+                            x: start.x,
+                            y: isVertical ? start.y - charHeight : tspanbb.y + i * lineSpacing * charHeight,
+                            width: isVertical ? (i === 0 ? firstRowMaxWidth : lastRowX - start.x) : end.x - start.x,
+                            height: charHeight
+                        });
+                    }
+                    // Add a last bbox for cursor at end of text
+                    // Because we insert a space for empty line, we don't add last bbox for empty line
+                    if (lines[i] !== '') {
+                        chardata[i].push({
+                            x: isVertical ? start.x : end.x,
+                            y: isVertical ? end.y : tspanbb.y + i * lineSpacing * charHeight,
+                            width: isVertical ? (i === 0 ? firstRowMaxWidth : lastRowX - start.x) : 0,
+                            height: isVertical ? 0 : charHeight
+                        });
+                    } else {
+                        tspans[i].textContent = '';
+                    }
+                    lastRowX = start.x;
+                };
+            };
 
             function indexToRowAndIndex(index) {
                 let rowIndex = 0;
@@ -2956,22 +3023,23 @@ define([
                 cursor.setAttribute('visibility', 'hidden');
                 let dString;
                 let points = [];
+                //drawing selection block
                 if (startRowIndex === endRowIndex) {
-                    points.push(ptToScreen(startbb.x, startbb.y));
-                    points.push(ptToScreen(endbb.x, endbb.y));
-                    points.push(ptToScreen(endbb.x, endbb.y + endbb.height));
-                    points.push(ptToScreen(startbb.x, startbb.y + startbb.height));
+                    if (isVertical) {
+                        points = [[startbb.x, startbb.y], [endbb.x, endbb.y], [endbb.x  + endbb.width, endbb.y], [startbb.x  + startbb.width, startbb.y]];
+                    } else {
+                        points = [[startbb.x, startbb.y], [endbb.x, endbb.y], [endbb.x, endbb.y + endbb.height], [startbb.x, startbb.y + startbb.height]];
+                    }
                 } else {
-                    points.push(ptToScreen(startbb.x, startbb.y));
-                    points.push(ptToScreen(textbb.x + textbb.width, startbb.y));
-                    points.push(ptToScreen(textbb.x + textbb.width, endbb.y));
-                    points.push(ptToScreen(endbb.x, endbb.y));
-                    points.push(ptToScreen(endbb.x, endbb.y + endbb.height));
-                    points.push(ptToScreen(textbb.x, endbb.y + endbb.height));
-                    points.push(ptToScreen(textbb.x, startbb.y + startbb.height));
-                    points.push(ptToScreen(startbb.x, startbb.y + startbb.height));
-
+                    if (isVertical) {
+                        points = [[startbb.x + startbb.width, startbb.y], [startbb.x + startbb.width, textbb.y + textbb.height], [endbb.x + endbb.width, textbb.y  + textbb.height],
+                        [endbb.x + endbb.width, endbb.y], [endbb.x, endbb.y], [endbb.x, textbb.y], [startbb.x, textbb.y], [startbb.x, startbb.y]];
+                    } else {
+                        points = [[startbb.x, startbb.y], [textbb.x + textbb.width, startbb.y], [textbb.x + textbb.width, endbb.y], [endbb.x, endbb.y],
+                        [endbb.x, endbb.y + endbb.height], [textbb.x, endbb.y + endbb.height], [textbb.x, startbb.y + startbb.height], [startbb.x, startbb.y + startbb.height]];
+                    }
                 }
+                points = points.map(p => ptToScreen(p[0], p[1]));
                 points = points.map(p => `${p.x},${p.y}`);
                 dString = `M ${points.join(' L ')} z`;
 
@@ -2994,11 +3062,16 @@ define([
                 // Determine if cursor should be on left or right of character
                 var charpos = curtext.getCharNumAtPosition(pt);
                 let rowIndex = 0;
+                textbb = svgedit.utilities.getBBox(curtext);
+                //console.log(textbb);
                 if (charpos < 0) {
                     // Out of text range, look at mouse coords
                     charpos = chardata[0].length - 2;
                     if (mouse_x <= chardata[0][0].x) {
                         charpos = 0;
+                    }
+                    if (textbb.x < mouse_x && mouse_x < textbb.x + textbb.width && textbb.y < mouse_y && mouse_y < textbb.y + textbb.height) {
+                        return false;
                     }
                 } else {
                     let index = charpos;
@@ -3007,9 +3080,16 @@ define([
                         rowIndex += 1;
                     }
                     const charbb = chardata[rowIndex][index];
-                    const mid = charbb.x + (charbb.width / 2);
-                    if (mouse_x > mid) {
-                        charpos++;
+                    if (isVertical) {
+                        const mid = charbb.y + (charbb.height / 2);
+                        if (mouse_y > mid) {
+                            charpos++;
+                        }
+                    } else {
+                        const mid = charbb.x + (charbb.width / 2);
+                        if (mouse_x > mid) {
+                            charpos++;
+                        }
                     }
                 }
                 //Add rowIndex because charbb = charnum + 1 in every row
@@ -3023,7 +3103,9 @@ define([
             function setEndSelectionFromPoint(x, y, apply) {
                 var i1 = textinput.selectionStart;
                 var i2 = getIndexFromPoint(x, y);
-
+                if (i2 === false) {
+                    return;
+                }
                 var start = Math.min(i1, i2);
                 var end = Math.max(i1, i2);
                 setSelection(start, end, !apply);
@@ -3071,6 +3153,37 @@ define([
                 }
             }
 
+            let moveCursorLastRow = () => {
+                let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
+                if (rowIndex === 0) {
+                    textinput.selectionEnd = textinput.selectionStart = 0;
+                } else {
+                    let newCursorIndex = 0;
+                    rowIndex -= 1;
+                    for (let i = 0; i < rowIndex; i++) {
+                        newCursorIndex += chardata[i].length;
+                    }
+                    newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
+                    textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
+                }
+            };
+
+            let moveCursorNextRow = () => {
+                let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
+                if (rowIndex === chardata.length -1) {
+                    textinput.selectionEnd += chardata[rowIndex].length - index - 1;
+                    textinput.selectionStart = textinput.selectionEnd;
+                } else {
+                    let newCursorIndex = 0;
+                    rowIndex += 1;
+                    for (let i = 0; i < rowIndex; i++) {
+                        newCursorIndex += chardata[i].length;
+                    }
+                    newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
+                    textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
+                }
+            };
+
             function selectAll(evt) {
                 setSelection(0, curtext.textContent.length);
                 $(this).unbind(evt);
@@ -3098,7 +3211,6 @@ define([
                 setTimeout(function () {
                     $(evt.target).unbind('click', selectAll);
                 }, 300);
-
             }
 
             return {
@@ -3147,33 +3259,36 @@ define([
 
                 },
                 setCursor: setCursor,
-                moveCursourUp: () => {
-                    let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
-                    if (rowIndex === 0) {
-                        textinput.selectionEnd = textinput.selectionStart = 0;
-                    } else {
-                        let newCursorIndex = 0;
-                        rowIndex -= 1;
-                        for (let i = 0; i < rowIndex; i++) {
-                            newCursorIndex += chardata[i].length;
-                        }
-                        newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
-                        textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
-                    }
-                },
-                moveCursourDown: () => {
-                    let {rowIndex, index} = indexToRowAndIndex(textinput.selectionEnd);
-                    if (rowIndex === chardata.length -1) {
-                        textinput.selectionEnd += chardata[rowIndex].length - index - 1;
+                onUpKey: () => {
+                    if (isVertical) {
+                        textinput.selectionEnd = Math.max(textinput.selectionEnd - 1, 0);
                         textinput.selectionStart = textinput.selectionEnd;
                     } else {
-                        let newCursorIndex = 0;
-                        rowIndex += 1;
-                        for (let i = 0; i < rowIndex; i++) {
-                            newCursorIndex += chardata[i].length;
-                        }
-                        newCursorIndex += Math.min(chardata[rowIndex].length - 1, index);
-                        textinput.selectionEnd = textinput.selectionStart = newCursorIndex;
+                        moveCursorLastRow();
+                    }
+                },
+                onDownKey: () => {
+                    if (isVertical) {
+                        textinput.selectionEnd += 1;
+                        textinput.selectionStart = textinput.selectionEnd;
+                    } else {
+                        moveCursorNextRow();
+                    }
+                },
+                onLeftKey: () => {
+                    if (isVertical) {
+                        moveCursorNextRow();
+                    } else {
+                        textinput.selectionEnd = Math.max(textinput.selectionEnd - 1, 0);
+                        textinput.selectionStart = textinput.selectionEnd;
+                    }
+                },
+                onRightKey: () => {
+                    if (isVertical) {
+                        moveCursorLastRow();
+                    } else {
+                        textinput.selectionEnd += 1;
+                        textinput.selectionStart = textinput.selectionEnd;
                     }
                 },
                 toEditMode: function (x, y) {
@@ -3182,7 +3297,6 @@ define([
                     selectorManager.requestSelector(curtext).showGrips(false);
                     // Make selector group accept clicks
                     var sel = selectorManager.requestSelector(curtext).selectorRect;
-
                     textActions.init();
 
                     $(curtext).css('cursor', 'text');
@@ -3242,26 +3356,70 @@ define([
                     textinput = elem;
                     //			$(textinput).blur(hideCursor);
                 },
-                updateLineSpacing: (textElem) => {
+                updateMultiLineTextElem: (textElem) => {
                     let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
                     const charHeight = parseFloat(canvas.getFontSize());
+                    const letterSpacing = canvas.getLetterSpacing();
                     for (let i = 0; i < tspans.length; i++) {
-                        $(tspans[i]).attr('y', $(textElem).attr('y') + i * lineSpacing * charHeight);
+                        if (isVertical) {
+                            let x = [];
+                            let y = [];
+                            const textContent = tspans[i].textContent;
+                            const xPos = $(textElem).attr('x') - i * lineSpacing * charHeight;
+                            let yPos = $(textElem).attr('y');
+                            for (let j = 0; j < textContent.length; j++) {
+                                x.push(xPos.toFixed(2));
+                                y.push(yPos.toFixed(2));
+                                yPos += (1 + letterSpacing) * charHeight;// text spacing
+                            }
+                            $(tspans[i]).attr({
+                                'x': x.join(' '),
+                                'y': y.join(' '),
+                                'vector-effect': 'non-scaling-stroke',
+                            });
+                        } else {
+                            $(tspans[i]).attr({
+                                'x': $(textElem).attr('x'),
+                                'y': $(textElem).attr('y') + i * lineSpacing * charHeight,
+                                'vector-effect': 'non-scaling-stroke',
+                            });
+                        }
                     }
                 },
                 renderMultiLineText: (textElem, val) => {
                     let lines = val.split('\x0b');
                     let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
                     const charHeight = parseFloat(canvas.getFontSize());
-                    //console.log(lines);
+                    const letterSpacing = canvas.getLetterSpacing();
                     for (let i = 0; i < Math.max(lines.length, tspans.length); i++) {
                         if (i < lines.length) {
                             // Add a space for empty line to render select bbox
                             if (lines[i] === '') lines[i] = ' ';
+                            let tspan;
+                            let x = [];
+                            let y = [];
                             if (tspans[i]) {
-                                tspans[i].textContent = lines[i];
+                                tspan = tspans[i];
                             } else {
-                                const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                                tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                                textElem.appendChild(tspan);
+                            }
+                            tspan.textContent = lines[i];
+
+                            if (isVertical) {
+                                const xPos = $(textElem).attr('x') - i * lineSpacing * charHeight;
+                                let yPos = $(textElem).attr('y');
+                                for (let j = 0; j < lines[i].length; j++) {
+                                    x.push(xPos.toFixed(2));
+                                    y.push(yPos.toFixed(2));
+                                    yPos += (1 + letterSpacing) * charHeight;// text spacing
+                                }
+                                $(tspan).attr({
+                                    'x': x.join(' '),
+                                    'y': y.join(' '),
+                                    'vector-effect': 'non-scaling-stroke',
+                                });
+                            } else {
                                 $(tspan).attr({
                                     'x': $(textElem).attr('x'),
                                     'y': $(textElem).attr('y') + i * lineSpacing * charHeight,
@@ -3276,9 +3434,11 @@ define([
                             }
                         }
                     }
-                    //console.log(lines);
                     svgedit.recalculate.recalculateDimensions(textElem);
                     selectorManager.requestSelector(textElem).resize();
+                },
+                setIsVertical: (val) => {
+                    isVertical = val;
                 },
                 setLineSpacing: (val) => {
                     lineSpacing = val;
@@ -3292,7 +3452,6 @@ define([
                     if (!curtext) {
                         return;
                     }
-                    let tspans = [];
                     //				if (svgedit.browser.supportsEditableText()) {
                     //					curtext.select();
                     //					return;
@@ -3303,80 +3462,12 @@ define([
                         curtext = selectedElements[0];
                         selectorManager.requestSelector(curtext).showGrips(false);
                     }
-
-                    
-                    tspans = Array.from(curtext.childNodes).filter((child) => child.tagName === 'tspan');
-
-                    let rowNumbers = tspans.length;
                     chardata = [];
-
                     const xform = curtext.getAttribute('transform');
-
                     textbb = svgedit.utilities.getBBox(curtext);
-
                     matrix = xform ? svgedit.math.getMatrix(curtext) : null;
-                    const charHeight = parseFloat(canvas.getFontSize());
 
-                    if (rowNumbers === 0) {
-                        chardata.push([{
-                            x: textbb.x + (textbb.width / 2),
-                            y: textbb.y,
-                            width: 0,
-                            height: charHeight
-                        }]);
-                    }
-
-                    let lines = textinput.value.split('\x0b');
-
-                    for (let i = 0; i < rowNumbers; ++i) {
-                        chardata.push([]);
-                        const str = tspans[i].textContent;
-                        const len = str.length;
-                        let end;
-                        let tspanbb = svgedit.utilities.getBBox(tspans[i]);
-                        if (!len) {
-                            end = {
-                                x: tspanbb.x,
-                                y: tspanbb.y + i * lineSpacing * charHeight,
-                                width: 0,
-                                height: charHeight
-                            };
-                        }
-
-                        for (let j = 0; j < len; ++j) {
-                            let start = tspans[i].getStartPositionOfChar(j);
-                            end = tspans[i].getEndPositionOfChar(j);
-
-                            if (!svgedit.browser.supportsGoodTextCharPos()) {
-                                var offset = canvas.contentW * current_zoom;
-                                start.x -= offset;
-                                end.x -= offset;
-    
-                                start.x /= current_zoom;
-                                end.x /= current_zoom;
-                            }
-                            // Get a "bbox" equivalent for each character. Uses the
-                            // bbox data of the actual text for y, height purposes
-
-                            // TODO: Decide if y, width and height are actually necessary
-                            chardata[i].push({
-                                x: start.x,
-                                y: tspanbb.y + i * lineSpacing * charHeight,
-                                width: end.x - start.x,
-                                height: charHeight
-                            });
-                        }
-                        // Add a last bbox for cursor at end of text
-                        // Because we insert a space for empty line, we don't add last bbox for empty line
-                        if (lines[i] !== '') {
-                            chardata[i].push({
-                                x: end.x,
-                                y: tspanbb.y + i * lineSpacing * charHeight,
-                                width: 0,
-                                height: charHeight
-                            });
-                        }
-                    };
+                    calculateCharbb();
 
                     textinput.focus();
                     $(curtext).unbind('dblclick', selectWord).dblclick(selectWord);
@@ -7509,7 +7600,7 @@ define([
                 let val = selected.getAttribute('letter-spacing');
                 if(val) {
                     if (val.toLowerCase().endsWith('em')) {
-                        return val.slice(0, -2);
+                        return parseFloat(val.slice(0, -2));
                     } else {
                         console.warn('letter-spacing should be em!');
                         return 0;
@@ -7527,6 +7618,7 @@ define([
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 changeSelectedAttribute('letter-spacing', val ? (val.toString() + 'em') : '0em');
+                textActions.updateMultiLineTextElem(selectedElements[0]);
             }
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
@@ -7558,15 +7650,36 @@ define([
                 textActions.setCursor();
             }
             textActions.setLineSpacing(val);
-            textActions.updateLineSpacing(selectedElements[0]);
+            textActions.updateMultiLineTextElem(selectedElements[0]);
         };
 
         this.getTextLineSpacing = () => {
             let textElem = selectedElements[0];
             if (textElem != null && textElem.tagName === 'text' &&
                 selectedElements[1] == null) {
-                let val = textElem.getAttribute('data-line-spacing') || 1;
-                textActions.setLineSpacing(val);
+                let val = textElem.getAttribute('data-line-spacing') || '1';
+                textActions.setLineSpacing(parseFloat(val));
+                return val;
+            }
+            return false;
+        }
+
+        this.setTextIsVertical = (val) => {
+            changeSelectedAttribute('data-verti', val);
+            if (!selectedElements[0].textContent) {
+                textActions.setCursor();
+            }
+            textActions.setIsVertical(val);
+            textActions.updateMultiLineTextElem(selectedElements[0]);
+        }
+
+        this.getTextIsVertical = () => {
+            let textElem = selectedElements[0];
+            if (textElem != null && textElem.tagName === 'text' &&
+                selectedElements[1] == null) {
+                let val = textElem.getAttribute('data-verti') || false;
+                val = val === 'true';
+                textActions.setIsVertical(val);
                 return val;
             }
             return false;
@@ -7605,7 +7718,7 @@ define([
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
             }
-            textActions.updateLineSpacing(selectedElements[0]);
+            textActions.updateMultiLineTextElem(selectedElements[0]);
         };
 
         // Function: getText

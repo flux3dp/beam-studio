@@ -1920,6 +1920,7 @@ define([
                             });
                             ObjectPanelsController.setLetterSpacing(svgCanvas.getLetterSpacing());
                             ObjectPanelsController.setLineSpacing(svgCanvas.getTextLineSpacing());
+                            ObjectPanelsController.setTextIsVertical(svgCanvas.getTextIsVertical());
                             ObjectPanelsController.setFontIsFill(svgCanvas.getFontIsFill());
                         } // text
                         else if (el_name === 'image') {
@@ -3271,10 +3272,16 @@ define([
                 evt.stopPropagation();
                 if (evt.keyCode === KeycodeConstants.KEY_UP) {
                     evt.preventDefault();
-                    svgCanvas.textActions.moveCursourUp();
+                    svgCanvas.textActions.onUpKey();
                 } else if (evt.keyCode === KeycodeConstants.KEY_DOWN) {
                     evt.preventDefault();
-                    svgCanvas.textActions.moveCursourDown();
+                    svgCanvas.textActions.onDownKey();
+                } else if (evt.keyCode === KeycodeConstants.KEY_LEFT) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.onLeftKey();
+                } else if (evt.keyCode === KeycodeConstants.KEY_RIGHT) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.onRightKey();
                 }
                 if (!evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
                     svgCanvas.textActions.toSelectMode(true);

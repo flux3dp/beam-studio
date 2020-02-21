@@ -124,10 +124,12 @@ svgedit.coords.remapElement = function(selected, changes, m) {
     } else {
       // we just absorb all matrices into the element and don't do any remapping
       chlist = svgedit.transformlist.getTransformList(selected);
-      mt = svgroot.createSVGTransform();
-      mt.setMatrix(svgedit.math.matrixMultiply(svgedit.math.transformListToTransform(chlist).matrix, m));
-      chlist.clear();
-      chlist.appendItem(mt);
+      if (chlist.numberOfItems > 0 || elName !== 'tspan') {
+        mt = svgroot.createSVGTransform();
+        mt.setMatrix(svgedit.math.matrixMultiply(svgedit.math.transformListToTransform(chlist).matrix, m));
+        chlist.clear();
+        chlist.appendItem(mt);
+      }
     }
   }
   var c, pt, pt1, pt2, len;

@@ -159,6 +159,9 @@ define([
         setLineSpacing(val) {
             this.data.font.lineSpacing = val;
         }
+        setTextIsVertical(val) {
+            this.data.font.isVertical = val;
+        }
         setFontIsFill(val) {
             this.data.font.isFill = val;
         }
