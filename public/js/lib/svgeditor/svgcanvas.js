@@ -37,6 +37,7 @@ define([
     'app/actions/beambox/constant',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
+    'app/actions/topbar',
     'helpers/local-storage',
     'helpers/shortcuts',
     'lib/svgeditor/imagetracer'
@@ -50,6 +51,7 @@ define([
     Constant,
     ProgressActions,
     ProgressConstants,
+    TopbarActions,
     LocalStorage,
     shortcuts,
     ImageTracer
@@ -1004,6 +1006,7 @@ define([
             if (!noCall) {
                 call('selected', selectedElements);
             }
+            TopbarActions.updateTopMenu();
         };
 
         // TODO: do we need to worry about selectedBBoxes here?
@@ -1086,6 +1089,7 @@ define([
             while (selectedElements[0] == null) {
                 selectedElements.shift(0);
             }
+            TopbarActions.updateTopMenu();
         };
 
         // Function: selectOnly()
