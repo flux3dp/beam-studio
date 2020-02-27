@@ -489,6 +489,9 @@ define([
 
         var restoreRefElems = function (elem) {
             // Look for missing reference elements, restore any found
+            if (elem.tagName === 'STYLE') {
+                return;
+            }
             var o, i, l,
                 attrs = $(elem).attr(ref_attrs);
             for (o in attrs) {
@@ -8286,6 +8289,27 @@ define([
                     selectedCopy.push(selected); //for the copy
                     selectedElements[i] = null;
                     batchCmd.addSubCommand(new RemoveElementCommand(elem, nextSibling, parent));
+                }
+                if (selected.tagName === 'use') {
+                    const ref_id = this.getHref(selected);
+                    //const ref = $(this.getHref(selected)).toArray()[0];
+                    console.log(ref_id);
+                    let use_elems = svgcontent.getElementsByTagName('use');
+                    let shouldDeleteRef = true;
+                    for (let j = 0; j < use_elems.length; j++) {
+                        if (ref_id === this.getHref(use_elems[j])) {
+                            shouldDeleteRef = false;
+                            break;
+                        }
+                    }
+                    if (shouldDeleteRef) {
+                        const ref = $(this.getHref(selected)).toArray()[0];
+                        parent = ref.parentNode;
+                        nextSibling = ref.nextSibling;
+                        let elem = parent.removeChild(ref);
+                        selectedCopy.push(ref); //for the copy
+                        batchCmd.addSubCommand(new RemoveElementCommand(elem, nextSibling, parent));
+                    }
                 }
             }
             if (!batchCmd.isEmpty()) {

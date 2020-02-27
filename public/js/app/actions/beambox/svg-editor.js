@@ -5627,7 +5627,6 @@ define([
                             // highlight imported element, otherwise we get strange empty selectbox
                             try {
                                 svgCanvas.selectOnly([newElement]);
-                                TopbarActions.updateTopMenu();
                             } catch(e) {
                                 console.warn('Reading empty SVG');
                                 resolve(false);
