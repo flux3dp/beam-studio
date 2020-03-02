@@ -52,7 +52,7 @@ svgEditor.addExtension('rotary_axis', function () {
         'y1': currentYRatio + '%',
         'x2': '100%',
         'y2': currentYRatio + '%',
-        'stroke-width': 5,
+        'stroke-width': 7,
         'stroke': 'transparent',
         'fill': 'none',
         'style': 'cursor:ns-resize',
