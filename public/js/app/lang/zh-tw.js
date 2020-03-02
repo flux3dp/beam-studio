@@ -1167,6 +1167,7 @@ define(function() {
                     speed: '速度',
                     repeat: '執行次數',
                     height: '物件高度',
+                    z_step: '每次遞降',
                     diode: '二極體雷射',
                     times: '次',
                     cut: '切割',

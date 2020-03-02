@@ -84,6 +84,7 @@ define([
             strength:   PropTypes.number.isRequired,
             repeat:     PropTypes.number.isRequired,
             height:     PropTypes.number.isRequired,
+            zStep:    PropTypes.number.isRequired,
             isDiode:    PropTypes.number.isRequired,
             funcs:      PropTypes.object.isRequired
         },
@@ -145,6 +146,7 @@ define([
                 strength:       this.props.strength,
                 repeat:         this.props.repeat,
                 height:         this.props.height,
+                zStep:          this.props.zStep,
                 isDiode:        this.props.isDiode > 0,
                 original:       defaultLaserOptions[0],
                 modal:          '',
@@ -178,6 +180,7 @@ define([
                 strength:   nextProps.strength,
                 repeat:     nextProps.repeat,
                 height:     nextProps.height,
+                zStep:      nextProps.zStep,
                 isDiode:    nextProps.isDiode > 0,
                 original:   defaultLaserOptions[0],
                 modal:      '',
@@ -213,6 +216,11 @@ define([
         _handleHeightChange: function(val) {
             this.setState({height: val});
             this.props.funcs.writeHeight(this.props.layerName, val);
+        },
+
+        _handleZStepChange: function(val) {
+            this.setState({zStep: val});
+            this.props.funcs.writeZStep(this.props.layerName, val);
         },
 
         _toggleDiode: function() {
@@ -498,6 +506,25 @@ define([
                         unit={'mm'}
                         defaultValue={this.state.height}
                         getValue={this._handleHeightChange}
+                        decimal={1}
+                    />
+                </div>
+            );
+        },
+
+        _renderZStep: function() {
+            if (!BeamboxPreference.read('enable-autofocus-module') || this.state.repeat === 1) {
+                return null;
+            }
+            return (
+                <div className='panel without-drag'>
+                    <span className='title'>{LANG.z_step}</span>
+                    <UnitInput
+                        min={0}
+                        max={20}
+                        unit={'mm'}
+                        defaultValue={this.state.zStep}
+                        getValue={this._handleZStepChange}
                         decimal={1}
                     />
                 </div>
@@ -939,6 +966,7 @@ define([
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
             const heightPanel = this._renderHeight();
+            const zStepPanel = this._renderZStep();
             const diodePanel = this._renderDiode();
             const modalDialog = this._renderModal();
 
@@ -990,6 +1018,7 @@ define([
                         {speedPanel}
                         {repeatPanel}
                         {heightPanel}
+                        {zStepPanel}
                         {diodePanel}
                         {modalDialog}
                         {this.state.isPrinterSelectorOpen ? printerSelector : ''}

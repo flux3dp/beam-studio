@@ -1169,6 +1169,7 @@ define(function() {
                     speed: 'Speed',
                     repeat: 'Execute',
                     height: 'Height',
+                    z_step: 'Z Step',
                     diode: 'Diode Laser',
                     times: 'times',
                     cut: 'Cut',

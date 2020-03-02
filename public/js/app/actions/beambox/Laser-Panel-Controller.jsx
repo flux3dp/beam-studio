@@ -15,6 +15,7 @@ define([
         strength: 15,
         repeat: 1,
         af: 0,
+        zstep: 0,
         height: 0,
         diode: 0
     }
@@ -26,6 +27,7 @@ define([
         repeat: 1,
         height: 0,
         af: 0,
+        zstep: 0,
         height: 0,
         diode: 0
     }
@@ -37,6 +39,7 @@ define([
         repeat: 1,
         height: 0,
         af: 0,
+        zstep: 0,
         height: 0,
         diode: 0
     }
@@ -91,6 +94,10 @@ define([
         return _getData(name, 'af');
     }
 
+    const _getZStep = function(name) {
+        return _getData(name, 'zstep');
+    }
+
     const getConfigName = function(name) {
         return _getData(name, 'configName');
     }
@@ -123,6 +130,10 @@ define([
         return _writeData(name, 'af', val);
     }
 
+    const writeZStep = function(name, val) {
+        return _writeData(name, 'zstep', val);
+    }
+
     const writeConfigName = function(name, val) {
         return _writeData(name, 'configName', val);
     }
@@ -136,6 +147,7 @@ define([
                 writeRepeat: writeRepeat,
                 writeHeight: writeHeight,
                 writeDiode: writeDiode,
+                writeZStep: writeZStep,
                 writeConfigName: writeConfigName
             }
         }
@@ -149,6 +161,7 @@ define([
             _getRepeat(name, _getConfig(name).repeat);
             _getHeight(name, _getConfig(name).height);
             _getDiode(name, _getConfig(name).diode);
+            _getZStep(name, _getConfig(name).zstep);
         }
 
         cloneConfig(name, baseName) {
@@ -157,6 +170,7 @@ define([
             writeRepeat(name, _getRepeat(baseName));
             writeHeight(name, _getHeight(baseName));
             writeDiode(name, _getDiode(baseName));
+            writeZStep(name, _getZStep(baseName));
             writeConfigName(name, getConfigName(baseName));
         }
 
@@ -166,6 +180,7 @@ define([
             const repeat = _getRepeat(name);
             const height = _getHeight(name);
             const isDiode = _getDiode(name);
+            const zStep = _getZStep(name);
             const configName = getConfigName(name);
 
             ReactDOM.render(
@@ -176,6 +191,7 @@ define([
                     strength={strength}
                     repeat={repeat}
                     height={height}
+                    zStep={zStep}
                     isDiode={isDiode}
                     funcs={this.funcs}
                 />
