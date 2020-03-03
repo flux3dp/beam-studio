@@ -156,6 +156,7 @@ define([
                 };
                 if (this.props.type !== AlertConstants.CUSTOM_GROUP) {
                     buttons.push({
+                        className: 'primary btn-default',
                         label: this._getCloseButtonCaption(),
                         onClick: onclose_bind_with_on_no.bind(this)
                     });
@@ -164,6 +165,7 @@ define([
                 switch (this.props.type) {
                 case AlertConstants.YES_NO:
                     buttons.push({
+                        className: 'primary btn-default',
                         label: lang.yes,
                         dataAttrs: {
                             'ga-event': 'yes'
@@ -173,6 +175,7 @@ define([
                     break;
                 case AlertConstants.RETRY_CANCEL:
                     buttons.push({
+                        className: 'primary btn-default',
                         label: lang.retry,
                         dataAttrs: {
                             'ga-event': 'cancel'
@@ -189,6 +192,7 @@ define([
                         onClick: this._onAbort
                     });
                     buttons.push({
+                        className: 'primary btn-default',
                         label: lang.retry,
                         dataAttrs: {
                             'ga-event': 'retry'
@@ -210,6 +214,7 @@ define([
                     var self = this;
                     this.props.customTextGroup.forEach(function(customText, idx) {
                       buttons.push({
+                          className: 'primary btn-default',
                           label: customText,
                           dataAttrs: {
                             'ga-enent': customText

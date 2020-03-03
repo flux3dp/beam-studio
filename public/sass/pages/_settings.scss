@@ -211,12 +211,16 @@
 
     .btn-done {
         background: #424242;
+        border-radius: 4px;
+        line-height: 36px;
+        font-size: 14px;
         color: white;
         padding: 0 20px;
         margin: 20px 0;
         display: inline-block;
         &:hover{
-            background: #555;
+            background: #222;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
     }
 }
