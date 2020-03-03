@@ -40,10 +40,6 @@
         max-height: 100%;
         overflow: hidden;
 
-        .btn-default{
-            background: #F8F8F8;
-        }
-
         .modal-content {
             height: 80%;
 
@@ -132,10 +128,6 @@
             min-width: 50px;
         }
 
-        .btn-default{
-            background: #F8F8F8;
-        }
-
         .spinner-roller-reverse {
 
             background: linear-gradient(to right, #F0F0F0 10%, rgba(248, 248, 248, 0) 42%);
@@ -165,9 +157,6 @@
         width: 100%;
 
         .btn {
-            font-size: 1.3rem;
-            height: 2.8rem;
-            line-height: calc(2.8rem - 4px);    // borders are 2px
             margin: 0 .6rem 0 0;
             max-width: 13rem;
 

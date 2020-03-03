@@ -218,7 +218,7 @@ define([
                         </section>
                         <section className='footer'>
                             <button
-                                className='btn btn-default pull-right'
+                                className='btn btn-default pull-right primary'
                                 onClick={() => {
                                     this._onStart();
                                 }}

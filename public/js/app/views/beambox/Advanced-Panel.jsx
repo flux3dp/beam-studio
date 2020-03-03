@@ -109,7 +109,7 @@ define([
                             >{LANG.cancel}
                             </button>
                             <button
-                                className='btn btn-default pull-right'
+                                className='btn btn-default primary pull-right'
                                 onClick={() => {
                                     this.save();
                                     this.props.unmount();

@@ -68,7 +68,7 @@ define(['react','reactCreateReactClass'], function(React){
                                 type={opt.type || 'button'}
                                 onClick={opt.onClick}
                                 dangerouslySetInnerHTML={{__html: opt.label}}
-                                {...attrs} ></button>
+                                {...attrs}  />
                         );
                     }
 

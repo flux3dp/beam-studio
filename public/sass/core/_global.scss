@@ -139,8 +139,7 @@ img {
 
     &:hover::before {
         background: rgba(0, 0 , 0, .8);
-        -webkit-border-radius: 3px;
-        border-radius: 3px;
+        border-radius: 4px;
         color: #FFF;
         content: attr(data-tip);
         display: block;
@@ -274,13 +273,13 @@ input[type=range]:focus::-webkit-slider-runnable-track {
     position: absolute;
 
     .btn-action {
-        border-radius: 3px;
+        border-radius: 4px;
         letter-spacing: .3px;
     }
 
     .main {
         background-color: #FFF;
-        border-radius: 3px;
+        border-radius: 4px;
 
         .time {
             font-size: 16px;
@@ -511,7 +510,7 @@ hr {
 }
 
 .vague-round-corner {
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .menubar-menu-container .action-menu-item {
@@ -527,7 +526,7 @@ input[type=text] {
     border: 1px solid #ccc;
     background: #FFF;
     padding-left: 10px;
-    border-radius: 2px;
+    border-radius: 4px;
     height: 32px;
     &::placeholder{
         color: #BBB;
