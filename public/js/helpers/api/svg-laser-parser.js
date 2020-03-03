@@ -342,6 +342,8 @@ define([
 
                 if (opts.enableDiode) {
                     args.push('-diode');
+                    args.push(`${BeamboxPreference.read('diode_offset_x') || 0},${BeamboxPreference.read('diode_offset_y') || 0}`);
+                    console.log(`${BeamboxPreference.read('diode_offset_x') || 0},${BeamboxPreference.read('diode_offset_y') || 0}`);
                 }
 
                 events.onMessage = function(data) {

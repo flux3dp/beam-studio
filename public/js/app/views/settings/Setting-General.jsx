@@ -342,12 +342,12 @@ define([
             const autofocusModuleOptions = [
                 {
                     value: true,
-                    label: lang.settings.on,
+                    label: lang.settings.enabled,
                     selected: BeamboxPreference.read('enable-autofocus-module')
                 },
                 {
                     value: false,
-                    label: lang.settings.off,
+                    label: lang.settings.disabled,
                     selected: !BeamboxPreference.read('enable-autofocus-module')
                 }
             ];
@@ -355,12 +355,12 @@ define([
             const diodeModuleOptions = [
                 {
                     value: true,
-                    label: lang.settings.on,
+                    label: lang.settings.enabled,
                     selected: BeamboxPreference.read('enable-diode-module')
                 },
                 {
                     value: false,
-                    label: lang.settings.off,
+                    label: lang.settings.disabled,
                     selected: !BeamboxPreference.read('enable-diode-module')
                 }
             ];
@@ -599,6 +599,27 @@ define([
                             onChange={e => this._updateBeamboxPreference('enable-diode-module', e.target.value)}
                         />
                     </Controls>
+
+                    {BeamboxPreference.read('enable-diode-module') ? <Controls label={lang.settings.diode_offset}>
+                        <span className='font2' style={{marginRight: '10px'}}>X</span>
+                        <UnitInput
+                            unit='mm'
+                            min={0}
+                            max={BeamboxConstant.dimension.width/10}
+                            defaultValue={BeamboxPreference.read('diode_offset_x') || 0}
+                            getValue={val => this._updateBeamboxPreference('diode_offset_x', val)}
+                            className={{half: true}}
+                        />
+                        <span className='font2' style={{marginRight: '10px'}}>Y</span>
+                        <UnitInput
+                            unit='mm'
+                            min={0}
+                            max={BeamboxConstant.dimension.height/10}
+                            defaultValue={BeamboxPreference.read('diode_offset_y')}
+                            getValue={val => this._updateBeamboxPreference('diode_offset_y', val) || 0}
+                            className={{half: true}}
+                        />
+                    </Controls> : null}
 
                     <a className='font5' onClick={this._resetFS}>
                         <b>{lang.settings.reset_now}</b>
