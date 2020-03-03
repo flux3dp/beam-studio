@@ -340,6 +340,10 @@ define([
                     args.push('-af');
                 }
 
+                if (opts.enableDiode) {
+                    args.push('-diode');
+                }
+
                 events.onMessage = function(data) {
 
                     if ('computing' === data.status) {
