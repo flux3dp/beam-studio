@@ -208,7 +208,7 @@ define(function() {
         initialize: {
             // generic strings
             next: '下一步',
-            start: '開始設定',
+            start: '開始使用',
             skip: '跳過',
             cancel: '取消',
             confirm: '確認',
