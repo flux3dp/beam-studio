@@ -807,7 +807,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
                 x: $(child).attr('x') || 0,
                 y: $(child).attr('y') || 0
               };
+              const orig = {...tspanChanges};
               svgedit.coords.remapElement(child, tspanChanges, extrat);
+              batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
             }
           }
           svgedit.coords.remapElement(selected, changes, extrat);
@@ -861,7 +863,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
               x: $(child).attr('x') || 0,
               y: $(child).attr('y') || 0
             };
+            const orig = {...tspanChanges};
             svgedit.coords.remapElement(child, tspanChanges, m);
+            batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
           }
         }
       }
@@ -891,7 +895,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
               x: $(child).attr('x') || 0,
               y: $(child).attr('y') || 0
             };
+            const orig = {...tspanChanges};
             svgedit.coords.remapElement(child, tspanChanges, extrat);
+            batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
           }
         }
       }
