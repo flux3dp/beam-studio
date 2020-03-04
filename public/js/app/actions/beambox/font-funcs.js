@@ -242,7 +242,7 @@ define([
         });
         $(path).insertAfter($textElement);
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        const pbbox = path.getBBox();
+        const pbbox = svgCanvas.calculateTransformedBBox(path);
         svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
         let textElem = $textElement[0];
         let parent = textElem.parentNode;
