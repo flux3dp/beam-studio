@@ -9728,7 +9728,8 @@ define([
 
                     var xform = svgroot.createSVGTransform();
                     var tlist = svgedit.transformlist.getTransformList(selected);
-
+                    let x = 0;
+                    let y = 0;
                     // dx and dy could be arrays
                     if (dx.constructor == Array) {
                         //				if (i==0) {
@@ -9736,12 +9737,16 @@ define([
                         //					selectedBBoxes[0].y += dy[0];
                         //				}
                         xform.setTranslate(dx[i], dy[i]);
+                        x = dx[i];
+                        y = dx[i];
                     } else {
                         //				if (i==0) {
                         //					selectedBBoxes[0].x += dx;
                         //					selectedBBoxes[0].y += dy;
                         //				}
                         xform.setTranslate(dx, dy);
+                        x = dx;
+                        y = dy;
                     }
 
                     if (tlist.numberOfItems) {
@@ -9751,7 +9756,7 @@ define([
                     }
 
                     var cmd = svgedit.recalculate.recalculateDimensions(selected);
-                    if (cmd) {
+                    if (cmd && (x !== 0 || y !== 0)) {
                         batchCmd.addSubCommand(cmd);
                     }
 
@@ -10898,7 +10903,8 @@ define([
 
         };
         // refer to resize behavior in mouseup mousemove mousedown
-        this.setSvgElemSize = function (para, val) {
+        this.setSvgElemSize = function (para, val, undoable) {
+            let batchCmd = new svgedit.history.BatchCommand('set size');
             const selected = selectedElements[0];
             const realLocation = this.getSvgRealLocation(selected);
             let sx = 1;
@@ -10943,9 +10949,17 @@ define([
 
             selectorManager.requestSelector(selected).showGrips(true);
 
-            svgedit.recalculate.recalculateDimensions(selected);
-
+            let cmd = svgedit.recalculate.recalculateDimensions(selected);
             window.updateContextPanel();
+            if (cmd) {
+                batchCmd.addSubCommand(cmd);
+            }
+            if (!batchCmd.isEmpty()) {
+                if (undoable) {
+                    addCommandToHistory(batchCmd);
+                }
+                return batchCmd;
+            }
         };
 
         this.toggleGrid = function() {

@@ -333,9 +333,7 @@ define([
         let elem = parent.removeChild(textElem);
         batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
 
-        if (!batchCmd.isEmpty()) {
-            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-        }
+        if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
 
         return;
     };

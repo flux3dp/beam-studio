@@ -30,6 +30,7 @@ define([
         }
 
         _updateWidth(val) {
+            let cmd = null;
             switch(this.props.type) {
                 case 'rect':
                     FnWrapper.update_rect_width(val);
@@ -41,14 +42,16 @@ define([
                 case 'path':
                 case 'g':
                 case 'use':
-                    svgCanvas.setSvgElemSize('width', val * Constant.dpmm);
+                    cmd = svgCanvas.setSvgElemSize('width', val * Constant.dpmm);
                     break;
             }
 
             this.setState({ width: val });
+            return cmd;
         }
 
         _updateHeight(val) {
+            let cmd = null;
             switch(this.props.type) {
                 case 'rect':
                     FnWrapper.update_rect_height(val);
@@ -60,11 +63,12 @@ define([
                 case 'path':
                 case 'g':
                 case 'use':
-                    svgCanvas.setSvgElemSize('height', val * Constant.dpmm);
+                    cmd = svgCanvas.setSvgElemSize('height', val * Constant.dpmm);
                     break;
             }
 
             this.setState({ height: val });
+            return cmd;
         }
 
         handleUpdateWidth(val) {
@@ -73,14 +77,19 @@ define([
                 height,
                 isRatioPreserve
             } = this.state;
+            let batchCmd = new svgedit.history.BatchCommand('Size Panel Width');
+            let cmd;
 
             if (isRatioPreserve) {
                 const constraintHeight = Number((val * height / width).toFixed(2));
 
-                this._updateHeight(constraintHeight);
+                cmd = this._updateHeight(constraintHeight);
+                if (cmd) { batchCmd.addSubCommand(cmd); }
             }
 
-            this._updateWidth(val);
+            cmd = this._updateWidth(val);
+            if (cmd) { batchCmd.addSubCommand(cmd); }
+            if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
         }
 
         handleUpdateHeight(val) {
@@ -89,14 +98,19 @@ define([
                 height,
                 isRatioPreserve
             } = this.state;
+            let batchCmd = new svgedit.history.BatchCommand('Size Panel Height');
+            let cmd;
 
             if (isRatioPreserve) {
                 const constraintWidth = Number((val * width / height).toFixed(2));
 
-                this._updateWidth(constraintWidth);
+                cmd = this._updateWidth(constraintWidth);
+                if (cmd) { batchCmd.addSubCommand(cmd); }
             }
 
-            this._updateHeight(val);
+            cmd = this._updateHeight(val);
+            if (cmd) { batchCmd.addSubCommand(cmd); }
+            if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
         }
 
         handleRatio(e) {

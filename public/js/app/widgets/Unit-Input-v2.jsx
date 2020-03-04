@@ -119,7 +119,8 @@ define([
                 case keyCodeConstants.KEY_RETURN:
                     const activeElement = document.activeElement;
 
-                    this._updateValue(e.target.value);
+                    // this seems unnecessary
+                    // this._updateValue(e.target.value);
 
                     if (activeElement.tagName === 'INPUT') {
                         activeElement.blur();
