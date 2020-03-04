@@ -3896,17 +3896,19 @@ define([
 
             var clickClear = function() {
                 var dims = curConfig.dimensions;
-                $.confirm(uiStrings.notification.QwantToClear, function(ok) {
-                    if (!ok) {return;}
-                    setSelectMode();
-                    svgCanvas.clear();
-                    svgCanvas.setResolution(dims[0], dims[1]);
-                    updateCanvas(true);
-                    unzoom();
-                    populateLayers();
-                    updateContextPanel();
-                    prepPaints();
-                    svgCanvas.runExtensions('onNewDocument');
+                AlertActions.showPopupYesNo('clear-scene', uiStrings.notification.QwantToClear, '', null, {
+                    yes: () => {
+                        setSelectMode();
+                        svgCanvas.clear();
+                        svgCanvas.setResolution(dims[0], dims[1]);
+                        updateCanvas(true);
+                        unzoom();
+                        populateLayers();
+                        updateContextPanel();
+                        prepPaints();
+                        svgCanvas.runExtensions('onNewDocument');
+                    },
+                    no: () => {}
                 });
             };
 
