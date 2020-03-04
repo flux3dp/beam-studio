@@ -79,6 +79,7 @@ function buildMenu(callback) {
         label: r.edit,
         submenu: [
             { 'id': 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
+            { 'id': 'REDO', label: r.redo || 'Redo', click: callback, 'accelerator': `${fnKey}+Shift+Z`},
             { type:'separator'},
             { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { 'id': 'PATH', label: r.path, enabled: false, submenu: [

@@ -3998,7 +3998,7 @@ define([
                     populateLayers();
                 }
             };
-            window.svgeditorClickUndo = clickUndo;
+            editor.clickUndo = clickUndo;
             //hack QQ. to let svgeditor-function-wrapper get this function
 
             var clickRedo = function () {
@@ -4007,6 +4007,7 @@ define([
                     populateLayers();
                 }
             };
+            editor.clickRedo = clickRedo;
 
             var clickGroup = function () {
                 // group
@@ -5127,11 +5128,11 @@ define([
                             svgCanvas.pasteElements('in_place');
                         });
                         //Shortcuts.on(['fnkey', 'z'], clickUndo);
-                        if (process.platform === 'darwin') {
-                            Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
-                        } else {
-                            Shortcuts.on(['ctrl', 'y'], clickRedo);
-                        }
+                        //if (process.platform === 'darwin') {
+                        //    Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
+                        //} else {
+                        //    Shortcuts.on(['ctrl', 'y'], clickRedo);
+                        //}
                         //Shortcuts.on(['fnkey', 'd'], clickClone);
                         Shortcuts.on(['fnkey', 'a'], (e) => {
                             e.preventDefault();

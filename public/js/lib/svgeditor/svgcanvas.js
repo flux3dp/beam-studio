@@ -960,7 +960,7 @@ define([
                 var elem = selectedElements[i];
                 //			if (svgedit.utilities.getRotationAngle(elem) && !svgedit.math.hasMatrixTransform(getTransformList(elem))) {continue;}
                 var cmd = svgedit.recalculate.recalculateDimensions(elem);
-                if (cmd) {
+                if (cmd && !cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
                 }
             }
@@ -1745,7 +1745,11 @@ define([
                     case 'rotate':
                         started = true;
                         // we are starting an undoable change (a drag-rotation)
-                        canvas.undoMgr.beginUndoableChange('transform', selectedElements);
+                        if (!tempGroup) {
+                            canvas.undoMgr.beginUndoableChange('transform', selectedElements);
+                        } else {
+                            canvas.undoMgr.beginUndoableChange('transform', tempGroup.childNodes);
+                        }
                         break;
                     default:
                         // This could occur in an extension
@@ -2335,7 +2339,6 @@ define([
                 var attrs, t;
 
                 selectedElems = selectedElements.filter((e) => e !== null);
-
 
                 switch (current_mode) {
                     case 'preview':
@@ -7962,7 +7965,7 @@ define([
                     }
                     const color = $(elem).attr('stroke') || '#333';
                     let cmd = this.setElementFill(elem, color);
-                    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+                    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
                 } else if (elem.tagName === 'g') {
                     this.setElemsFill(elem.childNodes);
                 } else {
@@ -7978,11 +7981,11 @@ define([
             canvas.undoMgr.beginUndoableChange('fill', [elem]);
             elem.setAttribute('fill', color);
             cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 1);
             cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             return batchCmd;
         }
 
@@ -8001,7 +8004,7 @@ define([
                     }
                     const color = $(elem).attr('fill') || '#333';
                     let cmd = this.setElementUnfill(elem, color);
-                    if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+                    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
                 } else if (elem.tagName ==='g') {
                     this.setElemsUnfill(elem.childNodes);
                 } else {
@@ -8017,11 +8020,11 @@ define([
             canvas.undoMgr.beginUndoableChange('stroke', [elem]);
             elem.setAttribute('stroke', color);
             cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 0);
             cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             return batchCmd;
         }
 
@@ -9368,7 +9371,7 @@ define([
                         chtlist.appendItem(newxform);
                     }
                     var cmd = svgedit.recalculate.recalculateDimensions(elem);
-                    if (cmd) {
+                    if (cmd && !cmd.isEmpty()) {
                         batchCmd.addSubCommand(cmd);
                     }
                 }
@@ -9506,7 +9509,7 @@ define([
 
             // update selection
             selectOnly([g], true);
-            tempGroup = true;
+            tempGroup = g;
             console.log('temp group created');
             return g;
         };
@@ -9756,7 +9759,7 @@ define([
                     }
 
                     var cmd = svgedit.recalculate.recalculateDimensions(selected);
-                    if (cmd && (x !== 0 || y !== 0)) {
+                    if (cmd && !cmd.isEmpty() && (x !== 0 || y !== 0)) {
                         batchCmd.addSubCommand(cmd);
                     }
 
@@ -9798,7 +9801,7 @@ define([
                     }
 
                     var cmd = svgedit.recalculate.recalculateDimensions(selected);
-                    if (cmd) {
+                    if (cmd && !cmd.isEmpty()) {
                         batchCmd.addSubCommand(cmd);
                     }
                     //selectorManager.requestSelector(selected).resize();
@@ -10180,7 +10183,7 @@ define([
                     ({elem: topElem, originalAngle} = stack.pop());
                     if (topElem.tagName !== 'g') {
                         cmd = await this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
-                        if (!cmd.isEmpty()) {
+                        if (cmd && !cmd.isEmpty()) {
                             batchCmd.addSubCommand(cmd);
                         }
                     } else {
@@ -10190,7 +10193,7 @@ define([
                                 canvas.undoMgr.beginUndoableChange('transform', [topElem]);
                                 canvas.setRotationAngle(0, true, topElem);
                                 cmd = canvas.undoMgr.finishUndoableChange();
-                                if (!cmd.isEmpty()) {
+                                if (cmd && !cmd.isEmpty()) {
                                     batchCmd.addSubCommand(cmd);
                                 }
                                 stack.push({elem: topElem, originalAngle: angle});
@@ -10235,7 +10238,7 @@ define([
             svgedit.recalculate.recalculateDimensions(elem);
             canvas.setRotationAngle(-angle, true, elem);
             let cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) {
+            if (cmd && !cmd.isEmpty()) {
                 batchCmd.addSubCommand(cmd);
             }
             let bbox;
@@ -10272,7 +10275,7 @@ define([
             } else {
                 cmd = await this._flipImage(elem, flipPara.horizon, flipPara.vertical);
             }
-            if (!cmd.isEmpty()) {
+            if (cmd && !cmd.isEmpty()) {
                 batchCmd.addSubCommand(cmd);
             }
             cmd = this.moveElements([dx], [dy], [elem], false);
@@ -10300,7 +10303,7 @@ define([
                 canvas.undoMgr.beginUndoableChange('origImage', [image]);
                 image.setAttribute('origImage', src);
                 cmd = canvas.undoMgr.finishUndoableChange();
-                if (!cmd.isEmpty()) {
+                if (cmd && !cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
                 }
             }
@@ -10316,7 +10319,7 @@ define([
             canvas.undoMgr.beginUndoableChange('xlink:href', [image]);
             image.setAttribute('xlink:href', flipCanvas.toDataURL());
             cmd = canvas.undoMgr.finishUndoableChange();
-            if (!cmd.isEmpty()) {
+            if (cmd && !cmd.isEmpty()) {
                 batchCmd.addSubCommand(cmd);
             }
             return batchCmd;
@@ -10951,7 +10954,7 @@ define([
 
             let cmd = svgedit.recalculate.recalculateDimensions(selected);
             window.updateContextPanel();
-            if (cmd) {
+            if (cmd && !cmd.isEmpty()) {
                 batchCmd.addSubCommand(cmd);
             }
             if (!batchCmd.isEmpty()) {
