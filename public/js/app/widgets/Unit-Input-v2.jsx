@@ -105,7 +105,7 @@ define([
         },
 
         _handleInput: function(e) {
-            if (this.props.isDoOnInput) {
+            if (this.props.isDoOnInput && !e.nativeEvent.inputType) {
                 this._updateValue(e.target.value);
             }
         },
