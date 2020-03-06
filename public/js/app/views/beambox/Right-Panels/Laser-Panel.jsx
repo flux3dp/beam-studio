@@ -83,12 +83,15 @@ define([
             speed:      PropTypes.number.isRequired,
             strength:   PropTypes.number.isRequired,
             repeat:     PropTypes.number.isRequired,
+            height:     PropTypes.number.isRequired,
+            zStep:    PropTypes.number.isRequired,
+            isDiode:    PropTypes.number.isRequired,
             funcs:      PropTypes.object.isRequired
         },
 
         getInitialState: function() {
-            this._handleStartClick = this._handleStartClick.bind(this);
-            this._renderPrinterSelectorWindow = this._renderPrinterSelectorWindow.bind(this);
+            //this._handleStartClick = this._handleStartClick.bind(this);
+            //this._renderPrinterSelectorWindow = this._renderPrinterSelectorWindow.bind(this);
 
             if (!LocalStorage.get('defaultLaserConfigsInUse')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
@@ -142,6 +145,9 @@ define([
                 speed:          this.props.speed,
                 strength:       this.props.strength,
                 repeat:         this.props.repeat,
+                height:         this.props.height,
+                zStep:          this.props.zStep,
+                isDiode:        this.props.isDiode > 0,
                 original:       defaultLaserOptions[0],
                 modal:          '',
                 isPrinterSelectorOpen: false,
@@ -172,10 +178,13 @@ define([
             this.setState({
                 speed:      nextProps.speed,
                 strength:   nextProps.strength,
-                repeat:   nextProps.repeat,
-                original:       defaultLaserOptions[0],
-                modal:          '',
-                selectedItem:   LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : ''
+                repeat:     nextProps.repeat,
+                height:     nextProps.height,
+                zStep:      nextProps.zStep,
+                isDiode:    nextProps.isDiode > 0,
+                original:   defaultLaserOptions[0],
+                modal:      '',
+                selectedItem: LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : ''
             });
         },
 
@@ -195,13 +204,29 @@ define([
         },
 
         _handleStrengthChange: function(val) {
-            this.setState({strength: val})
+            this.setState({strength: val});
             this.props.funcs.writeStrength(this.props.layerName, val);
         },
 
         _handleRepeatChange: function(val) {
-            this.setState({repeat: val})
+            this.setState({repeat: val});
             this.props.funcs.writeRepeat(this.props.layerName, val);
+        },
+
+        _handleHeightChange: function(val) {
+            this.setState({height: val});
+            this.props.funcs.writeHeight(this.props.layerName, val);
+        },
+
+        _handleZStepChange: function(val) {
+            this.setState({zStep: val});
+            this.props.funcs.writeZStep(this.props.layerName, val);
+        },
+
+        _toggleDiode: function() {
+            let val = !this.state.isDiode;
+            this.setState({isDiode: val});
+            this.props.funcs.writeDiode(this.props.layerName, val ? 1 : 0);
         },
 
         _handleSaveConfig: function() {
@@ -454,7 +479,7 @@ define([
 
         _renderRepeat: function() {
             return (
-                <div className='panel'>
+                <div className='panel without-drag'>
                     <span className='title'>{LANG.repeat}</span>
                     <UnitInput
                         min={0}
@@ -464,6 +489,56 @@ define([
                         getValue={this._handleRepeatChange}
                         decimal={0}
                     />
+                </div>
+            );
+        },
+
+        _renderHeight: function() {
+            if (!BeamboxPreference.read('enable-autofocus-module')) {
+                return null;
+            }
+            return (
+                <div className='panel without-drag'>
+                    <span className='title'>{LANG.height}</span>
+                    <UnitInput
+                        min={0}
+                        max={20}
+                        unit={'mm'}
+                        defaultValue={this.state.height}
+                        getValue={this._handleHeightChange}
+                        decimal={1}
+                    />
+                </div>
+            );
+        },
+
+        _renderZStep: function() {
+            if (!BeamboxPreference.read('enable-autofocus-module') || this.state.repeat === 1) {
+                return null;
+            }
+            return (
+                <div className='panel without-drag'>
+                    <span className='title'>{LANG.z_step}</span>
+                    <UnitInput
+                        min={0}
+                        max={20}
+                        unit={'mm'}
+                        defaultValue={this.state.zStep}
+                        getValue={this._handleZStepChange}
+                        decimal={1}
+                    />
+                </div>
+            );
+        },
+
+        _renderDiode: function() {
+            if (!BeamboxPreference.read('enable-diode-module')) {
+                return null;
+            }
+            return (
+                <div className='panel checkbox' onClick={() => {this._toggleDiode()}}>
+                    <span className='title'>{LANG.diode}</span>
+                    <input type="checkbox" checked={this.state.isDiode} onChange={()=>{}}/>
                 </div>
             );
         },
@@ -890,6 +965,9 @@ define([
             const speedPanel = this._renderSpeed();
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
+            const heightPanel = this._renderHeight();
+            const zStepPanel = this._renderZStep();
+            const diodePanel = this._renderDiode();
             const modalDialog = this._renderModal();
 
             const defaultOptions = defaultLaserOptions.map((item) => {
@@ -939,6 +1017,9 @@ define([
                         {strengthPanel}
                         {speedPanel}
                         {repeatPanel}
+                        {heightPanel}
+                        {zStepPanel}
+                        {diodePanel}
                         {modalDialog}
                         {this.state.isPrinterSelectorOpen ? printerSelector : ''}
                     </div>

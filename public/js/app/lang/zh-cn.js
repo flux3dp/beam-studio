@@ -1352,7 +1352,7 @@ define(function() {
             new_app_downloaded: '新版Mozu Studio 下载完毕',
             ask_for_upgrade: '马上升级吗?',
             please_enter_dpi: '请输入该文件的 dpi',
-            need_1_1_7_above: '请更新 Delta 固件到 v1.1.7 以上',
+            reset_sd_card: '請重置 SD 卡',
             gcode_area_too_big: '导入的 gcode 文件超过打印范围',
             empty_file: '文件内容不存在',
             usb_unplugged: 'USB 连接逾时，请确认与机器的连接',

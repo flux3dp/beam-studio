@@ -35,6 +35,11 @@ define([
             Dispatcher.dispatch({
                 actionType: TopbarConstants.CLOSE_IMAGE_TOOLBOX
             });
-        }
+        },
+        updateTopMenu: function() {
+            Dispatcher.dispatch({
+                actionType: TopbarConstants.UPDATE_TOP_MENU
+            });
+        },
     };
 });

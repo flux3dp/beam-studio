@@ -44,6 +44,10 @@ define([
             return topbarStore;
         },
 
+        onUpdateTopMenu(callback) {
+            this.on(Constants.UPDATE_TOP_MENU, callback);
+        },
+
         removeAlignToolboxShowedListener: function(callback) {
             this.removeListener(Constants.SHOW_ALIGN_TOOLBOX, callback);
             return topbarStore;
@@ -71,6 +75,11 @@ define([
 
         removeImageToolboxClosedListener: function(callback) {
             this.removeListener(Constants.CLOSE_IMAGE_TOOLBOX, callback);
+            return topbarStore;
+        },
+
+        removeUpdateTopMenuListener(callback) {
+            this.removeListener(Constants.UPDATE_TOP_MENU, callback);
             return topbarStore;
         },
 

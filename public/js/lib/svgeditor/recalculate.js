@@ -540,7 +540,10 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           em.setMatrix(m);
 
           childTlist.appendItem(em);
-          batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+          let cmd = svgedit.recalculate.recalculateDimensions(child);
+          if (cmd && !cmd.isEmpty()) {
+            batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+          }
           context_.setStartTransform(oldStartTransform);
         }
       }
@@ -613,8 +616,10 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
             } else {
               childTlist.appendItem(newxlate);
             }
-
-            batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+            let cmd = svgedit.recalculate.recalculateDimensions(child);
+            if (cmd && !cmd.isEmpty()) {
+              batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );
+            }
             context_.setStartTransform(oldStartTransform);
           }
         }
@@ -807,7 +812,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
                 x: $(child).attr('x') || 0,
                 y: $(child).attr('y') || 0
               };
+              const orig = {...tspanChanges};
               svgedit.coords.remapElement(child, tspanChanges, extrat);
+              batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
             }
           }
           svgedit.coords.remapElement(selected, changes, extrat);
@@ -861,7 +868,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
               x: $(child).attr('x') || 0,
               y: $(child).attr('y') || 0
             };
+            const orig = {...tspanChanges};
             svgedit.coords.remapElement(child, tspanChanges, m);
+            batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
           }
         }
       }
@@ -891,7 +900,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
               x: $(child).attr('x') || 0,
               y: $(child).attr('y') || 0
             };
+            const orig = {...tspanChanges};
             svgedit.coords.remapElement(child, tspanChanges, extrat);
+            batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(child, orig));
           }
         }
       }
@@ -910,8 +921,9 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
   if (tlist.numberOfItems == 0) {
     selected.removeAttribute('transform');
   }
-
-  batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(selected, initial));
+  if (!selected.getAttribute('data-tempgroup')) {
+    batchCmd.addSubCommand(new svgedit.history.ChangeElementCommand(selected, initial));
+  }
 
   return batchCmd;
 };

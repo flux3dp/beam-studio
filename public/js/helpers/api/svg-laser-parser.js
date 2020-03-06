@@ -336,6 +336,15 @@ define([
                     }
                 }
 
+                if (opts.enableAutoFocus) {
+                    args.push('-af');
+                }
+
+                if (opts.enableDiode) {
+                    args.push('-diode');
+                    args.push(`${BeamboxPreference.read('diode_offset_x') || 0},${BeamboxPreference.read('diode_offset_y') || 0}`);
+                }
+
                 events.onMessage = function(data) {
 
                     if ('computing' === data.status) {
@@ -519,7 +528,10 @@ define([
                 events.onError = function(data) {
                     alert(data);
                 };
-                const textString = $textElement.prop('outerHTML');
+                let textString = $textElement.prop('outerHTML');
+                if ($textElement.data('verti')) {
+                    textString = textString.replace(/letter-spacing="[^"]+"/, '');
+                }
                 let svgString = `<svg viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">
                     ${textString}
                 </svg>`

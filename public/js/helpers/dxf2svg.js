@@ -191,7 +191,8 @@
 
       // Start point
       var points = [];
-      var dTheta = Math.PI * 2 / 72;
+      let r = Math.sqrt(rx * ry);
+      var dTheta = Math.PI * 2 / (72 * Math.max(r, 1));
       var EPS = 1e-6;
       for (var theta = start; theta < end - EPS; theta += dTheta) {
         points.push([Math.cos(theta) * rx, Math.sin(theta) * ry]);

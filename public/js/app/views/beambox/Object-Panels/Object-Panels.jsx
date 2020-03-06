@@ -52,7 +52,7 @@ define([
         'ellipse': 340,
         'line': 340,
         'image': 340,
-        'text': 321,
+        'text': 403,
         'use': 308
     }
 

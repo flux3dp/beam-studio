@@ -157,12 +157,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: Config().read('auto_check_update') === '0' || !Config().read('auto_check_update')
+                    selected: Config().read('auto_check_update') === '0'
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: Config().read('auto_check_update') === '1'
+                    selected: Config().read('auto_check_update') === '1' || !Config().read('auto_check_update')
                 }
             ];
 
@@ -336,6 +336,32 @@ define([
                     value: false,
                     label: lang.settings.off,
                     selected: BeamboxPreference.read('font-substitute') === false
+                }
+            ];
+
+            const autofocusModuleOptions = [
+                {
+                    value: true,
+                    label: lang.settings.enabled,
+                    selected: BeamboxPreference.read('enable-autofocus-module')
+                },
+                {
+                    value: false,
+                    label: lang.settings.disabled,
+                    selected: !BeamboxPreference.read('enable-autofocus-module')
+                }
+            ];
+
+            const diodeModuleOptions = [
+                {
+                    value: true,
+                    label: lang.settings.enabled,
+                    selected: BeamboxPreference.read('enable-diode-module')
+                },
+                {
+                    value: false,
+                    label: lang.settings.disabled,
+                    selected: !BeamboxPreference.read('enable-diode-module')
                 }
             ];
 
@@ -553,6 +579,47 @@ define([
                             onChange={e => this._updateBeamboxPreference('font-substitute', e.target.value)}
                         />
                     </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.modules}</div>
+
+                    <Controls label={lang.settings.enable_autofocus_module}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={autofocusModuleOptions}
+                            onChange={e => this._updateBeamboxPreference('enable-autofocus-module', e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.enable_diode_module}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={diodeModuleOptions}
+                            onChange={e => this._updateBeamboxPreference('enable-diode-module', e.target.value)}
+                        />
+                    </Controls>
+
+                    {BeamboxPreference.read('enable-diode-module') ? <Controls label={lang.settings.diode_offset}>
+                        <span className='font2' style={{marginRight: '10px'}}>X</span>
+                        <UnitInput
+                            unit='mm'
+                            min={0}
+                            max={BeamboxConstant.dimension.width/10}
+                            defaultValue={BeamboxPreference.read('diode_offset_x') || 0}
+                            getValue={val => this._updateBeamboxPreference('diode_offset_x', val)}
+                            className={{half: true}}
+                        />
+                        <span className='font2' style={{marginRight: '10px'}}>Y</span>
+                        <UnitInput
+                            unit='mm'
+                            min={0}
+                            max={BeamboxConstant.dimension.height/10}
+                            defaultValue={BeamboxPreference.read('diode_offset_y')}
+                            getValue={val => this._updateBeamboxPreference('diode_offset_y', val) || 0}
+                            className={{half: true}}
+                        />
+                    </Controls> : null}
 
                     <a className='font5' onClick={this._resetFS}>
                         <b>{lang.settings.reset_now}</b>

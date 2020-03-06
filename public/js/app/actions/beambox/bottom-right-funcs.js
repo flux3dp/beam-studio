@@ -227,7 +227,9 @@ define([
                     },
                     fileMode: '-f',
                     codeType,
-                    model: BeamboxPreference.read('model')
+                    model: BeamboxPreference.read('model'),
+                    enableAutoFocus: BeamboxPreference.read('enable-autofocus-module'),
+                    enableDiode: BeamboxPreference.read('enable-diode-module'),
                 }
             );
         });

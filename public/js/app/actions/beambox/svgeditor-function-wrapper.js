@@ -64,7 +64,7 @@ define([
             window.svgCanvas.cloneSelectedElements(20, 20);
         },
         undo: function() {
-            window.svgeditorClickUndo();
+            svgEditor.clickUndo();
         },
 
         //main panel

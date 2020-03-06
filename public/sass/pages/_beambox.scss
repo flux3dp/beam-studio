@@ -162,7 +162,7 @@
             }
         }
         #overview_window_content {
-            border-radius: 2px;
+            border-radius: 4px;
             opacity: 0.8;
             transition: opacity 0.3s;
             &:hover {
@@ -171,7 +171,7 @@
         }
     }
     .advanced-panel {
-        border-radius: 2px;
+        border-radius: 4px;
         background-color: #fff;
         box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
         width: 440px;
@@ -223,7 +223,7 @@
     .tool-panels {
         display: absolute;
         box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
-        border-radius: 2px;
+        border-radius: 4px;
         transition: left .1s ease, top .1s ease, opacity .1s ease;
         &.unselectable {
             user-select: none;
@@ -434,7 +434,7 @@
                 overflow: initial;
                 border: 1px $panelBorderColor solid;
                 border-top: 0;
-                border-radius: 2px;
+                border-radius: 4px;
 
                 #layerbuttons {
                     padding: 0;
@@ -458,7 +458,7 @@
                         position: relative;
                         top: 2px;
                         border: 2px solid white;
-                        border-radius: 2px;
+                        border-radius: 4px;
                         background: black;
                         width: 14px;
                         height: 14px;
@@ -570,7 +570,7 @@
             height: 100%;
             margin-top: -1px;
             border: 1px $panelBorderColor solid;
-            border-radius: 2px;
+            border-radius: 4px;
             .layername {
                 padding: 10px 15px;
                 background: #F2F2F2;
@@ -600,6 +600,17 @@
                         line-height: 32px;
                     }
                 }
+                &.checkbox {
+                    height: 16px;
+                    .title {
+                        line-height: 16px;
+                    }
+                    input {
+                        float: right;
+                        margin-top: 2px;
+                        margin-right: 10%;
+                    }
+                }
             }
             .ui.ui-control-unit-input-v2 {
                 margin-bottom: 7px;
@@ -610,7 +621,7 @@
                 input {
                     outline: none;
                     border: 1px #E0E0E0 solid;
-                    border-radius: 2px;
+                    border-radius: 4px;
                     width: 90%;
                     padding: 3px 0px 3px 12px;
                 }
@@ -660,7 +671,7 @@
 
             .more-config-panel {
                 box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
-                border-radius: 2px;
+                border-radius: 4px;
                 background: #FFF;
                 padding: 20px 20px 0;
                 width: 640px;
@@ -820,7 +831,7 @@
 
             .save-config-panel {
                 box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
-                border-radius: 2px;
+                border-radius: 4px;
                 background: #FFF;
                 padding: 20px 20px 0;
                 width: 440px;
@@ -1060,7 +1071,7 @@
         background: linear-gradient(to bottom, rgba(255,255,255,0.5) 20%, rgba(0,0,0,0.1) 90%);
         width: 100%;
         height: 100%;
-        border-radius:5px;
+        border-radius: 4px;
         display: block;
     }
 }
@@ -1126,7 +1137,7 @@
                 background: #FFF;
                 padding: 10px;
                 color: #626262;
-                border-radius: 2px;
+                border-radius: 4px;
                 font-size: 13px;
             }
         }

@@ -10,7 +10,7 @@ define([
     'jsx!views/beambox/Object-Panels/text/FontSize',
     'jsx!views/beambox/Object-Panels/text/LetterSpacing',
     'jsx!views/beambox/Object-Panels/text/LineSpacing',
-    'jsx!views/beambox/Object-Panels/text/FontFill',
+    'jsx!views/beambox/Object-Panels/text/FontCheckbox',
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
@@ -25,7 +25,7 @@ define([
     FontSizeInput,
     LetterSpacingInput,
     LineSpacingPanel,
-    IsFillCheckbox,
+    FontCheckbox,
     BeamboxPreference,
     i18n
 ) {
@@ -68,7 +68,8 @@ define([
                 fontSize: props.fontSize,
                 letterSpacing: props.letterSpacing,
                 lineSpacing: props.lineSpacing,
-                isFill: props.isFill
+                isFill: props.isFill,
+                isVertical: props.isVertical,
             };
             // this.state = {
             //     fontFamily: props.fontFamily,
@@ -122,6 +123,12 @@ define([
             svgCanvas.setTextLineSpacing(val);
             this.setState({
                 lineSpacing: val
+            });
+        }
+        handleisVerticalChange(val) {
+            svgCanvas.setTextIsVertical(val);
+            this.setState({
+                isVertical: val
             });
         }
         handleIsFillChange(val) {
@@ -202,9 +209,16 @@ define([
                                 </div>
                                 <div className='control'>
                                     <div className='text-center header' style={{fontSize: '16px'}}>{LANG.fill}</div>
-                                    <IsFillCheckbox
-                                        currentIsFill={this.state.isFill}
+                                    <FontCheckbox
+                                        isChecked={this.state.isFill}
                                         onChange={val => this.handleIsFillChange(val)}
+                                    />
+                                </div>
+                                <div className='control'>
+                                    <div className='text-center header' style={{fontSize: '16px'}}>{LANG.vertical_text}</div>
+                                    <FontCheckbox
+                                        isChecked={this.state.isVertical}
+                                        onChange={val => this.handleisVerticalChange(val)}
                                     />
                                 </div>
                                 <div className='control'>

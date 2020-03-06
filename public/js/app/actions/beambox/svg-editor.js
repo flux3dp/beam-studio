@@ -1920,6 +1920,7 @@ define([
                             });
                             ObjectPanelsController.setLetterSpacing(svgCanvas.getLetterSpacing());
                             ObjectPanelsController.setLineSpacing(svgCanvas.getTextLineSpacing());
+                            ObjectPanelsController.setTextIsVertical(svgCanvas.getTextIsVertical());
                             ObjectPanelsController.setFontIsFill(svgCanvas.getFontIsFill());
                         } // text
                         else if (el_name === 'image') {
@@ -3271,10 +3272,16 @@ define([
                 evt.stopPropagation();
                 if (evt.keyCode === KeycodeConstants.KEY_UP) {
                     evt.preventDefault();
-                    svgCanvas.textActions.moveCursourUp();
+                    svgCanvas.textActions.onUpKey();
                 } else if (evt.keyCode === KeycodeConstants.KEY_DOWN) {
                     evt.preventDefault();
-                    svgCanvas.textActions.moveCursourDown();
+                    svgCanvas.textActions.onDownKey();
+                } else if (evt.keyCode === KeycodeConstants.KEY_LEFT) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.onLeftKey();
+                } else if (evt.keyCode === KeycodeConstants.KEY_RIGHT) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.onRightKey();
                 }
                 if (!evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
                     svgCanvas.textActions.toSelectMode(true);
@@ -3889,17 +3896,19 @@ define([
 
             var clickClear = function() {
                 var dims = curConfig.dimensions;
-                $.confirm(uiStrings.notification.QwantToClear, function(ok) {
-                    if (!ok) {return;}
-                    setSelectMode();
-                    svgCanvas.clear();
-                    svgCanvas.setResolution(dims[0], dims[1]);
-                    updateCanvas(true);
-                    unzoom();
-                    populateLayers();
-                    updateContextPanel();
-                    prepPaints();
-                    svgCanvas.runExtensions('onNewDocument');
+                AlertActions.showPopupYesNo('clear-scene', uiStrings.notification.QwantToClear, '', null, {
+                    yes: () => {
+                        setSelectMode();
+                        svgCanvas.clear();
+                        svgCanvas.setResolution(dims[0], dims[1]);
+                        updateCanvas(true);
+                        unzoom();
+                        populateLayers();
+                        updateContextPanel();
+                        prepPaints();
+                        svgCanvas.runExtensions('onNewDocument');
+                    },
+                    no: () => {}
                 });
             };
 
@@ -3989,7 +3998,7 @@ define([
                     populateLayers();
                 }
             };
-            window.svgeditorClickUndo = clickUndo;
+            editor.clickUndo = clickUndo;
             //hack QQ. to let svgeditor-function-wrapper get this function
 
             var clickRedo = function () {
@@ -3998,6 +4007,7 @@ define([
                     populateLayers();
                 }
             };
+            editor.clickRedo = clickRedo;
 
             var clickGroup = function () {
                 // group
@@ -4612,7 +4622,7 @@ define([
                     }
                     svgCanvas.cloneLayer(newName);
                     updateContextPanel();
-                    cloneLayerLaserConfig(oldName, newName);
+                    cloneLayerLaserConfig(newName, oldName);
                     populateLayers();
                 });
             }
@@ -5118,11 +5128,11 @@ define([
                             svgCanvas.pasteElements('in_place');
                         });
                         //Shortcuts.on(['fnkey', 'z'], clickUndo);
-                        if (process.platform === 'darwin') {
-                            Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
-                        } else {
-                            Shortcuts.on(['ctrl', 'y'], clickRedo);
-                        }
+                        //if (process.platform === 'darwin') {
+                        //    Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
+                        //} else {
+                        //    Shortcuts.on(['ctrl', 'y'], clickRedo);
+                        //}
                         //Shortcuts.on(['fnkey', 'd'], clickClone);
                         Shortcuts.on(['fnkey', 'a'], (e) => {
                             e.preventDefault();
@@ -5792,10 +5802,16 @@ define([
                             }
                         });
                         ImageTracer.appendSVGString(layer.paths.join(''), id);
-                        g.childNodes.forEach(child => {
-                            $(child).attr('id', svgCanvas.getNextId());
-                            $(child).attr('vector-effect', "non-scaling-stroke");
-                        });
+                        for (let j = 0; j < g.childNodes.length; j++) {
+                            let child = g.childNodes[j];
+                            if (child.tagName === 'path' && !$(child).attr('d')) {
+                                child.remove();
+                                j --;
+                            } else {
+                                $(child).attr('id', svgCanvas.getNextId());
+                                $(child).attr('vector-effect', "non-scaling-stroke");
+                            }
+                        }
                     }
                     //importBvgString(resizedSvg);
 
