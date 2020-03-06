@@ -1332,7 +1332,7 @@ define(function() {
                 layer_color_config: '圖層顏色參數設定',
                 color: '顏色',
                 power: '功率',
-                speed: '連線',
+                speed: '速度',
                 repeat: '執行次數',
                 add: '新增',
                 save: '儲存',
