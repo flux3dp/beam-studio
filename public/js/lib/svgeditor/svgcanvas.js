@@ -8639,7 +8639,7 @@ define([
 
             if (dir === 0) {
                 dist *= -1
-            }; 
+            };
             let newElem;
             let isContainNotSupportTag = false;
             let co = new svgedit.ClipperLib.ClipperOffset(2 , 0.25);
@@ -8910,6 +8910,11 @@ define([
                 svgedit.recalculate.recalculateDimensions(g);
                 if (angle) canvas.setRotationAngle(angle, true, g);
                 selectOnly([g], true);
+                // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
+                this.ungroupSelectedElement();
+                this.ungroupSelectedElement();
+                this.ungroupSelectedElement();
+                this.ungroupSelectedElement();
             }
         }
 
