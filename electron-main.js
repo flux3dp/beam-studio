@@ -447,14 +447,13 @@ app.on('ready', () => {
         }
     });
 
-    if (app.requestSingleInstanceLock()) {
-        if(!mainWindow) {
-            createWindow();
-        } else {
-            console.log("MainWindow instance", mainWindow);
-            mainWindow.focus();
-        }
-    };
+    if(!mainWindow) {
+        createWindow();
+    } else {
+        console.log("MainWindow instance", mainWindow);
+        mainWindow.focus();
+    }
+
 });
 
 
