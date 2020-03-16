@@ -345,6 +345,11 @@ define([
                     args.push(`${BeamboxPreference.read('diode_offset_x') || 0},${BeamboxPreference.read('diode_offset_y') || 0}`);
                 }
 
+                if (BeamboxPreference.read('stripe_compensation')) {
+                    args.push('-strpcom');
+                    args.push(`${BeamboxPreference.read('stripe_compensation_y0') || 0},${BeamboxPreference.read('stripe_compensation_interval') || 0},${BeamboxPreference.read('stripe_compensation_power') || 100}`);
+                }
+
                 events.onMessage = function(data) {
 
                     if ('computing' === data.status) {

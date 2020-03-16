@@ -300,6 +300,19 @@ define([
                 }
             ];
 
+            const stripeOptions = [
+                {
+                    value: true,
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('stripe_compensation') === true
+                },
+                {
+                    value: false,
+                    label: lang.settings.off,
+                    selected: !BeamboxPreference.read('stripe_compensation')
+                }
+            ];
+
             const maskOptions = [
                 {
                     value: true,
@@ -507,15 +520,15 @@ define([
                     { i18n.getActiveLang() === 'zh-tw' ?
                         <div>
                             <Controls label={lang.settings.blade_radius}>
-                            <UnitInput
-                                unit='mm'
-                                min={0}
-                                max={30}
-                                step={0.01}
-                                defaultValue={BeamboxPreference.read('blade_radius') || 0}
-                                getValue={val => this._updateBeamboxPreference('blade_radius', val)}
-                                className={{half: true}}
-                            />
+                                <UnitInput
+                                    unit='mm'
+                                    min={0}
+                                    max={30}
+                                    step={0.01}
+                                    defaultValue={BeamboxPreference.read('blade_radius') || 0}
+                                    getValue={val => this._updateBeamboxPreference('blade_radius', val)}
+                                    className={{half: true}}
+                                />
                             </Controls>
 
                             <Controls label={lang.settings.blade_precut_switch}>
@@ -547,6 +560,58 @@ define([
                                 />
                             </Controls>
                         </div> : null
+                    }
+
+                    <div className='subtitle'>{lang.settings.groups.stripe_calibration}</div>
+
+                    <Controls label={lang.settings.stripe_calibration}>
+                        <SelectView
+                            id='select-lang'
+                            className='font3'
+                            options={stripeOptions}
+                            onChange={e => this._updateBeamboxPreference('stripe_compensation', e.target.value)}
+                        />
+                    </Controls>
+                    { BeamboxPreference.read('stripe_compensation') ?
+                        <div>
+                            <Controls label={lang.settings.stripe_calibration_initial}>
+                                <UnitInput
+                                    unit='mm'
+                                    min={0}
+                                    max={3000}
+                                    step={0.01}
+                                    defaultValue={BeamboxPreference.read('stripe_compensation_y0') || 0}
+                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_y0', val)}
+                                    className={{half: true}}
+                                />
+                            </Controls>
+
+                            <Controls label={lang.settings.stripe_calibration_interval}>
+                                <UnitInput
+                                    unit='mm'
+                                    min={0}
+                                    max={3000}
+                                    step={0.01}
+                                    defaultValue={BeamboxPreference.read('stripe_compensation_interval') || 0}
+                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_interval', val)}
+                                    className={{half: true}}
+                                />
+                            </Controls>
+
+                            <Controls label={lang.settings.stripe_calibration_power}>
+                                <UnitInput
+                                    unit='%'
+                                    min={0}
+                                    max={100}
+                                    step={1}
+                                    decimal={0}
+                                    defaultValue={BeamboxPreference.read('stripe_compensation_power') || 100}
+                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_power', val)}
+                                    className={{half: true}}
+                                />
+                            </Controls>
+                        </div>
+                        : null
                     }
 
                     <div className='subtitle'>{lang.settings.groups.mask}</div>
