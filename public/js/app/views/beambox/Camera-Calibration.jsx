@@ -53,6 +53,8 @@ define([
     const STEP_FINISH = Symbol();
 
     let cameraOffset = {};
+    let isUsingSecondImage = false;
+    const SECOND_TIME_OFFSET = {x: 0, y: 10};
 
     class CameraCalibrationStateMachine extends React.Component {
         constructor(props) {
@@ -165,8 +167,25 @@ define([
     const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, self}) => {
         const cutThenCapture = async function(updateOffsetDataCb, self) {
             await _doCuttingTask(self);
-            let blobUrl = await _doCaptureTask();
-            await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
+            let blobUrlFirstTime = await _doCaptureTask(true);
+            let res;
+            res = await _doGetOffsetFromPicture(blobUrlFirstTime, updateOffsetDataCb);
+            if (res) {
+                updateImgBlobUrl(blobUrlFirstTime);
+                PreviewModeController.end();
+                isUsingSecondImage = false;
+                return;
+            }
+            let blobUrlSecondTime = await _doCaptureTask(false);
+            res = await _doGetOffsetFromPicture(blobUrlSecondTime, updateOffsetDataCb);
+            if (res) {
+                updateImgBlobUrl(blobUrlSecondTime);
+                isUsingSecondImage = true;
+            } else {
+                updateImgBlobUrl(blobUrlFirstTime);
+                isUsingSecondImage = false;
+            }
+            return;
         };
         const _doCuttingTask = async function(self) {
             await DeviceMaster.select(device);
@@ -189,22 +208,25 @@ define([
             }
             await DeviceMaster.setFan(fanSpeed);
         };
-        const _doCaptureTask = async () => {
+        const _doCaptureTask = async (isFirstTime) => {
             let blobUrl;
             try {
-                await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
+                if (isFirstTime) {
+                    await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
+                }
 
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
                 const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
-                const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
+                const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal - (isFirstTime ? 0 : SECOND_TIME_OFFSET.y);
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
                 cameraOffset = PreviewModeController.getCameraOffset();
-                updateImgBlobUrl(blobUrl);
             } catch (error) {
                 throw error;
             } finally {
                 ProgressActions.close();
-                PreviewModeController.end();
+                if (!isFirstTime) {
+                    PreviewModeController.end();
+                }
             }
             return blobUrl;
         };
@@ -239,6 +261,9 @@ define([
     };
 
     const sendPictureThenSetConfig = async (result, imgBlobUrl, borderless) => {
+        if (isUsingSecondImage) {
+            result.Y += SECOND_TIME_OFFSET.y;
+        }
         console.log("Setting camera_offset", borderless ? 'borderless' : '', result);
         if (result) {
             await _doSetConfigTask(result.X, result.Y, result.R, result.SX, result.SY, borderless);
@@ -333,6 +358,7 @@ define([
 
     const _doGetOffsetFromPicture = async function(imgBlobUrl, updateOffsetCb) {
         let sdata = await _doSendPictureTask(imgBlobUrl);
+        let hadGotOffsetFromPicture = true;
         if (!sdata) {
             sdata = {
                 X: 20,
@@ -341,8 +367,10 @@ define([
                 SX: 1.625,
                 SY: 1.625
             };
+            hadGotOffsetFromPicture = false;
         }
         updateOffsetCb({currentOffset: sdata});
+        return hadGotOffsetFromPicture;
     };
 
     const _doSetConfigTask = async (X, Y, R, SX, SY, borderless) => {
