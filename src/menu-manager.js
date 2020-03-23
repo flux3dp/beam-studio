@@ -263,8 +263,11 @@ class MenuManager extends EventEmitter {
         this.constructMenu();
 
         ipcMain.on(events.NOTIFY_LANGUAGE, (e, language) => {
-            language = language === 'zh-tw' ? 'zh-tw' : 'en';
+            language = language || 'zh-tw';
             r = resource[language];
+            if (!r) {
+                r = resource['zh-tw'];
+            }
             this.constructMenu();
         });
 
