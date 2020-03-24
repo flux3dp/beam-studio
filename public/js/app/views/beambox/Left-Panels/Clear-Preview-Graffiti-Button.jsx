@@ -1,11 +1,7 @@
 define([
-    'react',
-    'reactDOM',
     'app/actions/beambox',
     'app/actions/beambox/preview-mode-background-drawer'
 ], function (
-    React,
-    ReactDOM,
     BeamboxActions,
     PreviewModeBackgroundDrawer
 ) {

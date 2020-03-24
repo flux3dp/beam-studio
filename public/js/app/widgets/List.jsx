@@ -1,22 +1,9 @@
-define(['react'], function(React){
+define([], function(){
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        getDefaultProps: function() {
-            return {
-                name: '',
-                id: '',
-                emptyMessage: '',
-                className: '',
-                items: [],
-                onClick: function() {},
-                ondblclick: function() {}
-            };
-        },
-
-        render: function() {
-
+    class List extends React.Component{
+        render() {
             var list_items = this.props.items.map(function(opt, i){
                 var metadata = JSON.stringify(opt.data),
                     labelItem = opt.label;
@@ -36,5 +23,17 @@ define(['react'], function(React){
                 </ul>
             );
         }
-    });
+    };
+
+    List.defaultProps = {
+        name: '',
+        id: '',
+        emptyMessage: '',
+        className: '',
+        items: [],
+        onClick: function() {},
+        ondblclick: function() {}
+    };
+
+    return List;
 });

@@ -1,16 +1,9 @@
-define(['react','reactCreateReactClass'], function(React){
+define(['reactCreateReactClass'], function(){
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        getDefaultProps: function () {
-            return {
-                buttons: [],
-                className: ''
-            };
-        },
-
-        render: function() {
+    class ButtonGroup extends React.Component{
+        render() {
             var className,
                 props = this.props,
                 buttons = props.buttons.map(function(opt, i) {
@@ -90,5 +83,10 @@ define(['react','reactCreateReactClass'], function(React){
                     <span/>
             );
         }
-    });
+    };
+    ButtonGroup.defaultProps = {
+        buttons: [],
+        className: ''
+    };
+    return ButtonGroup;
 });

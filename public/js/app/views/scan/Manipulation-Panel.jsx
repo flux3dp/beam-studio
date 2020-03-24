@@ -1,62 +1,40 @@
 define([
-    'react',
-    'reactDOM',
     'reactClassset',
     'jquery',
     'jsx!widgets/Unit-Input',
     'helpers/round',
-], function(React, ReactDOM, ReactCx, $, UnitInput, round) {
+], function(ReactCx, $, UnitInput, round) {
     'use strict';
 
-    return React.createClass({
-        getDefaultProps: function() {
-            return {
-                position: {
-                    top: 0,
-                    left: 0
-                },
-                object: {
-                    position: {},
-                    size: {},
-                    rotation: {}
-                },
-                selectedMeshes: [],
-                onCropOn: function() {},
-                onCropOff: function() {},
-                onSavePCD: function() {},
-                onSaveASC: function() {},
-                onClearNoise: function() {},
-                onManualMerge: function() {},
-                onReset: function() {},
-                switchTransformMode: function() {},
-                onChange: function(objectMatrix) {}
-            };
-        },
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-        getInitialState: function() {
-            return {
+    class ManipulationPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 onCropping: false,
                 handleMesh: this.props.selectedMeshes[0],
                 visible: false,
                 position: this.props.position,
                 object: this.props.object
             };
-        },
+        }
 
-        _onClearNoise: function(e) {
+        _onClearNoise = (e) => {
             this.props.onClearNoise(this.state.handleMesh);
-        },
+        }
 
-        _onSavePCD: function(e) {
+        _onSavePCD = (e) => {
             this.props.onSavePCD();
-        },
+        }
 
-        _onSaveASC: function(e) {
+        _onSaveASC = (e) => {
             this.props.onSaveASC();
-        },
+        }
 
 
-        _onCrop: function(e) {
+        _onCrop = (e) => {
             var me = e.currentTarget,
                 onCropping = this.state.onCropping,
                 handleMesh = this.state.handleMesh;
@@ -71,13 +49,13 @@ define([
             this.setState({
                 onCropping: !onCropping
             });
-        },
+        }
 
-        _onManualMerge: function(e) {
+        _onManualMerge = (e) => {
             this.props.onManualMerge(e);
-        },
+        }
 
-        _onTransform: function(e) {
+        _onTransform = (e) => {
             var self = this,
                 me = e.currentTarget,
                 type = me.dataset.type.split('.'),
@@ -96,9 +74,9 @@ define([
             }, function() {
                 self.props.onChange(self.state.handleMesh, object);
             });
-        },
+        }
 
-        _renderForMultipleMesh: function(lang) {
+        _renderForMultipleMesh = (lang) => {
             return (
                 <div className="wrapper">
                     <label className="controls accordion">
@@ -123,9 +101,9 @@ define([
                     </label>
                 </div>
             );
-        },
+        }
 
-        _renderForSingleMesh: function(lang) {
+        _renderForSingleMesh = (lang) => {
             var props = this.props,
                 state = this.state,
                 position = {
@@ -273,9 +251,9 @@ define([
                 </div>
             );
 
-        },
+        }
 
-        render: function() {
+        render() {
             var self = this,
                 props = self.props,
                 lang = props.lang,
@@ -310,9 +288,9 @@ define([
                     {content}
                 </div>
             );
-        },
+        }
 
-        _computePosition: function(position) {
+        _computePosition = (position) => {
             var manipulationPanel = ReactDOM.findDOMNode(this.refs.manipulationPanel),
                 windowSize = {
                     height: window.innerHeight,
@@ -346,16 +324,16 @@ define([
             }
 
             return position;
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             this.setState({
                 visible: true,
                 position: this._computePosition(this.props.position)
             });
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             var manipulationPanel = ReactDOM.findDOMNode(this.refs.manipulationPanel);
             this.setState({
                 visible: true,
@@ -364,6 +342,29 @@ define([
                 object: nextProps.object
             });
         }
+    };
 
-    });
+    ManipulationPanel.defaultProps = {
+        position: {
+            top: 0,
+            left: 0
+        },
+        object: {
+            position: {},
+            size: {},
+            rotation: {}
+        },
+        selectedMeshes: [],
+        onCropOn: function() {},
+        onCropOff: function() {},
+        onSavePCD: function() {},
+        onSaveASC: function() {},
+        onClearNoise: function() {},
+        onManualMerge: function() {},
+        onReset: function() {},
+        switchTransformMode: function() {},
+        onChange: function(objectMatrix) {}
+    };
+
+    return ManipulationPanel;
 });

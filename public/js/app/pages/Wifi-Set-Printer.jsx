@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'reactClassset',
     'app/actions/initialize-machine',
     'helpers/api/usb-config',
@@ -14,8 +12,6 @@ define([
     'app/constants/progress-constants',
     'helpers/device-error-handler'
 ], function(
-    React,
-    ReactDOM,
     ReactCx,
     initializeMachine,
     usbConfig,
@@ -30,37 +26,39 @@ define([
     DeviceErrorHandler
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     return function(args) {
         var upnpMethods;
 
         args = args || {};
 
-        return React.createClass({
-
-            getInitialState: function() {
-                return {
+        return class WifiSetPrinter extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang                 : args.state.lang,
                     requirePrinterName   : false,
                     validPrinterName     : true,
                     validPrinterPassword : true,
                     settingPrinter       : initializeMachine.settingPrinter.get()
                 };
-            },
+            }
 
-            componentDidMount: function() {
+            componentDidMount() {
                 DeviceMaster.registerUsbEvent('SETUP', this._monitorUsb);
                 console.log('device to be set', this.state.settingPrinter);
-            },
+            }
 
-            _monitorUsb: function(usbOn) {
+            _monitorUsb = (usbOn) => {
                 if(!usbOn) {
                     AlertActions.showPopupError('USB_UNPLUGGED', this.state.lang.message.usb_unplugged);
                     location.hash = '#initialize/wifi/connect-machine';
                 }
-            },
+            }
 
-            _handleSetPrinter: function(e) {
+            _handleSetPrinter = (e) => {
                 e.preventDefault();
 
                 var self        = this,
@@ -171,9 +169,9 @@ define([
                     }
 
                 }
-            },
+            }
 
-            _renderAlert: function(lang) {
+            _renderAlert = (lang) => {
                 var self = this,
                     buttons = [{
                         label: lang.initialize.confirm,
@@ -203,9 +201,9 @@ define([
                     <Modal content={content}/> :
                     ''
                 );
-            },
+            }
 
-            render : function() {
+            render() {
                 var lang = this.state.lang,
                     wrapperClassName = {
                         'initialization': true
@@ -301,6 +299,6 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
     };
 });

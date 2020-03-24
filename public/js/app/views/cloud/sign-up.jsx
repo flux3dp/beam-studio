@@ -1,12 +1,11 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/api/cloud',
 ], function(
-    React,
     i18n,
     CloudApi
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
     const Controls = ({id, value, label, errorOn, errorMessage, type, onChange, onBlur}) => {
         return (
@@ -32,9 +31,10 @@ define([
         );
     };
 
-    return React.createClass({
-        getInitialState: function() {
-            return {
+    return class SignUp extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 nickname: '',
                 email: '',
                 password: '',
@@ -45,15 +45,15 @@ define([
                 agreeToTermError: false,
                 passwordMismatch: false
             };
-        },
+        }
 
-        _handleControlChange: function(id, val) {
+        _handleControlChange = (id, val) => {
             this.setState({
                 [id]: val
             });
-        },
+        }
 
-        _checkValue: function(id) {
+        _checkValue = (id) => {
             switch (id) {
                 case 'nickname':
                     this.setState({ userNameError: this.state.nickname === '' });
@@ -87,9 +87,9 @@ define([
                     }
                     break;
             }
-        },
+        }
 
-        _allValid: function() {
+        _allValid = () => {
             const { userNameError, emailError, passwordMismatch, password, agreeToTerms } = this.state;
             this.setState({
                 agreeToTermError: !agreeToTerms
@@ -101,13 +101,13 @@ define([
                 password !== '' &&
     			agreeToTerms === true
     		);
-        },
+        }
 
-        _handleAgreementChange: function(e) {
+        _handleAgreementChange = (e) => {
             this.setState({agreeToTerms: e.target.checked});
-        },
+        }
 
-        _handleSignUp: async function() {
+        _handleSignUp = async () => {
             if(this._allValid()) {
                 this.setState({ processing: true });
                 let { nickname, email, password } = this.state;
@@ -126,13 +126,13 @@ define([
                     });
                 }
             }
-        },
+        }
 
-        _handleCancel: function() {
+        _handleCancel = () => {
             location.hash = '#studio/cloud/sign-in';
-        },
+        }
 
-        render: function() {
+        render() {
             return(
                 <div className="cloud">
                     <div className="container">
@@ -206,5 +206,5 @@ define([
                 </div>
             );
         }
-    });
+    };
 });

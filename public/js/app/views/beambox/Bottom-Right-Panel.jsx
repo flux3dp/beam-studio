@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactClassset',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/preview-mode-controller',
@@ -11,7 +10,6 @@ define([
     'app/actions/alert-actions',
     'app/actions/beambox/beambox-version-master'
 ], function (
-    React,
     ReactCx,
     BottomRightFuncs,
     PreviewModeController,
@@ -23,6 +21,7 @@ define([
     AlertActions,
     BeamboxVersionMaster
 ) {
+    const React = require('react');
     const lang = i18n.lang;
 
     class BottomRightPanel extends React.Component {

@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
@@ -8,13 +7,13 @@ define([
     'app/actions/beambox/constant'
 ], function(
     $,
-    React,
     PropTypes,
     FnWrapper,
     UnitInput,
     i18n,
     Constant
 )   {
+    const React = require('react');
     const LANG = i18n.lang.beambox.tool_panels;
 
     class OffsetDistPanel extends React.Component{

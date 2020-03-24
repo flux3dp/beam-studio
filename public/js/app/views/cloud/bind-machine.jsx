@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'helpers/device-master',
     'helpers/device-list',
@@ -11,7 +10,6 @@ define([
     'helpers/firmware-version-checker'
 ], function(
     $,
-    React,
     i18n,
     DeviceMaster,
     DeviceList,
@@ -21,23 +19,23 @@ define([
     AlertActions,
     FirmwareVersionChecker
 ) {
-    return React.createClass({
-
-        lang: {},
-
-        getInitialState: function() {
-            return {
+    const React = require('react');
+    return class BindMachine extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 selectedDevice: {},
                 bindingInProgress: false,
                 me: {}
             };
-        },
+            this.lang = {};
+        }
 
-        componentWillMount: function() {
+        componentWillMount() {
             this.lang = i18n.get();
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             let getList = () => {
                 let deviceList = DeviceList(DeviceMaster.getDeviceList());
                 this.setState({ deviceList });
@@ -59,14 +57,14 @@ define([
                     });
                 }
             });
-        },
+        }
 
-        _handleSignout: async function() {
+        _handleSignout = async () => {
             await CloudApi.signOut();
             location.hash = '#studio/cloud/sign-in';
-        },
+        }
 
-        _handleSelectDevice: async function(device) {
+        _handleSelectDevice = async (device) => {
             const allowCloud = await FirmwareVersionChecker.check(device, 'CLOUD');
             if(allowCloud) {
                 this.setState({
@@ -82,17 +80,17 @@ define([
                     lang.not_supported_firmware
                 );
             }
-        },
+        }
 
-        _handleCancel: function() {
+        _handleCancel = () => {
             location.hash = '#/studio/print';
-        },
+        }
 
-        _handleCancelBinding: function() {
+        _handleCancelBinding = () => {
             this.setState({ bindingInProgress: false });
-        },
+        }
 
-        _handleBind: async function() {
+        _handleBind = async () => {
             this.setState({ bindingInProgress: true });
             const status = await DeviceMaster.selectDevice(this.state.selectedDevice);
             if(status === 'TIMEOUT') {
@@ -182,9 +180,9 @@ define([
                     }
                 }
             }
-        },
+        }
 
-        _handleUnbind: function(uuid) {
+        _handleUnbind = (uuid) => {
             let lang = this.props.lang.settings.flux_cloud;
             console.log('unbind', uuid);
 
@@ -201,9 +199,9 @@ define([
                     }
                 });
             }
-        },
+        }
 
-        _renderBindingWindow: function() {
+        _renderBindingWindow = () => {
             let lang = this.props.lang.settings.flux_cloud,
                 bindingWindow;
 
@@ -218,17 +216,17 @@ define([
             );
 
             return this.state.bindingInProgress ? bindingWindow : '';
-        },
+        }
 
-        _renderBlind: function() {
+        _renderBlind = () => {
             let blind = (
                 <div className="blind" />
             );
 
             return this.state.bindingInProgress ? blind : '';
-        },
+        }
 
-        render: function() {
+        render() {
             let lang = this.props.lang.settings.flux_cloud,
                 deviceList,
                 bindingWindow,
@@ -307,6 +305,6 @@ define([
             );
         }
 
-    });
+    };
 
 });

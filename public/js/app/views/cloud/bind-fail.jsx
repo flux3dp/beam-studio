@@ -1,14 +1,13 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/device-master',
     'helpers/device-error-handler'
 ], function(
-    React,
     i18n,
     DeviceMaster,
     DeviceErrorHandler
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
 
     return ({error, clear}) => {

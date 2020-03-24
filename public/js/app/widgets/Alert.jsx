@@ -1,31 +1,18 @@
-define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, ButtonGroup, i18n) {
+define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n) {
     'use strict';
+    const React = require('react');
     var lang = i18n.lang.buttons;
 
-    return React.createClass({
-
-        getDefaultProps: function () {
-            return {
-                lang: {},
-                caption: '',
-                checkbox: '',
-                message: '',
-                buttons: [],
-                images: [],
-                imgClass: '',
-                displayImages: false,
-                onCustom: function() {},
-                onClose: function() {}
-            };
-        },
-
-        getInitialState: function () {
-            return {
+    class Alert extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 imgIndex: 0
-            };
-        },
+            }
 
-        _renderMessage: function() {
+        }
+
+        _renderMessage = () => {
             if (this.props.displayImages) {
                 return <img className={this.props.imgClass} src={this.props.images[this.state.imgIndex]}></img>
             } else {
@@ -33,9 +20,9 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
                             <pre className="message" dangerouslySetInnerHTML={{__html: this.props.message}}></pre> :
                             <pre className="message">{this.props.message}</pre>
             }
-        },
+        }
 
-        _renderCheckbox: function() {
+        _renderCheckbox = () => {
             const self = this;
             const _handleCheckboxClick = function(e) {
                 if (e.target.checked) {
@@ -60,9 +47,9 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
             } else {
                 return null
             }
-        },
+        }
 
-        _renderButtons: function() {
+        _renderButtons = () => {
             var self = this;
             if (this.props.displayImages) {
                 if (this.state.imgIndex < this.props.images.length - 1) {
@@ -87,9 +74,9 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
             } else {
                 return <ButtonGroup buttons={this.props.buttons}/>
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var caption = (
                     '' !== this.props.caption ?
                     <h2 className="caption">{this.props.caption}</h2> :
@@ -113,5 +100,18 @@ define(['react', 'jsx!widgets/Button-Group', 'helpers/i18n'], function(React, Bu
                 </div>
             );
         }
-    });
+    };
+    Alert.defaultProps = {
+        lang: {},
+        caption: '',
+        checkbox: '',
+        message: '',
+        buttons: [],
+        images: [],
+        imgClass: '',
+        displayImages: false,
+        onCustom: function() {},
+        onClose: function() {}
+    };
+    return Alert;
 });

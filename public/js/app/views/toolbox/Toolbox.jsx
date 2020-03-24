@@ -1,16 +1,15 @@
 define([
-    'react',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/stores/topbar-store',
     'jsx!views/toolbox/Toolbox-Item',
     'helpers/i18n',
 ], function(
-    React,
     FnWrapper,
     TopbarStore,
     ToolboxItem,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.toolbox;
 
     class Toolbox extends React.Component {

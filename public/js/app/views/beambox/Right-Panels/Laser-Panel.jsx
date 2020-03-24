@@ -1,8 +1,6 @@
 define([
     'jquery',
-    'react',
     'reactClassset',
-    'reactDOM',
     'reactPropTypes',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/svgeditor-function-wrapper',
@@ -23,9 +21,7 @@ define([
     'app/actions/beambox/beambox-version-master'
 ], function(
     $,
-    React,
     ReactCx,
-    ReactDOM,
     PropTypes,
     BeamboxPreference,
     FnWrapper,
@@ -46,6 +42,8 @@ define([
     BeamboxVersionMaster
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
     const LANG2 = i18n.lang;
@@ -75,24 +73,11 @@ define([
     const functionalLaserOptions = [
         'save',
         'more'
-    ]
+    ];
 
-    return React.createClass({
-        propTypes: {
-            layerName:  PropTypes.string.isRequired,
-            speed:      PropTypes.number.isRequired,
-            strength:   PropTypes.number.isRequired,
-            repeat:     PropTypes.number.isRequired,
-            height:     PropTypes.number.isRequired,
-            zStep:    PropTypes.number.isRequired,
-            isDiode:    PropTypes.number.isRequired,
-            funcs:      PropTypes.object.isRequired
-        },
-
-        getInitialState: function() {
-            //this._handleStartClick = this._handleStartClick.bind(this);
-            //this._renderPrinterSelectorWindow = this._renderPrinterSelectorWindow.bind(this);
-
+    class LaserPanel extends React.Component{
+        constructor(props) {
+            super(props);
             if (!LocalStorage.get('defaultLaserConfigsInUse')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
                     const {speed, power, repeat} = this._getDefaultParameters(e);
@@ -139,9 +124,8 @@ define([
                     }
                 }
                 LocalStorage.set('customizedLaserConfigs', customized);
-            }
-
-            return {
+            };
+            this.state = {
                 speed:          this.props.speed,
                 strength:       this.props.strength,
                 repeat:         this.props.repeat,
@@ -154,17 +138,17 @@ define([
                 selectedItem:   LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : '',
                 isSelectingCustomized: true
             };
-        },
+        }
 
         componentDidMount() {
             BeamboxStore.onUpdateLaserPanel(() => this.updateData());
-        },
+        }
 
         componentWillUnmount() {
             BeamboxStore.removeUpdateLaserPanelListener(() => this.updateData());
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             if (nextProps.configName != '') {
                 if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || LocalStorage.get('customizedLaserConfigs').findIndex((e) => e.name === nextProps.configName) > -1) {
                     document.getElementById('laser-config-dropdown').value = nextProps.configName;
@@ -186,9 +170,9 @@ define([
                 modal:      '',
                 selectedItem: LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : ''
             });
-        },
+        }
 
-        updateData: function() {
+        updateData = () => {
             const layerData = FnWrapper.getCurrentLayerData();
 
             this.setState({
@@ -196,40 +180,40 @@ define([
                 strength:   layerData.power,
                 repeat:     layerData.repeat
             });
-        },
+        }
 
-        _handleSpeedChange: function(val) {
+        _handleSpeedChange = (val) => {
             this.setState({speed: val});
             this.props.funcs.writeSpeed(this.props.layerName, val);
-        },
+        }
 
-        _handleStrengthChange: function(val) {
+        _handleStrengthChange = (val) => {
             this.setState({strength: val});
             this.props.funcs.writeStrength(this.props.layerName, val);
-        },
+        }
 
-        _handleRepeatChange: function(val) {
+        _handleRepeatChange = (val) => {
             this.setState({repeat: val});
             this.props.funcs.writeRepeat(this.props.layerName, val);
-        },
+        }
 
-        _handleHeightChange: function(val) {
+        _handleHeightChange = (val) => {
             this.setState({height: val});
             this.props.funcs.writeHeight(this.props.layerName, val);
-        },
+        }
 
-        _handleZStepChange: function(val) {
+        _handleZStepChange = (val) => {
             this.setState({zStep: val});
             this.props.funcs.writeZStep(this.props.layerName, val);
-        },
+        }
 
-        _toggleDiode: function() {
+        _toggleDiode = () => {
             let val = !this.state.isDiode;
             this.setState({isDiode: val});
             this.props.funcs.writeDiode(this.props.layerName, val ? 1 : 0);
-        },
+        }
 
-        _handleSaveConfig: function() {
+        _handleSaveConfig = () => {
             const name = document.getElementsByClassName('configName')[0].value;
             const customizedConfigs = LocalStorage.get('customizedLaserConfigs');
 
@@ -260,9 +244,9 @@ define([
 
             this.setState({ modal: '' });
             
-        },
+        }
 
-        _handleDeleteConfig: function() {
+        _handleDeleteConfig = () => {
             const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
             const index = customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
             if (index > -1) {
@@ -275,14 +259,14 @@ define([
                 LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                 this.setState({ selectedItem: customizedLaserConfigs[0] ? customizedLaserConfigs[0].name : '' });
             }
-        },
+        }
 
-        _handleCancelModal: function() {
+        _handleCancelModal = () => {
             document.getElementById('laser-config-dropdown').value = this.state.original;
             this.setState({ modal: '' });
-        },
+        }
 
-        _handleSave: function() {
+        _handleSave = () => {
             if (this.state.selectedItem != '') {
                 const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
                 let newSpeed = ReactDOM.findDOMNode(this.refs.configSpeed).value;
@@ -294,9 +278,9 @@ define([
                     LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                 }
             }
-        },
+        }
 
-        _handleApply: function() {
+        _handleApply = () => {
             if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
                 this._handleSave();
                 document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
@@ -318,9 +302,9 @@ define([
             } else {
                 this.setState({ modal: '' })
             }
-        },
+        }
 
-        _handleParameterTypeChanged: function(id, value) {
+        _handleParameterTypeChanged = (id, value) => {
             if (value === defaultLaserOptions[0]) {
                 this.setState({ original: value });
                 return;
@@ -401,9 +385,9 @@ define([
                     console.error('No such value', value);
                 }
             }
-        },
+        }
 
-        _renderStrength: function() {
+        _renderStrength = () => {
             const maxValue = 100;
             const minValue = 1;
             const onSlideBarClick = (e) => {
@@ -439,8 +423,8 @@ define([
                 </div>
                  
             );
-        },
-        _renderSpeed: function() {
+        }
+        _renderSpeed = () => {
             const maxValue = 300;
             const minValue = 3;
             const onSlideBarClick = (e) => {
@@ -475,9 +459,9 @@ define([
                     </div>
                 </div>
             );
-        },
+        }
 
-        _renderRepeat: function() {
+        _renderRepeat = () => {
             return (
                 <div className='panel without-drag'>
                     <span className='title'>{LANG.repeat}</span>
@@ -491,9 +475,9 @@ define([
                     />
                 </div>
             );
-        },
+        }
 
-        _renderHeight: function() {
+        _renderHeight = () => {
             if (!BeamboxPreference.read('enable-autofocus-module')) {
                 return null;
             }
@@ -510,9 +494,9 @@ define([
                     />
                 </div>
             );
-        },
+        }
 
-        _renderZStep: function() {
+        _renderZStep = () => {
             if (!BeamboxPreference.read('enable-autofocus-module') || this.state.repeat === 1) {
                 return null;
             }
@@ -529,9 +513,9 @@ define([
                     />
                 </div>
             );
-        },
+        }
 
-        _renderDiode: function() {
+        _renderDiode = () => {
             if (!BeamboxPreference.read('enable-diode-module')) {
                 return null;
             }
@@ -541,9 +525,9 @@ define([
                     <input type="checkbox" checked={this.state.isDiode} onChange={()=>{}}/>
                 </div>
             );
-        },
+        }
 
-        _renderSaveModal: function() {
+        _renderSaveModal = () => {
             return (
                 <Modal>
                     <div className="save-config-panel">
@@ -569,9 +553,9 @@ define([
                     </div>
                 </Modal>
             );
-        },
+        }
 
-        _getDefaultParameters: function(para_name) {
+        _getDefaultParameters = (para_name) => {
             const model = BeamboxPreference.read('model');
             let speed, power, repeat;
             switch(model) {
@@ -592,9 +576,9 @@ define([
                     break;
             }
             return {speed, power, repeat};
-        },
+        }
 
-        _renderMoreModal: function() {
+        _renderMoreModal = () => {
             const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
             const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
             const selectedConfig = customizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
@@ -845,9 +829,9 @@ define([
                     </div>
                 </Modal>
             );
-        },
+        }
 
-        _renderModal: function() {
+        _renderModal = () => {
             switch(this.state.modal) {
                 case 'save':
                     return this._renderSaveModal();
@@ -856,9 +840,9 @@ define([
                 default:
                     return null;
             }
-        },
+        }
 
-        _handleStartClick: async function() {
+        _handleStartClick = async () => {
             if (PreviewModeController.isPreviewMode()) {
                 await PreviewModeController.end();
             }
@@ -893,9 +877,9 @@ define([
             this.setState({
                 isPrinterSelectorOpen: true
             });
-        },
+        }
 
-        _renderPrinterSelectorWindow: function() {
+        _renderPrinterSelectorWindow = () => {
             const onGettingPrinter = async (selected_item) => {
                 //export fcode
                 if (selected_item === 'export_fcode') {
@@ -945,9 +929,9 @@ define([
             return (
                 <Modal content={content} onClose={onClose} />
             );
-        },
+        }
 
-        _renderActionButtons: function() {
+        _renderActionButtons = () => {
             let className = ReactCx.cx({
                 'btn-default': true, 
                 'btn-go': true
@@ -959,9 +943,9 @@ define([
                     {label}
                 </button>
             );
-        },
+        }
 
-        render: function() {
+        render() {
             const speedPanel = this._renderSpeed();
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
@@ -1027,7 +1011,19 @@ define([
             );
         }
 
-    });
+    };
 
+    LaserPanel.propTypes = {
+        layerName:  PropTypes.string.isRequired,
+        speed:      PropTypes.number.isRequired,
+        strength:   PropTypes.number.isRequired,
+        repeat:     PropTypes.number.isRequired,
+        height:     PropTypes.number.isRequired,
+        zStep:    PropTypes.number.isRequired,
+        isDiode:    PropTypes.number.isRequired,
+        funcs:      PropTypes.object.isRequired
+    };
+
+    return LaserPanel;
 
 });

@@ -1,26 +1,30 @@
 define([
-    'react'
-], function(React) {
+], function() {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
+    return class TextToggle extends React.Component{
+        static defaultProps = {
+            title: '',
+            textOn: '',
+            textOff: '',
+            defaultChecked: false,
+            defaultValue: '',
+            displayText: '',
+            className: '',
+            // events
+            onClick: function() {}
+        }
 
-        getDefaultProps: function() {
-            return {
-                title: '',
-                textOn: '',
-                textOff: '',
-                defaultChecked: false,
-                defaultValue: '',
-                displayText: '',
-                className: '',
-                // events
-                onClick: function() {}
+        constructor(props) {
+            super(props);
+            this.state = {
+                checked: this.props.defaultChecked
             };
-        },
+        }
 
         // UI events
-        _onClick: function(e) {
+        _onClick = (e) => {
             this.state.checked = !this.state.checked;
 
             this.setState({
@@ -28,15 +32,15 @@ define([
             });
 
             this.props.onClick(e);
-        },
+        }
 
         // Public function
-        isChecked: function() {
+        isChecked = () => {
             return this.state.checked;
-        },
+        }
 
         // Lifecycle
-        render: function() {
+        render() {
             var props = this.props,
                 lang = props.lang,
                 stateStyle = (true === this.state.checked ? 'on' : 'off'),
@@ -57,19 +61,13 @@ define([
                     <span className="status" data-text-on={props.textOn} data-text-off={props.textOff}></span>
                 </label>
             );
-        },
+        }
 
-        getInitialState: function() {
-            return {
-                checked: this.props.defaultChecked
-            };
-        },
-
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 checked: nextProps.defaultChecked
             });
         }
 
-    });
+    };
 });

@@ -1,23 +1,25 @@
-define([
-    'react',
+define([,
     'helpers/i18n',
     'jsx!widgets/Select',
     'jsx!widgets/Modal'
-], function(React, i18n, SelectView, Modal) {
+], function(i18n, SelectView, Modal) {
     'use strict';
+
+    const React = require('react');
 
     return function(args) {
         args = args || {};
 
-        return React.createClass({
-            getInitialState: function() {
-                return {
+        class Home extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang: args.state.lang
                 };
-            },
+            }
 
             // Private methods
-            _getLanguageOptions: function() {
+            _getLanguageOptions = () => {
                 var options = [];
 
                 for (var lang_code in args.props.supported_langs) {
@@ -29,17 +31,17 @@ define([
                 }
 
                 return options;
-            },
+            }
 
-            _changeActiveLang: function(e) {
+            _changeActiveLang = (e) => {
                 i18n.setActiveLang(e.currentTarget.value);
                 this.setState({
                     lang: i18n.get()
                 });
-            },
+            }
 
             // Lifecycle
-            render: function() {
+            render() {
                 var lang = this.state.lang,
                     options = this._getLanguageOptions(),
                     wrapperClassName = {
@@ -64,6 +66,7 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
+        return Home;
     };
 });

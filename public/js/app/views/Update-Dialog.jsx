@@ -1,5 +1,4 @@
 define([
-    'react',
     'jsx!widgets/Modal',
     'jsx!widgets/Button-Group',
     'helpers/api/config',
@@ -7,7 +6,6 @@ define([
     'helpers/i18n',
     'helpers/device-master'
 ], function(
-    React,
     Modal,
     ButtonGroup,
     config,
@@ -15,24 +13,11 @@ define([
     i18n,
     DeviceMaster
 ) {
-    var View = React.createClass({
+    const React = require('react');
 
-        getDefaultProps: function() {
-            return {
-                open: false,
-                type: 'software',   // software|firmware|toolhead
-                device: {},
-                currentVersion: '',
-                latestVersion: '',
-                releaseNote: '',
-                updateFile: undefined,
-                onDownload: function() {},
-                onClose: function() {},
-                onInstall: function() {}
-            };
-        },
+    class UpdateDialog extends React.Component{
 
-        _onSkip: function() {
+        _onSkip = () => {
             var key = this.props.type + '-update-ignore-list',
                 ignoreList = config().read(key) || [];
 
@@ -41,27 +26,27 @@ define([
             // save skip version and close
             config().write(key, ignoreList);
             this._onClose();
-        },
-        _onDownload: function() {
+        }
+        _onDownload = () => {
             console.log('onDownload this.props', this.props);
             this.props.onDownload();
             this._onClose();
-        },
+        }
 
-        _onClose: function(quit) {
+        _onClose = (quit) => {
             if ('toolhead' === this.props.type && true === quit) {
                 DeviceMaster.quitTask();
             }
 
             this.props.onClose();
-        },
+        }
 
-        _onInstall: function() {
+        _onInstall = () => {
             this.props.onInstall();
             this._onClose();
-        },
+        }
 
-        _getButtons: function(lang) {
+        _getButtons = (lang) => {
             var buttons,
                 laterButton = {
                     label: lang.update.later,
@@ -75,7 +60,7 @@ define([
                     dataAttrs: {
                         'ga-event': 'download-' + this.props.type.toLowerCase() + '-later'
                     },
-                    onClick: this._onDownload
+                    onClick: () => {this._onDownload()}
                 },
                 installButton = {
                     label: ('software' === this.props.type ?
@@ -85,7 +70,7 @@ define([
                     dataAttrs: {
                         'ga-event': 'install-new-' + this.props.type.toLowerCase()
                     },
-                    onClick: this._onInstall
+                    onClick: () => {this._onInstall()}
                 };
 
             buttons = (this.props.type === 'software') ?
@@ -93,15 +78,15 @@ define([
                 [laterButton, downloadButton, installButton];
 
             return buttons;
-        },
+        }
 
-        _getReleaseNote: function() {
+        _getReleaseNote = () => {
             return {
                 __html: this.props.releaseNote
             };
-        },
+        }
 
-        render: function() {
+        render() {
             if (false === this.props.open) {
                 return <div/>;
             }
@@ -144,7 +129,20 @@ define([
             );
         }
 
-    });
+    };
 
-    return View;
+    UpdateDialog.defaultProps = {
+        open: false,
+        type: 'software',   // software|firmware|toolhead
+        device: {},
+        currentVersion: '',
+        latestVersion: '',
+        releaseNote: '',
+        updateFile: undefined,
+        onDownload: function() {},
+        onClose: function() {},
+        onInstall: function() {}
+    }
+
+    return UpdateDialog;
 });

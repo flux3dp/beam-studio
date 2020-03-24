@@ -1,29 +1,28 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/sprintf',
     'helpers/api/cloud',
     'plugins/classnames/index'
 ], function(
-    React,
     i18n,
     Sprintf,
     CloudApi,
     ClassNames
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
-    return React.createClass({
-
-        getInitialState: function() {
-            return {
+    return class SignIn extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 email: '',
                 password: '',
                 processing: false,
                 showResendVerificationEmail: false
             };
-        },
+        }
 
-        componentDidMount: async function() {
+        async componentDidMount() {
             const response = await CloudApi.getMe();
             if(response.ok) {
                 const responseBody = response.json();
@@ -31,30 +30,30 @@ define([
                     location.hash = '#/studio/cloud/bind-machine';
                 }
             }
-        },
+        }
 
-        _handleForgotPassword: function() {
+        _handleForgotPassword = () => {
             location.hash = '#/studio/cloud/forgot-password';
-        },
+        }
 
-        _handleEditValue: function(e) {
+        _handleEditValue = (e) => {
             let { id, value } = e.target;
             this.setState({
                 [id]: value
             });
-        },
+        }
 
-        _handleDetectEnterKey: function(e) {
+        _handleDetectEnterKey = (e) => {
             if(e.key === 'Enter') {
                 this._handleSignIn(e);
             }
-        },
+        }
 
-        _handleCancel: function() {
+        _handleCancel = () => {
             location.hash = '#/studio/print';
-        },
+        }
 
-        _handleResendVerificationEmail: async function() {
+        _handleResendVerificationEmail = async () => {
             let { email } = this.state;
 
             const response = await CloudApi.resendVerification(email);
@@ -64,9 +63,9 @@ define([
             else {
                 alert(LANG.contact_us);
             }
-        },
+        }
 
-        _handleSignIn: async function(e) {
+        _handleSignIn = async (e) => {
             e.preventDefault();
             let { email, password } = this.state;
 
@@ -95,9 +94,9 @@ define([
                     processing: false
                 });
             }
-        },
+        }
 
-        render: function() {
+        render() {
             const verificationClass = ClassNames('resend', {hide: !this.state.showResendVerificationEmail });
             const message = (this.state.processing) ? LANG.processing : '';
 
@@ -143,6 +142,6 @@ define([
             );
         }
 
-    });
+    };
 
 });

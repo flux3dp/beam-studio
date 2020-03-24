@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/global-actions',
     'app/stores/beambox-store',
@@ -9,8 +7,6 @@ define([
     'helpers/api/inter-process',
     'helpers/i18n'
 ], function(
-    React,
-    ReactDOM,
     FnWrapper,
     GlobalActions,
     BeamboxStore,
@@ -19,6 +15,8 @@ define([
     InterProcessApi,
     i18n
 ) {
+    const React = require('react');
+
     const LANG = i18n.lang.beambox.left_panel;
     const interProcessWebSocket = InterProcessApi() ;
 

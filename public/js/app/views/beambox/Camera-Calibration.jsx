@@ -1,7 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
@@ -22,7 +21,6 @@ define([
     'helpers/device-error-handler'
 ], function(
     $,
-    React,
     PropTypes,
     i18n,
     BeamboxPreference,
@@ -42,6 +40,7 @@ define([
     Constant,
     DeviceErrorHandler
 ) {
+    const React = require('react');
     const LANG = i18n.lang.camera_calibration;
 
     const cameraCalibrationWebSocket = CameraCalibration();

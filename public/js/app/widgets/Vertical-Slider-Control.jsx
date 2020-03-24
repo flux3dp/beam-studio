@@ -1,15 +1,13 @@
 define([
-    'react',
-    'reactDOM',
     'plugins/classnames/index',
     'app/constants/keycode-constants',
 ], function(
-    React,
-    ReactDOM,
     ClassNames,
     keyCodeConstants
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     class VerticalSlider extends React.Component {
         constructor(props) {

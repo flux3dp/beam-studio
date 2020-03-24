@@ -1,54 +1,49 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant'
-], function($, React, PropTypes, UnitInput, i18n, Constant) {
+], function($, PropTypes, UnitInput, i18n, Constant) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.tool_panels;
 
 
-    return React.createClass({
-        propTypes: {
-            dx: PropTypes.number.isRequired,
-            dy: PropTypes.number.isRequired,
-            onValueChange: PropTypes.func,
-        },
-
-        getInitialState: function() {
-            return {
+    class Interval extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 dx: this.props.dx,
                 dy: this.props.dy,
                 onValueChange: this.props.onValueChange,
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 dx: nextProps.dx,
                 dy: nextProps.dy,
                 onValueChange: nextProps.onValueChange,
             });
-        },
+        }
 
-        _update_dx_handler: function(val) {
+        _update_dx_handler = (val) => {
             this.setState({dx: val});
             let distance = this.state;
             distance.dx = val;
             this.props.onValueChange(distance);
-        },
+        }
 
-        _update_dy_handler: function(val) {
+        _update_dy_handler = (val) => {
             this.setState({dy: val});
             let distance = this.state;
             distance.dy = val;
             this.props.onValueChange(distance);       
-        },
+        }
 
-        getValueCaption: function() {
+        getValueCaption = () => {
             const dx = this.state.dx, 
                 dy = this.state.dy,
                 units = localStorage.getItem('default-units', 'mm') ;
@@ -57,8 +52,9 @@ define([
             } else {
                 return `${dx}, ${dy} mm`;
             }
-        },
-        render: function() {
+        }
+
+        render() {
             return (
                 <div className="tool-panel">
                     <label className="controls accordion">
@@ -93,5 +89,13 @@ define([
                 </div>
             );
         }
-    });
+    };
+
+    Interval.propTypes = {
+        dx: PropTypes.number.isRequired,
+        dy: PropTypes.number.isRequired,
+        onValueChange: PropTypes.func,
+    }
+
+    return Interval;
 });

@@ -1,10 +1,9 @@
 define([
-    'react',
     'helpers/api/cloud'
 ], function(
-    React,
     CloudApi
 ) {
+    const React = require('react');
 
     const Controls = (props) => {
         const _handleEntered = e => props.onEntered(props.id, e.target.value);
@@ -22,16 +21,15 @@ define([
         );
     };
 
-    return React.createClass({
-
-        values: {
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-        },
-
-        getInitialState: function() {
-            return {
+    return class changePassword extends React.Component{
+        constructor(props) {
+            super(props);
+            this.values = {
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            };
+            this.state = {
                 currentPasswordError: '',
                 newPasswordError: '',
                 confirmPasswordError: '',
@@ -40,16 +38,16 @@ define([
                 emptyNewPassword: false,
                 emptyConfirmPassword: false
             };
-        },
+        }
 
-        componentDidMount: async function() {
+        async componentDidMount() {
             const resp = await CloudApi.getMe();
             if(!resp.ok) {
                 location.hash = '#/studio/cloud';
             }
-        },
+        }
 
-        _checkValue: function(id, value) {
+        _checkValue = (id, value) => {
             const lang = this.props.lang.settings.flux_cloud,
                 f = {};
 
@@ -86,22 +84,22 @@ define([
                 const mismatch = this.values.newPassword !== this.values.confirmPassword;
                 this.setState({ confirmPasswordError: mismatch ? lang.error_password_not_match : ''});
             }
-        },
+        }
 
-        allValid: function() {
+        allValid = () => {
             const { currentPasswordError, newPasswordError, confirmPasswordError } = this.state;
             return (
                 currentPasswordError === '' &&
                 newPasswordError === '' &&
                 confirmPasswordError === ''
             );
-        },
+        }
 
-        _handleCancel: function() {
+        _handleCancel = () => {
             location.hash = '#/studio/cloud/bind-machine';
-        },
+        }
 
-        _handleChangePassword: async function() {
+        _handleChangePassword = async () => {
             if(!this.allValid()) { return; }
             let lang = this.props.lang.settings.flux_cloud;
 
@@ -116,9 +114,9 @@ define([
             } else {
                 location.hash = '#/studio/cloud/bind-machine';
             }
-        },
+        }
 
-        render: function() {
+        render() {
             const lang = this.props.lang.settings.flux_cloud;
 
             return (
@@ -171,5 +169,5 @@ define([
                 </div>
             );
         }
-    });
+    };
 });

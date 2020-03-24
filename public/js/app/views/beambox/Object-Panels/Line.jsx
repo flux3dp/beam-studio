@@ -1,59 +1,53 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant',
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
     
-    return React.createClass({
-        propTypes: {
-            x1: PropTypes.number.isRequired,
-            y1: PropTypes.number.isRequired,
-            x2: PropTypes.number.isRequired,
-            y2: PropTypes.number.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class Line extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 x1: this.props.x1,
                 y1: this.props.y1,
                 x2: this.props.x2,
                 y2: this.props.y2
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 x1: nextProps.x1,
                 y1: nextProps.y1,
                 x2: nextProps.x2,
                 y2: nextProps.y2
             });
-        },
+        }
 
-        _update_x1_handler: function(val) {
+        _update_x1_handler = (val) => {
             FnWrapper.update_line_x1(val);
             this.setState({x1: val});
-        },
-        _update_y1_handler: function(val) {
+        }
+        _update_y1_handler = (val) => {
             FnWrapper.update_line_y1(val);
             this.setState({y1: val});
-        },
-        _update_x2_handler: function(val) {
+        }
+        _update_x2_handler = (val) => {
             FnWrapper.update_line_x2(val);
             this.setState({x2: val});
-        },
-        _update_y2_handler: function(val) {
+        }
+        _update_y2_handler = (val) => {
             FnWrapper.update_line_y2(val);
             this.setState({y2: val});            
-        },
-        getValueCaption: function() {
+        }
+        getValueCaption = () => {
             const x1 = this.state.x1, 
                 y1 = this.state.y1,
                 x2 = this.state.x2, 
@@ -64,8 +58,8 @@ define([
             } else {
                 return `A (${x1.toFixed(1)}, ${y1.toFixed(1)}), B (${x2.toFixed(1)}, ${y2.toFixed(1)})`;
             } 
-        },
-        render: function() {
+        }
+        render() {
             return (
                 <div className="object-panel">
                     <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
@@ -126,7 +120,14 @@ define([
             </div>
             );
         }
-        
-    });
+    };
 
+    Line.propTypes = {
+        x1: PropTypes.number.isRequired,
+        y1: PropTypes.number.isRequired,
+        x2: PropTypes.number.isRequired,
+        y2: PropTypes.number.isRequired
+    };
+
+    return Line;
 });

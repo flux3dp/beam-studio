@@ -1,31 +1,13 @@
 define([
-    'react',
     'reactClassset',
     'jsx!widgets/Button-Group'
-], function(React, ReactCx, ButtonGroup) {
+], function(ReactCx, ButtonGroup) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
+    class ActionButtons extends React.Component{
 
-        getDefaultProps: function() {
-            return {
-                // mode: NOT_SCAN, SCANNED, MULTI_SCAN, CONVERTED
-                mode: 'NOT_SCAN',
-                lang: {},
-                className: {},
-                hasConvert: false,
-                disabledScan: false,
-                onScanClick: function() {}, // scan/multi scan
-                onSaveClick: function() {}, // save as stl
-                onRollbackClick: function() {}, // rollback to pcd
-                onConvertClick: function() {},  // convert from point cloud to stl
-                onScanAgainClick: function() {}, // start over
-                onMultiScanClick: function() {}, // ready to multi scan
-                onCancelMultiScanClick: function() {}   // cancel multi scan
-            };
-        },
-
-        _getActionButtons: function(lang) {
+        _getActionButtons = (lang) => {
             var self = this,
                 buttons = [],
                 className;
@@ -128,9 +110,9 @@ define([
             }
 
             return buttons;
-        },
+        }
 
-        render : function() {
+        render() {
             var lang = this.props.lang,
                 buttons = this._getActionButtons(lang),
                 defaultClassName = ReactCx.cx(this.props.className);
@@ -139,5 +121,23 @@ define([
                 <ButtonGroup className={defaultClassName} buttons={buttons}/>
             );
         }
-    });
+    };
+
+    ActionButtons.defaultProps = {
+        // mode: NOT_SCAN, SCANNED, MULTI_SCAN, CONVERTED
+        mode: 'NOT_SCAN',
+        lang: {},
+        className: {},
+        hasConvert: false,
+        disabledScan: false,
+        onScanClick: function() {}, // scan/multi scan
+        onSaveClick: function() {}, // save as stl
+        onRollbackClick: function() {}, // rollback to pcd
+        onConvertClick: function() {},  // convert from point cloud to stl
+        onScanAgainClick: function() {}, // start over
+        onMultiScanClick: function() {}, // ready to multi scan
+        onCancelMultiScanClick: function() {}   // cancel multi scan
+    };
+
+    return ActionButtons;
 });

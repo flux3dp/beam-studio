@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'jsx!views/settings/Setting-General',
     'plugins/classnames/index',
@@ -8,7 +7,6 @@ define([
     'helpers/api/config',
 ], function(
     $,
-    React,
     i18n,
     GeneralSetting,
     ClassNames,
@@ -16,31 +14,31 @@ define([
     config
 ) {
     'use strict';
+    const React = require('react');
 
     return function(args) {
         args = args || {};
 
-        var HomeView;
-
-        HomeView = React.createClass({
-            getInitialState: function() {
-                return {
+        class HomeView extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang: args.state.lang
                 };
-            },
+            }
 
-            _handleDone: function() {
+            _handleDone = () => {
                 location.hash = 'studio/' + (config().read('default-app')||'beambox');
                 location.reload();
-            },
+            }
 
-            _onLangChange: function() {
+            _onLangChange = () => {
                 this.setState({
                     lang: i18n.get()
                 });
-            },
+            }
 
-            _renderContent: function() {
+            _renderContent = () => {
                 var content = {},
                     view = args.child;
 
@@ -57,9 +55,9 @@ define([
 
                 if(typeof content[view] === 'undefined') { view = 'general'; }
                 return content[view]();
-            },
+            }
 
-            render: function() {
+            render() {
                 var lang = this.state.lang,
                     menu_item = 'nav-item',
                     generalClass = ClassNames( menu_item, {active: args.child === 'general'}),
@@ -85,7 +83,7 @@ define([
                 );
             }
 
-        });
+        };
 
         return HomeView;
     };

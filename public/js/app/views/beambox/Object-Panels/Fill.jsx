@@ -1,9 +1,9 @@
 define([
     'jquery',
-    'react',
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/i18n',
-], function($, React, FnWrapper, i18n) {
+], function($, FnWrapper, i18n) {
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
 

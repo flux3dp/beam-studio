@@ -1,26 +1,18 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index'
-], function(React, PropTypes, ClassNames) {
+], function(PropTypes, ClassNames) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        propTypes: {
-            id: PropTypes.string,
-            label: PropTypes.string,
-            default: PropTypes.string,
-            options: PropTypes.array.isRequired,
-            onChange: PropTypes.func.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class RadioControl extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 selected: this.props.default,
                 default: this.props.options[0].id
             };
-        },
+        }
 
         componentWillReceiveProps(nextProps) {
             let _new = nextProps.default,
@@ -29,16 +21,16 @@ define([
             if(_new !== _old) {
                 this.setState({ selected: nextProps.default });
             }
-        },
+        }
 
-        _handleChange: function(newValue, disable) {
+        _handleChange(newValue, disable) {
             if(disable !== true) {
                 this.setState({ selected: newValue });
                 this.props.onChange(this.props.id, newValue);
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var _options = this.props.options.map(function(option) {
                 var radioClass = ClassNames(
                     {'selected': this.state.selected === option.id}
@@ -61,5 +53,15 @@ define([
             );
         }
 
-    });
+    };
+
+    RadioControl.propTypes = {
+        id: PropTypes.string,
+        label: PropTypes.string,
+        default: PropTypes.string,
+        options: PropTypes.array.isRequired,
+        onChange: PropTypes.func.isRequired
+    };
+
+    return RadioControl;
 });

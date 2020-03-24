@@ -1389,6 +1389,7 @@ define(function() {
             showOutline: '繪製輪廓中',
             aborting: '取消工作中',
             starting: '啟動中',
+            preparing: '準備中',
             resuming: '恢復中',
             scanning: '掃描',
             occupied: '機器被佔用',

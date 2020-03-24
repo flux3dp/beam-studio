@@ -1,33 +1,33 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index'
-], function(React, PropTypes, ClassNames) {
+], function(PropTypes, ClassNames) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        propTypes: {
+    return class CheckboxControl extends React.Component{
+        static propTypes = {
             id: PropTypes.string,
             label: PropTypes.string,
             default: PropTypes.array,
             options: PropTypes.array.isRequired,
             onChange: PropTypes.func.isRequired
-        },
+        }
 
-        getInitialState: function() {
+        constructor(props) {
+            super(props);
             let selected = this.props.default;
-            return { selected };
-        },
+            this.state = { selected };
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             let _new = JSON.stringify(nextProps.default),
                 _old = JSON.stringify(this.state.selected);
 
             if(_new !== _old) { this.setState({ selected: nextProps.default }); }
-        },
+        }
 
-        _handleToggleChange: function(id) {
+        _handleToggleChange = (id) => {
             let { selected } = this.state;
             if(selected.indexOf(id) === -1) {
                 selected.push(id);
@@ -38,9 +38,9 @@ define([
             }
 
             this.props.onChange(this.props.id, selected, id);
-        },
+        }
 
-        render: function() {
+        render() {
             var _options = this.props.options.map(function(option) {
                 var checkboxClass = ClassNames(
                     { 'selected': this.state.selected.indexOf(option.id) !== -1 }
@@ -63,5 +63,5 @@ define([
             );
         }
 
-    });
+    };
 });

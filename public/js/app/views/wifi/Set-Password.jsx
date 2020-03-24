@@ -1,33 +1,34 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'helpers/i18n'
-], function($, React, PropTypes, i18n, localStorage) {
+], function($, PropTypes, i18n, localStorage) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-        PropTypes: {
+    return class SetPassword extends React.Component{
+        static propTypes = {
             onJoin: PropTypes.func,
             onBack: PropTypes.func,
             wifiName: PropTypes.string
-        },
-        getInitialState: function() {
-            return {
+        }
+        constructor(props) {
+            super(props);
+            this.state = {
                 connecting: false
             };
-        },
-        componentWillReceiveProps: function(nextProps) {
+        }
+        componentWillReceiveProps(nextProps) {
             console.log(nextProps);
-        },
-        _handleJoin: function() {
+        }
+        _handleJoin = () => {
             this.setState({connecting: true});
             this.props.onJoin();
-        },
-        _handleBack: function() {
+        }
+        _handleBack = () => {
             this.props.onBack();
-        },
-        _renderActions: function(lang) {
+        }
+        _renderActions = (lang) => {
             return this.state.connecting ? (
                 <div>
                     <div><img className="loading" src="img/ring.svg" /></div>
@@ -39,8 +40,8 @@ define([
                     <a id="btn-join" className="btn" onClick={this._handleJoin}>{lang.wifi.set_password.join}</a>
                 </div>
             );
-        },
-        render : function() {
+        }
+        render() {
             var lang = this.props.lang,
                 actions = this._renderActions(lang);
 
@@ -63,5 +64,5 @@ define([
             );
         }
 
-    });
+    };
 });

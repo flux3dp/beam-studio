@@ -1,15 +1,14 @@
 define([
-    'react',
     'jsx!widgets/Button-Group',
     'app/constants/keycode-constants',
     'helpers/i18n'
 ],
 function(
-    React,
     ButtonGroup,
     KeyCodeConstants,
     i18n
 ) {
+    const React = require('react');
     const lang = i18n.lang;
 
     const DxfDpiSelector = ({defaultDpiValue, onSubmit, onCancel}) => {

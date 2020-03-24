@@ -1,21 +1,11 @@
 // refer to: https://gist.github.com/jbottigliero/7982340,
 //           https://github.com/JedWatson/react-select
-define(['react', 'reactPropTypes'], function(React, PropTypes){
+define(['reactPropTypes'], function(PropTypes){
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        getDefaultProps: function(){
-            return {
-                multiple: false,
-            };
-        },
-
-        PropTypes: {
-            onChange: PropTypes.func
-        },
-
-        render: function() {
+    class Select extends React.Component{
+        render() {
             // the default value for the <select> (selected for ReactJS)
             // http://facebook.github.io/react/docs/forms.html#why-select-value
             var defaultValue = this.props.defaultValue;
@@ -60,5 +50,13 @@ define(['react', 'reactPropTypes'], function(React, PropTypes){
                         {options}
                     </select>;
         }
-    });
+    };
+    Select.defaultProps = {
+        multiple: false
+    };
+    Select.propType = {
+        onChange: PropTypes.func
+    };
+
+    return Select;
 });

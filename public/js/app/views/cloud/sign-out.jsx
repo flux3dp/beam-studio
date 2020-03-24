@@ -1,24 +1,23 @@
 define([
     'jquery',
-    'react',
     'helpers/api/cloud'
 ], function(
     $,
-    React,
     CloudApi
 ) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
+    return class SignOut extends React.Component{
 
-        componentDidMount: function() {
+        componentDidMount() {
             CloudApi.signOut().then(r => {
                 location.hash = '#/studio/cloud';
             });
-        },
+        }
 
-        render: function() {
+        render() {
             return <div></div>;
         }
-    });
+    };
 });

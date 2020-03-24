@@ -141,7 +141,6 @@ requirejs.config({
     }
 });
 define([
-    'react',
     'helpers/i18n',
     'jsx!views/beambox/Task-Interpreter-Panel',
     'jsx!views/beambox/Layer-Color-Config',
@@ -190,11 +189,11 @@ define([
     'lib/svgeditor/canvg/rgbcolor',
 
 ], function (
-    React,
     i18n,
     TaskInterpreterPanel,
     LayerColorConfigPanel
 ) {
+    const React = require('react');
     let LANG = i18n.lang.beambox;
 
     'use strict';

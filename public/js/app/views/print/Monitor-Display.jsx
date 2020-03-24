@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactPropTypes',
     'app/constants/global-constants',
     'app/constants/device-constants',
@@ -7,7 +6,6 @@ define([
     'plugins/classnames/index',
     'helpers/duration-formatter'
 ], (
-    React,
     PropTypes,
     GlobalConstants,
     DeviceConstants,
@@ -15,6 +13,7 @@ define([
     ClassNames,
     FormatDuration
 ) => {
+    const React = require('react');
 
     'use strict';
 
@@ -38,42 +37,30 @@ define([
         img.src = url;
     };
 
-    return React.createClass({
-        PropTypes: {
-
-        },
-
-        contextTypes: {
-            store: PropTypes.object,
-            slicingResult: PropTypes.object,
-            lang: PropTypes.object
-        },
-
-        getInitialState: function() {
-            return {
-                isHd: false
-            };
-        },
-
-        componentWillMount: function() {
-            const { store } = this.context;
+    class MonitorDisplay extends React.Component{
+        constructor(props) {
+            super(props);
+            const { store } = this.props.context;
 
             this.unsubscribe = store.subscribe(() => {
                 this.forceUpdate();
             });
-        },
+            this.state = {
+                isHd: false
+            };
+        }
 
-        componentWillUpdate: function() {
+        componentWillUpdate() {
             return false;
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             previewUrl = '';
             this.unsubscribe();
-        },
+        }
 
-        _getPreviewUrl: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _getPreviewUrl = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
             const setUrl = (info) => {
                 let blobIndex = info.findIndex(o => o instanceof Blob);
                 previewUrl = blobIndex > 0 ? window.URL.createObjectURL(info[blobIndex]) : defaultImage;
@@ -95,9 +82,9 @@ define([
                 return '';
             }
             return `url(${previewUrl})`;
-        },
+        }
 
-        _showPreview: function() {
+        _showPreview = () => {
             let divStyle = {
                 borderRadius: '2px',
                 backgroundColor: '#F0F0F0',
@@ -110,14 +97,14 @@ define([
             };
 
             return (<div style={divStyle} />);
-        },
+        }
 
-        _imageError: function(src) {
+        _imageError = (src) => {
             src.target.src = 'img/ph_s.png';
-        },
+        }
 
-        _listFolderContent: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _listFolderContent = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
             let { files, directories } = Monitor.currentFolderContent;
             previewUrl = defaultImage; // reset preview image
 
@@ -178,13 +165,13 @@ define([
                     {_files}
                 </div>
             );
-        },
+        }
 
-        _retrieveFileInfo: function() {
+        _retrieveFileInfo = () => {
 
-        },
+        }
 
-        _streamCamera: function() {
+        _streamCamera = () => {
             if(!this.cameraStream) {
                 let { selectedDevice } = this.props;
                 DeviceMaster.streamCamera(selectedDevice).then(
@@ -203,9 +190,9 @@ define([
             return(
                 <img className={cameraClass} />
             );
-        },
+        }
 
-        _processImage: function(imageBlob) {
+        _processImage = (imageBlob)  => {
             let targetDevice = this.props.selectedDevice;
             if (targetDevice) {
                 if (!hdChecked[targetDevice.serial]) {
@@ -223,11 +210,11 @@ define([
             }
             previewBlob = imageBlob;
             $('.camera-image').attr('src', URL.createObjectURL(imageBlob));
-        },
+        }
 
-        _getJobType: function() {
-            let { Monitor, Device } = this.context.store.getState();
-            let { lang } = this.context, jobInfo, headProp, taskProp;
+        _getJobType = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
+            let { lang } = this.props.context, jobInfo, headProp, taskProp;
 
             jobInfo = Monitor.mode === GlobalConstants.FILE_PREVIEW ? Monitor.selectedFileInfo : Device.jobInfo;
 
@@ -243,34 +230,34 @@ define([
                 return lang.monitor.task[taskProp[0].TASK_TYPE.toUpperCase()];
             }
             return lang.monitor.task[headProp[0].HEAD_TYPE.toUpperCase()];
-        },
+        }
 
-        _getJobTime: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _getJobTime = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
             let jobInfo, o;
 
             jobInfo = Monitor.mode === GlobalConstants.FILE_PREVIEW ? Monitor.selectedFileInfo : Device.jobInfo;
             o = findObjectContainsProperty(jobInfo, 'TIME_COST');
             return o.length > 0 ? o[0].TIME_COST : '';
-        },
+        }
 
-        _getJobProgress: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _getJobProgress = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
             if(Monitor.mode === GlobalConstants.FILE_PREVIEW  || this._isAbortedOrCompleted()) {
                 return '';
             }
             return Device.status.prog ? `${parseInt(Device.status.prog * 100)}%` : '';
-        },
+        }
 
-        _isAbortedOrCompleted: function() {
-            let { Device } = this.context.store.getState();
+        _isAbortedOrCompleted = () => {
+            let { Device } = this.props.context.store.getState();
             return (
                 Device.status.st_id === DeviceConstants.status.ABORTED ||
                 Device.status.st_id === DeviceConstants.status.COMPLETED
             );
-        },
+        }
 
-        _renderDisplay: function(mode) {
+        _renderDisplay = (mode) => {
             if(mode !== GlobalConstants.CAMERA) {
                 this.cameraStream = null;
             }
@@ -287,20 +274,19 @@ define([
             }
 
             return doMode[mode]();
-        },
+        }
 
-        _renderJobInfo: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _renderJobInfo = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
             if(Monitor.mode === GlobalConstants.FILE || Monitor.mode === GlobalConstants.CAMERA) {
                 return '';
             }
 
-            let { slicingResult } = this.context,
+            let { slicingResult } = this.props.context,
                 jobTime = FormatDuration(this._getJobTime()) || '',
                 jobProgress = this._getJobProgress(),
                 jobType = this._getJobType(),
                 infoClass;
-
             infoClass = ClassNames(
                 'status-info',
                 {
@@ -330,9 +316,9 @@ define([
                     <div className="status-info-progress">{jobProgress}</div>
                 </div>
             );
-        },
+        }
 
-        _handleSnapshot: function() {
+        _handleSnapshot = () => {
             if(previewBlob == null) return;
             let targetDevice = DeviceMaster.getSelectedDevice(),
                 fileName = (targetDevice ? targetDevice.name + ' ' : '') + new Date().
@@ -340,18 +326,18 @@ define([
                     replace(/(\d+)\/(\d+)\/(\d+)\, (\d+):(\d+):(\d+)/, '$3-$1-$2 $4-$5-$6')+ ".jpg";
 
             saveAs(previewBlob, fileName);
-        },
+        }
 
-        _renderSpinner: function() {
+        _renderSpinner = () => {
             return (
                 <div className="spinner-wrapper">
                     <div className="spinner-flip"/>
                 </div>
             );
-        },
+        }
 
-        render: function() {
-            let { Monitor } = this.context.store.getState();
+        render() {
+            let { Monitor } = this.props.context.store.getState();
             let content = this._renderDisplay(Monitor.mode),
                 jobInfo = this._renderJobInfo(),
                 specialBtn = Monitor.mode == GlobalConstants.CAMERA ? (<div className="btn-snap" onClick={this._handleSnapshot}>
@@ -374,6 +360,7 @@ define([
             );
         }
 
-    });
+    };
+    return MonitorDisplay;
 
 });

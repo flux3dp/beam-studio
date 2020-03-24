@@ -1,44 +1,36 @@
 define([
     'jquery',
-    'react',
     'reactClassset',
     'helpers/api/config',
     'jsx!widgets/List',
     'jsx!widgets/Dialog-Menu'
-], function($, React, ReactCx, config, List, DialogMenu) {
+], function($, ReactCx, config, List, DialogMenu) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
+    class SetupPanel extends React.Component{
+        constructor(props) {
+            super(props);
 
-        getDefaultProps: function() {
-            return {
-                className: {},
-                lang: {},
-                getSetting: function(setting) {},
-                onCalibrate: function() {}
-            };
-        },
-
-        getInitialState: function() {
             var defaultSettings = {
                     resolution: this.props.lang.scan.resolution[0]
                 },
                 defaults = config().read('scan-defaults') || defaultSettings;
 
-            return {
+            this.state = {
                 defaults: defaults
             };
-        },
+        }
 
-        openSubPopup: function(e) {
+        openSubPopup = (e) => {
             this.refs.dialogMenu.toggleSubPopup(e);
-        },
+        }
 
-        getSettings: function() {
+        getSettings = () => {
             return this.state.defaults;
-        },
+        }
 
-        _onPickupResolution: function(e) {
+        _onPickupResolution = (e) => {
             var $me = $(e.target).parents('li'),
                 settings = {
                     resolution: $me.data('meta')
@@ -53,9 +45,9 @@ define([
             });
 
             this.openSubPopup(e);
-        },
+        }
 
-        _getResolutionOptions: function(lang) {
+        _getResolutionOptions = (lang) => {
             var resolution = JSON.parse(JSON.stringify(lang.scan.resolution)),
                 options = [];
 
@@ -90,9 +82,9 @@ define([
                     <List items={options} onClick={this._onPickupResolution}/>
                 )
             };
-        },
+        }
 
-        _getCalibrate: function(lang) {
+        _getCalibrate = (lang) => {
             return {
                 label: (
                     <div>
@@ -102,9 +94,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        render: function() {
+        render() {
             var props = this.props,
                 lang = props.lang,
                 resolutionOptions = this._getResolutionOptions(lang),
@@ -121,5 +113,14 @@ define([
             );
         }
 
-    });
+    };
+
+    SetupPanel.defaultProps = {
+        className: {},
+        lang: {},
+        getSetting: function(setting) {},
+        onCalibrate: function() {}
+    };
+
+    return SetupPanel;
 });

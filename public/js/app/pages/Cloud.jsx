@@ -1,5 +1,4 @@
 define([
-    'react',
     'helpers/i18n',
     'jsx!views/cloud/sign-in',
     'jsx!views/cloud/sign-up',
@@ -16,7 +15,6 @@ define([
     'jsx!views/cloud/terms',
     'jsx!views/cloud/privacy',
 ], function(
-    React,
     i18n,
     SignIn,
     SignUp,
@@ -33,29 +31,30 @@ define([
     Terms,
     Privacy
 ) {
+    const React = require('react');
+
     return function({child}) {
-        return React.createClass({
-            getInitialState: function() {
-                return {
-                };
-            },
+        class Cloud extends React.Component{
+            constructor(props) {
+                super(props);
+            }
 
-            componentWillUpdate: function(nextProps, nextState) {
+            componentWillUpdate(nextProps, nextState) {
                 console.log('test next props', nextProps, nextState, this.props, this.state);
-            },
+            }
 
-            logError: function(errorArray) {
+            logError = (errorArray) => {
                 this.setState({
                     error: errorArray,
                     view: 'bind-fail'
                 });
-            },
+            }
 
-            clear: function() {
+            clear = () => {
                 this.setState({ view: '' });
-            },
+            }
 
-            renderContent: function() {
+            renderContent = () => {
                 const content = {};
                 let view = this.state.view || child;
 
@@ -76,9 +75,9 @@ define([
 
                 if(typeof content[view] === 'undefined') { view = 'sign-in'; }
                 return content[view]();
-            },
+            }
 
-            render: function() {
+            render() {
                 return (
                     <div className="studio-container settings-cloud">
                         <div className="cloud">
@@ -87,7 +86,8 @@ define([
                     </div>
                 );
             }
+        };
 
-        });
+        return Cloud;
     };
 });

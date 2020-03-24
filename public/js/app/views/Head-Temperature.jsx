@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'helpers/i18n',
     'jsx!widgets/Modal',
     'jsx!widgets/Alert',
@@ -8,8 +6,6 @@ define([
     'app/constants/device-constants',
     'app/actions/alert-actions'
 ], function(
-    React,
-    ReactDOM,
     i18n,
     Modal,
     Alert,
@@ -18,21 +14,22 @@ define([
     AlertActions
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-    var lang = i18n.get(),
-        view;
+    var lang = i18n.get();
 
-    view = React.createClass({
-
-        getInitialState: function() {
-            return {
+    return class HeadTemperature extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 currentTemperature  : 0,
                 enteredTemperature  : '',
                 targetTemperature   : ''
             };
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             const checkToolhead = () => {
                 DeviceMaster.headInfo().then((info) => {
                     if(info.TYPE === DeviceConstants.EXTRUDER) {
@@ -68,9 +65,9 @@ define([
                     });
                 }
             });
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             if(this.operateDuringPause) {
                 DeviceMaster.endToolheadOperation();
             }
@@ -78,11 +75,11 @@ define([
                 DeviceMaster.quitTask();
             }
             clearInterval(this.report);
-        },
+        }
 
 
 
-        _startReport: function() {
+        _startReport = () => {
             this.report = setInterval(() => {
                 const getStatus = () => {
                     return this.operateDuringPause ? DeviceMaster.getReport() : DeviceMaster.getHeadStatus();
@@ -94,13 +91,13 @@ define([
                     }
                 });
             }, 1500);
-        },
+        }
 
-        _handleChangeTemperature: function(e) {
+        _handleChangeTemperature = (e) => {
             this.setState({ enteredTemperature: e.target.value });
-        },
+        }
 
-        _handleSetTemperature: function(e) {
+        _handleSetTemperature = (e) => {
             e.preventDefault();
             let t = parseInt(this.state.enteredTemperature);
 
@@ -120,9 +117,9 @@ define([
             else {
                 DeviceMaster.setHeadTemperature(t);
             }
-        },
+        }
 
-        render: function() {
+        render() {
             let { currentTemperature, targetTemperature } = this.state,
                 temperature, buttons, content, className;
 
@@ -193,7 +190,5 @@ define([
             );
         }
 
-    });
-
-    return view;
+    };
 });

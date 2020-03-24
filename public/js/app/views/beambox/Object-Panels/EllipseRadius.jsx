@@ -1,38 +1,34 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant',
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
     
-    return React.createClass({
-        propTypes: {
-            rx: PropTypes.number.isRequired,
-            ry: PropTypes.number.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class EllipseRadius extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 rx: this.props.rx,
                 ry: this.props.ry,
                 isRatioPreserve: false
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 rx: nextProps.rx,
                 ry: nextProps.ry
             });
-        },
+        }
 
-        _update_rx_handler: function(val) {
+        _update_rx_handler = (val) => {
             val = val / 2;
             if(this.state.isRatioPreserve) {
                 const ry = val * (this.state.ry/this.state.rx);
@@ -41,8 +37,9 @@ define([
             }
             FnWrapper.update_ellipse_rx(val);
             this.setState({rx: val});
-        },
-        _update_ry_handler: function(val) {
+        }
+
+        _update_ry_handler = (val) => {
             val = val / 2;
             if(this.state.isRatioPreserve) {
                 const rx = val * (this.state.rx/this.state.ry);
@@ -51,13 +48,15 @@ define([
             }
             FnWrapper.update_ellipse_ry(val);
             this.setState({ry: val});            
-        },
-        _ratio_handler: function(e) {
+        }
+
+        _ratio_handler = (e) => {
             this.setState({
                 isRatioPreserve: e.target.checked
             });
-        },
-        getValueCaption: function() {
+        }
+
+        getValueCaption() {
             const rx = this.state.rx, 
                 ry = this.state.ry,
                 units = localStorage.getItem('default-units', 'mm') ;
@@ -66,8 +65,9 @@ define([
             } else {
                 return `${rx*2}, ${ry*2} mm`;
             }
-        },
-        render: function() {
+        }
+
+        render() {
             return (
                 <div className="object-panel">
                     <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
@@ -106,9 +106,14 @@ define([
                         </label>
                     </label>
                 </div>
-                );
+            );
         }
-        
-    });
+    };
 
+    EllipseRadius.propTypes = {
+        rx: PropTypes.number.isRequired,
+        ry: PropTypes.number.isRequired
+    };
+
+    return EllipseRadius;
 });

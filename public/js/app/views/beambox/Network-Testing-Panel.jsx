@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
     'app/stores/beambox-store',
     'app/actions/alert-actions',
@@ -9,8 +7,6 @@ define([
     'app/constants/keycode-constants',
     'helpers/i18n'
 ], function(
-    React,
-    ReactDOM,
     Modal,
     BeamboxStore,
     AlertActions,
@@ -19,6 +15,8 @@ define([
     KeycodeConstants,
     i18n
 ) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     const LANG = i18n.lang.beambox.network_testing_panel;
 
     

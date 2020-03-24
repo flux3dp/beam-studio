@@ -1,13 +1,11 @@
 define([
-    'react',
     'app/actions/beambox/beambox-init',
     'app/actions/beambox/beambox-global-interaction',
     'app/actions/beambox/beambox-preference',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Network-Testing-Panel',
-    'jsx!pages/svg-editor',
+    'jsx!pages/svg-editor'
 ], function (
-    React,
     BeamboxInit,
     BeamboxGlobalInteraction,
     BeamboxPreference,
@@ -15,6 +13,7 @@ define([
     NetworkTestingPanel,
     SvgEditor
 ) {
+    const React = require('react');
     BeamboxInit.init();
 
     class view extends React.Component {

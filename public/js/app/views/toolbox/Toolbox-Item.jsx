@@ -1,9 +1,8 @@
 
 define([
-    'react'
 ], function(
-    React
 ) {
+    const React = require('react');
     class ToolboxItem extends React.Component {
         constructor() {
             super();

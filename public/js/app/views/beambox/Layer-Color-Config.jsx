@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
     'jsx!widgets/Unit-Input-v2',
     'jsx!widgets/Validation-Text-Input',
@@ -9,8 +7,6 @@ define([
     'helpers/local-storage',
     'helpers/i18n'
 ], function(
-    React,
-    ReactDOM,
     Modal,
     UnitInput,
     ValidationTextInput,
@@ -19,6 +15,7 @@ define([
     LocalStorage,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.layer_color_config_panel;
     let defaultSettings = [
         {color: '#FF0000', power: 15, speed: 50, repeat: 1},

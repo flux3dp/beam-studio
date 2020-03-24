@@ -1,8 +1,6 @@
 define([
     'jquery',
-    'react',
     'reactClassset',
-    'reactDOM',
     'app/actions/initialize-machine',
     'jsx!widgets/Modal',
     'jsx!widgets/List',
@@ -16,9 +14,7 @@ define([
     'app/stores/alert-store'
 ], function(
     $,
-    React,
     ReactCx,
-    ReactDOM,
     initializeMachine,
     Modal,
     ListView,
@@ -33,6 +29,10 @@ define([
     DeviceErrorHandler
 ) {
     'use strict';
+
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+
     var actionMap = {
             BACK_TO_SET_PASSWARD      : 'BACK_TO_SET_PASSWARD',
             AP_MODE                   : 'AP_MODE',
@@ -44,20 +44,12 @@ define([
     return function(args) {
         args = args || {};
 
-        return React.createClass({
-
-            action: '',
-            deferred: $.Deferred(),
-
-            componentWillUnmount: () => {
-                if ('undefined' !== typeof globalWifiAPI) {
-                    globalWifiAPI.connection.close();
-                }
-            },
-
-            // Lifecycle
-            getInitialState: function() {
-                return {
+        return class WifiSelect extends React.Component{
+            constructor(props) {
+                super(props);
+                this.action = '';
+                this.deferred = $.Deferred();
+                this.state = {
                     lang: args.state.lang,
                     wifiOptions: [],
                     selectedWifi: false,
@@ -72,9 +64,15 @@ define([
                     apModePassIsVaild: true,
                     isFormSubmitted: false
                 };
-            },
+            }
 
-            componentDidMount : function() {
+            componentWillUnmount = () => {
+                if ('undefined' !== typeof globalWifiAPI) {
+                    globalWifiAPI.connection.close();
+                }
+            }
+
+            componentDidMount() {
                 var self = this,
                     wifiOptions = [],
                     settingWifi = initializeMachine.settingWifi.get(),
@@ -165,18 +163,18 @@ define([
                 getWifi();
 
                 AlertStore.onCancel(self._onCancel);
-            },
+            }
 
             // Private methods
-            _onCancel: function(id) {
+            _onCancel = (id) => {
                 if ('#initialize/wifi/select' === location.hash) {
                     usbSocket.close();
                     usbSocket = usbConfig();
                     location.hash = 'initialize/wifi/connect-machine';
                 }
-            },
+            }
 
-            _afterStopWifiScanning: function(args) {
+            _afterStopWifiScanning = (args) => {
                 var self = this;
 
                 ProgressActions.close();
@@ -192,9 +190,9 @@ define([
                     self._setWifiWithoutPassword();
                     break;
                 }
-            },
+            }
 
-            _goToSetPassword: function() {
+            _goToSetPassword = () => {
                 // var settingWifi = initializeMachine.settingWifi.get();
 
                 if ('WIFI' === this.state.settingPrinter.from) {
@@ -203,9 +201,9 @@ define([
                 else {
                     location.hash = '#initialize/wifi/set-password';
                 }
-            },
+            }
 
-            _setApMode: function() {
+            _setApMode = () => {
                 var self = this,
                     settingPrinter = self.state.settingPrinter,
                     apName = self.state.apName,
@@ -220,9 +218,9 @@ define([
                 else {
                     self._setApModeViaUsb(apName, apPass);
                 }
-            },
+            }
 
-            _setApModeViaUsb: function(name, pass) {
+            _setApModeViaUsb = (name, pass) => {
                 var self = this,
                     lang = self.state.lang;
 
@@ -238,9 +236,9 @@ define([
                         }
                     }
                 );
-            },
+            }
 
-            _setApModeViaWifi: function(name, pass) {
+            _setApModeViaWifi = (name, pass) => {
                 var self = this,
                     lang = self.state.lang,
                     settingPrinter = self.state.settingPrinter;
@@ -252,9 +250,9 @@ define([
                 fail(function(response) {
                     AlertActions.showPopupError('ap-mode-fail', lang.initialize.errors.select_wifi.ap_mode_fail);
                 });
-            },
+            }
 
-            _settingWifiViaWifi: function() {
+            _settingWifiViaWifi = () => {
                 var settingPrinter = this.state.settingPrinter,
                     settingWifi = initializeMachine.settingWifi.get();
 
@@ -273,9 +271,9 @@ define([
                 fail(function(response) {
                     console.log('fail', response);
                 });
-            },
+            }
 
-            _setWifiWithoutPassword: function() {
+            _setWifiWithoutPassword = () => {
                 var settingPrinter = self.state.settingPrinter,
                     settingWifi = initializeMachine.settingWifi.get();
 
@@ -287,9 +285,9 @@ define([
                 else {
                     location.hash = '#initialize/wifi/setup-complete/with-wifi';
                 }
-            },
+            }
 
-            _handleSetPassword: function(e) {
+            _handleSetPassword = (e) => {
                 e.preventDefault();
 
                 var self = this,
@@ -298,10 +296,10 @@ define([
                 wifi.plain_password = ReactDOM.findDOMNode(self.refs.password).value;
                 initializeMachine.settingWifi.set(wifi);
                 self._stopScan(actionMap.BACK_TO_SET_PASSWARD);
-            },
+            }
 
             // UI events
-            _confirmWifi: function(e) {
+            _confirmWifi = (e) => {
                 e.preventDefault();
 
                 var settingWifi = initializeMachine.settingWifi.get();
@@ -315,19 +313,19 @@ define([
                 else {
                     this._stopScan(actionMap.SET_WIFI_WITHOUT_PASSWORD);
                 }
-            },
+            }
 
-            _stopScan: function(action) {
+            _stopScan = (action) => {
                 this.action = action;
                 this.deferred.notify('STOP_SCAN');
-            },
+            }
 
-            _startScan: function() {
+            _startScan = () => {
                 this.action = '';
                 this.deferred.notify('SCAN_WIFI');
-            },
+            }
 
-            _selectWifi: function(e) {
+            _selectWifi = (e) => {
                 var $li = $(e.target).parents('label'),
                     meta = $li.data('meta');
 
@@ -336,9 +334,9 @@ define([
                 });
 
                 initializeMachine.settingWifi.set(meta);
-            },
+            }
 
-            _checkApModeSetting: function(e) {
+            _checkApModeSetting = (e) => {
                 var name = ReactDOM.findDOMNode(this.refs.ap_mode_name).value,
                     pass = ReactDOM.findDOMNode(this.refs.ap_mode_password).value,
                     apModeNameIsVaild = /^[a-zA-Z0-9 \-\.\_\!\,\[\]\(\)]+$/g.test(name),
@@ -352,9 +350,9 @@ define([
                 });
 
                 return apModeNameIsVaild && apModePassIsVaild;
-            },
+            }
 
-            _setAsStationMode: function(e) {
+            _setAsStationMode = (e) => {
                 e.preventDefault();
                 if (this._checkApModeSetting()) {
                     this.setState({
@@ -362,9 +360,9 @@ define([
                     });
                     this._stopScan(actionMap.AP_MODE);
                 }
-            },
+            }
 
-            _joinNetwork: function(e) {
+            _joinNetwork = (e) => {
                 e.preventDefault();
 
                 var ssid = ReactDOM.findDOMNode(this.refs.network_name).value,
@@ -381,9 +379,9 @@ define([
                 }).fail((error) => {
                     console.log(error);
                 });
-            },
+            }
 
-            _renderPasswordForm: function(lang) {
+            _renderPasswordForm = (lang) => {
                 var self = this,
                     settingWifi = initializeMachine.settingWifi.get(),
                     buttons = [{
@@ -432,9 +430,9 @@ define([
                     <Modal content={content}/> :
                     ''
                 );
-            },
+            }
 
-            _renderApModeForm: function(lang) {
+            _renderApModeForm = (lang) => {
                 var self = this,
                     closeForm = function(e) {
                         self.setState({
@@ -504,9 +502,9 @@ define([
                     <Modal content={content}/> :
                     ''
                 );
-            },
+            }
 
-            _renderJoinNetworkForm: function(lang) {
+            _renderJoinNetworkForm = (lang) => {
                 var self = this,
                     closeForm = function(e) {
                         self.setState({
@@ -573,9 +571,9 @@ define([
                 return (
                     this.state.openJoinNetworkForm ? <Modal content={content}/> : ''
                 );
-            },
+            }
 
-            _renderWifiItem: function(wifi) {
+            _renderWifiItem = (wifi) => {
                 var settingWifi = initializeMachine.settingWifi.get(),
                     lockClassName = 'fa ' + (true === wifi.password ? 'fa-lock' : ''),
                     meta = JSON.stringify(wifi);
@@ -590,9 +588,9 @@ define([
                         </div>
                     </label>
                 );
-            },
+            }
 
-            _renderWifiOptions: function(lang) {
+            _renderWifiOptions = (lang) => {
                 return (
                     this.state.wifiOptions.length > 0 ?
                     <ListView
@@ -606,9 +604,9 @@ define([
                         <div className="spinner-roller absolute-center"/>
                     </div>
                 );
-            },
+            }
 
-            render: function() {
+            render() {
                 var self = this,
                     lang = self.state.lang,
                     wrapperClassName = {
@@ -684,6 +682,6 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
     };
 });

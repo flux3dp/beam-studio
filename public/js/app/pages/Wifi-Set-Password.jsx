@@ -1,5 +1,4 @@
 define([
-    'react',
     'app/actions/initialize-machine',
     'jsx!widgets/Button-Group',
     'jsx!widgets/Modal',
@@ -8,7 +7,6 @@ define([
     'app/actions/alert-actions',
     'app/stores/alert-store'
 ], function(
-    React,
     initializeMachine,
     ButtonGroup,
     Modal,
@@ -18,28 +16,29 @@ define([
     AlertStore
 ) {
     'use strict';
+    const React = require('react');
 
     return function(args) {
         args = args || {};
 
-        var Page = React.createClass({
-
-            // Lifecycle
-            getInitialState: function() {
-                return {
+        class Page extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang: args.state.lang,
                     openAlert: false,
                     alertContent: {}
                 };
-            },
+            }
 
-            componentDidMount: function() {
+            // Lifecycle
+            componentDidMount() {
                 this._handleSetPassword();
-            },
+            }
 
             // UI events
 
-            _onCancelConnection: function(e) {
+            _onCancelConnection = (e) => {
                 clearTimeout(this.t);
                 var wifi = initializeMachine.settingWifi.get();
 
@@ -47,9 +46,9 @@ define([
                 initializeMachine.settingWifi.set(wifi);
 
                 location.hash = '#initialize/wifi/select';
-            },
+            }
 
-            _handleSetPassword: function(e) {
+            _handleSetPassword = (e) => {
                 var self = this,
                     wifi = initializeMachine.settingWifi.get(),
                     usb = usbConfig(),
@@ -140,9 +139,9 @@ define([
                     }
                 });
 
-            },
+            }
 
-            render: function() {
+            render() {
                 var wrapperClassName = {
                         'initialization': true
                     },
@@ -165,7 +164,7 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
 
         return Page;
     };

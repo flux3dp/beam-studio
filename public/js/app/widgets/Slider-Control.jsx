@@ -1,58 +1,47 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index'
-], function(React, PropTypes, ClassNames) {
+], function(PropTypes, ClassNames) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        propTypes: {
-            id: PropTypes.string.isRequired,
-            label: PropTypes.string,
-            min: PropTypes.number.isRequired,
-            max: PropTypes.number.isRequired,
-            step: PropTypes.number.isRequired,
-            default: PropTypes.number,
-            onChange: PropTypes.func.isRequired,
-            unit: PropTypes.string
-        },
-
-        getInitialState: function() {
-            return {
+    class SliderControl extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 sliderValue: this.props.default,
                 lastValidValue: this.props.default
-            };
-        },
+            }
+        }
 
-        shouldComponentUpdate: function(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
             var newPropIsDifferent = nextProps.default !== this.state.sliderValue,
                 newStateIsDifferent = this.state.sliderValue !== nextState.sliderValue;
 
             return newPropIsDifferent || newStateIsDifferent;
-        },
+        }
 
-        _fireChange: function(newValue) {
+        _fireChange(newValue) {
             this.props.onChange(this.props.id, newValue);
-        },
+        }
 
-        _validateValue: function(e) {
+        _validateValue(e) {
             if(!this._isValidValue(this.state.sliderValue)) {
                 this.setState({
                     sliderValue: this.state.lastValidValue,
                 });
                 this._fireChange(this.state.lastValidValue);
             }
-        },
+        }
 
-        _isValidValue: function(value) {
+        _isValidValue(value) {
             var min = this.props.min,
                 max = this.props.max;
 
             return min <= value && value <= max;
-        },
+        }
 
-        _handleSliderChange: function(key, e) {
+        _handleSliderChange(key, e) {
             var value = e.target.value;
             this.setState({
                 sliderValue: value,
@@ -60,9 +49,9 @@ define([
             }, function() {
                 this._fireChange(value);
             });
-        },
+        }
 
-        _handleEditValue: function(e) {
+        _handleEditValue(e) {
             var newValue = e.target.value;
 
             if(this._isValidValue(newValue)) {
@@ -71,9 +60,9 @@ define([
             }
 
             this.setState({ sliderValue: newValue });
-        },
+        }
 
-        render: function() {
+        render() {
             let unitClass = "control pull-right unit-" + this.props.unit;
 
             return (
@@ -99,5 +88,18 @@ define([
             );
         }
 
-    });
+    };
+
+    SliderControl.propTypes = {
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string,
+        min: PropTypes.number.isRequired,
+        max: PropTypes.number.isRequired,
+        step: PropTypes.number.isRequired,
+        default: PropTypes.number,
+        onChange: PropTypes.func.isRequired,
+        unit: PropTypes.string
+    }
+
+    return SliderControl;
 });

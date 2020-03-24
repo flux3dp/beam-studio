@@ -1,35 +1,33 @@
 define([
     'jquery',
-    'react',
     'reactClassset'
-], function($, React, ReactCx) {
+], function($, ReactCx) {
     'use strict';
+    const React = require('react');
 
     var deferred = $.Deferred();
 
-    return React.createClass({
-        getDefaultProps: function() {
-            return {
-                lang: {},
-                sizeMaxLimit: 400000,
-                accept: '',
-                multiple: true,
-                className: {},
-                typeErrorMessage: '',
-                // events
-                onReadFileStarted: function() {},
-                onReadingFile: function() {},
-                onReadEnd: function() {},
-                onError: function() {}
-            };
-        },
+    return class FileUploader extends React.Component{
+        static defaultProps = {
+            lang: {},
+            sizeMaxLimit: 400000,
+            accept: '',
+            multiple: true,
+            className: {},
+            typeErrorMessage: '',
+            // events
+            onReadFileStarted: function() {},
+            onReadingFile: function() {},
+            onReadEnd: function() {},
+            onError: function() {}
+        }
 
         // public events
-        getFileExtension: function(fileName) {
+        getFileExtension = (fileName) => {
             return fileName.split('.').pop();
-        },
+        }
 
-        readFiles: function(e, files) {
+        readFiles = (e, files) => {
             var self = this,
                 currentTarget = e.currentTarget,
                 fileIndex = 0,
@@ -114,15 +112,15 @@ define([
             else {
                 readFile();
             }
-        },
+        }
 
         // UI events
-        _onReadFile: function(e) {
+        _onReadFile = (e) => {
             if(window.processDroppedFile === true) { return; }
             this.readFiles(e, e.currentTarget.files);
-        },
+        }
 
-        render: function() {
+        render() {
             var self = this,
                 props = self.props,
                 className = ReactCx.cx(props.className);
@@ -143,5 +141,5 @@ define([
             );
         }
 
-    });
+    };
 });

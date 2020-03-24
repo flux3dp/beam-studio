@@ -1,43 +1,35 @@
 define([
     'jquery',
-    'react',
     'jsx!widgets/Unit-Input',
     'jsx!widgets/Dialog-Menu',
     'helpers/api/config',
     'helpers/i18n',
 ], function(
     $,
-    React,
     UnitInput,
     DialogMenu,
     config,
     i18n
 ) {
     'use strict';
+    const React = require('react');
 
     let lang = i18n.lang;
 
-    return React.createClass({
-
-        getDefaultProps: function() {
-            return {
-                defaults: {},
-                imageFormat: 'svg'  // svg, bitmap
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class SetupPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 defaults: this.props.defaults
             };
-        },
+        }
 
-        isShading: function() {
+        isShading = () => {
             return false;
-        },
+        }
 
         // UI Events
-        _saveLastestSet: function() {
+        _saveLastestSet = () => {
             var self = this,
                 refs = self.refs,
                 opts = {
@@ -52,19 +44,19 @@ define([
             config().write('draw-defaults', opts);
 
             self.setState(state);
-        },
+        }
 
-        openSubPopup: function(e) {
+        openSubPopup = (e) => {
             this.refs.dialogMenu.toggleSubPopup(e);
-        },
+        }
 
-        _updateDefaults: function(e, value) {
+        _updateDefaults = (e, value) => {
             this._saveLastestSet();
             this.openSubPopup(e);
-        },
+        }
 
         // Lifecycle
-        _renderLiftHeight: function() {
+        _renderLiftHeight = () => {
             var min = Math.max(5, this.state.defaults.drawHeight);
 
             return {
@@ -88,9 +80,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderDrawHeight: function() {
+        _renderDrawHeight = () => {
             var max = Math.min(150, this.state.defaults.liftHeight);
 
             return {
@@ -114,9 +106,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderSpeed: function() {
+        _renderSpeed = () => {
             return {
                 label: (
                     <div title={lang.draw.speed_title}>
@@ -139,9 +131,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        render: function() {
+        render() {
             var liftHeight = this._renderLiftHeight(),
                 drawHeight = this._renderDrawHeight(),
                 speed = this._renderSpeed(),
@@ -158,5 +150,12 @@ define([
             );
         }
 
-    });
+    };
+
+    SetupPanel.defaultProps = {
+        defaults: {},
+        imageFormat: 'svg'  // svg, bitmap
+    };
+
+    return SetupPanel;
 });

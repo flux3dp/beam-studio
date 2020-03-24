@@ -1,23 +1,16 @@
 define([
-    'react',
     'jsx!widgets/Radio-Group'
-], function(React, RadioGroupView) {
+], function(RadioGroupView) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
+    class Export extends React.Component{
 
-        getDefaultProps: function() {
-            return {
-                lang: {},
-                onExport: function() {}
-            };
-        },
-
-        _onExport: function(e) {
+        _onExport = (e) => {
             this.props.onExport(e);
-        },
+        }
 
-        render : function() {
+        render() {
             var lang = this.props.lang;
 
             return (
@@ -30,5 +23,12 @@ define([
                 </div>
             );
         }
-    });
+    };
+
+    Export.defaultProps = {
+        lang: {},
+        onExport: function() {}
+    };
+
+    return Export;
 });

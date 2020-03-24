@@ -1,62 +1,56 @@
 define([
-    'react',
     'reactPropTypes',
     'app/constants/global-constants',
     'app/constants/device-constants',
     'app/constants/monitor-status',
     'helpers/duration-formatter'
 ], (
-    React,
     PropTypes,
     GlobalConstants,
     DeviceConstants,
     MonitorStatus,
     FormatDuration
 ) => {
-
     'use strict';
+
+    const React = require('react');
 
     const findObjectContainsProperty = (infoArray = [], propertyName) => {
         return infoArray.filter((o) => Object.keys(o).some(n => n === propertyName));
     };
 
-    return React.createClass({
-        contextTypes: {
-            store: PropTypes.object,
-            slicingResult: PropTypes.object,
-            lang: PropTypes.object
-        },
-
-        componentWillMount: function() {
-            const { store, lang } = this.context;
+    class MonitorInfo extends React.Component{
+        constructor(props) {
+            super(props);
+            const { store, lang } = this.props.context;
             MonitorStatus['setLang'](lang);
 
             this.lang = lang;
             this.unsubscribe = store.subscribe(() => {
                 this.forceUpdate();
             });
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             clearInterval(this.timer);
             this.unsubscribe();
-        },
+        }
 
-        _isAbortedOrCompleted: function() {
-            let { Device } = this.context.store.getState();
+        _isAbortedOrCompleted = () => {
+            let { Device } = this.props.context.store.getState();
             return (
                 Device.status.st_id === DeviceConstants.status.ABORTED ||
                 Device.status.st_id === DeviceConstants.status.COMPLETED
             );
-        },
+        }
 
-        _getHeadInfo: function() {
-            let { Device } = this.context.store.getState();
+        _getHeadInfo = () => {
+            let { Device } = this.props.context.store.getState();
             return Device.status.module ? this.lang.monitor.device[Device.status.module] : '';
-        },
+        }
 
-        _getStatus: function() {
-            let { Monitor, Device } = this.context.store.getState();
+        _getStatus = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
 
             if(Boolean(Monitor.uploadProgress)) {
                 return this.lang.device.uploading;
@@ -72,10 +66,10 @@ define([
             else {
                 return '';
             }
-        },
+        }
 
-        _getTemperature: function() {
-            let { Device } = this.context.store.getState();
+        _getTemperature = () => {
+            let { Device } = this.props.context.store.getState();
             if(!Device.status || this._isAbortedOrCompleted()) {
                 return '';
             }
@@ -90,12 +84,12 @@ define([
             else {
                 return rt ? `${lang.temperature} ${parseInt(rt * 10) / 10} °C / ${tt} °C` : '';
             }
-        },
+        }
 
-        _getProgress: function() {
-            this.context.slicingResult = this.context.slicingResult || {};
-            let { Monitor, Device } = this.context.store.getState(),
-                { time } = this.context.slicingResult,
+        _getProgress = () => {
+            this.props.context.slicingResult = this.props.context.slicingResult || null;
+            let { Monitor, Device } = this.props.context.store.getState(),
+                time = this.props.context.slicingResult ? this.props.context.slicingResult.time : undefined,
                 lang = this.lang.monitor;
 
             if(Object.keys(Device.status).length === 0) {
@@ -132,9 +126,9 @@ define([
             timeLeft = FormatDuration(time * (1 - Device.status.prog));
 
             return `${percentageDone}%, ${timeLeft} ${this.lang.monitor.left}`;
-        },
+        }
 
-        render: function() {
+        render() {
             return (
                 <div className="wrapper">
                     <div className="row">
@@ -152,7 +146,7 @@ define([
                 </div>
             );
         }
-    });
+    };
 
-    return monitorInfo;
+    return MonitorInfo;
 });

@@ -1,12 +1,12 @@
 define([
-    'react',
     'reactPropTypes',
     'jsx!widgets/Modal',
     'jsx!widgets/Alert',
     'app/constants/progress-constants'
 ],
-function(React, PropTypes, Modal, Alert, ProgressConstants) {
+function(PropTypes, Modal, Alert, ProgressConstants) {
     'use strict';
+    const React = require('react');
 
     var acceptableTypes = [
         ProgressConstants.WAITING,
@@ -15,47 +15,21 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
         ProgressConstants.NONSTOP_WITH_MESSAGE
     ];
 
-    return React.createClass({
-
-        propTypes: {
-            type       : PropTypes.oneOf(acceptableTypes),
-            isOpen     : PropTypes.bool,
-            lang       : PropTypes.object,
-            caption    : PropTypes.string,
-            message    : PropTypes.string,
-            percentage : PropTypes.number,
-            hasStop    : PropTypes.bool,
-            onStop     : PropTypes.func,
-            onFinished : PropTypes.func
-        },
-
-        getDefaultProps: function () {
-            return {
-                lang       : {},
-                isOpen     : true,
-                caption    : '',
-                message    : '',
-                type       : ProgressConstants.WAITING,
-                percentage : 0,
-                hasStop    : true,
-                onStop     : function() {},
-                onFinished : function() {}
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class Progress extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 percentage: this.props.percentage
             };
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 percentage: nextProps.percentage
             });
-        },
+        }
 
-        _getButton: function() {
+        _getButton() {
             var buttons = [];
 
             switch (this.props.type) {
@@ -80,9 +54,9 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
             }
 
             return buttons;
-        },
+        }
 
-        _renderMessage: function() {
+        _renderMessage() {
             var message,
                 progressIcon = this._renderIcon();
 
@@ -103,9 +77,9 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
             }
 
             return message;
-        },
+        }
 
-        _renderIcon: function() {
+        _renderIcon() {
             var icon,
                 progressStyle = {
                     width: (this.state.percentage || 0) + '%'
@@ -130,9 +104,9 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
 
             return icon;
 
-        },
+        }
 
-        render: function() {
+        render() {
             if (false === this.props.isOpen) {
                 return <div/>
             }
@@ -160,5 +134,31 @@ function(React, PropTypes, Modal, Alert, ProgressConstants) {
                 <Modal className={className} content={content} disabledEscapeOnBackground={false}/>
             );
         }
-    });
+    }
+
+    Progress.propTypes = {
+        type       : PropTypes.oneOf(acceptableTypes),
+        isOpen     : PropTypes.bool,
+        lang       : PropTypes.object,
+        caption    : PropTypes.string,
+        message    : PropTypes.string,
+        percentage : PropTypes.number,
+        hasStop    : PropTypes.bool,
+        onStop     : PropTypes.func,
+        onFinished : PropTypes.func
+    };
+
+    Progress.defaultProps = {
+        lang       : {},
+        isOpen     : true,
+        caption    : '',
+        message    : '',
+        type       : ProgressConstants.WAITING,
+        percentage : 0,
+        hasStop    : true,
+        onStop     : function() {},
+        onFinished : function() {}
+    };
+
+    return Progress;
 });

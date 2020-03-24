@@ -1,69 +1,41 @@
 define([
-    'react',
     'reactPropTypes',
     'app/constants/keycode-constants',
     'helpers/round',
     'plugins/classnames/index'
 ], function(
-    React,
     PropTypes,
     keyCodeConstants,
     round,
     ClassNames
 ) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-        propTypes: {
-            getValue: PropTypes.func.isRequired,
-            defaultValue: PropTypes.number.isRequired,
-            className: PropTypes.object,
-            type: PropTypes.string,
-            unit: PropTypes.string,
-            min: PropTypes.number,
-            max: PropTypes.number,
-            step: PropTypes.number,
-            decimal: PropTypes.number,
-            disabled: PropTypes.bool,
-            abbr: PropTypes.bool,
-            isDoOnInput: PropTypes.bool
-        },
-
-        getDefaultProps: function() {
-            return {
-                getValue: function(NewValue) {},
-                defaultValue: 0,
-                className: {},
-                type: 'text',
-                unit: '',
-                min: Number.MIN_SAFE_INTEGER,
-                max: Number.MAX_SAFE_INTEGER,
-                step: 1,
-                decimal: 2,
-                disabled: false,
-                abbr: false,
-                isDoOnInput: false
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class UnitInput extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 displayValue:   this.getTransformedValue(this._validateValue(this.props.defaultValue)),
                 savedValue:     Number(this.props.defaultValue).toFixed(this.props.decimal)
             };
-        },
+            this._handleBlur = this._handleBlur.bind(this);
+            this._handleKeyDown = this._handleKeyDown.bind(this);
+            this._handleChange = this._handleChange.bind(this);
+            this._handleInput = this._handleInput.bind(this);
+        }
 
-        componentWillReceiveProps: function (nextProps) {
+        componentWillReceiveProps (nextProps) {
             const val = this._validateValue(nextProps.defaultValue);
 
             this.setState({
                 displayValue: this.getTransformedValue(Number(val)),
                 savedValue: val
             });
-        },
+        }
 
         //always return valid value
-        _validateValue: function(val) {
+        _validateValue(val) {
             let value = parseFloat(val);
 
             if(isNaN(value)) {
@@ -79,9 +51,9 @@ define([
             }
 
             return Number(value).toFixed(this.props.decimal);
-        },
+        }
 
-        _updateValue: function(newVal) {
+        _updateValue(newVal) {
             if (this.getLengthUnit() === 'in') {
                 newVal *= 25.4;
             }
@@ -93,24 +65,24 @@ define([
                 this.setState({savedValue: newValue});
                 this.props.getValue(Number(newValue));
             }
-        },
+        }
 
         // UI Events
-        _handleBlur: function(e) {
+        _handleBlur(e) {
             this._updateValue(e.target.value);
-        },
+        }
 
-        _handleChange: function(e) {
+        _handleChange(e) {
             this.setState({displayValue: e.target.value});
-        },
+        }
 
-        _handleInput: function(e) {
+        _handleInput(e) {
             if (this.props.isDoOnInput && !e.nativeEvent.inputType) {
                 this._updateValue(e.target.value);
             }
-        },
+        }
 
-        _handleKeyDown: function(e) {
+        _handleKeyDown(e) {
             const step = Math.abs(this.props.step);
 
             e.stopPropagation();
@@ -139,7 +111,7 @@ define([
                 default:
                     return;
             }
-        },
+        }
 
         getLengthUnit() {
             if (this.props.unit === 'mm') {
@@ -152,7 +124,7 @@ define([
             } else {
                 return this.props.abbr ? '' : this.props.unit;
             }
-        },
+        }
 
         getTransformedValue(value) {
             if (this.getLengthUnit() === 'in') {
@@ -160,9 +132,9 @@ define([
             } else {
                 return value;
             }
-        },
+        }
 
-        render: function() {
+        render() {
             let _renderUnit = '';
             if(this.props.unit !== '') {
                 _renderUnit = <span className="unit">{this.getLengthUnit()}</span>;
@@ -187,5 +159,34 @@ define([
                 </div>
             );
         }
-    });
+    };
+    UnitInput.propTypes = {
+        getValue: PropTypes.func.isRequired,
+        defaultValue: PropTypes.number.isRequired,
+        className: PropTypes.object,
+        type: PropTypes.string,
+        unit: PropTypes.string,
+        min: PropTypes.number,
+        max: PropTypes.number,
+        step: PropTypes.number,
+        decimal: PropTypes.number,
+        disabled: PropTypes.bool,
+        abbr: PropTypes.bool,
+        isDoOnInput: PropTypes.bool
+    };
+    UnitInput.defaultProps = {
+        getValue: function(NewValue) {},
+        defaultValue: 0,
+        className: {},
+        type: 'text',
+        unit: '',
+        min: Number.MIN_SAFE_INTEGER,
+        max: Number.MAX_SAFE_INTEGER,
+        step: 1,
+        decimal: 2,
+        disabled: false,
+        abbr: false,
+        isDoOnInput: false
+    };
+    return UnitInput;
 });

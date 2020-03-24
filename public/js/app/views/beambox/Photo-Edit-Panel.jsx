@@ -2,7 +2,6 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'helpers/image-data',
     'app/actions/progress-actions',
@@ -13,7 +12,6 @@ define([
     'lib/cropper'
 ], function(
     $,
-    React,
     i18n,
     ImageData,
     ProgressActions,
@@ -23,6 +21,7 @@ define([
     SliderControl,
     Cropper
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.photo_edit_panel;
     
     let cropper = null;

@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'reactPropTypes',
     'jsx!widgets/Button-Group',
     'jsx!widgets/Text-Input',
@@ -14,8 +12,6 @@ define([
     'plugins/jquery/serializeObject',
     'helpers/array-findindex',
 ], function(
-    React,
-    ReactDOM,
     PropTypes,
     ButtonGroup,
     TextInput,
@@ -28,32 +24,25 @@ define([
     i18n
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     var laserLang = i18n.lang.laser,
         advancedLang = laserLang.advanced;
 
-    return React.createClass({
-
-        PropTypes: {
-            lang: PropTypes.object,
-            defaultMaterial: PropTypes.object,
-            onLoadPreset: PropTypes.func,
-            onClose: PropTypes.func,
-            onSave: PropTypes.func,
-            onDone : PropTypes.func
-        },
-
-        getInitialState: function() {
-            return {
+    class AdvancedPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 defaultMaterial: this.props.defaultMaterial,
                 materialHasChanged: false,
                 openSaveWindow: false,
                 customBg: !!config().read('laser-custom-bg')
             };
-        },
+        }
 
         // Private methods
-        _getFooterButtons: function() {
+        _getFooterButtons = () => {
             var buttonGroup = [{
                     className: 'pull-left btn-default fa fa-folder-open-o',
                     title: advancedLang.load_preset_title,
@@ -93,9 +82,9 @@ define([
                 }];
 
             return buttonGroup;
-        },
+        }
 
-        _getControlButtons: function() {
+        _getControlButtons = () => {
             var self = this,
                 buttonGroup = [
                 {
@@ -117,22 +106,22 @@ define([
                 ];
 
             return buttonGroup;
-        },
+        }
 
-        _applySetting: function(e) {
+        _applySetting = (e) => {
             this.props.onDone();
-        },
+        }
 
         // UI Events
-        _onLoadPreset: function(e) {
+        _onLoadPreset = (e) => {
             this.props.onLoadPreset(e);
-        },
+        }
 
-        _onCancel: function(e) {
+        _onCancel = (e) => {
             this.props.onClose(e);
-        },
+        }
 
-        _onSaveAndApply: function(e) {
+        _onSaveAndApply = (e) => {
             var self = this,
                 material = {
                     data: self.state.defaultMaterial.data
@@ -158,9 +147,9 @@ define([
                     return '' !== presetName;
                 }
             });
-        },
+        }
 
-        _onCustomBackground: function(e) {
+        _onCustomBackground = (e) => {
             var self = this;
             if (this.state.customBg) {
                 config().write('laser-custom-bg', '');
@@ -169,9 +158,9 @@ define([
             }else {
                 $('input[data-ref=importBg]').click();
             }
-        },
+        }
 
-        _onApply: function(e) {
+        _onApply = (e) => {
             var material = {
                     value: 'custom',
                     label: laserLang.custom,
@@ -179,9 +168,9 @@ define([
                 };
 
             this.props.onApply(material);
-        },
+        }
 
-        _changeInputNumber: function() {
+        _changeInputNumber = () => {
             var self = this,
                 speed = self.refs.speed,
                 power = self.refs.power,
@@ -195,9 +184,9 @@ define([
             };
 
             self._updateDefaultMaterial(defaultMaterial);
-        },
+        }
 
-        _changeRangeNumber: function() {
+        _changeRangeNumber = () => {
             var self = this,
                 speedRange = ReactDOM.findDOMNode(self.refs.speedRange),
                 powerRange = ReactDOM.findDOMNode(self.refs.powerRange),
@@ -211,9 +200,9 @@ define([
             };
 
             self._updateDefaultMaterial(defaultMaterial);
-        },
+        }
 
-        _updateDefaultMaterial: function(defaultMaterial) {
+        _updateDefaultMaterial = (defaultMaterial) => {
             defaultMaterial.label = this.state.defaultMaterial.label;
             defaultMaterial.value = this.state.defaultMaterial.value;
 
@@ -221,10 +210,10 @@ define([
                 defaultMaterial: defaultMaterial,
                 materialHasChanged: true
             });
-        },
+        }
 
         // Lifecycle
-        _renderFooter: function() {
+        _renderFooter = () => {
 
             let buttons = this._getFooterButtons(),
                 ctrlButtons = this._getControlButtons();
@@ -236,9 +225,9 @@ define([
                 <ButtonGroup className="footer clearfix" buttons={ctrlButtons}/>
                 </div>
             );
-        },
+        }
 
-        _renderSaveForm: function() {
+        _renderSaveForm = () => {
             var maxLength = 10;
             return (
                 <div className="form">
@@ -251,9 +240,9 @@ define([
                     </div>
                 </div>
             );
-        },
+        }
 
-        _renderDefaultForm: function() {
+        _renderDefaultForm = () => {
             return (
                 <form ref="advancedForm" className="form">
                     <div className="controls clearfix">
@@ -315,16 +304,16 @@ define([
                     </div>
                 </form>
             );
-        },
+        }
 
-        _renderFileUploader: function() {
+        _renderFileUploader = () => {
             var style = {display: 'none'}
             return (
                 <input style={style} data-ref="importBg" type="file" accept=".jpg,.png,.bmp" onChange={this._handleImport} />
             );
-        },
+        }
 
-        _handleImport: function(e) {
+        _handleImport = (e) => {
             var t = e.target,
                 self = this;
              if (t.files.length) {
@@ -337,9 +326,9 @@ define([
                 fr.readAsDataURL(t.files[0]);
             }
 
-        },
+        }
 
-        render: function() {
+        render() {
             var form = (
                     false === this.state.openSaveWindow ?
                     this._renderDefaultForm() :
@@ -356,6 +345,16 @@ define([
                 </div>
             );
         }
+    };
 
-    });
+    AdvancedPanel.propTypes = {
+        lang: PropTypes.object,
+        defaultMaterial: PropTypes.object,
+        onLoadPreset: PropTypes.func,
+        onClose: PropTypes.func,
+        onSave: PropTypes.func,
+        onDone : PropTypes.func
+    };
+
+    return AdvancedPanel;
 });

@@ -1,7 +1,5 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'reactPropTypes',
     'reactClassset',
     'app/stores/global-store',
@@ -11,53 +9,52 @@ define([
 ],
 function(
     $,
-    React,
-    ReactDOM,
     PropTypes,
     ReactCx,
     GlobalStore,
     List
 ) {
-    return React.createClass({
-        propTypes: {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+    return class DialogMenu extends React.Component{
+        static propTypes = {
             arrowDirection: PropTypes.oneOf(['LEFT', 'RIGHT', 'UP', 'BOTTOM']),
             className: PropTypes.object,
             items: PropTypes.array
-        },
+        }
 
-        componentDidMount: function() {
-            GlobalStore.onResetDialogMenuIndex(() => this.resetCheckedItem());
-        },
+        static defaultProps = {
+            arrowDirection: 'LEFT',
+            className: {},
+            items: []
+        };
 
-        componentWillUnmount: function() {
-            GlobalStore.removeResetDialogMenuIndexListener(() => this.resetCheckedItem());
-        },
-
-        getDefaultProps: function() {
-            return {
-                arrowDirection: 'LEFT',
-                className: {},
-                items: []
-            };
-        },
-
-        getInitialState: function() {
-            return {
+        constructor(props) {
+            super(props);
+            this.state = {
                 checkedItem: -1
             };
-        },
+        }
 
-        resetCheckedItem: function() {
+        componentDidMount() {
+            GlobalStore.onResetDialogMenuIndex(() => this.resetCheckedItem());
+        }
+
+        componentWillUnmount() {
+            GlobalStore.removeResetDialogMenuIndexListener(() => this.resetCheckedItem());
+        }
+
+        resetCheckedItem = () => {
             this.setState({ checkedItem: -1 });
-        },
+        }
 
-        toggleSubPopup: function(itemIndex, isChecked) {
+        toggleSubPopup = (itemIndex, isChecked) => {
             this.setState({
                 checkedItem: isChecked ? itemIndex : -1
             });
-        },
+        }
 
-        _renderItem: function() {
+        _renderItem = () => {
             const arrowClassName = ReactCx.cx({
                 'arrow': true,
                 'arrow-left': 'LEFT' === this.props.arrowDirection,
@@ -116,10 +113,10 @@ function(
                         )
                     };
                 });
-        },
+        }
 
         // Lifecycle
-        render: function() {
+        render() {
             const className = this.props.className;
             className['ui ui-dialog-menu'] = true;
 
@@ -131,5 +128,5 @@ function(
                 />
             );
         }
-    });
+    };
 });

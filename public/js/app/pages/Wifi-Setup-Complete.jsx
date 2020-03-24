@@ -1,41 +1,41 @@
 define([
-    'react',
     'helpers/sprintf',
     'app/actions/initialize-machine',
     'helpers/api/config',
     'helpers/api/usb-config',
     'jsx!widgets/Modal',
     'helpers/device-master'
-], function(React, sprintf, initializeMachine, config, usbConfig, Modal, DeviceMaster) {
+], function(sprintf, initializeMachine, config, usbConfig, Modal, DeviceMaster) {
     'use strict';
 
     return function(args) {
+        const React = require('react');
 
         args = args || {};
 
-        return React.createClass({
+        return class WifiSetupComplete extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = args.state;
+            }
 
-            getInitialState: function() {
-                return args.state;
-            },
-
-            componentDidMount: function() {
+            componentDidMount() {
                 if ('with-usb' !== this.props.other) {
                     initializeMachine.completeSettingUp(false);
                 }
 
                 DeviceMaster.unregisterUsbEvent('SETUP');
-            },
+            }
 
-            _goBack: function(e) {
+            _goBack = (e) => {
                 history.go(-1);
-            },
+            }
 
-            _onStart: function(e) {
+            _onStart = (e) => {
                 initializeMachine.completeSettingUp(true);
-            },
+            }
 
-            _getArticle: function(lang, method) {
+            _getArticle = (lang, method) => {
                 var settingPrinter = initializeMachine.settingPrinter.get(),
                     article = {};
 
@@ -61,9 +61,9 @@ define([
                 }
 
                 return article;
-            },
+            }
 
-            render: function() {
+            render() {
                 const method = this.props.other || 'with-wifi';
                 var wrapperClassName = {
                         'initialization': true
@@ -105,6 +105,6 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
     };
 });

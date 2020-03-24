@@ -1,12 +1,12 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant'
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
 
@@ -29,7 +29,7 @@ define([
             });
         }
 
-        _updateWidth(val) {
+        _updateWidth = (val) => {
             let cmd = null;
             switch(this.props.type) {
                 case 'rect':
@@ -50,7 +50,7 @@ define([
             return cmd;
         }
 
-        _updateHeight(val) {
+        _updateHeight = (val) => {
             let cmd = null;
             switch(this.props.type) {
                 case 'rect':
@@ -71,7 +71,7 @@ define([
             return cmd;
         }
 
-        handleUpdateWidth(val) {
+        handleUpdateWidth = (val) => {
             const {
                 width,
                 height,
@@ -92,7 +92,7 @@ define([
             if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
         }
 
-        handleUpdateHeight(val) {
+        handleUpdateHeight = (val) => {
             const {
                 width,
                 height,
@@ -113,11 +113,11 @@ define([
             if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
         }
 
-        handleRatio(e) {
+        handleRatio = (e) => {
             this.setState({ isRatioPreserve: e.target.checked });
         }
 
-        getValueCaption() {
+        getValueCaption = () => {
             const width = this.state.width, 
                 height = this.state.height,
                 units = localStorage.getItem('default-units', 'mm') ;

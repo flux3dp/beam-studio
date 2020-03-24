@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'helpers/api/config',
     'app/actions/alert-actions',
@@ -11,7 +10,6 @@ define([
     'helpers/firmware-version-checker'
 ], function(
     $,
-    React,
     i18n,
     config,
     AlertActions,
@@ -21,32 +19,27 @@ define([
     CheckboxControl,
     FirmwareVersionChecker
 ) {
+    const React = require('react');
+
     'use strict';
 
     let lang = i18n.lang;
 
-    return React.createClass({
-        getDefaultProps: function() {
-            return {
-                lang: {},
-                supported_langs: '',
-                onLangChange: function() {}
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class SettingDevice extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 config: {},
                 showBacklash: false,
                 postbackUrl: 'http://your-domain/flux-status-changed?st_id=%(st_id)i',
             };
-        },
+        }
 
-        componentWillMount: function() {
+        componentWillMount() {
             this.devices = [];
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             this.t = setInterval(() => {
                 let d = DeviceMaster.getAvailableDevices();
 
@@ -60,13 +53,13 @@ define([
                     });
                 }
             }, 3000);
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             clearTimeout(this.t);
-        },
+        }
 
-        _handleDeviceChange: function(dropdownId, deviceName, selectedIndex) {
+        _handleDeviceChange = (dropdownId, deviceName, selectedIndex) => {
             if(selectedIndex === 0) {
                 this.setState({ config: {} });
                 return;
@@ -90,9 +83,9 @@ define([
             });
 
 
-        },
+        }
 
-        _handleComponentValueChange: function(id, value, source) {
+        _handleComponentValueChange = (id, value, source) => {
             let config = Object.assign({}, this.state.config);
 
             if(id === 'head_error_level') {
@@ -129,9 +122,9 @@ define([
 
             config[id] = value;
             this.setState({ config });
-        },
+        }
 
-         _updateBacklash: function(e) {
+         _updateBacklash = (e) => {
             if (e.type === 'blur') {
                 let v = parseFloat(e.target.value);
                 if(v > 0.2) { v = 0.2; }
@@ -141,9 +134,9 @@ define([
             } else {
                 this.setState({ backlash: e.target.value });
             }
-        },
+        }
 
-        _updateMachineRadius: function(e) {
+        _updateMachineRadius = (e) => {
             if(e.type === 'blur') {
                 let v = parseFloat(e.target.value);
 
@@ -155,17 +148,17 @@ define([
             } else {
                 this.setState({ machine_radius: e.target.value });
             }
-        },
+        }
 
-        _updatePostBackUrl: function(e) {
+        _updatePostBackUrl = (e) => {
             let url = e.target.value || this.getInitialState().postbackUrl;
             this.setState({ postbackUrl: url });
             if(e.type === 'blur') {
                 DeviceMaster.setDeviceSetting('player_postback_url', url);
             }
-        },
+        }
 
-        _getDeviceList: function() {
+        _getDeviceList = () => {
             let nameList;
 
             nameList = this.devices.map(d => {
@@ -190,11 +183,9 @@ define([
                     onChange={this._handleDeviceChange}
                     options={nameList}/>
             );
+        }
 
-
-        },
-
-        _getDeviceConfig: function() {
+        _getDeviceConfig = () => {
             const types = ['LASER_DOWN', 'FAN_FAILURE', 'TILT', 'SHAKE'];
             const pad = (num, size) => {
                 var s = num + '';
@@ -254,9 +245,9 @@ define([
                     }
                 });
             });
-        },
+        }
 
-        _renderCorrectionSetting: function() {
+        _renderCorrectionSetting = () => {
             let options,
                 content;
 
@@ -280,9 +271,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderDetectFilamentSetting: function() {
+        _renderDetectFilamentSetting = () => {
             let options,
                 content;
 
@@ -305,9 +296,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderFilterHeadErrorSetting: function() {
+        _renderFilterHeadErrorSetting = () => {
             let options,
                 content;
 
@@ -334,9 +325,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderAutoResumeSetting: function() {
+        _renderAutoResumeSetting = () => {
             let options,
                 content;
 
@@ -358,9 +349,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderBroadcast: function() {
+        _renderBroadcast = () => {
             let options,
                 content;
 
@@ -383,9 +374,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderEnableCloud: function() {
+        _renderEnableCloud = () => {
             let options,
                 content;
 
@@ -407,9 +398,9 @@ define([
             );
 
             return Object.keys(this.state.config).length > 0 ? content : '';
-        },
+        }
 
-        _renderBackLash: function() {
+        _renderBackLash = () => {
             let content;
 
             content = (
@@ -426,9 +417,9 @@ define([
             );
 
             return (this.state.showBacklash && Object.keys(this.state.config).length > 0) ? content : '';
-        },
+        }
 
-        _renderCamera: function() {
+        _renderCamera = () => {
             if(this.state.allowUpgradeKit) {
                 let options,
                     content;
@@ -455,9 +446,9 @@ define([
             else {
                 return (<div></div>);
             }
-        },
+        }
 
-        _renderPlusExtrusion: function() {
+        _renderPlusExtrusion = () => {
             if(this.state.allowUpgradeKit) {
                 let options,
                     content;
@@ -484,9 +475,9 @@ define([
             else {
                 return (<div></div>);
             }
-        },
+        }
 
-        _renderPlayerPostBack: function() {
+        _renderPlayerPostBack = () => {
             if(this.state.allowUpgradeKit) {
                 let content = (
                     <div className="controls">
@@ -506,9 +497,9 @@ define([
             else {
                 return (<div></div>);
             }
-        },
+        }
 
-        _renderMovementTest: function() {
+        _renderMovementTest = () => {
             if(this.state.allowM666R_MMTest) {
                 let options,
                     content;
@@ -535,10 +526,10 @@ define([
             else {
                 return (<div></div>);
             }
-        },
+        }
 
 
-        _renderMachineRadius: function() {
+        _renderMachineRadius = () => {
            let content = (
                 <div className="controls">
                     <div className="label">{lang.device.machine_radius}</div>
@@ -553,9 +544,9 @@ define([
             );
 
             return (this.state.allowM666R_MMTest && Object.keys(this.state.config).length > 0) ? content : '';
-        },
+        }
 
-        render : function() {
+        render() {
             const isBeamoxSeries = this.state.device && ['fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this.state.device.model);
             let deviceList      = this._getDeviceList(),
                 correction      = this._renderCorrectionSetting(),
@@ -602,6 +593,14 @@ define([
             );
         }
 
-    });
+    };
+
+    SettingDevice.defaultProps = {
+        lang: {},
+        supported_langs: '',
+        onLangChange: function() {}
+    };
+
+    return SettingDevice;
 
 });

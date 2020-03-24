@@ -82,6 +82,11 @@ define([
         SCANNING: () => ({
             displayStatus: lang.device.scanning,
             currentStatus: ''
+        }),
+
+        PREPARING: () => ({
+            displayStatus: lang.device.completed,
+            currentStatus: ''
         })
     };
 });

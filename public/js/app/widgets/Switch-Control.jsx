@@ -1,44 +1,37 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index'
-], function(React, PropTypes, ClassNames) {
+], function(PropTypes, ClassNames) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        propTypes: {
-            id: PropTypes.string.isRequired,
-            label: PropTypes.string,
-            default: PropTypes.bool,
-            onChange: PropTypes.func.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class SwitchControl extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 checked: this.props.default
-            };
-        },
+            }
+        }
 
-        shouldComponentUpdate: function(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
             var newPropIsDifferent = nextProps.default !== this.state.checked,
                 newStateIsDifferent = this.state.checked !== nextState.checked;
 
             return newPropIsDifferent || newStateIsDifferent;
-        },
+        }
 
-        _fireChange: function(newValue) {
+        _fireChange(newValue) {
             this.props.onChange(this.props.id, newValue);
-        },
+        }
 
-        _handleToggle: function(e) {
+        _handleToggle(e) {
             var isChecked = e.target.checked;
             this.setState({ checked: isChecked }, function() {
                 this._fireChange(isChecked);
             });
-        },
+        }
 
-        render: function() {
+        render() {
             return (
                 <div className="controls" name={this.props.id}>
                     <div className="label pull-left">{this.props.label}</div>
@@ -66,5 +59,14 @@ define([
             );
         }
 
-    });
+    };
+
+    SwitchControl.propTypes = {
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string,
+        default: PropTypes.bool,
+        onChange: PropTypes.func.isRequired
+    };
+
+    return SwitchControl;
 });

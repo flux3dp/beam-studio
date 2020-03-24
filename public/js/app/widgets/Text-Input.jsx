@@ -1,18 +1,22 @@
 define([
-    'react',
-    'reactDOM',
     'reactPropTypes'
-], function(React, ReactDOM, PropTypes) {
+], function(PropTypes) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-    return React.createClass({
+    return class TextInput extends React.Component{
+        static propTypes = {
+            defaultValue: PropTypes.string
+        }
+
         // Public
-        value: function() {
+        value = () => {
             return ReactDOM.findDOMNode(this.refs.textInput).value;
-        },
+        }
 
         // Lifecycle
-        render: function() {
+        render() {
             return (
                 <input
                     ref="textInput"
@@ -21,10 +25,6 @@ define([
                     defaultValue={this.props.displayValue}
                 />
             );
-        },
-
-        propTypes: {
-            defaultValue: PropTypes.string
         }
-    });
+    };
 });

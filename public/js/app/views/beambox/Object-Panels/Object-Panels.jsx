@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index',
     'jsx!views/beambox/Object-Panels/Position',
@@ -14,7 +13,6 @@ define([
     'jsx!views/beambox/Object-Panels/Text',
     'jsx!views/beambox/Object-Panels/ShadingThreshold'
 ], function(
-    React,
     PropTypes,
     ClassNames,
     PositionPanel,
@@ -29,6 +27,7 @@ define([
     TextPanel,
     ShadingThresholdPanel
 ) {
+    const React = require('react');
 
     const validPanelsMap = {
         'unknown':  [],
@@ -56,16 +55,9 @@ define([
         'use': 308
     }
 
-    const ObjectPanel = React.createClass({
-        propTypes: {
-            type: PropTypes.oneOf(Object.keys(validPanelsMap)).isRequired,
-            data: PropTypes.object.isRequired,
-            $me: PropTypes.object.isRequired,
-            isEditable: PropTypes.bool.isRequired
-        },
+    class ObjectPanel extends React.Component{
 
-
-        _renderPanels: function() {
+        _renderPanels() {
             const data = this.props.data;
             const type = this.props.type;
             const $me = this.props.$me;
@@ -90,9 +82,9 @@ define([
                 panelsToBeRender.push(panel);
             });
             return panelsToBeRender;
-        },
+        }
 
-        _findPositionStyle: function() {
+        _findPositionStyle() {
             const self = this;
             const angle = (function(){
                 const A = $('#selectorGrip_resize_w').offset();
@@ -146,9 +138,9 @@ define([
                 left: constrainedPosition.left
             };
             return positionStyle;
-        },
+        }
 
-        render: function() {
+        render() {
             const positionStyle = this._findPositionStyle();
             const classes = ClassNames('object-panels', {'unselectable': !(this.props.isEditable)});
             return (
@@ -158,7 +150,14 @@ define([
             );
         }
 
-    });
+    };
+
+    ObjectPanel.propTypes = {
+        type: PropTypes.oneOf(Object.keys(validPanelsMap)).isRequired,
+        data: PropTypes.object.isRequired,
+        $me: PropTypes.object.isRequired,
+        isEditable: PropTypes.bool.isRequired
+    };
 
     return ObjectPanel;
 });

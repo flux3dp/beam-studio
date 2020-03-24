@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactPropTypes',
     'reactClassset',
     'jquery',
@@ -20,7 +19,6 @@ define([
     'helpers/check-device-status',
     'helpers/device-list'
 ], function(
-    React,
     PropTypes,
     ReactCx,
     $,
@@ -42,32 +40,14 @@ define([
     DeviceList
 ) {
     'use strict';
+    const React = require('react');
+
     const lang = i18n.lang;
-    var View = React.createClass({
-        displayName: 'PrinterSelection',
-        selected_printer: null,
-
-        propTypes: {
-            showExport: PropTypes.bool,
-            modelFilter: PropTypes.string,
-            onClose: PropTypes.func,
-            onGettingPrinter: PropTypes.func
-        },
-
-        getDefaultProps: function() {
-            return {
-                uniqleId: '',
-                className: '',
-                modelFilter: '',
-                forceAuth: false,
-                onGettingPrinter: function() {},
-                onUnmount: function() {},
-                onClose: function() {},
-                arrowDirection: 'right' //'left'
-            };
-        },
-
-        getInitialState: function() {
+    class PrinterSelector extends React.Component{
+        constructor(props) {
+            super(props);
+            this.displayName = 'PrinterSelection';
+            this.selected_printer = null;
             let modelFilter = this.props.modelFilter.split(','),
                 hasDefaultPrinter = InitializeMachine.defaultPrinter.exist() && !this.props.bypassDefaultPrinter;
 
@@ -80,8 +60,7 @@ define([
                     hasDefaultPrinter = false;
                 }
             }
-
-            return {
+            this.state = {
                 discoverId          : 'printer-selector-' + (this.props.uniqleId || ''),
                 devices             : [],
                 loadFinished        : false,
@@ -90,9 +69,9 @@ define([
                 discoverMethods     : {},
                 componentReady      : false
             };
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             var selectedPrinter = InitializeMachine.defaultPrinter.get(),
                 self = this,
                 currentPrinter,
@@ -221,9 +200,9 @@ define([
             } else {
                 noDefaultPrinter();
             }
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             if ('function' === typeof this.state.discoverMethods.removeListener) {
                 this.state.discoverMethods.removeListener(this.state.discoverId);
             }
@@ -234,9 +213,9 @@ define([
             }
 
             clearTimeout(this._noPrinterAlertTimeout);
-        },
+        }
 
-        _onCancel: function(id) {
+        _onCancel = (id) => {
             this.setState({ processing: false });
             switch (id) {
             case 'no-printer':
@@ -246,9 +225,9 @@ define([
             default:
                 break;
             }
-        },
+        }
 
-        _selectPrinter: function(printer, e) {
+        _selectPrinter = (printer, e) => {
             this.setState({ processing: true });
             var self = this,
                 onError;
@@ -336,9 +315,9 @@ define([
                     AlertActions.showPopupError('fatal-occurred', status);
                 });
             }
-        },
+        }
 
-        _auth: function(uuid, password, opts) {
+        _auth = (uuid, password, opts) => {
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
             opts = opts || {};
             opts.onError = opts.onError || function() {};
@@ -359,14 +338,14 @@ define([
             };
 
             Touch(_opts).send(uuid, password);
-        },
+        }
 
-        _handleClose: function(e) {
+        _handleClose =(e) => {
             this.props.onClose();
-        },
+        }
 
         // renders
-        _renderPrinterSelection: function() {
+        _renderPrinterSelection = () => {
             let devices = this.state.devices;
             if (this.state.modelFilter.length > 0) {
                 
@@ -391,19 +370,19 @@ define([
             }
 
             return content;
-        },
+        }
 
-        _returnSelectedPrinter: function() {
+        _returnSelectedPrinter = () => {
             var self = this;
 
             self.props.onGettingPrinter(self.selected_printer);
-        },
+        }
 
-        _waitForPrinters: function() {
+        _waitForPrinters =() => {
             this._noPrinterAlertTimeout = setTimeout(this._openAlertWithnoPrinters, 5000);
-        },
+        }
 
-        _openAlertWithnoPrinters: function() {
+        _openAlertWithnoPrinters = () => {
             var self = this;
 
             AlertStore.removeRetryListener(self._waitForPrinters);
@@ -412,9 +391,9 @@ define([
             //     AlertActions.showPopupRetry('no-printer', lang.device_selection.no_printers);
             //     AlertStore.onRetry(self._waitForPrinters);
             // }
-        },
+        }
 
-        _renderPrinterItem: function(printer) {
+        _renderPrinterItem = (printer) => {
             var meta,
                 status = lang.machine_status,
                 headModule = lang.head_module,
@@ -436,7 +415,7 @@ define([
             let img = `img/icon_${printer.source === 'h2h' ? 'usb' : 'wifi' }.svg`;
 
             return (
-                <div className="device printer-item" id={printer.name} data-model={printer.model} data-status={statusId} data-meta={meta} onClick={this._selectPrinter.bind(null, printer)}>
+                <div className="device printer-item" id={printer.name} data-model={printer.model} data-status={statusId} data-meta={meta} onClick={this._selectPrinter.bind(this, printer)}>
                     <div className="col device-name" id={printer.name}>{printer.name}</div>
                     <div className="col module">{headText}</div>
                     <div className="col status">{statusText}</div>
@@ -445,9 +424,9 @@ define([
                     </div>
                 </div>
             );
-        },
+        }
 
-        _renderExportItem: function(printer) {
+        _renderExportItem = (printer) => {
 
             return (
                 <div className="device printer-item" id={"export-item"} data-status={0} data-meta={0} onClick={() => {this.props.onGettingPrinter("export_fcode")} }>
@@ -458,9 +437,9 @@ define([
                     </div>
                 </div>
             );
-        },
+        }
 
-        render: function() {
+        render() {
             var self = this,
                 showPassword = self.state.showPassword,
                 wrapperClass = {'select-printer': true},
@@ -485,9 +464,27 @@ define([
             );
         }
 
-    });
+    };
 
-    View.BEAMBOX_FILTER = "laser-b1,laser-b2,fbm1,fbb1b,fbb1p,mozu1,darwin-dev";
-    View.DELTA_FILTER = "delta-1,delta-1p";
-    return View;
+    PrinterSelector.propTypes = {
+        showExport: PropTypes.bool,
+        modelFilter: PropTypes.string,
+        onClose: PropTypes.func,
+        onGettingPrinter: PropTypes.func
+    };
+
+    PrinterSelector.defaultProps = {
+        uniqleId: '',
+        className: '',
+        modelFilter: '',
+        forceAuth: false,
+        onGettingPrinter: function() {},
+        onUnmount: function() {},
+        onClose: function() {},
+        arrowDirection: 'right' //'left'
+    };
+
+    PrinterSelector.BEAMBOX_FILTER = "laser-b1,laser-b2,fbm1,fbb1b,fbb1p,mozu1,darwin-dev";
+    PrinterSelector.DELTA_FILTER = "delta-1,delta-1p";
+    return PrinterSelector;
 });

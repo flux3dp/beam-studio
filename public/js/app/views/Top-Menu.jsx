@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'app/app-settings',
     'helpers/api/discover',
@@ -34,7 +33,6 @@ define([
     'app/actions/beambox/beambox-preference',
 ], function (
     $,
-    React,
     i18n,
     appSettings,
     Discover,
@@ -68,6 +66,7 @@ define([
     BeamboxPreference
 ) {
     'use strict';
+    const React = require('react');
 
     if (window["electron"]) {
         var { ipc, events } = window.electron;
@@ -461,18 +460,10 @@ define([
             registerAllDeviceMenuClickEvents();
         }
         // registerMenuItemClickEvents();
-
-        return React.createClass({
-
-            getDefaultProps: function () {
-                return {
-                    show: true,
-                    page: ''
-                };
-            },
-
-            getInitialState: function () {
-                return {
+        class TopMenu extends React.Component{
+            constructor(props){
+                super(props);
+                this.state = {
                     sourceId: '',
                     deviceList: [],
                     refresh: '',
@@ -481,29 +472,33 @@ define([
                     fcode: {},
                     previewUrl: ''
                 };
-            },
+                this._waitForPrinters = this._waitForPrinters.bind(this);
+                this._toggleDeviceList = this._toggleDeviceList.bind(this);
+                this._toggleDeviceListBind = this._toggleDeviceList.bind(this, false);
+                this._openAlertWithnoPrinters = this._openAlertWithnoPrinters.bind(this);
+                this._handleExportClick = this._handleExportClick.bind(this);
+            }
 
-            componentDidMount: function () {
-                this._toggleDeviceListBind = this._toggleDeviceList.bind(null, false);
+            componentDidMount() {
                 //AlertStore.onCancel(this._toggleDeviceListBind);
                 AlertStore.onRetry(this._waitForPrinters);
                 GlobalStore.onMonitorClosed(this._toggleDeviceListBind);
                 TopmenuStore.onUpdateTopMenu(() => {this.setState(this.state)});
-            },
+            }
 
-            componentWillUnmount: function () {
+            componentWillUnmount() {
                 //AlertStore.removeCancelListener(this._toggleDeviceListBind);
                 AlertStore.removeRetryListener(this._waitForPrinters);
                 GlobalStore.removeMonitorClosedListener(this._toggleDeviceListBind);
                 TopmenuStore.removeUpdateTopMenuListener(() => {this.setState(this.state)});
                 // unregisterEvents();
-            },
+            }
 
-            _waitForPrinters: function () {
+            _waitForPrinters() {
                 setTimeout(this._openAlertWithnoPrinters, 5000);
-            },
+            }
 
-            _openAlertWithnoPrinters: function () {
+            _openAlertWithnoPrinters() {
                 if (0 === this.state.deviceList.length && true === this.state.showDeviceList) {
                     if (location.hash === '#studio/beambox') {
                         AlertActions.showPopupRetry('no-printer', lang.device_selection.no_beambox);
@@ -511,9 +506,9 @@ define([
                         AlertActions.showPopupRetry('no-printer', lang.device_selection.no_printers);
                     }
                 }
-            },
+            }
 
-            _toggleDeviceList: function (open) {
+            _toggleDeviceList(open) {
                 this.setState({
                     showDeviceList: open
                 });
@@ -521,9 +516,9 @@ define([
                 if (open) {
                     this._waitForPrinters();
                 }
-            },
+            }
 
-            _handleNavigation: function (address) {
+            _handleNavigation(address) {
                 if (-1 < appSettings.needWebGL.indexOf(address) && false === detectWebgl()) {
                     AlertActions.showPopupError('no-webgl-support', lang.support.no_webgl);
                 }
@@ -536,9 +531,9 @@ define([
 
                     location.hash = '#studio/' + address;
                 }
-            },
+            }
 
-            _handleExportClick: async function() {
+            async _handleExportClick() {
                 const self = this;
                 const refreshOption = function (devices) {
                     self.setState({
@@ -606,13 +601,13 @@ define([
                 );
 
                 this._toggleDeviceList(!this.state.showDeviceList);
-            },
+            }
 
-            _handleSelectDevice: async function (device, e) {
+            async _handleSelectDevice(device, e) {
                 const self = this;
                 ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
                 device = DeviceMaster.usbDefaultDeviceCheck(device);
-                AlertStore.removeCancelListener(this._toggleDeviceListBind);
+                AlertStore.removeCancelListener(this._toggleDeviceList);
                 DeviceMaster.selectDevice(device).then(function (status) {
                     if (status === DeviceConstants.CONNECTED) {
                         const next = () => {
@@ -633,9 +628,9 @@ define([
                     });
                 this._toggleDeviceList(false);
 
-            },
+            }
 
-            _onSuccessConnected: async function(device, e) {
+            async _onSuccessConnected(device, e) {
                 //export fcode
                 if (device === 'export_fcode') {
                     BottomRightFuncs.exportFcode();
@@ -654,19 +649,19 @@ define([
                     this.setState({ showDeviceList: false });
                     BottomRightFuncs.uploadFcode(device);
                 }
-            },
+            }
 
-            _handleMonitorClose: function () {
+            _handleMonitorClose() {
                 this.setState({
                     showMonitor: false
                 });
-            },
+            }
 
-            _handleContextMenu: function (event) {
+            _handleContextMenu(event) {
                 electron && electron.ipc.send("POPUP_MENU_ITEM", { x: event.screenX, y: event.screenY }, {});
-            },
+            }
 
-            _renderDeviceList: function () {
+            _renderDeviceList() {
                 var status = lang.machine_status,
                     headModule = lang.head_module,
                     statusText,
@@ -693,7 +688,7 @@ define([
                             <li
                                 key={device.uuid}
                                 name={device.uuid}
-                                onClick={this._handleSelectDevice.bind(null, device)}
+                                onClick={this._handleSelectDevice.bind(this, device)}
                                 data-test-key={device.serial}
                             >
                                 <label className="name">{device.name}</label>
@@ -718,9 +713,9 @@ define([
                 return (
                     <ul>{list}</ul>
                 );
-            },
+            }
 
-            _renderTopDropDown: function(id, label) {
+            _renderTopDropDown(id, label) {
                 const labelFunctionMap = {
                     'align-h': [
                         {id: 'align-l', label: lang.topbar.left_align, f: () => {FnWrapper.alignLeft();}},
@@ -760,9 +755,9 @@ define([
                     </div>
                 );
 
-            },
+            }
 
-            _renderTopBtn: function(id, label, onClick) {
+            _renderTopBtn(id, label, onClick) {
                 const disabled = !this.topButtonAvailability[id];
                 if(disabled) onClick = () => {};
                 return (
@@ -776,9 +771,9 @@ define([
                         </div>
                     </div>
                 );
-            },
+            }
 
-            _renderZoomBtn: function(id, label, onClick) {
+            _renderZoomBtn(id, label, onClick) {
                 return (
                     <div className={ClassNames('top-btn zoom', process.platform)} onClick={onClick} key={id}>
                         <img src={`img/top-menu/icon-${id}.svg`} onError={(e)=>{e.target.onerror = null; e.target.src=`img/top-menu/icon-${id}.png`}} />
@@ -787,9 +782,9 @@ define([
                         </div>
                     </div>
                 );
-            },
+            }
 
-            _renderScrollCue: function() {
+            _renderScrollCue() {
                 const topbtns = $('.top-btns')
                 const containerWidth = 1000;
                 const left_space = topbtns.scrollLeft();
@@ -812,9 +807,9 @@ define([
                 </div>
                 );
                 return {left_scroll_cue, right_scroll_cue};
-            },
+            }
 
-            _renderFileTitle: function () {
+            _renderFileTitle () {
                 if (process.platform === 'win32') {
                     return null;
                 } else {
@@ -830,9 +825,9 @@ define([
                         </div>
                     );
                 }
-            },
+            }
 
-            _checkButtonAvailable: function() {
+            _checkButtonAvailable() {
                 let selectedElements = null;
                 try {
                     selectedElements = svgCanvas.getSelectedElems().filter((elem) => elem);
@@ -864,9 +859,9 @@ define([
                     'h-flip': (selectedElements && selectedElements.length > 0),
                     'v-flip': (selectedElements && selectedElements.length > 0),
                 }
-            },
+            }
 
-            render: function () {
+            render() {
                 let deviceList = this._renderDeviceList(),
                     menuClass,
                     topClass;
@@ -923,7 +918,7 @@ define([
                         {this._renderFileTitle()}
 
                         <div title={lang.print.deviceTitle} className={`device ${process.platform}`}>
-                            <p className="device-icon" onClick={this._handleExportClick}>
+                            <p className="device-icon" onClick={this._handleExportClick.bind(this)}>
                                 <img src="img/top-menu/icon-export.svg" draggable="false" />
                                 <div>{lang.topbar.export}</div>
                             </p>
@@ -939,6 +934,13 @@ define([
                 );
             }
 
-        });
+        };
+
+        TopMenu.defaultProps = {
+            show: true,
+            page: ''
+        };
+
+        return TopMenu;
     };
 });

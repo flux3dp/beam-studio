@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/font-funcs',
@@ -14,7 +13,6 @@ define([
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
-    React,
     PropTypes,
     FnWrapper,
     FontFuncs,
@@ -29,6 +27,7 @@ define([
     BeamboxPreference,
     i18n
 ) {
+    const React = require('react');
     if (!window.electron) {
         console.log('font is not supported in web browser');
         return () => null;

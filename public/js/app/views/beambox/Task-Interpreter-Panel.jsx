@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
     'jsx!widgets/Select',
     'jsx!widgets/Vertical-Slider-Control',
@@ -10,8 +8,6 @@ define([
     'app/constants/progress-constants',
     'helpers/i18n'
 ], function(
-    React,
-    ReactDOM,
     Modal,
     SelectView,
     VerticalSlider,
@@ -21,6 +17,8 @@ define([
     ProgressConstants,
     i18n
 ) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     const LANG = i18n.lang.topmenu;
     const SerialPort = require('serialport');
     const LINES_PER_PAGE = 100;

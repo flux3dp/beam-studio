@@ -1,13 +1,11 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Right-Panels/Laser-Panel',
     'reactCreateReactClass'
 ], function(
-    React,
-    ReactDOM,
     LaserPanel
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     const _defaultConfig = {
         configName: '',
@@ -28,7 +26,6 @@ define([
         height: 0,
         af: 0,
         zstep: 0,
-        height: 0,
         diode: 0
     }
 
@@ -40,7 +37,6 @@ define([
         height: 0,
         af: 0,
         zstep: 0,
-        height: 0,
         diode: 0
     }
 

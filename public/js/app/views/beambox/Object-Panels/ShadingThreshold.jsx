@@ -1,45 +1,40 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/image-data',
     'helpers/i18n'
-], function($, React, PropTypes, FnWrapper, ImageData, i18n) {
+], function($, PropTypes, FnWrapper, ImageData, i18n) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
 
-    return React.createClass({
-        propTypes: {
-            shading: PropTypes.bool.isRequired,
-            threshold: PropTypes.number.isRequired,
-            $me: PropTypes.object.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class ShadingThreshold extends React.Component{
+        constructor(props){
+            super(props);
+            this.state = {
                 shading: this.props.shading,
                 threshold: this.props.threshold
             };
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 shading: this.props.$me.attr('data-shading') === 'true',
                 threshold: nextProps.threshold
             });
-        },
+        }
 
-        _writeShading: function(val) {
+        _writeShading = (val) => {
             FnWrapper.write_image_data_shading(this.props.$me, val);
-        },
+        }
 
-        _writeThreshold: function(val) {
+        _writeThreshold = (val) => {
             FnWrapper.write_image_data_threshold(this.props.$me, val);
-        },
+        }
 
-        _refreshImage: function() {
+        _refreshImage = () => {
             const $me = this.props.$me;
 
             ImageData(
@@ -58,9 +53,9 @@ define([
                     }
                 }
             );
-        },
+        }
 
-        handleShadingClick: function(event) {
+        handleShadingClick = (event) => {
             event.stopPropagation();
             const { shading } = this.state;
             const threshold = (shading ? 128 : 255);
@@ -73,27 +68,27 @@ define([
                 this._writeThreshold(threshold);
                 this._refreshImage();
             });
-        },
+        }
 
-        handleThresholdChange: function(event) {
+        handleThresholdChange = (event) => {
             const val = event.target.value;
 
             this.setState({threshold: val}, function(){
                 this._writeThreshold(val);
                 this._refreshImage();
             });
-        },
+        }
 
-        _renderThresholdPanel: function() {
+        _renderThresholdPanel = () => {
             return this.state.shading ? null : (
                 <div className="control">
                     <span className="text-center header">{LANG.threshold}</span>
                     <input type="range" min={0} max={255} value={this.state.threshold} onChange={(e) => this.handleThresholdChange(e)} onClick={e => {e.stopPropagation();}}/>
                 </div>
             );
-        },
+        }
 
-        render: function() {
+        render() {
             const { shading, threshold } = this.state;
 
             return (
@@ -117,7 +112,13 @@ define([
                 </div>
             );
         }
+    };
 
-    });
+    ShadingThreshold.propTypes = {
+        shading: PropTypes.bool.isRequired,
+        threshold: PropTypes.number.isRequired,
+        $me: PropTypes.object.isRequired
+    };
 
+    return ShadingThreshold;
 });

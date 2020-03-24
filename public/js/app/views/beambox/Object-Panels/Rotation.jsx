@@ -1,37 +1,35 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
     
-    return React.createClass({
-        propTypes: {
-            angle: PropTypes.number.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class Rotation extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 angle: this.props.angle
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 angle: nextProps.angle
             });
-        },
+        }
 
-        _update_angle_handler: function(angle) {
+        _update_angle_handler = (angle) => {
             FnWrapper.update_angle(angle);
             this.setState({angle: angle});
-        },
-        render: function() {
+        }
+
+        render() {
             return (
                 <div className="object-panel">
                     <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
@@ -57,5 +55,11 @@ define([
             );
         }
         
-    });
+    };
+
+    Rotation.propTypes = {
+        angle: PropTypes.number.isRequired
+    };
+
+    return Rotation;
 });

@@ -1,47 +1,45 @@
 define([
-    'react',
-    'reactDOM',
     'helpers/unit-converter',
     'app/constants/keycode-constants',
     'helpers/round',
     'plugins/classnames/index'
-], function(React, ReactDOM, unitConverter, keyCodeConstants, round, ClassNames) {
+], function(unitConverter, keyCodeConstants, round, ClassNames) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-    return React.createClass({
-        operatorRegex: /(\+|-|\*|\/)/,
+    return class UnitInput extends React.Component{
+        static defaultProps = {
+            className: {},
+            defaultValue: '',
+            defaultUnit: unitConverter.defaultUnit,
+            defaultUnitType: unitConverter.defaultUnitType,
+            operators: ['+', '-', '*', '/'],
+            handleNumberFormat: function(value) {
+                return round(value, -2);
+            },
+            min: Number.MIN_SAFE_INTEGER,
+            max: Number.MAX_SAFE_INTEGER,
+            step: 1,
+            dataAttrs: {},
+            getValue: function() {}
+        }
 
-        getDefaultProps: function() {
-            return {
-                className: {},
-                defaultValue: '',
-                defaultUnit: unitConverter.defaultUnit,
-                defaultUnitType: unitConverter.defaultUnitType,
-                operators: ['+', '-', '*', '/'],
-                handleNumberFormat: function(value) {
-                    return round(value, -2);
-                },
-                min: Number.MIN_SAFE_INTEGER,
-                max: Number.MAX_SAFE_INTEGER,
-                step: 1,
-                dataAttrs: {},
-                getValue: function() {}
-            };
-        },
-
-        getInitialState: function() {
-            return {
+        constructor(props) {
+            super(props);
+            this.operatorRegex = /(\+|-|\*|\/)/;
+            this.state = {
                 defaultValue: this.props.defaultValue,
                 operatorAmount: 0
             };
-        },
+        }
 
-        componentWillReceiveProps: function (nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.value(nextProps.defaultValue);
-        },
+        }
 
         // Public methods
-        value: function(val) {
+        value = (val) => {
             if (false === this.isMounted()) {
                 return 0;
             }
@@ -57,10 +55,10 @@ define([
 
                 return val;
             }
-        },
+        }
 
         // Private methods
-        _parseValue: function(value) {
+        _parseValue = (value) => {
             var unitConfig = unitConverter.setDefaultUnitType(this.props.defaultUnitType),
                 acceptableUnits = unitConfig.acceptableUnits,
                 pattern = new RegExp('^(-?\\d+\\.?\\d{0,})(' + acceptableUnits.join('|') + ')?$'),
@@ -85,9 +83,9 @@ define([
             }
 
             return parsedValue;
-        },
+        }
 
-        _confirmValue: function(addValue) {
+        _confirmValue = (addValue) => {
             addValue = parseFloat(addValue, 10) || 0;
 
             var el = ReactDOM.findDOMNode(this.refs.unitInput),
@@ -141,10 +139,10 @@ define([
             }
 
             return this.value();
-        },
+        }
 
         // UI Events
-        _onBlur: function(e) {
+        _onBlur = (e) => {
             e.preventDefault();
             let textboxValue = ReactDOM.findDOMNode(this.refs.unitInput).value;
             var value = this._confirmValue();
@@ -154,9 +152,9 @@ define([
             else {
                 this.props.getValue(e, value);
             }
-        },
+        }
 
-        _onKeyUp: function(e) {
+        _onKeyUp = (e) => {
             e.preventDefault();
 
             var addValue = undefined,
@@ -200,10 +198,10 @@ define([
                 value = this._confirmValue(addValue);
                 this.props.getValue(e, value);
             }
-        },
+        }
 
         // Lifecycle
-        render: function() {
+        render() {
             var self = this,
                 props = self.props,
                 state = self.state,
@@ -232,5 +230,5 @@ define([
                 />
             );
         }
-    });
+    };
 });

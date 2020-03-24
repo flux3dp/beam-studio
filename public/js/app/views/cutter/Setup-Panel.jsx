@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'jsx!widgets/List',
     'jsx!widgets/Modal',
     'jsx!views/laser/Advanced-Panel',
@@ -15,7 +14,6 @@ define([
     'plugins/classnames/index'
 ], function(
     $,
-    React,
     List,
     Modal,
     AdvancedPanel,
@@ -30,31 +28,25 @@ define([
     ClassNames
 ) {
     'use strict';
+    const React = require('react');
 
     let Config = ConfigHelper(),
         lang = i18n.lang;
 
-    return React.createClass({
-
-        getDefaultProps: function() {
-            return {
-                defaults: {},
-                imageFormat: 'svg'  // svg, bitmap
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class SetupPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 defaults: this.props.defaults
             };
-        },
+        }
 
-        isShading: function() {
+        isShading = () => {
             return false;
-        },
+        }
 
         // UI Events
-        _saveLastestSet: function() {
+        _saveLastestSet = () => {
             var self = this,
                 refs = self.refs,
                 opts = {
@@ -70,19 +62,19 @@ define([
             Config.write('cut-defaults', opts);
 
             self.setState(state);
-        },
+        }
 
-        openSubPopup: function(e) {
+        openSubPopup = (e) => {
             this.refs.dialogMenu.toggleSubPopup(e);
-        },
+        }
 
-        _updateDefaults: function(e, value) {
+        _updateDefaults = (e, value) => {
             this._saveLastestSet();
             this.openSubPopup(e);
-        },
+        }
 
         // Lifecycle
-        _renderZOffset: function() {
+        _renderZOffset = () => {
             var min = -1;
 
             return {
@@ -106,9 +98,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderOvercut: function() {
+        _renderOvercut = () => {
             return {
                 label: (
                     <div title={lang.cut.overcutTip}>
@@ -130,9 +122,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderSpeed: function() {
+        _renderSpeed = () => {
             return {
                 label: (
                     <div title={lang.cut.speedTip}>
@@ -155,9 +147,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-         _renderBladeRadius: function() {
+         _renderBladeRadius = () => {
 
             return {
                 label: (
@@ -180,9 +172,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        render: function() {
+        render() {
             let items = [
                     this._renderZOffset(),
                     // this._renderOvercut(),
@@ -197,5 +189,11 @@ define([
             );
         }
 
-    });
+    };
+
+    SetupPanel.defaultProps = {
+        defaults: {},
+        imageFormat: 'svg'  // svg, bitmap
+    };
+    return SetupPanel;
 });

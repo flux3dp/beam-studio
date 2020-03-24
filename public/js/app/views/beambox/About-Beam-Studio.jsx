@@ -1,16 +1,13 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
     'app/stores/beambox-store',
     'helpers/i18n'
 ], function(
-    React,
-    ReactDOM,
     Modal,
     BeamboxStore,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.topmenu;
 
     
@@ -30,13 +27,13 @@ define([
         componentWillUnmount() {
         }
 
-        _show() {
+        _show = () => {
             this.setState({
                 show: true
             });
         }
 
-        _close() {
+        _close = () => {
             this.setState({show: false});
         }
 

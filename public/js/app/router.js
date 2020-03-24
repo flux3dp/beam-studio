@@ -1,6 +1,4 @@
 define([
-    'react',
-    'reactDOM',
     'helpers/i18n',
     'jquery',
     'backbone',
@@ -8,7 +6,9 @@ define([
     'app/app-settings',
     'helpers/detect-webgl',
 ],
-function(React, ReactDOM, i18n, $, Backbone, config, appSettings, detectWebgl) {
+function(i18n, $, Backbone, config, appSettings, detectWebgl) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     const _display = function(view, args, el) {
         el = el || $('section.content')[0];

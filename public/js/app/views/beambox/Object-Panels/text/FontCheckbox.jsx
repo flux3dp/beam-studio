@@ -1,8 +1,7 @@
 define([
-    'react',
 ], function(
-    React
 ) {
+    const React = require('react');
     return ({isChecked, onChange}) => {
         return (
             <label className='shading-checkbox' onClick={() => onChange(!isChecked)}>

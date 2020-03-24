@@ -1,14 +1,13 @@
 define([
-    'react',
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/shortcuts',
     'helpers/i18n',
 ], function(
-    React,
     FnWrapper,
     Shortcuts,
     i18n
 ){
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.left_panel.insert_object_submenu;
 

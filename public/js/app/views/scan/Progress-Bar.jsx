@@ -1,118 +1,118 @@
 define([
-    'react',
     'reactPropTypes',
     'reactClassset'
-], function(React, PropTypes, ReactCx) {
+], function(PropTypes, ReactCx) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-            ESTIMATED_STEP: 10,
+    class ProgressBar extends React.Component{
+        constructor(props) {
+            super(props);
+            this.ESTIMATED_STEP = 10;
+            this.state = {
+                stop: false
+            };
+        }
 
-            propTypes: {
-                lang: PropTypes.object,
-                percentage: PropTypes.number,
-                remainingTime: PropTypes.number,
-                currentSteps: PropTypes.number,
-                onStop: PropTypes.func
-            },
+        _paddingZero = (str, len) => {
+            var zero = new Array(len + 1),
+                afterPadding = zero.join(0) + str;
 
-            getDefaultProps: function() {
-                return {
-                    lang: {},
-                    percentage: 0,
-                    remainingTime: 0,
-                    currentSteps: 0,
-                    onStop: function() {}
-                };
-            },
+            return afterPadding.substr(-1 * len);
+        }
 
-            getInitialState: function() {
-                return {
-                    stop: false
-                };
-            },
+        _formatSecondToTime = (seconds) => {
+            var minutes = parseInt(seconds / 60, 10),
+                seconds = seconds % 60;
 
-            _paddingZero: function(str, len) {
-                var zero = new Array(len + 1),
-                    afterPadding = zero.join(0) + str;
+            return this._paddingZero(minutes, 2) + 'm' + this._paddingZero(seconds, 2) + 's';
+        }
 
-                return afterPadding.substr(-1 * len);
-            },
+        _onStop = () => {
+            var self = this;
 
-            _formatSecondToTime: function(seconds) {
-                var minutes = parseInt(seconds / 60, 10),
-                    seconds = seconds % 60;
+            self.props.onStop();
 
-                return this._paddingZero(minutes, 2) + 'm' + this._paddingZero(seconds, 2) + 's';
-            },
+            self.setState({
+                stop: true
+            }, function() {
+                self.setState(self.getInitialState());
+            });
+        }
 
-            _onStop: function() {
-                var self = this;
-
-                self.props.onStop();
-
-                self.setState({
-                    stop: true
-                }, function() {
-                    self.setState(self.getInitialState());
+        _renderProgress = () => {
+            var self = this,
+                lang = self.props.lang,
+                estimatedTime = self.props.remainingTime,
+                textRemainingTime = (
+                    self.ESTIMATED_STEP < self.props.currentSteps ?
+                    lang.scan.remaining_time :
+                    ''
+                ),
+                stopButtonClasses = ReactCx.cx({
+                    'btn': true,
+                    'btn-hexagon': true,
+                    'btn-stop-scan': true,
+                    'btn-disabled': (0 === self.props.percentage),
                 });
-            },
 
-            _renderProgress: function() {
-                var self = this,
-                    lang = self.props.lang,
-                    estimatedTime = self.props.remainingTime,
-                    textRemainingTime = (
-                        self.ESTIMATED_STEP < self.props.currentSteps ?
-                        lang.scan.remaining_time :
-                        ''
-                    ),
-                    stopButtonClasses = ReactCx.cx({
-                        'btn': true,
-                        'btn-hexagon': true,
-                        'btn-stop-scan': true,
-                        'btn-disabled': (0 === self.props.percentage),
-                    });
+            return (
+                <div className="progress-status">
+                    <span className="progress-text">{self.props.percentage}%,</span>
+                    <span className="progress-text">{estimatedTime}</span>
+                    <span className="progress-text">{textRemainingTime}</span>
+                    <button className={stopButtonClasses} data-ga-event="stop-scan" onClick={this._onStop}>{lang.scan.stop_scan}</button>
+                </div>
+            );
+        }
 
-                return (
-                    <div className="progress-status">
-                        <span className="progress-text">{self.props.percentage}%,</span>
-                        <span className="progress-text">{estimatedTime}</span>
-                        <span className="progress-text">{textRemainingTime}</span>
-                        <button className={stopButtonClasses} data-ga-event="stop-scan" onClick={this._onStop}>{lang.scan.stop_scan}</button>
-                    </div>
+        _renderFinish = () => {
+            var lang = this.props.lang;
+
+            return (
+                <p>
+                    <span className="amination-breath">{lang.scan.processing}</span>
+                </p>
+            );
+        }
+
+        render() {
+            var lang = this.props.lang,
+                isFinish = (100 <= this.props.percentage),
+                className = {
+                    'scan-progress': true,
+                    'hide': true === this.state.stop
+                },
+                content = (
+                    true === isFinish ?
+                    this._renderFinish() :
+                    this._renderProgress()
                 );
-            },
 
-            _renderFinish: function() {
-                var lang = this.props.lang;
+            return (
+                <div className={ReactCx.cx(className)}>
+                    {content}
+                </div>
+            );
+        }
 
-                return (
-                    <p>
-                        <span className="amination-breath">{lang.scan.processing}</span>
-                    </p>
-                );
-            },
+    };
 
-            render : function() {
-                var lang = this.props.lang,
-                    isFinish = (100 <= this.props.percentage),
-                    className = {
-                        'scan-progress': true,
-                        'hide': true === this.state.stop
-                    },
-                    content = (
-                        true === isFinish ?
-                        this._renderFinish() :
-                        this._renderProgress()
-                    );
+    ProgressBar.propTypes = {
+        lang: PropTypes.object,
+        percentage: PropTypes.number,
+        remainingTime: PropTypes.number,
+        currentSteps: PropTypes.number,
+        onStop: PropTypes.func
+    };
 
-                return (
-                    <div className={ReactCx.cx(className)}>
-                        {content}
-                    </div>
-                );
-            }
+    ProgressBar.defaultProps = {
+        lang: {},
+        percentage: 0,
+        remainingTime: 0,
+        currentSteps: 0,
+        onStop: function() {}
+    };
 
-        });
+    return ProgressBar;
 });

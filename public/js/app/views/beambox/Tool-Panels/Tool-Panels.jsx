@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index',
     'app/actions/beambox/constant',
@@ -10,7 +9,6 @@ define([
     'jsx!views/beambox/Tool-Panels/OffsetCorner',
     'jsx!views/beambox/Tool-Panels/OffsetDist',
 ], function(
-    React,
     PropTypes,
     ClassNames,
     Constant,
@@ -21,6 +19,7 @@ define([
     OffsetCornerPanel,
     OffsetDistPanel
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.tool_panels;
 
     let _mm2pixel = function(pixel_input) {

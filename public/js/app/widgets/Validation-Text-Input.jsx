@@ -1,15 +1,13 @@
 define([
-    'react',
-    'reactDOM',
     'reactPropTypes',
     'app/constants/keycode-constants',
 ], function(
-    React,
-    ReactDOM,
     PropTypes,
     keyCodeConstants
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     class ValidationTextInput extends React.Component {
         constructor(props) {

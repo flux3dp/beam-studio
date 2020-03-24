@@ -1,10 +1,9 @@
 define([
-    'react',
     'helpers/shortcuts'
 ], function(
-    React,
     shortcuts
 ) {
+    const React = require('react');
 
     return class CurveControl extends React.PureComponent {
         constructor(props) {

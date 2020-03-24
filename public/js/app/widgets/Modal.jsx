@@ -1,33 +1,19 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'reactPropTypes',
     'reactClassset',
     'helpers/shortcuts',
     'reactCreateReactClass'
-], function($, React, ReactDOM, PropTypes, ReactCx, shortcuts) {
+], function($, PropTypes, ReactCx, shortcuts) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-    var View = React.createClass({
+    class View extends React.Component{
+        constructor(props) {
+            super(props);
+        }
 
-        propTypes: {
-            onOpen      : PropTypes.func,
-            onClose     : PropTypes.func,
-            content     : PropTypes.element,
-            className   : PropTypes.object
-        },
-
-        getDefaultProps: function() {
-            return {
-                onOpen: function() {},
-                onClose: function() {},
-                content: <div/>,
-                disabledEscapeOnBackground: false,
-                className: {}
-            };
-        },
-
-        componentDidMount: function() {
+        componentDidMount() {
             var self = this;
 
             self.onOpen();
@@ -40,32 +26,32 @@ define([
                     }
                 }
             );
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             shortcuts.off(['esc']);
-        },
+        }
 
-        onOpen: function() {
+        onOpen = () => {
             if(this.props.onOpen) {
                 this.props.onOpen(this);
             }
-        },
+        }
 
-        _onClose: function(e) {
+        _onClose = (e) => {
             ReactDOM.unmountComponentAtNode(View);
             this.props.onClose(e);
-        },
+        }
 
-        _onEscapeOnBackground: function(e) {
+        _onEscapeOnBackground = (e) => {
             var self = this;
 
             if (false === self.props.disabledEscapeOnBackground) {
                 self.props.onClose(e);
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var backgroundClass;
 
             this.props.className['modal-window'] = true;
@@ -78,7 +64,21 @@ define([
                 </div>
             );
         }
-    });
+    };
+    View.propTypes = {
+        onOpen      : PropTypes.func,
+        onClose     : PropTypes.func,
+        content     : PropTypes.element,
+        className   : PropTypes.object
+    };
+    View.defaultProps = {
+        onOpen: function() {},
+        onClose: function() {},
+        content: <div/>,
+        disabledEscapeOnBackground: false,
+        className: {}
+    }
+
 
     return View;
 });

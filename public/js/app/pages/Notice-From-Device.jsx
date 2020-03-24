@@ -1,35 +1,34 @@
 define([
-    'react',
     'app/actions/initialize-machine',
     'jsx!widgets/Modal',
     'helpers/sprintf'
 ], function(
-    React,
     initializeMachine,
     Modal,
     sprintf
 ) {
+    const React = require('react');
+
     'use strict';
 
     return function(args) {
 
         args = args || {};
 
-        return React.createClass({
-
-            // Lifecycle
-            getInitialState: function() {
-                return {
+        class NoticeFromDevice extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang: args.state.lang
                 };
-            },
+            }
 
-            _restartStudio: function(e) {
+            _restartStudio = (e) => {
                 initializeMachine.completeSettingUp(true);
                 location.reload();
-            },
+            }
 
-            render : function() {
+            rendern() {
                 let wifi = initializeMachine.settingWifi.get();
                 var lang = this.state.lang,
                     localLang = lang.initialize.notice_from_device,
@@ -83,6 +82,7 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
+        return NoticeFromDevice;
     };
 });

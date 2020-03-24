@@ -1,47 +1,34 @@
 define([
-    'react',
     'reactPropTypes',
     'app/constants/global-constants',
     'app/constants/device-constants',
 ], (
-    React,
     PropTypes,
     GlobalConstants,
     DeviceConstants
 ) => {
+    const React = require('react');
 
-    return React.createClass({
-        PropTypes: {
-            name:           PropTypes.string,
-            source:         PropTypes.string,
-            history:        PropTypes.array,
-            onBackClick:    PropTypes.func,
-            onFolderClick:  PropTypes.func,
-            onCloseClick:   PropTypes.func
-        },
-
-        contextTypes: {
-            store: PropTypes.object
-        },
-
-        componentWillMount: function() {
-            let { store } = this.context;
+    class MonitorHeader extends React.Component{
+        constructor(props) {
+            super(props);
+            let { store } = this.props.context;
 
             this.unsubscribe = store.subscribe(() => {
                 this.forceUpdate();
             });
-        },
+        }
 
-        componentWillUpdate: function() {
+        componentWillUpdate() {
             return false;
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             this.unsubscribe();
-        },
+        }
 
-        _renderNavigation: function() {
-            let { Monitor, Device } = this.context.store.getState(),
+        _renderNavigation = () => {
+            let { Monitor, Device } = this.props.context.store.getState(),
                 history = this.props.history,
                 source = this.props.source;
 
@@ -86,9 +73,9 @@ define([
                 return (Monitor.mode === GlobalConstants.PREVIEW && history.length === 0) ?
                     folder() : back();
             };
-        },
+        }
 
-        render: function() {
+        render() {
             let nav = this._renderNavigation();
 
             return (
@@ -103,6 +90,14 @@ define([
                 </div>
             );
         }
-
-    });
+    };
+    MonitorHeader.propTypes = {
+        name:           PropTypes.string,
+        source:         PropTypes.string,
+        history:        PropTypes.array,
+        onBackClick:    PropTypes.func,
+        onFolderClick:  PropTypes.func,
+        onCloseClick:   PropTypes.func
+    }
+    return MonitorHeader;
 });

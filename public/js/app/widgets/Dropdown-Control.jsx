@@ -1,55 +1,47 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index'
-], function(React, PropTypes, ClassNames) {
+], function(PropTypes, ClassNames) {
     'use strict';
+    const React = require('react');
 
-    return React.createClass({
-
-        propTypes: {
-            id: PropTypes.string.isRequired,
-            label: PropTypes.string,
-            options: PropTypes.array,
-            default: PropTypes.string,
-            onChange: PropTypes.func.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class DropDownControl extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 selectedValue: this.props.default
-            };
-        },
+            }
+        }
 
-        shouldComponentUpdate: function(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
             var newPropIsDifferent = nextProps.default !== this.state.sliderValue,
                 newStateIsDifferent = this.state.selectedValue !== nextState.selectedValue;
 
             return newPropIsDifferent || newStateIsDifferent;
-        },
+        }
 
-        _fireChange: function(newValue, selectedIndex) {
+        _fireChange = (newValue, selectedIndex) => {
             if (this.props.id) {
                 this.props.onChange(this.props.id, newValue, selectedIndex);
             } else {
                 this.props.onChange(newValue, selectedIndex);
             }
-        },
+        }
 
-        _handleChange: function(e) {
+        _handleChange = (e) => {
             let { value, selectedIndex } = e.target;
             this.setState({ selectedValue: value }, function() {
                 this._fireChange(value, selectedIndex);
             });
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             if(nextProps.options.length !== this.props.options.length) {
                 this.forceUpdate();
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var self = this,
                 _options;
 
@@ -77,6 +69,13 @@ define([
                 </div>
             );
         }
-
-    });
+    };
+    DropDownControl.propTypes = {
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string,
+        options: PropTypes.array,
+        default: PropTypes.string,
+        onChange: PropTypes.func.isRequired
+    };
+    return DropDownControl;
 });

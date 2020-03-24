@@ -1391,6 +1391,7 @@ define(function() {
             showOutline: 'フレーム表示',
             aborting: 'アボート処理中',
             starting: '開始処理中',
+            preparing: '準備中',
             resuming: '再開中',
             scanning: 'スキャン中',
             occupied: '維持中',

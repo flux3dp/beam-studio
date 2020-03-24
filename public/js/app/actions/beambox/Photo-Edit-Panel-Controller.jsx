@@ -1,12 +1,10 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Photo-Edit-Panel'
 ], function(
-    React,
-    ReactDOM,
     PhotoEditPanel
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     class PhotoEditPanelController {
         constructor() {
             this.reactRoot = '';

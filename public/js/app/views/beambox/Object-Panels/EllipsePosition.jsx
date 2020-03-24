@@ -1,46 +1,42 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant'
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
 
 
-    return React.createClass({
-        propTypes: {
-            cx: PropTypes.number.isRequired,
-            cy: PropTypes.number.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class EllipsePosition extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 cx: this.props.cx,
                 cy: this.props.cy
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 cx: nextProps.cx,
                 cy: nextProps.cy
             });
-        },
+        }
 
-        _update_cx_handler: function(val) {
+        _update_cx_handler = (val) => {
             FnWrapper.update_ellipse_cx(val);
             this.setState({cx: val});
-        },
-        _update_cy_handler: function(val) {
+        }
+        _update_cy_handler = (val) => {
             FnWrapper.update_ellipse_cy(val);
             this.setState({cy: val});            
-        },
-        getValueCaption: function() {
+        }
+        getValueCaption = () => {
             const cx = this.state.cx, 
                 cy = this.state.cy,
                 units = localStorage.getItem('default-units', 'mm') ;
@@ -49,8 +45,8 @@ define([
             } else {
                 return `${cx}, ${cy} mm`;
             }
-        },
-        render: function() {
+        }
+        render() {
             return (
                 <div className="object-panel">
                     <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
@@ -86,6 +82,12 @@ define([
             );
         }
         
-    });
+    };
 
+    EllipsePosition.propTypes = {
+        cx: PropTypes.number.isRequired,
+        cy: PropTypes.number.isRequired
+    };
+
+    return EllipsePosition;
 });

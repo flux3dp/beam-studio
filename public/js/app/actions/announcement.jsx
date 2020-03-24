@@ -1,9 +1,9 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
-], function(React, ReactDOM, Modal) {
-
+], function(Modal) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+    
     class Announcement {
         init(reactRoot) {
             this.reactRoot = reactRoot;

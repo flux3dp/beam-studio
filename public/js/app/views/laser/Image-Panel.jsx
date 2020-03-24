@@ -1,17 +1,17 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'jsx!widgets/Radio-Group',
     'jsx!widgets/Unit-Input',
     'helpers/round'
-], function($, React, ReactDOM, RadioGroupView, UnitInput, round) {
+], function($, RadioGroupView, UnitInput, round) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-    return React.createClass({
-
-        getInitialState: function () {
-            return {
+    class ImagePanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 initialPosition: {
                     top: this.props.initialPosition.top,
                     left: this.props.initialPosition.left
@@ -19,25 +19,10 @@ define([
                 size: this.props.size,
                 sizeLock: this.props.sizeLock
             };
-        },
-
-        getDefaultProps: function() {
-            return {
-                onThresholdChanged: function() {},
-                onTransform: function() {},
-                style: {},
-                sizeLock: true,
-                mode: '',
-                angle: 0,
-                position: {},
-                size: {},
-                threshold: 0,
-                initialPosition: {}
-            };
-        },
+        }
 
         // UI events
-        _onThresholdChanged: function(e) {
+        _onThresholdChanged = (e) => {
             var self = this,
                 trigger = function() {
                     self.props.onThresholdChanged(e.currentTarget.value);
@@ -48,9 +33,9 @@ define([
             });
 
             self._thresholdTimer = trigger();
-        },
+        }
 
-        _onTransform: function(e) {
+        _onTransform = (e) => {
             var type = e.currentTarget.dataset.type,
                 newParams = {
                     angle: this.refs.objectAngle.value(),
@@ -87,9 +72,9 @@ define([
 
             console.log('imagePanel', this.props);
             this.props.onTransform(e, newParams);
-        },
+        }
 
-        _lockRatio: function(which, e) {
+        _lockRatio = (which, e) => {
             e.preventDefault();
 
             var self = this,
@@ -99,9 +84,9 @@ define([
             self.setState(state);
 
             self._onTransform(e);
-        },
+        }
 
-        _renderThreshold: function(lang, props, state) {
+        _renderThreshold = (lang, props, state) => {
             var thresholdValue = (state.threshold || props.threshold || lang.laser.object_params.threshold.default),
                 thresholdDisplay = round(thresholdValue / lang.laser.advanced.form.power.max * 100, 0);
 
@@ -123,9 +108,9 @@ define([
                 </label> :
                 ''
             );
-        },
+        }
 
-        render: function() {
+        render() {
             var props = this.props,
                 state = this.state,
                 lang = props.lang,
@@ -231,14 +216,29 @@ define([
                     </div>
                 </div>
             );
-        },
+        }
 
-        componentWillReceiveProps: function (nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 initialPosition: nextProps.initialPosition,
                 size: nextProps.size,
                 position: nextProps.position
             });
         }
-    });
+    };
+
+    ImagePanel.defaultProps = {
+        onThresholdChanged: function() {},
+        onTransform: function() {},
+        style: {},
+        sizeLock: true,
+        mode: '',
+        angle: 0,
+        position: {},
+        size: {},
+        threshold: 0,
+        initialPosition: {}
+    };
+
+    return ImagePanel;
 });

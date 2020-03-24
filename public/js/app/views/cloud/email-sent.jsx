@@ -1,10 +1,9 @@
 define([
-    'react',
     'helpers/i18n',
 ], function(
-    React,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
 
     return () => {

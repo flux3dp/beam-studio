@@ -2,7 +2,6 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox',
     'app/actions/beambox/preview-mode-background-drawer',
@@ -17,7 +16,6 @@ define([
     'lib/svgeditor/imagetracer'
 ], function(
     $,
-    React,
     PropTypes,
     BeamboxActions,
     PreviewModeBackgroundDrawer,
@@ -31,6 +29,7 @@ define([
     Cropper,
     ImageTracer
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.image_trace_panel;
 
     const imageTracerWebSocket = ImageTracerApi();

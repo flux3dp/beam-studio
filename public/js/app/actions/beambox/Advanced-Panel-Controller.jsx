@@ -1,14 +1,12 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Advanced-Panel',
     'app/actions/beambox/beambox-preference',
 ], function(
-    React,
-    ReactDOM,
     AdvancedPanel,
     BeamboxPreference
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     class AdvancedPanelController {
         constructor() {
             this.reactRoot = '';

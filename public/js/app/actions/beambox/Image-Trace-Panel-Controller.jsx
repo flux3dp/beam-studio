@@ -1,13 +1,11 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Image-Trace-Panel',
     'reactCreateReactClass'
 ], function(
-    React,
-    ReactDOM,
     ImageTracePanel
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     class ImageTracePanelController {
         constructor() {
             this.reactRoot = '';

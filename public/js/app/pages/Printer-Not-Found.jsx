@@ -1,5 +1,4 @@
 define([
-    'react',
     'app/actions/initialize-machine',
     'helpers/api/discover',
     'helpers/api/upnp-config',
@@ -9,7 +8,6 @@ define([
     'app/constants/progress-constants',
     'app/actions/alert-actions'
 ], function(
-    React,
     initializeMachine,
     discover,
     upnpConfig,
@@ -19,6 +17,8 @@ define([
     ProgressConstants,
     AlertActions
 ) {
+    const React = require('react');
+
     'use strict';
 
     return function(args) {
@@ -26,22 +26,21 @@ define([
 
         args = args || {};
 
-        return React.createClass({
-
-            // Lifecycle
-            getInitialState: function() {
-                return {
+        class PrinterNotFound extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     lang: args.state.lang
                 };
-            },
+            }
 
-            componentWillUnmount: () => {
+            componentWillUnmount = () => {
                 if (typeof upnpMethods !== 'undefined') {
                     upnpMethods.connection.close();
                 }
-            },
+            }
 
-            _retrieveDevice: function(e) {
+            _retrieveDevice = (e) => {
                 var self = this,
                     currentPrinter,
                     discoverMethods = discover('upnp-config', (printers) => {
@@ -68,9 +67,9 @@ define([
                     }, 1000);
 
                 ProgressActions.open(ProgressConstants.NONSTOP);
-            },
+            }
 
-            render : function() {
+            render() {
                 const lang = this.state.lang;
                 const localLang = lang.initialize.notice_from_device;
                 const wrapperClassName = {
@@ -100,6 +99,8 @@ define([
                     <Modal className={wrapperClassName} content={content}/>
                 );
             }
-        });
+        };
+
+        return PrinterNotFound;
     };
 });

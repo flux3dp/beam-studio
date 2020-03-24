@@ -1,12 +1,11 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/sprintf',
 ], function(
-    React,
     i18n,
     Sprintf
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
     return () => {
         const _handleCancel = () => location.hash = '#studio/print';

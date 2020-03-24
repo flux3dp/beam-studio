@@ -1,18 +1,16 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Object-Panels/Object-Panels',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/constant',
     'app/actions/beambox/beambox-global-interaction',
 ], function(
-    React,
-    ReactDOM,
     ObjectPanels,
     FnWrapper,
     Constant,
     BeamboxGlobalInteraction
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     let _pixel2mm = function(pixel_input) {
         const dpmm = Constant.dpmm;
         return Number(pixel_input)/dpmm;

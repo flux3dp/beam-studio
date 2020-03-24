@@ -1,5 +1,4 @@
 define([
-    'react',
     'jsx!widgets/Modal',
     'jsx!widgets/Dropdown-Control',
     'jsx!widgets/Switch-Control',
@@ -7,7 +6,6 @@ define([
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
-    React,
     Modal,
     DropDownControl,
     SwitchControl,
@@ -15,6 +13,7 @@ define([
     BeamboxPreference,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.left_panel.advanced_panel;
 
     // value is one of low, medium, high

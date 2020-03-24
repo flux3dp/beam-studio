@@ -52,7 +52,10 @@ gulp.task('sass', function () {
 
 gulp.task('jsx', function () {
     return gulp.src('./public/js/**/*.jsx')
-        .pipe(react())
+        .pipe(babel({
+            presets: ['@babel/preset-react'],
+            "plugins": ["@babel/plugin-proposal-class-properties"]
+        }))
         .pipe(gulp.dest('./public/js/jsx/'));
 });
 

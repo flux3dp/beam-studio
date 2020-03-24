@@ -1,18 +1,17 @@
 define([
-    'react',
-    'reactDOM',
     'jsx!views/beambox/Tool-Panels/Tool-Panels',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/constant',
     'app/actions/beambox/beambox-global-interaction',
 ], function(
-    React,
-    ReactDOM,
     ToolPanels,
     FnWrapper,
     Constant,
     BeamboxGlobalInteraction
 ){
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+
     let _toFixed = function(val) {
         const decimal = 2;
         return Number(Number(val).toFixed(decimal));

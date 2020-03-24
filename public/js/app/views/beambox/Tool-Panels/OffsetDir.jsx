@@ -1,14 +1,13 @@
 define([
-    'react',
     'reactPropTypes',
     'jsx!widgets/Select',
     'helpers/i18n',
 ], function(
-    React,
     PropTypes,
     SelectView,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.tool_panels;
     class OffsetDirPanel extends React.Component {
         constructor(props) {

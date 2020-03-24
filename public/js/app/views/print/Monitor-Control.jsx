@@ -1,16 +1,15 @@
 define([
-    'react',
     'reactPropTypes',
     'app/constants/global-constants',
     'app/constants/device-constants',
     'plugins/classnames/index',
 ], (
-    React,
     PropTypes,
     GlobalConstants,
     DeviceConstants,
     ClassNames
 ) => {
+    const React = require('react');
 
     'use strict';
 
@@ -20,35 +19,27 @@ define([
 
     const type = { FILE: 'FILE', FOLDER: 'FOLDER' };
 
-    return React.createClass({
-        PropTypes: {
-
-        },
-
-        contextTypes: {
-            store: PropTypes.object,
-            lang: PropTypes.object
-        },
-
-        componentWillMount: function() {
-            let { store } = this.context;
+    class MonitorControl extends React.Component{
+        constructor(props) {
+            super(props);
+            let { store } = this.props.context;
 
             this.unsubscribe = store.subscribe(() => {
                 this.forceUpdate();
             });
-        },
+        }
 
-        componentWillUpdate: function() {
+        componentWillUpdate() {
             return false;
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             this.unsubscribe();
-        },
+        }
 
-        _operation: function() {
-            let { Monitor, Device } = this.context.store.getState();
-            let { lang } = this.context;
+        _operation = () => {
+            let { Monitor, Device } = this.props.context.store.getState();
+            let { lang } = this.props.context;
 
             let cameraClass = ClassNames('btn-camera btn-control', { 'on': Monitor.mode === GlobalConstants.CAMERA }),
                 cameraDescriptionClass = ClassNames('description', { 'on': Monitor.mode === GlobalConstants.CAMERA }),
@@ -127,20 +118,20 @@ define([
                     );
                 }
             };
-        },
+        }
 
-        _isAbortedOrCompleted: function(statusId) {
-            let { Device } = this.context.store.getState();
+        _isAbortedOrCompleted = (statusId) => {
+            let { Device } = this.props.context.store.getState();
             statusId = statusId || Device.status.st_id;
             return (
                 statusId === DeviceConstants.status.ABORTED ||
                 statusId === DeviceConstants.status.COMPLETED
             );
-        },
+        }
 
-        _getJobType: function() {
-            let { lang } = this.context, jobInfo, o;
-            let { Monitor, Device } = this.context.store.getState();
+        _getJobType = () => {
+            let { lang } = this.props.context, jobInfo, o;
+            let { Monitor, Device } = this.props.context.store.getState();
 
             jobInfo = Monitor.mode === GlobalConstants.FILE_PREVIEW ? Monitor.selectedFileInfo : Device.jobInfo;
             o = findObjectContainsProperty(jobInfo, 'HEAD_TYPE');
@@ -151,10 +142,10 @@ define([
             }
 
             return o.length > 0 ? lang.monitor.task[o[0].HEAD_TYPE.toUpperCase()] : '';
-        },
+        }
 
-        _renderButtons: function() {
-            let { Monitor, Device } = this.context.store.getState()
+        _renderButtons = () => {
+            let { Monitor, Device } = this.props.context.store.getState()
             let { selectedItem } = Monitor;
             let commands, action, statusId, currentStatus;
             let leftButtonOn = false,
@@ -301,9 +292,9 @@ define([
                 middleButton,
                 rightButton
             };
-        },
+        }
 
-        render: function() {
+        render() {
             let { leftButton, middleButton, rightButton } = this._renderButtons();
 
             return (
@@ -314,6 +305,6 @@ define([
                 </div>
             );
         }
-
-    });
+    };
+    return MonitorControl;
 });

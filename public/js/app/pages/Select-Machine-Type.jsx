@@ -1,20 +1,19 @@
 define([
-    'react',
     'jsx!widgets/Modal',
     'helpers/i18n',
 ], function (
-    React,
     Modal,
     i18n
 ) {
     'use strict';
+    const React = require('react');
 
     const lang = i18n.lang;
 
     return function () {
-        return React.createClass({
+        return class SelectMachineType extends React.Component{
 
-            _renderSelectMachineStep: function () {
+            _renderSelectMachineStep = () => {
                 return (
                     <div className="select-machine-type">
                         <h1 className="main-title">{lang.initialize.select_machine_type}</h1>
@@ -40,11 +39,11 @@ define([
                         </div>
                     </div>
                 );
-            },
+            }
 
 
 
-            render: function () {
+            render() {
                 const wrapperClassName = {
                     'initialization': true
                 };
@@ -64,8 +63,8 @@ define([
                 return (
                     <Modal className={wrapperClassName} content={content} />
                 );
-            },
+            }
 
-        });
+        };
     };
 });

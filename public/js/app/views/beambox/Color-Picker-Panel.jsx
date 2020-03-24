@@ -2,22 +2,14 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
-    'reactDOM',
-    'helpers/i18n',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'jsx!widgets/Modal',
+    'helpers/i18n'
 ], function(
     $,
-    React,
-    ReactDOM,
-    i18n,
-    ProgressActions,
-    ProgressConstants,
-    Modal
+    i18n
 ) {
     const LANG = i18n.lang.beambox.photo_edit_panel;
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     
     class ColorPickerPanel extends React.Component{
         constructor(props) {

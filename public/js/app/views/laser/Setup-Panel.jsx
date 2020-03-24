@@ -1,7 +1,5 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'reactClassset',
     'jsx!widgets/List',
     'jsx!widgets/Modal',
@@ -18,8 +16,6 @@ define([
     'plugins/classnames/index'
 ], function(
     $,
-    React,
-    ReactDOM,
     ReactCx,
     List,
     Modal,
@@ -36,20 +32,14 @@ define([
     ClassNames
 ) {
     'use strict';
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     var lang = i18n.lang;
 
-    return React.createClass({
-
-        getDefaultProps: function() {
-            return {
-                defaults: {},
-                imageFormat: 'bitmap',  // svg, bitmap
-                onShadingChanged: function() {}
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class SetupPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 openAdvancedPanel: false,
                 openCustomPresets: false,
                 hasSelectedPreset: false,
@@ -61,19 +51,19 @@ define([
                     message: ''
                 }
             };
-        },
+        }
 
-        isShading: function() {
+        isShading = () => {
             if ('undefined' === typeof this.refs.shading) {
                 return true;
             }
             else {
                 return this.refs.shading.isChecked();
             }
-        },
+        }
 
         // UI Events
-        _togglePanel: function(name, open) {
+        _togglePanel = (name, open) => {
             var self = this,
                 panelMap = {
                     advanced: [{
@@ -102,20 +92,20 @@ define([
 
                 self.setState(state);
             };
-        },
+        }
 
-        _openAdvancedPanel: function(e) {
+        _openAdvancedPanel = (e) => {
             this._togglePanel('advanced', true)();
-        },
+        }
 
-        _onAdvanceDone: function(material) {
+        _onAdvanceDone = (material) => {
             this._saveLastestSet({
                 material: material
             });
             this._togglePanel('advanced', false)();
-        },
+        }
 
-        _onSaveCustomPreset: function(material) {
+        _onSaveCustomPreset = (material) => {
             var customPresets = config().read('laser-custom-presets') || [],
                 sameNamePresets = customPresets.some(function(preset) {
                     return preset.label === material.label;
@@ -138,9 +128,9 @@ define([
             }
 
             return !sameNamePresets;
-        },
+        }
 
-        _saveLastestSet: function(opts) {
+        _saveLastestSet = (opts) => {
             opts = opts || {};
             opts.material = opts.material || this.state.defaults.material;
             opts.objectHeight = ('number' === typeof opts.objectHeight ? opts.objectHeight : this.state.defaults.objectHeight);
@@ -150,9 +140,9 @@ define([
             config().write('laser-defaults', opts);
 
             this.setState({ defaults: opts });
-        },
+        }
 
-        _onPickupMaterial: function(e) {
+        _onPickupMaterial = (e) => {
             e.preventDefault();
 
             var self = this,
@@ -172,29 +162,29 @@ define([
 
                 self.openSubPopup(e);
             }
-        },
+        }
 
-        _onShadingChanged: function(e) {
+        _onShadingChanged = (e) => {
             this.props.onShadingChanged(e);
             this._saveLastestSet({ isShading: this.isShading() });
-        },
+        }
 
-        openSubPopup: function(e) {
+        openSubPopup = (e) => {
             this.refs.dialogMenu.toggleSubPopup(e);
-        },
+        }
 
-        _refreshObjectHeight: function(e, value) {
+        _refreshObjectHeight = (e, value) => {
             this._saveLastestSet({ objectHeight: value });
             this.openSubPopup(e);
-        },
+        }
 
-        _refreshHeightOffset: function(e, value) {
+        _refreshHeightOffset = (e, value) => {
             this._saveLastestSet({ heightOffset: value });
             this.openSubPopup(e);
-        },
+        }
 
         // Lifecycle
-        _renderCustomPresets: function() {
+        _renderCustomPresets = () => {
             var self = this,
                 customPresets = config().read('laser-custom-presets') || [],
                 buttons = [
@@ -339,14 +329,14 @@ define([
                 /> :
                 ''
             );
-        },
+        }
 
-        _onLoadCalibrationImage() {
+        _onLoadCalibrationImage = () => {
             this.props.onLoadCalibrationImage();
             this._togglePanel('advanced', false)();
-        },
+        }
 
-        _renderAdvancedPanel: function(default_material) {
+        _renderAdvancedPanel = (default_material) => {
             var content = (
                     <AdvancedPanel
                         lang={lang}
@@ -369,9 +359,9 @@ define([
                 /> :
                 ''
             );
-        },
+        }
 
-        _renderHeightOffset: function() {
+        _renderHeightOffset = () => {
             return {
                 label: (
                     <div title={lang.laser.title.height_offset}>
@@ -392,9 +382,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderObjectHeight: function() {
+        _renderObjectHeight = () => {
             return {
                 label: (
                     <div title={lang.laser.title.object_height}>
@@ -415,9 +405,9 @@ define([
                     </div>
                 )
             };
-        },
+        }
 
-        _renderMaterialSelection: function() {
+        _renderMaterialSelection = () => {
             var state = this.state,
                 materialOptions = lang.laser.advanced.form.object_options.options,
                 defaultMaterial;
@@ -442,9 +432,9 @@ define([
                     />
                 )
             };
-        },
+        }
 
-        _renderShading: function() {
+        _renderShading = () => {
             var checked = ('undefined' !== typeof this.props.imageFormat && 'svg' === this.props.imageFormat ? false : this.state.defaults.isShading),
                 classes = ReactCx.cx('display-text', 'shading');
             return {
@@ -465,9 +455,9 @@ define([
                 },
                 content: ''
             };
-        },
+        }
 
-        _renderAlert: function() {
+        _renderAlert = () => {
             var buttons = [{
                 label: lang.laser.confirm,
                 dataAttrs: {
@@ -493,9 +483,9 @@ define([
                 /> :
                 ''
             );
-        },
+        }
 
-        _renderAdvancedButton: function() {
+        _renderAdvancedButton = () => {
             return {
                 label: (
                     <button
@@ -509,9 +499,9 @@ define([
                 ),
                 content: ''
             };
-        },
+        }
 
-        render: function() {
+        render() {
             var advancedPanel = this._renderAdvancedPanel(this.state.defaults.material),
                 customPresets = this._renderCustomPresets(),
                 alert = this._renderAlert(),
@@ -534,5 +524,13 @@ define([
             );
         }
 
-    });
+    };
+
+    SetupPanel.defaultProps = {
+        defaults: {},
+        imageFormat: 'bitmap',  // svg, bitmap
+        onShadingChanged: function() {}
+    };
+
+    return SetupPanel;
 });

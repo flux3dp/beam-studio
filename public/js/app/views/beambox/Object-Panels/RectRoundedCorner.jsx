@@ -1,38 +1,35 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
     'app/actions/beambox/constant',
-], function($, React, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
 
-    return React.createClass({
-        propTypes: {
-            rx: PropTypes.number.isRequired
-        },
-
-        getInitialState: function() {
-            return {
+    class RectRoundedCorner extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 rx: this.props.rx
-            };
-        },
+            }
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 rx: nextProps.rx
             });
-        },
+        }
 
-        _update_rx_handler: function(val) {
+        _update_rx_handler = (val) => {
             FnWrapper.update_ellipse_rx(val);
             this.setState({rx: val});
-        },
+        }
 
-        getValueCaption: function() {
+        getValueCaption = () => {
             const rx = this.state.rx,
                 units = localStorage.getItem('default-units', 'mm') ;
             if (units === 'inches') {
@@ -40,9 +37,9 @@ define([
             } else {
                 return `${rx} mm`;
             }
-        },
+        }
 
-        render: function() {
+        render() {
             return (
                 <div className="object-panel">
                     <label className="controls accordion" onClick={() => {FnWrapper.resetObjectPanel()}}>
@@ -69,5 +66,12 @@ define([
                 </div>
             );
         }
-    });
+    };
+
+    RectRoundedCorner.propTypes = {
+        rx: PropTypes.number.isRequired
+    };
+
+    return RectRoundedCorner;
+
 });

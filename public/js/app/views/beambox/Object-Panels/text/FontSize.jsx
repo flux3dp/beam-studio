@@ -1,7 +1,7 @@
 define([
-    'react',
     'jsx!widgets/Unit-Input-v2',
-], function(React, UnitInput) {
+], function(UnitInput) {
+    const React = require('react');
 
     const FontSize = ({currentFontSize, onChange}) => {
         return (

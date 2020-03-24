@@ -1,5 +1,4 @@
 define([
-    'react',
     'reactClassset',
     'app/actions/initialize-machine',
     'helpers/api/discover',
@@ -12,7 +11,6 @@ define([
     'app/constants/progress-constants',
     'helpers/device-master'
 ], function(
-    React,
     ReactCx,
     initializeMachine,
     discover,
@@ -26,45 +24,46 @@ define([
     DeviceMaster
 ) {
     'use strict';
+    const React = require('react');
 
     return function(args) {
         var upnpMethods,
             usbConnectionTestingTimer,
             args = args || {};
 
-        return React.createClass({
-            // Lifecycle
-
-            componentWillMount: function() {
-            },
-
-            getInitialState: function() {
+        class ConnectMachine extends  React.Component{
+            constructor(props) {
+                super(props);
                 var self = this;
                 usbConnectionTestingTimer = setInterval(function() {
                     self.setState({usbConnected: (DeviceMaster.getAvailableUsbChannel() >= 0)});
                 }, 1000);
-                return {
+                this.state = {
                     lang: args.state.lang,
                     showPrinters: false,
                     usbConnected: false
                 };
-            },
+            }
+            // Lifecycle
 
-            componentWillUnmount: () => {
+            componentWillMount() {
+            }
+
+            componentWillUnmount() {
                 if ('undefined' !== typeof upnpMethods) {
                     upnpMethods.connection.close();
                 }
                 clearInterval(usbConnectionTestingTimer);
-            },
+            }
 
             // UI events
-            _setSettingPrinter: function(printer) {
+            _setSettingPrinter = (printer) => {
                 // temporary store for setup
                 initializeMachine.settingPrinter.set(printer);
                 location.hash = '#initialize/wifi/set-printer';
-            },
+            }
 
-            _onUsbStartingSetUp: function(e) {
+            _onUsbStartingSetUp = (e) => {
                 var self = this,
                     lang = this.state.lang,
                     usb = usbConfig({forceReconnect: true});
@@ -86,9 +85,9 @@ define([
                         );
                     }
                 });
-            },
+            }
 
-            _onWifiStartingSetUp: function(e) {
+            _onWifiStartingSetUp = (e) => {
                 var self = this,
                     discoverMethods,
                     timer;
@@ -117,18 +116,18 @@ define([
                 }, 1000);
 
                 self._toggleBlocker(true);
-            },
+            }
 
-            _toggleBlocker: function(open) {
+            _toggleBlocker = (open) => {
                 if (true === open) {
                     ProgressActions.open(ProgressConstants.NONSTOP);
                 }
                 else {
                     ProgressActions.close();
                 }
-            },
+            }
 
-            _onGettingPrinter: function(currentPrinter) {
+            _onGettingPrinter = (currentPrinter) => {
                 var self = this,
                     lastError;
 
@@ -163,16 +162,16 @@ define([
                         break;
                     }
                 });
-            },
+            }
 
-            _closePrinterList: function() {
+            _closePrinterList = () => {
                 this.setState({
                     showPrinters: false
                 });
-            },
+            }
 
 
-            _renderPrinters: function(lang) {
+            _renderPrinters = (lang) => {
                 var content = (
                     <PrinterSelector
                         uniqleId="connect-via-wifi"
@@ -190,9 +189,9 @@ define([
                     <Modal onClose={this._closePrinterList} content={content}/> :
                     ''
                 );
-            },
+            }
 
-            _renderConnectionStep : function() {
+            _renderConnectionStep = () => {
                 const lang = this.state.lang;
                 const usbButtonClass = ReactCx.cx({
                     'btn': true,
@@ -228,9 +227,9 @@ define([
                         {useUsb}
                     </div>
                 );
-            },
+            }
 
-            render: function() {
+            render() {
                 const lang = this.state.lang;
                 const wrapperClassName = {
                     'initialization': true
@@ -253,8 +252,9 @@ define([
                 return (
                     <Modal className={wrapperClassName} content={content}/>
                 );
-            },
+            }
+        };
 
-        });
+        return ConnectMachine;
     };
 });

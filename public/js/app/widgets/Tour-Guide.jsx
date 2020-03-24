@@ -1,46 +1,45 @@
 define([
-    'react',
     'reactPropTypes',
     'app/actions/alert-actions',
     'helpers/device-master',
 ], function(
-    React,
     PropTypes,
     AlertActions,
     DeviceMaster
 ) {
+    const React = require('react');
 
     var lang;
 
-    return React.createClass({
-
-        propTypes: {
+    return class TourGuide extends React.Component{
+        static propTypes = {
             lang: PropTypes.object,
             guides: PropTypes.array,
             step: PropTypes.number,
             onNextClick: PropTypes.func,
             onComplete: PropTypes.func
-        },
+        }
 
-        getInitialState: function() {
-            return {
+        constructor(props) {
+            super(props);
+            this.state = {
                 currentStep: this.props.step || 0
             };
-        },
+        }
 
-        componentWillMount: function() {
+        componentWillMount() {
             lang = this.props.lang;
-        },
+        }
 
-        _handleTourNavigation: function(e) {
+        _handleTourNavigation = (e) => {
             e.preventDefault();
             this.props.onNextClick();
             if(this.props.step === this.props.guides.length - 1) {
                 this.props.onComplete();
             }
-        },
+        }
 
-        _renderTourMask: function(hole, text, r, position) {
+        _renderTourMask = (hole, text, r, position) => {
             var content = (
                 `<svg class="tour" style="width: 100%; height: 100%; position: absolute; z-index: 99999; left:0;">
                     <rect width="100%" mask="url(#hole)" height="100%" fill="rgba(0,0,0,0.3)"></rect>
@@ -56,9 +55,9 @@ define([
             return {
                 __html: content
             };
-        },
+        }
 
-        render: function() {
+        render() {
             var _o = $(this.props.guides[this.props.step].selector),
                 _offset_x = this.props.guides[this.props.step].offset_x,
                 _offset_y = this.props.guides[this.props.step].offset_y,
@@ -126,6 +125,6 @@ define([
             );
         }
 
-    });
+    };
 
 });

@@ -1,10 +1,11 @@
 define([
-    'react',
     'reactPropTypes',
     'plugins/classnames/index',
     'jsx!widgets/Unit-Input'
-], function(React, PropTypes, ClassNames, UnitInput) {
+], function(PropTypes, ClassNames, UnitInput) {
     'use strict';
+
+    const React = require('react');
 
     var refSize,
         lastModifiedAxis,
@@ -16,31 +17,17 @@ define([
         cursors = {},
         prevState = "";
 
-    return React.createClass({
-        propTypes: {
-            lang            : PropTypes.object,
-            model           : PropTypes.object,
-            mode            : PropTypes.string,
-            scaleLocked     : PropTypes.bool,
-            onRotate        : PropTypes.func,
-            onScale         : PropTypes.func,
-            onScaleLock     : PropTypes.func,
-            onResize        : PropTypes.func,
-            onFocus         : PropTypes.func,
-            onModeChange    : PropTypes.func,
-            isTransforming  : PropTypes.bool,
-            style           : PropTypes.object
-        },
-
-        getInitialState: function() {
+    class ObjectDialog extends React.Component{
+        constructor(props) {
+            super(props);
             this._updateSizeProperty(this.props.model.size);
-            return ({
+            this.state = {
                 _size: _size,
                 scaleLocked: this.props.scaleLocked
-            });
-        },
+            };
+        }
 
-        componentWillMount: function() {
+        componentWillMount() {
             rotation.x = this.props.model.rotation.x;
             rotation.y = this.props.model.rotation.y;
             rotation.z = this.props.model.rotation.z;
@@ -48,16 +35,16 @@ define([
             rotation.enteredX = this.props.model.rotation.enteredX;
             rotation.enteredY = this.props.model.rotation.enteredY;
             rotation.enteredZ = this.props.model.rotation.enteredZ;
-        },
+        }
 
-        componentDidMount: function() {
+        componentDidMount() {
             this._openAccordion(this.props.mode);
             refSize = this.props.model.size.clone();
             this._updateSizeProperty(refSize);
             this.props.onFocus(false);
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this._openAccordion(nextProps.mode);
             rotation.x = this.props.model.rotation.x;
             rotation.y = this.props.model.rotation.y;
@@ -66,9 +53,9 @@ define([
             rotation.enteredX = this.props.model.rotation.enteredX;
             rotation.enteredY = this.props.model.rotation.enteredY;
             rotation.enteredZ = this.props.model.rotation.enteredZ;
-        },
+        }
 
-        componentWillUpdate: function(nextProp, nextState) {
+        componentWillUpdate(nextProp, nextState) {
             // update from transform control
             if(!this._hasSameSize(nextProp.model.size, refSize)) {
                 refSize = nextProp.model.size.clone();
@@ -77,9 +64,9 @@ define([
                 _size.originalZ = refSize.originalZ;
                 this._updateSizeProperty(nextProp.model.size);
             }
-        },
+        }
 
-        shouldComponentUpdate: function(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
             var tmp = Object.assign({}, rotation);
 
             Object.assign(tmp, nextState);
@@ -88,17 +75,17 @@ define([
             if (prevState == updateContent) return false;
             prevState = updateContent;
             return true;
-        },
+        }
 
-        _hasSameSize: function(size1, size2) {
+        _hasSameSize = (size1, size2) => {
             return (
                 size1.x === size2.x &&
                 size1.y === size2.y &&
                 size1.z === size2.z
             );
-        },
+        }
 
-        _updateSizeProperty: function(size) {
+        _updateSizeProperty = (size) => {
             if (_size == null) {
                 _size = size.clone();
                 _size['originalX'] = size.originalX;
@@ -120,18 +107,18 @@ define([
             }.bind(this));
 
             this.setState({_size: _size});
-        },
+        }
 
-        _openAccordion(name) {
+        _openAccordion = (name) => {
             $('.accordion-switcher').prop('checked', '');
             $('.accordion-switcher').map(function(i, target) {
                 if(target.name === name) {
                     $(target).prop('checked', 'checked');
                 }
             });
-        },
+        }
 
-        _getLargestPropertyValue(src) {
+        _getLargestPropertyValue = (src) => {
             var p, x, y, z;
             p = 'x';
             x = src.x;
@@ -142,9 +129,9 @@ define([
             if(y < z) { p = 'z'; }
 
             return p;
-        },
+        }
 
-        _handleResize: function(src, value) {
+        _handleResize = (src, value) => {
             if(src.keyCode !== 13) {
                 return;
             }
@@ -185,9 +172,9 @@ define([
             this.props.onResize(_size);
 
             this.setState({ size: _size });
-        },
+        }
 
-        _handleUpdateSize: function(e) {
+        _handleUpdateSize = (e) => {
             if(e.keyCode === 13 || e.type === 'blur') {
                 _size.x = this._getNumberOnly(_size['enteredX']) * _ratio;
                 _size.y = this._getNumberOnly(_size['enteredY']) * _ratio;
@@ -197,14 +184,14 @@ define([
                 this._updateSizeProperty(_size);
                 this.props.onResize(_size);
             }
-        },
+        }
 
-        _handleToggleScaleLock: function() {
+        _handleToggleScaleLock = () => {
             this.props.onScaleLock(_size, !this.state.scaleLocked);
             this.setState({ scaleLocked: !this.state.scaleLocked });
-        },
+        }
 
-        _handleRotationChange: function(e) {
+        _handleRotationChange = (e) => {
             if(e.type === 'blur') {
                 rotation['entered' + e.target.id.toUpperCase()] = parseInt(e.target.value) || 0;
                 this.props.onRotate(rotation);
@@ -223,27 +210,27 @@ define([
                 this.forceUpdate();
             }
 
-        },
+        }
 
-        _handleModeChange: function(e) {
+        _handleModeChange = (e) => {
             this._openAccordion(e.target.name);
             this.props.onModeChange(e.target.name);
             this.props.onFocus(false);
-        },
+        }
 
-        _getNumberOnly: function(string) {
+        _getNumberOnly = (string) => {
             return parseFloat(string.replace(/[^0-9\.]+/g, ''));
-        },
+        }
 
-        _roundSizeToTwoDecimalPlace: function(src) {
+        _roundSizeToTwoDecimalPlace = (src) => {
             return parseFloat((Math.round(src * 100) / 100).toFixed(2));
-        },
+        }
 
-        _inputFocused: function(e) {
+        _inputFocused = (e) => {
             this.props.onFocus(true);
-        },
+        }
 
-        _rotationKeyUp: function(e) {
+        _rotationKeyUp = (e) => {
             if(e.keyCode === 13) {
             }
 
@@ -256,9 +243,9 @@ define([
                     this.props.onRotate(rotation);
                 }.bind(this), 500);
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var lang            = this.props.lang,
                 dialogueClass   = ClassNames('object-dialogue', {'through': this.props.isTransforming}),
                 lockClass       = ClassNames('lock', { 'unlock': !this.state.scaleLocked });
@@ -415,5 +402,22 @@ define([
             );
         }
 
-    });
+    };
+
+    ObjectDialog.propTypes =  {
+        lang            : PropTypes.object,
+        model           : PropTypes.object,
+        mode            : PropTypes.string,
+        scaleLocked     : PropTypes.bool,
+        onRotate        : PropTypes.func,
+        onScale         : PropTypes.func,
+        onScaleLock     : PropTypes.func,
+        onResize        : PropTypes.func,
+        onFocus         : PropTypes.func,
+        onModeChange    : PropTypes.func,
+        isTransforming  : PropTypes.bool,
+        style           : PropTypes.object
+    };
+
+    return ObjectDialog;
 });

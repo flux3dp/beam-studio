@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'lib/jquery.growl',
     'helpers/api/config',
     'helpers/check-software-update',
@@ -35,7 +34,6 @@ define([
     'helpers/device-master',
 ], function(
     $,
-    React,
     Notifier,
     config,
     checkSoftwareUpdate,
@@ -70,6 +68,7 @@ define([
     DeviceMaster
 ) {
     'use strict';
+    const React = require('react');
 
     return function(args) {
         args = args || {};
@@ -77,12 +76,10 @@ define([
         var lang = args.state.lang,
             FIRST_DEVICE_UPDATE = 'check-first-device-firmware';
 
-        return React.createClass({
-
-            getInitialState: function() {
-                var self = this;
-
-                return {
+        return class NotificationCollection extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {
                     // monitor
                     showMonitor           : false,
                     fcode                 : {},
@@ -154,9 +151,9 @@ define([
                     displayImages: false,
                     images: []
                 };
-            },
+            }
 
-            componentDidMount: function() {
+            componentDidMount() {
                 var self = this,
                     discoverMethods,
                     firstDevice,
@@ -229,9 +226,9 @@ define([
                 }
 
                 DeviceMaster.registerUsbEvent('DASHBOARD', this._monitorUsb);
-            },
+            }
 
-            componentWillUnmount: function() {
+            componentWillUnmount() {
                 AlertStore.removeNotifyListener(this._handleNotification);
                 AlertStore.removePopupListener(this._handlePopup);
                 AlertStore.removeClosePopupListener(this._handleClosePopup);
@@ -245,23 +242,23 @@ define([
                 // input lightbox
                 InputLightboxStore.removeOpenedListener(this._handleInputLightBoxOpen);
 
-                GlobalStore.removeShowMoniotorListener();
-                GlobalStore.removeCloseMonitorListener();
-                GlobalStore.removeCloseAllViewListener();
-                GlobalStore.removeSliceCompleteListener();
-            },
+                GlobalStore.removeShowMoniotorListener(this._handleOpenMonitor);
+                GlobalStore.removeCloseMonitorListener(this._handlecloseMonitor);
+                GlobalStore.removeCloseAllViewListener(this._handleCloseAllView);
+                GlobalStore.removeSliceCompleteListener(this._handleSliceReport);
+            }
 
 
-            _monitorUsb: function(usbOn) {
+            _monitorUsb = (usbOn) => {
                 if(this.state.showMonitor) {
                     if(!usbOn) {
                         this._handlecloseMonitor();
                         AlertActions.showPopupError('USB_UNPLUGGED', lang.message.usb_unplugged);
                     }
                 }
-            },
+            }
 
-            _onYes: function(id) {
+            _onYes = (id) => {
                 var self = this;
 
                 if (id === FIRST_DEVICE_UPDATE) {
@@ -271,9 +268,9 @@ define([
                         firmwareUpdater(self.state.firstDevice.apiResponse, self.state.firstDevice.info, 'firmware');
                     }, 0);
                 }
-            },
+            }
 
-            _showChangeFilament: function(payload) {
+            _showChangeFilament = (payload) => {
                 if (false === this.state.changeFilament.open) {
                     this.setState({
                         changeFilament: {
@@ -283,9 +280,9 @@ define([
                         }
                     });
                 }
-            },
+            }
 
-            _showCameraCalibration: function(payload) {
+            _showCameraCalibration = (payload) => {
                 this.setState({
                     cameraCalibration: {
                         open: true,
@@ -293,25 +290,25 @@ define([
                         borderless: payload.borderless
                     }
                 });
-            },
+            }
 
-            _hideChangeFilament: function() {
+            _hideChangeFilament = () => {
                 this.setState({
                     changeFilament: {
                         open: false
                     }
                 });
-            },
+            }
 
-            _closeHeadTemperature: function() {
+            _closeHeadTemperature = () => {
                 this.setState({
                     headTemperature: {
                         show: false
                     }
                 });
-            },
+            }
 
-            _showUpdate: function(payload) {
+            _showUpdate = (payload) => {
                 var currentVersion = (
                       'software' === payload.type ?
                       payload.updateInfo.currentVersion :
@@ -335,9 +332,9 @@ define([
                         onInstall: payload.onInstall
                     }
                 });
-            },
+            }
 
-            _showHeadTemperature: function(payload) {
+            _showHeadTemperature = (payload) => {
                 if(this.state.headTemperature.show === false) {
                     this.setState({
                         headTemperature: {
@@ -346,26 +343,26 @@ define([
                         }
                     });
                 }
-            },
+            }
 
-            _handleUpdateClose: function() {
+            _handleUpdateClose = () => {
                 this.setState({
                     application: {
                         open: false,
                         device: this.state.application.device
                     }
                 });
-            },
+            }
 
-            _handleUpdateDownload: function() {
+            _handleUpdateDownload = () => {
                 this.state.application.onDownload();
-            },
+            }
 
-            _handleUpdateInstall: function() {
+            _handleUpdateInstall = () => {
                 this.state.application.onInstall();
-            },
+            }
 
-            _handleInputLightBoxOpen: function(payload) {
+            _handleInputLightBoxOpen = (payload) => {
                 this.setState({
                     inputLightbox: {
                         open         : true,
@@ -379,9 +376,9 @@ define([
                         onSubmit     : payload.onSubmit || function() {}
                     }
                 });
-            },
+            }
 
-            _handleInputLightBoxClosed: function(e, reactid, from) {
+            _handleInputLightBoxClosed = (e, reactid, from) => {
                 this.setState({
                     inputLightbox: {
                         open: false
@@ -394,13 +391,13 @@ define([
                 else if(from === 'cancel') {
                     this.state.inputLightbox.onClose();
                 }
-            },
+            }
 
-            _handleInputLightBoxSubmit: function(value) {
+            _handleInputLightBoxSubmit = (value) => {
                 return this.state.inputLightbox.onSubmit(value);
-            },
+            }
 
-            _handleProgress: function(payload) {
+            _handleProgress = (payload) => {
                 var self = this,
                     hasStop;
 
@@ -426,9 +423,9 @@ define([
                         payload.onOpened();
                     }
                 });
-            },
+            }
 
-            _handleProgressFinish: function() {
+            _handleProgressFinish = () => {
                 var self = this;
 
                 self.state.progress.onFinished();
@@ -439,9 +436,9 @@ define([
                         onFinished: self.state.progress.onFinished
                     }
                 });
-            },
+            }
 
-            _handleProgressStop: function(payload) {
+            _handleProgressStop = (payload) => {
                 GlobalActions.cancelPreview();
                 (this.state.progress.onStop || function() {})();
                 this.setState({
@@ -450,9 +447,9 @@ define([
                         onFinished: this.state.progress.onStop
                     }
                 });
-            },
+            }
 
-            _handleNotification: function(type, message, onClickCallback, fixed) {
+            _handleNotification = (type, message, onClickCallback, fixed) => {
                 var growl;
                 fixed = fixed || false;
 
@@ -491,13 +488,13 @@ define([
                         onClickCallback(growl);
                     });
                 }, 500);
-            },
+            }
 
-            _handleCloseNotification: function() {
+            _handleCloseNotification = () => {
                 $('#growls').remove();
-            },
+            }
 
-            _handlePopup: function(type, id, caption, message, customText, args, callback={}) {
+            _handlePopup = (type, id, caption, message, customText, args, callback={}) => {
                 var customTextGroup = Array.isArray(customText) ? customText : [''];
                 console.log('_handlepopup_callback', callback);
 
@@ -516,13 +513,13 @@ define([
                     images                : (args && args.images != null ? args.images : [] ),
                     imgClass              : (args && args.imgClass) ? args.imgClass : ''
                 });
-            },
+            }
 
-            _handleClosePopup: function() {
+            _handleClosePopup = () => {
                 this.setState({ showNotificationModal: false });
-            },
+            }
 
-            _handleNotificationModalClose: function(e, reactid, from) {
+            _handleNotificationModalClose = (e, reactid, from) => {
                 var from = from || '';
 
                 this.setState({ showNotificationModal: false });
@@ -530,9 +527,9 @@ define([
                 if ('' === from) {
                     AlertActions.notifyCancel(this.state.sourceId);
                 }
-            },
+            }
 
-            _handlePopupFeedBack: function(type) {
+            _handlePopupFeedBack = (type) => {
                 console.log('sourceId', this.state.sourceId);
                 switch (type) {
                 case 'custom':
@@ -552,9 +549,9 @@ define([
                     break;
                 }
 
-            },
+            }
 
-            _handleOpenMonitor: function(payload) {
+            _handleOpenMonitor = (payload) => {
                 this.setState({
                     fcode: payload.fcode,
                     showMonitor: true,
@@ -562,28 +559,28 @@ define([
                     previewUrl: payload.previewUrl,
                     monitorOpener: payload.opener
                 });
-            },
+            }
 
-            _handlecloseMonitor: function() {
+            _handlecloseMonitor = () => {
                 this.setState({
                     showMonitor: false
                 });
-            },
+            }
 
-            _handleCloseAllView: function() {
+            _handleCloseAllView = () => {
                 $('.device > .menu').removeClass('show');
                 $('.dialog-opener').prop('checked','');
-            },
+            }
 
-            _handleSliceReport: function(data) {
+            _handleSliceReport = (data) => {
                 this.setState({ slicingStatus: data.report });
-            },
+            }
 
-            _handleSetHeadTemperature: function(e) {
+            _handleSetHeadTemperature = (e) => {
                 DeviceMaster.setHeadTemperature(this.state.headTemperature.target);
-            },
+            }
 
-            _renderMonitorPanel: function() {
+            _renderMonitorPanel = () => {
                 var content = (
                     <Monitor
                         lang           = {lang}
@@ -600,9 +597,9 @@ define([
                         lang    = {lang}
                         content ={content} />
                 );
-            },
+            }
 
-            _renderChangeFilament: function() {
+            _renderChangeFilament = () => {
                 return (
                     <ChangeFilament
                         open={this.state.changeFilament.open}
@@ -611,18 +608,18 @@ define([
                         onClose={this._hideChangeFilament}
                     />
                 );
-            },
+            }
 
-            _renderHeadTemperature: function() {
+            _renderHeadTemperature = () => {
                 return (
                     <HeadTemperature
                         device={this.state.headTemperature.device}
                         onClose={this._closeHeadTemperature}
                     />
                 );
-            },
+            }
 
-            _renderCameraCalibration: function() {
+            _renderCameraCalibration = () => {
                 return (
                     <CameraCalibration
                         model="beambox"
@@ -639,9 +636,9 @@ define([
                         }}
                     />
                 );
-            },
+            }
 
-            render : function() {
+            render() {
                 var monitorPanel = this.state.showMonitor ? this._renderMonitorPanel() : '',
                     filament = this.state.changeFilament.open ? this._renderChangeFilament() : '',
                     headTemperature = this.state.headTemperature.show ? this._renderHeadTemperature() : '',
@@ -719,7 +716,6 @@ define([
                     </div>
                 );
             }
-
-        });
+        };
     };
 });

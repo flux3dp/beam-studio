@@ -23,7 +23,6 @@ TODOS
 1. JSDoc
 */
 define([
-    'react',
     'jsx!app/actions/beambox/Object-Panels-Controller',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
@@ -44,7 +43,6 @@ define([
     'helpers/api/svg-laser-parser',
     'lib/svgeditor/imagetracer'
 ], function (
-    React,
     ObjectPanelsController,
     ToolPanelsController,
     LaserPanelController,
@@ -65,6 +63,8 @@ define([
     SvgLaserParser,
     ImageTracer
 ) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
     const LANG = i18n.lang.beambox;
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
     if (window.svgEditor) {

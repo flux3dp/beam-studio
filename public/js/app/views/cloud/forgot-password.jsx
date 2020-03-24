@@ -1,30 +1,30 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/api/cloud'
 ], function(
-    React,
     i18n,
     CloudApi
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
 
-    return React.createClass({
-        getInitialState: function() {
-            return {
+    return class ForgotPassword extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 email: ''
             };
-        },
+        }
 
-        _handleEnterEmail: function(e) {
+        _handleEnterEmail = (e) => {
             this.setState({ email: e.target.value });
-        },
+        }
 
-        _handleBack: function() {
+        _handleBack = () => {
             location.hash = '#studio/cloud/sign-in';
-        },
+        }
 
-        _handleNext: async function() {
+        _handleNext = async () => {
             const response = await CloudApi.resetPassword(this.state.email);
             if(response.ok) {
                 location.hash = '#studio/cloud/email-sent';
@@ -32,9 +32,9 @@ define([
                 alert(LANG.contact_us);
             }
 
-        },
+        }
 
-        render: function() {
+        render() {
             return(
                 <div className="cloud">
                     <div className="container forgot-password">
@@ -62,6 +62,6 @@ define([
             );
         }
 
-    });
+    };
 
 });

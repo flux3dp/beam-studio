@@ -1,10 +1,9 @@
 define([
-    'react',
     'plugins/classnames/index',
 ], function(
-    React,
     ClassNames
 ) {
+    const React = require('react');
 
     const FontStyle = ({currentFontStyle, fontStyleOptions, onChange}) => {
         const options = fontStyleOptions.map(option => (

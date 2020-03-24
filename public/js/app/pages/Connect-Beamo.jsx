@@ -1,5 +1,4 @@
 define([
-    'react',
     'jsx!widgets/Modal',
     'jsx!widgets/Button-Group',
     'app/actions/initialize-machine',
@@ -8,7 +7,6 @@ define([
     'helpers/sprintf',
     'helpers/i18n'
 ], function (
-    React,
     Modal,
     ButtonGroup,
     initializeMachine,
@@ -17,11 +15,12 @@ define([
     sprintf,
     i18n
 ) {
+    const React = require('react');
     const LANG = i18n.lang.initialize;
 
     return function () {
-        return React.createClass({
-            onStart: function() {
+        class ConnectBeamo extends React.Component{
+            onStart = () => {
                 BeamboxPreference.write('model', 'fbm1');
 
                 const pokeIPAddr = localStorage.getItem('poke-ip-addr');
@@ -46,12 +45,12 @@ define([
 
                 initializeMachine.completeSettingUp(true);
                 location.reload();
-            },
-            onOpenTutorialLink: function() {
+            }
+            onOpenTutorialLink = () => {
                 const url = sprintf(LANG.tutorial_url, "beamo");
                 window.open(url);
-            },
-            _renderSelectMachineStep: function () {
+            }
+            _renderSelectMachineStep = () => {
                 var buttons = [
                     {
                         label: LANG.please_see_tutorial_video,
@@ -77,9 +76,9 @@ define([
                         <ButtonGroup className="btn-v-group" buttons={buttons}/>
                     </div>
                 );
-            },
+            }
 
-            render: function () {
+            render() {
                 const wrapperClassName = {
                     'initialization': true
                 };
@@ -93,8 +92,8 @@ define([
                 return (
                     <Modal className={wrapperClassName} content={content} />
                 );
-            },
-
-        });
+            }
+        };
+        return ConnectBeamo;
     };
 });

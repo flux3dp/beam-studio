@@ -1,26 +1,28 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'reactPropTypes',
     'reactClassset',
     'helpers/i18n'
-], function($, React, ReactDOM, PropTypes, ReactCx, i18n) {
+], function($, PropTypes, ReactCx, i18n) {
     'use strict';
 
-    return React.createClass({
-        PropTypes: {
-            onSetPrinter: PropTypes.func
-        },
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
-        getInitialState: function() {
-            return {
+    return class SetPrinter extends React.Component{
+        static propTypes = {
+            onSetPrinter: PropTypes.func
+        }
+
+        constructor(props) {
+            super(props);
+            this.state = {
                 validPrinterName    : true,
                 validPrinterPassword: true
             };
-        },
+        }
 
-        _handleSetPrinter: function() {
+        _handleSetPrinter = () => {
             var name     = ReactDOM.findDOMNode(this.refs.name).value,
                 password = ReactDOM.findDOMNode(this.refs.password).value;
 
@@ -32,9 +34,9 @@ define([
             if(name !== '') {
                 this.props.onSetPrinter(name, password);
             }
-        },
+        }
 
-        render : function() {
+        render() {
             var lang = this.props.lang,
                 printerNameClass;
 
@@ -80,5 +82,5 @@ define([
             );
         }
 
-    });
+    };
 });

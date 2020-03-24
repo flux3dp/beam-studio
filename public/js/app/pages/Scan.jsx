@@ -1,8 +1,6 @@
 define([
     'jquery',
-    'react',
     'reactClassset',
-    'reactDOM',
     'jsx!widgets/List',
     'jsx!widgets/Modal',
     'app/actions/scanned-model',
@@ -34,9 +32,7 @@ define([
     'plugins/file-saver/file-saver.min'
 ], function(
     $,
-    React,
     ReactCx,
-    ReactDOM,
     List,
     Modal,
     ScannedModel,
@@ -63,6 +59,9 @@ define([
     FirmwareVersionChecker,
     Shortcuts
 ) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+
     'use strict';
 
     return function(args) {

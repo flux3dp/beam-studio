@@ -1391,6 +1391,7 @@ define(function() {
             showOutline: 'frame showing',
             aborting: 'Aborting',
             starting: 'Starting',
+            preparing: 'Preparing',
             resuming: 'Resuming',
             scanning: 'Scanning',
             occupied: 'Mantaining',

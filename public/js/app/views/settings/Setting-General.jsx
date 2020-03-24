@@ -1,7 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
     'helpers/i18n',
     'helpers/api/config',
     'jsx!widgets/Select',
@@ -13,7 +12,6 @@ define([
     'app/actions/initialize-machine',
 ], function(
     $,
-    React,
     i18n,
     Config,
     SelectView,
@@ -24,6 +22,7 @@ define([
     BeamboxPreference,
     initializeMachine
 ) {
+    const React = require('react');
 
     const Controls = props => {
         const style = { width: 'calc(100% / 10 * 3 - 10px)' };
@@ -43,22 +42,15 @@ define([
         );
     };
 
-    return React.createClass({
-        getDefaultProps: function() {
-            return {
-                lang: {},
-                supported_langs: '',
-                onLangChange: function() {}
-            };
-        },
-
-        getInitialState: function() {
-            return {
+    class SettingGeneral extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 lang: i18n.lang
             };
-        },
+        }
 
-        _checkIPFormat: function(e) {
+        _checkIPFormat = (e) => {
             var me = e.currentTarget,
                 lang = this.state.lang,
                 originalIP = Config().read('poke-ip-addr'),
@@ -79,22 +71,22 @@ define([
             if(isCorrectFormat) {
                 Config().write('poke-ip-addr', me.value);
             }
-        },
+        }
 
-        _changeActiveLang: function(e) {
+        _changeActiveLang = (e) => {
             i18n.setActiveLang(e.currentTarget.value);
             this.setState({
                 lang: i18n.get()
             });
             this.props.onLangChange(e);
-        },
+        }
 
-        _updateOptions: function(id, e) {
+        _updateOptions = (id, e) => {
             Config().write(id, e.target.value);
             this.forceUpdate();
-        },
+        }
 
-        _updateBeamboxPreference: function(item_key, val) {
+        _updateBeamboxPreference = (item_key, val) => {
             if (val === 'true') {
                 val = true;
             } else if (val === 'false') {
@@ -102,28 +94,28 @@ define([
             }
             BeamboxPreference.write(item_key, val);
             this.forceUpdate();
-        },
+        }
 
-        _removeDefaultMachine: function() {
+        _removeDefaultMachine = () => {
             if(confirm(this.state.lang.settings.confirm_remove_default)) {
                 initializeMachine.defaultPrinter.clear();
                 this.forceUpdate();
             }
-        },
+        }
 
-        _resetFS: function() {
+        _resetFS = () => {
             if(confirm(this.state.lang.settings.confirm_reset)) {
                 LocalStorage.clearAllExceptIP();
                 location.hash = '#';
             }
-        },
+        }
 
-        _handleDone: function() {
+        _handleDone = () => {
             location.hash = 'studio/beambox';
             location.reload();
-        },
+        }
 
-        render: function() {
+        render() {
             let { supported_langs } = this.props,
                 printer = initializeMachine.defaultPrinter.get(),
                 default_machine_button,
@@ -695,6 +687,14 @@ define([
             );
         }
 
-    });
+    };
+
+    SettingGeneral.defaultProps = {
+        lang: {},
+        supported_langs: '',
+        onLangChange: function() {}
+    };
+
+    return SettingGeneral;
 
 });

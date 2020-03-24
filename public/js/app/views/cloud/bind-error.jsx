@@ -1,12 +1,11 @@
 define([
-    'react',
     'helpers/i18n',
     'helpers/device-master'
 ], function(
-    React,
     i18n,
     DeviceMaster
 ) {
+    const React = require('react');
     const LANG = i18n.lang.settings.flux_cloud;
 
     return () => {

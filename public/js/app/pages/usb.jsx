@@ -1,18 +1,18 @@
 define([
-    'jquery',
-    'react'
-], function($, React) {
+    'jquery'
+], function($) {
     'use strict';
+    const React = require('react');
 
     return function(args) {
         args = args || {};
 
-        var view = React.createClass({
-            _handleSlideToggle: function(e) {
+        return class Usb extends  React.Component{
+            _handleSlideToggle = (e) => {
                 var _target = e.target.attributes["data-target"].value;
                 $('#' + _target).slideToggle();
-            },
-            render : function() {
+            }
+            render() {
                 var lang = args.state.lang;
 
                 return (
@@ -86,8 +86,6 @@ define([
                     </div>
                 );
             }
-        });
-
-        return view;
+        };
     };
 });

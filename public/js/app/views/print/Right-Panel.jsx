@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'reactClassset',
     'reactPropTypes',
     'app/actions/perspective-camera',
@@ -8,65 +7,57 @@ define([
     'app/actions/alert-actions',
     'app/stores/alert-store',
     'helpers/duration-formatter'
-], function($, React, ReactCx, PropTypes, PerspectiveCamera, ButtonGroup, AlertActions, AlertStore, DurationFormatter) {
+], function($, ReactCx, PropTypes, PerspectiveCamera, ButtonGroup, AlertActions, AlertStore, DurationFormatter) {
+    const React = require('react');
 
-    return React.createClass({
-        propTypes: {
-            lang                    : PropTypes.object,
-            hasObject               : PropTypes.bool,
-            hasOutOfBoundsObject    : PropTypes.bool,
-            onDownloadGCode         : PropTypes.func,
-            onDownloadFCode         : PropTypes.func,
-            onGoClick               : PropTypes.func,
-            onCameraPositionChange  : PropTypes.func,
-        },
+    class RightPanel extends React.Component{
 
-        componentDidMount: function() {
+        componentDidMount() {
             PerspectiveCamera.init(this);
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             if(nextProps.updateCamera === true) {
                 PerspectiveCamera.setCameraPosition(nextProps.camera);
             }
-        },
+        }
 
-        _handleTest: function() {
+        _handleTest = () => {
             AlertActions.showInfo('hello');
             AlertActions.showWarning('warning');
             AlertActions.showError('error');
-        },
+        }
 
-        _handleRetry: function(id) {
+        _handleRetry = (id) => {
             console.log('sending retry with ID:' + id);
-        },
+        }
 
-        _handleAnswer: function(id, isYes) {
+        _handleAnswer = (id, isYes) => {
             console.log(id, isYes);
-        },
+        }
 
-        _handleGeneric: function(id, message) {
+        _handleGeneric = (id, message) => {
             console.log(id, message);
-        },
+        }
 
-        _handleGetFCode: function() {
+        _handleGetFCode = () => {
             this.props.onDownloadFCode();
-        },
+        }
 
-        _handleGo: function(e) {
+        _handleGo = (e) => {
             e.preventDefault();
             this.props.onGoClick();
-        },
+        }
 
-        _handleGetGCode: function() {
+        _handleGetGCode = () => {
             this.props.onDownloadGCode();
-        },
+        }
 
-        _updateCamera: function(position, rotation) {
+        _updateCamera = (position, rotation) => {
             this.props.onCameraPositionChange(position, rotation);
-        },
+        }
 
-        _renderActionButtons: function(lang) {
+        _renderActionButtons = (lang) => {
             let { hasObject, hasOutOfBoundsObject, disableGoButtons } = this.props,
                 buttons = [{
                     label: lang.monitor.start,
@@ -87,9 +78,9 @@ define([
             return (
                 <ButtonGroup buttons={buttons} className="beehive-buttons action-buttons"/>
             );
-        },
+        }
 
-        _renderTimeAndCost: function(lang) {
+        _renderTimeAndCost = (lang) => {
             let { slicingStatus, slicingPercentage, hasObject, hasOutOfBoundsObject } = this.props;
             if(slicingStatus && hasObject && !hasOutOfBoundsObject && slicingPercentage === 1) {
                 if(!slicingStatus.filament_length) {
@@ -107,9 +98,9 @@ define([
             else {
                 return '';
             }
-        },
+        }
 
-        render: function() {
+        render() {
             var lang            = this.props.lang,
                 actionButtons   = this._renderActionButtons(lang),
                 previewTimeAndCost = this._renderTimeAndCost(lang);
@@ -122,5 +113,17 @@ define([
                 </div>
             );
         }
-    });
+    };
+
+    RightPanel.propTypes = {
+        lang                    : PropTypes.object,
+        hasObject               : PropTypes.bool,
+        hasOutOfBoundsObject    : PropTypes.bool,
+        onDownloadGCode         : PropTypes.func,
+        onDownloadFCode         : PropTypes.func,
+        onGoClick               : PropTypes.func,
+        onCameraPositionChange  : PropTypes.func,
+    };
+
+    return RightPanel;
 });

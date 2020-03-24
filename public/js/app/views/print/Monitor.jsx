@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'plugins/classnames/index',
     'helpers/device-master',
@@ -22,7 +21,6 @@ define([
     'helpers/device-error-handler'
 ], function(
     $,
-    React,
     PropTypes,
     ClassNames,
     DeviceMaster,
@@ -44,6 +42,8 @@ define([
     DeviceErrorHandler
 ) {
     'use strict';
+
+    const React = require('react');
 
     let _id = 'MONITOR',
         start,
@@ -93,19 +93,10 @@ define([
         DeviceConstants.ABORTED,
     ];
 
-    return React.createClass({
+    class Monitor extends React.Component{
+        constructor(props) {
+            super(props);
 
-        propTypes: {
-            lang                : PropTypes.object,
-            selectedDevice      : PropTypes.object,
-            fCode               : PropTypes.object,
-            slicingStatus       : PropTypes.object,
-            previewUrl          : PropTypes.string,
-            opener              : PropTypes.string,
-            onClose             : PropTypes.func
-        },
-
-        componentWillMount: function() {
             lang        = this.props.lang;
             previewUrl  = this.props.previewUrl;
             statusId    = DeviceConstants.status.IDLE;
@@ -128,23 +119,29 @@ define([
             store = Redux.createStore(MainReducer);
             store.dispatch(MonitorActionCreator.changeMode(_mode));
 
-            this._preFetchInfo();
-        },
+            this.childContext = {
+                store: store,
+                slicingResult: this.props.slicingStatus,
+                lang: this.props.lang
+            };
 
-        componentDidMount: function() {
+            this._preFetchInfo();
+        }
+
+        componentDidMount() {
             AlertStore.onRetry(this._handleRetry);
             AlertStore.onCancel(this._handleCancel);
             AlertStore.onYes(this._handleYes);
 
             this._registerDeleteKey();
             this._startReport();
-        },
+        }
 
-        shouldComponentUpdate: function(nextProps, nextState) {
+        shouldComponentUpdate(nextProps, nextState) {
             return false;
-        },
+        }
 
-        componentWillUnmount: function() {
+        componentWillUnmount() {
             AlertStore.removeRetryListener(this._handleRetry);
             AlertStore.removeCancelListener(this._handleCancel);
             AlertStore.removeYesListener(this._handleYes);
@@ -161,32 +158,18 @@ define([
 
             clearInterval(this.reporter);
             this.unsubscribeDeleteKey();
-        },
+        }
 
-        childContextTypes: {
-            store: PropTypes.object,
-            slicingResult: PropTypes.object,
-            lang: PropTypes.object
-        },
-
-        getChildContext: function() {
-            return {
-                store: store,
-                slicingResult: this.props.slicingStatus,
-                lang: this.props.lang
-            };
-        },
-
-        _registerDeleteKey: function() {
+        _registerDeleteKey = () => {
             this.unsubscribeDeleteKey = shortcuts.on(['DEL'], (e) => {
                 e.preventDefault();
                 if(store.getState().Monitor.selectedItem && this.state.focused) {
                     AlertActions.showPopupYesNo('DELETE_FILE', lang.monitor.confirmFileDelete);
                 }
             });
-        },
+        }
 
-        _preFetchInfo: function() {
+        _preFetchInfo = () => {
             let { Monitor } = store.getState();
 
             const go = (result) => {
@@ -218,9 +201,9 @@ define([
 
             let s = starter();
             go(s.next());
-        },
+        }
 
-        _getPreviewInfo: function() {
+        _getPreviewInfo = () => {
             let d = $.Deferred();
             DeviceMaster.getPreviewInfo().then((info) => {
                 console.log('Device Master upload preview info', info);
@@ -228,30 +211,30 @@ define([
                 d.resolve();
             });
             return d.promise();
-        },
+        }
 
-        _getInitialStatus: function() {
+        _getInitialStatus = () => {
             let d = $.Deferred();
             DeviceMaster.getReport().then((result) => {
                 store.dispatch(DeviceActionCreator.updateDeviceStatus(result));
                 d.resolve();
             });
             return d.promise();
-        },
+        }
 
-        _hasFCode: function() {
+        _hasFCode = () => {
             return this.props.fCode instanceof Blob;
-        },
+        }
 
-        _stopCamera: function() {
+        _stopCamera = () => {
             DeviceMaster.disconnectCamera();
-        },
+        }
 
-        _refreshDirectory: function() {
+        _refreshDirectory = () => {
             this._retrieveFolderContent(store.getState().Monitor.currentPath);
-        },
+        }
 
-        _existFileInDirectory: function(path, fileName) {
+        _existFileInDirectory = (path, fileName) => {
             let d = $.Deferred();
             fileName = fileName.replace('.gcode', '.fc');
             DeviceMaster.fileInfo(path, fileName).then(() => {
@@ -260,9 +243,9 @@ define([
                 d.resolve(false);
             });
             return d.promise();
-        },
+        }
 
-        _doFileUpload: function(file) {
+        _doFileUpload = (file) => {
             let reader = new FileReader();
 
             store.dispatch(MonitorActionCreator.setUploadProgress(0));
@@ -300,17 +283,17 @@ define([
                     AlertActions.showPopupInfo('', lang.monitor.extensionNotSupported);
                 }
             };
-        },
+        }
 
-        _clearSelectedItem: function() {
+        _clearSelectedItem = () => {
             store.dispatch(MonitorActionCreator.selectItem({ name: '', type: '' }));
-        },
+        }
 
-        _handleClose: function() {
+        _handleClose = () => {
             this.props.onClose();
-        },
+        }
 
-        _handleRetry: function(id) {
+        _handleRetry = (id) => {
             if(id === _id) {
                 let { Device } = store.getState();
                 if(Device.status.st_id === DeviceConstants.status.ABORTED) {
@@ -327,14 +310,14 @@ define([
                     store.dispatch(DeviceActionCreator.updateDeviceStatus(resumeStatus));
                 }
             }
-        },
+        }
 
-        _handleCancel: function() {
+        _handleCancel = () => {
             messageViewed = true;
             showingPopup = false;
-        },
+        }
 
-        _handleYes: function(id) {
+        _handleYes = (id) => {
             if(id === DeviceConstants.KICK) {
                 DeviceMaster.kick();
             }
@@ -358,20 +341,20 @@ define([
                 let { Monitor } = store.getState();
                 this._handleDeleteFile(Monitor.currentPath, Monitor.selectedItem.name);
             }
-        },
+        }
 
-        _handleBrowseFolder: function() {
+        _handleBrowseFolder = () => {
             this._addHistory();
             this._dispatchFolderContent('');
             // avoid error occur, but don't know that will cause any bug, so mark it only.
             //this.unsubscribeEnterKey();
-        },
+        }
 
-        _handleFileCrossIconClick: function() {
+        _handleFileCrossIconClick = () => {
             AlertActions.showPopupYesNo('DELETE_FILE', lang.monitor.confirmFileDelete);
-        },
+        }
 
-        _dispatchFolderContent: function(path) {
+        _dispatchFolderContent = (path) => {
             let d = $.Deferred();
             this._stopCamera();
 
@@ -380,9 +363,9 @@ define([
                 return d.resolve();
             });
             return d.promise();
-        },
+        }
 
-        _handleFolderclick: function(event) {
+        _handleFolderclick = (event) => {
             const folderName = event.currentTarget.dataset.foldername;
             this.unsubscribeEnterKey = shortcuts.on(['RETURN'], e => {
                 // if a folder is selected
@@ -395,19 +378,19 @@ define([
                 name: folderName,
                 type: type.FOLDER
             }));
-        },
+        }
 
-        _handleFolderDoubleClick: function(event) {
+        _handleFolderDoubleClick = (event) => {
             const folderName = event.currentTarget.dataset.foldername;
             this._addHistory();
             this._dispatchFolderContent(store.getState().Monitor.currentPath + '/' + folderName);
-        },
+        }
 
-        _handleDeleteFile: function(pathToFile, fileName) {
+        _handleDeleteFile = (pathToFile, fileName) => {
             DeviceMaster.deleteFile(pathToFile, fileName).then(() => { this._refreshDirectory(); });
-        },
+        }
 
-        _handleBack: function() {
+        _handleBack = () => {
             if(typeof this.unsubscribeEnterKey === 'function') {
                 this.unsubscribeEnterKey();
             }
@@ -433,17 +416,17 @@ define([
                 actions[lastAction.mode]();
                 store.dispatch(MonitorActionCreator.changeMode(lastAction.mode));
             }
-        },
+        }
 
-        _handleFileClick: function(event) {
+        _handleFileClick = (event) => {
             const { filename } = event.currentTarget.dataset;
             store.dispatch(MonitorActionCreator.selectItem({
                 name: filename,
                 type: type.FILE
             }));
-        },
+        }
 
-        _handleFileDoubleClick: function(event) {
+        _handleFileDoubleClick = (event) => {
             const { filename } = event.currentTarget.dataset;
             event.stopPropagation();
 
@@ -476,9 +459,9 @@ define([
                 }
             });
             handlePreviewFile();
-        },
+        }
 
-        _handleUpload: function(e) {
+        _handleUpload = (e) => {
             if(e.target.files.length > 0) {
                 fileToBeUpload = e.target.files[0];
                 this._existFileInDirectory(store.getState().Monitor.currentPath, fileToBeUpload.name.replace(/ /g, '_')).then((exist) => {
@@ -499,9 +482,9 @@ define([
                 });
                 e.target.value = null;
             }
-        },
+        }
 
-        _handleDownload: function() {
+        _handleDownload = () => {
             const downloadProgressDisplay = (p) => {
                 store.dispatch(MonitorActionCreator.setDownloadProgress(p));
             };
@@ -515,9 +498,9 @@ define([
             }).fail((error) => {
                 // TODO: show download error
             });
-        },
+        }
 
-        _handleToggleCamera: function() {
+        _handleToggleCamera = () => {
             let { Monitor } = store.getState();
             if(Monitor.mode === mode.CAMERA) {
                 this._handleBack();
@@ -526,9 +509,9 @@ define([
                 this._addHistory();
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.CAMERA));
             }
-        },
+        }
 
-        _handleGo: function() {
+        _handleGo = () => {
             messageViewed = false;
             let { Monitor, Device } = store.getState();
             let startingStatus = { st_label: 'INIT', st_id: 1 };
@@ -591,13 +574,13 @@ define([
             else {
                 DeviceMaster.resume();
             }
-        },
+        }
 
-        _handlePause: function() {
+        _handlePause = () => {
             DeviceMaster.pause();
-        },
+        }
 
-        _handleStop: function() {
+        _handleStop = () => {
             if(statusId < 0) {
                 AlertActions.showPopupYesNo('KICK', lang.monitor.forceStop);
             }
@@ -636,16 +619,16 @@ define([
                     });
                 }
             }
-        },
+        }
 
-        _addHistory: function() {
+        _addHistory = () => {
             let { Monitor } = store.getState(),
                 history = { mode: Monitor.mode, previewUrl: previewUrl, path: Monitor.currentPath };
 
             _history.push(history);
-        },
+        }
 
-        _startReport: function() {
+        _startReport = () => {
             this.reporter = setInterval(() => {
                 // if(window.stopReport === true) { return; }
                 DeviceMaster.getReport().fail((error) => {
@@ -664,13 +647,13 @@ define([
                     this._processReport(result);
                 });
             }, refreshTime);
-        },
+        }
 
-        _stopReport: function() {
+        _stopReport = () => {
             clearInterval(this.reporter);
-        },
+        }
 
-        _generatePreview: function(info) {
+        _generatePreview = (info) => {
             if(info === '') { return; }
             info = info || [];
 
@@ -682,9 +665,9 @@ define([
             }
 
             this.forceUpdate();
-        },
+        }
 
-        _processReport: function(report) {
+        _processReport = (report) => {
             if(!report.error) {
                 if(this._isAbortedOrCompleted() && openedFrom !== GlobalConstants.DEVICE_LIST) {
                     //DeviceMaster.quit();
@@ -749,21 +732,21 @@ define([
                     store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
                 }
             }
-        },
+        }
 
-        _isError: function(s) {
+        _isError = (s) => {
             return operationStatus.indexOf(s) < 0;
-        },
+        }
 
-        _isAbortedOrCompleted: function() {
+        _isAbortedOrCompleted = () => {
             let { Device } = store.getState();
             return (
                 Device.status.st_id === DeviceConstants.status.ABORTED ||
                 Device.status.st_id === DeviceConstants.status.COMPLETED
             );
-        },
+        }
 
-        _isPaused: function() {
+        _isPaused = () => {
             let { Device } = store.getState();
             let s = [
                 DeviceConstants.status.PAUSED,
@@ -773,9 +756,9 @@ define([
                 DeviceConstants.status.PAUSING_FROM_RUNNING
             ];
             return s.indexOf(Device.status.st_id) > 0;
-        },
+        }
 
-        _retrieveFolderContent: function(path) {
+        _retrieveFolderContent = (path) => {
             let d = $.Deferred();
 
             DeviceMaster.ls(path).then((result) => {
@@ -803,9 +786,9 @@ define([
             });
 
             return d.promise();
-        },
+        }
 
-        _renderFolderFilesWithPreview: function() {
+        _renderFolderFilesWithPreview = () => {
             if(
                 start > currentDirectoryContent.files.length ||
                 currentDirectoryContent.files.length === 0
@@ -832,9 +815,9 @@ define([
                 end = currentDirectoryContent.files.length;
             }
             this._retrieveFileInfo(start, end, handleCallback);
-        },
+        }
 
-        _retrieveFileInfo: function(index, end, callback, filesArray) {
+        _retrieveFileInfo = (index, end, callback, filesArray) => {
             filesArray = filesArray || [];
             if(index < end) {
                 if(currentDirectoryContent.files.length === 0) { return; }
@@ -856,9 +839,9 @@ define([
             else {
                 callback(filesArray);
             }
-        },
+        }
 
-        _checkUSBFolderExistance: function() {
+        _checkUSBFolderExistance = () => {
             let d = $.Deferred();
             DeviceMaster.ls('USB').then(() => {
                 store.dispatch(DeviceActionCreator.updateUsbFolderExistance(true));
@@ -869,23 +852,23 @@ define([
             });
 
             return d.promise();
-        },
+        }
 
-        _findObjectContainsProperty: function(infoArray, propertyName) {
+        _findObjectContainsProperty = (infoArray, propertyName) => {
             return infoArray.filter((o) => Object.keys(o).some(o => o === propertyName));
-        },
+        }
 
-        onBlur: function(e) {
+        onBlur = (e) => {
             e.preventDefault();
             this.setState({ focused: false });
-        },
+        }
 
-        onFocus: function(e) {
+        onFocus = (e) => {
             e.preventDefault();
             this.setState({ focused: true });
-        },
+        }
 
-        render: function() {
+        render() {
             let subClass = ClassNames('sub', { 'hide': false });
 
             return (
@@ -895,12 +878,14 @@ define([
                             name={DeviceMaster.getSelectedDevice().name}
                             source = {openedFrom}
                             history = {_history}
+                            context = {this.childContext}
                             onBackClick = {this._handleBack}
                             onFolderClick = {this._handleBrowseFolder}
                             onCloseClick = {this._handleClose} />
                         <MonitorDisplay
                             selectedDevice = {this.props.selectedDevice}
                             previewUrl = {previewUrl}
+                            context = {this.childContext}
                             onFolderClick = {this._handleFolderclick}
                             onFolderDoubleClick = {this._handleFolderDoubleClick}
                             onFileClick = {this._handleFileClick}
@@ -909,6 +894,7 @@ define([
                         <MonitorControl
                             source = {openedFrom}
                             previewUrl = {previewUrl}
+                            context = {this.childContext}
                             onGo = {this._handleGo}
                             onPause = {this._handlePause}
                             onStop = {this._handleStop}
@@ -917,10 +903,22 @@ define([
                             onToggleCamera = {this._handleToggleCamera} />
                     </div>
                     <div className={subClass}>
-                        <MonitorInfo />
+                        <MonitorInfo
+                            context = {this.childContext} />
                     </div>
                 </div>
             );
         }
-    });
+    };
+
+    Monitor.propTypes = {
+        lang: PropTypes.object,
+        selectedDevice: PropTypes.object,
+        fCode: PropTypes.object,
+        slicingStatus: PropTypes.object,
+        previewUrl: PropTypes.string,
+        opener: PropTypes.string,
+        onClose: PropTypes.func
+    }
+    return Monitor;
 });

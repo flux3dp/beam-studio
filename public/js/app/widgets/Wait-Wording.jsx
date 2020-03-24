@@ -1,34 +1,31 @@
 define([
-    'react',
     'helpers/i18n'
 ], function(
-    React,
     i18n
 ) {
+    const React = require('react');
 
     let lang = i18n.get();
 
-    return React.createClass({
-
-        getInitialState: function() {
-            let str = this.props.animationString || '';
-
-            return {
+    return class WaitWording extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 str,
                 counter: 0
-            }
-        },
+            };
+        }
 
-        componentDidMount: function() {
+        componentDidMount = () => {
             let { interval } = this.props;
 
 
             setInterval(() => {
                 this.setState(this.next());
             }, interval || 1000);
-        },
+        }
 
-        next: function() {
+        next = () => {
             let { animationString, interval } = this.props,
                 { counter } = this.state,
                 arr, str;
@@ -40,14 +37,14 @@ define([
             return {
                 str, counter
             }
-        },
+        }
 
-        render: function() {
+        render() {
             return (
                 <div className="processing">
                     <label>{lang.general.wait + this.state.str}</label>
                 </div>
             );
         }
-    });
+    };
 });

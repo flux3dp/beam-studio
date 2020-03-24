@@ -1,58 +1,53 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
-], function($, React, PropTypes, UnitInput, i18n) {
+], function($, PropTypes, UnitInput, i18n) {
     'use strict';
+    const React = require('react');
 
     const LANG = i18n.lang.beambox.tool_panels;
     
-    return React.createClass({
-        propTypes: {
-            row: PropTypes.number.isRequired,
-            column: PropTypes.number.isRequired,
-            onValueChange: PropTypes.func,
-            onColumnChange: PropTypes.func,
-        },
-
-        getInitialState: function() {
-            return {
+    class RowColumn extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 row: this.props.row,
                 column: this.props.column,
                 onValueChange: this.props.onValueChange,
             };
-        },
+        }
         
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 row: nextProps.row,
                 column: nextProps.column,
                 onValueChange: nextProps.onValueChange,
             });
-        },
+        }
 
-        _update_row_handler: function(val) {
+        _update_row_handler = (val) => {
             this.setState({row: val});
             let rc = this.state;
             rc.row = val;
             this.props.onValueChange(rc);
-        },
+        }
 
-        _update_column_handler: function(val) {
+        _update_column_handler = (val) => {
             this.setState({column: val});
             let rc = this.state;
             rc.column = val;
             this.props.onValueChange(rc);
-        },
+        }
 
-        getValueCaption: function() {
+        getValueCaption = () => {
             const row = this.state.row, 
                 column = this.state.column;
             return `${row} X ${column}`;
-        },
-        render: function() {
+        }
+
+        render() {
             return (
                 <div className="tool-panel">
                     <label className="controls accordion">
@@ -87,5 +82,14 @@ define([
                 </div>
             );
         } 
-    });
+    };
+
+    RowColumn.propTypes = {
+        row: PropTypes.number.isRequired,
+        column: PropTypes.number.isRequired,
+        onValueChange: PropTypes.func,
+        onColumnChange: PropTypes.func,
+    };
+
+    return RowColumn;
 });

@@ -1,12 +1,12 @@
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'plugins/classnames/index',
     'jsx!widgets/Dialog-Menu',
     'app/constants/global-constants',
     'app/actions/alert-actions'
-], function($, React, PropTypes, ClassNames, DialogMenu, GlobalConstants, AlertActions) {
+], function($, PropTypes, ClassNames, DialogMenu, GlobalConstants, AlertActions) {
+    const React = require('react');
 
     const DEFAULT_QUALITY = 'high',
         DEFAULT_MODEL  = 'fd1';
@@ -22,43 +22,25 @@ define([
         PREVIEW     : 'PREVIEW'
     };
 
-    return React.createClass({
-
-        propTypes: {
-            lang                        : PropTypes.object,
-            enable                      : PropTypes.bool,
-            previewMode                 : PropTypes.bool,
-            previewModeOnly             : PropTypes.bool,
-            disablePreview              : PropTypes.bool,
-            displayModelControl         : PropTypes.bool,
-            hasObject                   : PropTypes.bool,
-            previewLayerCount           : PropTypes.number,
-            supportOn                   : PropTypes.bool,
-            raftOn                      : PropTypes.bool,
-            onRaftClick                 : PropTypes.func,
-            onSupportClick              : PropTypes.func,
-            onPreviewClick              : PropTypes.func,
-            onPreviewLayerChange        : PropTypes.func,
-            onShowAdvancedSettingPanel  : PropTypes.func,
-        },
-
-        getInitialState: function() {
-            return {
+    class LeftPanel extends React.Component{
+        constructor(props) {
+            super(props);
+            this.state = {
                 previewOn           : false,
                 previewCurrentLayer : 0,
                 previewLayerCount   : this.props.previewLayerCount,
                 quality             : DEFAULT_QUALITY,
                 model               : DEFAULT_MODEL,
             };
-        },
+        }
 
-        componentWillMount: function() {
+        componentWillMount() {
             lang = this.props.lang.print.left_panel;
             lang.quality = this.props.lang.print.quality;
             lang.model = this.props.lang.print.model;
-        },
+        }
 
-        componentWillReceiveProps: function(nextProps) {
+        componentWillReceiveProps(nextProps) {
             this.setState({
                 previewLayerCount: nextProps.previewLayerCount || 0
             });
@@ -74,9 +56,9 @@ define([
             if (nextProps.previewMode !== this.state.previewOn) {
                 this.setState({ previewOn: nextProps.previewMode });
             }
-        },
+        }
 
-        _handleActions: function(source, arg, e) {
+        _handleActions = (source, arg, e) => {
             if (this.props.previewModeOnly === true) {
                 e.preventDefault();
 
@@ -131,16 +113,16 @@ define([
             }
 
             actions[source]();
-        },
+        }
 
-        _handlePreviewLayerChange: function(e) {
+        _handlePreviewLayerChange = (e) => {
             this.setState({
                 previewCurrentLayer: e.target.value
             });
             this.props.onPreviewLayerChange(e.target.value);
-        },
+        }
 
-        _renderQuality: function() {
+        _renderQuality = () => {
             const { previewModeOnly } = this.props;
             const _quality = ['high', 'med', 'low'];
             const _class = ClassNames('display-text quality-select', {'disable': previewModeOnly});
@@ -166,9 +148,9 @@ define([
                 ),
                 disable: previewModeOnly
             };
-        },
+        }
 
-        _renderModel: function() {
+        _renderModel = () => {
             const { previewModeOnly } = this.props;
             const _class = ClassNames('display-text model-select', {'disable': previewModeOnly});
 
@@ -193,9 +175,9 @@ define([
                 ),
                 disable: previewModeOnly
             };
-        },
+        }
 
-        _renderRaft: function() {
+        _renderRaft = () => {
             const {
                 enable,
                 previewModeOnly,
@@ -211,9 +193,9 @@ define([
                 ),
                 disable: previewModeOnly
             };
-        },
+        }
 
-        _renderSupport: function() {
+        _renderSupport = () => {
             const {
                 enable,
                 previewModeOnly,
@@ -229,9 +211,9 @@ define([
                 ),
                 disable: previewModeOnly
             };
-        },
+        }
 
-        _renderAdvanced: function() {
+        _renderAdvanced = () => {
             const {
                 enable,
                 lang,
@@ -247,9 +229,9 @@ define([
                 ),
                 disable: previewModeOnly
             };
-        },
+        }
 
-        _renderPreview: function() {
+        _renderPreview = () => {
             const { enable, previewModeOnly } = this.props;
             const { previewCurrentLayer, previewLayerCount, previewOn } = this.state;
             const _class = ClassNames('display-text preview', {'disable': !enable && !previewModeOnly});
@@ -272,9 +254,9 @@ define([
                 previewOn: previewOn,
                 forceKeepOpen: previewModeOnly
             };
-        },
+        }
 
-        render: function() {
+        render() {
             const {
                 enable,
                 previewModeOnly,
@@ -300,5 +282,25 @@ define([
                 </div>
             );
         }
-    });
+    };
+
+    LeftPanel.propTypes = {
+        lang                        : PropTypes.object,
+        enable                      : PropTypes.bool,
+        previewMode                 : PropTypes.bool,
+        previewModeOnly             : PropTypes.bool,
+        disablePreview              : PropTypes.bool,
+        displayModelControl         : PropTypes.bool,
+        hasObject                   : PropTypes.bool,
+        previewLayerCount           : PropTypes.number,
+        supportOn                   : PropTypes.bool,
+        raftOn                      : PropTypes.bool,
+        onRaftClick                 : PropTypes.func,
+        onSupportClick              : PropTypes.func,
+        onPreviewClick              : PropTypes.func,
+        onPreviewLayerChange        : PropTypes.func,
+        onShowAdvancedSettingPanel  : PropTypes.func,
+    };
+
+    return LeftPanel;
 });

@@ -1,7 +1,5 @@
 define([
     'jquery',
-    'react',
-    'reactDOM',
     'jsx!widgets/Modal',
     'jsx!views/beambox/Left-Panels/Clear-Preview-Graffiti-Button',
     'jsx!views/beambox/Left-Panels/Image-Trace-Button',
@@ -24,8 +22,6 @@ define([
     'helpers/i18n',
 ], function(
     $,
-    React,
-    ReactDOM,
     Modal,
     ClearPreviewGraffitiButton,
     ImageTraceButton,
@@ -47,6 +43,8 @@ define([
     ConfigHelper,
     i18n
 ) {
+    const React = require('react');
+    const ReactDOM = require('react-dom');
 
     const LANG = i18n.lang.beambox.left_panel;
 

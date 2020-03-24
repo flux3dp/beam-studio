@@ -2,7 +2,6 @@
 /* eslint-disable react/no-multi-comp */
 define([
     'jquery',
-    'react',
     'reactPropTypes',
     'helpers/i18n',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
@@ -15,7 +14,6 @@ define([
     'helpers/api/image-tracer',
 ], function(
     $,
-    React,
     PropTypes,
     i18n,
     ImageTracePanelController,
@@ -27,6 +25,7 @@ define([
     classNames,
     ImageTracerApi
 ) {
+    const React = require('react');
     const LANG = i18n.lang.beambox.left_panel;
 
     class ImageTraceButton extends React.Component {
