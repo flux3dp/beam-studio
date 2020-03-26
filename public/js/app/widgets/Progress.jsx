@@ -1,10 +1,10 @@
 define([
     'reactPropTypes',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'app/constants/progress-constants'
 ],
-function(PropTypes, Modal, Alert, ProgressConstants) {
+function(PropTypes, Modal, AlertDialog, ProgressConstants) {
     'use strict';
     const React = require('react');
 
@@ -115,7 +115,7 @@ function(PropTypes, Modal, Alert, ProgressConstants) {
                 progressIcon = this._renderIcon(),
                 message = this._renderMessage(),
                 content = (
-                    <Alert
+                    <AlertDialog
                         lang={this.props.lang}
                         caption={this.props.caption}
                         message={message}

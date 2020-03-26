@@ -7,8 +7,8 @@ define([
     'helpers/device-master',
     'app/constants/device-constants',
     'app/actions/beambox/preview-mode-controller',
-    'app/actions/alert-actions',
-    'app/stores/alert-store',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/progress-actions',
     'app/constants/progress-constants'
 ], function(
@@ -17,8 +17,8 @@ define([
     DeviceMaster,
     DeviceConstants,
     PreviewModeController,
-    AlertActions,
-    AlertStore,
+    Alert,
+    AlertConstants,
     ProgressActions,
     ProgressConstants
 ) {
@@ -57,13 +57,7 @@ define([
                     }, 1000);
                     break;
             }
-
-            AlertStore.removeYesListener(onYes);
         };
-
-        deferred.always(function() {
-            AlertStore.removeYesListener(onYes);
-        });
 
         switch (printer.st_id) {
             // null for simulate
@@ -79,8 +73,12 @@ define([
             case DeviceConstants.status.MAINTAIN:
                 // ask kick?
                 ProgressActions.close();
-                AlertActions.showPopupYesNo('kick', lang.message.device_is_used);
-                AlertStore.onYes(onYes);
+                Alert.popUp({
+                    id: 'kick',
+                    message: lang.message.device_is_used,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {onYes('kick')}
+                });
                 break;
             case DeviceConstants.status.COMPLETED:
             case DeviceConstants.status.ABORTED:
@@ -106,11 +104,14 @@ define([
                     // ask for abort
                     ProgressActions.close();
                     if (forceAbort) {
-                        AlertStore.onYes(onYes);
                         onYes('abort');
                     } else {
-                        AlertActions.showPopupYesNo('abort', lang.message.device_is_used);
-                        AlertStore.onYes(onYes);
+                        Alert.popUp({
+                            id: 'abort',
+                            message: lang.message.device_is_used,
+                            buttonType: AlertConstants.YES_NO,
+                            onYes: () => {onYes('abort')}
+                        });
                     }
                 }
                 break;
@@ -118,7 +119,7 @@ define([
                 // device busy
                 console.log('Device Busy ', printer.st_id);
                 ProgressActions.close();
-                AlertActions.showDeviceBusyPopup('on-select-printer');
+                Alert.popUpDeviceBusy('on-select-printer');
                 break;
         }
 

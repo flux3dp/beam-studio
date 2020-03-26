@@ -3,6 +3,7 @@ define([
     'app/actions/initialize-machine',
     'helpers/api/usb-config',
     'jsx!widgets/Modal',
+    'jsx!widgets/AlertDialog',
     'app/actions/alert-actions',
     'app/stores/alert-store',
     'helpers/api/config',
@@ -16,6 +17,7 @@ define([
     initializeMachine,
     usbConfig,
     Modal,
+    AlertDialog,
     AlertActions,
     AlertStore,
     Config,
@@ -193,7 +195,7 @@ define([
                         }
                     }],
                     content = (
-                        <Alert caption={this.state.alertContent.caption} message={this.state.alertContent.message} buttons={buttons}/>
+                        <AlertDialog caption={this.state.alertContent.caption} message={this.state.alertContent.message} buttons={buttons}/>
                     );
 
                 return (

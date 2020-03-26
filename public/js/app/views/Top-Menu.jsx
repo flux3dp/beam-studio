@@ -13,6 +13,8 @@ define([
     'plugins/classnames/index',
     'app/constants/device-constants',
     'jsx!views/beambox/About-Beam-Studio',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/alert-actions',
     'app/stores/alert-store',
     'app/actions/global-actions',
@@ -46,6 +48,8 @@ define([
     ClassNames,
     DeviceConstants,
     AboutBeamStudio,
+    Alert,
+    AlertConstants,
     AlertActions,
     AlertStore,
     GlobalActions,
@@ -100,7 +104,10 @@ define([
                 }).fail((data) => {
                     let msg = data === 'canceled' ?
                         lang.device.download_log_canceled : lang.device.download_log_error;
-                    AlertActions.showPopupInfo('', msg);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        message: msg
+                    });
                 });
             },
 
@@ -145,23 +152,21 @@ define([
                             }
 
                             if (!response.needUpdate) {
-                                let forceUpdate = {
-                                    custom: () => {
+                                Alert.popUp({
+                                    id: 'latest-firmware',
+                                    message: message + ' (v' + latestVersion + ')',
+                                    caption,
+                                    buttonType: AlertConstants.CUSTOM_CANCEL,
+                                    buttonLabels: lang.update.firmware.latest_firmware.still_update,
+                                    callbacks: () => {
                                         firmwareUpdater(response, currentPrinter, type, true);
                                     },
-                                    no: () => {
+                                    onCancel: () => {
                                         if ('toolhead' === type) {
                                             DeviceMaster.quitTask();
                                         }
                                     }
-                                };
-                                AlertActions.showPopupCustomCancel(
-                                    'latest-firmware',
-                                    message + ' (v' + latestVersion + ')',
-                                    lang.update.firmware.latest_firmware.still_update,
-                                    caption,
-                                    forceUpdate
-                                );
+                                });
                             } else {
                                 firmwareUpdater(response, currentPrinter, type);
                             }
@@ -169,10 +174,11 @@ define([
                         })
                             .fail(function (response) {
                                 firmwareUpdater(response, currentPrinter, type);
-                                AlertActions.showPopupInfo(
-                                    'latest-firmware',
-                                    lang.monitor.cant_get_toolhead_version
-                                );
+                                Alert.popUp({
+                                    id: 'latest-firmware',
+                                    type: AlertConstants.SHOW_POPUP_INFO,
+                                    message: lang.monitor.cant_get_toolhead_version
+                                });
                             });
                     },
                     checkStatus = function () {
@@ -181,7 +187,11 @@ define([
                                 ProgressActions.close();
                                 updateFirmware();
                             }).fail(function () {
-                                AlertActions.showPopupError('toolhead-offline', lang.monitor.cant_get_toolhead_version);
+                                Alert.popUp({
+                                    id: 'toolhead-offline',
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                    message: lang.monitor.cant_get_toolhead_version
+                                });
                             });
                         };
 
@@ -220,7 +230,11 @@ define([
                 DeviceMaster.select(printer).then((status) => {
                     checkStatus();
                 }).fail((resp) => {
-                    AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                    Alert.popUp({
+                        id: 'menu-item',
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: lang.message.connectionTimeout
+                    });
                 });
             };
 
@@ -260,7 +274,11 @@ define([
                                                         lang.select_printer.unable_to_connect :
                                                         lang.select_printer.auth_failure
                                                 );
-                                                AlertActions.showPopupError('device-auth-fail', message);
+                                                Alert.popUp({
+                                                    id: 'device-auth-fail',
+                                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                                    message: message
+                                                });
                                             }
                                         });
                                     }
@@ -282,24 +300,37 @@ define([
                             GlobalActions.showMonitor(device, '', '', GlobalConstants.DEVICE_LIST);
                         }
                         else if (status === DeviceConstants.TIMEOUT) {
-                            AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                            Alert.popUp({
+                                id: 'menu-item',
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                message: lang.message.connectionTimeout
+                            });
                         }
                     });
                 };
 
                 _action['MACHINE_INFO'] = (device) => {
                     let info = `${lang.device.model_name}: ${device.model.toUpperCase()}\n${lang.device.IP}: ${device.ipaddr}\n${lang.device.serial_number}: ${device.serial}\n${lang.device.firmware_version}: ${device.version}\n${lang.device.UUID}: ${device.uuid}`;
-                    AlertActions.showPopupCustomGroup('', info, [lang.topmenu.device.network_test, lang.topmenu.ok], '', '',
-                        [
+                    Alert.popUp({
+                        id: 'machine-info',
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        caption: device.name,
+                        message: info,
+                        buttonLabels: [lang.topmenu.device.network_test, lang.topmenu.ok],
+                        callbacks: [
                             () => {BeamboxActions.showNetworkTestingPanel(device.ipaddr)},
                             () => {}
-                        ]
-                    );
+                        ],
+                        primaryButtonIndex: 1
+                    });
                 };
 
                 _action['CALIBRATE_BEAMBOX_CAMERA'] = (device) => {
                     if (location.hash !== '#studio/beambox') {
-                        AlertActions.showPopupInfo('', lang.camera_calibration.please_goto_beambox_first);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,
+                            message: lang.camera_calibration.please_goto_beambox_first,
+                        });
                         return;
                     }
                     ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
@@ -311,13 +342,19 @@ define([
                         })
                         .fail(() => {
                             ProgressActions.close();
-                            AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                            Alert.popUp({
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                message: lang.message.connectionTimeout,
+                            });
                         });
                 };
 
                 _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = (device) => {
                     if (location.hash !== '#studio/beambox') {
-                        AlertActions.showPopupInfo('', lang.camera_calibration.please_goto_beambox_first);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,
+                            message: lang.camera_calibration.please_goto_beambox_first,
+                        });
                         return;
                     }
                     let isAvailableVersion = function(version, targetVersion) {
@@ -342,11 +379,17 @@ define([
                             })
                             .fail(() => {
                                 ProgressActions.close();
-                                AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                                Alert.popUp({
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                    message: lang.message.connectionTimeout,
+                                });
                             });
                     } else {
-                        const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`
-                        AlertActions.showPopupInfo('', message)
+                        const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`;
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,
+                            message,
+                        });
                     }
 
                 };
@@ -383,7 +426,11 @@ define([
                     DeviceMaster.selectDevice(device).then(status => {
                         if (status === DeviceConstants.CONNECTED) {}
                         DeviceMaster.lsusb().then( res => {
-                            AlertActions.showPopupInfo('', res.usbs.join('\n'), lang.topmenu.device.log.usblist);
+                            Alert.popUp({
+                                type: AlertConstants.SHOW_POPUP_INFO,
+                                message: res.usbs.join('\n'),
+                                caption: lang.topmenu.device.log.usblist
+                            });
                         });
                     });
                 };
@@ -501,9 +548,19 @@ define([
             _openAlertWithnoPrinters() {
                 if (0 === this.state.deviceList.length && true === this.state.showDeviceList) {
                     if (location.hash === '#studio/beambox') {
-                        AlertActions.showPopupRetry('no-printer', lang.device_selection.no_beambox);
+                        Alert.popUp({
+                            id: 'no-printer',
+                            message: lang.device_selection.no_beambox,
+                            buttonType: AlertConstants.RETRY_CANCEL,
+                            onRetry: () => {this._waitForPrinters()}
+                        });
                     } else {
-                        AlertActions.showPopupRetry('no-printer', lang.device_selection.no_printers);
+                        Alert.popUp({
+                            id: 'no-printer',
+                            message: lang.device_selection.no_printers,
+                            buttonType: AlertConstants.RETRY_CANCEL,
+                            onRetry: () => {this._waitForPrinters()}
+                        });
                     }
                 }
             }
@@ -520,7 +577,10 @@ define([
 
             _handleNavigation(address) {
                 if (-1 < appSettings.needWebGL.indexOf(address) && false === detectWebgl()) {
-                    AlertActions.showPopupError('no-webgl-support', lang.support.no_webgl);
+                    Alert.popUp({
+                        message: lang.support.no_webgl,
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                    });
                 }
                 else {
                     if (location.hash.indexOf('beambox') > 0 && address !== 'beambox') {
@@ -582,13 +642,25 @@ define([
                 }
 
                 if (isPowerTooHigh && isSpeedTooHigh) {
-                    AlertActions.showPopupWarning('', lang.beambox.popup.both_power_and_speed_too_high);
+                    Alert.popUp({
+                        message: lang.beambox.popup.both_power_and_speed_too_high,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                    });
                 } else if (isPowerTooHigh) {
-                    AlertActions.showPopupWarning('', lang.beambox.popup.power_too_high_damage_laser_tube);
+                    Alert.popUp({
+                        message: lang.beambox.popup.power_too_high_damage_laser_tube,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                    });
                 } else if (isSpeedTooHigh) {
-                    AlertActions.showPopupWarning('', lang.beambox.popup.speed_too_high_lower_the_quality);
+                    Alert.popUp({
+                        message: lang.beambox.popup.speed_too_high_lower_the_quality,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                    });
                 } else if (isTooFastForPath) {
-                    AlertActions.showPopupWarning('', lang.beambox.popup.too_fast_for_path);
+                    Alert.popUp({
+                        message: lang.beambox.popup.too_fast_for_path,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                    });
                 }
 
                 Discover(
@@ -619,12 +691,20 @@ define([
                     }
                     else if (status === DeviceConstants.TIMEOUT) {
                         ProgressActions.close();
-                        AlertActions.showPopupError(_id, lang.message.connectionTimeout);
+                        Alert.popUp({
+                            id: _id,
+                            message: lang.message.connectionTimeout,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                        });
                     }
                 })
                     .fail(function (status) {
                         ProgressActions.close();
-                        AlertActions.showPopupError('fatal-occurred', status);
+                        Alert.popUp({
+                            id: 'fatal-occurred',
+                            message: status,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                        });
                     });
                 this._toggleDeviceList(false);
 
@@ -642,7 +722,11 @@ define([
                 // Check firmware
                 if (await BeamboxVersionMaster.isUnusableVersion(device)) {
                     console.error('Not a valid firmware version');
-                    AlertActions.showPopupError('', lang.beambox.popup.should_update_firmware_to_continue);
+                    Alert.popUp({
+                        id: 'fatal-occurred',
+                        message: lang.beambox.popup.should_update_firmware_to_continue,
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                    });
                     this.setState({ showDeviceList: false });
                     return;
                 } else {

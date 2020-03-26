@@ -1,14 +1,16 @@
 define([
     'helpers/i18n',
     'helpers/api/config',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
     i18n,
     Config,
-    AlertActions,
+    Alert,
+    AlertConstants,
     ProgressActions,
     ProgressConstants,
     FnWrapper
@@ -27,32 +29,46 @@ define([
                 if (res.error) {
                     console.log(res.error);
                     if (!isAutoCheck) {
-                        AlertActions.showPopupInfo('update-check-error', `Error: ${res.error.code} `, LANG.check_update);
+                        Alert.popUp({
+                            message: `Error: ${res.error.code} `,
+                            caption: LANG.check_update
+                        });
                     }
                 } else if (res.isUpdateAvailable) {
                     let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
-                    AlertActions.showPopupCustomGroup('updateavailable', msg, [LANG.no, LANG.yes], LANG.check_update, null, [
-                        () => {
-                            ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {});
-                        },
-                        () => {
+                    Alert.popUp({
+                        message: msg,
+                        caption: LANG.check_update,
+                        buttonType: AlertConstants.YES_NO,
+                        onYes: () => {
                             ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
                                 let msg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
-                                AlertActions.showPopupCustomGroup('update-downloaded', msg, [LANG.no, LANG.yes], LANG.check_update, null, [
-                                    () => {},
-                                    () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
-                                ]);
+                                Alert.popUp({
+                                    buttonType: AlertConstants.YES_NO,
+                                    message: msg,
+                                    caption: LANG.check_update,
+                                    onYes: () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
+                                });
                             });
                             ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
                                 console.log('progress:', progress.percent);
                             });
-                            AlertActions.showPopupInfo('download-update', LANG.downloading, LANG.check_update);
+                            Alert.popUp({
+                                message: LANG.downloading,
+                                caption: LANG.check_update
+                            });
                             ipc.send(events.DOWNLOAD_UPDATE);
+                        },
+                        onNo: () => {
+                            ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {});
                         }
-                    ]);
+                    });
                 } else {
                     if (!isAutoCheck){
-                        AlertActions.showPopupInfo('update-unavailable', LANG.not_found, LANG.check_update);
+                        Alert.popUp({
+                            message: LANG.not_found,
+                            caption: LANG.check_update
+                        });
                     }
                 }
             });

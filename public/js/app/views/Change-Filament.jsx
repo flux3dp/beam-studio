@@ -4,7 +4,7 @@ define([
     'helpers/i18n',
     'helpers/shortcuts',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'helpers/device-master',
     'app/constants/device-constants',
     'app/actions/alert-actions',
@@ -16,7 +16,7 @@ define([
     i18n,
     shortcuts,
     Modal,
-    Alert,
+    AlertDialog,
     DeviceMaster,
     DeviceConstants,
     AlertActions,
@@ -552,7 +552,7 @@ define([
 
             var section = this._sectionFactory(),
                 content = (
-                    <Alert
+                    <AlertDialog
                         lang={lang}
                         caption={this._makeCaption(section.caption)}
                         message={section.message}

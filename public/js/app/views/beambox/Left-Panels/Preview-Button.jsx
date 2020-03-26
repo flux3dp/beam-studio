@@ -4,7 +4,8 @@ define([
     'jsx!views/beambox/Left-Panels/Clear-Preview-Graffiti-Button',
     'jsx!views/beambox/Left-Panels/Image-Trace-Button',
     'jsx!views/Printer-Selector',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/preview-mode-background-drawer',
     'app/actions/beambox/preview-mode-controller',
@@ -26,7 +27,8 @@ define([
     ClearPreviewGraffitiButton,
     ImageTraceButton,
     PrinterSelector,
-    AlertActions,
+    Alert,
+    AlertConstants,
     FnWrapper,
     PreviewModeBackgroundDrawer,
     PreviewModeController,
@@ -128,7 +130,10 @@ define([
                 };
 
                 const remindCalibrateCamera = () => {
-                    AlertActions.showPopupInfo('what-is-this-parameter-for?', LANG.suggest_calibrate_camera_first);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_INFO,
+                        message: LANG.suggest_calibrate_camera_first,
+                    });
                     BeamboxPreference.write('should_remind_calibrate_camera', false);
                 };
 
@@ -137,7 +142,10 @@ define([
                 };
 
                 const alertUserToUpdateFirmware = () => {
-                    AlertActions.showPopupError('', i18n.lang.beambox.popup.should_update_firmware_to_continue);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: i18n.lang.beambox.popup.should_update_firmware_to_continue,
+                    });
                 };
 
                 const isFirmwareBorderlessAvailable = (device) => {
@@ -192,7 +200,10 @@ define([
 
                 const startPreviewMode = async (device) => {
                     const errorCallback = (errMessage) => {
-                        AlertActions.showPopupError('menu-item', errMessage);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: errMessage,
+                        });
                         this.setState({ isPreviewMode: false });
                         $(workarea).css('cursor', 'auto');
                     };
@@ -207,7 +218,10 @@ define([
 
                     } catch (error) {
                         console.log(error);
-                        AlertActions.showPopupError('menu-item', error.message || 'Fail to start preview mode');
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: error.message || 'Fail to start preview mode',
+                        });
                         FnWrapper.useSelectTool();
                     }
                 };
@@ -230,7 +244,11 @@ define([
                     if (!isFirmwareBorderlessAvailable(device)) {
                         const message = `${i18n.lang.camera_calibration.update_firmware_msg1} 2.5.1 ${i18n.lang.camera_calibration.update_firmware_msg2} ${i18n.lang.beambox.popup.or_turn_off_borderless_mode}`;
                         const caption = i18n.lang.beambox.left_panel.borderless_preview;
-                        AlertActions.showPopupError('', message, caption);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message,
+                            caption
+                        });
                         return;
                     }
                 }
@@ -239,6 +257,7 @@ define([
 
                 if (!(await isFirmwareVersionValid(device))) {
                     alertUserToUpdateFirmware();
+                    ProgressActions.close();
                     return;
                 }
 

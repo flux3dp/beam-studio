@@ -7,7 +7,8 @@ define([
     'helpers/websocket',
     'helpers/rsa-key',
     'helpers/i18n',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/input-lightbox-actions',
     'app/constants/input-lightbox-constants'
 ], function(
@@ -15,7 +16,8 @@ define([
     Websocket,
     rsaKey,
     i18n,
-    AlertActions,
+    Alert,
+    AlertConstants,
     InputLightboxActions,
     InputLightboxConstants
 ) {
@@ -76,7 +78,10 @@ define([
 
                     switch (response.error) {
                     case 'UPNP_PASSWORD_FAIL':
-                        AlertActions.showPopupError(response.error, lang.initialize.set_machine_generic.incorrect_password);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.initialize.set_machine_generic.incorrect_password
+                        });
                     case 'UPNP_CONNECTION_FAIL':
                         InputLightboxActions.open('need_password', {
                             type        : InputLightboxConstants.TYPE_PASSWORD,
@@ -98,10 +103,17 @@ define([
                 },
                 onFatal: function(response) {
                     if (0 < response.error.indexOf('not supported')) {
-                        AlertActions.showPopupError('not-supported', lang.initialize.errors.not_support);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.initialize.errors.not_support
+                        });
                     }
                     else {
-                        AlertActions.showPopupError(response.error, lang.initialize.errors.not_support);
+                        Alert.popUp({
+                            id: response.error,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.initialize.errors.not_support
+                        });
                     }
                 }
             });

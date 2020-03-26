@@ -1,10 +1,8 @@
 define([
     'reactPropTypes',
-    'app/actions/alert-actions',
     'helpers/device-master',
 ], function(
     PropTypes,
-    AlertActions,
     DeviceMaster
 ) {
     const React = require('react');

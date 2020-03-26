@@ -1,13 +1,11 @@
 define([
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/api/svg-laser-parser',
-    'app/actions/alert-actions',
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
 ], function(
     FnWrapper,
     SvgLaserParser,
-    AlertActions,
     BeamboxPreference,
     i18n
 ) {

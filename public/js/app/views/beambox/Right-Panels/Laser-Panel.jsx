@@ -17,7 +17,8 @@ define([
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/preview-mode-controller',
     'jsx!views/Printer-Selector',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/beambox/beambox-version-master'
 ], function(
     $,
@@ -38,7 +39,8 @@ define([
     BottomRightFuncs,
     PreviewModeController,
     PrinterSelector,
-    AlertActions,
+    Alert,
+    AlertConstants,
     BeamboxVersionMaster
 ) {
     'use strict';
@@ -238,7 +240,10 @@ define([
                     }]));
                     this.props.funcs.writeConfigName(this.props.layerName, name);
                 } else {
-                    AlertActions.showPopupError('', LANG.existing_name)
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: LANG.existing_name,
+                    });
                 }
             }
 
@@ -689,7 +694,10 @@ define([
 
             const onControlClick = () => {
                 if (!selectedConfig) {
-                    AlertActions.showPopupError('', 'Not selecting');
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: 'Not selecting',
+                    });
                 }
             };
 
@@ -842,43 +850,6 @@ define([
             }
         }
 
-        _handleStartClick = async () => {
-            if (PreviewModeController.isPreviewMode()) {
-                await PreviewModeController.end();
-            }
-
-            const layers = $('#svgcontent > g.layer').toArray();
-            const dpi = BeamboxPreference.read('engrave_dpi');
-
-            const isPowerTooHigh = layers.map(layer => layer.getAttribute('data-strength'))
-                    .some(strength => Number(strength) > 80);
-            const imageElems = document.querySelectorAll('image');
-
-            let isSpeedTooHigh = false;
-
-            for (let i = 1; i < imageElems.length; i++) {
-                if (imageElems[i].getAttribute('data-shading') && (
-                        (dpi === 'medium' && imageElems[i].parentNode.getAttribute('data-speed') > 135) ||
-                        (dpi === 'high' && imageElems[i].parentNode.getAttribute('data-speed') > 90)
-                )) {
-                    isSpeedTooHigh = true;
-                    break;
-                }
-            }
-
-            if (isPowerTooHigh && isSpeedTooHigh) {
-                AlertActions.showPopupWarning('', LANG2.beambox.popup.both_power_and_speed_too_high);
-            } else if (isPowerTooHigh) {
-                AlertActions.showPopupWarning('', LANG2.beambox.popup.power_too_high_damage_laser_tube);
-            } else if (isSpeedTooHigh) {
-                AlertActions.showPopupWarning('', LANG2.beambox.popup.speed_too_high_lower_the_quality);
-            }
-
-            this.setState({
-                isPrinterSelectorOpen: true
-            });
-        }
-
         _renderPrinterSelectorWindow = () => {
             const onGettingPrinter = async (selected_item) => {
                 //export fcode
@@ -894,7 +865,10 @@ define([
                 //check firmware
                 if (await BeamboxVersionMaster.isUnusableVersion(selected_item)) {
                     console.error('Not a valid firmware version');
-                    AlertActions.showPopupError('', lang.beambox.popup.should_update_firmware_to_continue);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: lang.beambox.popup.should_update_firmware_to_continue,
+                    });
                     this.setState({
                         isPrinterSelectorOpen: false
                     });
@@ -928,20 +902,6 @@ define([
 
             return (
                 <Modal content={content} onClose={onClose} />
-            );
-        }
-
-        _renderActionButtons = () => {
-            let className = ReactCx.cx({
-                'btn-default': true, 
-                'btn-go': true
-            });
-            let label = LANG2.monitor.start;
-            
-            return (
-                <button className={className} type="button" data-ga-event="laser-goto-monitor" data-test-key={label} onClick={this._handleStartClick}>
-                    {label}
-                </button>
             );
         }
 
@@ -983,7 +943,6 @@ define([
                     defaultOptions.concat(functionalOptions)
             );
 
-            // const actionButtons = this._renderActionButtons();
             const printerSelector = this._renderPrinterSelectorWindow();
 
             return (

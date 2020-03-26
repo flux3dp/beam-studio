@@ -9,9 +9,10 @@ define([
     'helpers/convertToTypedArray',
     'app/constants/device-constants',
     'helpers/rsa-key',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/progress-actions'
-], function($, i18n, Websocket, convertToTypedArray, DeviceConstants, rsaKey, AlertActions, ProgressActions) {
+], function($, i18n, Websocket, convertToTypedArray, DeviceConstants, rsaKey, Alert, AlertConstants, ProgressActions) {
     'use strict';
 
     return function(uuid, opts) {
@@ -79,20 +80,20 @@ define([
                     }
                     else if(response.error === 'UNKNOWN_DEVICE') {
                         ProgressActions.close();
-                        AlertActions.showPopupError(
-                            'unhandle-exception',
-                            lang.message.unknown_device
-                        );
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.message.unknown_device
+                        });
                     }
                     else if(response.error === 'NOT_FOUND' || response.error === 'DISCONNECTED') {
                         opts.onError(response);
                     }
                     else if(response.code === 1006) {
                         ProgressActions.close();
-                        AlertActions.showPopupError(
-                            'NO-CONNECTION',
-                            lang.message.cant_connect_to_device
-                        );
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.message.cant_connect_to_device
+                        });
                         opts.onFatal(response);
                     }
                     else {

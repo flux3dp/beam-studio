@@ -8,8 +8,8 @@ define([
     'helpers/i18n',
     'helpers/api/touch',
     'app/constants/device-constants',
-    'app/actions/alert-actions',
-    'app/stores/alert-store',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/initialize-machine',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -28,8 +28,8 @@ define([
     i18n,
     Touch,
     DeviceConstants,
-    AlertActions,
-    AlertStore,
+    Alert,
+    AlertConstants,
     InitializeMachine,
     ProgressActions,
     ProgressConstants,
@@ -112,8 +112,6 @@ define([
                     });
                 };
 
-            AlertStore.onCancel(self._onCancel);
-
             const existWifiAndUsbConnection = (serial) => {
                 let devices = DeviceMaster.getAvailableDevices(),
                     num = 0;
@@ -157,7 +155,12 @@ define([
                             if (0 > tryTimes) {
                                 clearInterval(timer);
                                 if(self.state.devices.length === 0) {
-                                    AlertActions.showPopupError('device-not-found', lang.message.device_not_found.message, lang.message.device_not_found.caption);
+                                    Alert.popUp({
+                                        id: 'device-not-found',
+                                        message: lang.message.device_not_found.message,
+                                        caption: lang.message.device_not_found.caption,
+                                        callbacks: () => {this._onCancel('device-not-found')}
+                                    });
                                 }
                                 else {
                                     self.setState({
@@ -206,8 +209,6 @@ define([
             if ('function' === typeof this.state.discoverMethods.removeListener) {
                 this.state.discoverMethods.removeListener(this.state.discoverId);
             }
-
-            AlertStore.removeCancelListener(this._onCancel);
             if(this.props.onUnmount) {
                 this.props.onUnmount();
             }
@@ -259,7 +260,12 @@ define([
 
                                     ProgressActions.close();
 
-                                    AlertActions.showPopupError('device-auth-fail', message);
+                                    Alert.popUp({
+                                        id: 'device-auth-fail',
+                                        message,
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                        callbacks: () => {this._onCancel('device-auth-fail')}
+                                    });
                                 }
                             });
                         }
@@ -299,20 +305,33 @@ define([
                     else if (status === DeviceConstants.TIMEOUT) {
                         // TODO: Check default printer
                         if (self.state.hasDefaultPrinter) {
-                            AlertActions.showPopupError(
-                                'printer-connection-timeout',
-                                sprintf(lang.message.device_not_found.message, self.selected_printer.name),
-                                lang.message.device_not_found.caption
-                            );
+                            Alert.popUp({
+                                id: 'printer-connection-timeout',
+                                message: sprintf(lang.message.device_not_found.message, self.selected_printer.name),
+                                caption: lang.message.device_not_found.caption,
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                callbacks: () => {this._onCancel('printer-connection-timeout')}
+                            });
                         }
                         else {
-                            AlertActions.showPopupError('printer-connection-timeout', lang.message.connectionTimeout, lang.caption.connectionTimeout);
+                            Alert.popUp({
+                                id: 'printer-connection-timeout',
+                                message: lang.message.connectionTimeout,
+                                caption: lang.caption.connectionTimeout,
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                callbacks: () => {this._onCancel('printer-connection-timeout')}
+                            });
                         }
                     }
                 }).always(() => {
                     ProgressActions.close();
                 }).fail((status) => {
-                    AlertActions.showPopupError('fatal-occurred', status);
+                    Alert.popUp({
+                        id: 'fatal-occurred',
+                        message: status,
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        callbacks: () => {this._onCancel('fatal-occurred')}
+                    });
                 });
             }
         }
@@ -383,14 +402,6 @@ define([
         }
 
         _openAlertWithnoPrinters = () => {
-            var self = this;
-
-            AlertStore.removeRetryListener(self._waitForPrinters);
-
-            // if (self.state.devices.length === 0 && !self.state.hasDefaultPrinter) {
-            //     AlertActions.showPopupRetry('no-printer', lang.device_selection.no_printers);
-            //     AlertStore.onRetry(self._waitForPrinters);
-            // }
         }
 
         _renderPrinterItem = (printer) => {

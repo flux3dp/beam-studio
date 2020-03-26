@@ -2,24 +2,12 @@ define([
     'jquery',
     'helpers/api/config',
     'helpers/i18n',
-    'helpers/version-compare',
-    'app/actions/alert-actions',
-    'app/stores/alert-store',
-    'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/stores/progress-store',
-    'app/constants/progress-constants'
+    'helpers/version-compare'
 ], function(
     $,
     config,
     i18n,
-    versionCompare,
-    AlertActions,
-    AlertStore,
-    AlertConstants,
-    ProgressActions,
-    ProgressStore,
-    ProgressConstants
+    versionCompare
 ) {
     'use strict';
 

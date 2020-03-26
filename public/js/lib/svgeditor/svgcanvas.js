@@ -30,7 +30,8 @@
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'jsx!app/actions/beambox/Object-Panels-Controller',
     'app/actions/beambox/preview-mode-controller',
     'app/actions/beambox',
@@ -44,7 +45,8 @@ define([
 ], function (
     i18n,
     BeamboxPreference,
-    AlertActions,
+    Alert,
+    AlertConstants,
     ObjectPanelsController,
     PreviewModeController,
     BeamboxActions,
@@ -5665,7 +5667,10 @@ define([
             function parseSvg(svg, type) {
                 function _removeSvgText() {
                     if($(svg).find('text').length) {
-                        AlertActions.showPopupInfo('', LANG.popup.no_support_text);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,Alert,
+                            message: LANG.popup.no_support_text,
+                        });
                         $(svg).find('text').remove();
                     }
                 }
@@ -8516,7 +8521,10 @@ define([
                 } else {
                     fileName = filePath.split('/');
                 }
-                AlertActions.showPopupInfo('read recent', LANG.popup.loading_image, ' ');
+                Alert.popUp({
+                    id: 'load-recent',
+                    message: LANG.popup.loading_image,
+                });
                 fileName = fileName[fileName.length -1];
                 fileName = fileName.slice(0, fileName.lastIndexOf('.')).replace(':', "/");
                 this.setLatestImportFileName(fileName);
@@ -8527,10 +8535,14 @@ define([
                 try {
                     svgEditor.importBvg(res);
                 } finally {
-                    AlertActions.closePopup();
+                    Alert.popAlertStackById('load-recent');
                 }
             } else {
-                AlertActions.showPopupError('Recent', i18n.lang.topmenu.file.path_not_exit);
+                Alert.popUp({
+                    id: 'load-recent',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: i18n.lang.topmenu.file.path_not_exit,
+                });
             }
         }
 
@@ -8690,15 +8702,27 @@ define([
             solution_paths = (dir === 1) ? [solution_paths[0]] : solution_paths.slice(1);
             if (solution_paths.length === 0 || !solution_paths[0]) {
                 if (isContainNotSupportTag) {
-                    AlertActions.showPopupWarning('Offset', LANG.tool_panels._offset.not_support_message)
+                    Alert.popUp({
+                        id: 'Offset',
+                        type: AlertConstants.SHOW_POP_WARNING,
+                        message: LANG.tool_panels._offset.not_support_message,
+                    });
                 } else {
-                    AlertActions.showPopupError('Offset', LANG.tool_panels._offset.fail_message);
+                    Alert.popUp({
+                        id: 'Offset',
+                        type: AlertConstants.SHOW_POP_ERROR,
+                        message: LANG.tool_panels._offset.fail_message,
+                    });
                 }
                 console.log('clipper.co failed');
                 return;
             }
             if (isContainNotSupportTag) {
-                AlertActions.showPopupWarning('Offset', LANG.tool_panels._offset.not_support_message)
+                Alert.popUp({
+                    id: 'Offset',
+                    type: AlertConstants.SHOW_POP_WARNING,
+                    message: LANG.tool_panels._offset.not_support_message,
+                });
             }
             let d = '';
             for (let i = 0; i < solution_paths.length; ++i) {
@@ -10073,12 +10097,19 @@ define([
                 }
             }
             if (len < 2) {
-                AlertActions.showPopupError('Boolean Operate', LANG.popup.select_at_least_two);
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.select_at_least_two,
+                });
                 return;
             }
             if (len > 2 && mode === 'diff') {
-                //TODO: lang
-                AlertActions.showPopupError('Boolean Operate', LANG.popup.more_than_two_object);
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.more_than_two_object,
+                });
                 return;
             }
             let batchCmd = new svgedit.history.BatchCommand(`${mode} Elements`);
@@ -10100,7 +10131,11 @@ define([
                         'image': LANG.tag.image,
                         'text': LANG.tag.text
                     };
-                    AlertActions.showPopupError('Boolean Operate', `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`);
+                    Alert.popUp({
+                        id: 'Boolean Operate',
+                        type: AlertConstants.SHOW_POP_ERROR,
+                        message: `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`,
+                    });
                     return;
                 }
                 const dpath = svgedit.utilities.getPathDFromElement(elem);

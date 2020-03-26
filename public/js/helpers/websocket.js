@@ -1,7 +1,6 @@
 define([
     'helpers/is-json',
     'helpers/i18n',
-    'app/actions/alert-actions',
     'app/stores/alert-store',
     'helpers/output-error',
     'helpers/logger',
@@ -9,7 +8,6 @@ define([
 ], function(
     isJson,
     i18n,
-    AlertActions,
     AlertStore,
     outputError,
     Logger,

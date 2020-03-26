@@ -1,20 +1,20 @@
 define([
     'app/actions/beambox/constant',
-    'app/actions/alert-actions',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'helpers/image-data',
-    'lib/cropper',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'jsx!app/actions/beambox/Advanced-Panel-Controller',
     'jsx!app/actions/beambox/Photo-Edit-Panel-Controller',
     'helpers/i18n'
 ], function(
     Constant,
-    AlertActions,
     ProgressActions,
     ProgressConstants,
     ImageData,
-    Cropper,
+    Alert,
+    AlertConstants,
     AdvancedPanelController,
     PhotoEditPanelController,
     i18n
@@ -341,24 +341,23 @@ define([
             if (!svgCanvas.changed) {
                 callback();
             } else {
-                AlertActions.showPopupCustomGroup(
-                    'unsaved change dialog',
-                    LANG.popup.save_unsave_changed,
-                    [i18n.lang.alert.dont_save, i18n.lang.alert.cancel, i18n.lang.alert.save],
-                    '',
-                    '',
-                    [
+                Alert.popUp({
+                    id: 'unsaved_change_dialog',
+                    message: LANG.popup.save_unsave_changed,
+                    buttonLabels: [i18n.lang.alert.cancel, i18n.lang.alert.dont_save, i18n.lang.alert.save],
+                    callbacks: [
+                        () => {},
                         () => {
                             callback();
                         },
-                        () => {},
                         () => {
                             if (this.saveFile()) {
                                 callback();
                             }
                         }
-                    ]
-                );
+                    ],
+                    primaryButtonIndex: 2
+                });
             }
         },
 

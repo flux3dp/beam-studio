@@ -4,7 +4,8 @@
  */
 define([
     'jquery',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/beambox/beambox-preference',
     'helpers/websocket',
     'helpers/convertToTypedArray',
@@ -13,7 +14,8 @@ define([
     'helpers/i18n'
 ], function(
     $,
-    AlertActions,
+    Alert,
+    AlertConstants,
     BeamboxPreference,
     Websocket,
     convertToTypedArray,
@@ -486,13 +488,14 @@ define([
                         if (version) {
                             version = version[0].substring(10, version[0].length -1);
                             if (version === '1.1') {
-                                AlertActions.showPopupCheckboxWarning(
-                                    'svg 1.1 warning',
-                                    LANG.svg_1_1_waring,
-                                    '',
-                                    LANG.dont_show_again,
-                                    () => {BeamboxPreference.write('svg_version_warning', false)}
-                                );
+                                Alert.popUp({
+                                    type: AlertConstants.SHOW_POPUP_WARNING,
+                                    message: LANG.svg_1_1_waring,
+                                    checkBox: {
+                                        text: LANG.dont_show_again,
+                                        callbacks: () => {BeamboxPreference.write('svg_version_warning', false)}
+                                    }
+                                });
                             }
                         }
                     }

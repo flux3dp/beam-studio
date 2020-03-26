@@ -30,7 +30,8 @@ define([
     'jsx!app/actions/announcement',
     'jsx!app/views/beambox/DxfDpiSelector',
     'jsx!app/views/beambox/Color-Picker-Panel',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/topbar',
     'helpers/aws-helper',
     'helpers/image-data',
@@ -50,7 +51,8 @@ define([
     Announcement,
     DxfDpiSelector,
     ColorPickerPanel,
-    AlertActions,
+    Alert,
+    AlertConstants,
     TopbarActions,
     AwsHelper,
     ImageData,
@@ -252,8 +254,14 @@ define([
             if (success) {
                 callback(true);
             } else {
-                $.alert(uiStrings.notification.errorLoadingSVG, function () {
-                    callback(false);
+                Alert.popUp({
+                    id: 'load SVG fail',
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    message: uiStrings.notification.errorLoadingSVG,
+                    callbacks: () => {
+                        console.log('cb');
+                        callback(false);
+                    }
                 });
             }
         };
@@ -3245,7 +3253,12 @@ define([
                     if (promptMoveLayerOnce) {
                         moveToLayer(true);
                     } else {
-                        $.confirm(confirmStr, moveToLayer);
+                        Alert.popUp({
+                            id: 'load SVG fail',
+                            buttonType: AlertConstants.YES_NO,
+                            message: confirmStr,
+                            onYes: moveToLayer
+                        });
                     }
                 }
             });
@@ -3310,7 +3323,9 @@ define([
                 var valid = svgedit.units.isValidUnit(attr, val, selectedElement);
 
                 if (!valid) {
-                    $.alert(uiStrings.notification.invalidAttrValGiven);
+                    Alert.popUp({
+                        message: uiStrings.notification.invalidAttrValGiven,
+                    });
                     this.value = selectedElement.getAttribute(attr);
                     return false;
                 }
@@ -3746,7 +3761,11 @@ define([
                         ObjectPanelsController.setVisibility(false);
                         ObjectPanelsController.render();
                     } else {
-                        AlertActions.showPopupError('Select First', LANG.popup.select_first, LANG.left_panel.label.array);
+                        Alert.popUp({
+                            id: 'select first',
+                            message: LANG.popup.select_first,
+                            caption: LANG.left_panel.label.array
+                        });
                         $('#left-Grid').removeClass('active');
                         $('#left-Cursor').addClass('active');
                     }
@@ -3761,7 +3780,11 @@ define([
                     ObjectPanelsController.setVisibility(false);
                     ObjectPanelsController.render();
                 } else {
-                    AlertActions.showPopupError('Select First', LANG.popup.select_first, LANG.left_panel.label.offset);
+                    Alert.popUp({
+                        id: 'select first',
+                        message: LANG.popup.select_first,
+                        caption: LANG.left_panel.label.offset
+                    });
                 }
             }
             editor.triggerOffsetTool = triggerOffsetTool;
@@ -3896,8 +3919,11 @@ define([
 
             var clickClear = function() {
                 var dims = curConfig.dimensions;
-                AlertActions.showPopupYesNo('clear-scene', uiStrings.notification.QwantToClear, '', null, {
-                    yes: () => {
+                Alert.popUp({
+                    id: 'clear-scene',
+                    message: uiStrings.notification.QwantToClear,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
                         setSelectMode();
                         svgCanvas.clear();
                         svgCanvas.setResolution(dims[0], dims[1]);
@@ -3907,8 +3933,7 @@ define([
                         updateContextPanel();
                         prepPaints();
                         svgCanvas.runExtensions('onNewDocument');
-                    },
-                    no: () => {}
+                    }
                 });
             };
 
@@ -4166,7 +4191,10 @@ define([
                     h = height.val();
 
                 if (w !== 'fit' && !svgedit.units.isValidUnit('width', w)) {
-                    $.alert(uiStrings.notification.invalidAttrValGiven);
+                    Alert.popUp({
+                        id: 'invalid attr',
+                        message: uiStrings.notification.invalidAttrValGiven,
+                    });
                     width.parent().addClass('error');
                     return false;
                 }
@@ -4174,7 +4202,10 @@ define([
                 width.parent().removeClass('error');
 
                 if (h !== 'fit' && !svgedit.units.isValidUnit('height', h)) {
-                    $.alert(uiStrings.notification.invalidAttrValGiven);
+                    Alert.popUp({
+                        id: 'invalid attr',
+                        message: uiStrings.notification.invalidAttrValGiven,
+                    });
                     height.parent().addClass('error');
                     return false;
                 }
@@ -4182,7 +4213,10 @@ define([
                 height.parent().removeClass('error');
 
                 if (!svgCanvas.setResolution(w, h)) {
-                    $.alert(uiStrings.notification.noContentToFitTo);
+                    Alert.popUp({
+                        id: 'invalid attr',
+                        message: uiStrings.notification.noContentToFitTo,
+                    });
                     return false;
                 }
 
@@ -4282,7 +4316,10 @@ define([
             })();
 
             $('#url_notice').click(function () {
-                $.alert(this.title);
+                Alert.popUp({
+                    id: 'url notice',
+                    message: this.title,
+                });
             });
 
             $('#change_image_url').click(promptImgURL);
@@ -4592,7 +4629,10 @@ define([
                         return;
                     }
                     if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        $.alert(uiStrings.notification.dupeLayerName);
+                        Alert.popUp({
+                            id: 'dupli layer name',
+                            message: uiStrings.notification.dupeLayerName,
+                        });
                         return;
                     }
                     svgCanvas.createLayer(newName);
@@ -4617,7 +4657,10 @@ define([
                         return;
                     }
                     if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        $.alert(uiStrings.notification.dupeLayerName);
+                        Alert.popUp({
+                            id: 'dupli layer name',
+                            message: uiStrings.notification.dupeLayerName,
+                        });
                         return;
                     }
                     svgCanvas.cloneLayer(newName);
@@ -4664,7 +4707,10 @@ define([
                         return;
                     }
                     if (oldName === newName || svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        $.alert(uiStrings.notification.layerHasThatName);
+                        Alert.popUp({
+                            id: 'old_layer_name',
+                            message: uiStrings.notification.layerHasThatName,
+                        });
                         return;
                     }
 
@@ -5507,7 +5553,7 @@ define([
                                 }
                                 resolve();
                                 updateContextPanel();
-                                $('#dialog_box').hide();
+                                Alert.popAlertStackById('loading_image');
                             };
                                 // create dummy img so we know the default dimensions
                             var imgWidth = 100;
@@ -5635,7 +5681,7 @@ define([
                                 resolve(false);
                             }
                             // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
-                            $('#dialog_box').hide();
+                            Alert.popAlertStackById('loading_image');
                             resolve(newElement);
                         };
                         reader.readAsText(blob);
@@ -5646,26 +5692,31 @@ define([
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file);
                         if (result !== 'ok') {
-                            $('#dialog_box').hide();
+                            Alert.popAlertStackById('loading_image');
                             switch (result) {
                                 case 'invalid_path':
-                                    AlertActions.showPopupError('', LANG.popup.import_file_contain_invalid_path);
+                                    Alert.popUp({
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                        message: LANG.popup.import_file_contain_invalid_path
+                                    });
                                     break;
                             }
                             return;
                         }
                         let outputs = await svgWebSocket.divideSVG();
                         if (!outputs.res) {
-                            AlertActions.showPopupYesNo('import-svg-error', `${outputs.data}\n${LANG.popup.import_file_error_ask_for_upload}`, i18n.lang.alert.error, null, {
-                                yes: () => {
+                            Alert.popUp({
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                buttonType: AlertConstants.YES_NO,
+                                message: `${outputs.data}\n${LANG.popup.import_file_error_ask_for_upload}`,
+                                onYes: () => {
                                     let fileReader = new FileReader();
                                     fileReader.onloadend = function (e) {
                                         let svgString = e.target.result;
                                         AwsHelper.uploadToS3(file.name, svgString);
                                     }
                                     fileReader.readAsText(file);
-                                },
-                                no: () => {}
+                                }
                             });
                             return;
                         } else {
@@ -5690,14 +5741,11 @@ define([
                             await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
                     }
-
-                    AlertActions.showPopupCustomGroup(
-                        'confirm_mouse_input_device',
-                        LANG.popup.select_import_method,
-                        [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer],
-                        '',
-                        '',
-                        [
+                    Alert.popUp({
+                        id: 'confirm_mouse_input_device',
+                        message: LANG.popup.select_import_method,
+                        buttonLabels: [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer],
+                        callbacks: [
                             () => {
                                 importAs('layer');
                             },
@@ -5708,7 +5756,7 @@ define([
                                 importAs('nolayer');
                             }
                         ]
-                    );
+                    });
                 };
                 const importBitmap = file => {
                     readImage(file);
@@ -5723,14 +5771,21 @@ define([
                                 let autoCadVersion = evt.target.result.match(/AC\d+/);
                                 if (autoCadVersion) {
                                     autoCadVersion = autoCadVersion[0].substring(2 ,autoCadVersion[0].length);
-                                    if (autoCadVersion !== '1027')
-                                    AlertActions.showPopupCheckboxWarning(
-                                        'dxf version warning',
-                                        LANG.popup.dxf_version_waring,
-                                        '',
-                                        LANG.popup.dont_show_again,
-                                        () => {BeamboxPreference.write('dxf_version_warning', false)}
-                                    );
+                                    if (autoCadVersion !== '1027') {
+                                        Alert.popUp({
+                                            id: 'dxf_version_warning',
+                                            message: LANG.popup.dxf_version_waring,
+                                            type: AlertConstants.SHOW_POPUP_WARNING,
+                                            callbacks: () => {console.log('unchecked')},
+                                            checkBox: {
+                                                text: LANG.popup.dont_show_again,
+                                                callbacks: () => {
+                                                    console.log('checked');
+                                                }
+                                            }
+                                        });
+                                    }
+                                    
                                 }
                             }
 
@@ -5768,7 +5823,7 @@ define([
                                     },
                                     onCancel: () => {
                                         Announcement.unpost('DXF_DPI_SELECTOR');
-                                        $('#dialog_box').hide();
+                                        Alert.popAlertStackById('loading_image');
                                         reject();
                                     }
                                 }
@@ -5778,12 +5833,16 @@ define([
                     });
                     if (!parsed) {
                         alert("DXF Parsing Error");
-                        $('#dialog_box').hide();
+                        Alert.popAlertStackById('loading_image');
                         return;
                     }
                     const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
                     if (bbox.width > Constant.dimension.width || bbox.height > Constant.dimension.height) {
-                        AlertActions.showPopupWarning('dxf size over workarea', LANG.popup.dxf_bounding_box_size_over);
+                        Alert.popUp({
+                            id: 'dxf_size_over_workarea',
+                            message: LANG.popup.dxf_bounding_box_size_over,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                        });
                     }
 
                     for (let i in outputLayers) {
@@ -5832,7 +5891,7 @@ define([
                     svgCanvas.setSvgElemPosition('x', 0);
                     svgCanvas.setSvgElemPosition('y', 0);*/
                     // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
-                    $('#dialog_box').hide();
+                    Alert.popAlertStackById('loading_image');
                 };
 
                 const importBvgString = (str) => {
@@ -5910,7 +5969,7 @@ define([
                 editor.importBvg = importBvg;
 
                 const importJsScript = async (file) => {
-                    $('#dialog_box').hide();
+                    Alert.popAlertStackById('loading_image');
                     if (require.cache[file.path]) {
                         delete require.cache[file.path];
                     }
@@ -5918,14 +5977,14 @@ define([
                 };
 
                 var importImage = function (e) {
-                    $.process_cancel(uiStrings.notification.loadingImage);
+                    Alert.popUp({id: 'loading_image', message: uiStrings.notification.loadingImage,});
                     e.stopPropagation();
                     e.preventDefault();
                     $('#workarea').removeAttr('style');
                     $('#main_menu').hide();
                     const file = (e.type === 'drop') ? e.dataTransfer.files[0] : this.files[0];
                     if (!file) {
-                        $('#dialog_box').hide();
+                        Alert.popAlertStackById('loading_image');
                         return;
                     }
                     const fileType = (function() {
@@ -5965,13 +6024,21 @@ define([
                             importDxf(file);
                             break;
                         case 'ai':
-                            $.alert(LANG.svg_editor.unnsupport_ai_file_directly);
+                            Alert.popUp({
+                                id: 'import_ai',
+                                message: LANG.svg_editor.unnsupport_ai_file_directly,
+                                type: AlertConstants.SHOW_POPUP_WARNING,
+                            });
                             break;
                         case 'js':
                             importJsScript(file);
                             break;
                         case 'unknown':
-                            $.alert(LANG.svg_editor.unnsupported_file_type);
+                            Alert.popUp({
+                                id: 'import_unknown',
+                                message: LANG.svg_editor.unnsupported_file_type,
+                                type: AlertConstants.SHOW_POPUP_WARNING,
+                            });
                             break;
                     }
                     let fileName = file.name.slice(0, file.name.lastIndexOf('.')).replace(':', "/");
@@ -6015,7 +6082,10 @@ define([
                         }
                         svgCanvas.clear();
                         if (f.files.length === 1) {
-                            $.process_cancel(uiStrings.notification.loadingImage);
+                            Alert.popUp({
+                                id: 'loading_image',
+                                message: uiStrings.notification.loadingImage,
+                            });
                             var reader = new FileReader();
                             reader.onloadend = function (e) {
                                 loadSvgString(e.target.result);
@@ -6227,7 +6297,10 @@ define([
                     'dataType': 'text',
                     cache: !!cache,
                     beforeSend: function () {
-                        $.process_cancel(uiStrings.notification.loadingImage);
+                        Alert.popUp({
+                            id: 'loading_image',
+                            message: uiStrings.notification.loadingImage,
+                        });
                     },
                     success: function (str) {
                         loadSvgString(str, cb);
@@ -6236,11 +6309,16 @@ define([
                         if (xhr.status != 404 && xhr.responseText) {
                             loadSvgString(xhr.responseText, cb);
                         } else {
-                            $.alert(uiStrings.notification.URLloadFail + ': \n' + err, cb);
+                            Alert.popUp({
+                                id: 'url_load_error',
+                                message: uiStrings.notification.URLloadFail + ': \n' + err,
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                callbacks: cb
+                            });
                         }
                     },
                     complete: function () {
-                        $('#dialog_box').hide();
+                        Alert.popAlertStackById('loading_image');
                     }
                 });
             });

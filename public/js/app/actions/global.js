@@ -7,7 +7,6 @@ define([
     'helpers/logger',
     'helpers/device-master',
     'app/actions/alert-actions',
-    'app/stores/alert-store'
 ], function(
     $,
     i18n,
@@ -17,7 +16,6 @@ define([
     Logger,
     DeviceMaster,
     AlertActions,
-    AlertStore
 ) {
     'use strict';
 

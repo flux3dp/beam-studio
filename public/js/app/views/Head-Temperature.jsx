@@ -1,14 +1,14 @@
 define([
     'helpers/i18n',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'helpers/device-master',
     'app/constants/device-constants',
     'app/actions/alert-actions'
 ], function(
     i18n,
     Modal,
-    Alert,
+    AlertDialog,
     DeviceMaster,
     DeviceConstants,
     AlertActions
@@ -165,7 +165,7 @@ define([
             );
 
             content = (
-                <Alert
+                <AlertDialog
                     lang={lang}
                     caption={lang.head_temperature.title}
                     message={content}

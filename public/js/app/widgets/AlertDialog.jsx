@@ -3,7 +3,7 @@ define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n)
     const React = require('react');
     var lang = i18n.lang.buttons;
 
-    class Alert extends React.Component{
+    class AlertDialog extends React.Component{
         constructor(props) {
             super(props);
             this.state = {
@@ -101,7 +101,7 @@ define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n)
             );
         }
     };
-    Alert.defaultProps = {
+    AlertDialog.defaultProps = {
         lang: {},
         caption: '',
         checkbox: '',
@@ -113,5 +113,5 @@ define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n)
         onCustom: function() {},
         onClose: function() {}
     };
-    return Alert;
+    return AlertDialog;
 });

@@ -4,8 +4,8 @@ define([
     'helpers/shortcuts',
     'app/constants/alert-constants',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert'
-], function($, PropTypes, shortcuts, AlertConstants, Modal, Alert) {
+    'jsx!widgets/AlertDialog'
+], function($, PropTypes, shortcuts, AlertConstants, Modal, AlertDialog) {
     'use strict';
     const React = require('react');
 
@@ -216,7 +216,7 @@ define([
                 buttons = this._getButtons(),
                 checkbox = this._getCheckbox(),
                 content = (
-                    <Alert
+                    <AlertDialog
                         lang={lang}
                         caption={typeTitle}
                         message={this.props.message}

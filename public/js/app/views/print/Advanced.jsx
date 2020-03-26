@@ -9,7 +9,6 @@ define([
     'app/actions/input-lightbox-actions',
     'plugins/classnames/index',
     'helpers/api/config',
-    'app/actions/alert-actions',
     'app/default-print-settings',
     'helpers/slicer-settings',
     'helpers/object-assign'
@@ -24,7 +23,6 @@ define([
     InputLightboxActions,
     ClassNames,
     Config,
-    AlertActions,
     DefaultPrintSettings,
     SlicerSettings
 ) {

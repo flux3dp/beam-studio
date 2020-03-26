@@ -11,7 +11,8 @@ define([
     'helpers/image-data',
     'helpers/i18n',
     'helpers/round',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/global-actions',
     'app/constants/global-constants',
     'helpers/device-master',
@@ -36,7 +37,8 @@ define([
     imageData,
     i18n,
     round,
-    AlertActions,
+    Alert,
+    AlertConstants,
     GlobalActions,
     GlobalConstants,
     DeviceMaster,
@@ -100,7 +102,11 @@ define([
                 });
 
                 if (0 < messages.length) {
-                    AlertActions.showPopupWarning('svg-parse-fail', messages.join('\n'));
+                    Alert.popUp({
+                        id: 'svg-parse-fail',
+                        message: messages.join('\n'),
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                    });
                 }
 
                 ProgressActions.close();
@@ -196,7 +202,11 @@ define([
                                 GlobalActions.showMonitor(self.state.selectedPrinter, blob, blobUrl.createObjectURL(thumbnailBlob), source);
                             }
                             else if (status === DeviceConstants.TIMEOUT) {
-                                AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                                Alert.popUp({
+                                    id: 'menu-item',
+                                    message: lang.message.connectionTimeout,
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                });
                             }
                         });
                     },
@@ -774,17 +784,30 @@ define([
                         CheckDeviceStatus(self.state.selectedPrinter).then(() => {
                             DeviceMaster.calibrate({forceExtruder: false, doubleZProbe: false, withoutZProbe: true}).done((debug_message) => {
                                 setTimeout(() => {
-                                    AlertActions.showPopupInfo('zprobed', lang.cut.run_height_adjustment, lang.cut.horizontal_adjustment_completed);
+                                    Alert.popUp({
+                                        id: 'zprobed',
+                                        caption: lang.cut.horizontal_adjustment_completed,
+                                        message: lang.cut.run_height_adjustment,
+                                        type: AlertConstants.SHOW_POPUP_INFO,
+                                    });
                                 }, 100);
                             }).fail((resp) => {
                                 console.log('fail');
                                 if (resp.error[0] === 'EDGE_CASE') { return; }
                                 if (resp.module === 'LASER') {
-                                    AlertActions.showPopupError('calibrate-fail', lang.calibration.extruderOnly);
+                                    Alert.popUp({
+                                        id: 'calibrate-fail',
+                                        message: lang.calibration.extruderOnly,
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                    });
                                 }
                                 else {
                                     DeviceErrorHandler.processDeviceMasterResponse(resp);
-                                    AlertActions.showPopupError('calibrate-fail', DeviceErrorHandler.translate(resp.error));
+                                    Alert.popUp({
+                                        id: 'calibrate-fail',
+                                        message: DeviceErrorHandler.translate(resp.error),
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                    });
                                 }
                             }).always(() => {
                                 ProgressActions.close();
@@ -794,7 +817,11 @@ define([
                         });
                     }).fail(() => {
                         ProgressActions.close();
-                        AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                        Alert.popUp({
+                            id: 'menu-item',
+                            message: lang.message.connectionTimeout,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                        });
                     });
                 } else if (command === 'zprobe') {
                     DeviceMaster.select(self.state.selectedPrinter).then((printer) => {
@@ -807,16 +834,29 @@ define([
                         CheckDeviceStatus(self.state.selectedPrinter).then(() => {
                             DeviceMaster.zprobe({forceExtruder: false}).done((debug_message) => {
                                 setTimeout(() => {
-                                    AlertActions.showPopupInfo('zprobed', lang.cut.you_can_now_cut, lang.cut.height_adjustment_completed);
+                                    Alert.popUp({
+                                        id: 'zprobed',
+                                        message: lang.cut.you_can_now_cut,
+                                        caption: lang.cut.height_adjustment_completed,
+                                        type: AlertConstants.SHOW_POPUP_INFO,
+                                    });
                                 }, 100);
                             }).fail((resp) => {
                                 if (resp.error[0] === 'EDGE_CASE') { return; }
                                 if (resp.module === 'LASER') {
-                                    AlertActions.showPopupError('zprobe-fail', lang.calibration.extruderOnly);
+                                    Alert.popUp({
+                                        id: 'zprobe-fail',
+                                        message: lang.calibration.extruderOnly,
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                    });
                                 }
                                 else {
                                     DeviceErrorHandler.processDeviceMasterResponse(resp);
-                                    AlertActions.showPopupError('zprobe-fail', DeviceErrorHandler.translate(resp.error));
+                                    Alert.popUp({
+                                        id: 'zprobe-fail',
+                                        message: DeviceErrorHandler.translate(resp.error),
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                    });
                                 }
                             }).always(() => {
                                 ProgressActions.close();
@@ -826,7 +866,11 @@ define([
                         });
                     }).fail(() => {
                         ProgressActions.close();
-                        AlertActions.showPopupError('menu-item', lang.message.connectionTimeout);
+                        Alert.popUp({
+                            id: 'menu-item',
+                            message: lang.message.connectionTimeout,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                        });
                     });
                 }
             },

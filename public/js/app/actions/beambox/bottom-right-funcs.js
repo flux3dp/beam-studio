@@ -7,8 +7,9 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/actions/beambox/font-funcs',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'helpers/api/svg-laser-parser',
-    'app/actions/alert-actions',
     'app/actions/beambox',
     'app/actions/global-actions',
 ], function (
@@ -20,8 +21,9 @@ define([
     ProgressActions,
     ProgressConstants,
     FontFuncs,
+    Alert,
+    AlertConstants,
     svgLaserParser,
-    AlertActions,
     BeamboxActions,
     GlobalActions
 ) {
@@ -185,12 +187,15 @@ define([
             onError: (message) => {
                 isErrorOccur = true;
                 ProgressActions.close();
-                AlertActions.showPopupYesNo('get-taskcode-error', `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`, lang.alert.error, null, {
-                    yes: () => {
+                Alert.popUp({
+                    id: 'get-taskcode-error',
+                    message: `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
                         const svgString = svgCanvas.getSvgString();
                         AwsHelper.uploadToS3('output.bvg', svgString);
-                    },
-                    no: () => {}
+                    }
                 });
             },
         });
@@ -215,12 +220,15 @@ define([
                     },
                     onError: (message) => {
                         ProgressActions.close();
-                        AlertActions.showPopupYesNo('get-taskcode-error', `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`, lang.alert.error, null, {
-                            yes: () => {
+                        Alert.popUp({
+                            id: 'get-taskcode-error',
+                            message: `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            buttonType: AlertConstants.YES_NO,
+                            onYes: () => {
                                 const svgString = svgCanvas.getSvgString();
                                 AwsHelper.uploadToS3('output.bvg', svgString);
-                            },
-                            no: () => {}
+                            }
                         });
                         isErrorOccur = true;
                         resolve({});
@@ -262,7 +270,11 @@ define([
                     GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
                 })
                 .fail((errMsg) => {
-                    AlertActions.showPopupError('menu-item', errMsg);
+                    Alert.popUp({
+                        id: 'menu-item',
+                        message: errMsg,
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                    });
                 });
 
             ProgressActions.close();

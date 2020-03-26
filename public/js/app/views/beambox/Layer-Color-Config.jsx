@@ -2,7 +2,8 @@ define([
     'jsx!widgets/Modal',
     'jsx!widgets/Unit-Input-v2',
     'jsx!widgets/Validation-Text-Input',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/stores/beambox-store',
     'helpers/local-storage',
     'helpers/i18n'
@@ -10,7 +11,8 @@ define([
     Modal,
     UnitInput,
     ValidationTextInput,
-    AlertActions,
+    Alert,
+    AlertConstants,
     BeamboxStore,
     LocalStorage,
     i18n
@@ -190,7 +192,10 @@ define([
             if (res && this.layerColorConfigDict[res] === undefined) {
                 return res;
             } else if (res && this.layerColorConfigDict[res] !== index) {
-                AlertActions.showPopupError('layer-color-config', LANG.in_use);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.in_use
+                });
             }
 
             return false;
@@ -203,7 +208,10 @@ define([
                 this.layerColorConfig[index].color = val;
                 this.setState(this.state);
             } else if (this.layerColorConfigDict[val] !== index) {
-                AlertActions.showPopupError('layer-color-config', LANG.in_use);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.in_use
+                });
                 this.setState(this.state);
             }
         }
@@ -213,16 +221,17 @@ define([
         }
 
         _handleRemoveConfig(index) {
-            AlertActions.showPopupYesNo('layer-color-config default', LANG.sure_to_delete, '', '', {
-                yes: () => {
+            Alert.popUp({
+                buttonType: AlertConstants.YES_NO,
+                message: LANG.sure_to_delete,
+                onYes: () => {
                     delete this.layerColorConfigDict[this.layerColorConfig[index].color];
                     this.layerColorConfig.splice(index, 1);
                     for (let i = index; i < this.layerColorConfig.length; i++) {
                         this.layerColorConfigDict[this.layerColorConfig[i].color] -= 1;
                     }
                     this.setState(this.state);
-                },
-                no: () => {}
+                }
             });
         }
 
@@ -247,15 +256,16 @@ define([
         }
 
         _onResetDefault() {
-            AlertActions.showPopupYesNo('layer-color-config default', LANG.sure_to_reset, '', '', {
-                yes: () => {
+            Alert.popUp({
+                buttonType: AlertConstants.YES_NO,
+                message: LANG.sure_to_reset,
+                onYes: () => {
                     this.layerColorConfig = [...defaultSettings];
                     let i = 0;
                     this.layerColorConfigDict = this.layerColorConfig.reduce((acc, cur) => ({...acc, [cur.color]: i++}), {});
                     this.setState(this.state);
-                },
-                no: () => {}
-            })
+                }
+            });
         }
 
         _onSave() {
@@ -358,9 +368,15 @@ define([
 
         _handleAddConfig() {
             if (!this.state.newColor) {
-                AlertActions.showPopupError('layer-color-config', LANG.no_input);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.no_input,
+                });
             } else if (this.layerColorConfigDict[this.state.newColor] !== undefined) {
-                AlertActions.showPopupError('layer-color-config', LANG.in_use);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.in_use,
+                });
             } else {
                 this.layerColorConfig.push({
                     color: this.state.newColor,

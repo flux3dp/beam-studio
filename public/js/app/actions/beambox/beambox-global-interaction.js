@@ -34,8 +34,6 @@ define([
                 oReq.send();
             }
             
-            ElectronUpdater.autoCheck();
-            
             this._actions = {
 
                 'OPEN': () => {
@@ -110,6 +108,7 @@ define([
                 'NETWORK_TESTING',
                 'ABOUT_BEAM_STUDIO'
             ]);
+            ElectronUpdater.autoCheck();
         }
         onObjectFocus() {
             this.enableMenuItems(['DUPLICATE', 'PATH']);

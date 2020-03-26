@@ -46,9 +46,6 @@ define([
             }
             // Lifecycle
 
-            UNSAFE_componentWillMount() {
-            }
-
             componentWillUnmount() {
                 if ('undefined' !== typeof upnpMethods) {
                     upnpMethods.connection.close();

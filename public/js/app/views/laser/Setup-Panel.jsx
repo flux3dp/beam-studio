@@ -7,7 +7,7 @@ define([
     'jsx!widgets/Text-Toggle',
     'jsx!widgets/Unit-Input',
     'jsx!widgets/Button-Group',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'app/actions/alert-actions',
     'jsx!widgets/Dialog-Menu',
     'helpers/api/config',
@@ -23,7 +23,7 @@ define([
     TextToggle,
     UnitInput,
     ButtonGroup,
-    Alert,
+    AlertDialog,
     AlertActions,
     DialogMenu,
     config,
@@ -466,7 +466,7 @@ define([
                 onClick: this._togglePanel('alert', false)
             }],
             content = (
-                <Alert
+                <AlertDialog
                     caption={this.state.alertContent.caption}
                     message={this.state.alertContent.message}
                     buttons={buttons}

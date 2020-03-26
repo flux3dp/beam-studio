@@ -5,7 +5,7 @@ define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'jsx!widgets/Unit-Input-v2',
     'helpers/device-master',
     'helpers/version-checker',
@@ -25,7 +25,7 @@ define([
     i18n,
     BeamboxPreference,
     Modal,
-    Alert,
+    AlertDialog,
     UnitInput,
     DeviceMaster,
     VersionChecker,
@@ -145,7 +145,7 @@ define([
     };
 
     const StepRefocus = ({gotoNextStep, onClose, model}) => (
-        <Alert
+        <AlertDialog
             caption={LANG.camera_calibration}
             message={LANG.please_refocus[model]}
             buttons={
@@ -230,7 +230,7 @@ define([
             return blobUrl;
         };
         return (
-            <Alert
+            <AlertDialog
                 caption={LANG.camera_calibration}
                 message={LANG.please_place_paper[model]}
                 buttons={
@@ -495,7 +495,7 @@ define([
         );
 
         return (
-            <Alert
+            <AlertDialog
                 caption={LANG.camera_calibration}
                 message={manual_calibration}
                 buttons={
@@ -555,7 +555,7 @@ define([
     };
 
     const StepFinish = ({self, onClose}) => (
-        <Alert
+        <AlertDialog
             caption={LANG.camera_calibration}
             message={LANG.calibrate_done}
             buttons={

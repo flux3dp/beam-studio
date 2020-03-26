@@ -7,7 +7,8 @@ define([
     'helpers/i18n',
     'jsx!widgets/Modal',
     'jsx!views/Printer-Selector',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/beambox/beambox-version-master'
 ], function (
     ReactCx,
@@ -18,7 +19,8 @@ define([
     i18n,
     Modal,
     PrinterSelector,
-    AlertActions,
+    Alert,
+    AlertConstants,
     BeamboxVersionMaster
 ) {
     const React = require('react');
@@ -61,11 +63,20 @@ define([
             }
 
             if (isPowerTooHigh && isSpeedTooHigh) {
-                AlertActions.showPopupWarning('', lang.beambox.popup.both_power_and_speed_too_high);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    message: lang.beambox.popup.both_power_and_speed_too_high
+                });
             } else if (isPowerTooHigh) {
-                AlertActions.showPopupWarning('', lang.beambox.popup.power_too_high_damage_laser_tube);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    message: lang.beambox.popup.power_too_high_damage_laser_tube
+                });
             } else if (isSpeedTooHigh) {
-                AlertActions.showPopupWarning('', lang.beambox.popup.speed_too_high_lower_the_quality);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    message: lang.beambox.popup.speed_too_high_lower_the_quality
+                });
             }
 
             this.setState({
@@ -88,7 +99,10 @@ define([
                 //check firmware
                 if (await BeamboxVersionMaster.isUnusableVersion(selected_item)) {
                     console.error('Not a valid firmware version');
-                    AlertActions.showPopupError('', lang.beambox.popup.should_update_firmware_to_continue);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: lang.beambox.popup.should_update_firmware_to_continue
+                    });
                     this.setState({
                         isPrinterSelectorOpen: false
                     });

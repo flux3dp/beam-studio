@@ -4,16 +4,14 @@ define([
     'jsx!widgets/Modal',
     'helpers/api/usb-config',
     'helpers/api/config',
-    'app/actions/alert-actions',
-    'app/stores/alert-store'
+    'app/actions/alert-actions'
 ], function(
     initializeMachine,
     ButtonGroup,
     Modal,
     usbConfig,
     config,
-    AlertActions,
-    AlertStore
+    AlertActions
 ) {
     'use strict';
     const React = require('react');

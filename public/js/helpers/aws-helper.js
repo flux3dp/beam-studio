@@ -1,13 +1,15 @@
 define([
     'helpers/i18n',
     'helpers/api/config',
-    'app/actions/alert-actions',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/progress-actions',
     'app/constants/progress-constants'
 ],function(
     i18n,
     Config,
-    AlertActions,
+    Alert,
+    AlertConstants,
     ProgressActions,
     ProgressConstants
 ){
@@ -17,7 +19,12 @@ define([
     return {
         uploadToS3: function(fileName, body) {
             if (body.length > 10000000) { // 10M
-                window.setTimeout(() => {AlertActions.showPopupError('upload-to-s3', LANG.popup.upload_file_too_large)}, 100);
+                setTimeout(() => {
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: LANG.popup.upload_file_too_large
+                    });
+                }, 100);
                 return;   
             }
 
@@ -30,12 +37,18 @@ define([
                 success: (data, textStatus, jqXHR) => {
                     ProgressActions.close();
                     console.log(data, textStatus, jqXHR);
-                    AlertActions.showPopupInfo('upload-to-s3', LANG.popup.successfully_uploaded);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        message: LANG.popup.successfully_uploaded
+                    });
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
                     ProgressActions.close();
                     console.log(jqXHR, textStatus, errorThrown);
-                    AlertActions.showPopupError('upload-to-s3', `${LANG.popup.upload_failed}\n${textStatus}: ${errorThrown}`);
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: `${LANG.popup.upload_failed}\n${textStatus}: ${errorThrown}`
+                    });
                 },
                 complete: () => {
                 }

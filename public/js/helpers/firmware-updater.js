@@ -2,10 +2,10 @@
  * firmware updater
  */
 define([
-    'jquery',
     'helpers/i18n',
-    'helpers/check-firmware',
     'helpers/device-master',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/alert-actions',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -13,10 +13,10 @@ define([
     'app/constants/input-lightbox-constants',
     'helpers/round'
 ], function(
-    $,
     i18n,
-    checkFirmware,
     DeviceMaster,
+    Alert,
+    AlertConstants,
     AlertActions,
     ProgressActions,
     ProgressConstants,
@@ -64,16 +64,16 @@ define([
             }
 
             if (true === isSuccess) {
-                AlertActions.showPopupInfo(
-                    'firmware-update-success',
-                    lang.update.firmware.update_success
-                );
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_INFO,
+                    message: lang.update.firmware.update_success
+                });
             }
             else {
-                AlertActions.showPopupError(
-                    'firmware-update-fail',
-                    lang.update.firmware.update_fail
-                );
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: lang.update.firmware.update_fail
+                });
             }
         };
 
@@ -89,10 +89,10 @@ define([
                   let file = req.response;
                   _uploadToDevice(file);
               } else {
-               AlertActions.showPopupError(
-                    'firmware-update-fail',
-                     lang.update.cannot_reach_internet
-                );
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: lang.update.cannot_reach_internet
+                });
               }
           };
           req.send();

@@ -3,9 +3,9 @@ define([
     'helpers/i18n',
     'app/constants/input-lightbox-constants',
     'jsx!widgets/Modal',
-    'jsx!widgets/Alert',
+    'jsx!widgets/AlertDialog',
     'plugins/classnames/index'
-], function(PropTypes, i18n, Constants, Modal, Alert, classNames) {
+], function(PropTypes, i18n, Constants, Modal, AlertDialog, classNames) {
     'use strict';
     const React = require('react');
     const ReactDOM = require('react-dom');
@@ -25,17 +25,17 @@ define([
         }
 
         // button actions
-        _onClose(e, reactid, from) {
+        _onClose = (e, reactid, from) => {
             e.preventDefault();
             this.props.onClose.apply(null, [e, reactid, from]);
         }
 
-        _onCancel(e, reactid) {
+        _onCancel = (e, reactid) => {
             e.preventDefault();
             this._onClose.apply(null, [e, reactid, 'cancel']);
         }
 
-        _onSubmit(e, reactid) {
+        _onSubmit = (e, reactid) => {
             e.preventDefault();
 
             var returnValue,
@@ -55,7 +55,7 @@ define([
             }
         }
 
-        _inputKeyUp(e) {
+        _inputKeyUp = (e) => {
             var targetFiles = e.currentTarget.files || {};
             this.setState({
                 allowSubmit: (
@@ -65,7 +65,7 @@ define([
             });
         }
 
-        _getButtons(lang) {
+        _getButtons = (lang) => {
             var buttons = [];
 
             buttons.push({
@@ -91,7 +91,7 @@ define([
             return buttons;
         }
 
-        _getMessage() {
+        _getMessage = () => {
             var typeMap = {},
                 type = 'text',
                 inputHeader = (
@@ -135,7 +135,7 @@ define([
                 message = this._getMessage(),
                 content = (
                     <form className="form" onSubmit={this._onSubmit}>
-                        <Alert
+                        <AlertDialog
                             lang={lang}
                             caption={this.props.caption}
                             message={message}

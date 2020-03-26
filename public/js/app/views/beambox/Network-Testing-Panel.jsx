@@ -1,15 +1,17 @@
 define([
     'jsx!widgets/Modal',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/stores/beambox-store',
-    'app/actions/alert-actions',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/constants/keycode-constants',
     'helpers/i18n'
 ], function(
     Modal,
+    Alert,
+    AlertConstants,
     BeamboxStore,
-    AlertActions,
     ProgressActions,
     ProgressConstants,
     KeycodeConstants,
@@ -75,7 +77,10 @@ define([
 
         _onStart() {
             if (!this.state.ip) {
-                AlertActions.showPopupError('empty_ip', LANG.empty_ip);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.empty_ip
+                })
                 return;
             }
             this._createSession();
@@ -107,7 +112,10 @@ define([
                 });
             }
             catch (e) {
-                AlertActions.showPopupError('create_session_fail', `${LANG.fail_to_start_network_test}\n${e}`);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: `${LANG.fail_to_start_network_test}\n${e}`
+                });
                 throw e;
             }
         }
@@ -124,7 +132,10 @@ define([
                     if (invalidIp) {
                         this.stopFlag = true;
                         ProgressActions.close();
-                        AlertActions.showPopupError('invalid_target_ip', `${LANG.invalid_ip}: ${this.state.ip}`);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: `${LANG.invalid_ip}: ${this.state.ip}`
+                        });
                         return;
                     }
                 }
@@ -148,8 +159,11 @@ define([
             ProgressActions.close();
             const healthiness = parseInt(100 * this.success / this.pingTimes);
             if (healthiness !== 0) {
-                AlertActions.showPopupInfo('network_test_result', `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
-                LANG.test_completed);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_INFO,
+                    message: `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
+                    caption: LANG.test_completed
+                });
             } else {
                 let match = false;
                 const targetIpFirstThree = this.state.ip.match(/.*\./)[0];
@@ -160,9 +174,17 @@ define([
                     }
                 });
                 if (match) {
-                    AlertActions.showPopupInfo('network_test_result', `${LANG.cannot_connect_1}`, LANG.test_completed);
+                    Alert.popUp({
+                        id: 'network_test_result',
+                        message: `${LANG.cannot_connect_1}`,
+                        caption: LANG.test_completed
+                    });
                 } else {
-                    AlertActions.showPopupInfo('network_test_result', `${LANG.cannot_connect_2}`, LANG.test_completed);
+                    Alert.popUp({
+                        id: 'network_test_result',
+                        message: `${LANG.cannot_connect_2}`,
+                        caption: LANG.test_completed
+                    });
                 }
             }
         }

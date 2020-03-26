@@ -2,6 +2,8 @@ define([
     'jquery',
     'helpers/i18n',
     'helpers/sprintf',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'app/actions/alert-actions',
     'app/actions/beambox',
     'app/actions/progress-actions',
@@ -26,6 +28,8 @@ define([
     $,
     i18n,
     sprintf,
+    Alert,
+    AlertConstants,
     AlertActions,
     BeamboxActions,
     ProgressActions,
@@ -108,7 +112,11 @@ define([
 
                         goAuth(device.uuid);
 
-                        AlertActions.showPopupError('device-auth-fail', message);
+                        Alert.popUp({
+                            id: 'device-auth-fail',
+                            message,
+                            type: AlertConstants.SHOW_POPUP_ERROR
+                        });
                     });
             };
 
@@ -164,19 +172,21 @@ define([
                                 })
                                     .fail(() => {
                                         ProgressActions.close();
-                                        AlertActions.showPopupError(
-                                            'auth-error-with-diff-computer',
-                                            lang.message.reset_sd_card
-                                        );
+                                        Alert.popUp({
+                                            id: 'auth-error-with-diff-computer',
+                                            message: lang.message.reset_sd_card,
+                                            type: AlertConstants.SHOW_POPUP_ERROR
+                                        });
                                     });
                             }
                             break;
                         case DeviceConstants.MONITOR_TOO_OLD:
-                            AlertActions.showPopupError(
-                                'fatal-occurred',
-                                lang.message.monitor_too_old.content,
-                                lang.message.monitor_too_old.caption
-                            );
+                            Alert.popUp({
+                                id: 'fatal-occurred',
+                                message: lang.message.monitor_too_old.content,
+                                caption: lang.message.monitor_too_old.caption,
+                                type: AlertConstants.SHOW_POPUP_ERROR
+                            });
                             break;
                         default:
                             let message = lang.message.unknown_error;
@@ -198,10 +208,11 @@ define([
                             }
 
                             success(false);
-                            AlertActions.showPopupError(
-                                'unhandle-exception',
-                                message
-                            );
+                            Alert.popUp({
+                                id: 'unhandle-exception',
+                                message,
+                                type: AlertConstants.SHOW_POPUP_ERROR
+                            });
                     }
                 },
                 onFatal: function (response) {
@@ -388,26 +399,29 @@ define([
                                 selectDevice(device, d);
                             }).fail(() => {
                                 ProgressActions.close();
-                                AlertActions.showPopupError(
-                                    'auth-error-with-diff-computer',
-                                    lang.message.reset_sd_card
-                                );
+                                Alert.popUp({
+                                    id: 'auth-error-with-diff-computer',
+                                    message: lang.message.reset_sd_card,
+                                    type: AlertConstants.SHOW_POPUP_ERROR
+                                });
                             });
                         }
                         break;
                     case DeviceConstants.MONITOR_TOO_OLD:
                         ProgressActions.close();
-                        AlertActions.showPopupError(
-                            'fatal-occurred',
-                            lang.message.monitor_too_old.content,
-                            lang.message.monitor_too_old.caption
-                        );
+                        Alert.popUp({
+                            id: 'auth-error-with-diff-computer',
+                            message: lang.message.monitor_too_old.content,
+                            caption: lang.message.monitor_too_old.caption,
+                            type: AlertConstants.SHOW_POPUP_ERROR
+                        });
                         break;
                     default:
-                        AlertActions.showPopupError(
-                            'unhandle-exception',
-                            lang.message.unknown_error
-                        );
+                        Alert.popUp({
+                            id: 'unhandle-exception',
+                            message: lang.message.unknown_error,
+                            type: AlertConstants.SHOW_POPUP_ERROR
+                        });
                 }
             },
             onFatal: function (response) {
@@ -656,7 +670,10 @@ define([
                 d.resolve('');
             },
             onError: function (error) {
-                AlertActions.showPopupError('', error);
+                Alert.popUp({
+                    message: error,
+                    type: AlertConstants.SHOW_POPUP_ERROR
+                });
             }
         });
 
@@ -1040,7 +1057,11 @@ define([
             if (typeof resp === 'string') { resp = { error: [resp] }; }
             if (resp.error && resp.error === 'EDGE_CASE') { return; }
             DeviceErrorHandler.processDeviceMasterResponse(resp);
-            AlertActions.showPopupError('device-busy', DeviceErrorHandler.translate(resp.error));
+            Alert.popUp({
+                id: 'device-busy',
+                message: DeviceErrorHandler.translate(resp.error),
+                type: AlertConstants.SHOW_POPUP_ERROR
+            });
             SocketMaster.addTask('endMaintainMode');
         };
 
@@ -1109,7 +1130,11 @@ define([
             if (typeof resp === 'string') { resp = { error: [resp] }; }
             if (resp.error && resp.error === 'EDGE_CASE') { return; }
             DeviceErrorHandler.processDeviceMasterResponse(resp);
-            AlertActions.showPopupError('device-busy', DeviceErrorHandler.translate(resp.error));
+            Alert.popUp({
+                id: 'device-busy',
+                message: DeviceErrorHandler.translate(resp.error),
+                type: AlertConstants.SHOW_POPUP_ERROR
+            });
             SocketMaster.addTask('endMaintainMode');
         };
 
@@ -1171,7 +1196,11 @@ define([
 
         const processError = (resp = {}) => {
             DeviceErrorHandler.processDeviceMasterResponse(resp);
-            AlertActions.showPopupError('device-busy', DeviceErrorHandler.translate(resp.error));
+            Alert.popUp({
+                id: 'device-busy',
+                message: DeviceErrorHandler.translate(resp.error),
+                type: AlertConstants.SHOW_POPUP_ERROR
+            });
             SocketMaster.addTask('endMaintainMode');
         };
 
@@ -1209,7 +1238,11 @@ define([
 
         const processError = (resp = {}) => {
             DeviceErrorHandler.processDeviceMasterResponse(resp);
-            AlertActions.showPopupError('device-busy', DeviceErrorHandler.translate(resp.error));
+            Alert.popUp({
+                id: 'device-busy',
+                message: DeviceErrorHandler.translate(resp.error),
+                type: AlertConstants.SHOW_POPUP_ERROR
+            });
             SocketMaster.addTask('endMaintainMode');
         };
 
