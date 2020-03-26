@@ -14,7 +14,7 @@ define([
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             let _new = nextProps.default,
                 _old = this.state.selected;
 

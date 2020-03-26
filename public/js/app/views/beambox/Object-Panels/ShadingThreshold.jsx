@@ -19,7 +19,7 @@ define([
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 shading: this.props.$me.attr('data-shading') === 'true',
                 threshold: nextProps.threshold

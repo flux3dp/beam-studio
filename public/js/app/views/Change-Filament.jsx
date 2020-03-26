@@ -49,7 +49,7 @@ define([
             };
         }
 
-        componentWillUpdate(nextProps, nextState) {
+        UNSAFE_componentWillUpdate(nextProps, nextState) {
             if (true === nextProps.open && false === this.props.open) {
                 this.setState(this.getInitialState());
             }

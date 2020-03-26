@@ -19,7 +19,7 @@ define([
             });
         }
 
-        componentWillUpdate() {
+        UNSAFE_componentWillUpdate() {
             return false;
         }
 

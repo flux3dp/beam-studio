@@ -46,7 +46,7 @@ define([
             }
             // Lifecycle
 
-            componentWillMount() {
+            UNSAFE_componentWillMount() {
             }
 
             componentWillUnmount() {

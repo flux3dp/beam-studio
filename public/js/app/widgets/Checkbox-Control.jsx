@@ -20,7 +20,7 @@ define([
             this.state = { selected };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             let _new = JSON.stringify(nextProps.default),
                 _old = JSON.stringify(this.state.selected);
 

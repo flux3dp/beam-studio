@@ -34,7 +34,7 @@ define([
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.value(nextProps.defaultValue);
         }
 

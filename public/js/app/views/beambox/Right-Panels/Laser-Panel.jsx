@@ -148,7 +148,7 @@ define([
             BeamboxStore.removeUpdateLaserPanelListener(() => this.updateData());
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             if (nextProps.configName != '') {
                 if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || LocalStorage.get('customizedLaserConfigs').findIndex((e) => e.name === nextProps.configName) > -1) {
                     document.getElementById('laser-config-dropdown').value = nextProps.configName;

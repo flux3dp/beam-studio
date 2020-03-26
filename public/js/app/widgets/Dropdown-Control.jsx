@@ -35,7 +35,7 @@ define([
             });
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             if(nextProps.options.length !== this.props.options.length) {
                 this.forceUpdate();
             }

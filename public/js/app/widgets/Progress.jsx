@@ -23,7 +23,7 @@ function(PropTypes, Modal, Alert, ProgressConstants) {
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 percentage: nextProps.percentage
             });

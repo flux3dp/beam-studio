@@ -34,13 +34,13 @@ define([
             };
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             lang = this.props.lang.print.left_panel;
             lang.quality = this.props.lang.print.quality;
             lang.model = this.props.lang.print.model;
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 previewLayerCount: nextProps.previewLayerCount || 0
             });

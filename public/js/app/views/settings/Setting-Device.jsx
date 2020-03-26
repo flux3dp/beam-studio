@@ -35,7 +35,7 @@ define([
             };
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             this.devices = [];
         }
 

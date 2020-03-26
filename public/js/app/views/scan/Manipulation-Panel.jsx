@@ -333,7 +333,7 @@ define([
             });
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             var manipulationPanel = ReactDOM.findDOMNode(this.refs.manipulationPanel);
             this.setState({
                 visible: true,

@@ -18,7 +18,7 @@ define([
                 connecting: false
             };
         }
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             console.log(nextProps);
         }
         _handleJoin = () => {

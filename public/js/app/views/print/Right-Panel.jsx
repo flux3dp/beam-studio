@@ -16,7 +16,7 @@ define([
             PerspectiveCamera.init(this);
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             if(nextProps.updateCamera === true) {
                 PerspectiveCamera.setCameraPosition(nextProps.camera);
             }

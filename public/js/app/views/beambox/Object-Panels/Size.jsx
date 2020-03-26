@@ -22,7 +22,7 @@ define([
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 width: nextProps.width,
                 height: nextProps.height

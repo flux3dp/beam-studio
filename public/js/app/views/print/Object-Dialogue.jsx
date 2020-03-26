@@ -27,7 +27,7 @@ define([
             };
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             rotation.x = this.props.model.rotation.x;
             rotation.y = this.props.model.rotation.y;
             rotation.z = this.props.model.rotation.z;
@@ -44,7 +44,7 @@ define([
             this.props.onFocus(false);
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this._openAccordion(nextProps.mode);
             rotation.x = this.props.model.rotation.x;
             rotation.y = this.props.model.rotation.y;
@@ -55,7 +55,7 @@ define([
             rotation.enteredZ = this.props.model.rotation.enteredZ;
         }
 
-        componentWillUpdate(nextProp, nextState) {
+        UNSAFE_componentWillUpdate(nextProp, nextState) {
             // update from transform control
             if(!this._hasSameSize(nextProp.model.size, refSize)) {
                 refSize = nextProp.model.size.clone();

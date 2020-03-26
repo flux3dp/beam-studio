@@ -21,7 +21,7 @@ define([
             };
         }
         
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 cx: nextProps.cx,
                 cy: nextProps.cy

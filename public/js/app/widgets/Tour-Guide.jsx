@@ -27,7 +27,7 @@ define([
             };
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             lang = this.props.lang;
         }
 

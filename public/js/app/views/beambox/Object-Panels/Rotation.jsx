@@ -18,7 +18,7 @@ define([
             };
         }
         
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 angle: nextProps.angle
             });

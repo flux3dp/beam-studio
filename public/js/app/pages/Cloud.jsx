@@ -39,7 +39,7 @@ define([
                 super(props);
             }
 
-            componentWillUpdate(nextProps, nextState) {
+            UNSAFE_componentWillUpdate(nextProps, nextState) {
                 console.log('test next props', nextProps, nextState, this.props, this.state);
             }
 

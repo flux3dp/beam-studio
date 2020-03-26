@@ -20,7 +20,7 @@ define([
             };
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 x: nextProps.x,
                 y: nextProps.y

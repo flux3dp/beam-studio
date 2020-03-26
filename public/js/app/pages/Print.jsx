@@ -164,7 +164,7 @@ define([
                 }; 
             }
 
-            componentWillMount() {
+            UNSAFE_componentWillMount() {
                 if(window["electron"]) {
                     let { ipc, events } = window.electron;
                     CloudApi.getMe().then(response => {

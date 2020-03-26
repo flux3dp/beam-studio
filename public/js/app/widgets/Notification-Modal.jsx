@@ -23,7 +23,7 @@ define([
     
     class NotificationModal extends React.Component {
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             lang = this.props.lang.alert;
         }
 

@@ -25,7 +25,7 @@ define([
             this._handleInput = this._handleInput.bind(this);
         }
 
-        componentWillReceiveProps (nextProps) {
+        UNSAFE_componentWillReceiveProps (nextProps) {
             const val = this._validateValue(nextProps.defaultValue);
 
             this.setState({

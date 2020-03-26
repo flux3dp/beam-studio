@@ -74,7 +74,7 @@ define([
             };
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             lang = this.props.lang.print.advanced;
             cura2Infill = [
                 { label: lang.curaInfill.automatic, value: 'AUTOMATIC' },

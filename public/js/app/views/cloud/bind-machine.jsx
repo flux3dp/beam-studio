@@ -31,7 +31,7 @@ define([
             this.lang = {};
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             this.lang = i18n.get();
         }
 

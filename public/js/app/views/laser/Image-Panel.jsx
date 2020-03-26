@@ -218,7 +218,7 @@ define([
             );
         }
 
-        componentWillReceiveProps(nextProps) {
+        UNSAFE_componentWillReceiveProps(nextProps) {
             this.setState({
                 initialPosition: nextProps.initialPosition,
                 size: nextProps.size,

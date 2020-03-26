@@ -109,7 +109,7 @@ define([
                 DnDHandler.unplug(document);
             }
 
-            componentWillReceiveProps(nextProps) {
+            UNSAFE_componentWillReceiveProps(nextProps) {
                 this.setState({
                     panelOptions: nextProps.panelOptions
                 });
