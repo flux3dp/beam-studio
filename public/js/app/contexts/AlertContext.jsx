@@ -81,6 +81,27 @@ define([
                         checkBox.callbacks = [onCheckedNo, onCheckedYes];
                     }
                     break;
+                case AlertConstants.YES_NO_CUSTOM:
+                    onYes = onYes ? onYes : () => {};
+                    onNo = onNo ? onNo : () => {};
+                    if (!buttonLabels) {
+                        buttonLabels = [LANG.no, LANG.yes];
+                        callbacks = [onNo, onYes];
+                        if (checkBox) {
+                            const onCheckedYes = checkBox.onYes ? checkBox.onYes : () => {};
+                            const onCheckedNo = checkBox.onNo ? checkBox.onNo : () => {};
+                            checkBox.callbacks = [onCheckedNo, onCheckedYes];
+                        }
+                    } else if (typeof buttonLabels === 'string') {
+                        buttonLabels = [buttonLabels, LANG.no, LANG.yes];
+                        callbacks = callbacks ? callbacks : () => {};
+                        callbacks = [callbacks, onNo, onYes];
+                        
+                    } else {
+                        buttonLabels = [...buttonLabels, buttonLabels, LANG.no, LANG.yes];
+                        callbacks = [...callbacks, onNo, onYes];
+                    }
+                    break;
                 case AlertConstants.RETRY_CANCEL:
                     onRetry = onRetry ? onRetry : () => {};
                     onCancel = onCancel ? onCancel : () => {};
@@ -89,7 +110,7 @@ define([
                     if (checkBox) {
                         const onCheckedRetry = checkBox.onRetry ? checkBox.onRetry : () => {};
                         const onCheckedCancel = checkBox.onCancel ? checkBox.onCancel : () => {};
-                        checkBox.callbacks = [onCancel, onCheckedRetry];
+                        checkBox.callbacks = [onCheckedCancel, onCheckedRetry];
                     }
                     break;
                 case AlertConstants.CUSTOM_CANCEL:

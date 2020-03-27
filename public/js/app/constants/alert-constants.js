@@ -7,6 +7,7 @@ define(function(){
         WARNING_WITH_CHECKBOX       : 'WARNING_WITH_CHECKBOX',
         ERROR                       : 'ERROR',
         YES_NO                      : 'YES_NO',
+        YES_NO_CUSTOM               : 'YES_NO_CUSTOM',
         RETRY_CANCEL                : 'RETRY_CANCEL',
         RETRY_ABORT_CANCEL          : 'RETRY_ABORT_CANCEL',
         CUSTOM                      : 'CUSTOM',
