@@ -75,11 +75,12 @@ define(function() {
                 downloading: '正在背景下載更新中，您可以按確定以繼續您的工作。',
                 install_or_not: '已準備好更新，是否重新啟動以套用更新？',
                 message_pattern_1: 'Beam Studio 有新的軟體更新。',
-                message_pattern_2: 'FLUX Software v%s 可使用 - 你的版本為 v%s.',
+                message_pattern_2: 'Beam Studio v%s 可使用 - 你的版本為 v%s.',
                 available_update: '現可提供下載，是否要下載更新？',
                 not_found: 'Beam Studio 已是最新版本。',
                 yes: '是',
-                no: '否'
+                no: '否',
+                skip: '跳過此版本'
             },
             toolhead: {
                 caption: 'FLUX 工具頭有新的韌體更新',

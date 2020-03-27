@@ -71,15 +71,16 @@ define(function() {
             software: {
                 checking: 'アップデートの確認中',
                 check_update: 'アップデートを確認',
-                caption: 'FLUX Studioのソフトウェアアップデートがご利用いただけます',
+                caption: 'Beam Studioのソフトウェアアップデートがご利用いただけます',
                 downloading: 'アップデートのダウンロード中…',
                 install_or_not: 'アップデートがダウンロードされました。今すぐ再起動してインストールしますか？',
-                message_pattern_1: 'FLUX Studioは現在、ソフトウェアアップデートの準備ができています。',
+                message_pattern_1: 'Beam Studioは現在、ソフトウェアアップデートの準備ができています。',
                 message_pattern_2: 'FLUX Software v%sが現在ご利用いただけます。 - v%sがあります。',
                 available_update: 'が現在、ご利用いただけます。アップデートをダウンロードしますか？',
                 not_found: 'あなたは、最新バージョンのBeam Studioを使用しています。',
                 yes: 'はい',
-                no: 'いいえ'
+                no: 'いいえ',
+                skip: 'Skip This Version'
             },
             toolhead: {
                 caption: 'FLUXツールヘッドのファームウェアアップデートがご利用いただけます',
