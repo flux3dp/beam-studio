@@ -28,9 +28,11 @@
             width: 36px;
             opacity: 0.5;
             &.active {
+                filter: brightness(0);
                 opacity: 1.0;
             }
             &:hover {
+                filter: brightness(0);
                 opacity: 0.8;
             }
         }
