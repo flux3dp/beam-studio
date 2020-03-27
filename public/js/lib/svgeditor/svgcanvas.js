@@ -6028,6 +6028,7 @@ define([
                     'cm': 10 * 10,
                     'mm': 10,
                     'px': svgUnitScaling,
+                    'pt': 1,
                     'text': 1
                 };
 
