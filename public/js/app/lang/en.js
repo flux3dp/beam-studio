@@ -1093,7 +1093,7 @@ define(function() {
                 layer_by_color: 'Color',
                 nolayer: 'Single Layer',
                 loading_image: 'Loading image, please wait...',
-                no_support_text: 'FLUX Studio does not support text tag currently. Please transfer text to path before importing.',
+                no_support_text: 'Beam Studio does not support text tag currently. Please transfer text to path before importing.',
                 power_too_high_damage_laser_tube: 'Using lower laser power will extends laser tube\'s lifetime.' ,
                 speed_too_high_lower_the_quality: 'Using too high speed at this resolution may result in the lower quality of shading engraving.',
                 both_power_and_speed_too_high: 'Using lower laser power will extends laser tube\'s lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.',

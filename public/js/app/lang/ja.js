@@ -1093,7 +1093,7 @@ define(function() {
                 layer_by_color: '色',
                 nolayer: '単一層',
                 loading_image: '画像を読み込んでいます。お待ちください…',
-                no_support_text: 'FLUX Studioは現在、テキストタグをサポートしていません。インポートする前にテキストをパスに変換してください。',
+                no_support_text: 'Beam Studioは現在、テキストタグをサポートしていません。インポートする前にテキストをパスに変換してください。',
                 power_too_high_damage_laser_tube: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。' ,
                 speed_too_high_lower_the_quality: 'この解像度で速すぎる速度を使用すると、シェーディング彫刻の品質が低下する場合があります。',
                 both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
