@@ -6149,6 +6149,10 @@ define([
                 return ($(this).css('display') === 'none');
             }).remove();
 
+            $(symbol).find('use').filter(function () {
+                return $(symbol).find(getHref(this)).length === 0;
+            }).remove();
+
             //add prefix(which constrain css selector to symbol's id) to prevent class style pollution
             let originStyle = $(symbol).find('style').text();
             if (type === 'nolayer') {
