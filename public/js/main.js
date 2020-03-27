@@ -104,7 +104,7 @@ requirejs([
     'helpers/menubar'
 ], function($, Backbone, Router, Announcement, globalEvents, menuBar) {
 
-    console.log(`Flux-Studio: ${window.FLUX.version}`);
+    console.log(`Beam-Studio: ${window.FLUX.version}`);
 
     if(window.FLUX.allowTracking) {
         // google analytics
