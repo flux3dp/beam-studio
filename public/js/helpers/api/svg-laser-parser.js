@@ -377,7 +377,7 @@ define([
                 }
                 ws.send(args.join(' '));
             },
-            divideSVG: function() {
+            divideSVG: function(opts) {
                 var $deferred = $.Deferred();
                 opts = opts || {};
                 opts.onProgressing = opts.onProgressing || function() {};
@@ -390,6 +390,11 @@ define([
                     currentLength = 0,
                     finalBlobs = {},
                     currentName = '';
+                //set scale when devide svg, default value is 254 / 72
+                if (opts.scale) {
+                    args.push('-s');
+                    args.push(Math.floor(opts.scale * 100) / 100);
+                }
 
                 events.onMessage = function(data) {
                     if (data.name) {
@@ -409,7 +414,7 @@ define([
                     } else if (data.status === 'ok') {
                         $deferred.resolve({res: true, data: finalBlobs});
                     } else if (data.status === 'Error') {
-                        $('#dialog_box').hide();
+                        Alert.popAlertStackById('loading_image');
                         $deferred.resolve({res: false, data: data.message});
                     }
 
