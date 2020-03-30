@@ -46,9 +46,6 @@ define([
         ipc.send(events.CHECK_FOR_UPDATE, version);
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
             ProgressActions.close();
-            let [updateVersion, channel] = res.info.version.split('-');
-            let latestSkip = Config().read('skip_version');
-            
             if (res.error) {
                 console.log(res.error);
                 if (!isAutoCheck) {
@@ -57,7 +54,12 @@ define([
                         caption: LANG.check_update
                     });
                 }
-            } else if (res.isUpdateAvailable && (channel || versionCompare(updateVersion, latestSkip))) {
+                return;
+            }
+            let [updateVersion, channel] = res.info.version.split('-');
+            let latestSkip = Config().read('skip_version');
+
+            if (res.isUpdateAvailable && (channel || versionCompare(updateVersion, latestSkip))) {
                 let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
                 Alert.popUp({
                     message: msg,
