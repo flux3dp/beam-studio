@@ -5955,6 +5955,7 @@ define([
                 editor.importBvgString = importBvgString;
 
                 const importBvg = async (file) => {
+                    Alert.popAlertStackById('loading_image');
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {

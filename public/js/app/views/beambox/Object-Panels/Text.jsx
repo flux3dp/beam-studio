@@ -44,7 +44,6 @@ define([
             const sanitizedDefaultFontFamily = (() => {
                 // use these font if props.fontFamily cannot find in user PC
                 const fontFamilyFallback = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', FontFuncs.availableFontFamilies[0]];
-
                 const sanitizedFontFamily = [props.fontFamily, ...fontFamilyFallback].find(
                     f => FontFuncs.availableFontFamilies.includes(f)
                 );
@@ -70,17 +69,6 @@ define([
                 isFill: props.isFill,
                 isVertical: props.isVertical,
             };
-            // this.state = {
-            //     fontFamily: props.fontFamily,
-            //     fontStyle: FontFuncs.requestFontByFamilyAndStyle({
-            //         family: props.fontFamily,
-            //         weight: props.fontWeight,
-            //         italic: props.italic
-            //     }).style,
-            //     fontSize: props.fontSize,
-            //     letterSpacing: props.letterSpacing,
-            //     isFill: props.isFill
-            // };
         }
 
         handleFontFamilyChange(newFamily) {
@@ -149,7 +137,11 @@ define([
                 //delay FontFuncs.requestToConvertTextToPath() to ensure ProgressActions has already popup
                 await new Promise(resolve => {
                     setTimeout(async () => {
-                        await FontFuncs.requestToConvertTextToPath(this.props.$me, this.state.fontFamily, this.props.fontWeight, this.state.fontStyle);
+                        await FontFuncs.requestToConvertTextToPath(this.props.$me, {
+                            family: this.state.fontFamily,
+                            weight: this.props.fontWeight,
+                            style: this.state.fontStyle
+                        });
                         resolve();
                     }, 50);
                 });

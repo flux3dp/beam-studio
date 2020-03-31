@@ -1288,6 +1288,10 @@ define(function() {
                 convert_to_path: '轉換為路徑',
                 convert_to_path_to_get_precise_result: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示',
                 wait_for_parsing_font: '解析字體中... 請稍待 10 秒',
+                text_to_path: {
+                    font_substitute_pop: '文字:『%s』中含有當前字體:『%s』不支援的字元: %s，\n將替換成以下字體:『%s』。',
+                    check_thumbnail_warning: '轉換文字時出現字體不支援的情形，請在送出工作前，再次檢查預覽圖確認文字是否如預期轉換。'
+                },
                 laser_config: '雷射設定',
                 shading: '漸層',
                 threshold: '臨界值',

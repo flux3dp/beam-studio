@@ -1290,6 +1290,10 @@ define(function() {
                 convert_to_path: 'Convert to Path',
                 convert_to_path_to_get_precise_result: '一部のフォントは正しく解析できません。Beamboxに提出する前にテキストをパスに変換してください',
                 wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
+                text_to_path: {
+                    font_substitute_pop: 'Text: "%s" contains below characters which are not supported by current font: "%s".\n%s\nWould you like to use "%s" as substitution?',
+                    check_thumbnail_warning: 'Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.\nPlease check preview image again before sending task.'
+                },
                 laser_config: 'レーザー設定',
                 shading: 'シェーディング',
                 threshold: 'しきい値',

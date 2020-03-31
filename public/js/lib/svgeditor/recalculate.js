@@ -539,7 +539,12 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
           let em = svgroot.createSVGTransform();
           em.setMatrix(m);
 
-          childTlist.appendItem(em);
+          if (childTlist.numberOfItems) {
+            childTlist.insertItemBefore(em, 0);
+          } else {
+            childTlist.appendItem(em);
+          }
+
           let cmd = svgedit.recalculate.recalculateDimensions(child);
           if (cmd && !cmd.isEmpty()) {
             batchCmd.addSubCommand( svgedit.recalculate.recalculateDimensions(child) );

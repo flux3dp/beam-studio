@@ -1290,6 +1290,10 @@ define(function() {
                 convert_to_path: 'Convert to Path',
                 convert_to_path_to_get_precise_result: 'Some fonts can\'t be parsed correctly. Please convert text to path before submitting to Beambox',
                 wait_for_parsing_font: 'Parsing font... Please wait a second',
+                text_to_path: {
+                    font_substitute_pop: 'Text: "%s" contains below characters which are not supported by current font: "%s".\n%s\nWould you like to use "%s" as substitution?',
+                    check_thumbnail_warning: 'Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.\nPlease check preview image again before sending task.'
+                },
                 laser_config: 'Laser Config',
                 shading: 'Shading',
                 threshold: 'Threshold',

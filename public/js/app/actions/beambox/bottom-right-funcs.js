@@ -170,7 +170,7 @@ define([
     const fetchTaskCode = async (isOutputGcode) => {
         let isErrorOccur = false;
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
-        await FontFuncs.convertTextToPathAmoungSvgcontent();
+        await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
         ProgressActions.close();
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
@@ -199,6 +199,7 @@ define([
                 });
             },
         });
+        await FontFuncs.revertTempConvert();
         if (isErrorOccur) {
             return {fcodeBlob: null};
         }
@@ -308,8 +309,9 @@ define([
         },
 
         prepareFileWrappedFromSvgStringAndThumbnail: async () => {
-            await FontFuncs.convertTextToPathAmoungSvgcontent();
+            await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
             const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
+            await FontFuncs.revertTempConvert();
             return { uploadFile, thumbnailBlobURL };
         }
     };

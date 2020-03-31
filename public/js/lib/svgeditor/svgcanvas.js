@@ -3406,7 +3406,7 @@ define([
                         }
                     }
                 },
-                renderMultiLineText: (textElem, val) => {
+                renderMultiLineText: (textElem, val, showGrips) => {
                     let lines = val.split('\x0b');
                     let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
                     const charHeight = parseFloat(canvas.getFontSize());
@@ -3455,7 +3455,9 @@ define([
                         }
                     }
                     svgedit.recalculate.recalculateDimensions(textElem);
-                    selectorManager.requestSelector(textElem).resize();
+                    if (showGrips) {
+                        selectorManager.requestSelector(textElem).resize();
+                    }
                 },
                 setIsVertical: (val) => {
                     isVertical = val;
@@ -5839,22 +5841,23 @@ define([
                     });
                     return symbols;
                 }
-                function _parseSvgByNolayer(svg, isText) {
+                function _parseSvgByNolayer(svg) {
                     //this is same as parseByLayer .....
                     const defNodes = Array.from(svg.childNodes).filter(node => 'defs' === node.tagName);
+                    const styleNodes = Array.from(svg.childNodes).filter(node => 'style' === node.tagName);
                     let defChildren = [];
                     defNodes.map(def => {
                         defChildren = defChildren.concat(Array.from(def.childNodes));
                     });
+                    defChildren = defChildren.concat(styleNodes);
 
                     const layerNodes = Array.from(svg.childNodes).filter(node => !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName));
-                    const type = isText ? 'text' : 'nolayer';
-                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes, isText ? 'text' : null), [], batchCmd, defChildren, type);
+                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren, type);
 
                     return [symbol];
                 }
                 // return symbols
-                _removeSvgText();
+                // _removeSvgText();
                 _removeComments();
                 switch (type) {
                     case 'color':
@@ -5865,15 +5868,9 @@ define([
 
                     case 'nolayer':
                         return {
-                            symbols: _parseSvgByNolayer(svg, false),
+                            symbols: _parseSvgByNolayer(svg),
                             confirmedType: 'nolayer'
                         };
-                    case 'text':
-                        return {
-                            symbols: _parseSvgByNolayer(svg, true),
-                            confirmedType: 'nolayer'
-                        };
-
                     case 'layer':
                         let symbols = _parseSvgByLayer(svg);
                         if(symbols) {
@@ -5884,7 +5881,7 @@ define([
                         } else {
                             console.log('Not valid layer. Use nolayer parsing option instead');
                             return {
-                                symbols: _parseSvgByNolayer(svg, false),
+                                symbols: _parseSvgByNolayer(svg),
                                 confirmedType: 'nolayer'
                             };
                         }
@@ -6159,6 +6156,57 @@ define([
             if (type === 'nolayer') {
                 originStyle = originStyle.replace(/stroke[^a-zA-Z]*:[^;]*;/g,'');
                 originStyle = originStyle.replace(/stroke-width[^a-zA-Z]*:[^;]*;/g,'');
+            }
+
+            const svgPixelTomm = 254 / 72; //本來 72 個點代表 1 inch, 現在 254 個點代表 1 inch.
+            const unitMap = {
+                'in': 25.4 * 10 / svgPixelTomm,
+                'cm': 10 * 10 / svgPixelTomm,
+                'mm': 10 / svgPixelTomm,
+                'px': 1
+            };
+            const getFontSizeInPixel = (fontSizeCss) => {
+                if (!isNaN(fontSizeCss)) {
+                    return fontSizeCss;
+                }
+                const unit = fontSizeCss.substr(-2);
+                const num = fontSizeCss.substr(0, fontSizeCss.length-2);
+                if (!unit || !unitMap[unit]) {
+                    return num;
+                } else {
+                    return num * unitMap[unit];
+                }
+            }
+
+            let textElems = $(symbol).find('text');
+            for (let i = 0; i < textElems.length; i++) {
+                // Remove text in <text> to <tspan>
+                const textElem = textElems[i];
+                const fontFamily = $(textElem).css('font-family');
+                $(textElem).attr('font-family', fontFamily);
+                const fontSize = getFontSizeInPixel($(textElem).css('font-size'));
+                $(textElem).attr('font-size', fontSize);
+                $(textElem).attr('stroke-width', 2);
+                
+                if (!$(textElem).attr('x')) {
+                    $(textElem).attr('x', 0);
+                }
+                if (!$(textElem).attr('y')) {
+                    $(textElem).attr('y', 0);
+                }
+                let texts = Array.from(textElem.childNodes).filter((child) => child.nodeType === 3);
+                for (let j = texts.length - 1; j >= 0; j--) {
+                    let t = texts[j];
+                    const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                    textElem.prepend(tspan);
+                    tspan.textContent = t.textContent;
+                    $(t).remove();
+                    $(tspan).attr({
+                        'x': $(textElem).attr('x'),
+                        'y': $(textElem).attr('y'),
+                        'vector-effect': 'non-scaling-stroke',
+                    });
+                }
             }
             //the regex indicate the css selector, but the selector may contain comma, so we replace it again.
             let prefixedStyle = originStyle.replace(/([^{}]+){/g, function replacer(match, p1, offset, string) {
@@ -7656,6 +7704,10 @@ define([
         // Function: getFontFamily
         // Returns the current font family
         this.getFontFamily = function () {
+            const selected = selectedElements[0];
+            if (selected) {
+                return selected.getAttribute('font-family');
+            }
             return cur_text.font_family;
         };
 
@@ -7732,6 +7784,10 @@ define([
         // Function: getFontSize
         // Returns the current font size
         this.getFontSize = function () {
+            const selected = selectedElements[0];
+            if (selected) {
+                return selected.getAttribute('font-size');
+            }
             return cur_text.font_size;
         };
 
@@ -7766,7 +7822,7 @@ define([
         // val - String with the new text
         this.setTextContent = function (val) {
             let textElement = selectedElements[0];
-            textActions.renderMultiLineText(textElement, val);
+            textActions.renderMultiLineText(textElement, val, true);
             textActions.init(textElement);
             textActions.setCursor();
         };

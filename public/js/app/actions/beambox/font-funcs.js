@@ -1,25 +1,38 @@
 define([
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/api/svg-laser-parser',
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
+    'helpers/sprintf',
 ], function(
+    Alert,
+    AlertConstants,
+    ProgressActions,
+    ProgressConstants,
     FnWrapper,
     SvgLaserParser,
     BeamboxPreference,
-    i18n
+    i18n,
+    sprintf
 ) {
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
     if (!window.electron) {
         console.log('font is not supported in web browser');
         return {
-            convertTextToPathAmoungSvgcontent: ()=>{}
+            tempConvertTextToPathAmoungSvgcontent: ()=>{}
         };
     }
     const ipc = electron.ipc;
     const events = electron.events;
+    const LANG = i18n.lang.beambox.object_panels;
     const activeLang = i18n.getActiveLang();
     const FontManager = require('font-manager');
+
+    let tempPaths = [];
 
     // a simple memoize function that takes in a function
     // and returns a memoized function
@@ -39,8 +52,6 @@ define([
             }
         };
     };
-
-
 
     const hashCode = function(s) {
         var h = 0, l = s.length, i = 0;
@@ -114,12 +125,12 @@ define([
         const whiteList = ['標楷體'];
         const whiteKeyWords = ['華康', 'Adobe'];
         if (whiteList.indexOf(fontFamily) >= 0) {
-            return fontFamily;
+            return {fontFamily};
         }
         for (let i = 0; i < whiteKeyWords.length; i++) {
             let keyword = whiteKeyWords[i];
-            if (fontFamily.indexOf(keyword) >= 0) {
-                return fontFamily;
+            if (fontFamily && fontFamily.indexOf(keyword) >= 0) {
+                return {fontFamily};
             }
         }
         //if only contain basic character (123abc!@#$...), don't substitute.
@@ -129,7 +140,7 @@ define([
             return char.charCodeAt(0) <= 0x007F;
         });
         if (textOnlyContainBasicLatin) {
-            return fontFamily;
+            return {fontFamily};
         }
         const originFont = findFontSync({
             family: fontFamily,
@@ -138,9 +149,12 @@ define([
         // array of used family which are in the text
         
         const originPostscriptName = originFont.postscriptName;
-        const fontList = Array.from(text).map(char =>
-            FontManager.substituteFontSync(originPostscriptName, char)
-        );
+        let unSupportedChar = [];
+        const fontList = Array.from(text).map(char => {
+            let sub = FontManager.substituteFontSync(originPostscriptName, char);
+            if (sub.postscriptName !== originPostscriptName) unSupportedChar.push(char);
+            return sub;
+        });
         let familyList = fontList.map(font => font.family);
         let postscriptList = fontList.map(font => font.postscriptName);
         // make unique
@@ -148,67 +162,106 @@ define([
         postscriptList = [...new Set(postscriptList)];
 
         if (familyList.length === 1) {
-            return familyList[0];
+            return {
+                fontFamily: familyList[0],
+                unSupportedChar
+            };
         } else {
             // Test all found fonts if they contain all 
-            
             for (let i = 0; i < postscriptList.length; ++i) {
                 let allFit = true;
                 for (let j = 0; j < text.length; ++j) {
                     if (fontList[j].postscriptName === postscriptList[i]) {
                         continue;
                     }
-                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]).family;
-                    if (familyList[i] !== foundfont) {
+                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]);
+                    if (postscriptList[i] !== foundfont.postscriptName) {
                         allFit = false;
                         break;
                     }
                 }
                 if (allFit) {
-                    console.log(`Find ${familyList[i]} fit for all char`);
-                    return familyList[i];
+                    console.log(`Find ${postscriptList[i]} fit for all char`);
+                    return {
+                        fontFamily: FontManager.findFontSync({ postscriptName: postscriptList[i] }).family,
+                        unSupportedChar
+                    };
                 }
             }
-            console.log('Cannot find a font fit for all')
-            return (familyList.filter(family => family !== fontFamily))[0];
+            console.log('Cannot find a font fit for all');
+            return {
+                fontFamily: (familyList.filter(family => family !== fontFamily))[0],
+                unSupportedChar
+            };;
         }
     };
 
-    const convertTextToPathFluxsvg = async ($textElement, bbox) => {
+    const showsubstitutedFamilyPopup = ($textElement, newFont, origFont, unSupportedChar) => {
+        return new Promise((resolve, reject) => {
+            ProgressActions.close();
+            const message = sprintf(LANG.text_to_path.font_substitute_pop, $textElement.text(), fontNameMap.get(origFont), unSupportedChar.join(', '), fontNameMap.get(newFont));
+            Alert.popUp({
+                type: AlertConstants.SHOW_POPUP_WARNING,
+                message,
+                buttonType: AlertConstants.CONFIRM_CANCEL,
+                onConfirm: () => {
+                    ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
+                    resolve(true);
+                },
+                onCancel: () => {
+                    ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    const calculateFilled = ($textElement) => {
+        if ($textElement.attr('fill-opacity') === 0) {
+            return false;
+        }
+        const fillAttr = $textElement.attr('fill');
+        if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
+            return false;
+        } else if(fillAttr || fillAttr === null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert) => {
         if (!$textElement.text()) {
             svgCanvas.clearSelection();
             $textElement.remove();
             return;
         }
+        let isUnsupported = false;
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
+        const origFontFamily = $textElement.attr('font-family');
         if (BeamboxPreference.read('font-substitute') !== false) {
-            const newFontFamily = substitutedFamily($textElement);
-            $textElement.attr('font-family', newFontFamily);
+            const {fontFamily: newFontFamily, unSupportedChar} = substitutedFamily($textElement);
+            if (newFontFamily !== origFontFamily) {
+                isUnsupported = true;
+                const doSub = await showsubstitutedFamilyPopup($textElement, newFontFamily, origFontFamily, unSupportedChar);
+                if (doSub) {
+                    $textElement.attr('font-family', newFontFamily);
+                }
+            }
         }
         console.log($textElement.attr('font-family'));
         $textElement.removeAttr('stroke-width');
+        const isFill = calculateFilled($textElement);
+        let color = $textElement.attr('stroke');
+        color = color !== 'none' ? color : $textElement.attr('fill');
+
         await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
-
-        const isFill = (() => {
-            if ($textElement.attr('fill-opacity') === 0) {
-                return false;
-            }
-            const fillAttr = $textElement.attr('fill');
-            if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
-                return false;
-            } else if(fillAttr || fillAttr === null) {
-                return true;
-            } else {
-                return false;
-            }
-        })();
-
-        const outputs = await svgWebSocket.divideSVG();
+        const outputs = await svgWebSocket.divideSVG({scale: 1});
         let {pathD, transform} = await new Promise ((resolve, reject) => {
             let fileReader = new FileReader();
             fileReader.onloadend = function (e) {
                 let svgString = e.target.result;
-                console.log(svgString);
+                //console.log(svgString);
                 const pathD = svgString.match(/(?<= d=")[^"]+/g);
                 const transform = svgString.match(/(?<= transform=")[^"]+/g);
                 resolve({pathD, transform});
@@ -223,11 +276,10 @@ define([
             return;
         }
 
+        const newPathId = svgCanvas.getNextId();
         const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
-        let color = $textElement.attr('stroke');
-        color = color !== 'none' ? color : $textElement.attr('fill');
         $(path).attr({
-            'id': svgCanvas.getNextId(),
+            'id': newPathId,
             'd': pathD.join(''),
             //Note: Assuming transform matrix for all d are the same
             'transform': transform ? transform[0] : '',
@@ -239,27 +291,43 @@ define([
             'vector-effect': 'non-scaling-stroke',
         });
         $(path).insertAfter($textElement);
+        const isVerti = $textElement.data('verti');
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        const pbbox = svgCanvas.calculateTransformedBBox(path);
-        svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
-        let textElem = $textElement[0];
-        let parent = textElem.parentNode;
-        let nextSibling = textElem.nextSibling;
-        let elem = parent.removeChild(textElem);
-        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
-
-        if (!batchCmd.isEmpty()) {
-            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        if (isVerti) {
+            const pbbox = svgCanvas.calculateTransformedBBox(path);
+            svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
+        } else {
+            svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
         }
+        if (!isTempConvert) {
+            let textElem = $textElement[0];
+            let parent = textElem.parentNode;
+            let nextSibling = textElem.nextSibling;
+            let elem = parent.removeChild(textElem);
+            batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+
+            if (!batchCmd.isEmpty()) {
+                svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+            }
+        } else {
+            $textElement.attr({
+                'font-family': origFontFamily,
+                'stroke-width': 2,
+                'display': 'none',
+                'data-path-id': newPathId
+            });
+            tempPaths.push(path);
+        }
+        return isUnsupported;
     }
 
-    const requestToConvertTextToPath = async ($textElement, family, weight, style) => {
+    const requestToConvertTextToPath = async ($textElement, args) => {
+        const {isTempConvert} = args;
         const d = $.Deferred();
-
         const fontStyle = requestFontByFamilyAndStyle({
-            family: family,
-            weight: weight,
-            style:  style,
+            family: args.family,
+            weight: args.weight,
+            style:  args.style,
             italic: ($textElement.attr('font-style') === 'italic')
         }).style;
 
@@ -294,19 +362,7 @@ define([
 
         const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
 
-        const isFill = (function(){
-            if ($textElement.attr('fill-opacity') === 0) {
-                return false;
-            }
-            const fillAttr = $textElement.attr('fill');
-            if (['#fff', '#ffffff', 'none'].includes(fillAttr)) {
-                return false;
-            } else if(fillAttr || fillAttr === null) {
-                return true;
-            } else {
-                return false;
-            }
-        })();
+        const isFill = calculateFilled($textElement);
         let color = $textElement.attr('stroke');
         color = color !== 'none' ? color : $textElement.attr('fill');
 
@@ -321,30 +377,47 @@ define([
             'stroke-dasharray': 'none',
             'vector-effect': 'non-scaling-stroke',
         });
-
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        let textElem = $textElement[0];
-        let parent = textElem.parentNode;
-        let nextSibling = textElem.nextSibling;
-        let elem = parent.removeChild(textElem);
-        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+        if (!isTempConvert) {
+            let textElem = $textElement[0];
+            let parent = textElem.parentNode;
+            let nextSibling = textElem.nextSibling;
+            let elem = parent.removeChild(textElem);
+            batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
 
-        if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
+            if (!batchCmd.isEmpty()) { svgCanvas.undoMgr.addCommandToHistory(batchCmd); }
+        } else {
+            $textElement.attr('display', 'none');
+            tempPaths.push(path);
+        }
 
         return;
     };
 
-    const convertTextToPathAmoungSvgcontent = async () => {
+    const tempConvertTextToPathAmoungSvgcontent = async () => {
         //FnWrapper.reset_select_mode();
         const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
+        let isSomeUnsupported = false;
         if (convertByFluxsvg) {
-            const texts = $('#svgcontent').find('text').toArray()
+            const texts = $('#svgcontent').find('text').toArray();
             for (let i = 0; i < texts.length; ++i) {
                 let el = texts[i];
                 let bbox = svgCanvas.calculateTransformedBBox($(el)[0]);
-                await convertTextToPathFluxsvg($(el), bbox);
+                let isFontSubstituted = await convertTextToPathFluxsvg($(el), bbox, true);
+                if (isFontSubstituted) {isSomeUnsupported = true}
+            }
+            
+            if (isSomeUnsupported) {
+                ProgressActions.close();
+                await new Promise((resolve) => {
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_WARNING,
+                        message: LANG.text_to_path.check_thumbnail_warning,
+                        callbacks: () => {resolve()}
+                    });
+                }); 
             }
             return;
         } else {
@@ -352,11 +425,22 @@ define([
                 .find('text')
                 .toArray()
                 .map(
-                    el => requestToConvertTextToPath($(el))
+                    el => requestToConvertTextToPath($(el), {isTempConvert: true})
                 );
             return await Promise.all(allPromises);
         }
     };
+
+    const revertTempConvert = async () => {
+        const texts = $('#svgcontent').find('text').toArray();
+        texts.forEach((t) => {
+            $(t).removeAttr('display');
+        });
+        for (let i = 0; i < tempPaths.length; i++) {
+            tempPaths[i].remove();
+        }
+        tempPaths = [];
+    }
 
     // <Map> family -> fullName
     const fontNameMap = (function requestEachFontFullname() {
@@ -469,6 +553,7 @@ define([
         requestFontByFamilyAndStyle: requestFontByFamilyAndStyle,
         requestToConvertTextToPath: requestToConvertTextToPath,
         convertTextToPathFluxsvg: convertTextToPathFluxsvg,
-        convertTextToPathAmoungSvgcontent: convertTextToPathAmoungSvgcontent
+        tempConvertTextToPathAmoungSvgcontent: tempConvertTextToPathAmoungSvgcontent,
+        revertTempConvert: revertTempConvert
     };
 });
