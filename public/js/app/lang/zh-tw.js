@@ -1555,6 +1555,7 @@ define(function() {
             error: '錯誤',
             retry: '重試',
             abort: '放棄',
+            confirm: '確認',
             cancel: '取消',
             close: '關閉',
             ok: '確定',

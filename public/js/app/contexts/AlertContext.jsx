@@ -29,7 +29,7 @@ define([
         };
 
         pushAlertToStack = (alert) => {
-            console.log(`alert id: ${alert.id} popped up`);
+            if (alert.id) console.log(`alert id: ${alert.id} popped up`);
             this.state.alertStack.push(alert);
             this.setState(this.state);
         }
@@ -64,7 +64,7 @@ define([
         }
 
         buttonsGenerator = (args) => {
-            let {id, buttons, buttonType, buttonLabels, checkBox, callbacks, primaryButtonIndex, onYes, onNo, onRetry, onCancel} = args;
+            let {id, buttons, buttonType, buttonLabels, checkBox, callbacks, primaryButtonIndex, onYes, onNo, onConfirm, onRetry, onCancel} = args;
             if (buttons) {
                 return {buttons, checkBox};
             }
@@ -73,48 +73,64 @@ define([
                 case AlertConstants.YES_NO:
                     onYes = onYes ? onYes : () => {};
                     onNo = onNo ? onNo : () => {};
-                    buttonLabels = [LANG.no, LANG.yes];
-                    callbacks = [onNo, onYes];
+                    buttonLabels = [LANG.yes, LANG.no];
+                    callbacks = [onYes, onNo];
+                    primaryButtonIndex = primaryButtonIndex || 0;
                     if (checkBox) {
                         const onCheckedYes = checkBox.onYes ? checkBox.onYes : () => {};
                         const onCheckedNo = checkBox.onNo ? checkBox.onNo : () => {};
-                        checkBox.callbacks = [onCheckedNo, onCheckedYes];
+                        checkBox.callbacks = [onCheckedYes, onCheckedNo];
                     }
                     break;
                 case AlertConstants.YES_NO_CUSTOM:
                     onYes = onYes ? onYes : () => {};
                     onNo = onNo ? onNo : () => {};
+                    primaryButtonIndex = primaryButtonIndex || 0;
                     if (!buttonLabels) {
-                        buttonLabels = [LANG.no, LANG.yes];
-                        callbacks = [onNo, onYes];
+                        buttonLabels = [LANG.yes, LANG.no];
+                        callbacks = [onYes, onNo];
                         if (checkBox) {
                             const onCheckedYes = checkBox.onYes ? checkBox.onYes : () => {};
                             const onCheckedNo = checkBox.onNo ? checkBox.onNo : () => {};
-                            checkBox.callbacks = [onCheckedNo, onCheckedYes];
+                            checkBox.callbacks = [onCheckedYes, onCheckedNo];
                         }
                     } else if (typeof buttonLabels === 'string') {
-                        buttonLabels = [buttonLabels, LANG.no, LANG.yes];
+                        buttonLabels = [LANG.yes, LANG.no, buttonLabels];
                         callbacks = callbacks ? callbacks : () => {};
-                        callbacks = [callbacks, onNo, onYes];
+                        callbacks = [onYes, onNo, callbacks];
                         
                     } else {
-                        buttonLabels = [...buttonLabels, buttonLabels, LANG.no, LANG.yes];
-                        callbacks = [...callbacks, onNo, onYes];
+                        buttonLabels = [LANG.yes, LANG.no, ...buttonLabels];
+                        callbacks = [onYes, onNo, ...callbacks];
+                    }
+                    break;
+                case AlertConstants.CONFIRM_CANCEL:
+                    onConfirm = onConfirm ? onConfirm : () => {};
+                    onCancel = onCancel ? onCancel : () => {};
+                    buttonLabels = [LANG.confirm, LANG.cancel];
+                    primaryButtonIndex = primaryButtonIndex || 0;
+                    callbacks = [onConfirm, onCancel];
+                    if (checkBox) {
+                        const onCheckedConfirm = checkBox.onConfirm ? checkBox.onConfirm : () => {};
+                        const onCheckedCancel = checkBox.onCancel ? checkBox.onCancel : () => {};
+                        checkBox.callbacks = [onCheckedConfirm, onCheckedCancel];
                     }
                     break;
                 case AlertConstants.RETRY_CANCEL:
                     onRetry = onRetry ? onRetry : () => {};
                     onCancel = onCancel ? onCancel : () => {};
-                    buttonLabels = [LANG.cancel, LANG.retry];
+                    buttonLabels = [LANG.retry, LANG.cancel];
+                    primaryButtonIndex = primaryButtonIndex || 0;
                     callbacks = [onRetry, onCancel];
                     if (checkBox) {
                         const onCheckedRetry = checkBox.onRetry ? checkBox.onRetry : () => {};
                         const onCheckedCancel = checkBox.onCancel ? checkBox.onCancel : () => {};
-                        checkBox.callbacks = [onCheckedCancel, onCheckedRetry];
+                        checkBox.callbacks = [onCheckedRetry, onCheckedCancel];
                     }
                     break;
                 case AlertConstants.CUSTOM_CANCEL:
                     onCancel = onCancel ? onCancel : () => {};
+                    primaryButtonIndex = primaryButtonIndex || 0;
                     if (!buttonLabels) {
                         buttonLabels = [LANG.cancel];
                         callbacks = [onCancel];
@@ -123,13 +139,13 @@ define([
                             checkBox.callbacks = [onCheckedCancel];
                         }
                     } else if (typeof buttonLabels === 'string') {
-                        buttonLabels = [LANG.cancel, buttonLabels];
+                        buttonLabels = [buttonLabels, LANG.cancel];
                         callbacks = callbacks ? callbacks : () => {};
-                        callbacks = [onCancel, callbacks];
+                        callbacks = [callbacks, onCancel];
                         
                     } else {
-                        buttonLabels = [LANG.cancel, ...buttonLabels];
-                        callbacks = [onCancel, ...callbacks];
+                        buttonLabels = [...buttonLabels, LANG.cancel];
+                        callbacks = [...callbacks, onCancel];
                     }
                     break;
                 default:

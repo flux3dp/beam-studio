@@ -1556,6 +1556,7 @@ define(function() {
             error: 'UH-OH',
             retry: 'RETRY',
             abort: 'ABORT',
+            confirm: 'CONFIRM',
             cancel: 'CANCEL',
             close: 'CLOSE',
             ok: 'OK',

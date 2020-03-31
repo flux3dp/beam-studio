@@ -8,6 +8,7 @@ define(function(){
         ERROR                       : 'ERROR',
         YES_NO                      : 'YES_NO',
         YES_NO_CUSTOM               : 'YES_NO_CUSTOM',
+        CONFIRM_CANCEL              : 'CONFIRM_CANCEL',
         RETRY_CANCEL                : 'RETRY_CANCEL',
         RETRY_ABORT_CANCEL          : 'RETRY_ABORT_CANCEL',
         CUSTOM                      : 'CUSTOM',

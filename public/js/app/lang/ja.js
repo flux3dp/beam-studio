@@ -1556,6 +1556,7 @@ define(function() {
             error: 'おっと',
             retry: '再試行',
             abort: 'アボート',
+            confirm: '確認する',
             cancel: 'キャンセル',
             close: '閉じる',
             ok: 'OK',
