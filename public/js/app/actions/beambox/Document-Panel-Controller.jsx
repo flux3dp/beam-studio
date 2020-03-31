@@ -1,13 +1,13 @@
 define([
-    'jsx!views/beambox/Advanced-Panel',
+    'jsx!views/beambox/Document-Panels/Document-Panel',
     'app/actions/beambox/beambox-preference',
 ], function(
-    AdvancedPanel,
+    DocumentPanel,
     BeamboxPreference
 ){
     const React = require('react');
     const ReactDOM = require('react-dom');
-    class AdvancedPanelController {
+    class DocumentPanelController {
         constructor() {
             this.reactRoot = '';
             this.isVisible = false;
@@ -33,14 +33,14 @@ define([
 
         _render() {
             ReactDOM.render(
-                <AdvancedPanel
+                <DocumentPanel
                     unmount={this.unmount}
                 />, document.getElementById(this.reactRoot)
             );
         }
     }
 
-    const instance = new AdvancedPanelController();
+    const instance = new DocumentPanelController();
 
     return instance;
 });

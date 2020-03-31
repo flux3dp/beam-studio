@@ -5,7 +5,7 @@ define([
     'helpers/image-data',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'jsx!app/actions/beambox/Advanced-Panel-Controller',
+    'jsx!app/actions/beambox/Document-Panel-Controller',
     'jsx!app/actions/beambox/Photo-Edit-Panel-Controller',
     'helpers/i18n'
 ], function(
@@ -15,7 +15,7 @@ define([
     ImageData,
     Alert,
     AlertConstants,
-    AdvancedPanelController,
+    DocumentPanelController,
     PhotoEditPanelController,
     i18n
 ){
@@ -486,7 +486,7 @@ define([
         },
 
         openAdvancedPanel: function() {
-            AdvancedPanelController.render();
+            DocumentPanelController.render();
         },
 
         // others

@@ -56,7 +56,7 @@ define([
         );
     };
 
-    return class AdvancedPanel extends React.PureComponent {
+    return class DocumentPanel extends React.PureComponent {
         constructor() {
             super();
             this.state = {
