@@ -175,7 +175,7 @@ define([
 
         _getPreviewBoundary() {
             const previewBoundaryId = 'previewBoundary';
-            const color = 'rgba(200,200,200,0.8)';
+            const color = 'rgba(204,204,204,0.8)';
             const uncapturabledHeight = (this.cameraOffset.y * Constant.dpmm) - (Constant.camera.imgHeight * this.cameraOffset.scaleRatioY / 2);
 
             const svgdoc = document.getElementById('svgcanvas').ownerDocument;

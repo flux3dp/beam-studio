@@ -40,6 +40,7 @@ define([
             $clonedSvg.find('#canvasBackground image#background_image').remove();
             $clonedSvg.find('#canvasBackground #previewBoundary').remove();
             $clonedSvg.find('#canvasBackground #guidesLines').remove();
+            $clonedSvg.find('#canvasBackground #diode-boundary').remove();
 
             return $clonedSvg;
         }
@@ -135,7 +136,6 @@ define([
     //return {uploadFile, thumbnailBlobURL}
     const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
         const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
-        console.log(thumbnail);
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.retreive_image_data);
         await updateImageResolution();
         ProgressActions.close();

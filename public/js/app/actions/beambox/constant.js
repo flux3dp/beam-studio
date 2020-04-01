@@ -45,6 +45,12 @@ define([
                 centerY: 90, //mm
                 size: 25 //mm
             }
+        },
+        diode: {
+            limitX: 50, //mm
+            limitY: 10, //mm
+            defaultOffsetX: 69, //mm
+            defaultOffsetY: 6, //mm
         }
     };
 });

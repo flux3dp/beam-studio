@@ -19,7 +19,8 @@ define([
     'jsx!views/Printer-Selector',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/beambox/beambox-version-master'
+    'app/actions/beambox/beambox-version-master',
+    'app/actions/beambox/diode-boundary-drawer'
 ], function(
     $,
     ReactCx,
@@ -41,7 +42,8 @@ define([
     PrinterSelector,
     Alert,
     AlertConstants,
-    BeamboxVersionMaster
+    BeamboxVersionMaster,
+    DiodeBoundaryDrawer
 ) {
     'use strict';
     const React = require('react');
@@ -935,6 +937,12 @@ define([
             const zStepPanel = this._renderZStep();
             const diodePanel = this._renderDiode();
             const modalDialog = this._renderModal();
+
+            if (this.state.isDiode) {
+                DiodeBoundaryDrawer.show();
+            } else {
+                DiodeBoundaryDrawer.hide();
+            }
 
             const defaultOptions = defaultLaserOptions.map((item) => {
                 return {
