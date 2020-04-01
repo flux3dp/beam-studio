@@ -69,10 +69,10 @@ define([
             const x = - (W - w) / 2;
             const y = - (H - h) / 2;
 
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = Math.min(w, 500);
+            canvas.height = h * canvas.width / w;
 
-            ctx.drawImage(img, x, y, img.width, img.height);
+            ctx.drawImage(img, -x, -y, w, h, 0, 0, canvas.width, canvas.height);
             return canvas;
         }
 
@@ -135,6 +135,7 @@ define([
     //return {uploadFile, thumbnailBlobURL}
     const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
         const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
+        console.log(thumbnail);
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.retreive_image_data);
         await updateImageResolution();
         ProgressActions.close();
