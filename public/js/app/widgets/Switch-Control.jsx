@@ -20,11 +20,11 @@ define([
             return newPropIsDifferent || newStateIsDifferent;
         }
 
-        _fireChange(newValue) {
+        _fireChange = (newValue) => {
             this.props.onChange(this.props.id, newValue);
         }
 
-        _handleToggle(e) {
+        _handleToggle = (e) => {
             var isChecked = e.target.checked;
             this.setState({ checked: isChecked }, function() {
                 this._fireChange(isChecked);
