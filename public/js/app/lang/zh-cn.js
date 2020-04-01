@@ -1024,7 +1024,7 @@ define(function() {
                     image: '图片',
                     text: '文本'
                 },
-                advanced_panel: {
+                document_panel: {
                     engrave_parameters: '雕刻参数',
                     engrave_dpi: '雕刻分辨率',
                     low: '低',

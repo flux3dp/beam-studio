@@ -74,6 +74,10 @@ define([
     }
     window.svgEditor = (function ($) {
         var editor = {};
+        const defaultModel = BeamboxPreference.read('model');
+        if (defaultModel !== undefined) {
+            BeamboxPreference.write('workarea', defaultModel);
+        }
         // EDITOR PROPERTIES: (defined below)
         //		curPrefs, curConfig, canvas, storage, uiStrings
         //
@@ -83,7 +87,7 @@ define([
         editor.langChanged = false;
         editor.showSaveWarning = false;
         editor.storagePromptClosed = false; // For use with ext-storage.js
-        editor.dimensions = [Constant.dimension.width, Constant.dimension.height];
+        editor.dimensions = [Constant.dimension.getWidth(), Constant.dimension.getHeight()];
 
         var svgCanvas, urldata,
             Utils = svgedit.utilities,
@@ -5837,7 +5841,7 @@ define([
                         return;
                     }
                     const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
-                    if (bbox.width > Constant.dimension.width || bbox.height > Constant.dimension.height) {
+                    if (bbox.width > Constant.dimension.getWidth() || bbox.height > Constant.dimension.getHeight()) {
                         Alert.popUp({
                             id: 'dxf_size_over_workarea',
                             message: LANG.popup.dxf_bounding_box_size_over,
@@ -5933,6 +5937,24 @@ define([
                         } else {
                             BeamboxPreference.write('engrave_dpi', 'medium');
                         }
+                        match = str.match(/data-en_diode="([a-zA-Z]+)"/);
+                        if (match[1]) {
+                            if (match[1] === 'true') {
+                                BeamboxPreference.write('enable-diode', true);
+                            } else {
+                                BeamboxPreference.write('enable-diode', false);
+                            }
+                            renderLayerLaserConfigs();
+                        }
+                        match = str.match(/data-en_af="([a-zA-Z]+)"/);
+                        if (match[1]) {
+                            if (match[1] === 'true') {
+                                BeamboxPreference.write('enable-autofocus', true);
+                            } else {
+                                BeamboxPreference.write('enable-autofocus', false);
+                            }
+                            renderLayerLaserConfigs();
+                        }
                         match = str.match(/data-zoom="[0-9\.]+"/);
                         if (match) {
                             let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
@@ -5941,13 +5963,13 @@ define([
                         match = str.match(/data-left="[-0-9]+"/);
                         if (match) {
                             let left = parseInt(match[0].substring(11, match[0].length - 1));
-                            left = Math.round((left + Constant.dimension.width) * svgCanvas.getZoom());
+                            left = Math.round((left + Constant.dimension.getWidth()) * svgCanvas.getZoom());
                             $('#workarea').scrollLeft(left);
                         }
                         match = str.match(/data-top="[-0-9]+"/);
                         if (match) {
                             let top = parseInt(match[0].substring(10, match[0].length - 1));
-                            top = Math.round((top + Constant.dimension.height) * svgCanvas.getZoom());
+                            top = Math.round((top + Constant.dimension.getHeight()) * svgCanvas.getZoom());
                             $('#workarea').scrollTop(top);
                         }
                     }
@@ -6191,10 +6213,6 @@ define([
             zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
-            svgCanvas.defaultScroll = {
-                x: ($('#canvasBackground').attr('x') - 10) / zoomLevel,
-                y: ($('#canvasBackground').attr('y') - 10) / zoomLevel
-            };
 
             //greyscale all svgContent
             (function () {
@@ -6221,13 +6239,17 @@ define([
         };
 
         editor.resetView = function() {
-            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 20) / svgEditor.dimensions[0], ($('#workarea').height() - 20) / svgEditor.dimensions[1]);
+            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 20) / Constant.dimension.getWidth(), ($('#workarea').height() - 20) / Constant.dimension.getHeight());
             const zoomLevel = workareaToDimensionRatio;
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
-            $('#workarea')[0].scrollLeft = svgCanvas.defaultScroll.x * zoomLevel;
-            $('#workarea')[0].scrollTop = svgCanvas.defaultScroll.y * zoomLevel;
+            defaultScroll = {
+                x: ($('#canvasBackground').attr('x') - 10) / zoomLevel,
+                y: ($('#canvasBackground').attr('y') - 10) / zoomLevel
+            };
+            $('#workarea')[0].scrollLeft = defaultScroll.x * zoomLevel;
+            $('#workarea')[0].scrollTop = defaultScroll.y * zoomLevel;
         };
 
         editor.setZoomWithWindow = function() {

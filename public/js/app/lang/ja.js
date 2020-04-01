@@ -391,7 +391,7 @@ define(function() {
             delta_series: 'Delta群',
             beambox_series: 'Beambox群',
             default_model: 'デフォルトモデル<br />（印刷設定用）',
-            default_beambox_model: 'デフォルトモデル',
+            default_beambox_model: 'デフォルト作業エリア',
             guides_origin: 'ガイドの原点',
             guides: 'ガイド',
             image_downsampling: 'Bitmap Image Quality',
@@ -402,8 +402,9 @@ define(function() {
             mask: 'ワークエリアのクリッピング',
             optimization: '最適化',
             font_substitute: 'Substitute Font For Unsupported Char.',
-            enable_autofocus_module: 'Autofocus Module',
-            enable_diode_module: 'Diode Module',
+            default_borderless_mode: 'Borderless Mode Default',
+            default_enable_autofocus_module: 'Autofocus Module Default',
+            default_enable_diode_module: 'Diode Module  Default',
             diode_offset: 'Diode Module Offset',
             none: 'なし',
             close: '閉じる',
@@ -1156,16 +1157,6 @@ define(function() {
                     path: 'パス',
                     polygon: '多角形'
                 },
-                advanced_panel: {
-                    engrave_parameters: '彫刻パラメーター',
-                    rotary_mode: 'ロータリー',
-                    engrave_dpi: '解像度',
-                    low: '低',
-                    medium: '中',
-                    high: '高',
-                    cancel: 'キャンセル',
-                    save: '保存する'
-                }
             },
             right_panel: {
                 layer_panel: {
@@ -1237,6 +1228,22 @@ define(function() {
                     do_not_adjust_default_para: 'デフォルトのパラメーターは調整できません。',
                     existing_name: 'このパラメーター名は使用されています。'
                 },
+            },
+            document_panel: {
+                engrave_parameters: '彫刻パラメーター',
+                workarea: 'Work Area',
+                rotary_mode: 'ロータリー',
+                borderless_mode: 'ボーダーレスモード',
+                engrave_dpi: '解像度',
+                enable_diode: 'Diode Module',
+                enable_autofocus: 'Autofocus Module',
+                low: '低',
+                medium: '中',
+                high: '高',
+                enable: 'Enable',
+                disable: 'Disable',
+                cancel: 'キャンセル',
+                save: '保存する'
             },
             bottom_right_panel: {
                 convert_text_to_path_before_export: 'テキストをパスに変換…',

@@ -187,7 +187,10 @@ define([
             const layerData = {
                 speed: currentLayer.getAttribute('data-speed'),
                 power: currentLayer.getAttribute('data-strength'),
-                repeat: currentLayer.getAttribute('data-repeat')
+                repeat: currentLayer.getAttribute('data-repeat'),
+                height: currentLayer.getAttribute('data-height'),
+                zstep: currentLayer.getAttribute('data-zstep'),
+                diode: currentLayer.getAttribute('data-diode'),
             };
 
             return layerData;

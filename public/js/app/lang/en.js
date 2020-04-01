@@ -391,7 +391,7 @@ define(function() {
             delta_series: 'Delta Family',
             beambox_series: 'Beambox Family',
             default_model: 'Default Model<br />(For Print Settings)',
-            default_beambox_model: 'Default Model',
+            default_beambox_model: 'Default Document Setting',
             guides_origin: 'Guides Origin',
             guides: 'Guides',
             image_downsampling: 'Bitmap Image Quality',
@@ -402,8 +402,9 @@ define(function() {
             mask: 'Workarea Clipping',
             optimization: 'Optimization',
             font_substitute: 'Substitute Font For Unsupported Char.',
-            enable_autofocus_module: 'Autofocus Module',
-            enable_diode_module: 'Diode Module',
+            default_borderless_mode: 'Borderless Mode Default',
+            default_enable_autofocus_module: 'Autofocus Module Default',
+            default_enable_diode_module: 'Diode Module  Default',
             diode_offset: 'Diode Module Offset',
             none: 'None',
             close: 'Close',
@@ -1156,16 +1157,6 @@ define(function() {
                     path: 'Path',
                     polygon: 'Polygon'
                 },
-                advanced_panel: {
-                    engrave_parameters: 'Engraving Parameters',
-                    rotary_mode: 'Rotary',
-                    engrave_dpi: 'Resolution',
-                    low: 'Low',
-                    medium: 'Medium',
-                    high: 'High',
-                    cancel: 'Cancel',
-                    save: 'Save'
-                }
             },
             right_panel: {
                 layer_panel: {
@@ -1237,6 +1228,22 @@ define(function() {
                     do_not_adjust_default_para: 'Default parameter can not be adjusted.',
                     existing_name: 'This parameter name has been used.'
                 },
+            },
+            document_panel: {
+                engrave_parameters: 'Engraving Parameters',
+                workarea: 'Work Area',
+                rotary_mode: 'Rotary',
+                borderless_mode: 'Borderless Mode',
+                engrave_dpi: 'Resolution',
+                enable_diode: 'Diode Module',
+                enable_autofocus: 'Autofocus Module',
+                low: 'Low',
+                medium: 'Medium',
+                high: 'High',
+                enable: 'Enable',
+                disable: 'Disable',
+                cancel: 'Cancel',
+                save: 'Save'
             },
             bottom_right_panel: {
                 convert_text_to_path_before_export: 'Convert Text to Path...',

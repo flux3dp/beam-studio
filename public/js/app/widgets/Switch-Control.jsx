@@ -9,7 +9,7 @@ define([
         constructor(props) {
             super(props);
             this.state = {
-                checked: this.props.default
+                checked: this.props.default,
             }
         }
 
@@ -38,7 +38,7 @@ define([
                     <div className="control">
                         <div className="switch-container">
 
-                            <div className="switch-status">{this.state.checked ? 'ON' : 'OFF'}</div>
+                            <div className="switch-status">{this.state.checked ? this.props.onText : this.props.offText}</div>
 
                             <div className="onoffswitch" name={this.props.name || ''}>
 
@@ -64,9 +64,16 @@ define([
     SwitchControl.propTypes = {
         id: PropTypes.string.isRequired,
         label: PropTypes.string,
+        onText: PropTypes.string,
+        offText: PropTypes.string,
         default: PropTypes.bool,
         onChange: PropTypes.func.isRequired
     };
+
+    SwitchControl.defaultProps = {
+        onText: 'ON',
+        offText: 'OFF',
+    }
 
     return SwitchControl;
 });

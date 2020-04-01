@@ -9,14 +9,25 @@ define([
     workareaMap.set('fbm1', [3000, 2100]);
     workareaMap.set('fbb1b', [4000, 3750]);
     workareaMap.set('fbb1p', [6000, 3750]);
-
     const workarea = workareaMap.get(BeamboxPreference.read('model'));
 
     return {
         dpmm: 10, //seem not to be used by all people QQ
         dimension: {
-            width: workarea[0],
-            height: workarea[1]
+            getWidth: () => {
+                let model = BeamboxPreference.read('workarea');
+                if (model) {
+                    return workareaMap.get(model)[0];
+                }
+                return workarea[0];
+            },
+            getHeight: () => {
+                let model = BeamboxPreference.read('workarea');
+                if (model) {
+                    return workareaMap.get(model)[1];
+                }
+                return workarea[1];
+            },
         },
         camera: {
             movementSpeed: {

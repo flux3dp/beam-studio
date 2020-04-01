@@ -74,7 +74,7 @@ define([
                             <span>
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.width/Constant.dpmm}
+                                    max={Constant.dimension.getWidth()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.x1}
@@ -83,7 +83,7 @@ define([
                                 />
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.height/Constant.dpmm}
+                                    max={Constant.dimension.getHeight()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.y1}
@@ -97,7 +97,7 @@ define([
                             <span>
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.width/Constant.dpmm}
+                                    max={Constant.dimension.getWidth()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.x2}
@@ -106,7 +106,7 @@ define([
                                 />
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.height/Constant.dpmm}
+                                    max={Constant.dimension.getHeight()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.y2}

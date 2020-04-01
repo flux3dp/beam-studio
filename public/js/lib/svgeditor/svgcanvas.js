@@ -582,7 +582,6 @@ define([
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
         Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
         this.isBorderlessMode = BeamboxPreference.read('borderless');
-        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = this.isBorderlessMode;
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
 
@@ -4638,12 +4637,16 @@ define([
                     $(this).replaceWith(svg);
                 }
             });
-            engraveDpi= BeamboxPreference.read('engrave_dpi');
-            rotaryMode= BeamboxPreference.read('rotary_mode');
+            engraveDpi = BeamboxPreference.read('engrave_dpi');
+            rotaryMode = BeamboxPreference.read('rotary_mode');
+            const isUsingDiode = BeamboxPreference.read('enable-diode');
+            const isUsingAF = BeamboxPreference.read('enable-autofocus');
             svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
             svgcontent.setAttribute('data-rotary_mode', rotaryMode);
-            const x = $('#workarea').scrollLeft() / current_zoom - Constant.dimension.width;
-            const y = $('#workarea').scrollTop() / current_zoom - Constant.dimension.height;
+            svgcontent.setAttribute('data-en_diode', isUsingDiode);
+            svgcontent.setAttribute('data-en_af', isUsingAF);
+            const x = $('#workarea').scrollLeft() / current_zoom - Constant.dimension.getWidth();
+            const y = $('#workarea').scrollTop() / current_zoom - Constant.dimension.getHeight();
             svgcontent.setAttribute('data-zoom', (Math.round(current_zoom * 1000) / 1000));
             svgcontent.setAttribute('data-left', Math.round(x));
             svgcontent.setAttribute('data-top', Math.round(y));
@@ -6744,8 +6747,6 @@ define([
                 borderless = turnOnBorderless;
             }
             BeamboxPreference.write('borderless', borderless);
-            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'BORDERLESS_MODE')[0].checked = borderless;
-            //console.log(BeamboxPreference.read('borderless'), typeof(BeamboxPreference.read('borderless')));
         };
 
         // Function: setConfig
@@ -6881,6 +6882,9 @@ define([
             var w = res.w,
                 h = res.h;
             var batchCmd;
+
+            svgroot.setAttribute('x', x);
+            svgroot.setAttribute('y', y);
 
             if (x === 'fit') {
                 // Get bounding box

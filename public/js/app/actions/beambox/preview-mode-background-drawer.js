@@ -23,13 +23,13 @@ define([
                 minY : 10000
             }
 
-            this.canvas.width = Constant.dimension.width;
-            this.canvas.height = Constant.dimension.height;
-
             this.cameraOffset = null;
         }
 
         start(cameraOffset) {
+            this.canvas.width = Constant.dimension.getWidth();
+            this.canvas.height = Constant.dimension.getHeight();
+
             // { x, y, angle, scaleRatioX, scaleRatioY }
             this.cameraOffset = cameraOffset;
 
@@ -188,14 +188,14 @@ define([
                 'id': previewBoundaryId,
                 'width': '100%',
                 'height': '100%',
-                'viewBox': `0 0 ${Constant.dimension.width} ${Constant.dimension.height}`,
+                'viewBox': `0 0 ${Constant.dimension.getWidth()} ${Constant.dimension.getHeight()}`,
                 'x': 0,
                 'y': 0,
                 'style': 'pointer-events:none'
             });
 
             svgedit.utilities.assignAttributes(borderTop, {
-                'width': Constant.dimension.width,
+                'width': Constant.dimension.getWidth(),
                 'height': uncapturabledHeight,
                 'x': 0,
                 'y': 0,

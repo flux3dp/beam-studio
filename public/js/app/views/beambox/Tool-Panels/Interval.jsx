@@ -68,7 +68,7 @@ define([
                                 <span className="text-center header">{LANG.dx}</span>
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.width/Constant.dpmm}
+                                    max={Constant.dimension.getWidth()/Constant.dpmm}
                                     unit="mm"
                                     defaultValue={this.state.dx}
                                     getValue={this._update_dx_handler}
@@ -78,7 +78,7 @@ define([
                                 <span className="text-center header">{LANG.dy}</span>
                                 <UnitInput
                                     min={0}
-                                    max={Constant.dimension.height/Constant.dpmm}
+                                    max={Constant.dimension.getHeight()/Constant.dpmm}
                                     unit="mm"
                                     defaultValue={this.state.dy}
                                     getValue={this._update_dy_handler}

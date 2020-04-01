@@ -174,7 +174,7 @@ define([
         ProgressActions.close();
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
-            model: BeamboxPreference.read('model'),
+            model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
             engraveDpi: BeamboxPreference.read('engrave_dpi'),
             enableMask: BeamboxPreference.read('enable_mask') || BeamboxPreference.read('borderless'),
             onProgressing: (data) => {
@@ -236,9 +236,9 @@ define([
                     },
                     fileMode: '-f',
                     codeType,
-                    model: BeamboxPreference.read('model'),
-                    enableAutoFocus: BeamboxPreference.read('enable-autofocus-module'),
-                    enableDiode: BeamboxPreference.read('enable-diode-module'),
+                    model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+                    enableAutoFocus: BeamboxPreference.read('enable-autofocus'),
+                    enableDiode: BeamboxPreference.read('enable-diode'),
                 }
             );
         });

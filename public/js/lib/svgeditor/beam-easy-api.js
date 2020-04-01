@@ -125,7 +125,7 @@ define([
             svgEditor.importBvgString(this.bvg);
             let { uploadFile, thumbnailBlobURL } = await BottomRightFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
             let r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
-                model: this.device ? this.device.model : BeamboxPreference.read('model'),
+                model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
                 engraveDpi: BeamboxPreference.read('engrave_dpi'),
                 onProgressing: (data) => {
                 },
@@ -162,7 +162,7 @@ define([
                         },
                         fileMode: '-f',
                         codeType,
-                        model: this.device ? this.device.model : BeamboxPreference.read('model')
+                        model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model')
                     }
                 );
             });

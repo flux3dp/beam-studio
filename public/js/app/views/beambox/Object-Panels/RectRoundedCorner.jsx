@@ -54,7 +54,7 @@ define([
                                     <span className="text-center header">{LANG.radius}</span>
                                     <UnitInput
                                         min={0}
-                                        max={Constant.dimension.width/Constant.dpmm}
+                                        max={Constant.dimension.getWidth()/Constant.dpmm}
                                         unit="mm"
                                         defaultValue={this.state.rx}
                                         getValue={this._update_rx_handler}

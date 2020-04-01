@@ -102,7 +102,7 @@ define([
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             } else {
                 let customized = LocalStorage.get('customizedLaserConfigs');
-                const model = BeamboxPreference.read('model');
+                const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
                 for (let i = 0; i < customized.length; i++) {
                     if (customized[i].isDefault) {
                         customized[i].name = LANG.dropdown[customized[i].key];
@@ -180,7 +180,10 @@ define([
             this.setState({
                 speed:      layerData.speed,
                 strength:   layerData.power,
-                repeat:     layerData.repeat
+                repeat:     layerData.repeat,
+                height:     layerData.height,
+                zStep:      layerData.zStep,
+                isDiode:    layerData.isDiode > 0,
             });
         }
 
@@ -315,7 +318,7 @@ define([
                 return;
             }
             if (defaultLaserOptions.indexOf(value) > -1) {
-                const model = BeamboxPreference.read('model');
+                const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
                 switch(model) {
                     case 'fbm1':
                         this.setState({
@@ -483,7 +486,7 @@ define([
         }
 
         _renderHeight = () => {
-            if (!BeamboxPreference.read('enable-autofocus-module')) {
+            if (!BeamboxPreference.read('enable-autofocus')) {
                 return null;
             }
             return (
@@ -502,7 +505,7 @@ define([
         }
 
         _renderZStep = () => {
-            if (!BeamboxPreference.read('enable-autofocus-module') || this.state.repeat === 1) {
+            if (!BeamboxPreference.read('enable-autofocus') || this.state.repeat <= 1) {
                 return null;
             }
             return (
@@ -521,7 +524,7 @@ define([
         }
 
         _renderDiode = () => {
-            if (!BeamboxPreference.read('enable-diode-module')) {
+            if (!BeamboxPreference.read('enable-diode')) {
                 return null;
             }
             return (
@@ -561,7 +564,7 @@ define([
         }
 
         _getDefaultParameters = (para_name) => {
-            const model = BeamboxPreference.read('model');
+            const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
             let speed, power, repeat;
             switch(model) {
                 case 'fbm1':

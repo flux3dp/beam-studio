@@ -172,7 +172,7 @@
             }
         }
     }
-    .advanced-panel {
+    .document-panel {
         border-radius: 4px;
         background-color: #fff;
         box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -201,6 +201,9 @@
                 }
                 .switch-container {
                     margin-left: 0;
+                }
+                .dropdown-container {
+                    left: 0px;
                 }
             }
         }

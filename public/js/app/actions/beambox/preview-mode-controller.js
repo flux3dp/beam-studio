@@ -243,8 +243,8 @@ define([
         }
 
         _constrainPreviewXY(x, y) {
-            const maxWidth = Constant.dimension.width;
-            const maxHeight = Constant.dimension.height;
+            const maxWidth = Constant.dimension.getWidth();
+            const maxHeight = Constant.dimension.getHeight();
 
             x = Math.max(x, this._getCameraOffset().x * 10);
             x = Math.min(x, maxWidth);

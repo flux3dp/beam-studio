@@ -60,7 +60,7 @@ define([
                             <span className="text-center header">X</span>
                             <UnitInput
                                 min={0}
-                                max={Constant.dimension.width/Constant.dpmm}
+                                max={Constant.dimension.getWidth()/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.cx}
                                 getValue={this._update_cx_handler}
@@ -70,7 +70,7 @@ define([
                             <span className="text-center header">Y</span>
                             <UnitInput
                                 min={0}
-                                max={Constant.dimension.height/Constant.dpmm}
+                                max={Constant.dimension.getHeight()/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.cy}
                                 getValue={this._update_cy_handler}

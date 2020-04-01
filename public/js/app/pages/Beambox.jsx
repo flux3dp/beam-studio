@@ -43,7 +43,7 @@ define([
                         <LeftPanel />
                         <SvgEditor />
                         <NetworkTestingPanel />
-                        <div id='advanced-panel-placeholder' />
+                        <div id='document-panel-placeholder' />
                         <div id='object-panels-placeholder' />
                         <div id='tool-panels-placeholder' />
                         <div id='image-trace-panel-placeholder' />

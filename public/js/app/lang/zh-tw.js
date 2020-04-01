@@ -390,7 +390,7 @@ define(function() {
             blade_precut_position: '預切位置',
             beambox_series: 'Beambox 系列',
             default_model: '預設型號（列印參數）',
-            default_beambox_model: '預設型號',
+            default_beambox_model: '預設文件設定',
             guides_origin: '參考線座標',
             guides: '參考線',
             image_downsampling: '點陣圖畫質',
@@ -401,8 +401,9 @@ define(function() {
             mask: '工作範圍剪裁',
             optimization: '優化',
             font_substitute: '自動替換字體',
-            enable_autofocus_module: '自動對焦模組',
-            enable_diode_module: '二極體雷射模組',
+            default_borderless_mode: '開蓋模式預設',
+            default_enable_autofocus_module: '自動對焦模組預設',
+            default_enable_diode_module: '二極體雷射模組預設',
             diode_offset: '二極體雷射偏移值',
             none: '無',
             close: '關閉',
@@ -1154,16 +1155,6 @@ define(function() {
                     path: '路徑',
                     polygon: '多邊形'
                 },
-                advanced_panel: {
-                    engrave_parameters: '雕刻參數',
-                    rotary_mode: '旋轉軸',
-                    engrave_dpi: '雕刻解析度',
-                    low: '低',
-                    medium: '中',
-                    high: '高',
-                    cancel: '取消',
-                    save: '儲存'
-                }
             },
             right_panel: {
                 layer_panel: {
@@ -1266,6 +1257,22 @@ define(function() {
                 invert: '色彩反轉',
                 okay: '完成',
                 phote_edit: '影像編輯'
+            },
+            document_panel: {
+                engrave_parameters: '雕刻參數',
+                workarea: '工作範圍',
+                rotary_mode: '旋轉軸',
+                borderless_mode: '開蓋模式',
+                engrave_dpi: '雕刻解析度',
+                enable_diode: '二極體模組',
+                enable_autofocus: '自動對焦模組',
+                low: '低',
+                medium: '中',
+                high: '高',
+                enable: '開啟',
+                disable: '關閉',
+                cancel: '取消',
+                save: '儲存'
             },
             object_panels: {
                 position: '位置',
