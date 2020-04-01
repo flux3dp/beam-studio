@@ -61,7 +61,7 @@ define([
     };
 
     const workareaOptions = [
-        {label: 'Beamo', value: 'fbm1'},
+        {label: 'beamo', value: 'fbm1'},
         {label: 'Beambox', value: 'fbb1b'},
         {label: 'Beambox Pro', value: 'fbb1p'},
     ]
@@ -136,7 +136,7 @@ define([
                 <Modal onClose={() => this.props.unmount()}>
                     <div className='document-panel'>
                         <section className='main-content'>
-                            <div className='title'>{LANG.engrave_parameters}</div>
+                            <div className='title'>{LANG.document_settings}</div>
                             <EngraveDpiSlider
                                 value={this.state.engraveDpi}
                                 onChange={val => this._handleEngraveDpiChange(val)}
@@ -150,12 +150,16 @@ define([
                             <SwitchControl
                                 id="rotary_mode"
                                 name="rotary_mode"
+                                onText={LANG.enable}
+                                offText={LANG.disable}
                                 label={LANG.rotary_mode}
                                 default={this.state.rotaryMode}
                                 onChange={(id, val) => this._handleRotaryModeChange(val)} />
                             <SwitchControl
                                 id="borderless_mode"
                                 name="borderless_mode"
+                                onText={LANG.enable}
+                                offText={LANG.disable}
                                 label={LANG.borderless_mode}
                                 default={this.state.borderlessMode}
                                 onChange={(id, val) => this._handleBorderlessModeChange(val)} />

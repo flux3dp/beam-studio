@@ -1166,6 +1166,7 @@ define(function() {
                     strength: '功率',
                     speed: '速度',
                     repeat: '執行次數',
+                    focus_adjustment: '對焦調整',
                     height: '物件高度',
                     z_step: '每次遞降',
                     diode: '二極體雷射',
@@ -1259,6 +1260,7 @@ define(function() {
                 phote_edit: '影像編輯'
             },
             document_panel: {
+                document_settings: '文件設定',
                 engrave_parameters: '雕刻參數',
                 workarea: '工作範圍',
                 rotary_mode: '旋轉軸',
@@ -1269,7 +1271,7 @@ define(function() {
                 low: '低',
                 medium: '中',
                 high: '高',
-                enable: '開啟',
+                enable: '啟用',
                 disable: '關閉',
                 cancel: '取消',
                 save: '儲存'

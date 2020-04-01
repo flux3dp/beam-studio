@@ -201,9 +201,16 @@
                 }
                 .switch-container {
                     margin-left: 0;
+                    .onoffswitch {
+                        margin-left: 20px;
+                    }
                 }
                 .dropdown-container {
                     left: 0px;
+                    height:  100%;
+                    select {
+                        margin: 0;
+                    }
                 }
             }
         }

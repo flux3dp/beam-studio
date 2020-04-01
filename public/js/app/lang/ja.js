@@ -1168,7 +1168,8 @@ define(function() {
                     strength: '出力',
                     speed: '速度',
                     repeat: '実行',
-                    height: 'Height',
+                    focus_adjustment: 'フォーカスを調整する',
+                    height: '高さ',
                     z_step: 'Z Step',
                     diode: 'Diode Laser',
                     times: '回数',
@@ -1230,6 +1231,7 @@ define(function() {
                 },
             },
             document_panel: {
+                document_settings: 'ドキュメント設定',
                 engrave_parameters: '彫刻パラメーター',
                 workarea: 'Work Area',
                 rotary_mode: 'ロータリー',

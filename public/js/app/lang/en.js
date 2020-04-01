@@ -1168,6 +1168,7 @@ define(function() {
                     strength: 'Power',
                     speed: 'Speed',
                     repeat: 'Execute',
+                    focus_adjustment: 'Focus Adjustment',
                     height: 'Height',
                     z_step: 'Z Step',
                     diode: 'Diode Laser',
@@ -1230,6 +1231,7 @@ define(function() {
                 },
             },
             document_panel: {
+                document_settings: 'Document Settings',
                 engrave_parameters: 'Engraving Parameters',
                 workarea: 'Work Area',
                 rotary_mode: 'Rotary',

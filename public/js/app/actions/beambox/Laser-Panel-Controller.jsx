@@ -14,7 +14,7 @@ define([
         repeat: 1,
         af: 0,
         zstep: 0,
-        height: 0,
+        height: -3,
         diode: 0
     }
 

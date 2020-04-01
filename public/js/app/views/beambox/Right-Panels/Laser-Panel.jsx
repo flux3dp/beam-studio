@@ -202,6 +202,12 @@ define([
             this.props.funcs.writeRepeat(this.props.layerName, val);
         }
 
+        _toggleEnableHeight = () => {
+            let val = -this.state.height;
+            this.setState({height: val});
+            this.props.funcs.writeHeight(this.props.layerName, val);
+        }
+
         _handleHeightChange = (val) => {
             this.setState({height: val});
             this.props.funcs.writeHeight(this.props.layerName, val);
@@ -485,27 +491,39 @@ define([
             );
         }
 
-        _renderHeight = () => {
+        _renderEnableHeight = () => {
             if (!BeamboxPreference.read('enable-autofocus')) {
+                return null;
+            }
+            return (
+                <div className='panel checkbox' onClick={() => {this._toggleEnableHeight()}}>
+                    <span className='title'>{LANG.focus_adjustment}</span>
+                    <input type="checkbox" checked={this.state.height > 0} onChange={()=>{}}/>
+                </div>
+            );
+        }
+
+        _renderHeight = () => {
+            if (!BeamboxPreference.read('enable-autofocus') || this.state.height < 0) {
                 return null;
             }
             return (
                 <div className='panel without-drag'>
                     <span className='title'>{LANG.height}</span>
                     <UnitInput
-                        min={0}
+                        min={0.01}
                         max={20}
                         unit={'mm'}
                         defaultValue={this.state.height}
                         getValue={this._handleHeightChange}
-                        decimal={1}
+                        decimal={2}
                     />
                 </div>
             );
         }
 
         _renderZStep = () => {
-            if (!BeamboxPreference.read('enable-autofocus') || this.state.repeat <= 1) {
+            if (!BeamboxPreference.read('enable-autofocus') || this.state.repeat <= 1 || this.state.height < 0) {
                 return null;
             }
             return (
@@ -517,7 +535,7 @@ define([
                         unit={'mm'}
                         defaultValue={this.state.zStep}
                         getValue={this._handleZStepChange}
-                        decimal={1}
+                        decimal={2}
                     />
                 </div>
             );
@@ -912,6 +930,7 @@ define([
             const speedPanel = this._renderSpeed();
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
+            const enableHeightPanel = this._renderEnableHeight();
             const heightPanel = this._renderHeight();
             const zStepPanel = this._renderZStep();
             const diodePanel = this._renderDiode();
@@ -963,6 +982,7 @@ define([
                         {strengthPanel}
                         {speedPanel}
                         {repeatPanel}
+                        {enableHeightPanel}
                         {heightPanel}
                         {zStepPanel}
                         {diodePanel}
