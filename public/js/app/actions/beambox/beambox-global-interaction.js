@@ -61,6 +61,8 @@ define([
                 'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
                 'UNDO': () => svgEditor.clickUndo(),
                 'REDO': () => svgEditor.clickRedo(),
+                'GROUP': () => FnWrapper.groupSelected(),
+                'UNGROUP': () => FnWrapper.ungroupSelected(),
                 'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
                 'OFFSET': () => svgEditor.triggerOffsetTool(),
                 'IMAGE_SHARPEN': () => FnWrapper.photoEdit('sharpen'),
@@ -112,12 +114,22 @@ define([
         }
         onObjectFocus() {
             this.enableMenuItems(['DUPLICATE', 'PATH']);
-            if (svgCanvas.getSelectedElems()[0].tagName ==='image') {
+            let selectedElements = svgCanvas.getSelectedElems().filter((elem) => elem);
+            if (selectedElements.length > 0 && selectedElements[0].getAttribute('data-tempgroup') === 'true') {
+                selectedElements = Array.from(selectedElements[0].childNodes);
+            }
+            if (selectedElements[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
-            } else if (svgCanvas.getSelectedElems()[0].tagName ==='use') {
+            } else if (selectedElements[0].tagName ==='use') {
                 this.enableMenuItems(['DISASSEMBLE_USE']);
-            } else if (svgCanvas.getSelectedElems()[0].tagName ==='path') {
+            } else if (selectedElements[0].tagName ==='path') {
                 this.enableMenuItems(['DECOMPOSE_PATH']);
+            }
+            if (selectedElements && selectedElements.length > 0) {
+                this.enableMenuItems(['GROUP']);
+            }
+            if (selectedElements && selectedElements.length === 1 && ['g', 'a', 'use'].includes(selectedElements[0].tagName)) {
+                this.enableMenuItems(['UNGROUP']);
             }
         }
         onObjectBlur() {

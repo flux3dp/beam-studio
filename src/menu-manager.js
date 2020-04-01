@@ -81,6 +81,8 @@ function buildMenu(callback) {
             { 'id': 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
             { 'id': 'REDO', label: r.redo || 'Redo', click: callback, 'accelerator': `${fnKey}+Shift+Z`},
             { type:'separator'},
+            { 'id': 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
+            { 'id': 'UNGROUP', label: r.ungroup || 'Ungroup', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+G` },
             { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { 'id': 'PATH', label: r.path, enabled: false, submenu: [
                 { 'id': 'OFFSET', label: r.offset || 'Offset', click: callback},
