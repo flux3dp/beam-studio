@@ -1752,6 +1752,29 @@ define(function() {
             hint_red_square: 'Please align the red square with cut square',
             hint_adjust_parameters: 'Use these parameters to adjust the red square'
         },
+        diode_calibration: {
+            diode_calibration: 'Diode Module Calibration',
+            next: 'NEXT',
+            cancel: 'CANCEL',
+            back: 'BACK',
+            start_engrave: 'START ENGRAVE',
+            finish: 'DONE',
+            please_do_camera_calibration_and_focus: {
+                beambox: 'When calibrating diode module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the platform to the focal point (the height of turned down acrylic)',
+                beamo: 'When calibrating diode module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
+            },
+            please_place_paper: {
+                beambox: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
+                beamo: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
+            },
+            dx: 'X',
+            dy: 'Y',
+            drawing_calibration_image: 'Drawing calibration image...',
+            taking_picture: 'Taking Picture...',
+            calibrate_done: 'Calibration done. Offset of diode module has been saved.',
+            hint_red_square: 'Please align the red square with cut square',
+            hint_adjust_parameters: 'Use these parameters to adjust the red square'
+        },
         input_machine_password: {
             require_password: '"%s" requires a password',
             connect: 'CONNECT',

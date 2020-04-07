@@ -1730,16 +1730,10 @@ define(function() {
             please_place_paper: {
                 beambox: '請將乾淨 A4 白紙放在工作區域的左上角',
                 beamo: '請將乾淨 A4 白紙放在工作區域的左上角',
-                borderless: {
-                    beamo: '請將乾淨 A4 白紙放在工作區域的左上角',
-                }
             },
             please_refocus: {
                 beambox: '請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
                 beamo: '請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
-                borderless: {
-                    beamo: '請轉開焦距固定環，調整雷射頭至雕刻平面輕觸焦距尺，完成對焦',
-                },
             },
             dx: '水平位移',
             dy: '垂直位移',
@@ -1755,6 +1749,29 @@ define(function() {
             calibrate_done: '校正相機完成<br/>使用時請正確對焦以取得良好的預覽效果。',
             hint_red_square: '請將紅框對齊切割出來的方塊',
             hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小'
+        },
+        diode_calibration: {
+            diode_calibration: '二極體模組校正',
+            next: '下一步',
+            cancel: '取消',
+            back: '上一步',
+            start_engrave: '開始繪製校正圖片',
+            finish: '完成',
+            please_do_camera_calibration_and_focus: {
+                beambox: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
+                beamo: '校正二極體雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
+            },
+            please_place_paper: {
+                beambox: '請將乾淨 A4 白紙放在工作區域的左上角',
+                beamo: '請將乾淨 A4 白紙放在工作區域的左上角',
+            },
+            dx: '水平位移',
+            dy: '垂直位移',
+            drawing_calibration_image: '繪製校正圖片中...',
+            taking_picture: '擷取圖片中...',
+            calibrate_done: '校正完成<br/>二極體模組偏移值已自動儲存。',
+            hint_red_square: '請將紅框對齊切割出來的方塊',
+            hint_adjust_parameters: '由這些參數來調整紅框的位置',
         },
         input_machine_password: {
             require_password: '"%s" 需要密碼',

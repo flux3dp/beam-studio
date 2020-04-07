@@ -594,6 +594,44 @@ define([
         return d.promise();
     }
 
+    function doDiodeCalibrationCut() {
+        let d = $.Deferred();
+
+        fetch(DeviceConstants.DIODE_CALIBRATION).then(res => res.blob()).then(blob => {
+            go(blob)
+                .fail(() => {
+                    d.reject('UPLOAD_FAILED'); // Error while uploading task
+                })
+                .then(() => {
+                    ProgressActions.open(ProgressConstants.STEPPING, lang.diode_calibration.drawing_calibration_image, false);
+                    let taskTotalSecs = 35;
+                    let elapsedSecs = 0;
+                    let progressUpdateTimer = setInterval(() => {
+                        elapsedSecs += 0.1;
+                        if (elapsedSecs > taskTotalSecs) {
+                            clearInterval(progressUpdateTimer);
+                            return;
+                        }
+                        ProgressActions.updating(lang.diode_calibration.drawing_calibration_image, (elapsedSecs / taskTotalSecs) * 100);
+                    }, 100);
+                    waitTillCompleted()
+                        .fail((err) => {
+                            clearInterval(progressUpdateTimer);
+                            ProgressActions.close();
+                            d.reject(err); // Error while running test
+                        })
+                        .then(() => {
+                            clearInterval(progressUpdateTimer);
+                            ProgressActions.close();
+                            d.resolve();
+                        });
+
+                });
+        });
+
+        return d.promise();
+    }
+
     function resume() {
         return SocketMaster.addTask('resume')
     }
@@ -1674,6 +1712,7 @@ define([
             this.registerUsbEvent = registerUsbEvent;
             this.resume = resume;
             this.runBeamboxCameraTest = runBeamboxCameraTest;
+            this.doDiodeCalibrationCut = doDiodeCalibrationCut;
             this.runMovementTests = runMovementTests;
             this.select = select;
             this.selectDevice = selectDevice;

@@ -17,6 +17,7 @@ define([
     'app/constants/alert-constants',
     'app/actions/alert-actions',
     'app/stores/alert-store',
+    'jsx!contexts/DialogCaller',
     'app/actions/global-actions',
     'app/stores/global-store',
     'app/actions/topbar',
@@ -52,6 +53,7 @@ define([
     AlertConstants,
     AlertActions,
     AlertStore,
+    DialogCaller,
     GlobalActions,
     GlobalStore,
     TopmenuActions,
@@ -394,6 +396,31 @@ define([
 
                 };
 
+                _action['CALIBRATE_DIODE_MODULE'] = (device) => {
+                    if (location.hash !== '#studio/beambox') {
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,
+                            message: lang.camera_calibration.please_goto_beambox_first,
+                        });
+                        return;
+                    }
+                    //DialogCaller.showDiodeCalibration(device);
+                    ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                    DeviceMaster.select(device)
+                        .done(() => {
+                            ProgressActions.close();
+                            const isBorderless = false;
+                            DialogCaller.showDiodeCalibration(device);
+                        })
+                        .fail(() => {
+                            ProgressActions.close();
+                            Alert.popUp({
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                message: lang.message.connectionTimeout,
+                            });
+                        });
+                };
+
                 _action['UPDATE_FIRMWARE'] = (device) => {
                     checkDeviceStatus(device).then(() => {
                         executeFirmwareUpdate(device, 'firmware');
@@ -608,7 +635,11 @@ define([
                 const layers = $('#svgcontent > g.layer').toArray();
                 const dpi = BeamboxPreference.read('engrave_dpi');
 
-                const isPowerTooHigh = layers.map(layer => layer.getAttribute('data-strength')).some(strength => Number(strength) > 80);
+                const isPowerTooHigh = layers.some((layer) => {
+                    const strength = Number(layer.getAttribute('data-strength'));
+                    const diode = Number(layer.getAttribute('data-diode'));
+                    return strength > 80 && diode !== 1;
+                });
                 const imageElems = document.querySelectorAll('image');
                 let isSpeedTooHigh = false;
                 for (let i = 1; i < imageElems.length; i++) {
@@ -937,9 +968,9 @@ define([
                     'dist-h': (selectedElements && selectedElements.length > 1),
                     'dist-v': (selectedElements && selectedElements.length > 1),
                     'union': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-                    'subtract': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'subtract': (selectedElements && selectedElements.length === 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
                     'intersect': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-                    'difference': (selectedElements && selectedElements.length === 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'difference': (selectedElements && selectedElements.length > 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
                     'h-flip': (selectedElements && selectedElements.length > 0),
                     'v-flip': (selectedElements && selectedElements.length > 0),
                 }

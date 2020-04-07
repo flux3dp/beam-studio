@@ -6,7 +6,9 @@ define([
     'jsx!views/beambox/Network-Testing-Panel',
     'jsx!pages/svg-editor',
     'jsx!/views/Alert',
-    'jsx!/contexts/AlertContext'
+    'jsx!/views/Dialog',
+    'jsx!/contexts/AlertContext',
+    'jsx!/contexts/DialogContext'
 ], function (
     BeamboxInit,
     BeamboxGlobalInteraction,
@@ -15,7 +17,9 @@ define([
     NetworkTestingPanel,
     SvgEditor,
     { Alert },
-    { AlertContextProvider }
+    { Dialog },
+    { AlertContextProvider },
+    { DialogContextProvider }
 ) {
     const React = require('react');
     BeamboxInit.init();
@@ -39,17 +43,20 @@ define([
         render() {
             return (
                 <AlertContextProvider>
-                    <div className="studio-container beambox-studio">
-                        <LeftPanel />
-                        <SvgEditor />
-                        <NetworkTestingPanel />
-                        <div id='document-panel-placeholder' />
-                        <div id='object-panels-placeholder' />
-                        <div id='tool-panels-placeholder' />
-                        <div id='image-trace-panel-placeholder' />
-                        <div id='photo-edit-panel-placeholder' />
-                        <Alert stackLevel={0}/>
-                    </div>
+                    <DialogContextProvider>
+                        <div className="studio-container beambox-studio">
+                            <LeftPanel />
+                            <SvgEditor />
+                            <NetworkTestingPanel />
+                            <div id='document-panel-placeholder' />
+                            <div id='object-panels-placeholder' />
+                            <div id='tool-panels-placeholder' />
+                            <div id='image-trace-panel-placeholder' />
+                            <div id='photo-edit-panel-placeholder' />
+                            <Dialog index={0}/>
+                            <Alert index={0}/>
+                        </div>
+                    </DialogContextProvider>
                 </AlertContextProvider>
             );
         }

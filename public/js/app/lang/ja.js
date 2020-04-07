@@ -1752,6 +1752,29 @@ define(function() {
             hint_red_square: '赤い正方形をカットした正方形に合わせてください',
             hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
         },
+        diode_calibration: {
+            diode_calibration: 'ダイオードモジュールの較正',
+            next: '次へ',
+            cancel: 'キャンセル',
+            back: '戻る',
+            start_engrave: '彫刻開始',
+            finish: '完了済み',
+            please_refocus: {
+                beambox: 'プラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
+                beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ'
+            },
+            please_place_paper: {
+                beambox: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
+                beamo: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
+            },
+            dx: 'X',
+            dy: 'Y',
+            drawing_calibration_image: '較正画像の描画中…',
+            taking_picture: '写真撮影中…',
+            calibrate_done: 'Calibration done. Offset of diode module has been saved.',
+            hint_red_square: '赤い正方形をカットした正方形に合わせてください',
+            hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
+        },
         input_machine_password: {
             require_password: '「%s」にはパスワードが必要です。',
             connect: '接続する',

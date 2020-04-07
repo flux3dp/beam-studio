@@ -47,13 +47,13 @@ define([
         }
 
         render() {
-            const { stackLevel } = this.props;
+            const { index } = this.props;
             const {checkboxChecked} = this.state;
             const { alertStack, popAlertStack } = this.context;
-            if (alertStack.length <= stackLevel) {
+            if (alertStack.length <= index) {
                 return null;
             } 
-            const alert = alertStack[stackLevel];
+            const alert = alertStack[index];
             let buttons = alert.buttons.map((b, i) => {
                 const newButton = {...b};
                 const buttonCallback = b.onClick;
@@ -94,7 +94,7 @@ define([
                         <ButtonGroup buttons={buttons}/>
                     </div>
                     <Alert 
-                        stackLevel={stackLevel+1}
+                        index={index+1}
                     />
                 </Modal>
             );

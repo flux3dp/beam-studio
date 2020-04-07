@@ -271,6 +271,9 @@ define([
                 x: movementX, // mm
                 y: movementY  // mm
             };
+            if (BeamboxPreference.read('enable-diode')) {
+                movement.f = movement.f * 0.6;
+            }
 
             await DeviceMaster.select(this.storedPrinter);
             await DeviceMaster.maintainMove(movement);
@@ -288,6 +291,10 @@ define([
                 y: Constant.camera.movementSpeed.y / 60 / 1000 // speed: mm per millisecond
             };
             let timeToWait = Math.hypot((this.lastPosition[0] - movementX)/speed.x, (this.lastPosition[1] - movementY)/speed.y);
+
+            if (BeamboxPreference.read('enable-diode')) {
+                timeToWait = timeToWait / 0.6;
+            }
 
             // wait for moving camera to take a stable picture, this value need to be optimized
             timeToWait *= 1.2;

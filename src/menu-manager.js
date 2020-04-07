@@ -189,6 +189,14 @@ function buildDeviceMenu(callback, uuid, data) {
                 click: callback
             });
         }
+        submenu.push({
+            id: 'CALIBRATE_DIODE_MODULE', 
+            uuid, 
+            serial, 
+            source, 
+            label: r.calibrate_diode_module, 
+            click: callback
+        });
         submenu = submenu.concat([
             { type: 'separator' },
             { id: 'UPDATE_FIRMWARE', uuid, serial, source, label: r.update_firmware, click: callback},
