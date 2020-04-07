@@ -47,7 +47,7 @@
     "babel-preset-stage-2": "^6.3.13",
     "chai": "3.5.0",
     "electron": "5.0.6",
-    "electron-builder": "^21.1.1",
+    "electron-builder": "22.3.6",
     "electron-publisher-s3": "^19.53.1",
     "electron-rebuild": "^1.8.5",
     "electron-reload": "~1.1.0",
