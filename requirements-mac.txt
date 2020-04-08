@@ -6,7 +6,7 @@ cssselect2==0.2.1
 cycler==0.10.0
 Cython==0.29.11
 defusedxml==0.6.0
-ecdsa==0.13.2
+ecdsa==0.13.3
 future==0.17.1
 isort==4.3.21
 kiwisolver==1.1.0
