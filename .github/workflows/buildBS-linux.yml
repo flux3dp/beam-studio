@@ -89,7 +89,7 @@ jobs:
           fi
           echo $PUBLISH_PATH
 
-          yarn dist
+          yarn dist --publish always
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

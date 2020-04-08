@@ -85,7 +85,7 @@ jobs:
 
           chmod -R 777 node_modules/font-manager
 
-          yarn dist
+          yarn dist --publish always
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

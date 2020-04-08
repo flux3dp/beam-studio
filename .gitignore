@@ -75,5 +75,6 @@ _test/tests_output/CHROME_57.0.2987.133_MAC_printing.xml
 build/config.gypi
 .vscode/ipch/7a6dfb8b3e824ce9/mmap_address.bin
 build-script.sh
+curl.exe
 
 **/top-menu/black/**
