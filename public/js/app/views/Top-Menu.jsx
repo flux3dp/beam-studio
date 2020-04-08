@@ -20,7 +20,6 @@ define([
     'jsx!contexts/DialogCaller',
     'app/actions/global-actions',
     'app/stores/global-store',
-    'app/actions/topbar',
     'app/stores/topbar-store',
     'app/actions/beambox',
     'helpers/device-list',
@@ -34,6 +33,7 @@ define([
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/beambox-version-master',
     'app/actions/beambox/beambox-preference',
+    'app/actions/beambox/constant',
 ], function (
     $,
     i18n,
@@ -56,7 +56,6 @@ define([
     DialogCaller,
     GlobalActions,
     GlobalStore,
-    TopmenuActions,
     TopmenuStore,
     BeamboxActions,
     DeviceList,
@@ -69,7 +68,8 @@ define([
     FnWrapper,
     BottomRightFuncs,
     BeamboxVersionMaster,
-    BeamboxPreference
+    BeamboxPreference,
+    Constant
 ) {
     'use strict';
     const React = require('react');
@@ -713,6 +713,20 @@ define([
                 ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
                 device = DeviceMaster.usbDefaultDeviceCheck(device);
                 AlertStore.removeCancelListener(this._toggleDeviceList);
+                const currentWorkarea = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+                const allowedWorkareas = Constant.allowedWorkarea[device.model];
+                if (currentWorkarea && allowedWorkareas) {
+                    if (!allowedWorkareas.includes(currentWorkarea)) {
+                        ProgressActions.close();
+                        this._toggleDeviceList(false);
+                        Alert.popUp({
+                            id: 'workarea unavailable',
+                            message: lang.message.unavailableWorkarea,
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                        })
+                        return;
+                    }
+                }
                 DeviceMaster.selectDevice(device).then(function (status) {
                     if (status === DeviceConstants.CONNECTED) {
                         const next = () => {

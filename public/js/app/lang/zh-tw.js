@@ -1631,6 +1631,7 @@ define(function() {
             },
             unsupport_osx_version: '不支援此 Mac OS X 版本',
             need_password: '需要密碼與機器建立連線',
+            unavailableWorkarea: '目前設定的工作範圍超過目標機器的工作範圍。請確認選擇的機器型號，或從 編輯 > 文件設定 更改工作範圍。',
             new_app_downloading: 'Beam Studio 下載中',
             new_app_download_canceled: 'Beam Studio 下載已被取消',
             new_app_downloaded: '新版Beam Studio 下載完畢',

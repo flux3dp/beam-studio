@@ -1632,6 +1632,7 @@ define(function() {
             },
             unsupport_osx_version: 'Unsupported Mac OS X Version Detected',
             need_password: 'Need Password to Connect to the Machine',
+            unavailableWorkarea: 'Current workarea exceeds the workarea of this machine. Please check the workarea of selected machine or set workarea from Edit > Document Setting.',
             new_app_downloading: 'FLUX Studio is Downloading',
             new_app_download_canceled: 'FLUX Studio download has been canceled',
             new_app_downloaded: 'Newest FLUX Studio has been downloaded',
