@@ -5605,8 +5605,8 @@ define([
                 }
 
                 // Keep workarea size after loading external svg
-                attrs.width = svgEditor.dimensions[0];
-                attrs.height = svgEditor.dimensions[1];
+                attrs.width = Constant.dimension.getWidth();
+                attrs.height = Constant.dimension.getHeight();
 
                 // identify layers
                 identifyLayers();
@@ -8698,7 +8698,9 @@ define([
             }
             addToSelection(pastedElements);
             const cmd = canvas.moveSelectedElements(dx, dy, false);
-            batchCmd.addSubCommand(cmd);
+            if (cmd) {
+                batchCmd.addSubCommand(cmd);
+            }
             canvas.undoMgr.undoStackPointer -= 1;
             canvas.undoMgr.undoStack.pop();
             addCommandToHistory(batchCmd);
