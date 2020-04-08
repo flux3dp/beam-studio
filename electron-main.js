@@ -157,8 +157,13 @@ function createWindow () {
     }));
 
     let isCloseConfirm = false;
+    let isFrontEndReady = false;
+    ipcMain.on(events.FRONTEND_READY, () => {
+        isFrontEndReady = true;
+    });
+
     mainWindow.on('close', function(e) {
-        if (!isCloseConfirm) {
+        if (isFrontEndReady && !isCloseConfirm) {
             e.preventDefault(); 
             mainWindow.webContents.send('WINDOW_CLOSE', e);
             ipcMain.once('CLOSE_REPLY', (event, reply) => {

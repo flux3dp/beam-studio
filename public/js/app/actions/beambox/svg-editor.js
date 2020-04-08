@@ -5938,7 +5938,7 @@ define([
                             BeamboxPreference.write('engrave_dpi', 'medium');
                         }
                         match = str.match(/data-en_diode="([a-zA-Z]+)"/);
-                        if (match[1]) {
+                        if (match && match[1]) {
                             if (match[1] === 'true') {
                                 BeamboxPreference.write('enable-diode', true);
                             } else {
@@ -5947,7 +5947,7 @@ define([
                             renderLayerLaserConfigs();
                         }
                         match = str.match(/data-en_af="([a-zA-Z]+)"/);
-                        if (match[1]) {
+                        if (match && match[1]) {
                             if (match[1] === 'true') {
                                 BeamboxPreference.write('enable-autofocus', true);
                             } else {

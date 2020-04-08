@@ -35,6 +35,10 @@ define([
             if (BeamboxPreference.read('show_guides')) {
                 BeamboxInit.displayGuides();
             }
+
+            let ipc = electron.ipc;
+            let events = electron.events;
+            ipc.send(events.FRONTEND_READY);
         }
         componentWillUnmount() {
             BeamboxGlobalInteraction.detach();
