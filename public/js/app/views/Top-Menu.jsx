@@ -327,7 +327,7 @@ define([
                     });
                 };
 
-                _action['CALIBRATE_BEAMBOX_CAMERA'] = (device) => {
+                _action['CALIBRATE_BEAMBOX_CAMERA'] = async (device) => {
                     if (location.hash !== '#studio/beambox') {
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_INFO,
@@ -336,6 +336,7 @@ define([
                         return;
                     }
                     ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                    await checkDeviceStatus(device);
                     DeviceMaster.select(device)
                         .done(() => {
                             ProgressActions.close();
@@ -351,7 +352,7 @@ define([
                         });
                 };
 
-                _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = (device) => {
+                _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = async (device) => {
                     if (location.hash !== '#studio/beambox') {
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_INFO,
@@ -373,6 +374,7 @@ define([
                     }(device.version, '2.5.1');
                     if (isAvailableVersion) {
                         ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                        await checkDeviceStatus(device);
                         DeviceMaster.select(device)
                             .done(() => {
                                 ProgressActions.close();

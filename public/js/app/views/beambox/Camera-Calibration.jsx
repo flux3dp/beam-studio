@@ -51,9 +51,7 @@ define([
     const STEP_BEFORE_ANALYZE_PICTURE = Symbol();
     const STEP_FINISH = Symbol();
 
-    let cameraOffset = {};
-    let isUsingSecondImage = false;
-    const SECOND_TIME_OFFSET = {x: 0, y: 10};
+    let cameraPosition = {};
 
     class CameraCalibrationStateMachine extends React.Component {
         constructor(props) {
@@ -79,6 +77,7 @@ define([
 
         onClose() {
             this.props.onClose();
+            PreviewModeController.end();
             DeviceMaster.setFan(this.origFanSpeed);
         }
 
@@ -121,6 +120,7 @@ define([
                         gotoNextStep={this.updateCurrentStep}
                         onClose={this.onClose}
                         imgBlobUrl={this.state.imgBlobUrl}
+                        updateImgBlobUrl={this.updateImgBlobUrl}
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
                         showHint={this.state.showHint}
                         updateShowHint={this.updateShowHint.bind(this)}
@@ -166,24 +166,9 @@ define([
     const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, self}) => {
         const cutThenCapture = async function(updateOffsetDataCb, self) {
             await _doCuttingTask(self);
-            let blobUrlFirstTime = await _doCaptureTask(true);
-            let res;
-            res = await _doGetOffsetFromPicture(blobUrlFirstTime, updateOffsetDataCb);
-            if (res) {
-                updateImgBlobUrl(blobUrlFirstTime);
-                PreviewModeController.end();
-                isUsingSecondImage = false;
-                return;
-            }
-            let blobUrlSecondTime = await _doCaptureTask(false);
-            res = await _doGetOffsetFromPicture(blobUrlSecondTime, updateOffsetDataCb);
-            if (res) {
-                updateImgBlobUrl(blobUrlSecondTime);
-                isUsingSecondImage = true;
-            } else {
-                updateImgBlobUrl(blobUrlFirstTime);
-                isUsingSecondImage = false;
-            }
+            let blobUrl = await _doCaptureTask(true);
+            await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
+            updateImgBlobUrl(blobUrl);
             return;
         };
         const _doCuttingTask = async function(self) {
@@ -207,25 +192,20 @@ define([
             }
             await DeviceMaster.setFan(fanSpeed);
         };
-        const _doCaptureTask = async (isFirstTime) => {
+        const _doCaptureTask = async () => {
             let blobUrl;
             try {
-                if (isFirstTime) {
-                    await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
-                }
+                await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
 
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
                 const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
-                const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal - (isFirstTime ? 0 : SECOND_TIME_OFFSET.y);
+                const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
-                cameraOffset = PreviewModeController.getCameraOffset();
+                cameraPosition = {x: movementX, y: movementY}
             } catch (error) {
                 throw error;
             } finally {
                 ProgressActions.close();
-                if (!isFirstTime) {
-                    PreviewModeController.end();
-                }
             }
             return blobUrl;
         };
@@ -239,7 +219,6 @@ define([
                         className: 'btn-default btn-alone-right',
                         onClick: async ()=>{
                             try {
-                                await CheckDeviceStatus(device);
                                 await cutThenCapture(updateOffsetDataCb, self);
                                 gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                             } catch (error) {
@@ -260,9 +239,6 @@ define([
     };
 
     const sendPictureThenSetConfig = async (result, imgBlobUrl, borderless) => {
-        if (isUsingSecondImage) {
-            result.Y += SECOND_TIME_OFFSET.y;
-        }
         console.log("Setting camera_offset", borderless ? 'borderless' : '', result);
         if (result) {
             await _doSetConfigTask(result.X, result.Y, result.R, result.SX, result.SY, borderless);
@@ -383,7 +359,7 @@ define([
         }
     };
 
-    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, self}) => {
+    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, self}) => {
         const imageScale = 200 / 280;
         const mmToImage = 10 * imageScale;
         let imgBackground = {
@@ -394,8 +370,9 @@ define([
             height: 25 * mmToImage / currentOffset.SY //px
         };
 
-        squareStyle.left = 100 - squareStyle.width / 2 - (currentOffset.X - Constant.camera.offsetX_ideal) * mmToImage / currentOffset.SX;
-        squareStyle.top = 100 - squareStyle.height / 2 - (currentOffset.Y - Constant.camera.offsetY_ideal) * mmToImage / currentOffset.SY;
+        
+        squareStyle.left = 100 - squareStyle.width / 2 - (currentOffset.X - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / currentOffset.SX;
+        squareStyle.top = 100 - squareStyle.height / 2 - (currentOffset.Y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / currentOffset.SY;
         squareStyle.transform = `rotate(${-currentOffset.R * 180 / Math.PI}deg)`;
         console.log('SquareStyle', squareStyle);
 
@@ -410,8 +387,12 @@ define([
             <div>
                 <div className="img-center" style={imgBackground}>
                     <div className="virtual-square" style={squareStyle} />
+                    <div className="camera-control up" onClick={() => moveAndRetakePicture('up', updateImgBlobUrl)}/>
+                    <div className="camera-control down" onClick={() => moveAndRetakePicture('down', updateImgBlobUrl)}/>
+                    <div className="camera-control left" onClick={() => moveAndRetakePicture('left', updateImgBlobUrl)}/>
+                    <div className="camera-control right" onClick={() => moveAndRetakePicture('right', updateImgBlobUrl)}/>
                 </div>
-                <div className="hint-icon" onClick={()=>{updateShowHint(true)}}>
+                <div className="hint-icon" onClick={()=> updateShowHint(true)}>
                     ?
                 </div>
                 <div className="controls">
@@ -504,6 +485,7 @@ define([
                         className: 'btn-default btn-alone-right-1',
                         onClick: async () => {
                             try {
+                                await PreviewModeController.end();
                                 await sendPictureThenSetConfig(currentOffset, imgBlobUrl, self.props.borderless);
                                 gotoNextStep(STEP_FINISH);
                             } catch (error) {
@@ -527,6 +509,36 @@ define([
             />
         );
     };
+
+    const moveAndRetakePicture = async (dir, updateImgBlobUrl) => {
+        try {
+
+            ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+            let {x, y} = cameraPosition;
+            switch(dir) {
+                case 'up':
+                    y -= 3;
+                    break;
+                case 'down':
+                    y += 3;
+                    break;
+                case 'left':
+                    x -= 3;
+                    break;
+                case 'right':
+                    x += 3;
+                    break;
+            }
+            let blobUrl = await PreviewModeController.takePictureAfterMoveTo(x, y);
+            console.log(x, y);
+            cameraPosition = {x, y}
+            updateImgBlobUrl(blobUrl);
+        } catch (error) {
+            throw error;
+        } finally {
+            ProgressActions.close();
+        }
+    }
 
     const renderHintModal = (updateShowHint) => {
         const virtual_square = $('.modal-camera-calibration .virtual-square');

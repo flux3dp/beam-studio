@@ -21,11 +21,11 @@ define([
             return newPropIsDifferent || newStateIsDifferent;
         }
 
-        _fireChange(newValue) {
+        _fireChange = (newValue) => {
             this.props.onChange(this.props.id, newValue);
         }
 
-        _validateValue(e) {
+        _validateValue = (e) => {
             if(!this._isValidValue(this.state.sliderValue)) {
                 this.setState({
                     sliderValue: this.state.lastValidValue,
@@ -34,14 +34,14 @@ define([
             }
         }
 
-        _isValidValue(value) {
+        _isValidValue = (value) => {
             var min = this.props.min,
                 max = this.props.max;
 
             return min <= value && value <= max;
         }
 
-        _handleSliderChange(key, e) {
+        _handleSliderChange = (key, e) => {
             var value = e.target.value;
             this.setState({
                 sliderValue: value,
@@ -51,7 +51,7 @@ define([
             });
         }
 
-        _handleEditValue(e) {
+        _handleEditValue = (e) => {
             var newValue = e.target.value;
 
             if(this._isValidValue(newValue)) {
