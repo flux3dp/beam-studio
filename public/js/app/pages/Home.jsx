@@ -1,4 +1,4 @@
-define([,
+define([
     'helpers/i18n',
     'jsx!widgets/Select',
     'jsx!widgets/Modal'
