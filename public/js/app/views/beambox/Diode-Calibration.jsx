@@ -6,6 +6,7 @@ define([
     'jsx!widgets/AlertDialog',
     'jsx!widgets/Unit-Input-v2',
     'helpers/device-master',
+    'helpers/version-checker',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'helpers/check-device-status',
@@ -22,6 +23,7 @@ define([
     AlertDialog,
     UnitInput,
     DeviceMaster,
+    VersionChecker,
     Alert,
     AlertConstants,
     CheckDeviceStatus,
@@ -162,8 +164,15 @@ define([
             const fanSpeed = Number((await DeviceMaster.getFan()).value);
             this.origFanSpeed = fanSpeed;
 
-            if (fanSpeed > 100) {
-                await DeviceMaster.setFan(100); // 10%
+            const deviceInfo = await DeviceMaster.getDeviceInfo();
+            const vc = VersionChecker(deviceInfo.version);
+            const tempCmdAvailable = vc.meetRequirement('TEMP_I2C_CMD');
+            if (tempCmdAvailable) {
+                await DeviceMaster.setFanTemp(100);
+            } else {
+                if (fanSpeed > 100) {
+                    await DeviceMaster.setFan(100); // 10%
+                }
             }
 
             if (laserPower !== 1) {
@@ -175,7 +184,10 @@ define([
             if (laserPower !== 1) {
                 await DeviceMaster.setLaserPower(Number(laserPower));
             }
-            await DeviceMaster.setFan(fanSpeed);
+
+            if (!tempCmdAvailable) {
+                await DeviceMaster.setFan(fanSpeed);
+            }
         }
 
         doCaptureTask = async () => {

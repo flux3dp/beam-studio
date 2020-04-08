@@ -616,6 +616,27 @@ define([
                 return d.promise();
             },
 
+            setLaserPowerTemp: (power) => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => {
+                    switch (response.status) {
+                        case 'ok':
+                            d.resolve(response);
+                            break;
+                        default:
+                            console.log('strange message', response);
+                            break;
+                    }
+                };
+
+                events.onError = (response) => { d.reject(response); console.log('on error', response); };
+                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+
+                ws.send(`play set_laser_power_temp ${power}`);
+                return d.promise();
+            },
+
             setLaserSpeed: (speed) => {
                 let d = $.Deferred();
 
@@ -637,6 +658,27 @@ define([
                 return d.promise();
             },
 
+            setLaserSpeedTemp: (speed) => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => {
+                    switch (response.status) {
+                        case 'ok':
+                            d.resolve(response);
+                            break;
+                        default:
+                            console.log('strange message', response);
+                            break;
+                    }
+                };
+
+                events.onError = (response) => { d.reject(response); console.log('on error', response); };
+                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+
+                ws.send(`play set_laser_speed_temp ${speed}`);
+                return d.promise();
+            },
+
             setFan: (fan) => {
                 let d = $.Deferred();
 
@@ -655,6 +697,27 @@ define([
                 events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
                 ws.send(`play set_fan ${fan}`);
+                return d.promise();
+            },
+
+            setFanTemp: (fan) => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => {
+                    switch (response.status) {
+                        case 'ok':
+                            d.resolve(response);
+                            break;
+                        default:
+                            console.log('strange message', response);
+                            break;
+                    }
+                };
+
+                events.onError = (response) => { d.reject(response); console.log('on error', response); };
+                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+
+                ws.send(`play set_fan_temp ${fan}`);
                 return d.promise();
             },
 

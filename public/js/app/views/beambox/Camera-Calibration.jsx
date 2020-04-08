@@ -78,7 +78,7 @@ define([
         onClose() {
             this.props.onClose();
             PreviewModeController.end();
-            DeviceMaster.setFan(this.origFanSpeed);
+            //DeviceMaster.setFan(this.origFanSpeed);
         }
 
         updateImgBlobUrl(val) {
@@ -177,8 +177,15 @@ define([
             const fanSpeed = Number((await DeviceMaster.getFan()).value);
             self.origFanSpeed = fanSpeed;
 
-            if (fanSpeed > 100) {
-                await DeviceMaster.setFan(100); // 10%
+            const deviceInfo = await DeviceMaster.getDeviceInfo();
+            const vc = VersionChecker(deviceInfo.version);
+            const tempCmdAvailable = vc.meetRequirement('TEMP_I2C_CMD');
+            if (tempCmdAvailable) {
+                await DeviceMaster.setFanTemp(100);
+            } else {
+                if (fanSpeed > 100) {
+                    await DeviceMaster.setFan(100); // 10%
+                }
             }
 
             if (laserPower !== 1) {
@@ -190,7 +197,10 @@ define([
             if (laserPower !== 1) {
                 await DeviceMaster.setLaserPower(Number(laserPower));
             }
-            await DeviceMaster.setFan(fanSpeed);
+
+            if (!tempCmdAvailable) {
+                await DeviceMaster.setFan(fanSpeed);
+            }
         };
         const _doCaptureTask = async () => {
             let blobUrl;
