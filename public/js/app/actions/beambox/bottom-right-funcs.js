@@ -3,6 +3,7 @@ define([
     'helpers/device-master',
     'helpers/i18n',
     'helpers/image-data',
+    'helpers/version-checker',
     'app/actions/beambox/beambox-preference',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -17,6 +18,7 @@ define([
     DeviceMaster,
     i18n,
     ImageData,
+    VersionChecker,
     BeamboxPreference,
     ProgressActions,
     ProgressConstants,
@@ -168,7 +170,8 @@ define([
     };
 
     // fetchTaskCode: send svg string calculate taskcode, default output Fcode if isOutputGcode === true output gcode
-    const fetchTaskCode = async (isOutputGcode) => {
+    const fetchTaskCode = async (args={}) => {
+        const {isOutputGcode, device} = args;
         let isErrorOccur = false;
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
         await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
@@ -205,6 +208,14 @@ define([
             return {fcodeBlob: null};
         }
 
+        let isSupportDiodeAndAF = true;
+        let isSupportFastGradient = true;
+        if (device) {
+            const vc = VersionChecker(device.version);
+            isSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
+            isSupportFastGradient = vc.meetRequirement('FAST_GRADIENT');
+        }
+
         const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
             const names = []; //don't know what this is for
             const codeType = isOutputGcode ? 'gcode' : 'fcode';
@@ -238,8 +249,9 @@ define([
                     fileMode: '-f',
                     codeType,
                     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-                    enableAutoFocus: BeamboxPreference.read('enable-autofocus'),
-                    enableDiode: BeamboxPreference.read('enable-diode'),
+                    enableAutoFocus: isSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus'),
+                    enableDiode: isSupportDiodeAndAF && BeamboxPreference.read('enable-diode'),
+                    isSupportFastGradient
                 }
             );
         });
@@ -263,7 +275,7 @@ define([
 
     return {
         uploadFcode: async function (device) {
-            const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode();
+            const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode({device});
             if (!fcodeBlob) {
                 return;
             }
@@ -300,7 +312,7 @@ define([
         },
 
         getGcode: async function () {
-            const { gcodeBlob } = await fetchTaskCode(true);
+            const { gcodeBlob } = await fetchTaskCode({isOutputGcode: true});
             if (!gcodeBlob) {
                 return;
             }
