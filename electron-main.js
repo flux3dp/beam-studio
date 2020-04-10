@@ -101,10 +101,14 @@ function onDeviceUpdated(deviceInfo) {
     }
 
     if(deviceInfo.alive) {
-        menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+        if (menuManager) {
+            menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+        }
     } else {
         if(global.devices[deviceID]) {
-            menuManager.removeDevice(deviceInfo.uuid, global.devices[deviceID]);
+            if (menuManager) {
+                menuManager.removeDevice(deviceInfo.uuid, global.devices[deviceID]);
+            }
             delete global.devices[deviceID];
         }
     }
