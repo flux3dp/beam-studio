@@ -2,7 +2,6 @@ define([
     'helpers/api/config',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
-    'jsx!app/actions/beambox/Document-Panel-Controller',
     'jsx!app/actions/beambox/Object-Panels-Controller',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
@@ -11,14 +10,12 @@ define([
     ConfigHelper,
     BeamboxPreference,
     Constant,
-    DocumentPanelController,
     ObjectPanelsController,
     ToolPanelsController,
     LaserPanelController,
     ImageTracePanelController
 ) {
     const init = () => {
-        DocumentPanelController.init('document-panel-placeholder');
         ObjectPanelsController.init('object-panels-placeholder');
         ToolPanelsController.init('tool-panels-placeholder');
         LaserPanelController.init('layer-laser-panel-placeholder');

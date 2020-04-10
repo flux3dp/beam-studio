@@ -5,7 +5,6 @@ define([
     'helpers/image-data',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'jsx!app/actions/beambox/Document-Panel-Controller',
     'helpers/i18n'
 ], function(
     Constant,
@@ -14,7 +13,6 @@ define([
     ImageData,
     Alert,
     AlertConstants,
-    DocumentPanelController,
     i18n
 ){
     const LANG = i18n.lang.beambox;
@@ -465,11 +463,6 @@ define([
         },
         write_image_data_threshold: function(elem, val) {
             elem.attr('data-threshold', val);
-        },
-
-        //menubar
-        openAdvancedPanel: function() {
-            DocumentPanelController.render();
         },
 
         // others

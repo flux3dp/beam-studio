@@ -3,6 +3,7 @@ define([
     'jsx!/views/Dialog',
     'jsx!views/beambox/Camera-Calibration',
     'jsx!views/beambox/Diode-Calibration',
+    'jsx!views/beambox/Document-Panels/Document-Panel',
     'jsx!views/beambox/Network-Testing-Panel',
     'jsx!views/beambox/Photo-Edit-Panel',
     'jsx!views/beambox/Layer-Color-Config',
@@ -11,6 +12,7 @@ define([
     Dialog,
     CameraCalibration,
     DiodeCalibration,
+    DocumentPanel,
     NetworkTestingPanel,
     PhotoEditPanel,
     LayerColorConfigPanel
@@ -57,6 +59,17 @@ define([
                         model={'beamo'}
                         onClose={() => {
                             popDialogById('diode-cali')
+                        }}
+                    />
+                </Modal>
+            );
+        },
+        showDocumentSettings: () => {
+            addDialogComponent('docu-setting',
+                <Modal>
+                    <DocumentPanel
+                        unmount={() => {
+                            popDialogById('docu-setting')
                         }}
                     />
                 </Modal>

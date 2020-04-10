@@ -51,7 +51,6 @@ define([
                         <div className="studio-container beambox-studio">
                             <LeftPanel />
                             <SvgEditor />
-                            <div id='document-panel-placeholder' />
                             <div id='object-panels-placeholder' />
                             <div id='tool-panels-placeholder' />
                             <div id='image-trace-panel-placeholder' />

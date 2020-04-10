@@ -76,7 +76,7 @@ define([
                 'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
                 'DECOMPOSE_PATH': () => svgCanvas.decomposePath(),
                 'LAYER_COLOR_CONFIG': () => DialogCaller.showLayerColorConfig(),
-                'DOCUMENT_SETTING': () => FnWrapper.openAdvancedPanel(),
+                'DOCUMENT_SETTING': () => DialogCaller.showDocumentSettings(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
                 'TUTORIAL': () => {},
                 'ZOOM_IN': () => svgEditor.zoomIn(),
