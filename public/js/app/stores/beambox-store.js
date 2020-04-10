@@ -54,11 +54,6 @@ define([
             return beamboxStore;
         },
 
-        onShowNetworkTestingPanel: function(callback) {
-            this.on(Constants.SHOW_NETWORK_TESTING_PANEL, callback);
-            return beamboxStore;
-        },
-
         onShowAboutBeambox: function(callback) {
             this.on(Constants.SHOW_ABOUT_BEAM_STUDIO, callback);
             return beamboxStore;

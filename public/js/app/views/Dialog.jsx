@@ -25,10 +25,10 @@ define([
             }
             const { component } = dialogComponents[index];
             return (
-                <Modal>
+                <div className="dialog-container">
                     {component}
                     <Dialog index={index+1}/>
-                </Modal>
+                </div>
             );
         }
     };

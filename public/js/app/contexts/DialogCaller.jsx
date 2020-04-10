@@ -1,9 +1,13 @@
 define([
+    'jsx!widgets/Modal',
     'jsx!/views/Dialog',
     'jsx!views/beambox/Diode-Calibration',
+    'jsx!views/beambox/Network-Testing-Panel',
 ], function (
+    Modal,
     Dialog,
-    DiodeCalibration
+    DiodeCalibration,
+    NetworkTestingPanel
 ) {
     const React = require('react');
     const addDialogComponent = (id, component) => {
@@ -27,15 +31,26 @@ define([
         popDialogById,
         showDiodeCalibration: (device) => {
             addDialogComponent('diode-cali',
-                <DiodeCalibration
-                    device={device}
-                    model={'beamo'}
+                <Modal>
+                    <DiodeCalibration
+                        device={device}
+                        model={'beamo'}
+                        onClose={() => {
+                            popDialogById('diode-cali')
+                        }}
+                    />
+                </Modal>
+            );
+        },
+        showNetworkTestingPanel: (ip) => {
+            addDialogComponent('network-test',
+                <NetworkTestingPanel
+                    ip={ip}
                     onClose={() => {
-                        popDialogById('diode-cali')
+                        popDialogById('network-test')
                     }}
                 />
             );
-
         }
     }
 });

@@ -5,13 +5,15 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
+    'jsx!contexts/DialogCaller'
 ],function(
     i18n,
     ElectronUpdater,
     GlobalInteraction,
     BeamboxActions,
     BottomRightFuncs,
-    FnWrapper
+    FnWrapper,
+    DialogCaller
 ){
     class BeamboxGlobalInteraction extends GlobalInteraction {
         constructor() {
@@ -84,7 +86,7 @@ define([
                 'BORDERLESS_MODE': () => svgCanvas.toggleBorderless(),
                 'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
-                'NETWORK_TESTING': () => BeamboxActions.showNetworkTestingPanel(),
+                'NETWORK_TESTING': () => DialogCaller.showNetworkTestingPanel(),
                 'ABOUT_BEAM_STUDIO': () => BeamboxActions.showAboutBeamStudio(),
                 'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
                 'UPDATE_BS': () => ElectronUpdater.checkForUpdate()

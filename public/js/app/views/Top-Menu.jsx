@@ -322,7 +322,7 @@ define([
                         message: info,
                         buttonLabels: [lang.topmenu.device.network_test, lang.topmenu.ok],
                         callbacks: [
-                            () => {BeamboxActions.showNetworkTestingPanel(device.ipaddr)},
+                            () => {DialogCaller.showNetworkTestingPanel(device.ipaddr)},
                             () => {}
                         ],
                         primaryButtonIndex: 1

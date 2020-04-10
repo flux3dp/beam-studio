@@ -25,31 +25,15 @@ define([
     class NetworkTestingPanel extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {
-                show: false,
-                ip: ''
-            };
-            this.TEST_TIME = 30000;
-        }
-
-        componentDidMount() {
-            BeamboxStore.onShowNetworkTestingPanel(this._initAndShow.bind(this));
-
-        }
-
-        componentWillUnmount() {
-        }
-
-        _initAndShow(payload) {
             let ip = '';
-            if (payload.device) {
-                ip = payload.device;
+            if (props.ip) {
+                ip = props.ip;
                 this.defaultValue = ip;
             }
+            this.TEST_TIME = 30000;
             let local_ips = [];
             const os = require('os');
             let ifaces = os.networkInterfaces();
-
             Object.keys(ifaces).forEach(function (ifname) {
                 let alias = 0;
                 ifaces[ifname].forEach(function (iface) {
@@ -68,11 +52,10 @@ define([
                     local_ips.push(iface.address);
                 });
             });
-            this.setState({
+            this.state = {
                 ip: ip,
-                show: true,
                 localIp: local_ips
-            });
+            };
         }
 
         _onStart() {
@@ -203,62 +186,55 @@ define([
         }
 
         _close() {
-            this.setState({show: false});
+            this.props.onClose();
         }
 
         render() {
-            if (this.state.show) {
-                return (
-                    <Modal onClose={() => {this._close()}}>
-                        <div className='network-testing-panel'>
-                        <section className='main-content'>
-                            <div className='title'>{LANG.network_testing}</div>
-                            <div className='info'>
-                                <div className='left-part'>
-                                    {LANG.local_ip}
-                                </div>
-                                <div className='right-part'>
-                                    {this.state.localIp.join(', ')}
-                                </div>
+            return (
+                <Modal onClose={() => {this._close()}}>
+                    <div className='network-testing-panel'>
+                    <section className='main-content'>
+                        <div className='title'>{LANG.network_testing}</div>
+                        <div className='info'>
+                            <div className='left-part'>
+                                {LANG.local_ip}
                             </div>
-                            <div className='info'>
-                                <div className='left-part'>
-                                    {LANG.insert_ip}
-                                </div>
-                                <div className='right-part'>
-                                    <input
-                                        ref='textInput'
-                                        defaultValue={this.defaultValue}
-                                        onBlur={this._onInputBlur.bind(this)}
-                                        onKeyDown={this._onInputKeydown.bind(this)}
-                                        >    
-                                    </input>
-                                </div>
+                            <div className='right-part'>
+                                {this.state.localIp.join(', ')}
                             </div>
-                        </section>
-                        <section className='footer'>
-                            <button
-                                className='btn btn-default pull-right primary'
-                                onClick={() => {
-                                    this._onStart();
-                                }}
-                            >{LANG.start}
-                            </button>
-                            <button
-                                className='btn btn-default pull-right'
-                                onClick={() => this._close()}
-                            >{LANG.end}
-                            </button>
-                        </section>
                         </div>
-                    </Modal>
-                );
-            } else {
-                return (
-                    <div className='network-testing-panel-place-holder'></div>
-                )
-            }
-            
+                        <div className='info'>
+                            <div className='left-part'>
+                                {LANG.insert_ip}
+                            </div>
+                            <div className='right-part'>
+                                <input
+                                    ref='textInput'
+                                    defaultValue={this.defaultValue}
+                                    onBlur={this._onInputBlur.bind(this)}
+                                    onKeyDown={this._onInputKeydown.bind(this)}
+                                    >    
+                                </input>
+                            </div>
+                        </div>
+                    </section>
+                    <section className='footer'>
+                        <button
+                            className='btn btn-default pull-right primary'
+                            onClick={() => {
+                                this._onStart();
+                            }}
+                        >{LANG.start}
+                        </button>
+                        <button
+                            className='btn btn-default pull-right'
+                            onClick={() => this._close()}
+                        >{LANG.end}
+                        </button>
+                    </section>
+                    </div>
+                </Modal>
+            );
         }
     };
 
