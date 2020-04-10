@@ -6,6 +6,7 @@ define([
     'helpers/device-master',
     'helpers/check-device-status',
     'helpers/check-firmware',
+    'helpers/version-checker',
     'helpers/firmware-updater',
     'helpers/firmware-version-checker',
     'helpers/api/cloud',
@@ -42,6 +43,7 @@ define([
     DeviceMaster,
     checkDeviceStatus,
     checkFirmware,
+    VersionChecker,
     firmwareUpdater,
     FirmwareVersionChecker,
     CloudApi,
@@ -360,18 +362,8 @@ define([
                         });
                         return;
                     }
-                    let isAvailableVersion = function(version, targetVersion) {
-                        version = version.split('.').map(i => parseInt(i));
-                        targetVersion = targetVersion.split('.').map(i => parseInt(i));
-                        for (let i = 0; i < Math.min(version.length, targetVersion.length); ++i) {
-                            if(version[i] > targetVersion[i]) {
-                                return true;
-                            } else if (targetVersion[i] > version[i]) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }(device.version, '2.5.1');
+                    const vc = VersionChecker(device.version);
+                    const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                     if (isAvailableVersion) {
                         ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
                         await checkDeviceStatus(device);
@@ -407,20 +399,29 @@ define([
                         return;
                     }
                     //DialogCaller.showDiodeCalibration(device);
-                    ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
-                    DeviceMaster.select(device)
-                        .done(() => {
-                            ProgressActions.close();
-                            const isBorderless = false;
-                            DialogCaller.showDiodeCalibration(device);
-                        })
-                        .fail(() => {
-                            ProgressActions.close();
-                            Alert.popUp({
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                message: lang.message.connectionTimeout,
+                    const vc = VersionChecker(device.version);
+                    const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
+                    if (diodeAvailable) {
+                        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                        DeviceMaster.select(device)
+                            .done(() => {
+                                ProgressActions.close();
+                                DialogCaller.showDiodeCalibration(device);
+                            })
+                            .fail(() => {
+                                ProgressActions.close();
+                                Alert.popUp({
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                    message: lang.message.connectionTimeout,
+                                });
                             });
+                    } else {
+                        const message = `${lang.diode_calibration.update_firmware_msg1} 3.0.0 ${lang.diode_calibration.update_firmware_msg2}`;
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_INFO,
+                            message,
                         });
+                    }
                 };
 
                 _action['UPDATE_FIRMWARE'] = (device) => {

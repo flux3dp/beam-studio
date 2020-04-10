@@ -1752,6 +1752,8 @@ define(function() {
             hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小'
         },
         diode_calibration: {
+            update_firmware_msg1: '您的韌體版本不支援此功能。請先更新 Beambox 的韌體至 v',
+            update_firmware_msg2: '以上以繼續。 (主選單 > 機器 > [ Your Beambox ] > 韌體更新',
             diode_calibration: '二極體模組校正',
             next: '下一步',
             cancel: '取消',

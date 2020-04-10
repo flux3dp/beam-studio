@@ -3,6 +3,7 @@ define(function() {
         FAST_GRADIENT               : '3.0.1',
         TEMP_I2C_CMD                : '3.0.1',
         DIODE_AND_AUTOFOCUS         : '3.0.0',
+        BORDERLESS_MODE             : '2.5.1',
         BACKLASH                    : '1.5b12',
         OPERATE_DURING_PAUSE        : '1.6.20',
         UPGRADE_KIT_PROFILE_SETTING : '1.6.20',

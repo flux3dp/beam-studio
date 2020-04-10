@@ -1754,6 +1754,8 @@ define(function() {
             hint_adjust_parameters: 'Use these parameters to adjust the red square'
         },
         diode_calibration: {
+            update_firmware_msg1: 'Your firmware does not support this function. Please update firmware to v',
+            update_firmware_msg2: 'or above to continue。 (Menu > Machine > [Your Machine] > Update Firmware)',
             diode_calibration: 'Diode Module Calibration',
             next: 'NEXT',
             cancel: 'CANCEL',

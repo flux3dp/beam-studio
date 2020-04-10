@@ -1722,8 +1722,8 @@ define(function() {
             attach_toolhead: '印刷ツールヘッドを接続してください'
         },
         camera_calibration: {
-            update_firmware_msg1: 'ファームウェアはこの機能をサポートしていません。ファームウェアをvまたはそれ以上にアップデートして',
-            update_firmware_msg2: '続行してください。（メニュー > マシン > [お使いのマシン] >ファームウェアのアップデート）',
+            update_firmware_msg1: 'ファームウェアはこの機能をサポートしていません。ファームウェアを v',
+            update_firmware_msg2: 'またはそれ以上にアップデートして。続行してください。（メニュー > マシン > [お使いのマシン] >ファームウェアのアップデート）',
             camera_calibration: 'カメラの較正',
             next: '次へ',
             cancel: 'キャンセル',
@@ -1754,6 +1754,8 @@ define(function() {
             hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
         },
         diode_calibration: {
+            update_firmware_msg1: 'ファームウェアはこの機能をサポートしていません。ファームウェアを v',
+            update_firmware_msg2: 'またはそれ以上にアップデートして。続行してください。（メニュー > マシン > [お使いのマシン] >ファームウェアのアップデート）',
             diode_calibration: 'ダイオードモジュールの較正',
             next: '次へ',
             cancel: 'キャンセル',
