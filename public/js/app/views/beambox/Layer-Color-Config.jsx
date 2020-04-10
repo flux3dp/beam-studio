@@ -40,22 +40,6 @@ define([
     class LayerColorConfigPanel extends React.Component {
         constructor(props) {
             super(props);
-            this.state =  {
-                show: false
-            };
-        }
-
-        componentDidMount() {
-            BeamboxStore.onShowLayerColorConfig(this._show.bind(this));
-        }
-
-        componentDidUpdate() {
-        }
-
-        componentWillUnmount() {
-        }
-
-        _show() {
             let layerColorConfig = LocalStorage.get('layer-color-config');
             if (layerColorConfig) {
                 this.layerColorConfig = layerColorConfig.array;
@@ -65,15 +49,13 @@ define([
                 let i = 0;
                 this.layerColorConfigDict = this.layerColorConfig.reduce((acc, cur) => ({...acc, [cur.color]: i++}), {});
             }
-            this.setState({
-                show: true
-            });
+            this.state = {
+                isDisplayingModal: false
+            }
         }
 
         _close() {
-            this.setState({
-                show: false
-            });
+            this.props.onClose();
         }
 
         _renderMainContent() {
@@ -88,7 +70,7 @@ define([
                     {configItems}
                     {this._renderAddConfigButton()}
                 </div>
-                );
+            );
         }
 
         _renderLayerColorConfigItem(item, index) {
@@ -389,24 +371,18 @@ define([
         }
 
         render() {
-            if (this.state.show) {
-                return (
-                    <Modal onClose={() => {}}>
-                        <div className='layer-color-config-panel'>
-                            <div className='title'>
-                                {LANG.layer_color_config}
-                            </div>
-                            {this._renderMainContent()}
-                            {this._renderFooter()}
-                            {this._renderAddConfigModal()}
+            return (
+                <Modal onClose={() => {}}>
+                    <div className='layer-color-config-panel'>
+                        <div className='title'>
+                            {LANG.layer_color_config}
                         </div>
-                    </Modal>
-                );
-            } else {
-                return (
-                    null
-                );
-            }
+                        {this._renderMainContent()}
+                        {this._renderFooter()}
+                        {this._renderAddConfigModal()}
+                    </div>
+                </Modal>
+            );
         }
     };
 

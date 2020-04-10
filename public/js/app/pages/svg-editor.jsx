@@ -190,8 +190,7 @@ define([
 
 ], function (
     i18n,
-    TaskInterpreterPanel,
-    LayerColorConfigPanel
+    TaskInterpreterPanel
 ) {
     const React = require('react');
     let LANG = i18n.lang.beambox;
@@ -246,7 +245,6 @@ define([
                                 }}
                             />
                         </div>
-                        <LayerColorConfigPanel />
                         <div id="sidepanels">
                             <div id="layerpanel">
                                 <fieldset id="layerbuttons">
