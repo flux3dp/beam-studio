@@ -4,6 +4,7 @@ define([
     'jsx!views/beambox/Camera-Calibration',
     'jsx!views/beambox/Diode-Calibration',
     'jsx!views/beambox/Network-Testing-Panel',
+    'jsx!views/beambox/Photo-Edit-Panel',
     'jsx!views/beambox/Layer-Color-Config',
 ], function (
     Modal,
@@ -11,6 +12,7 @@ define([
     CameraCalibration,
     DiodeCalibration,
     NetworkTestingPanel,
+    PhotoEditPanel,
     LayerColorConfigPanel
 ) {
     const React = require('react');
@@ -66,6 +68,31 @@ define([
                     ip={ip}
                     onClose={() => {
                         popDialogById('network-test')
+                    }}
+                />
+            );
+        },
+        showPhotoEditPanel: (mode) => {
+            const selectedElements = svgCanvas.getSelectedElems();
+            let len = selectedElements.length;
+            for (let i = 0; i < selectedElements.length; ++i) {
+                if (!selectedElements[i]) {
+                    len = i;
+                    break;
+                }
+            }
+            if (len > 1) {
+                return;
+            }
+            element = selectedElements[0];
+            const src = element.getAttribute('origImage');
+            addDialogComponent('photo-edit',
+                <PhotoEditPanel
+                    mode={mode}
+                    element={element}
+                    src={src}
+                    unmount={() => {
+                        popDialogById('photo-edit')
                     }}
                 />
             );

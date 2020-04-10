@@ -7,7 +7,6 @@ define([
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
-    'jsx!app/actions/beambox/Photo-Edit-Panel-Controller'
 ], function (
     ConfigHelper,
     BeamboxPreference,
@@ -16,8 +15,7 @@ define([
     ObjectPanelsController,
     ToolPanelsController,
     LaserPanelController,
-    ImageTracePanelController,
-    PhotoEditPanelController
+    ImageTracePanelController
 ) {
     const init = () => {
         DocumentPanelController.init('document-panel-placeholder');
@@ -25,7 +23,6 @@ define([
         ToolPanelsController.init('tool-panels-placeholder');
         LaserPanelController.init('layer-laser-panel-placeholder');
         ImageTracePanelController.init('image-trace-panel-placeholder');
-        PhotoEditPanelController.init('photo-edit-panel-placeholder');
 
         const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
         if (defaultAutoFocus !== undefined) {

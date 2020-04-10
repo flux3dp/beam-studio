@@ -6,7 +6,6 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'jsx!app/actions/beambox/Document-Panel-Controller',
-    'jsx!app/actions/beambox/Photo-Edit-Panel-Controller',
     'helpers/i18n'
 ], function(
     Constant,
@@ -16,7 +15,6 @@ define([
     Alert,
     AlertConstants,
     DocumentPanelController,
-    PhotoEditPanelController,
     i18n
 ){
     const LANG = i18n.lang.beambox;
@@ -470,24 +468,6 @@ define([
         },
 
         //menubar
-        photoEdit: function(mode) {
-            const selectedElements = window.svgCanvas.getSelectedElems();
-            let len = selectedElements.length;
-            for (let i = 0; i < selectedElements.length; ++i) {
-                if (!selectedElements[i]) {
-                    len = i;
-                    break;
-                }
-            }
-            if (len > 1) {
-                return;
-            }
-            elem = selectedElements[0];
-            PhotoEditPanelController.setElememt(elem);
-            PhotoEditPanelController.setMode(mode);
-            PhotoEditPanelController.render();
-        },
-
         openAdvancedPanel: function() {
             DocumentPanelController.render();
         },

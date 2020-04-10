@@ -423,21 +423,20 @@
     .footer {
         background: #fff;
         height: 59px;
-        padding-top: 12px;
-        padding-bottom: 12px;
         margin-bottom: 0px;
         border-top: 1px solid #DDD;
+        .btn-h-group {
+            padding: 12px;
+            justify-content: flex-end;
+        }
         .btn {
-            margin-left: 12px;
-            margin-right: 0px;
+            margin-right: 10px;
             line-height: 30px;
-            &:first-of-type {
-                margin-right: 12px;
-            }
             &.disabled {
                 &:hover {
-                    border: 2px solid #C0C0C0;
-                    color: #B3B3B3
+                    opacity: 0.5;
+                    background: none;
+                    box-shadow: none;
                 }
             }
         }

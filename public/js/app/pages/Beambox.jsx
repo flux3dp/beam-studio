@@ -55,7 +55,6 @@ define([
                             <div id='object-panels-placeholder' />
                             <div id='tool-panels-placeholder' />
                             <div id='image-trace-panel-placeholder' />
-                            <div id='photo-edit-panel-placeholder' />
                             <Dialog index={0}/>
                             <Alert index={0}/>
                         </div>

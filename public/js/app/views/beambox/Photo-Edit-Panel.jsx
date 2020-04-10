@@ -7,6 +7,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'jsx!widgets/Modal',
+    'jsx!widgets/Button-Group',
     'jsx!widgets/Curve-Control',
     'jsx!widgets/Slider-Control',
     'lib/cropper'
@@ -17,6 +18,7 @@ define([
     ProgressActions,
     ProgressConstants,
     Modal,
+    ButtonGroup,
     CurveControl,
     SliderControl,
     Cropper
@@ -483,51 +485,73 @@ define([
 
         _renderPhotoEditFooter() {
             if (this.props.mode === 'sharpen') {
+                let buttons = [
+                    {
+                        label: LANG.okay,
+                        onClick: () => {this._handleComplete()},
+                        className: 'btn btn-default primary'
+                    },
+                    {
+                        label: LANG.cancel,
+                        onClick: () => {this._handleCancel()},
+                        className: 'btn btn-default'
+                    }
+                ];
                 return (
                 <div className='footer'>
-                    {this._renderFooterButton(LANG.okay, this._handleComplete.bind(this))}
-                    {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
+                    <ButtonGroup buttons={buttons}/>
                 </div>
                 );
             } 
             if (this.props.mode === 'crop') {
                 const disableGoBack = (this.state.srcHistory.length === 0);
+                let buttons = [
+                    {
+                        label: LANG.okay,
+                        onClick: () => {this._handleCrop(true)},
+                        className: 'btn btn-default pull-right primary'
+                    },
+                    {
+                        label: LANG.apply,
+                        onClick: () => {this._handleCrop()},
+                        className: 'btn btn-default pull-right'
+                    },
+                    {
+                        label: LANG.back,
+                        onClick: disableGoBack ? () => {} : () => {this._handleGoBack()},
+                        className: `btn btn-default pull-right${disableGoBack ? ' disabled':''}`
+                    },
+                    {
+                        label: LANG.cancel,
+                        onClick: () => {this._handleCancel()},
+                        className: 'btn btn-default pull-right'
+                    }
+                ];
                 return (
                     <div className='footer'>
-                        {this._renderFooterButton(LANG.okay, () => {
-                                this._handleCrop.bind(this)(true);
-                            })}
-                        {this._renderFooterButton(LANG.apply, this._handleCrop.bind(this))}
-                        {this._renderFooterButton(LANG.back, this._handleGoBack.bind(this), disableGoBack)}
-                        {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
+                        <ButtonGroup buttons={buttons}/>
                     </div>
                 );
             }
             if (this.props.mode === 'curve') {
+                let buttons = [
+                    {
+                        label: LANG.okay,
+                        onClick: () => {this._handleCurveComplete()},
+                        className: 'btn btn-default primary'
+                    },
+                    {
+                        label: LANG.cancel,
+                        onClick: () => {this._handleCancel()},
+                        className: 'btn btn-default'
+                    }
+                ];
                 return (
                     <div className='footer'>
-                        {this._renderFooterButton(LANG.okay, this._handleCurveComplete.bind(this))}
-                        {this._renderFooterButton(LANG.cancel, this._handleCancel.bind(this))}
+                        <ButtonGroup buttons={buttons}/>
                     </div>
                 );
             }
-        }
-
-        _renderFooterButton(label, onClick, isDisable) {
-            let disable = '';
-            if (isDisable) {
-                disable = 'disabled';
-                onClick = () => {};
-            }
-            return(
-                <button
-                        key={label}
-                        className={`btn btn-default pull-right ${disable}`}
-                        onClick={() => {onClick()}}
-                    >
-                        {label}
-                </button>
-            )
         }
 
         render() {
