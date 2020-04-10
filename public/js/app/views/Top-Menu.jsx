@@ -343,7 +343,7 @@ define([
                         .done(() => {
                             ProgressActions.close();
                             const isBorderless = false;
-                            AlertActions.showCameraCalibration(device, isBorderless);
+                            DialogCaller.showCameraCalibration(device, isBorderless);
                         })
                         .fail(() => {
                             ProgressActions.close();
@@ -371,7 +371,7 @@ define([
                             .done(() => {
                                 ProgressActions.close();
                                 const isBorderless = true;
-                                AlertActions.showCameraCalibration(device, isBorderless);
+                                DialogCaller.showCameraCalibration(device, isBorderless);
                             })
                             .fail(() => {
                                 ProgressActions.close();

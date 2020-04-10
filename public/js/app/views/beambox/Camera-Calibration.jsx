@@ -10,7 +10,9 @@ define([
     'helpers/device-master',
     'helpers/version-checker',
     'app/constants/device-constants',
+    'app/contexts/AlertCaller',
     'app/actions/alert-actions',
+    'app/constants/alert-constants',
     'helpers/check-device-status',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
@@ -30,7 +32,9 @@ define([
     DeviceMaster,
     VersionChecker,
     DeviceConstants,
+    Alert,
     AlertActions,
+    AlertConstants,
     CheckDeviceStatus,
     ProgressActions,
     ProgressConstants,
@@ -234,7 +238,11 @@ define([
                             } catch (error) {
                                 console.log(error);
                                 ProgressActions.close();
-                                AlertActions.showPopupRetry('menu-item', error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture');
+                                Alert.popUp({
+                                    id: 'menu-item',
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                    message: error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture',
+                                });
                             }
                         }
                     },
@@ -500,8 +508,12 @@ define([
                                 gotoNextStep(STEP_FINISH);
                             } catch (error) {
                                 console.log(error);
-                                AlertActions.showPopupRetry('menu-item', error.toString().replace('Error: ', ''));
-                                gotoNextStep(STEP_REFOCUS);
+                                Alert.popUp({
+                                    id: 'menu-item',
+                                    type: AlertConstants.SHOW_POPUP_ERROR,
+                                    message: error.toString().replace('Error: ', ''),
+                                    callbacks: () => {gotoNextStep(STEP_REFOCUS)}
+                                });
                             }
                         }
                     },

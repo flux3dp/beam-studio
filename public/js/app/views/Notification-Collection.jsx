@@ -185,8 +185,6 @@ define([
                 AlertStore.onUpdate(this._showUpdate);
                 AlertStore.onChangeFilament(this._showChangeFilament);
                 AlertStore.onShowHeadTemperature(this._showHeadTemperature);
-                AlertStore.onCameraCalibration(this._showCameraCalibration);
-                
 
                 if (true === isUnsupportedMacOSX) {
                     AlertActions.showPopupError('unsupported_mac_osx', lang.message.unsupport_osx_version);
