@@ -81,7 +81,7 @@ jobs:
           cp -R $HOME/flux_api_swap backend/flux_api
           ./backend/flux_api/flux_api --test --without_pcl 
 
-          if [ ${{ matrix.os }} -eq "ubuntu-16.04" ]
+          if [ ${{ matrix.os }} = "ubuntu-16.04" ]
           then
             export PUBLISH_PATH=""
           else
