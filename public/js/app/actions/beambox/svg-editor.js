@@ -5173,7 +5173,8 @@ define([
                         Shortcuts.on(['del'], deleteSelected);
                         Shortcuts.on(['fnkey', 'x'], cutSelected);
                         Shortcuts.on(['fnkey', 'c'], copySelected);
-                        Shortcuts.on(['fnkey', 'v'], pasteInCenter);
+                        // Move to event listener 'paste'
+                        //Shortcuts.on(['fnkey', 'v'], pasteInCenter);
                         Shortcuts.on(['fnkey', 'shift', 'v'], () => {
                             svgCanvas.pasteElements('in_place');
                         });
@@ -6010,6 +6011,81 @@ define([
                         Alert.popAlertStackById('loading_image');
                         return;
                     }
+                    handleFile(file);
+                    // let file input import same file again.
+                    // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
+                    $(this).attr('value', '');
+                };
+
+                window.addEventListener('paste', async function (e) {
+                    const clipboardData = e.clipboardData;
+                    let importedFromClipboard = false;
+                    if (clipboardData) {
+                        if (clipboardData.types.includes('Files')) {
+                            console.log('handle clip board file');
+                            for(let i = 0; i < clipboardData.files.length; i++) {
+                                let file = clipboardData.files[i];
+                                handleFile(file);
+                                importedFromClipboard = true;
+                            }
+                        } else if (clipboardData.types.includes('text/html')) {
+                            const matchImgs = clipboardData.getData('text/html').match(/<img[^>]+>/);
+                            if (matchImgs) {
+                                console.log('handle clip board html img');
+                                for (let i=0; i < matchImgs.length; i++) {
+                                    const matchSrc = matchImgs[i].match(/src="([^"]+)"/);
+                                    if (matchSrc && matchSrc[1]) {
+                                        importedFromClipboard = true;
+                                        console.log(matchSrc[1]);
+                                        let res = await fetch(matchSrc[1]);
+                                        if (res.ok) {
+                                            res = await res.blob();
+                                            const blobSrc = URL.createObjectURL(res);
+                                            ImageData(
+                                                blobSrc,
+                                                {
+                                                    grayscale: {
+                                                        is_rgba: true,
+                                                        is_shading: false,
+                                                        is_svg: false
+                                                    },
+                                                    onComplete: function (result) {
+                                                        let newImage = svgCanvas.addSvgElementFromJson({
+                                                            element: 'image',
+                                                            attr: {
+                                                                x: 0,
+                                                                y: 0,
+                                                                width: result.canvas.width,
+                                                                height: result.canvas.height,
+                                                                id: svgCanvas.getNextId(),
+                                                                style: 'pointer-events:inherit',
+                                                                preserveAspectRatio: 'none',
+                                                                'data-threshold': 128,
+                                                                'data-shading': false,
+                                                                origImage: blobSrc,
+                                                                'xlink:href': result.canvas.toDataURL()
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            );
+                                        } else {
+                                            Alert.popUp({
+                                                type: AlertConstants.SHOW_POPUP_WARNING,
+                                                message: LANG.svg_editor.unable_to_fetch_clipboard_img,
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!importedFromClipboard) {
+                        pasteInCenter();
+                    }
+                }, false);
+
+                const handleFile = (file) => {
                     const fileType = (function() {
                         if (file.name.toLowerCase().includes('.bvg')) {
                             return 'bvg';
@@ -6086,11 +6162,7 @@ define([
                             svgCanvas.changed = true;
                             break;
                     }
-
-                    // let file input import same file again.
-                    // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
-                    $(this).attr('value', '');
-                };
+                }
 
                 workarea[0].addEventListener('dragenter', onDragEnter, false);
                 workarea[0].addEventListener('dragover', onDragOver, false);

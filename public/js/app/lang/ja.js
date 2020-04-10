@@ -1367,7 +1367,8 @@ define(function() {
             },
             svg_editor: {
                 unnsupported_file_type: 'ファイルタイプは直接サポートされていません。ファイルをSVGまたはビットマップに変換してください',
-                unnsupport_ai_file_directly: '最初にAlファイルをSVGまたはビットマップに変換してください。'
+                unnsupport_ai_file_directly: '最初にAlファイルをSVGまたはビットマップに変換してください。',
+                unable_to_fetch_clipboard_img: 'Failed to fetch image from your clipboard',
             },
             units: {
                 walt: 'W',

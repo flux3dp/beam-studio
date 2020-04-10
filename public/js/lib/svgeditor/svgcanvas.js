@@ -8461,17 +8461,19 @@ define([
 
         // Function: copySelectedElements
         // Remembers the current selected elements on the clipboard
-        this.copySelectedElements = function () {
+        this.copySelectedElements = async function () {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
             var layerDict = {}, layerCount = 0;
+            let clipBoardText = 'BS Copy: ';
 
             for (var i = 0; i < selectedElements.length && selectedElements[i]; ++i) {
                 var selected = selectedElements[i],
                     layerName = $(selected.parentNode).find('title').text();
                 selected.setAttribute("data-origin-layer", layerName);
+                clipBoardText += $(selected).attr('id') + ', ';
                 if (!layerDict[layerName]) {
                     layerDict[layerName] = true;
                     layerCount++;
@@ -8486,11 +8488,17 @@ define([
                     }
                 }
             }
+            try {
+                await navigator.clipboard.writeText(clipBoardText);
+                console.log('Copying to clipboard was successful!', clipBoardText);
+            } catch (err) {
+                console.error('Async: Could not copy text: ', err);
+            }
 
             canvas.clipBoard = $.merge([], selectedElements);
         };
 
-        this.pasteElements = function (type, x, y) {
+        this.pasteElements = async function (type, x, y) {
             var cb = canvas.clipBoard;
             var len = cb.length;
             if (!len) {

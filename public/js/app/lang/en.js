@@ -1367,7 +1367,8 @@ define(function() {
             },
             svg_editor: {
                 unnsupported_file_type: 'The file type is not directly supported. Please convert the file into SVG or bitmap',
-                unnsupport_ai_file_directly: 'Please convert your AI file into SVG or Bitmap first.'
+                unnsupport_ai_file_directly: 'Please convert your AI file into SVG or Bitmap first.',
+                unable_to_fetch_clipboard_img: 'Failed to fetch image from your clipboard',
             },
             units: {
                 walt: 'W',

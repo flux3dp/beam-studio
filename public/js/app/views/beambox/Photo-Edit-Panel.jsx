@@ -50,6 +50,7 @@ define([
                 self.state.origWidth = tempImg.naturalWidth;
                 self.state.imageheight = tempImg.naturalHeight;
                 self.state.origHeight = tempImg.naturalHeight;
+                self.setState(self.state);
             };
         }
 

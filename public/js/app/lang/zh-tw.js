@@ -1365,7 +1365,8 @@ define(function() {
             },
             svg_editor: {
                 unnsupported_file_type: 'Beam Studio 不直接支援此檔案格式。請先輸出成圖片檔或 SVG 格式',
-                unnsupport_ai_file_directly: '請先將您的 AI 檔輸出成 SVG 或 圖片檔，再匯入至 Beam Studio'
+                unnsupport_ai_file_directly: '請先將您的 AI 檔輸出成 SVG 或 圖片檔，再匯入至 Beam Studio',
+                unable_to_fetch_clipboard_img: '無法讀取複製連結中的檔案',
             },
             units: {
                 walt: 'W',
