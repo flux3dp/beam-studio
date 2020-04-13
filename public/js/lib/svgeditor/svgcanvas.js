@@ -8737,7 +8737,7 @@ define([
             };
             let newElem;
             let isContainNotSupportTag = false;
-            let co = new svgedit.ClipperLib.ClipperOffset(2 , 0.25);
+            let co = new ClipperLib.ClipperOffset(2 , 0.25);
             elems.forEach(elem => {
                 if (!elem) {
                     return;
@@ -8755,7 +8755,7 @@ define([
                     cy: bbox.y + bbox.height / 2
                 };
 
-                const paths = svgedit.ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
                 let closed = true;
                 for (let j = 0; j < paths.length; ++j) {
                     if (!(paths[j][0].X === paths[j][paths[j].length - 1].X && paths[j][0].Y === paths[j][paths[j].length - 1].Y)) {
@@ -8764,12 +8764,12 @@ define([
                     }
                 }
                 if (cornerType === 'round') {
-                    co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtRound, svgedit.ClipperLib.EndType.etOpenRound);
+                    co.AddPaths(paths, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etOpenRound);
                 } else if (cornerType === 'sharp') {
                     if (closed) {
-                        co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtMiter, svgedit.ClipperLib.EndType.etClosedLine);
+                        co.AddPaths(paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedLine);
                     } else {
-                        co.AddPaths(paths, svgedit.ClipperLib.JoinType.jtMiter, svgedit.ClipperLib.EndType.etOpenSquare);
+                        co.AddPaths(paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etOpenSquare);
                     }
                 }
             });
@@ -10197,7 +10197,7 @@ define([
             const clip_fillType = 1;
             let succeeded = true;
             for (let i = len - 1; i >= 0; --i) {
-                let clipper = new svgedit.ClipperLib.Clipper();
+                let clipper = new ClipperLib.Clipper();
                 const elem =selectedElements[i];
                 if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
                     tagNameMap = {
@@ -10220,12 +10220,12 @@ define([
                     cx: bbox.x + bbox.width / 2,
                     cy: bbox.y + bbox.height / 2
                 };
-                const paths = svgedit.ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
                 if (i === len - 1) {
                     solution_paths = paths;
                 } else {
-                    clipper.AddPaths(solution_paths, svgedit.ClipperLib.PolyType.ptSubject, true);
-                    clipper.AddPaths(paths, svgedit.ClipperLib.PolyType.ptClip, true);
+                    clipper.AddPaths(solution_paths, ClipperLib.PolyType.ptSubject, true);
+                    clipper.AddPaths(paths, ClipperLib.PolyType.ptClip, true);
                     succeeded = clipper.Execute(clipType, solution_paths, subject_fillType, clip_fillType);
                 }
                 if (!succeeded) {

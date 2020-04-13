@@ -7712,7 +7712,7 @@
 		const maxDistance = 1000;
 		const defaultStep = 10;
 		let cPath = [];
-		let bzc = new svgedit.ClipperLib.BezierCurve(startPoint, controlPoints);
+		let bzc = new ClipperLib.BezierCurve(startPoint, controlPoints);
 		if (bzc.isLine) {
 			cPath.push(controlPoints[2]);
 		} else {
@@ -7756,5 +7756,5 @@
 		}
 	}
 
-	svgedit.ClipperLib = ClipperLib;
+	window.ClipperLib = ClipperLib;
 })();

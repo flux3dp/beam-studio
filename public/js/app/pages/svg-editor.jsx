@@ -32,7 +32,8 @@ requirejs.config({
         beameasyapi: 'lib/svgeditor/beam-easy-api',
         locale: 'lib/svgeditor/locale/locale',
         contextmenu: 'lib/svgeditor/contextmenu',
-        clipper_unminified: 'lib/svgeditor/clipper_unminified',
+        clipper_unminified: 'lib/clipper_unminified',
+        svgnest: 'lib/svg-nest/svgnest',
 
         jqueryUi: 'lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min',
         jpicker: 'lib/svgeditor/jgraduate/jpicker',
@@ -131,8 +132,11 @@ requirejs.config({
         clipper_unminified: {
             deps: ['contextmenu']
         },
-        jqueryUi: {
+        svgnest: {
             deps: ['clipper_unminified']
+        },
+        jqueryUi: {
+            deps: ['svgnest']
         },
         jpicker: {
             deps: ['jqueryUi']
