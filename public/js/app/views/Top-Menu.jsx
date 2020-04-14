@@ -987,7 +987,7 @@ define([
                     'union': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
                     'subtract': (selectedElements && selectedElements.length === 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
                     'intersect': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-                    'difference': (selectedElements && selectedElements.length > 2 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+                    'difference': (selectedElements && selectedElements.length > 1 && selectedElements.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
                     'h-flip': (selectedElements && selectedElements.length > 0),
                     'v-flip': (selectedElements && selectedElements.length > 0),
                 }
