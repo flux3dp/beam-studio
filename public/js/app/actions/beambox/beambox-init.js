@@ -22,13 +22,9 @@ define([
         ImageTracePanelController.init('image-trace-panel-placeholder');
 
         const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
-        if (defaultAutoFocus !== undefined) {
-            BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
-        }
+        BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
         const defaultDiode = BeamboxPreference.read('default-diode');
-        if (defaultDiode !== undefined) {
-            BeamboxPreference.write('enable-diode', defaultDiode);
-        }
+        BeamboxPreference.write('enable-diode', defaultDiode);
         const defaultBorderless = BeamboxPreference.read('default-borderless');
         if (defaultBorderless === undefined) {
             BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
