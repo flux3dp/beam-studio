@@ -3407,6 +3407,9 @@ define([
                 },
                 renderMultiLineText: (textElem, val, showGrips) => {
                     let lines = val.split('\x0b');
+                    if (!textElem) {
+                        return;
+                    }
                     let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
                     const charHeight = parseFloat(canvas.getFontSize());
                     const letterSpacing = canvas.getLetterSpacing();

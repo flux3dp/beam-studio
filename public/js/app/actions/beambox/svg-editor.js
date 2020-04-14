@@ -3276,6 +3276,14 @@ define([
             });
 
             $('#text').bind('keyup input', function (evt) {
+                console.log(!textBeingEntered && evt.type === 'input');
+                if (!textBeingEntered && evt.type === 'input') {
+                    evt.preventDefault();
+                    // Hack: Windows input event will some how block undo event
+                    // So do undo when not entering & input event triggered
+                    clickUndo();
+                    return;
+                }
                 evt.stopPropagation();
                 if (evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
                     let oldSelectionStart = this.selectionStart;
