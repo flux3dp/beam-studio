@@ -32,7 +32,6 @@ function rotatePolygon(polygon, degrees){
 		var y = polygon[i].y;
 		var x1 = x*Math.cos(angle)-y*Math.sin(angle);
 		var y1 = x*Math.sin(angle)+y*Math.cos(angle);
-						
 		rotated.push({x:x1, y:y1});
 	}
 	
@@ -287,7 +286,6 @@ function PlacementWorker(binPolygon, paths, ids, rotations, config, nfpCache){
 		
 		return {placements: allplacements, fitness: fitness, paths: paths, area: binarea };
 	};
-
 }
 (typeof window !== 'undefined' ? window : self).PlacementWorker = PlacementWorker;
 

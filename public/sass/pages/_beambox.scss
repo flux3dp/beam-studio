@@ -44,7 +44,7 @@
                 left: 90px;
                 top: 30px;
                 width: 110px;
-                height: 25px;
+                height: 32px;
                 z-index: 2;
                 border-radius: 20px;
                 &.active {
@@ -56,12 +56,12 @@
                     left: 31px;
                     width: 80px;
                     height: 36px;
-                    line-height: 25px;
+                    line-height: 32px;
                     font-size: 9pt;
                     text-align: center;
                 }
                 img {
-                    margin: 4px 0px 0px 15px;
+                    margin: 8px 0px 0px 15px;
                     height: 16px;
                     filter: brightness(0) invert(100%);
                 }
@@ -80,7 +80,7 @@
                 left: 215px;
                 top: 30px;
                 width: 80px;
-                height: 25px;
+                height: 32px;
                 z-index: 2;
                 border-radius: 20px;
                 &.active {
@@ -92,12 +92,12 @@
                     left: 0px;
                     width: 80px;
                     height: 36px;
-                    line-height: 25px;
+                    line-height: 32px;
                     font-size: 9pt;
                     text-align: center;
                 }
                 img {
-                    margin: 4px 0px 0px 15px;
+                    margin: 8px 0px 0px 15px;
                     height: 16px;
                     filter: brightness(0) invert(100%);
                 }
@@ -405,6 +405,42 @@
                 &:last-child {
                     margin: 0;
                 }
+            }
+        }
+    }
+    .svg-nest-buttons {
+        position: absolute;
+        top: 120px;
+        left: 91px;
+        &.previewing {
+            top: 165px;
+        }
+        .svg-nest-button{
+            background: #999;
+            color: white;
+            height: 32px;
+            z-index: 2;
+            border-radius: 20px;
+            float: left;
+            margin-right: 15px;
+            &.active {
+                background: #0099cc;
+            }
+            .text {
+                height: 36px;
+                line-height: 32px;
+                font-size: 9pt;
+                text-align: center;
+                padding: 0px 20px;
+                &.with-img {
+                    padding-left: 35px;
+                }
+            }
+            img {
+                margin: 8px 0px 0px 10px;
+                height: 16px;
+                filter: brightness(0) invert(100%);
+                float: left;
             }
         }
     }

@@ -21,6 +21,7 @@ define([
         activate(endPreviewMode) {
             $(`#${rootId}`).addClass('active');
             $(`#${rootId}`).removeClass('hide');
+            $('.svg-nest-buttons').addClass('previewing');
             const onClick= () => {
                 if(!PreviewModeBackgroundDrawer.isClean()) {
                     PreviewModeBackgroundDrawer.resetCoordinates();
@@ -38,6 +39,7 @@ define([
         }
 
         hide() {
+            $('.svg-nest-buttons').removeClass('previewing');
             $(`#${rootId}`).addClass('hide');
         }
         

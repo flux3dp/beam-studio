@@ -8,6 +8,9 @@ define([
     'jsx!views/beambox/Tool-Panels/OffsetDir',
     'jsx!views/beambox/Tool-Panels/OffsetCorner',
     'jsx!views/beambox/Tool-Panels/OffsetDist',
+    'jsx!views/beambox/Tool-Panels/NestSpacing',
+    'jsx!views/beambox/Tool-Panels/NestGA',
+    'jsx!views/beambox/Tool-Panels/NestRotation',
 ], function(
     PropTypes,
     ClassNames,
@@ -17,7 +20,10 @@ define([
     IntervalPanel,
     OffsetDirPanel,
     OffsetCornerPanel,
-    OffsetDistPanel
+    OffsetDistPanel,
+    NestSpacingPanel,
+    NestGAPanel,
+    NestRotationPanel
 ) {
     const React = require('react');
     const LANG = i18n.lang.beambox.tool_panels;
@@ -30,7 +36,8 @@ define([
     const validPanelsMap = {
         'unknown':  [],
         'gridArray': ['rowColumn', 'distance'],
-        'offset': ['offsetDir', 'offsetCorner', 'offsetDist']
+        'offset': ['offsetDir', 'offsetCorner', 'offsetDist'],
+        'nest': ['nestOffset', 'nestRotation', 'nestGA'],
     };
 
     class ToolPanel extends React.Component {
@@ -45,7 +52,13 @@ define([
             this.offset = {
                 dir: 1, // 1 for outward, 0 for inward
                 distance: 5,
-                cornerType: 'sharp' // 0 for sharp, 1 for round
+                cornerType: 'sharp'
+            };
+            this.nestOptions = {
+                spacing: 0,
+                generations: 3,
+                population: 10,
+                rotations: 1
             }
         }
 
@@ -105,6 +118,21 @@ define([
                     case 'offsetDist':
                         panel = <OffsetDistPanel
                             key={panelName} distance={this.offset.distance} onValueChange={this._setOffsetDist}
+                            />;
+                        break;
+                    case 'nestOffset':
+                        panel = <NestSpacingPanel
+                            key={panelName} spacing={this.nestOptions.spacing} onValueChange={(val) => {this.nestOptions.spacing = val;}}
+                            />;
+                        break;
+                    case 'nestGA':
+                        panel = <NestGAPanel
+                            key={panelName} nestOptions={this.nestOptions} updateNestOptions={(options) => {this.nestOptions = {...this.nestOptions, ...options}}}
+                            />;
+                        break;
+                    case 'nestRotation':
+                        panel = <NestRotationPanel
+                            key={panelName} rotations={this.nestOptions.rotations} onValueChange={(val) => {this.nestOptions.rotations = val;}}
                             />;
                         break;
                     //case 'button':          panel = <div; break;
@@ -167,12 +195,23 @@ define([
                         $('#left-Cursor').addClass('active');
                         svgCanvas.changed = true;
                     }
+                    break;
+                case 'nest':
+                    _onYes = () => {
+                        this.nestOptions.spacing *= 10;//pixel to mm
+                        svgCanvas.nestElements(null, null, this.nestOptions);
+
+                        this.props.unmount();
+                        svgCanvas.setMode('select');
+                        $('.tool-btn').removeClass('active');
+                        $('#left-Cursor').addClass('active');
+                    }
             }
             return (
                 <div className="tool-block">
                         <div className="btn-h-group">
                             <button className="btn btn-default" onClick={_onCancel}>{LANG.cancel}</button>
-                            <button className="btn btn-default" onClick={_onYes.bind(this)}>{LANG.confirm}</button>
+                            <button className="btn btn-default" onClick={() => {_onYes()}}>{LANG.confirm}</button>
                         </div>
                 </div>
             );
@@ -188,38 +227,6 @@ define([
                 let degree = radius * (180 / Math.PI);
                 if (degree < 0) degree += 360;
                 return degree;
-            })();
-
-            const thePoint = (function () {
-                const E = $('#selectorGrip_resize_e').offset();
-                const S = $('#selectorGrip_resize_s').offset();
-                const W = $('#selectorGrip_resize_w').offset();
-                const N = $('#selectorGrip_resize_n').offset();
-                function isAngleIn(a, b) {
-                    return (a <= angle) && (angle < b);
-                }
-                if (isAngleIn(45+3,135+3)) return S;
-                if (isAngleIn(135+3,225+3)) return W;
-                if (isAngleIn(225+3,315+3))return N;
-                return E;
-            })();
-
-            thePoint.top -= 40;
-            thePoint.left += 35;
-
-            // constrain position not exceed window
-            const constrainedPosition = (function(){
-                function _between(input, min, max) {
-                    input = Math.min(input, max);
-                    input = Math.max(input, min);
-                    return input;
-                }
-                const left = _between(thePoint.left, 0, $(window).width()-240);
-                const top = _between(thePoint.top, 100, $('#svg_editor').height()-$('#beamboxObjPanel').height());
-                return {
-                    left: left,
-                    top: top
-                };
             })();
 
             const positionStyle = {

@@ -3276,7 +3276,6 @@ define([
             });
 
             $('#text').bind('keyup input', function (evt) {
-                console.log(!textBeingEntered && evt.type === 'input');
                 if (!textBeingEntered && evt.type === 'input') {
                     evt.preventDefault();
                     // Hack: Windows input event will some how block undo event
@@ -3800,6 +3799,23 @@ define([
                 }
             }
             editor.triggerOffsetTool = triggerOffsetTool;
+
+            let triggerNestTool = function () {
+                if (selectedElement != null || multiselected) {
+                    ToolPanelsController.setVisibility(ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible);
+                    ToolPanelsController.setType('nest');
+                    ToolPanelsController.render();
+                    ObjectPanelsController.setVisibility(false);
+                    ObjectPanelsController.render();
+                } else {
+                    Alert.popUp({
+                        id: 'select first',
+                        message: LANG.popup.select_first,
+                        caption: LANG.tool_panels.nest
+                    });
+                }
+            }
+            editor.triggerNestTool = triggerNestTool;
 
                 // Delete is a contextual tool that only appears in the ribbon if
                 // an element has been selected

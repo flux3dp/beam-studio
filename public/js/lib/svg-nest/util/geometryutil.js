@@ -1879,7 +1879,7 @@
 				rotated.push({x:x1, y:y1});
 			}
 			// reset bounding box
-			var bounds = GeometryUtil.getPolygonBounds(rotated);
+			var bounds = SvgNest.GeometryUtil.getPolygonBounds(rotated);
 			rotated.x = bounds.x;
 			rotated.y = bounds.y;
 			rotated.width = bounds.width;
@@ -1888,4 +1888,4 @@
 			return rotated;
 		}
 	};
-})(typeof window !== 'undefined' ? window : self);
+})(typeof window !== 'undefined' ? window.SvgNest : self);

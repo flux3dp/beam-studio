@@ -34,6 +34,9 @@ requirejs.config({
         contextmenu: 'lib/svgeditor/contextmenu',
         clipper_unminified: 'lib/clipper_unminified',
         svgnest: 'lib/svg-nest/svgnest',
+        svgnestGeoUtil: 'lib/svg-nest/util/geometryutil',
+        svgnestParallel: 'lib/svg-nest/util/parallel',
+        svgnestEval: 'lib/svg-nest/util/eval',
 
         jqueryUi: 'lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min',
         jpicker: 'lib/svgeditor/jgraduate/jpicker',
@@ -135,8 +138,17 @@ requirejs.config({
         svgnest: {
             deps: ['clipper_unminified']
         },
-        jqueryUi: {
+        svgnestGeoUtil: {
             deps: ['svgnest']
+        },
+        svgnestParallel: {
+            deps: ['svgnestGeoUtil']
+        },
+        svgnestEval: {
+            deps: ['svgnestParallel']
+        },
+        jqueryUi: {
+            deps: ['svgnestEval']
         },
         jpicker: {
             deps: ['jqueryUi']

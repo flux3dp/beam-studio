@@ -7,6 +7,7 @@ define([
     'jsx!views/beambox/Network-Testing-Panel',
     'jsx!views/beambox/Photo-Edit-Panel',
     'jsx!views/beambox/Layer-Color-Config',
+    'jsx!views/beambox/Svg-Nest-Buttons',
 ], function (
     Modal,
     Dialog,
@@ -15,20 +16,30 @@ define([
     DocumentPanel,
     NetworkTestingPanel,
     PhotoEditPanel,
-    LayerColorConfigPanel
+    LayerColorConfigPanel,
+    SvgNestButtons
 ) {
     const React = require('react');
     const addDialogComponent = (id, component) => {
         if (!Dialog.DialogContextCaller) {
-            console.log('Alert context not loaded Yet');
+            console.log('Dialog context not loaded Yet');
         } else {
             Dialog.DialogContextCaller.addDialogComponent(id, component);
         }
     };
 
+    const isIdExist = (id) => {
+        if (!Dialog.DialogContextCaller) {
+            console.log('Dialog context not loaded Yet');
+        } else {
+            const isExist = Dialog.DialogContextCaller.isIdExist(id);
+            return isExist;
+        }
+    }
+
     const popDialogById = (id) => {
         if (!Dialog.DialogContextCaller) {
-            console.log('Alert context not loaded Yet');
+            console.log('Dialog context not loaded Yet');
         } else {
             Dialog.DialogContextCaller.popDialogById(id);
         }
@@ -38,6 +49,7 @@ define([
         addDialogComponent,
         popDialogById,
         showCameraCalibration: (device, isBorderless) => {
+            if (isIdExist('camera-cali')) return;
             addDialogComponent('camera-cali',
                 <Modal>
                     <CameraCalibration
@@ -52,6 +64,7 @@ define([
             );
         },
         showDiodeCalibration: (device) => {
+            if (isIdExist('diode-cali')) return;
             addDialogComponent('diode-cali',
                 <Modal>
                     <DiodeCalibration
@@ -65,6 +78,7 @@ define([
             );
         },
         showDocumentSettings: () => {
+            if (isIdExist('docu-setting')) return;
             addDialogComponent('docu-setting',
                 <Modal>
                     <DocumentPanel
@@ -76,6 +90,7 @@ define([
             );
         },
         showNetworkTestingPanel: (ip) => {
+            if (isIdExist('network-test')) return;
             addDialogComponent('network-test',
                 <NetworkTestingPanel
                     ip={ip}
@@ -86,6 +101,7 @@ define([
             );
         },
         showPhotoEditPanel: (mode) => {
+            if (isIdExist('photo-edit')) return;
             const selectedElements = svgCanvas.getSelectedElems();
             let len = selectedElements.length;
             for (let i = 0; i < selectedElements.length; ++i) {
@@ -111,10 +127,21 @@ define([
             );
         },
         showLayerColorConfig: () => {
+            if (isIdExist('layer-color-config')) return;
             addDialogComponent('layer-color-config',
                 <LayerColorConfigPanel
                     onClose={() => {
                         popDialogById('layer-color-config')
+                    }}
+                />
+            );
+        },
+        showSvgNestButtons: () => {
+            if (isIdExist('svg-nest')) return;
+            addDialogComponent('svg-nest',
+                <SvgNestButtons
+                    onClose={() => {
+                        popDialogById('svg-nest')
                     }}
                 />
             );

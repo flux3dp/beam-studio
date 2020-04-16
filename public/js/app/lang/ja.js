@@ -1319,6 +1319,7 @@ define(function() {
                 dx: 'X',
                 dy: 'Y',
                 offset: 'オフセット',
+                nest: 'Arrangement Optimization',
                 _offset: {
                     direction: 'オフセット方向',
                     inward: '内向き',
@@ -1330,6 +1331,14 @@ define(function() {
                     fail_message: 'オブジェクトのオフセットに失敗しました。',
                     not_support_message: 'サポートされていないSVGタグを含む選択された要素：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;\nこれらのオブジェクトはスキップされます。',
                 },
+                _nest: {
+                    start_nest: '整列開始',
+                    stop_nest: '整列停止',
+                    end: 'Close',
+                    spacing: '間隔',
+                    rotations: 'Possible Rotation',
+                    no_element: 'There is no element to arrange.',
+                }
             },
             network_testing_panel: {
                 network_testing: 'ネットワーク試験',

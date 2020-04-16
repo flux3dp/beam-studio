@@ -30,10 +30,11 @@
 			curveTolerance: 0.3, 
 			spacing: 0,
 			rotations: 4,
-			populationSize: 10,
+            populationSize: 10,
+            generations: 1,
 			mutationRate: 10,
-			useHoles: false,
-			exploreConcave: false
+			useHoles: true,
+            exploreConcave: false,
 		};
 		
 		this.working = false;
@@ -88,7 +89,7 @@
 				return config;
 			}
 			
-			if(c.curveTolerance && !GeometryUtil.almostEqual(parseFloat(c.curveTolerance), 0)){
+			if(c.curveTolerance && !this.GeometryUtil.almostEqual(parseFloat(c.curveTolerance), 0)){
 				config.curveTolerance =  parseFloat(c.curveTolerance);
 			}
 			
@@ -98,6 +99,9 @@
 			
 			if(c.rotations && parseInt(c.rotations) > 0){
 				config.rotations = parseInt(c.rotations);
+			}
+			if (c.generations && parseInt(c.generations) > 0) {
+				config.generations = parseInt(c.generations)
 			}
 			
 			if(c.populationSize && parseInt(c.populationSize) > 2){
@@ -116,15 +120,13 @@
 				config.exploreConcave = !!c.exploreConcave;
 			}
 			
-			SvgParser.config({ tolerance: config.curveTolerance});
-			
 			best = null;
 			nfpCache = {};
 			binPolygon = null;
 			GA = null;
 						
 			return config;
-		}
+        }
 		
 		// progressCallback is called when progress is made
 		// displayCallback is called when a new placement has been made
@@ -142,10 +144,10 @@
 			}
 			
 			// build tree without bin
-			tree = this.getParts(parts.slice(0));
-			
-			offsetTree(tree, 0.5*config.spacing, this.polygonOffset.bind(this));
+            tree = this.getParts(parts.slice(0));
 
+            offsetTree(tree, 0.5*config.spacing, this.polygonOffset.bind(this));
+            
 			// offset tree recursively
 			function offsetTree(t, offset, offsetFunction){
 				for(var i=0; i<t.length; i++){
@@ -159,14 +161,14 @@
 						offsetTree(t[i].childNodes, -offset, offsetFunction);
 					}
 				}
-			}
-			
+            }
+
 			binPolygon = SvgParser.polygonify(bin);
 			binPolygon = this.cleanPolygon(binPolygon);
 						
 			if(!binPolygon || binPolygon.length < 3){
 				return false;
-			}
+            }
 			
 			binBounds = GeometryUtil.getPolygonBounds(binPolygon);
 						
@@ -177,7 +179,7 @@
 					binPolygon = offsetBin.pop();
 				}
 			}
-						
+
 			binPolygon.id = -1;
 			
 			// put bin on origin
@@ -238,6 +240,444 @@
 				
 				progressCallback(progress);
 			}, 100);
+        }
+        
+        // ====== Custom Functions for Beam Studio ======
+        this.nestElements = (containerPolygon, elementsPolygons, progressCallback, displayCallback, completeCallback) => {
+			this.onStop = completeCallback;
+            // Offset children, using clipper
+            offsetTree(elementsPolygons, 0.5*config.spacing, this.polygonOffset.bind(this));
+            // offset tree recursively
+            function offsetTree(t, offset, offsetFunction){
+                for(var i=0; i<t.length; i++){
+					var offsetpaths = offsetFunction(t[i], offset);
+                    if(offsetpaths.length == 1){
+						// replace array items in place
+						offsetpaths.id = t[i].id;
+						offsetpaths.source = t[i].source;
+                        Array.prototype.splice.apply(t[i], [0, t[i].length].concat(offsetpaths[0]));
+                    }
+                    if(t[i].childNodes && t[i].childNodes.length > 0){
+                        offsetTree(t[i].childNodes, -offset, offsetFunction);
+                    }
+				}
+			}
+			
+            containerPolygon = this.cleanPolygon(containerPolygon);
+            if(!containerPolygon || containerPolygon.length < 3){
+                return false;
+            }
+
+            // binBounds = GeometryUtil.getPolygonBounds(containerPolygon);
+
+            if(config.spacing > 0){
+                var offsetBin = this.polygonOffset(containerPolygon, -0.5*config.spacing);
+				console.log(offsetBin[0]);
+                if(offsetBin.length == 1){
+                    // if the offset contains 0 or more than 1 path, something went wrong.
+                    containerPolygon = offsetBin.pop();
+                }
+			}
+			console.log(containerPolygon);
+
+            // put bin on origin
+            let xbinmax = containerPolygon[0].x;
+            let xbinmin = containerPolygon[0].x;
+            let ybinmax = containerPolygon[0].y;
+            let ybinmin = containerPolygon[0].y;
+
+            for(let i=1; i<containerPolygon.length; i++){
+            	if(containerPolygon[i].x > xbinmax){
+            		xbinmax = containerPolygon[i].x;
+            	}
+            	else if(containerPolygon[i].x < xbinmin){
+            		xbinmin = containerPolygon[i].x;
+            	}
+            	if(containerPolygon[i].y > ybinmax){
+            		ybinmax = containerPolygon[i].y;
+            	}
+            	else if(containerPolygon[i].y < ybinmin){
+            		ybinmin = containerPolygon[i].y;
+            	}
+            }
+
+            containerPolygon.width = xbinmax-xbinmin;
+            containerPolygon.height = ybinmax-ybinmin;
+
+            // all paths need to have the same winding direction
+            if(this.GeometryUtil.polygonArea(containerPolygon) > 0){
+            	containerPolygon.reverse();
+            }
+
+            // remove duplicate endpoints, ensure counterclockwise winding direction
+            for(let i=0; i<elementsPolygons.length; i++){
+                const start = elementsPolygons[i][0];
+                const end = elementsPolygons[i][elementsPolygons[i].length-1];
+                if(start == end || (this.GeometryUtil.almostEqual(start.x,end.x) && this.GeometryUtil.almostEqual(start.y,end.y))){
+                    elementsPolygons[i].pop();
+                }
+
+                if(this.GeometryUtil.polygonArea(elementsPolygons[i]) > 0){
+                    elementsPolygons[i].reverse();
+                }
+			}
+
+            elementsPolygons = elementsPolygons.map(p => {
+                return toNestCoordinates(p, 1);
+			});
+			console.log(elementsPolygons);
+            console.log(config);
+
+            var self = this;
+            this.working = false;
+			this.currentGen = 0;
+			this.finished = 0;
+			this.elementsPolygons = elementsPolygons;
+			GA = null;
+			nfpCache = {};
+			best = null;
+
+            workerTimer = setInterval(function(){
+                if(!self.working){
+					self.launchNestWorkers.call(self, elementsPolygons, containerPolygon, config, progressCallback, displayCallback);
+					self.working = true;
+                }
+            }, 100);
+        }
+
+        // ====== Custom function from launchWorkers
+        this.launchNestWorkers = function(elementsPolygons, containerPolygon, config, progressCallback, displayCallback){
+			var i,j;
+			if(GA === null){
+				// initiate new GA
+				var adam = elementsPolygons.slice(0);
+
+				// seed with decreasing area
+				adam.sort(function(a, b){
+					return Math.abs(window.SvgNest.GeometryUtil.polygonArea(b)) - Math.abs(window.SvgNest.GeometryUtil.polygonArea(a));
+				});
+				
+				GA = new GeneticAlgorithm(adam, containerPolygon, config);
+				// 829
+			}
+			// Generate array of population w/ size = population, randomly rotated, mutate => excahnge 
+			
+			var individual = null;
+			
+			// evaluate all members of the population
+			for(i=0; i<GA.population.length; i++){
+				if(!GA.population[i].fitness){
+					individual = GA.population[i];
+					break;
+				}
+			}
+			if(individual === null){
+				// all individuals have been evaluated, start next generation
+				GA.generation();
+                individual = GA.population[1];
+				this.currentGen += 1;
+				console.log('Gen', this.currentGen, 'End');
+            }
+			
+			var placelist = individual.placement;
+			var rotations = individual.rotation;
+			
+			var ids = [];
+			for(i=0; i<placelist.length; i++){
+				ids.push(placelist[i].id);
+				placelist[i].rotation = rotations[i];
+			}
+			
+			var nfpPairs = [];
+			var key;
+            var newCache = {};
+			
+			for(i=0; i<placelist.length; i++){
+                var part = placelist[i];
+				key = {A: containerPolygon.id || -1, B: part.id, inside: true, Arotation: 0, Brotation: rotations[i]};
+				if(!nfpCache[JSON.stringify(key)]){
+					nfpPairs.push({A: containerPolygon, B: part, key: key});
+				}
+				else{
+					newCache[JSON.stringify(key)] = nfpCache[JSON.stringify(key)]
+				}
+				for(j=0; j<i; j++){
+					var placed = placelist[j];
+					key = {A: placed.id, B: part.id, inside: false, Arotation: rotations[j], Brotation: rotations[i]};
+					if(!nfpCache[JSON.stringify(key)]){
+						nfpPairs.push({A: placed, B: part, key: key});
+					}
+					else{
+						newCache[JSON.stringify(key)] = nfpCache[JSON.stringify(key)]
+					}
+				}
+            }
+			
+			// only keep cache for one cycle
+            nfpCache = newCache;
+			
+			var worker = new PlacementWorker(containerPolygon, placelist.slice(0), ids, rotations, config, nfpCache);
+			
+			var p = new SvgNestParallel(nfpPairs, {
+				env: {
+					containerPolygon: containerPolygon,
+					searchEdges: config.exploreConcave,
+					useHoles: config.useHoles
+				},
+				evalPath: 'js/lib/svg-nest/util/eval.js'
+			});
+			
+			p.require('matrix.js');
+			p.require('geometryutil.js');
+			p.require('placementworker.js');
+			p.require('clipper.js');
+			
+			var self = this;
+			var spawncount = 0;
+			p._spawnMapWorker = function (i, cb, done, env, wrk){
+				// hijack the worker call to check progress
+				progress = spawncount++/nfpPairs.length;
+				return SvgNestParallel.prototype._spawnMapWorker.call(p, i, cb, done, env, wrk);
+			}
+			
+			p.map(function(pair){
+				if(!pair || pair.length == 0){
+					return null;
+				};
+				var searchEdges = global.env.searchEdges;
+                var useHoles = global.env.useHoles;
+
+				var A = rotatePolygon(pair.A, pair.key.Arotation);
+                var B = rotatePolygon(pair.B, pair.key.Brotation);
+                var nfp;
+				
+				if(pair.key.inside){
+					if(GeometryUtil.isRectangle(A, 0.001)){
+                        nfp = GeometryUtil.noFitPolygonRectangle(A,B);
+					}
+					else{
+						nfp = GeometryUtil.noFitPolygon(A,B,true,searchEdges);
+					}
+					
+					// ensure all interior NFPs have the same winding direction
+					if(nfp && nfp.length > 0){
+						for(var i=0; i<nfp.length; i++){
+							if(GeometryUtil.polygonArea(nfp[i]) > 0){
+								nfp[i].reverse();
+							}
+						}
+					}
+					else{
+						// warning on null inner NFP
+						// this is not an error, as the part may simply be larger than the bin or otherwise unplaceable due to geometry
+						log('NFP Warning: ', pair.key);
+					}
+				}
+				else{
+					if(searchEdges){
+						nfp = GeometryUtil.noFitPolygon(A,B,false,searchEdges);
+					}
+					else{
+						nfp = minkowskiDifference(A,B);
+					}
+					// sanity check
+					if(!nfp || nfp.length == 0){
+						log('NFP Error: ', pair.key);
+						log('A: ',JSON.stringify(A));
+						log('B: ',JSON.stringify(B));
+						return null;
+					}
+					
+					for(var i=0; i<nfp.length; i++){
+						if(!searchEdges || i==0){ // if searchedges is active, only the first NFP is guaranteed to pass sanity check
+							if(Math.abs(GeometryUtil.polygonArea(nfp[i])) < Math.abs(GeometryUtil.polygonArea(A))){
+								log('NFP Area Error: ', Math.abs(GeometryUtil.polygonArea(nfp[i])), pair.key);
+								log('NFP:', JSON.stringify(nfp[i]));
+								log('A: ',JSON.stringify(A));
+								log('B: ',JSON.stringify(B));
+								nfp.splice(i,1);
+								return null;
+							}
+						}
+					}
+					
+					if(nfp.length == 0){
+						return null;
+					}
+					
+					// for outer NFPs, the first is guaranteed to be the largest. Any subsequent NFPs that lie inside the first are holes
+					for(var i=0; i<nfp.length; i++){
+						if(GeometryUtil.polygonArea(nfp[i]) > 0){
+							nfp[i].reverse();
+						}
+						
+						if(i > 0){
+							if(GeometryUtil.pointInPolygon(nfp[i][0], nfp[0])){
+								if(GeometryUtil.polygonArea(nfp[i]) < 0){
+									nfp[i].reverse();
+								}
+							}
+						}
+					}
+					
+					// generate nfps for children (holes of parts) if any exist
+					if(useHoles && A.childNodes && A.childNodes.length > 0){
+						var Bbounds = GeometryUtil.getPolygonBounds(B);
+						
+						for(var i=0; i<A.childNodes.length; i++){
+							var Abounds = GeometryUtil.getPolygonBounds(A.childNodes[i]);
+
+							// no need to find nfp if B's bounding box is too big
+							if(Abounds.width > Bbounds.width && Abounds.height > Bbounds.height){
+							
+								var cnfp = GeometryUtil.noFitPolygon(A.childNodes[i],B,true,searchEdges);
+								// ensure all interior NFPs have the same winding direction
+								if(cnfp && cnfp.length > 0){
+									for(var j=0; j<cnfp.length; j++){
+										if(GeometryUtil.polygonArea(cnfp[j]) < 0){
+											cnfp[j].reverse();
+										}
+										nfp.push(cnfp[j]);
+									}
+								}
+							
+							}
+						}
+					}
+				}
+				
+				function log(){
+					if(typeof console !== "undefined") {
+						console.log.apply(console,arguments);
+					}
+				}
+				
+				function toClipperCoordinates(polygon){
+					var clone = [];
+					for(var i=0; i<polygon.length; i++){
+						clone.push({
+							X: polygon[i].x,
+							Y: polygon[i].y
+						});
+					}
+	
+					return clone;
+				};
+				
+				function toNestCoordinates(polygon, scale){
+					var clone = [];
+					for(var i=0; i<polygon.length; i++){
+						clone.push({
+							x: polygon[i].X !== undefined ? polygon[i].X/scale : polygon[i].x/scale,
+							y: polygon[i].Y !== undefined ? polygon[i].Y/scale : polygon[i].y/scale
+                        });
+					}
+	
+					return clone;
+				};
+				
+				function minkowskiDifference(A, B){
+					var Ac = toClipperCoordinates(A);
+					ClipperLib.JS.ScaleUpPath(Ac, 10000000);
+					var Bc = toClipperCoordinates(B);
+					ClipperLib.JS.ScaleUpPath(Bc, 10000000);
+					for(var i=0; i<Bc.length; i++){
+						Bc[i].X *= -1;
+						Bc[i].Y *= -1;
+					}
+					var solution = ClipperLib.Clipper.MinkowskiSum(Ac, Bc, true);
+					var clipperNfp;
+		
+					var largestArea = null;
+					for(i=0; i<solution.length; i++){
+						var n = toNestCoordinates(solution[i], 10000000);
+						var sarea = GeometryUtil.polygonArea(n);
+						if(largestArea === null || largestArea > sarea){
+							clipperNfp = n;
+							largestArea = sarea;
+						}
+					}
+		
+					for(var i=0; i<clipperNfp.length; i++){
+						clipperNfp[i].x += B[0].x;
+						clipperNfp[i].y += B[0].y;
+					}
+		
+					return [clipperNfp];
+				}
+                // Gererate NFP
+				return {key: pair.key, value: nfp};
+			}).then(function(generatedNfp){
+				if(generatedNfp){
+					for(var i=0; i<generatedNfp.length; i++){
+						var Nfp = generatedNfp[i];
+												
+						if(Nfp){
+							// a null nfp means the nfp could not be generated, either because the parts simply don't fit or an error in the nfp algo
+							var key = JSON.stringify(Nfp.key);
+							nfpCache[key] = Nfp.value;
+						}
+					}
+				}
+				worker.nfpCache = nfpCache;
+				
+				// can't use .spawn because our data is an array
+				var p2 = new SvgNestParallel([placelist.slice(0)], {
+					env: {
+						self: worker
+					},
+					evalPath: 'js/lib/svg-nest/util/eval.js'
+				});
+				
+				p2.require('json.js');
+				p2.require('clipper.js');
+				p2.require('matrix.js');
+				p2.require('geometryutil.js');
+				p2.require('placementworker.js');
+				p2.map(worker.placePaths).then(function(placements){
+					self.finished += 1;
+					if(!placements || placements.length == 0){
+						return;
+                    }
+					
+					individual.fitness = placements[0].fitness;
+					var bestresult = placements[0];
+					
+					for(var i=1; i<placements.length; i++){
+						if(placements[i].fitness < bestresult.fitness){
+							bestresult = placements[i];
+						}
+                    }
+					
+					if(!best || bestresult.fitness < best.fitness){
+						best = bestresult;
+						console.log('fitness', best.fitness);
+						
+						var placedArea = 0;
+						var totalArea = 0;
+						var numParts = placelist.length;
+                        var numPlacedParts = 0;
+						for(i=0; i<best.placements.length; i++){
+							totalArea += Math.abs(window.SvgNest.GeometryUtil.polygonArea(containerPolygon));
+							for(var j=0; j<best.placements[i].length; j++){
+								placedArea += Math.abs(window.SvgNest.GeometryUtil.polygonArea(elementsPolygons[best.placements[i][j].id]));
+								numPlacedParts++;
+							}
+						}
+						self.bestResult = bestresult;
+                        self.applyPlacement(best.placements, elementsPolygons)
+						// displayCallback(self.applyPlacement(best.placements, elementsPolygons), placedArea/totalArea, numPlacedParts, numParts);
+					}
+					else{
+						// displayCallback();
+					}
+					self.working = false;
+				}, function (err) {
+					console.log(err);
+				});
+			}, function (err) {
+				console.log(err);
+			});
 		}
 		
 		this.launchWorkers = function(tree, binPolygon, config, progressCallback, displayCallback){
@@ -265,6 +705,7 @@
 			if(GA === null){
 				// initiate new GA
 				var adam = tree.slice(0);
+				console.log(adam)
 
 				// seed with decreasing area
 				adam.sort(function(a, b){
@@ -273,8 +714,10 @@
 				
 				GA = new GeneticAlgorithm(adam, binPolygon, config);
 			}
+			// Generate array of population w/ size = population, randomly rotated, mutate => excahnge 
 			
 			var individual = null;
+			console.log(GA);
 			
 			// evaluate all members of the population
 			for(i=0; i<GA.population.length; i++){
@@ -283,7 +726,6 @@
 					break;
 				}
 			}
-			
 			if(individual === null){
 				// all individuals have been evaluated, start next generation
 				GA.generation();
@@ -517,7 +959,7 @@
 		
 					return [clipperNfp];
 				}
-				
+				// Gererate NFP
 				return {key: pair.key, value: nfp};
 			}).then(function(generatedNfp){
 				if(generatedNfp){
@@ -670,12 +1112,11 @@
 		// use the clipper library to return an offset to the given polygon. Positive offset expands the polygon, negative contracts
 		// note that this returns an array of polygons
 		this.polygonOffset = function(polygon, offset){
-			if(!offset || offset == 0 || GeometryUtil.almostEqual(offset, 0)){
+			if(!offset || offset == 0 || this.GeometryUtil.almostEqual(offset, 0)){
 				return polygon;
 			}
 			
 			var p = this.svgToClipper(polygon);
-			
 			var miterLimit = 2;
 			var co = new ClipperLib.ClipperOffset(miterLimit, config.curveTolerance*config.clipperScale);
 			co.AddPath(p, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedPolygon);
@@ -687,7 +1128,6 @@
 			for(var i=0; i<newpaths.length; i++){
 				result.push(this.clipperToSvg(newpaths[i]));
 			}
-			
 			return result;
 		};
 		
@@ -725,9 +1165,8 @@
 		this.svgToClipper = function(polygon){
 			var clip = [];
 			for(var i=0; i<polygon.length; i++){
-				clip.push({X: polygon[i].x, Y: polygon[i].y});
+				clip.push({X: polygon[i].x !== undefined ? polygon[i].x : polygon[i].X, Y: polygon[i].y !== undefined ? polygon[i].y : polygon[i].Y});
 			}
-			
 			ClipperLib.JS.ScaleUpPath(clip, config.clipperScale);
 			
 			return clip;
@@ -744,83 +1183,61 @@
 		}
 		
 		// returns an array of SVG elements that represent the placement, for export or rendering
-		this.applyPlacement = function(placement){
-			var i, j, k;
-			var clone = [];
-			for(i=0; i<parts.length; i++){
-				clone.push(parts[i].cloneNode(false));
-			}
-			
-			var svglist = [];
-
-			for(i=0; i<placement.length; i++){
-				var newsvg = svg.cloneNode(false);
-				newsvg.setAttribute('viewBox', '0 0 '+binBounds.width+' '+binBounds.height);
-				newsvg.setAttribute('width',binBounds.width + 'px');
-				newsvg.setAttribute('height',binBounds.height + 'px');
-				var binclone = bin.cloneNode(false);
-				
-				binclone.setAttribute('class','bin');
-				binclone.setAttribute('transform','translate('+(-binBounds.x)+' '+(-binBounds.y)+')');
-				newsvg.appendChild(binclone);
-
-				for(j=0; j<placement[i].length; j++){
-					var p = placement[i][j];
-					var part = tree[p.id];
-					
-					// the original path could have transforms and stuff on it, so apply our transforms on a group
-					var partgroup = document.createElementNS(svg.namespaceURI, 'g');
-					partgroup.setAttribute('transform','translate('+p.x+' '+p.y+') rotate('+p.rotation+')');
-					partgroup.appendChild(clone[part.source]);
-					
-					if(part.children && part.children.length > 0){
-						var flattened = _flattenTree(part.children, true);
-						for(k=0; k<flattened.length; k++){
-							
-							var c = clone[flattened[k].source];
-							// add class to indicate hole
-							if(flattened[k].hole && (!c.getAttribute('class') || c.getAttribute('class').indexOf('hole') < 0)){
-								c.setAttribute('class',c.getAttribute('class')+' hole');
-							}
-							partgroup.appendChild(c);
-						}
+		this.applyPlacement = function(placement, elementsPolygons){
+            console.log(placement, elementsPolygons);
+            for (let i = 0; i < placement.length; i++) {
+                for (let j = 0; j < placement[i].length; j++) {
+                    let p = placement[i][j]
+                    const elementData = elementsPolygons[p.id];
+                    //console.log(elementData);
+                    const elemId = elementData.source;
+                    const elem = $(`#${elemId}`)[0];
+                    let bbox;
+                    if (elem.tagName === 'use') {
+                        bbox = svgCanvas.getSvgRealLocation(elem);
+                    } else {
+                        bbox = svgCanvas.calculateTransformedBBox(elem);
+                    }
+                    let [dx, dy] = [0, 0];
+					let tempMove = elementData.tempMove || {x: 0, y: 0, angle: 0};
+					//console.log(tempMove);
+                    let center = tempMove.origCenter || {x: bbox.x + bbox.width /2, y: bbox.y + bbox.height/2};
+					//console.log(center);
+                    if (p.rotation !== 0 || (tempMove && tempMove.angle !== 0)) {
+                        const angle = svgedit.utilities.getRotationAngle(elem) - tempMove.angle;
+                        const new_angle = (angle + p.rotation) % 360 ;
+                        svgCanvas.setRotationAngle(new_angle, true, elem);
+                        const rad = p.rotation / 180 * Math.PI;
+                        dx = center.x * Math.cos(rad) - center.y * Math.sin(rad) - center.x;
+                        dy = center.x * Math.sin(rad) + center.y * Math.cos(rad) - center.y;
 					}
-					
-					newsvg.appendChild(partgroup);
-				}
-				
-				svglist.push(newsvg);
-			}
-			
-			// flatten the given tree into a list
-			function _flattenTree(t, hole){
-				var flat = [];
-				for(var i=0; i<t.length; i++){
-					flat.push(t[i]);
-					t[i].hole = hole;
-					if(t[i].children && t[i].children.length > 0){
-						flat = flat.concat(_flattenTree(t[i].children, !hole));
-					}
-				}
-				
-				return flat;
-			}
-			
-			return svglist;
+					//console.log('x', p.x, dx, tempMove.x)
+					//console.log('y', p.y, dy, tempMove.y)
+                    svgCanvas.moveElements([p.x + dx - tempMove.x], [p.y + dy - tempMove.y], [elem], false);
+                    tempMove = {
+                        x: p.x + dx,//relevant to original center
+                        y: p.y + dy,
+                        angle: p.rotation,
+                        origCenter: center
+                    };
+                    elementData.tempMove = tempMove;
+                }
+            }
 		}
 		
-		this.stop = function(){
+		this.stop = () => {
+			console.log('Stop');
 			this.working = false;
 			if(workerTimer){
 				clearInterval(workerTimer);
 			}
-		};
+        };
 	}
 	
 	function GeneticAlgorithm(adam, bin, config){
 	
-		this.config = config || { populationSize: 10, mutationRate: 10, rotations: 4 };
-		this.binBounds = GeometryUtil.getPolygonBounds(bin);
+        this.config = config || { populationSize: 10, mutationRate: 10, rotations: 4 };
+		this.binBounds = window.SvgNest.GeometryUtil.getPolygonBounds(bin);
 		
 		// population is an array of individuals. Each individual is a object representing the order of insertion and the angle each part is rotated
 		var angles = [];
@@ -828,8 +1245,8 @@
 			angles.push(this.randomAngle(adam[i]));
 		}
 		
-		this.population = [{placement: adam, rotation: angles}];
-		
+        this.population = [{placement: adam, rotation: angles}];
+
 		while(this.population.length < config.populationSize){
 			var mutant = this.mutate(this.population[0]);
 			this.population.push(mutant);
@@ -857,7 +1274,7 @@
 		angleList = shuffleArray(angleList);
 
 		for(i=0; i<angleList.length; i++){
-			var rotatedPart = GeometryUtil.rotatePolygon(part, angleList[i]);
+			var rotatedPart = window.SvgNest.GeometryUtil.rotatePolygon(part, angleList[i]);
 			
 			// don't use obviously bad angles where the part doesn't fit in the bin
 			if(rotatedPart.width < this.binBounds.width && rotatedPart.height < this.binBounds.height){
@@ -870,6 +1287,7 @@
 	
 	// returns a mutated individual with the given mutation rate
 	GeneticAlgorithm.prototype.mutate = function(individual){
+		//Shallow Copy
 		var clone = {placement: individual.placement.slice(0), rotation: individual.rotation.slice(0)};
 		for(var i=0; i<clone.placement.length; i++){
 			var rand = Math.random();
@@ -983,6 +1401,303 @@
 		}
 		
 		return pop[0];
-	}
-	
+    }
+    // ====== From util/placementworker.js ======
+    // jsClipper uses X/Y instead of x/y...
+    function toClipperCoordinates(polygon){
+        var clone = [];
+        for(var i=0; i<polygon.length; i++){
+            clone.push({
+                X: polygon[i].x,
+                Y: polygon[i].y
+            });
+        }
+        clone.source = polygon.source;
+        clone.id = polygon.id;
+        
+        return clone;
+    };
+
+    function toNestCoordinates(polygon, scale){
+        var clone = [];
+        for(var i=0; i<polygon.length; i++){
+            clone.push({
+                x: polygon[i].X !== undefined ? polygon[i].X/scale : polygon[i].x/scale,
+				y: polygon[i].Y !== undefined ? polygon[i].Y/scale : polygon[i].y/scale
+            });
+        }
+        clone.source = polygon.source;
+        clone.id = polygon.id;
+        
+        return clone;
+    };
+
+    function rotatePolygon(polygon, degrees){
+        var rotated = [];
+        var angle = degrees * Math.PI / 180;
+        for(var i=0; i<polygon.length; i++){
+            var x = polygon[i].x;
+            var y = polygon[i].y;
+            var x1 = x*Math.cos(angle)-y*Math.sin(angle);
+            var y1 = x*Math.sin(angle)+y*Math.cos(angle);
+                            
+            rotated.push({x:x1, y:y1});
+        }
+        
+        if(polygon.children && polygon.children.length > 0){
+            rotated.children = [];
+            for(var j=0; j<polygon.children.length; j++){
+                rotated.children.push(rotatePolygon(polygon.children[j], degrees));
+            }
+        }
+        
+        return rotated;
+    };
+
+    function PlacementWorker(binPolygon, paths, ids, rotations, config, nfpCache){
+        this.binPolygon = binPolygon;
+        this.paths = paths;
+        this.ids = ids;
+        this.rotations = rotations;
+        this.config = config;
+        this.nfpCache = nfpCache || {};
+        
+        // return a placement for the paths/rotations given
+        // happens inside a webworker
+        this.placePaths = function(paths){
+            var self = global.env.self;
+
+            if(!self.binPolygon){
+                return null;
+            }		
+            
+            var i, j, k, m, n, path;
+            
+            // rotate paths by given rotation
+            var rotated = [];
+            for(i=0; i<paths.length; i++){
+                var r = rotatePolygon(paths[i], paths[i].rotation);
+                r.rotation = paths[i].rotation;
+                r.source = paths[i].source;
+                r.id = paths[i].id;
+                rotated.push(r);
+            }
+            
+            paths = rotated;
+            
+            var allplacements = [];
+            var fitness = 0;
+            var binarea = Math.abs(GeometryUtil.polygonArea(self.binPolygon));
+            var key, nfp;
+            
+            while(paths.length > 0){
+                
+                var placed = [];
+                var placements = [];
+                fitness += 1; // add 1 for each new bin opened (lower fitness is better)
+
+                for(i=0; i<paths.length; i++){
+                    path = paths[i];
+                    
+                    // inner NFP
+                    key = JSON.stringify({A:-1,B:path.id,inside:true,Arotation:0,Brotation:path.rotation});
+                    var binNfp = self.nfpCache[key];
+                    
+                    // part unplaceable, skip
+                    if(!binNfp || binNfp.length == 0){
+                        continue;
+                    }
+                    
+                    // ensure all necessary NFPs exist
+                    var error = false;
+                    for(j=0; j<placed.length; j++){			
+                        key = JSON.stringify({A:placed[j].id,B:path.id,inside:false,Arotation:placed[j].rotation,Brotation:path.rotation});
+						nfp = self.nfpCache[key];
+                                            
+                        if(!nfp){
+                            error = true;
+                            break;
+                        }	
+                    }
+                    
+                    // part unplaceable, skip
+                    if(error){
+                        continue;
+                    }
+                    
+                    var position = null;
+                    if(placed.length == 0){
+                        // first placement, put it on the left
+                        for(j=0; j<binNfp.length; j++){
+                            for(k=0; k<binNfp[j].length; k++){
+                                if(position === null || binNfp[j][k].x-path[0].x < position.x ){
+                                    position = {
+                                        x: binNfp[j][k].x-path[0].x,
+                                        y: binNfp[j][k].y-path[0].y,
+                                        id: path.id,
+                                        rotation: path.rotation
+                                    }
+                                }
+                            }
+                        }
+                        
+                        placements.push(position);
+                        placed.push(path);
+                        
+                        continue;
+                    }
+                    
+                    var clipperBinNfp = [];
+                    for(j=0; j<binNfp.length; j++){
+                        clipperBinNfp.push(toClipperCoordinates(binNfp[j]));
+                    }
+                    
+                    ClipperLib.JS.ScaleUpPaths(clipperBinNfp, self.config.clipperScale);
+                    
+                    var clipper = new ClipperLib.Clipper();
+                    var combinedNfp = new ClipperLib.Paths();
+                    
+                    
+                    for(j=0; j<placed.length; j++){			
+                        key = JSON.stringify({A:placed[j].id,B:path.id,inside:false,Arotation:placed[j].rotation,Brotation:path.rotation});
+                        nfp = self.nfpCache[key];
+                                            
+                        if(!nfp){
+                            continue;
+                        }
+                        
+                        for(k=0; k<nfp.length; k++){
+                            var clone = toClipperCoordinates(nfp[k]);
+                            for(m=0; m<clone.length; m++){
+                                clone[m].X += placements[j].x;
+                                clone[m].Y += placements[j].y;
+                            }
+                            
+                            ClipperLib.JS.ScaleUpPath(clone, self.config.clipperScale);
+                            clone = ClipperLib.Clipper.CleanPolygon(clone, 0.0001*self.config.clipperScale);
+                            var area = Math.abs(ClipperLib.Clipper.Area(clone));
+                            if(clone.length > 2 && area > 0.1*self.config.clipperScale*self.config.clipperScale){
+                                clipper.AddPath(clone, ClipperLib.PolyType.ptSubject, true);
+                            }
+                        }		
+                    }
+                    
+                    if(!clipper.Execute(ClipperLib.ClipType.ctUnion, combinedNfp, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero)){
+                        continue;
+                    }
+                    
+                    // difference with bin polygon
+                    var finalNfp = new ClipperLib.Paths();
+                    clipper = new ClipperLib.Clipper();
+                    
+                    clipper.AddPaths(combinedNfp, ClipperLib.PolyType.ptClip, true);
+                    clipper.AddPaths(clipperBinNfp, ClipperLib.PolyType.ptSubject, true);
+                    if(!clipper.Execute(ClipperLib.ClipType.ctDifference, finalNfp, ClipperLib.PolyFillType.pftNonZero, ClipperLib.PolyFillType.pftNonZero)){
+                        continue;
+                    }
+                    
+                    finalNfp = ClipperLib.Clipper.CleanPolygons(finalNfp, 0.0001*self.config.clipperScale);
+                    
+                    for(j=0; j<finalNfp.length; j++){
+                        var area = Math.abs(ClipperLib.Clipper.Area(finalNfp[j]));
+                        if(finalNfp[j].length < 3 || area < 0.1*self.config.clipperScale*self.config.clipperScale){
+                            finalNfp.splice(j,1);
+                            j--;
+                        }
+                    }
+                    
+                    if(!finalNfp || finalNfp.length == 0){
+                        continue;
+                    }
+                    
+                    var f = [];
+                    for(j=0; j<finalNfp.length; j++){
+                        // back to normal scale
+                        f.push(toNestCoordinates(finalNfp[j], self.config.clipperScale));
+                    }
+                    finalNfp = f;
+                    
+                    // choose placement that results in the smallest bounding box
+                    // could use convex hull instead, but it can create oddly shaped nests (triangles or long slivers) which are not optimal for real-world use
+                    // todo: generalize gravity direction
+                    var minwidth = null;
+                    var minarea = null;
+                    var minx = null;
+                    var nf, area, shiftvector;
+
+                    for(j=0; j<finalNfp.length; j++){
+                        nf = finalNfp[j];
+                        if(Math.abs(GeometryUtil.polygonArea(nf)) < 2){
+                            continue;
+                        }
+                        
+                        for(k=0; k<nf.length; k++){
+                            var allpoints = [];
+                            for(m=0; m<placed.length; m++){
+                                for(n=0; n<placed[m].length; n++){
+                                    allpoints.push({x:placed[m][n].x+placements[m].x, y: placed[m][n].y+placements[m].y});
+                                }
+                            }
+                            
+                            shiftvector = {
+                                x: nf[k].x-path[0].x,
+                                y: nf[k].y-path[0].y,
+                                id: path.id,
+                                rotation: path.rotation,
+                                nfp: combinedNfp
+                            };
+                            
+                            for(m=0; m<path.length; m++){
+                                allpoints.push({x: path[m].x+shiftvector.x, y:path[m].y+shiftvector.y});
+                            }
+                            
+                            var rectbounds = GeometryUtil.getPolygonBounds(allpoints);
+                            
+                            // weigh width more, to help compress in direction of gravity
+                            area = rectbounds.width*2 + rectbounds.height;
+                            
+                            if(minarea === null || area < minarea || (GeometryUtil.almostEqual(minarea, area) && (minx === null || shiftvector.x < minx))){
+                                minarea = area;
+                                minwidth = rectbounds.width;
+                                position = shiftvector;
+                                minx = shiftvector.x;
+                            }
+                        }
+                    }
+                    if(position){
+                        placed.push(path);
+                        placements.push(position);
+                    }
+                }
+                
+                if(minwidth){
+                    fitness += minwidth/binarea;
+                }
+                
+                for(i=0; i<placed.length; i++){
+                    var index = paths.indexOf(placed[i]);
+                    if(index >= 0){
+                        paths.splice(index,1);
+                    }
+                }
+                
+                if(placements && placements.length > 0){
+                    allplacements.push(placements);
+                }
+                else{
+                    break; // something went wrong
+                }
+            }
+            
+            // there were parts that couldn't be placed
+            fitness += 2*paths.length;
+            
+            return {placements: allplacements, fitness: fitness, paths: paths, area: binarea };
+        };
+    }
+    // clipperjs uses alerts for warnings
+    function alert(message) { 
+        console.log('alert: ', message);
+    }
+
 })(window);

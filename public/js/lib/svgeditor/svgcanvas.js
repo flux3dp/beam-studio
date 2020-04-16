@@ -945,8 +945,10 @@ define([
             //			pathActions.setPointContainerTransform(elem.getAttribute('transform'));
             //		}
             var selector = selectorManager.requestSelector(selectedElements[0]);
-            selector.resize();
-            selector.updateGripCursors(val);
+            if (selector) {
+                selector.resize();
+                selector.updateGripCursors(val);
+            }
         };
 
         // Function: recalculateAllSelectedDimensions
@@ -1158,6 +1160,10 @@ define([
                     return;
                 } else {
                     selectOnly(elemsToAdd);
+                    if (elemsToAdd.length > 1) {
+                        svgCanvas.tempGroupSelectedElements();
+                        window.updateContextPanel();
+                    }
                 }
             }
         };

@@ -75,6 +75,7 @@ define([
                 'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
                 'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
                 'DECOMPOSE_PATH': () => svgCanvas.decomposePath(),
+                'SVG_NEST': () => DialogCaller.showSvgNestButtons(),
                 'LAYER_COLOR_CONFIG': () => DialogCaller.showLayerColorConfig(),
                 'DOCUMENT_SETTING': () => DialogCaller.showDocumentSettings(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},

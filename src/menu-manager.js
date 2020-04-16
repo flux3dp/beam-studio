@@ -100,6 +100,9 @@ function buildMenu(callback) {
             ]},
             { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges || 'Align To Edges', enabled: false, click: callback, type:'checkbox'},
             { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', enabled: false, click: callback },
+            { 'id': 'OPTIMIZATION', label: r.optimization, submenu: [
+                { 'id': 'SVG_NEST', label: r.arrangement_optimization, click: callback }
+            ]},
             { type:'separator'},
             { 'id': 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback},
             { type: 'separator' },

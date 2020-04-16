@@ -1317,6 +1317,7 @@ define(function() {
                 dx: '寬',
                 dy: '高',
                 offset: '偏移物件',
+                nest: '排列最佳化',
                 _offset: {
                     direction: '偏移方向',
                     inward: '向內',
@@ -1328,6 +1329,15 @@ define(function() {
                     fail_message: '生成偏移物件失敗',
                     not_support_message: '選取物件中含有不支援的類型：\n圖片、群組、文字、匯入圖檔\n這些類型的物件將被忽略。',
                 },
+                _nest: {
+                    start_nest: '開始排列',
+                    stop_nest: '停止排列',
+                    end: '結束',
+                    spacing: '間距',
+                    rotations: '旋轉方向數',
+                    end_when_working: '將會結束目前正在進行的排列工作。',
+                    no_element: '沒有物件可以進行排列。',
+                }
             },
             network_testing_panel: {
                 network_testing: '網路檢測',

@@ -1319,6 +1319,7 @@ define(function() {
                 dx: 'X',
                 dy: 'Y',
                 offset: 'Offset',
+                nest: 'Arrangement Optimization',
                 _offset: {
                     direction: 'Offset Direction',
                     inward: 'Inward',
@@ -1330,6 +1331,14 @@ define(function() {
                     fail_message: 'Failed to Offset Objects.',
                     not_support_message: 'Selected elements containing unsupported SVG tag：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;\nThese objects will be skipped.',
                 },
+                _nest: {
+                    start_nest: 'Arrange',
+                    stop_nest: 'Stop',
+                    end: 'Close',
+                    spacing: 'Spacing',
+                    rotations: 'Possible Rotation',
+                    no_element: 'There is no element to arrange.',
+                }
             },
             network_testing_panel: {
                 network_testing: 'Network Testing',

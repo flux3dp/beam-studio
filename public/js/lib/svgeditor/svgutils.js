@@ -610,7 +610,6 @@ svgedit.utilities.getPathDFromElement = function(elem) {
 					['L',[x+w, y]],
 					['L',[x+w, y+h]],
 					['L',[x, y+h]],
-					['L',[x, y]],
 					['Z',[]]
 				]);
 			} else {

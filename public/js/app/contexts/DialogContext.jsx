@@ -18,6 +18,10 @@ define([
             this.setState(this.state);
         }
 
+        isIdExist = (id) => {
+            return this.state.dialogComponents.some((dialog) => dialog.id === id);
+        }
+
         popDialogById = (id) => {
             this.state.dialogComponents = this.state.dialogComponents.filter((dialog) => {return dialog.id !== id});
             this.setState(this.state);
@@ -27,12 +31,14 @@ define([
             const { dialogComponents } = this.state;
             const {
                 addDialogComponent,
+                isIdExist,
                 popDialogById
             } = this;
             return (
                 <DialogContext.Provider value={{
                     dialogComponents,
                     addDialogComponent,
+                    isIdExist,
                     popDialogById
                 }}>
                     {this.props.children}
