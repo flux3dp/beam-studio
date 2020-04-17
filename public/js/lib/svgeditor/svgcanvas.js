@@ -5967,7 +5967,7 @@ define([
                     let iterationStack = [symbol];
                     while (iterationStack.length > 0) {
                         let node = iterationStack.pop();
-                        if (node.nodeType === 1) {
+                        if (node.nodeType === 1 && node.tagName !== 'STYLE') {
                             node.setAttribute('data-wireframe', true);
                             node.setAttribute('stroke', '#000');
                             node.setAttribute('fill-opacity', '0');

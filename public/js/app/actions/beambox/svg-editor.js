@@ -263,7 +263,6 @@ define([
                     type: AlertConstants.SHOW_POPUP_WARNING,
                     message: uiStrings.notification.errorLoadingSVG,
                     callbacks: () => {
-                        console.log('cb');
                         callback(false);
                     }
                 });
@@ -5924,7 +5923,7 @@ define([
                 };
 
                 const importBvgString = (str) => {
-                    editor.loadFromString(str.replace(/STYLE>/g, 'style>'));
+                    editor.loadFromString(str.replace(/STYLE>/g, 'style>').replace(/STYLE>/g, 'style>'));
                     // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
                     if (typeof(str) === 'string') {
                         let tmp = str.substr(str.indexOf('<use')).split('<use');
