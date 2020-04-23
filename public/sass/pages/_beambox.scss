@@ -1284,6 +1284,43 @@
         text-align: center;
         cursor: pointer;
     }
+    .camera-control {
+        position: absolute;
+        border-style: solid;
+        width: 0px;
+        height: 0px;
+        opacity: 0.5;
+        &:hover {
+            opacity: 0.7;
+        }
+        &:active {
+            opacity: 1;
+        }
+        &.up {
+            border-color: transparent transparent #333333 transparent;
+            border-width: 0px 10px 16px 10px;
+            top: 5px;
+            left: 90px;
+        }
+        &.down {
+            border-color: #333333 transparent transparent transparent;
+            border-width: 16px 10px 0px 10px;
+            bottom: 5px;
+            left: 90px;
+        }
+        &.left {
+            border-color: transparent #333333 transparent transparent;
+            border-width: 10px 16px 10px 0px;
+            top: 90px;
+            left: 5px;
+        }
+        &.right {
+            border-color:  transparent transparent transparent #333333;
+            border-width: 10px 0px 10px 16px;
+            top: 90px;
+            right: 5px;
+        }
+    }
     .hint-modal-background {
         position: fixed;
         z-index: 1;

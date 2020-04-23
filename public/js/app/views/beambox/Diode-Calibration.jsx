@@ -54,7 +54,9 @@ define([
                 currentStep: STEP_ALERT,
                 showHint: false,
                 dx: 0,
-                dy: 0
+                dy: 0,
+                cameraMovedX: 0,
+                cameraMovedY: 0
             };
         }
 
@@ -66,6 +68,7 @@ define([
 
         onClose = () => {
             this.props.onClose();
+            PreviewModeController.end();
             DeviceMaster.setFan(this.origFanSpeed);
         }
 
@@ -205,7 +208,6 @@ define([
                 throw error;
             } finally {
                 ProgressActions.close();
-                PreviewModeController.end();
             }
             this.imageUrl = blobUrl;
         }
@@ -252,7 +254,7 @@ define([
         }
 
         renderStepAnalyze() {
-            const { dx, dy } = this.state; 
+            const { dx, dy, cameraMovedX, cameraMovedY } = this.state; 
 
             let imgBackground = {
                 background: `url(${this.imageUrl})`
@@ -264,12 +266,16 @@ define([
                 height: squareSize //px
             };
     
-            squareStyle.left = 100 - squareSize / 2 + dx * Constant.dpmm * this.imageScale;
-            squareStyle.top = 100 - squareSize / 2 + dy * Constant.dpmm * this.imageScale;
+            squareStyle.left = 100 - squareSize / 2 + (dx - cameraMovedX) * Constant.dpmm * this.imageScale;
+            squareStyle.top = 100 - squareSize / 2 + (dy - cameraMovedY) * Constant.dpmm * this.imageScale;
             let manual_calibration = (
                 <div>
                     <div className="img-center" style={imgBackground}>
                         <div className="virtual-square" style={squareStyle} />
+                        <div className="camera-control up" onClick={() => this.moveAndRetakePicture('up')}/>
+                        <div className="camera-control down" onClick={() => this.moveAndRetakePicture('down')}/>
+                        <div className="camera-control left" onClick={() => this.moveAndRetakePicture('left')}/>
+                        <div className="camera-control right" onClick={() => this.moveAndRetakePicture('right')}/>
                     </div>
                     <div className="hint-icon" onClick={()=>{this.setState({showHint: true})}}>
                         ?
@@ -363,6 +369,38 @@ define([
                 </div>
             );
         };
+
+        moveAndRetakePicture = async (dir) => {
+            try {
+                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                let {cameraMovedX, cameraMovedY} = this.state;
+                switch(dir) {
+                    case 'up':
+                        cameraMovedY -= 3;
+                        break;
+                    case 'down':
+                        cameraMovedY += 3;
+                        break;
+                    case 'left':
+                        cameraMovedX -= 3;
+                        break;
+                    case 'right':
+                        cameraMovedX += 3;
+                        break;
+                }
+                const movementX = Constant.camera.calibrationPicture.centerX + Constant.diode.defaultOffsetX - this.cameraOffset.x + cameraMovedX;
+                const movementY = Constant.camera.calibrationPicture.centerY + Constant.diode.defaultOffsetY - this.cameraOffset.y + cameraMovedY;
+                let blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
+                console.log(movementX, movementY);
+                this.imageUrl = blobUrl;
+                await this.cropAndRotateImg();
+                this.setState({cameraMovedX, cameraMovedY});
+            } catch (error) {
+                throw error;
+            } finally {
+                ProgressActions.close();
+            }
+        }
 
         renderStepFinish() {
             return (
