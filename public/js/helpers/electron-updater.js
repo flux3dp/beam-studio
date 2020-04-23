@@ -41,9 +41,10 @@ define([
     }
 
     const checkForUpdate = (isAutoCheck) => {
-        let version = Config().read('update_version') || 'latest';
+        let currentChannel = FLUX.version.split('-')[1];
+        let target_channel = (isAutoCheck ? currentChannel : Config().read('update_version')) || 'latest';
         ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
-        ipc.send(events.CHECK_FOR_UPDATE, version);
+        ipc.send(events.CHECK_FOR_UPDATE, target_channel);
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
             ProgressActions.close();
             if (res.error) {
@@ -79,7 +80,7 @@ define([
                                 onYes: () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
                             });
                         });
-                        ipc.once(events.DOWNLOAD_PROGRESS, (event, progress) => {
+                        ipc.on(events.DOWNLOAD_PROGRESS, (event, progress) => {
                             console.log('progress:', progress.percent);
                         });
                         Alert.popUp({
