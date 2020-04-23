@@ -16,7 +16,7 @@ define([
         
 
         getValueCaption() {
-            const x1 = this.props.x1, 
+            let x1 = this.props.x1, 
                 y1 = this.props.y1,
                 x2 = this.props.x2, 
                 y2 = this.props.y2,
@@ -26,8 +26,9 @@ define([
                 x2 /= 25.4;
                 y1 /= 25.4;
                 y2 /= 25.4;
+                units = '"';
             }
-                return `${Math.hypot(x1 - x2, y1 - y2).toFixed(2)}`;
+                return `${Math.hypot(x1 - x2, y1 - y2).toFixed(2)} ${units}`;
         }
         render () {
             return (
