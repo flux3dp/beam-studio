@@ -198,8 +198,8 @@ define([
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
                 cameraOffset = PreviewModeController.getCameraOffset();
                 this.cameraOffset = cameraOffset;
-                const movementX = Constant.camera.calibrationPicture.centerX + BeamboxPreference.read('diode_offset_x') - cameraOffset.x;
-                const movementY = Constant.camera.calibrationPicture.centerY + BeamboxPreference.read('diode_offset_y') - cameraOffset.y;
+                const movementX = Constant.camera.calibrationPicture.centerX + Constant.diode.defaultOffsetX - cameraOffset.x;
+                const movementY = Constant.camera.calibrationPicture.centerY + Constant.diode.defaultOffsetY - cameraOffset.y;
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
             } catch (error) {
                 throw error;
@@ -317,8 +317,8 @@ define([
                             label: LANG.next,
                             className: 'btn-default btn-alone-right primary',
                             onClick: () => {
-                                const offsetX = BeamboxPreference.read('diode_offset_x') + dx;
-                                const offsetY = BeamboxPreference.read('diode_offset_y') + dy;
+                                const offsetX = Constant.diode.defaultOffsetX + dx;
+                                const offsetY = Constant.diode.defaultOffsetY + dy;
                                 console.log(offsetX, offsetY);
                                 BeamboxPreference.write('diode_offset_x', offsetX);
                                 BeamboxPreference.write('diode_offset_y', offsetY);
