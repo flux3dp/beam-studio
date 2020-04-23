@@ -6,6 +6,8 @@ const events = require('./ipc-events');
 let r = resource['en'];
 
 function _buildOSXAppMenu(callback) {
+    const currentChannel = app.getVersion().split('-')[1] || 'latest';
+    const switchChannelLabel;
     return {
         label: 'Beam Studio',
         submenu: [
@@ -98,7 +100,7 @@ function buildMenu(callback) {
             { 'id': 'LAYER', label: r.layer_setting, submenu: [
                 { 'id': 'LAYER_COLOR_CONFIG', label: r.layer_color_config || 'Color Configuration', click: callback }
             ]},
-            { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges || 'Align To Edges', enabled: false, click: callback, type:'checkbox'},
+            { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type:'checkbox'},
             { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', enabled: false, click: callback },
             { 'id': 'OPTIMIZATION', label: r.optimization, submenu: [
                 { 'id': 'SVG_NEST', label: r.arrangement_optimization, click: callback }
