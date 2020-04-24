@@ -89,6 +89,13 @@ define([
         editor.storagePromptClosed = false; // For use with ext-storage.js
         editor.dimensions = [Constant.dimension.getWidth(), Constant.dimension.getHeight()];
 
+        const availableLangMap = {
+            'en': 'en',
+            'ja': 'ja',
+            'zh-tw': 'zh-TW',
+            'zh-cn': 'zh-CN',
+        }
+
         var svgCanvas, urldata,
             Utils = svgedit.utilities,
             isReady = false,
@@ -101,7 +108,7 @@ define([
             // The iteration algorithm for defaultPrefs does not currently support array/objects
             defaultPrefs = {
                 // EDITOR OPTIONS (DIALOG)
-                lang: (i18n.getActiveLang() === 'en') ? 'en' : 'zh-TW', // Default to "en" if locale.js detection does not detect another language
+                lang: availableLangMap[i18n.getActiveLang()] || 'en', // Default to "en" if locale.js detection does not detect another language
                 iconsize: '', // Will default to 's' if the window height is smaller than the minimum height and 'm' otherwise
                 bkgd_color: '#FFF',
                 bkgd_url: '',
@@ -5923,7 +5930,7 @@ define([
                 };
 
                 const importBvgString = (str) => {
-                    editor.loadFromString(str.replace(/STYLE>/g, 'style>').replace(/STYLE>/g, 'style>'));
+                    editor.loadFromString(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
                     // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
                     if (typeof(str) === 'string') {
                         let tmp = str.substr(str.indexOf('<use')).split('<use');

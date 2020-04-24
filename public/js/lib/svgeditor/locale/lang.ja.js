@@ -3,7 +3,7 @@ svgEditor.readLang({
 	lang: "ja",
 	dir : "ltr",
 	common: {
-		"ok": "OK",
+		"ok": "はい",
 		"cancel": "キャンセル",
 		"key_backspace": "backspace", 
 		"key_del": "削除", 
@@ -224,7 +224,7 @@ svgEditor.readLang({
 		"featNotSupported":"機能はサポートされていません。",
 		"enterNewImgURL":"画像のURLを入力してください。",
 		"defsFailOnSave": "NOTE: Due to a bug in your browser, this image may appear wrong (missing gradients or elements). It will however appear correct once actually saved.",
-		"loadingImage":"Loading image, please wait...",
+		"loadingImage":"画像を読み込んでいます，少々お待ちください",
 		"saveFromBrowser": "Select \"Save As...\" in your browser to save this image as a %s file.",
 		"noteTheseIssues": "Also note the following issues: ",
 		"unsavedChanges": "There are unsaved changes.",

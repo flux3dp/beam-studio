@@ -1337,6 +1337,12 @@ define([
                                         <option id="lang_zh-TW" value="zh-TW">
                                             繁體中文
                                         </option>
+                                        <option id="lang_ja" value="ja">
+                                            日本語
+                                        </option>
+                                        <option id="lang_zh-CN" value="zh-CN">
+                                            簡中
+                                        </option>
                                     </select>
                                 </label>
                                 <label>

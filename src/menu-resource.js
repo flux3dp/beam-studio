@@ -238,7 +238,7 @@ module.exports = {
     },
     'ja': {
         switch_to_latest: '安定版リリースに切り替える',
-        switch_to_beta: 'ベータに切り替える',
+        switch_to_beta: 'ベータリリースに切り替える',
         preferences: '好み',
         update: 'アップデートを確認',
         about: 'Beam Studioについて',

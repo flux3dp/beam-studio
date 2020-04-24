@@ -70,14 +70,18 @@ define(function() {
             },
             software: {
                 checking: 'アップデートの確認中',
+                switch_version: 'バージョンを切り替える',
                 check_update: 'アップデートを確認',
                 caption: 'Beam Studioのソフトウェアアップデートがご利用いただけます',
                 downloading: 'アップデートのダウンロード中…',
                 install_or_not: 'アップデートがダウンロードされました。今すぐ再起動してインストールしますか？',
+                switch_or_not: 'がダウンロードされました。今すぐ再起動してインストールしますか？',
                 message_pattern_1: 'Beam Studioは現在、ソフトウェアアップデートの準備ができています。',
                 message_pattern_2: 'FLUX Software v%sが現在ご利用いただけます。 - v%sがあります。',
                 available_update: 'が現在、ご利用いただけます。アップデートをダウンロードしますか？',
+                available_switch: 'が現在、ご利用いただけます。このバージョンを切り替えますか？',
                 not_found: 'あなたは、最新バージョンのBeam Studioを使用しています。',
+                switch_version_not_found: '切り替えられるバージョンが見つかりません',
                 yes: 'はい',
                 no: 'いいえ',
                 skip: 'Skip This Version'
@@ -1160,7 +1164,7 @@ define(function() {
             },
             right_panel: {
                 layer_panel: {
-                    layer1: '層1',
+                    layer1: 'レイヤ 1',
                     layer_bitmap: 'ビットマップ'
                 },
                 laser_panel: {
@@ -1300,8 +1304,8 @@ define(function() {
                 convert_to_path_to_get_precise_result: '一部のフォントは正しく解析できません。Beamboxに提出する前にテキストをパスに変換してください',
                 wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
                 text_to_path: {
-                    font_substitute_pop: 'Text: "%s" contains below characters which are not supported by current font: "%s".\n%s\nWould you like to use "%s" as substitution?',
-                    check_thumbnail_warning: 'Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.\nPlease check preview image again before sending task.'
+                    font_substitute_pop: 'テキスト：「%s」に書体：「%s」サポートできない文字があります.\n%s\n書体「%s」に変更して宜しいですか',
+                    check_thumbnail_warning: 'テキストをパスに解析するときに一部の書体が他のフォントに変更され、一部の文字が正常に変換されないことがあります.\nタスクを送信する前に、プレビュー画像をもう一度確認してください。'
                 },
                 laser_config: 'レーザー設定',
                 shading: 'シェーディング',
@@ -1319,7 +1323,7 @@ define(function() {
                 dx: 'X',
                 dy: 'Y',
                 offset: 'オフセット',
-                nest: 'Arrangement Optimization',
+                nest: '整列の最適化',
                 _offset: {
                     direction: 'オフセット方向',
                     inward: '内向き',
@@ -1334,10 +1338,10 @@ define(function() {
                 _nest: {
                     start_nest: '整列開始',
                     stop_nest: '整列停止',
-                    end: 'Close',
+                    end: '終了する',
                     spacing: '間隔',
                     rotations: 'Possible Rotation',
-                    no_element: 'There is no element to arrange.',
+                    no_element: '整列できるオブジェクトがありません',
                 }
             },
             network_testing_panel: {
@@ -1377,7 +1381,7 @@ define(function() {
             svg_editor: {
                 unnsupported_file_type: 'ファイルタイプは直接サポートされていません。ファイルをSVGまたはビットマップに変換してください',
                 unnsupport_ai_file_directly: '最初にAlファイルをSVGまたはビットマップに変換してください。',
-                unable_to_fetch_clipboard_img: 'Failed to fetch image from your clipboard',
+                unable_to_fetch_clipboard_img: '画像をクリップボードから転送失敗しました。',
             },
             units: {
                 walt: 'W',
@@ -1642,7 +1646,7 @@ define(function() {
             },
             unsupport_osx_version: 'サポートされていないMac OS Xバージョンが検出されました',
             need_password: 'マシンに接続するには、パスワードが必要です',
-            unavailableWorkarea: 'Current workarea exceeds the workarea of this machine. Please check the workarea of selected machine or set workarea from Edit > Document Setting.',
+            unavailableWorkarea: 'セットした作業領域がマシンの作業領域を超えます。マシンの作業領域を確認や[編集]>[ドキュメント設定]で作業領域をセットくださいい。',
             new_app_downloading: 'FLUX Studioがダウンロードしています',
             new_app_download_canceled: 'FLUX Studioのダウンロードがキャンセルされました',
             new_app_downloaded: '最新のFLUX Studioがダウンロードされました',
@@ -1777,14 +1781,14 @@ define(function() {
                 beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ'
             },
             please_place_paper: {
-                beambox: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
-                beamo: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
+                beambox: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
+                beamo: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
             },
             dx: 'X',
             dy: 'Y',
             drawing_calibration_image: '較正画像の描画中…',
             taking_picture: '写真撮影中…',
-            calibrate_done: 'Calibration done. Offset of diode module has been saved.',
+            calibrate_done: '較正が完了しました。ハイブリッドレーザーオフセットを保存しました。',
             hint_red_square: '赤い正方形をカットした正方形に合わせてください',
             hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
         },
