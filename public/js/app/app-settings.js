@@ -7,7 +7,8 @@ define(function() {
             supported_langs : {
                 'en' : 'English',
                 'zh-tw' : '繁體中文',
-                'ja' : '日本語'
+                'ja' : '日本語',
+                'zh-cn' : '简体中文'
             }
         },
 

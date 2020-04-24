@@ -1529,7 +1529,6 @@ define(function() {
             HARDWARE_ERROR_DOOR_OPENED          : '#901 門蓋開啟，將門蓋關上以繼續',
             HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 水溫過高，請稍後再繼續',
             USER_OPERATION_ROTARY_PAUSE         : '請切換旋轉軸馬達開關',
-            USER_OPERATION_ROTARY_PAUSE         : '請切換旋轉軸馬達開關',
             WRONG_HEAD                          : '請更換成列印工具頭',
             USER_OPERATION                      : '別的使用者正在佔用機器',
             RESOURCE_BUSY                       : '機器忙碌中\n如果機器沒有在進行動作， 請重新啟動機器',
