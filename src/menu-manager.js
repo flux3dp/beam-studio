@@ -7,11 +7,12 @@ let r = resource['en'];
 
 function _buildOSXAppMenu(callback) {
     const currentChannel = app.getVersion().split('-')[1] || 'latest';
-    const switchChannelLabel;
+    const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
     return {
         label: 'Beam Studio',
         submenu: [
             { label: r.about, role: 'about'},
+            { id: 'SWITCH_VERSION',  label: switchChannelLabel, click: callback },
             { id: 'PREFERENCE',  label: r.preferences, accelerator: 'Cmd+,', click: callback },
             { type: 'separator' },
             { label: r.service, role: 'services', submenu: [] },

@@ -1,4 +1,4 @@
-const {ipcMain, BrowserWindow} = require('electron');
+const {app, ipcMain, BrowserWindow} = require('electron');
 const events = require('./ipc-events');
 const { autoUpdater, UpdaterSignal } = require("electron-updater");
 
@@ -8,7 +8,8 @@ class AutoUpdateManager {
         this.mainWindow = null;
         this.isDownloading = false;
         autoUpdater.autoDownload = false;
-        autoUpdater.autoInstallOnAppQuit = false;
+        autoUpdater.allowDowngrade = true;
+        autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.on('checking-for-update', () => {
         });
         autoUpdater.on('update-available', info => {
@@ -56,6 +57,8 @@ class AutoUpdateManager {
         ipcMain.on(events.CHECK_FOR_UPDATE, (event, channel) => {
             if (channel) {
                 autoUpdater.channel = channel;
+            } else {
+                autoUpdater.channel = app.getVersion().split('-')[1] || 'latest';
             }
             this.checkForUpdates();
         });

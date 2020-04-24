@@ -41,10 +41,9 @@ define([
     }
 
     const checkForUpdate = (isAutoCheck) => {
-        let currentChannel = FLUX.version.split('-')[1];
-        let target_channel = (isAutoCheck ? currentChannel : Config().read('update_version')) || 'latest';
+        let currentChannel = FLUX.version.split('-')[1] || 'latest';
         ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
-        ipc.send(events.CHECK_FOR_UPDATE, target_channel);
+        ipc.send(events.CHECK_FOR_UPDATE, currentChannel);
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
             ProgressActions.close();
             if (res.error) {
@@ -57,19 +56,17 @@ define([
                 }
                 return;
             }
-            let [updateVersion, channel] = res.info.version.split('-');
-            let latestSkip = Config().read('skip_version');
+            let channel = res.info.version.split('-')[1] || 'latest';
+            if (currentChannel !== channel) {
+                console.log(`Current Channel: ${currentChannel}, But got: ${channel}`);
+            }
 
-            if (res.isUpdateAvailable && (channel || versionCompare(updateVersion, latestSkip))) {
+            if (res.isUpdateAvailable && channel === currentChannel) {
                 let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
                 Alert.popUp({
                     message: msg,
                     caption: LANG.check_update,
-                    buttonType: AlertConstants.YES_NO_CUSTOM,
-                    buttonLabels: LANG.skip,
-                    callbacks: () => {
-                        Config().write('skip_version', updateVersion);
-                    },
+                    buttonType: AlertConstants.YES_NO,
                     onYes: () => {
                         ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
                             let msg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
@@ -104,6 +101,59 @@ define([
         });
     };
 
+    const switchVersion = () => {
+        const currentChannel = FLUX.version.split('-')[1];
+        ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+        const targetChannel = currentChannel ? 'latest' : 'beta';
+        ipc.send(events.CHECK_FOR_UPDATE, targetChannel);
+        ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
+            ProgressActions.close();
+            if (res.error) {
+                console.log(res.error);
+                Alert.popUp({
+                    message: `Error: ${res.error.code} `,
+                    caption: LANG.switch_version
+                });
+                return;
+            }
+            if (res.isUpdateAvailable) {
+                let msg = `Beam Studio v${res.info.version} ${LANG.available_switch}`;
+                Alert.popUp({
+                    message: msg,
+                    caption: LANG.switch_version,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
+                        ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {
+                            let msg = `Beam Studio v${info.version} ${LANG.switch_or_not}`;
+                            Alert.popUp({
+                                buttonType: AlertConstants.YES_NO,
+                                message: msg,
+                                caption: LANG.switch_version,
+                                onYes: () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
+                            });
+                        });
+                        ipc.on(events.DOWNLOAD_PROGRESS, (event, progress) => {
+                            console.log('progress:', progress.percent);
+                        });
+                        Alert.popUp({
+                            message: LANG.downloading,
+                            caption: LANG.switch_version
+                        });
+                        ipc.send(events.DOWNLOAD_UPDATE);
+                    },
+                    onNo: () => {
+                        ipc.once(events.UPDATE_DOWNLOADED, (event, info) => {});
+                    }
+                });
+            } else {
+                Alert.popUp({
+                    message: LANG.switch_version_not_found,
+                    caption: LANG.switch_version
+                });
+            }
+        });
+    };
+
     return {
         checkForUpdate: function() {
             checkForUpdate(false);
@@ -114,6 +164,7 @@ define([
             if (isAutoCheck) {
                 checkForUpdate(isAutoCheck);
             }
-        }
+        },
+        switchVersion
     }
 });

@@ -37,7 +37,7 @@ define([
             }
             
             this._actions = {
-
+                'SWITCH_VERSION': () => {ElectronUpdater.switchVersion()},
                 'OPEN': () => {
                     if(electron) {
                         electron.trigger_file_input_click('import_image');

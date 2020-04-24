@@ -70,14 +70,18 @@ define(function() {
             },
             software: {
                 checking: 'Checking for Update',
+                switch_version: 'Switch Version',
                 check_update: 'Check for Update',
                 caption: 'A Software Update to Beam Studio is available',
                 downloading: 'Downloading updates in the background, you can click "OK" to continue your work.',
                 install_or_not: 'is ready for update. Would you like restart and update now?',
+                switch_or_not: 'is ready for switch. Would you like restart and switch now?',
                 message_pattern_1: 'Beam Studio is now ready for software update.',
                 message_pattern_2: 'FLUX Software v%s is now available - You have v%s.',
                 available_update: 'is available now. Do you want to download the update?',
+                available_switch: 'is available now. Do you want to switch to this version?',
                 not_found: 'You are using the latest version Beam Studio.',
+                switch_version_not_found: 'Switchable Version not found.',
                 yes: 'Yes',
                 no: 'No',
                 skip: 'Skip This Version'
