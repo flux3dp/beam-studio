@@ -28,6 +28,8 @@ function _buildOSXAppMenu(callback) {
 
 
 function _buildFileMenu(fnKey, callback) {
+    const currentChannel = app.getVersion().split('-')[1] || 'latest';
+    const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
     let menuItems = [
         { 'id': 'OPEN', label: r.open || 'Open', click: callback, 'accelerator': `${fnKey}+O` },
         { 'id': 'RECENT', label: r.recent || 'Open Recent', submenu: []},
