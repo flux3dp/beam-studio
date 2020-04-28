@@ -1050,10 +1050,10 @@ define([
                         {this._renderFileTitle()}
 
                         <div title={lang.print.deviceTitle} className={`device ${process.platform}`}>
-                            <p className="device-icon" onClick={this._handleExportClick.bind(this)}>
+                            <div className="device-icon" onClick={this._handleExportClick.bind(this)}>
                                 <img src="img/top-menu/icon-export.svg" draggable="false" />
                                 <div>{lang.topbar.export}</div>
-                            </p>
+                            </div>
                             <div className={menuClass}>
                                 <div className="arrow arrow-right" />
                                 <div className="device-list">
