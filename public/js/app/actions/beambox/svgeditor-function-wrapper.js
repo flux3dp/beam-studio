@@ -337,6 +337,7 @@ define([
         },
 
         toggleUnsavedChangedDialog: function (callback) {
+            window.electron.ipc.send('SAVE_DIALOG_POPPED');
             if (!svgCanvas.changed) {
                 callback();
             } else {

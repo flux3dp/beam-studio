@@ -170,12 +170,23 @@ function createWindow () {
         if (isFrontEndReady && !isCloseConfirm) {
             e.preventDefault(); 
             mainWindow.webContents.send('WINDOW_CLOSE', e);
+            // if save dialog does not pop in 10 seconds, something may goes wrong in frontend, close the app
+            let isSaveDialogPopped = false;
+            ipcMain.once('SAVE_DIALOG_POPPED', () => {
+                isSaveDialogPopped = true;
+            });
+            setTimeout(() => {
+                if (!isSaveDialogPopped) {
+                    isCloseConfirm = true;
+                    mainWindow.close();
+                }
+            }, 10000);
             ipcMain.once('CLOSE_REPLY', (event, reply) => {
                 if (reply) {
                     isCloseConfirm = true;
                     mainWindow.close();
                 }
-            })
+            });
         }
     });
 
