@@ -18,7 +18,7 @@
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
     "fontkit": "^1.7.7",
-    "jimp": "^0.6.4",
+    "jimp": "^0.10.3",
     "jquery": "^1.11.0",
     "jsdom-global": "^1.6.2",
     "nan": "^2.4.0",

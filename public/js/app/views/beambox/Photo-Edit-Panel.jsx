@@ -25,6 +25,7 @@ define([
 ) {
     const React = require('react');
     const LANG = i18n.lang.beambox.photo_edit_panel;
+    const jimp = require('jimp');
     
     let cropper = null;
     class PhotoEditPanel extends React.Component {
@@ -40,30 +41,23 @@ define([
                 wRatio: 1,
                 hRatio: 1,
                 threshold: $(this.props.element).attr('data-threshold'),
-                shading: ($(this.props.element).attr('data-shading') === 'true')
+                shading: ($(this.props.element).attr('data-shading') === 'true'),
+                hadPreprocessDone: false,
+                grayScaleUrl: null,
+                isGrayScale: false,
             };
             this.sharpenIntensity = 0;
-            let tempImg = new Image();
-            const self = this;
-            tempImg.src = this.state.src;
-            tempImg.onload = function() {
-                self.state.origImage = tempImg;
-                self.state.imagewidth = tempImg.naturalWidth;
-                self.state.origWidth = tempImg.naturalWidth;
-                self.state.imageheight = tempImg.naturalHeight;
-                self.state.origHeight = tempImg.naturalHeight;
-                self.setState(self.state);
-            };
         }
 
         componentDidMount() {
             switch(this.props.mode) {
                 case 'sharpen':
                 case 'curve':
-                    this._handleDownSampling();
+                case 'crop':
+                    this._handlePreprocess();
                     break;
                 case 'invert':
-                    this._handleInvert(this._handleComplete.bind(this));
+                    this._handleInvertAndComplete();
                     break;
                 default:
                     break;
@@ -73,50 +67,58 @@ define([
         componentWillUnmount() {
         }
 
-        _handleDownSampling() {
-            const jimp = require('jimp');
+        async _handlePreprocess() {
             let imgBlobUrl = this.state.origSrc;
-            let imageFile;
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-            fetch(imgBlobUrl)
-                .then(res => res.blob())
-                .then((blob) => {
-                    var fileReader = new FileReader();
-                    fileReader.onloadend = (e) => {
-                        imageFile = e.target.result;
-                        imageFile = new Buffer.from(imageFile);
-                        
-                        jimp.read(imageFile)
-                            .then((image) => {
-                                if(Math.max(image.bitmap.width, image.bitmap.height) > 600) {
-                                    if (image.bitmap.width >= image.bitmap.height) {
-                                        image.resize(600, jimp.AUTO);
-                                    } else {
-                                        image.resize(jimp.AUTO, 600);
-                                    }
-                                    image.getBuffer(jimp.MIME_PNG, (err, buffer) => {
-                                        const newBlob = new Blob([buffer]);
-                                        const src = URL.createObjectURL(newBlob);
-                                        if (this.state.src !== this.state.origSrc) {
-                                            URL.revokeObjectURL(this.state.src);
-                                        }
-                                        this.state.previewSrc= src;
-                                        this.setState({src: src});
-                                        ProgressActions.close();
-                                    });
-                                }
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                ProgressActions.close();
-                            });
-                    };
-                    fileReader.readAsArrayBuffer(blob);
-                })
-                .catch((err) => {
-                    d.reject(err);
+            try {
+                const res = await fetch(imgBlobUrl)
+                const blob = await res.blob();
+                const arrayBuffer = await new Response(blob).arrayBuffer(); 
+                const image = await jimp.read(arrayBuffer);
+                let w = image.bitmap.width;
+                let h = image.bitmap.height;
+                if (['sharpen', 'curve'].includes(this.props.mode)){
+                    if( Math.max(image.bitmap.width, image.bitmap.height) > 600 ) {
+                        console.log('Down Sampling');
+                        if (image.bitmap.width >= image.bitmap.height) {
+                            image.resize(600, jimp.AUTO);
+                        } else {
+                            image.resize(jimp.AUTO, 600);
+                        }
+                        const buffer = await image.getBufferAsync(jimp.MIME_PNG);
+                        const newBlob = new Blob([buffer]);
+                        const src = URL.createObjectURL(newBlob);
+                        if (this.state.src !== this.state.origSrc) {
+                            URL.revokeObjectURL(this.state.src);
+                        }
+                        this.state.previewSrc= src;
+                        this.setState({
+                            imageWidth: w,
+                            imageHeight: h,
+                            previewSrc: src,
+                            src: src,
+                            hadPreprocessDone: true
+                        });
+                    }
+                } else if (this.props.mode === 'crop') {
                     ProgressActions.close();
-                });
+
+                    this.setState({
+                        imageWidth: w,
+                        origWidth: w,
+                        imageHeight: h,
+                        origHeight: h,
+                        hadPreprocessDone: true
+                    });
+                } else {
+                    throw new Error(`Unknown Mode ${this.props.mode}`); 
+
+                }
+                
+            } catch (err) {
+                console.log(err)
+                ProgressActions.close();
+            }
         }
 
         _handleCancel() {
@@ -192,13 +194,17 @@ define([
             }
             URL.revokeObjectURL(this.state.src);
             const src = this.state.srcHistory.pop();
-            this.setState({src: src, isCropping: false});
+            this.setState({
+                src: src,
+                isCropping: false,
+                isGrayScale: false,
+            });
         }
 
         _renderPhotoEditeModal() {
-            if (this.state.src !== this.lastSrc) {
+            if (!this.state.isGrayScale && this.state.hadPreprocessDone) {
                 this._handleGrayScale();
-            }
+            } 
             let panelContent;
             let rightWidth = 40;
             switch (this.props.mode) {
@@ -215,15 +221,15 @@ define([
             }
             const maxAllowableWidth = $('.top-menu').width() - rightWidth;
             const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 180;
-            const containerStyle = (this.state.imagewidth / maxAllowableWidth > this.state.imageheight / maxAllowableHieght) ? 
+            const containerStyle = (this.state.imageWidth / maxAllowableWidth > this.state.imageHeight / maxAllowableHieght) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
             const footer = this._renderPhotoEditFooter();
-            const onImgLoad = (this.props.mode === 'crop' && !this.state.isCropping) ? this._handleStartCrop.bind(this) : () => {};
-            if (this.state.grayScaleUrl && this.state.grayScaleUrl === this.lastGrayScale && this.state.src === this.lastSrc && !this.state.isCropping) {
-                onImgLoad();
-            }
-            this.lastSrc = this.state.src;
-            this.lastGrayScale =this.state.grayScaleUrl;
+            const onImgLoad = () => {
+                if (this.props.mode === 'crop' && !this.state.isCropping) {
+                    this._handleStartCrop();
+                }
+                ProgressActions.close();
+            };
             return (
                 <Modal>
                     <div className='photo-edit-panel'>
@@ -233,10 +239,7 @@ define([
                                     id='original-image'
                                     style={containerStyle}
                                     src={this.state.grayScaleUrl}
-                                    onLoad={() => {
-                                        onImgLoad();
-                                        ProgressActions.close();
-                                    }}/>
+                                    onLoad={() => onImgLoad()}/>
                             </div>
                             {panelContent}
                         </div>
@@ -246,7 +249,7 @@ define([
             );
         }
 
-        _handleGrayScale() {
+        _handleGrayScale = () => {
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             ImageData(
                 this.state.src,
@@ -263,7 +266,10 @@ define([
                         if (this.state.grayScaleUrl) {
                             URL.revokeObjectURL(this.state.grayScaleUrl);
                         }
-                        this.setState({grayScaleUrl: result.canvas.toDataURL('image/png')});
+                        this.setState({
+                            grayScaleUrl: result.canvas.toDataURL('image/png'),
+                            isGrayScale: true
+                        });
                     }
                 }
             );
@@ -284,7 +290,7 @@ define([
                             max={20}
                             step={1}
                             default={0}
-                            onChange={(id, val) => this._handleParameterChange(id, val)}
+                            onChange={(id, val) => this._handleSharp(true, val)}
                         />
                         </div>
                     </div>
@@ -292,39 +298,45 @@ define([
             );
         }
 
-        async _handleParameterChange(id, val) {
-            if (id === 'sharpen-intensity'){
-                const sharpenIntensity = parseInt(val);
-                const jimp = require('jimp');
-                let imgBlobUrl = this.state.origSrc;
-                const k_edge = -sharpenIntensity / 2;
-                const k_corner = -sharpenIntensity / 4;
-                const k_m = -4 * (k_edge + k_corner) + 1;
-                const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
-                try {
-                    let imageData = await fetch(imgBlobUrl);
-                    imageData = await imageData.blob();
-                    imageData = await new Response(imageData).arrayBuffer(); 
-                    imageData = await jimp.read(imageData);
-                    imageData.convolute(kernal);
-                    imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                    imageData = new Blob([imageData]);
-                    const src = URL.createObjectURL(imageData);
-                    if (this.state.src !== this.state.origSrc) {
-                        URL.revokeObjectURL(this.state.src);
-                    }
-                    this.setState({src: src});
-                    ProgressActions.close();
-                } catch(e) {
-                    console.error(e);
-                    ProgressActions.close();
+        async _handleSharp(isPreview, val) {
+            const imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
+            const sharpness = isPreview ? parseInt(val) : this.state.sharpness;
+            const k_edge = -sharpness / 2;
+            const k_corner = -sharpness / 4;
+            const k_m = -4 * (k_edge + k_corner) + 1;
+            const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
+            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            try {
+                let imageData = await fetch(imgBlobUrl);
+                imageData = await imageData.blob();
+                imageData = await new Response(imageData).arrayBuffer(); 
+                imageData = await jimp.read(imageData);
+                imageData.convolute(kernal);
+                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
+                imageData = new Blob([imageData]);
+                const src = URL.createObjectURL(imageData);
+                if (this.state.src !== this.state.previewSrc) {
+                    URL.revokeObjectURL(this.state.src);
                 }
+                if (isPreview) {
+                    this.setState({
+                        src: src,
+                        isGrayScale: false,
+                        sharpness: sharpness
+                    });
+                } else {
+                    this.setState({src: src}, () => this._handleComplete());
+                }
+                
+                ProgressActions.close();
+            } catch(e) {
+                console.error(e);
+                ProgressActions.close();
             }
         }
 
         // CROP
-        _handleStartCrop() {
+        _handleStartCrop = () => {
             if (this.state.isCropping) {
                 return;
             }
@@ -350,7 +362,6 @@ define([
             const w = Math.min(image.naturalWidth - x, cropData.width);
             const h = Math.min(image.naturalHeight - y, cropData.height);
 
-            const jimp = require('jimp');
             let imgBlobUrl = this.state.src;
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
@@ -367,8 +378,9 @@ define([
                 this.setState({
                     src: src,
                     isCropping: false,
-                    imagewidth: cropData.width,
-                    imageheight: cropData.height
+                    isGrayScale: false,
+                    imageWidth: cropData.width,
+                    imageHeight: cropData.height
                 }, () => {
                     ProgressActions.close();
                     if (complete) {
@@ -395,9 +407,7 @@ define([
         }
 
         // INVERT
-        async _handleInvert(callback) {
-            const jimp = require('jimp');
-            const d = $.Deferred();
+        async _handleInvertAndComplete() {
             let imgBlobUrl = this.state.src;
             try {
                 let imageData = await fetch(imgBlobUrl);
@@ -414,7 +424,7 @@ define([
                 this.state.srcHistory.push(this.state.src);
                 this.state.src = src;
                 ProgressActions.close();
-                callback();
+                this._handleComplete();
             } catch(e) {
                 console.error(e);
                 ProgressActions.close();
@@ -429,7 +439,7 @@ define([
                         <div className='title'>{LANG.curve}</div>
                         <CurveControl
                             updateCurveFunction={this._updateCurveFunction.bind(this)}
-                            updateImage={this._handleCurve.bind(this)}
+                            updateImage={() => {this._handleCurve(true)}}
                         />
                     </div>
                 </div>
@@ -440,16 +450,9 @@ define([
             this.curvefunction = curvefunction;
         }
 
-        async _handleCurve(mode) {
-            const jimp = require('jimp');
+        async _handleCurve(isPreview) {
             const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
-            let imgBlobUrl;
-            if (mode === 'preview') {
-                imgBlobUrl = this.state.previewSrc;
-            } else {
-                imgBlobUrl = this.state.origSrc;
-            }
-            let imageFile;
+            let imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
                 let imageData = await fetch(imgBlobUrl);
@@ -467,10 +470,13 @@ define([
                 if (this.state.src !== this.state.previewSrc) {
                     URL.revokeObjectURL(this.state.src);
                 }
-                if (mode === 'preview') {
-                    this.setState({src: src});
+                if (isPreview) {
+                    this.setState({
+                        src: src,
+                        isGrayScale: false,
+                    });
                 } else {
-                    this.setState({src: src}, this._handleComplete);
+                    this.setState({src: src}, () => this._handleComplete());
                 }
                 ProgressActions.close();
             } catch(e) {
@@ -480,7 +486,7 @@ define([
         }
 
         _handleCurveComplete() {
-            this._handleCurve('complete');
+            this._handleCurve(false);
         }
 
         _renderPhotoEditFooter() {
@@ -488,7 +494,7 @@ define([
                 let buttons = [
                     {
                         label: LANG.okay,
-                        onClick: () => {this._handleComplete()},
+                        onClick: () => {this._handleSharp(false)},
                         className: 'btn btn-default primary'
                     },
                     {

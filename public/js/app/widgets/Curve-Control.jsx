@@ -175,7 +175,7 @@ define([
 
         _onMouseUp(e) {
             if (this.dragging != null) {
-                this.props.updateImage('preview');
+                this.props.updateImage();
             }
             this.dragging = null;
         }
@@ -238,7 +238,7 @@ define([
         _deleteControlPoint() {
             if (this.state.selectingIndex != null && this.state.controlPoints.length > 2) {
                 this.state.controlPoints.splice(this.state.selectingIndex, 1);
-                this.props.updateImage('preview');
+                this.props.updateImage();
                 this.setState({selectingIndex: null});
             }
         }

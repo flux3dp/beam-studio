@@ -5546,7 +5546,9 @@ define([
                             defaultY = offset[1];
                         }
                         reader = new FileReader();
-                        reader.onloadend = function (e) {
+                        reader.onloadend = async function (e) {
+                            let rotationFlag = getExifRotationFlag(e.target.result);
+
                             // let's insert the new image until we know its dimensions
                             var insertNewImage = function (img, width, height) {
                                 var newImage = svgCanvas.addSvgElementFromJson({
@@ -5554,8 +5556,8 @@ define([
                                     attr: {
                                         x: defaultX * scale,
                                         y: defaultY * scale,
-                                        width: width * scale,
-                                        height: height * scale,
+                                        width: (rotationFlag <= 4 ? width : height) * scale,
+                                        height: (rotationFlag <= 4 ? height : width) * scale,
                                         id: svgCanvas.getNextId(),
                                         style: 'pointer-events:inherit',
                                         preserveAspectRatio: 'none',
@@ -5564,11 +5566,11 @@ define([
                                         origImage: img.src
                                     }
                                 });
-
                                 ImageData(
                                     newImage.getAttribute('origImage'), {
                                         height: height,
                                         width: width,
+                                        rotationFlag,
                                         grayscale: {
                                             is_rgba: true,
                                             is_shading: false,
@@ -5582,6 +5584,7 @@ define([
                                 );
 
                                 svgCanvas.selectOnly([newImage]);
+                                svgCanvas.undoMgr.addCommandToHistory(new svgedit.history.InsertElementCommand(newImage));
                                 if (!offset) {
                                     svgCanvas.alignSelectedElements('l', 'page');
                                     svgCanvas.alignSelectedElements('t', 'page');
@@ -5590,22 +5593,54 @@ define([
                                 updateContextPanel();
                                 Alert.popAlertStackById('loading_image');
                             };
-                                // create dummy img so we know the default dimensions
-                            var imgWidth = 100;
-                            var imgHeight = 100;
                             var img = new Image();
                             var blob = new Blob([reader.result]);
                             img.src = URL.createObjectURL(blob);
                             img.style.opacity = 0;
                             img.onload = function () {
-                                imgWidth = img.width;
-                                imgHeight = img.height;
+                                let imgWidth = img.width;
+                                let imgHeight = img.height;
                                 insertNewImage(img, imgWidth, imgHeight);
                             };
                         };
                         reader.readAsArrayBuffer(file);
                     });
                 }
+                // Get exif rotation data ref: https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side
+                getExifRotationFlag = (arrayBuffer) => {
+                    let view = new DataView(arrayBuffer);
+                    if (view.getUint16(0, false) != 0xFFD8) {
+                        return -2;
+                    }
+                    let length = view.byteLength, offset = 2;
+                    while (offset < length) {
+                        if (view.getUint16(offset+2, false) <= 8) return -1;
+                        let marker = view.getUint16(offset, false);
+                        offset += 2;
+                        if (marker == 0xFFE1) {
+                            if (view.getUint32(offset += 2, false) != 0x45786966) {
+                                return -1;
+                            }
+                            let little = view.getUint16(offset += 6, false) == 0x4949;
+                            offset += view.getUint32(offset + 4, little);
+                            let tags = view.getUint16(offset, little);
+                            offset += 2;
+                            for (var i = 0; i < tags; i++) {
+                                if (view.getUint16(offset + (i * 12), little) == 0x0112) {
+                                    return view.getUint16(offset + (i * 12) + 8, little);
+                                }
+                            }
+                        }
+                        else if ((marker & 0xFF00) != 0xFF00) {
+                            break;
+                        }
+                        else { 
+                            offset += view.getUint16(offset, false);
+                        }
+                    }
+                    return -1;
+                };
+                editor.getExifRotationFlag = getExifRotationFlag;
                 function getBasename(path) {
                     const pathMatch = path.match(/(.+)[\/\\].+/);
                     if (pathMatch[1]) return pathMatch[1];
