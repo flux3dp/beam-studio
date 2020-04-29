@@ -99,6 +99,14 @@ define([
                             src: src,
                             hadPreprocessDone: true
                         });
+                    } else {
+                        this.setState({
+                            imageWidth: w,
+                            imageHeight: h,
+                            previewSrc: imgBlobUrl,
+                            src: imgBlobUrl,
+                            hadPreprocessDone: true
+                        });
                     }
                 } else if (this.props.mode === 'crop') {
                     ProgressActions.close();
