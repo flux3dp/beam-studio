@@ -9,7 +9,7 @@ define([
     'jsx!views/Printer-Selector',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/beambox/beambox-version-master'
+    'helpers/version-checker'
 ], function (
     ReactCx,
     BottomRightFuncs,
@@ -21,7 +21,7 @@ define([
     PrinterSelector,
     Alert,
     AlertConstants,
-    BeamboxVersionMaster
+    VersionChecker
 ) {
     const React = require('react');
     const lang = i18n.lang;
@@ -97,7 +97,8 @@ define([
                 }
 
                 //check firmware
-                if (await BeamboxVersionMaster.isUnusableVersion(selected_item)) {
+                const vc = VersionChecker(selected_item.version);
+                if (vc.meetRequirement('USABLE_VERSION')) {
                     console.error('Not a valid firmware version');
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_ERROR,

@@ -32,7 +32,6 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/bottom-right-funcs',
-    'app/actions/beambox/beambox-version-master',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
 ], function (
@@ -69,7 +68,6 @@ define([
     PreviewModeController,
     FnWrapper,
     BottomRightFuncs,
-    BeamboxVersionMaster,
     BeamboxPreference,
     Constant
 ) {
@@ -768,7 +766,8 @@ define([
                 // Regular machine
                 e.preventDefault();
                 // Check firmware
-                if (await BeamboxVersionMaster.isUnusableVersion(device)) {
+                const vc = VersionChecker(device.version);
+                if (vc.meetRequirement('USABLE_VERSION')) {
                     console.error('Not a valid firmware version');
                     Alert.popUp({
                         id: 'fatal-occurred',

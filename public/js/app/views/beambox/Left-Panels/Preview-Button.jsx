@@ -9,7 +9,6 @@ define([
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/preview-mode-background-drawer',
     'app/actions/beambox/preview-mode-controller',
-    'app/actions/beambox/beambox-version-master',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox',
     'app/actions/global-actions',
@@ -19,6 +18,7 @@ define([
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
     'plugins/classnames/index',
     'helpers/shortcuts',
+    'helpers/version-checker',
     'helpers/api/config',
     'helpers/i18n',
 ], function(
@@ -32,7 +32,6 @@ define([
     FnWrapper,
     PreviewModeBackgroundDrawer,
     PreviewModeController,
-    BeamboxVersionMaster,
     BeamboxPreference,
     BeamboxActions,
     GlobalActions,
@@ -42,7 +41,8 @@ define([
     ImageTracePanelController,
     classNames,
     shortcuts,
-    ConfigHelper,
+    VersionChecker,
+    Config,
     i18n
 ) {
     const React = require('react');
@@ -137,8 +137,9 @@ define([
                     BeamboxPreference.write('should_remind_calibrate_camera', false);
                 };
 
-                const isFirmwareVersionValid = async (device) => {
-                    return !(await BeamboxVersionMaster.isUnusableVersion(device));
+                const isFirmwareVersionValid = (device) => {
+                    const vc = VersionChecker(device.version);
+                    return vc.meetRequirement('USABLE_VERSION');
                 };
 
                 const alertUserToUpdateFirmware = () => {
@@ -254,8 +255,7 @@ define([
                 }
 
                 ProgressActions.open(ProgressConstants.NONSTOP, i18n.lang.message.tryingToConenctMachine);
-
-                if (!(await isFirmwareVersionValid(device))) {
+                if (!(isFirmwareVersionValid(device))) {
                     alertUserToUpdateFirmware();
                     ProgressActions.close();
                     return;

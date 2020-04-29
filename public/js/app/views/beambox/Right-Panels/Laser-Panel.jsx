@@ -19,7 +19,7 @@ define([
     'jsx!views/Printer-Selector',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/beambox/beambox-version-master',
+    'helpers/version-checker',
     'app/actions/beambox/diode-boundary-drawer'
 ], function(
     $,
@@ -42,7 +42,7 @@ define([
     PrinterSelector,
     Alert,
     AlertConstants,
-    BeamboxVersionMaster,
+    VersionChecker,
     DiodeBoundaryDrawer
 ) {
     'use strict';
@@ -886,7 +886,7 @@ define([
                 }
 
                 //check firmware
-                if (await BeamboxVersionMaster.isUnusableVersion(selected_item)) {
+                if (VersionChecker(selected_item.version).meetRequirement('USABLE_VERSION')) {
                     console.error('Not a valid firmware version');
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_ERROR,

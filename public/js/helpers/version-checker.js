@@ -10,10 +10,10 @@ define(function() {
         SCAN_CALIBRATION            : '1.6.9',
         M666R_MMTEST                : '1.6.40',
         CLOUD                       : '1.5.0',
-
         CLOSE_FAN                   : '1.4.1',
         BEAMBOX_CAMERA_SPEED_UP     : '1.4.4',
         BEAMBOX_CAMERA_CALIBRATION_XY_RATIO: '1.6.0',
+        USABLE_VERSION              : '1.4.9',
     };
 
     // 1.7.0 > 1.5.0 > 1.5b12 > 1.5a12
