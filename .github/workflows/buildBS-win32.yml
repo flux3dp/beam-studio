@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [10.6]
         python-version: [3.7]
-        arch: [32, 64]
+        arch: [32]
 
     steps:
       - uses: actions/checkout@v2
