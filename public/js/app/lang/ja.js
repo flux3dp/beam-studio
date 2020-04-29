@@ -81,6 +81,7 @@ define(function() {
                 available_update: 'が現在、ご利用いただけます。アップデートをダウンロードしますか？',
                 available_switch: 'が現在、ご利用いただけます。このバージョンを切り替えますか？',
                 not_found: 'あなたは、最新バージョンのBeam Studioを使用しています。',
+                no_response: 'サーバーに接続できませんでした。ネットワーク設定を確認してください。',
                 switch_version_not_found: '切り替えられるバージョンが見つかりません',
                 yes: 'はい',
                 no: 'いいえ',

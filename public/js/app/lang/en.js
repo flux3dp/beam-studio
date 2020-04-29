@@ -81,6 +81,7 @@ define(function() {
                 available_update: 'is available now. Do you want to download the update?',
                 available_switch: 'is available now. Do you want to switch to this version?',
                 not_found: 'You are using the latest version Beam Studio.',
+                no_response: 'Failed to connect to server, please check you network setting.',
                 switch_version_not_found: 'Switchable Version not found.',
                 yes: 'Yes',
                 no: 'No',

@@ -42,10 +42,28 @@ define([
 
     const checkForUpdate = (isAutoCheck) => {
         let currentChannel = FLUX.version.split('-')[1] || 'latest';
-        ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+        if (!isAutoCheck) {
+            ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+        }
+        let hasGetResponse = false;
         ipc.send(events.CHECK_FOR_UPDATE, currentChannel);
+        setTimeout(() => {
+            if (!hasGetResponse) {
+                console.log('yo');
+                if (!isAutoCheck) {
+                    ProgressActions.close();
+                }
+                Alert.popUp({
+                    message: LANG.no_response,
+                    caption: LANG.check_update
+                });
+            }
+        }, 15000)
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
-            ProgressActions.close();
+            hasGetResponse = true;
+            if (!isAutoCheck) {
+                ProgressActions.close();
+            }
             if (res.error) {
                 console.log(res.error);
                 if (!isAutoCheck) {

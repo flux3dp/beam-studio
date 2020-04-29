@@ -81,6 +81,7 @@ define(function() {
                 available_update: '現可提供下載，是否要下載更新？',
                 available_switch: '現可提供切換，是否要切換至此此版本？',
                 not_found: 'Beam Studio 已是最新版本。',
+                no_response: '無法連接到伺服器，請確認您目前的網路狀態。',
                 switch_version_not_found: '無法找到可切換的版本',
                 yes: '是',
                 no: '否',
