@@ -158,6 +158,19 @@ define([
                 }
             ];
 
+            const GuessingPokeOptions = [
+                {
+                    value: 0,
+                    label: lang.settings.off,
+                    selected: Config().read('guessing_poke') === '0'
+                },
+                {
+                    value: 1,
+                    label: lang.settings.on,
+                    selected: Config().read('guessing_poke') === '1' || !Config().read('guessing_poke')
+                }
+            ];
+
             const defaultAppOptions = [
                 {
                     value: 'print',
@@ -419,6 +432,14 @@ define([
                             autoComplete='false'
                             defaultValue={pokeIP}
                             onBlur={this._checkIPFormat}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.guess_poke}>
+                        <SelectView
+                            className='font3'
+                            options={GuessingPokeOptions}
+                            onChange={(e) => this._updateOptions('guessing_poke', e)}
                         />
                     </Controls>
 

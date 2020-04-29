@@ -373,6 +373,7 @@ define(function() {
                 device: 'マシン'
             },
             ip: 'マシンIPアドレス',
+            guess_poke: 'マシンIPを自動的に検索',
             wrong_ip_format: '間違ったIP形式',
             lock_selection: 'ロック選択',
             default_machine: 'デフォルトマシン',

@@ -373,6 +373,7 @@ define(function() {
                 device: '機器'
             },
             ip: '機器 IP 位址',
+            guess_poke: '自動搜尋機器 IP',
             wrong_ip_format: 'IP格式錯誤',
             lock_selection: '鎖定選取目標',
             reset: '重置所有設定',

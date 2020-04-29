@@ -373,6 +373,7 @@ define(function() {
                 device: 'Machine'
             },
             ip: 'Machine IP Address',
+            guess_poke: 'Search for machine IP address',
             wrong_ip_format: 'Wrong IP Formats',
             lock_selection: 'Lock Selection',
             default_machine: 'Default Machine',
