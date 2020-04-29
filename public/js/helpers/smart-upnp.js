@@ -1,4 +1,7 @@
-define(['helpers/i18n'], function (i18n) {
+define([
+	'helpers/i18n',
+    'helpers/api/config',
+], function (i18n, Config) {
 	'use strict';
 
 	const lang = i18n.get();
@@ -18,11 +21,13 @@ define(['helpers/i18n'], function (i18n) {
 		 */
 		init: (discoverObj) => {
 			Discover = discoverObj;
-			setInterval(function() {
-				if(Discover.countDevices() === 0){
-					self.pokeNext();
-				}
-			}, AUTO_DISCOVER);
+			if (Config().read('guessing_poke') !== '0') {
+				setInterval(function() {
+					if(Discover.countDevices() === 0){
+						self.pokeNext();
+					}
+				}, AUTO_DISCOVER);
+			}
 			//Start from self ip address
 			var myIPAddresses = self.getLocalAddresses();
 			myIPAddresses.forEach( x => self.guessFromIP(x) );
@@ -46,6 +51,7 @@ define(['helpers/i18n'], function (i18n) {
 			var match = ipv4Pattern.exec(targetIP),
 				i = 0,
 				localIndex = parseInt(match[2]);
+
 			if(match==null) return;
 			for(i = localIndex + 1; i < Math.min(localIndex + 20, 255); i++){
 				var gip = match[1] + "." + i;
@@ -67,7 +73,6 @@ define(['helpers/i18n'], function (i18n) {
 		pokeNext: function(){
 			if(guessIPs.length == 0) return;
 			var ip = guessIPs.shift();
-			Discover.poke(ip);
 			Discover.poke(ip);
         },
 
