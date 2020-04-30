@@ -1779,6 +1779,9 @@
         if (Math.hypot(polyline[polyline.length - 1][0] - polylines[i+1][0][0], polyline[polyline.length - 1][1] - polylines[i+1][0][1]) < 1e-7) {
           polylines[i+1] = [...polyline, ...polylines[i+1]];
           polylines[i] = [];
+        } else if (Math.hypot(polyline[0][0] - polylines[i+1][polylines[i+1].length - 1][0], polyline[0][1] - polylines[i+1][polylines[i+1].length - 1][1]) < 1e-7) {
+          polylines[i+1] = [...polylines[i+1], ...polyline];
+          polylines[i] = [];
         }
       }
       polylines = polylines.filter((p) => (p.length > 0));

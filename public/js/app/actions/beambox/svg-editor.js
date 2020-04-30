@@ -5943,6 +5943,7 @@ define([
                                 $(child).attr('vector-effect', "non-scaling-stroke");
                             }
                         }
+                        svgCanvas.updateElementColor(g);
                     }
                     //importBvgString(resizedSvg);
 
