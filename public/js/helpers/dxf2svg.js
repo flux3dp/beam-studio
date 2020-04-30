@@ -276,6 +276,14 @@
 
       if (entity.type === 'CIRCLE') {
         polyline = interpolateElliptic(entity.x, entity.y, entity.r, entity.r, 0, Math.PI * 2);
+
+        // Don't know why, but just like arcs and ellipses
+        var _flipY = entity.extrusionZ === -1;
+        if (_flipY) {
+          polyline = polyline.map(function (p) {
+            return [-p[0], p[1]];
+          });
+        }
       }
 
       if (entity.type === 'ELLIPSE') {
@@ -1762,6 +1770,20 @@
         }
         return rgb;
       }
+      console.log(polylines.length);
+      for (let i = 0; i < polylines.length - 1; i++) {
+        let polyline = polylines[i];
+        if (polyline.length > 0 && polyline[0][0] === polyline[polyline.length - 1][0] && polyline[0][1] === polyline[polyline.length - 1][1]) {
+          continue;
+        }
+        if (Math.hypot(polyline[polyline.length - 1][0] - polylines[i+1][0][0], polyline[polyline.length - 1][1] - polylines[i+1][0][1]) < 1e-7) {
+          polylines[i+1] = [...polyline, ...polylines[i+1]];
+          polylines[i] = [];
+        }
+      }
+      polylines = polylines.filter((p) => (p.length > 0));
+      console.log(polylines.length);
+
       polylines.forEach(function (polyline, i) {
         var entity = entities[i];
         let rgb = getLayerColor(entity);
