@@ -440,7 +440,7 @@ define([
                  
             );
         }
-        _renderSpeed = () => {
+        _renderSpeed = (hasVector) => {
             const maxValue = 300;
             const minValue = 3;
             const onSlideBarClick = (e) => {
@@ -470,7 +470,7 @@ define([
                         getValue={this._handleSpeedChange}
                         decimal={1}
                     />
-                    <div className="rainbow-sidebar" onClick={onSlideBarClick.bind(this)}>
+                    <div className={`rainbow-sidebar${hasVector ? ' speed-for-vector' : ''}`} onClick={onSlideBarClick.bind(this)}>
                         <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.speed/3}%`}} /> 
                     </div>
                 </div>
@@ -929,7 +929,20 @@ define([
         }
 
         render() {
-            const speedPanel = this._renderSpeed();
+            const layer = svgCanvas.getCurrentDrawing().getLayerByName(this.props.layerName);
+            const paths = $(layer).find('path, rect, ellipse, polygon, line', 'text');
+            let hasVector = false;
+            for (let j = 0; j < paths.length; j++) {
+                const path = paths[j],
+                    fill = $(path).attr('fill'),
+                    fill_op = $(path).attr('fill-opacity');
+                if (!fill || fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
+                    hasVector = true;
+                    break;
+                }
+            }
+
+            const speedPanel = this._renderSpeed(hasVector);
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
             const enableHeightPanel = this._renderEnableHeight();
@@ -974,7 +987,6 @@ define([
             );
 
             const printerSelector = this._renderPrinterSelectorWindow();
-
             return (
                 <div>
                     <div className="layername">

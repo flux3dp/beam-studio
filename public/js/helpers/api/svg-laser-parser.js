@@ -351,6 +351,10 @@ define([
                     args.push('-fg');
                 }
 
+                if (opts.vectorSpeedConstraint) {
+                    args.push('-vsc');
+                }
+
                 if (BeamboxPreference.read('stripe_compensation')) {
                     args.push('-strpcom');
                     args.push(`${BeamboxPreference.read('stripe_compensation_y0') || 0},${BeamboxPreference.read('stripe_compensation_interval') || 0},${BeamboxPreference.read('stripe_compensation_power') || 100}`);

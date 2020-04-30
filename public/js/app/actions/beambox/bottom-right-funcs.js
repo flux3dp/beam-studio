@@ -251,7 +251,8 @@ define([
                     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
                     enableAutoFocus: isSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus'),
                     enableDiode: isSupportDiodeAndAF && BeamboxPreference.read('enable-diode'),
-                    isSupportFastGradient
+                    isSupportFastGradient,
+                    vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false
                 }
             );
         });

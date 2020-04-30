@@ -243,6 +243,19 @@ define([
                 }
             ];
 
+            const vectorSpeedConstraintOptions = [
+                {
+                    value: 'false',
+                    label: lang.settings.off,
+                    selected: BeamboxPreference.read('vector_speed_contraint') === false
+                },
+                {
+                    value: 'true',
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('vector_speed_contraint') !== false
+                }
+            ];
+
             const precutSwitchOptions = [
                 {
                     value: 'false',
@@ -510,6 +523,14 @@ define([
                     </Controls>
 
                     <div className='subtitle'>{lang.settings.groups.path}</div>
+
+                    <Controls label={lang.settings.vector_speed_constraint}>
+                        <SelectView
+                            className='font3'
+                            options={vectorSpeedConstraintOptions}
+                            onChange={e => this._updateBeamboxPreference('vector_speed_contraint', e.target.value)}
+                        />
+                    </Controls>
 
                     <Controls label={lang.settings.loop_compensation}>
                         <UnitInput

@@ -9,6 +9,7 @@ define([
     'helpers/version-checker',
     'helpers/firmware-updater',
     'helpers/firmware-version-checker',
+    'helpers/sprintf',
     'helpers/api/cloud',
     'helpers/output-error',
     'plugins/classnames/index',
@@ -45,6 +46,7 @@ define([
     VersionChecker,
     firmwareUpdater,
     FirmwareVersionChecker,
+    sprintf,
     CloudApi,
     OutputError,
     ClassNames,
@@ -654,6 +656,8 @@ define([
                 }
 
                 let isTooFastForPath = false;
+                const tooFastLayers = [];
+                svgCanvas.getCurrentDrawing().getLayerName(i);
                 for (let i = 0; i < layers.length; ++i) {
                     const layer = layers[i];
                     if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
@@ -664,11 +668,9 @@ define([
                                   fill_op = $(path).attr('fill-opacity');
                             if (!fill || fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
                                 isTooFastForPath = true;
+                                tooFastLayers.push(svgCanvas.getCurrentDrawing().getLayerName(i));
                                 break;
                             }
-                        }
-                        if (isTooFastForPath) {
-                            break;
                         }
                     }
                 }
@@ -689,10 +691,19 @@ define([
                         type: AlertConstants.SHOW_POPUP_WARNING,
                     });
                 } else if (isTooFastForPath) {
-                    Alert.popUp({
-                        message: lang.beambox.popup.too_fast_for_path,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                    });
+                    if (BeamboxPreference.read('vector_speed_contraint') === false) {
+                        Alert.popUp({
+                            message: lang.beambox.popup.too_fast_for_path,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                        });
+                    } else {
+                        let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
+                        Alert.popUp({
+                            message,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                        });
+                    }
+                        
                 }
 
                 Discover(

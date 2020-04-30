@@ -33,6 +33,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'jsx!app/actions/beambox/Object-Panels-Controller',
+    'jsx!app/actions/beambox/Laser-Panel-Controller',
     'app/actions/beambox/preview-mode-controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
@@ -49,6 +50,7 @@ define([
     Alert,
     AlertConstants,
     ObjectPanelsController,
+    LaserPanelController,
     PreviewModeController,
     BeamboxActions,
     Constant,
@@ -1015,6 +1017,8 @@ define([
                 call('selected', selectedElements);
             }
             TopbarActions.updateTopMenu();
+            const currentLayerName = getCurrentDrawing().getCurrentLayerName();
+            LaserPanelController.render(currentLayerName);
         };
 
         // TODO: do we need to worry about selectedBBoxes here?
