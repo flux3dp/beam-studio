@@ -73,8 +73,6 @@ define([
                             <span className="text-center header">A</span>
                             <span>
                                 <UnitInput
-                                    min={0}
-                                    max={Constant.dimension.getWidth()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.x1}
@@ -82,8 +80,6 @@ define([
                                     className={{'input-halfsize': true}}
                                 />
                                 <UnitInput
-                                    min={0}
-                                    max={Constant.dimension.getHeight()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.y1}
@@ -96,8 +92,6 @@ define([
                             <span className="text-center header">B</span>
                             <span>
                                 <UnitInput
-                                    min={0}
-                                    max={Constant.dimension.getWidth()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.x2}
@@ -105,8 +99,6 @@ define([
                                     className={{'input-halfsize': true}}
                                 />
                                 <UnitInput
-                                    min={0}
-                                    max={Constant.dimension.getHeight()/Constant.dpmm}
                                     unit="mm"
                                     abbr={true}
                                     defaultValue={this.state.y2}
