@@ -48,6 +48,7 @@ function _buildFileMenu(fnKey, callback) {
         ]},
         { type: 'separator' },
         { 'id': 'EXPORT_TO', label: r.export_to || 'Export to', submenu: [
+            { 'id': 'EXPORT_BVG', label: 'BVG', click: callback},
             { 'id': 'EXPORT_SVG', label: r.export_SVG, click: callback},
             { 'id': 'EXPORT_PNG', label: 'PNG', click: callback},
             { 'id': 'EXPORT_JPG', label: 'JPG', click: callback},

@@ -3,6 +3,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'helpers/image-data',
+    'helpers/beam-file-helper',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'helpers/i18n'
@@ -11,6 +12,7 @@ define([
     ProgressActions,
     ProgressConstants,
     ImageData,
+    BeamFileHelper,
     Alert,
     AlertConstants,
     i18n
@@ -291,7 +293,7 @@ define([
         enterPreviewMode: function() {
             svgCanvas.setMode('preview');
         },
-        saveFile: function() {
+        saveFile: async function() {
             if (!svgCanvas.currentFilePath) {
                 const result = this.saveAsFile();
                 return result;
@@ -299,41 +301,67 @@ define([
                 svgCanvas.clearSelection();
                 const output = svgCanvas.getSvgString();
                 const fs = require('fs');
-                fs.writeFile(svgCanvas.currentFilePath, output, function(err) {
-                    if (err) {
-                        console.log('Save Err', err);
-                        return;
-                    }
-                    console.log('saved');
-                });
-                svgCanvas.changed = false;
-                return true;
+                console.log(svgCanvas.currentFilePath);
+                if (svgCanvas.currentFilePath.endsWith('.bvg')) {
+                    fs.writeFile(svgCanvas.currentFilePath, output, function(err) {
+                        if (err) {
+                            console.log('Save Err', err);
+                            return;
+                        }
+                        console.log('saved');
+                    });
+                    svgCanvas.changed = false;
+                    return true;
+                } else if (svgCanvas.currentFilePath.endsWith('.beam')) {
+                    const ImageSource = await svgCanvas.getImageSource();
+                    await BeamFileHelper.saveBeam(svgCanvas.currentFilePath, output, ImageSource);
+                }
             }
         },
 
-        saveAsFile: function() {
+        saveAsFile: async function() {
+            svgCanvas.clearSelection();
+            const output = svgCanvas.getSvgString();
+            const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
+            const langFile = i18n.lang.topmenu.file;
+            const ImageSource = await svgCanvas.getImageSource();
+            const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.bvg_files, ['beam'], defaultFileName);
+            if (currentFilePath) {
+                await BeamFileHelper.saveBeam(currentFilePath, output, ImageSource);
+                this.setCurrentFileName(currentFilePath);
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        exportAsBVG: async function() {
             svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
             let currentFilePath = window.electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
             if (currentFilePath) {
-                let currentFileName;
-                if (process.platform === 'win32') {
-                    currentFileName = currentFilePath.split('\\');
-                } else {
-                    currentFileName = currentFilePath.split('/');
-                }
-                currentFileName = currentFileName[currentFileName.length -1];
-                currentFileName = currentFileName.slice(0, currentFileName.lastIndexOf('.')).replace(':', "/");
-                svgCanvas.setLatestImportFileName(currentFileName);
-                svgCanvas.currentFilePath = currentFilePath;
-                svgCanvas.updateRecentFiles(currentFilePath);
-                svgCanvas.changed = false;
+                this.setCurrentFileName(currentFilePath);
                 return true;
             } else {
                 return false;
             }
+        },
+
+        setCurrentFileName: (filePath) => {
+            let currentFileName;
+            if (process.platform === 'win32') {
+                currentFileName = filePath.split('\\');
+            } else {
+                currentFileName = filePath.split('/');
+            }
+            currentFileName = currentFileName[currentFileName.length -1];
+            currentFileName = currentFileName.slice(0, currentFileName.lastIndexOf('.')).replace(':', "/");
+            svgCanvas.setLatestImportFileName(currentFileName);
+            svgCanvas.filePath = filePath;
+            svgCanvas.updateRecentFiles(filePath);
+            svgCanvas.changed = false;
         },
 
         toggleUnsavedChangedDialog: function (callback) {

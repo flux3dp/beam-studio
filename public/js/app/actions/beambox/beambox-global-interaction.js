@@ -57,6 +57,7 @@ define([
                 'IMPORT_MATERIAL_TESTING_LINE': () => {loadExampleFile('examples/mat_test_line.bvg')},
                 'SAVE_SCENE': () => FnWrapper.saveFile(),
                 'SAVE_AS': () => FnWrapper.saveAsFile(),
+                'EXPORT_BVG': () => FnWrapper.exportAsBVG(),
                 'EXPORT_SVG': () => FnWrapper.exportAsSVG(),
                 'EXPORT_PNG': () => FnWrapper.exportAsImage('png'),
                 'EXPORT_JPG': () => FnWrapper.exportAsImage('jpg'),

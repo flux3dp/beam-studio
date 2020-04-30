@@ -39,6 +39,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/actions/topbar',
+    'helpers/beam-file-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
     'lib/svgeditor/imagetracer'
@@ -54,6 +55,7 @@ define([
     ProgressActions,
     ProgressConstants,
     TopbarActions,
+    BeamFileHelper,
     LocalStorage,
     shortcuts,
     ImageTracer
@@ -4878,6 +4880,30 @@ define([
             return out.join('');
         }; // end svgToString()
 
+        // Function: getImageSource
+        // When saving svg string, we need to get image source data such that we can edits image again after loading
+        //
+        // Parameters:
+        // Do it for all svgcanvas so no parameters needed
+        // Returns:
+        // String or Binary containing image ids and image sources
+        this.getImageSource = async () => {
+            const images = $('#svgcontent').find('image').toArray();
+            let ret = {};
+            for (let i = 0; i < images.length; i++) {
+                let blobUrl = images[i].getAttributeNS(null, 'origImage');
+                let id = images[i].getAttributeNS(null, 'id');
+                if (blobUrl) {
+                    const res = await fetch(blobUrl);
+                    const blob = await res.blob();
+                    const arrayBuffer = await new Response(blob).arrayBuffer(); 
+                    ret[id] = arrayBuffer;
+                }
+            }
+            return ret;
+        }
+
+
         // Function: embedImage
         // Converts a given image file to a data URL when possible, then runs a given callback
         //
@@ -8615,10 +8641,14 @@ define([
                 this.setLatestImportFileName(fileName);
                 this.currentFilePath = filePath;
                 this.updateRecentFiles(filePath);
-                let res = await fetch(filePath);
-                res = await res.blob();
                 try {
-                    svgEditor.importBvg(res);
+                    if (filePath.endsWith('beam')) {
+                        BeamFileHelper.readBeam(filePath);
+                    } else if (filePath.endsWith('bvg')) {
+                        let res = await fetch(filePath);
+                        res = await res.blob();
+                        svgEditor.importBvg(res);
+                    }
                 } finally {
                     Alert.popAlertStackById('load-recent');
                 }
@@ -10358,7 +10388,7 @@ define([
                     }
                 }
                 selectorManager.requestSelector(elem).resize();
-                selectorManager.requestSelector(elem).showGrips(true);
+                selectorManager.requestSelector(elem).showGrips(false);
                 window.updateContextPanel();
             }
             addCommandToHistory(batchCmd);
@@ -10427,14 +10457,14 @@ define([
             const origImage = $(image).attr('origImage');
             if (origImage) {
                 const jimp = require('jimp');
-                let imageData = await fetch(origImage);
-                imageData = await imageData.blob();
-                imageData = await new Response(imageData).arrayBuffer(); 
-                imageData = await jimp.read(imageData);
-                imageData.flip(horizon === -1, vertical === -1);
-                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                imageData = new Blob([imageData]);
-                const src = URL.createObjectURL(imageData);
+                let data = await fetch(origImage);
+                data = await data.blob();
+                data = await new Response(data).arrayBuffer(); 
+                data = await jimp.read(data);
+                data.flip(horizon === -1, vertical === -1);
+                data = await data.getBufferAsync(jimp.MIME_PNG);
+                data = new Blob([data]);
+                const src = URL.createObjectURL(data);
                 canvas.undoMgr.beginUndoableChange('origImage', [image]);
                 image.setAttribute('origImage', src);
                 cmd = canvas.undoMgr.finishUndoableChange();

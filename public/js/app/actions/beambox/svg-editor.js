@@ -34,6 +34,7 @@ define([
     'app/constants/alert-constants',
     'app/actions/topbar',
     'helpers/aws-helper',
+    'helpers/beam-file-helper',
     'helpers/image-data',
     'helpers/shortcuts',
     'helpers/i18n',
@@ -55,6 +56,7 @@ define([
     AlertConstants,
     TopbarActions,
     AwsHelper,
+    BeamFileHelper,
     ImageData,
     Shortcuts,
     i18n,
@@ -6042,6 +6044,84 @@ define([
                 }
                 editor.importBvgString = importBvgString;
 
+                const importBvgStringAsync = async (str) => {
+                    await editor.loadFromStringAsync(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
+                    // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
+                    if (typeof(str) === 'string') {
+                        let tmp = str.substr(str.indexOf('<use')).split('<use');
+
+                        for(let i = 1; i < tmp.length; ++i) {
+                            let elem, match, id, wireframe, xform;
+
+                            tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
+                            match = tmp[i].match(/id="svg_\d+"/)[0];
+                            id = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/data-xform="[^"]*"/)[0];
+                            xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/data-wireframe="[a-z]*"/);
+                            if (match) {
+                                match = match[0];
+                                wireframe = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            }
+
+                            elem = document.getElementById(id);
+                            elem.setAttribute('data-xform', xform);
+                            elem.setAttribute('data-wireframe', wireframe === 'true');
+                        }
+                        match = str.match(/data-rotary_mode="[a-zA-Z]+"/);
+                        if (match) {
+                            let rotaryMode = match[0].substring(18, match[0].length - 1);
+                            rotaryMode = rotaryMode === 'true';
+                            svgCanvas.setRotaryMode(rotaryMode);
+                            svgCanvas.runExtensions('updateRotaryAxis');
+                            BeamboxPreference.write('rotary_mode', rotaryMode);
+                        }
+                        match = str.match(/data-engrave_dpi="[a-zA-Z]+"/);
+                        if (match) {
+                            let engraveDpi = match[0].substring(18, match[0].length - 1);
+                            BeamboxPreference.write('engrave_dpi', engraveDpi);
+                        } else {
+                            BeamboxPreference.write('engrave_dpi', 'medium');
+                        }
+                        match = str.match(/data-en_diode="([a-zA-Z]+)"/);
+                        if (match && match[1]) {
+                            if (match[1] === 'true') {
+                                BeamboxPreference.write('enable-diode', true);
+                            } else {
+                                BeamboxPreference.write('enable-diode', false);
+                            }
+                            renderLayerLaserConfigs();
+                        }
+                        match = str.match(/data-en_af="([a-zA-Z]+)"/);
+                        if (match && match[1]) {
+                            if (match[1] === 'true') {
+                                BeamboxPreference.write('enable-autofocus', true);
+                            } else {
+                                BeamboxPreference.write('enable-autofocus', false);
+                            }
+                            renderLayerLaserConfigs();
+                        }
+                        match = str.match(/data-zoom="[0-9\.]+"/);
+                        if (match) {
+                            let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
+                            zoomChanged(window, {zoomLevel: zoom, staticPoint: {x: 0, y: 0}});
+                        }
+                        match = str.match(/data-left="[-0-9]+"/);
+                        if (match) {
+                            let left = parseInt(match[0].substring(11, match[0].length - 1));
+                            left = Math.round((left + Constant.dimension.getWidth()) * svgCanvas.getZoom());
+                            $('#workarea').scrollLeft(left);
+                        }
+                        match = str.match(/data-top="[-0-9]+"/);
+                        if (match) {
+                            let top = parseInt(match[0].substring(10, match[0].length - 1));
+                            top = Math.round((top + Constant.dimension.getHeight()) * svgCanvas.getZoom());
+                            $('#workarea').scrollTop(top);
+                        }
+                    }
+                }
+                editor.importBvgStringAsync = importBvgStringAsync;
+
                 const importBvg = async (file) => {
                     Alert.popAlertStackById('loading_image');
                     const parsedSvg = await new Promise(resolve => {
@@ -6158,6 +6238,9 @@ define([
 
                 const handleFile = (file) => {
                     const fileType = (function() {
+                        if (file.name.toLowerCase().includes('.beam')) {
+                            return 'beam';
+                        }
                         if (file.name.toLowerCase().includes('.bvg')) {
                             return 'bvg';
                         }
@@ -6183,6 +6266,9 @@ define([
                     switch (fileType) {
                         case 'bvg':
                             importBvg(file);
+                            break;
+                        case 'beam':
+                            BeamFileHelper.readBeam(file);
                             break;
                         case 'svg':
                             importSvg(file);
@@ -6214,6 +6300,7 @@ define([
                     let fileName = file.name.slice(0, file.name.lastIndexOf('.')).replace(':', "/");
                     switch (fileType) {
                         case 'bvg':
+                        case 'beam':
                             svgCanvas.setLatestImportFileName(fileName);
                             svgCanvas.currentFilePath = file.path;
                             svgCanvas.updateRecentFiles(file.path);
@@ -6264,7 +6351,7 @@ define([
                 $('#tool_open').show().prepend(open);
 
                 // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
-                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js" data-file-input="import_image">').change(importImage);
+                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam" data-file-input="import_image">').change(importImage);
                 $('#tool_import').show().prepend(imgImport);
 
                 window.populateLayers = populateLayers;
@@ -6438,6 +6525,17 @@ define([
             editor.ready(function () {
                 loadSvgString(str,function() {
                     editor.resetView();
+                });
+            });
+        };
+
+        editor.loadFromStringAsync = async function (str) {
+            return new Promise ((resolve) => {
+                editor.ready(function () {
+                    loadSvgString(str,function() {
+                        editor.resetView();
+                        resolve(true);
+                    });
                 });
             });
         };
