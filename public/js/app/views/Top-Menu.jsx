@@ -778,7 +778,7 @@ define([
                 e.preventDefault();
                 // Check firmware
                 const vc = VersionChecker(device.version);
-                if (vc.meetRequirement('USABLE_VERSION')) {
+                if (!vc.meetRequirement('USABLE_VERSION')) {
                     console.error('Not a valid firmware version');
                     Alert.popUp({
                         id: 'fatal-occurred',
