@@ -231,8 +231,8 @@ define([
             return (
                 <div className="footer">
                     {this._renderButton('pull-left', () => this._onResetDefault(), LANG.default)}
-                    {this._renderButton('pull-right primary', () => this._onSave(), LANG.save)}
                     {this._renderButton('pull-right', () => this._onCancel(), LANG.cancel)}
+                    {this._renderButton('pull-right primary', () => this._onSave(), LANG.save)}
                 </div>
             );
         }

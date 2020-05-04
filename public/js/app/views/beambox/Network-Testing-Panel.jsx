@@ -220,16 +220,18 @@ define([
                     </section>
                     <section className='footer'>
                         <button
+                            className='btn btn-default pull-right'
+                            onClick={() => this._close()}
+                        >
+                            {LANG.end}
+                        </button>
+                        <button
                             className='btn btn-default pull-right primary'
                             onClick={() => {
                                 this._onStart();
                             }}
-                        >{LANG.start}
-                        </button>
-                        <button
-                            className='btn btn-default pull-right'
-                            onClick={() => this._close()}
-                        >{LANG.end}
+                        >
+                            {LANG.start}
                         </button>
                     </section>
                     </div>

@@ -295,7 +295,7 @@ define([
         },
         saveFile: async function() {
             if (!svgCanvas.currentFilePath) {
-                const result = this.saveAsFile();
+                const result = await this.saveAsFile();
                 return result;
             } else {
                 svgCanvas.clearSelection();
@@ -315,6 +315,7 @@ define([
                 } else if (svgCanvas.currentFilePath.endsWith('.beam')) {
                     const ImageSource = await svgCanvas.getImageSource();
                     await BeamFileHelper.saveBeam(svgCanvas.currentFilePath, output, ImageSource);
+                    return true;
                 }
             }
         },
@@ -372,19 +373,19 @@ define([
                 Alert.popUp({
                     id: 'unsaved_change_dialog',
                     message: LANG.popup.save_unsave_changed,
-                    buttonLabels: [i18n.lang.alert.cancel, i18n.lang.alert.dont_save, i18n.lang.alert.save],
+                    buttonLabels: [i18n.lang.alert.save, i18n.lang.alert.dont_save, i18n.lang.alert.cancel],
                     callbacks: [
-                        () => {},
+                        async () => {
+                            if (await this.saveFile()) {
+                                callback();
+                            }
+                        },
                         () => {
                             callback();
                         },
-                        () => {
-                            if (this.saveFile()) {
-                                callback();
-                            }
-                        }
+                        () => {},
                     ],
-                    primaryButtonIndex: 2
+                    primaryButtonIndex: 0
                 });
             }
         },
