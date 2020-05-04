@@ -49,14 +49,13 @@ define([
         ipc.send(events.CHECK_FOR_UPDATE, currentChannel);
         setTimeout(() => {
             if (!hasGetResponse) {
-                console.log('yo');
                 if (!isAutoCheck) {
                     ProgressActions.close();
+                    Alert.popUp({
+                        message: LANG.no_response,
+                        caption: LANG.check_update
+                    });
                 }
-                Alert.popUp({
-                    message: LANG.no_response,
-                    caption: LANG.check_update
-                });
             }
         }, 15000)
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
