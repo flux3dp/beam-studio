@@ -73,9 +73,9 @@ class MonitorManager {
         };
 
         if (process.platform === 'darwin') {
-            monitor_cmd = path.join(this._backendLocation, 'monitorexe-osx/monitorexe');
+            monitor_cmd = `"${path.join(this._backendLocation, 'monitorexe-osx/monitorexe')}"`;
         } else if (process.platform === 'win32' && process.arch === 'x64') {
-            monitor_cmd = path.join(this._backendLocation, 'monitorexe-win64/monitorexe.exe');
+            monitor_cmd = `"${path.join(this._backendLocation, 'monitorexe-win64/monitorexe.exe')}"`;
             exec(`"${path.join(this._backendLocation, 'monitorexe-win64/cygserver.exe')}"`, (err, stdout) => {
                 if (err) {
                     console.log(err);
