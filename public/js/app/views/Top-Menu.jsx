@@ -657,7 +657,6 @@ define([
 
                 let isTooFastForPath = false;
                 const tooFastLayers = [];
-                svgCanvas.getCurrentDrawing().getLayerName(i);
                 for (let i = 0; i < layers.length; ++i) {
                     const layer = layers[i];
                     if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
