@@ -5979,8 +5979,11 @@ define([
                             tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
                             match = tmp[i].match(/id="svg_\d+"/)[0];
                             id = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                            match = tmp[i].match(/data-xform="[^"]*"/)[0];
-                            xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/data-xform="[^"]*"/);
+                            if (match) {
+                                match = match[0];
+                                xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            }
                             match = tmp[i].match(/data-wireframe="[a-z]*"/);
                             if (match) {
                                 match = match[0];
