@@ -1,4 +1,4 @@
-name: Electron CD Windows
+name: Electron CD Windows x86
 
 on:
   push:
