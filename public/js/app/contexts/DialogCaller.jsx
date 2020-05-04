@@ -114,7 +114,7 @@ define([
                 return;
             }
             element = selectedElements[0];
-            const src = element.getAttribute('origImage');
+            const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
             addDialogComponent('photo-edit',
                 <PhotoEditPanel
                     mode={mode}
