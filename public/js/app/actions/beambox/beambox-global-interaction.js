@@ -19,18 +19,21 @@ define([
         constructor() {
             super();
             const loadExampleFile = function(path) {
-                var fileEntry = {
-                    name: path,
-                    toURL: function() {
-                        return path;
-                    }
-                }
                 var oReq = new XMLHttpRequest();
                 oReq.open('GET', path, true);
                 oReq.responseType = 'blob';
+                console.log(path);
 
-                oReq.onload = function(oEvent) {
-                    svgEditor.importBvg(oReq.response);
+                oReq.onload = async function(oEvent) {
+                    let res = oReq.response;
+                    let buf = new Buffer.from(await new Response(res).arrayBuffer());
+                    let string = buf.toString();
+                    if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
+                        const LANG = i18n.lang.beambox.right_panel.layer_panel;
+                        string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
+                        console.log(string);
+                    }
+                    svgEditor.importBvgString(string);
                 };
 
                 oReq.send();
@@ -43,18 +46,13 @@ define([
                         electron.trigger_file_input_click('import_image');
                     }
                 },
-                'IMPORT_EXAMPLE': () => {
-                    if (i18n.getActiveLang() === 'zh-tw') {
-                        loadExampleFile(`examples/badge_zh-tw.bvg`);
-                    } else {
-                        loadExampleFile(`examples/badge_en.bvg`);
-                    }
-                },
+                'IMPORT_EXAMPLE': () => {loadExampleFile(`examples/badge.bvg`);},
                 'IMPORT_MATERIAL_TESTING_OLD': () => {loadExampleFile('examples/mat_test_old.bvg')},
                 'IMPORT_MATERIAL_TESTING_SIMPLECUT': () => {loadExampleFile('examples/mat_test_simple_cut.bvg')},
                 'IMPORT_MATERIAL_TESTING_CUT': () => {loadExampleFile('examples/mat_test_cut.bvg')},
                 'IMPORT_MATERIAL_TESTING_ENGRAVE': () => {loadExampleFile('examples/mat_test_engrave.bvg')},
                 'IMPORT_MATERIAL_TESTING_LINE': () => {loadExampleFile('examples/mat_test_line.bvg')},
+                'IMPORT_HELLO_BEAMBOX': () => {loadExampleFile('examples/hello-beambox.bvg')},
                 'SAVE_SCENE': () => FnWrapper.saveFile(),
                 'SAVE_AS': () => FnWrapper.saveAsFile(),
                 'EXPORT_BVG': () => FnWrapper.exportAsBVG(),

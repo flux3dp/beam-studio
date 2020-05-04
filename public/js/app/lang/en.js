@@ -1169,7 +1169,9 @@ define(function() {
             right_panel: {
                 layer_panel: {
                     layer1: 'Layer 1',
-                    layer_bitmap: 'Bitmap'
+                    layer_bitmap: 'Bitmap',
+                    layer_engraving: 'Engraving',
+                    layer_cutting: 'Cutting',
                 },
                 laser_panel: {
                     parameters: 'Parameters',

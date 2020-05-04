@@ -1169,7 +1169,9 @@ define(function() {
             right_panel: {
                 layer_panel: {
                     layer1: 'レイヤ 1',
-                    layer_bitmap: 'ビットマップ'
+                    layer_bitmap: 'ビットマップ',
+                    layer_engraving: '彫る',
+                    layer_cutting: '切る',
                 },
                 laser_panel: {
                     parameters: 'パラメーター',

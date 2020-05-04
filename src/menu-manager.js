@@ -38,13 +38,14 @@ function _buildFileMenu(fnKey, callback) {
         { 'id': 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` },
         { 'id': 'SAVE_AS', label: r.save_as, click: callback, 'accelerator': `Shift+${fnKey}+S` },
         { type: 'separator' },
-        { 'id': 'SAMPLES', label: r.samples || 'Samples', submenu: [
-            { 'id': 'IMPORT_EXAMPLE', label: r.import_first_engrave || 'First Engraving', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut || 'Material Testing Suite - Cut (Simple)', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut || 'Material Testing Suite - Cut', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave || 'Material Testing Suite - Engraving', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line || 'Material Testing Suite - Line', click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old || 'Material Testing Suite (Old)', click: callback },
+        { 'id': 'SAMPLES', label: r.samples || 'Examples', submenu: [
+            { 'id': 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
+            { 'id': 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave, click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old, click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut, click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut, click: callback },
+            { 'id': 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line, click: callback },
         ]},
         { type: 'separator' },
         { 'id': 'EXPORT_TO', label: r.export_to || 'Export to', submenu: [

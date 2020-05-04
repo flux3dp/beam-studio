@@ -1167,7 +1167,9 @@ define(function() {
             right_panel: {
                 layer_panel: {
                     layer1: '預設圖層',
-                    layer_bitmap: '點陣圖層'
+                    layer_bitmap: '點陣圖層',
+                    layer_engraving: '雕刻圖層',
+                    layer_cutting: '切割圖層',
                 },
                 laser_panel: {
                     parameters: '選擇參數',
