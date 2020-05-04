@@ -77,6 +77,7 @@ jobs:
           cd ../../
           $env:TMP
           cp -R $env:TMP/flux_api_swap backend/flux_api
+          cp -R lib/monitorexe-win64  backend/monitorexe-win64
           ./backend/flux_api/flux_api --test --without_pcl 
 
           cp -Force ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js

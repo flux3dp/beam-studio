@@ -76,6 +76,7 @@ jobs:
           cd ../../
 
           cp -R $HOME/flux_api_swap backend/flux_api
+          cp -R lib/monitorexe-osx  backend/monitorexe-osx
           ./backend/flux_api/flux_api --test --without_pcl
 
 

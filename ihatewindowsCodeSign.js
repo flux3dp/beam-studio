@@ -234,26 +234,27 @@ async function doSign(configuration, packager) {
     }
   }
 
-  const { execSync } = require('child_process');
-
-  try {
-    await execSync(`curl.exe -F file="@${args[args.length-1]}" -o "${args[args.length-1]}" ${env.WIN_CODESIGN_SERVER}`,  { timeout, env });
-  } catch (e) {
-    // if (e.message.includes("The file is being used by another process") || e.message.includes("The specified timestamp server either could not be reached")) {
-    //   _util().log.warn(`First attempt to code sign failed, another attempt will be made in 2 seconds: ${e.message}`);
-
-    //   await new Promise((resolve, reject) => {
-    //     setTimeout(() => {
-    //       vm.exec(tool, args, {
-    //         timeout,
-    //         env
-    //       }).then(resolve).catch(reject);
-    //     }, 2000);
-    //   });
-    // }
-
-    throw e;
-  }
+  const { exec } = require('child_process');
+  
+  await new Promise((resolve) => {
+    let retryTime = 0;
+    const doCodeSign = () => {
+      exec(`curl.exe -F file="@${args[args.length-1]}" -o "${args[args.length-1]}" ${env.WIN_CODESIGN_SERVER}`,  { timeout, env }, (err, stdout, stderr) => {
+        console.log(err, stdout, stderr);
+        if(err) {
+          retryTime += 1;
+          if (retryTime > 3) {
+            throw err;
+          } else {
+            doCodeSign();
+          }
+        } else {
+          resolve();
+        }
+      });
+    }
+    doCodeSign();
+  });
 } // on windows be aware of http://stackoverflow.com/a/32640183/1910191
 
 
