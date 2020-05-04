@@ -390,6 +390,7 @@ define(function() {
             updates_version: '版本',
             default_app: '預設功能',
             default_units: '預設單位',
+            fast_gradient: '快速雕刻',
             vector_speed_constraint: '限制輸出速度',
             loop_compensation: '封閉路徑補償',
             blade_radius: '旋轉刀半徑',
@@ -422,6 +423,7 @@ define(function() {
                 connection: '連線',
                 editor: '編輯器',
                 path: '路徑',
+                engraving: '雕刻',
                 stripe_calibration: '間距橫紋校正',
                 mask: '工作範圍剪裁',
                 text_to_path: '文字轉路徑',
@@ -441,7 +443,7 @@ define(function() {
                 save_password: '儲存變更'
             },
             cancel: '取消',
-            done: '完成',
+            done: '套用',
             connect_printer: {
                 title: '選擇連接成型機'
             },

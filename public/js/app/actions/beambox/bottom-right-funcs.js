@@ -209,11 +209,11 @@ define([
         }
 
         let isSupportDiodeAndAF = true;
-        let isSupportFastGradient = true;
+        let shouldUseFastGradient = BeamboxPreference.read('fast_gradient') !== false;
         if (device) {
             const vc = VersionChecker(device.version);
             isSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
-            isSupportFastGradient = vc.meetRequirement('FAST_GRADIENT');
+            shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
         }
 
         const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
@@ -251,7 +251,7 @@ define([
                     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
                     enableAutoFocus: isSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus'),
                     enableDiode: isSupportDiodeAndAF && BeamboxPreference.read('enable-diode'),
-                    isSupportFastGradient,
+                    shouldUseFastGradient,
                     vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false
                 }
             );

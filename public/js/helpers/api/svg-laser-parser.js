@@ -347,7 +347,7 @@ define([
                     args.push(`${BeamboxPreference.read('diode_offset_x') || 0},${BeamboxPreference.read('diode_offset_y') || 0}`);
                 }
 
-                if (opts.isSupportFastGradient) {
+                if (opts.shouldUseFastGradient) {
                     args.push('-fg');
                 }
 

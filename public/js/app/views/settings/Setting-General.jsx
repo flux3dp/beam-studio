@@ -243,6 +243,19 @@ define([
                 }
             ];
 
+            const fastGradientOptions = [
+                {
+                    value: 'false',
+                    label: lang.settings.off,
+                    selected: BeamboxPreference.read('fast_gradient') === false
+                },
+                {
+                    value: 'true',
+                    label: lang.settings.on,
+                    selected: BeamboxPreference.read('fast_gradient') !== false
+                }
+            ];
+
             const vectorSpeedConstraintOptions = [
                 {
                     value: 'false',
@@ -519,6 +532,16 @@ define([
                             className='font3'
                             options={imageDownsamplingOptions}
                             onChange={e => this._updateBeamboxPreference('image_downsampling', e.target.value)}
+                        />
+                    </Controls>
+
+                    <div className='subtitle'>{lang.settings.groups.engraving}</div>
+
+                    <Controls label={lang.settings.fast_gradient}>
+                        <SelectView
+                            className='font3'
+                            options={fastGradientOptions}
+                            onChange={e => this._updateBeamboxPreference('fast_gradient', e.target.value)}
                         />
                     </Controls>
 
