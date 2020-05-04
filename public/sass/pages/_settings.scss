@@ -105,12 +105,13 @@
         }
 
         .subtitle {
+            line-height: 40px;
             font-size: 20px;
             color: #333;
-            border-bottom: 1px #888 solid;
+            border-bottom: 1px #CCC solid;
             margin-top: 15px;
             margin-bottom: 15px;
-            width: 200px;
+            width: 400px;
         }
         .ui.ui-control-unit-input-v2 {
             &.half {
