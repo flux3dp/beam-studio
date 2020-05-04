@@ -7629,7 +7629,7 @@
 		const commands  = ClipperLib.dPathSpliter(dPath);
 		let resultPaths = [];
 		let currentPath = [];
-		let startPoint, controlPoints, cPath;
+		let startPoint, controlPoints, cPath, qPath;
 		let lastControlPoint = null;
 		for (let i = 0; i < commands.length; ++i) {
 			let points = commands[i].points;
@@ -7654,6 +7654,12 @@
 					lastControlPoint = controlPoints[1];
 					cPath = ClipperLib.generatePointPathFromC(startPoint, controlPoints);
 					currentPath.push(...cPath);
+					break;
+				case 'Q':
+					startPoint = currentPath[currentPath.length - 1];
+					controlPoints = points;
+					qPath = ClipperLib.generatePointPathFromQ(startPoint, controlPoints);
+					currentPath.push(...qPath);
 					break;
 				case 'S':
 					startPoint = currentPath[currentPath.length - 1];
@@ -7708,24 +7714,24 @@
 		points[i].Y = new_y;
 		}
 	}
-	ClipperLib.generatePointPathFromC = function (startPoint, controlPoints) {
+	ClipperLib.generatePointPathFromQ = function (startPoint, controlPoints) {
 		const maxDistance = 1000;
 		const defaultStep = 10;
 		let cPath = [];
-		let bzc = new ClipperLib.BezierCurve(startPoint, controlPoints);
-		if (bzc.isLine) {
+		let curve = new ClipperLib.QCurve(startPoint, controlPoints);
+		if (curve.isLine) {
 			cPath.push(controlPoints[2]);
 		} else {
 			let lastPoint = {...startPoint, t: 0};
 			let stack = [];
 			for (let i = 1; i <= defaultStep; ++i) {
-				stack.push({...bzc.point(i / defaultStep), t: i / defaultStep});
+				stack.push({...curve.point(i / defaultStep), t: i / defaultStep});
 				
 				while (stack.length > 0) {
 					const p = stack[stack.length - 1];
 					if (Math.sqrt((p.X - lastPoint.X) ** 2 + (p.Y - lastPoint.Y) ** 2) > maxDistance) {
 						const mid_t = (lastPoint.t + p.t) / 2;
-						stack.push({...bzc.point(mid_t), t: mid_t});
+						stack.push({...curve.point(mid_t), t: mid_t});
 					} else {
 						stack.pop();
 						cPath.push({X: p.X, Y: p.Y});
@@ -7736,7 +7742,53 @@
 		}
 		return cPath;
 	}
-	ClipperLib.BezierCurve = function(startPoint, controlPoints) {
+	ClipperLib.QCurve = function(startPoint, controlPoints) {
+		this.x0 = startPoint.X;
+		this.y0 = startPoint.Y;
+		this.x1 = controlPoints[0].X;
+		this.y1 = controlPoints[0].Y;
+		this.x2 = controlPoints[1].X;
+		this.y2 = controlPoints[1].Y;
+		this.controlPoints = controlPoints;
+		this.isLine = false;
+		if ((this.x0 == this.x1 && this.y0 == this.y1) || (this.x1 == this.x2 && this.y1 == this.y2)) {
+			this.isLine = true;
+		}
+		this.point = function(t) {
+			const x = this.x0 * (1 - t) ** 2 + 2 * this.x1 * t * (1 - t) + this.x2 * t ** 2;
+			const y = this.y0 * (1 - t) ** 2 + 2 * this.y1 * t * (1 - t) + this.y2 * t ** 2;
+			return {X:x, Y:y};
+		}
+	}
+	ClipperLib.generatePointPathFromC = function (startPoint, controlPoints) {
+		const maxDistance = 1000;
+		const defaultStep = 10;
+		let cPath = [];
+		let curve = new ClipperLib.CCurve(startPoint, controlPoints);
+		if (curve.isLine) {
+			cPath.push(controlPoints[2]);
+		} else {
+			let lastPoint = {...startPoint, t: 0};
+			let stack = [];
+			for (let i = 1; i <= defaultStep; ++i) {
+				stack.push({...curve.point(i / defaultStep), t: i / defaultStep});
+				
+				while (stack.length > 0) {
+					const p = stack[stack.length - 1];
+					if (Math.sqrt((p.X - lastPoint.X) ** 2 + (p.Y - lastPoint.Y) ** 2) > maxDistance) {
+						const mid_t = (lastPoint.t + p.t) / 2;
+						stack.push({...curve.point(mid_t), t: mid_t});
+					} else {
+						stack.pop();
+						cPath.push({X: p.X, Y: p.Y});
+						lastPoint = p;
+					}
+				}
+			}
+		}
+		return cPath;
+	}
+	ClipperLib.CCurve = function(startPoint, controlPoints) {
 		this.x0 = startPoint.X;
 		this.y0 = startPoint.Y;
 		this.x1 = controlPoints[0].X;
