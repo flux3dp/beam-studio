@@ -240,8 +240,10 @@ async function doSign(configuration, packager) {
     let retryTime = 0;
     const doCodeSign = () => {
       exec(`curl.exe -F file="@${args[args.length-1]}" -o "${args[args.length-1]}" ${env.WIN_CODESIGN_SERVER}`,  { timeout, env }, (err, stdout, stderr) => {
-        console.log(err, stdout, stderr);
+        console.log(stdout);
         if(err) {
+          console.log(err);
+          console.log(stderr);
           retryTime += 1;
           if (retryTime > 3) {
             throw err;
