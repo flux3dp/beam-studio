@@ -425,15 +425,15 @@ define([
                         <div className='footer'>
                             <button
                                 className='btn btn-default pull-right'
-                                onClick={() => this._handleCropping()}
-                            >
-                                {LANG.next}
-                            </button>
-                            <button
-                                className='btn btn-default pull-right'
                                 onClick={() => this._handleCropperCancel()}
                             >
                                 {LANG.cancel}
+                            </button>
+                            <button
+                                className='btn btn-default pull-right primary'
+                                onClick={() => this._handleCropping()}
+                            >
+                                {LANG.next}
                             </button>
                         </div>
                     </div>
@@ -560,15 +560,15 @@ define([
                         </button>
                         <button
                             className='btn btn-default pull-right'
-                            onClick={() => this._calculateImageTrace()}
-                        >
-                            {LANG.apply}
-                        </button>
-                        <button
-                            className='btn btn-default pull-right'
                             onClick={() => this._backToCropper()}
                         >
                             {LANG.back}
+                        </button>
+                        <button
+                            className='btn btn-default pull-right primary'
+                            onClick={() => this._calculateImageTrace()}
+                        >
+                            {LANG.apply}
                         </button>
                     </div>
                 );
@@ -583,15 +583,15 @@ define([
                         </button>
                         <button
                             className='btn btn-default pull-right'
-                            onClick={() => this._pushImageTrace()}
-                        >
-                            {LANG.okay}
-                        </button>
-                        <button
-                            className='btn btn-default pull-right'
                             onClick={() => this.prev()}
                         >
                             {LANG.back}
+                        </button>
+                        <button
+                            className='btn btn-default pull-right primary'
+                            onClick={() => this._pushImageTrace()}
+                        >
+                            {LANG.okay}
                         </button>
                     </div>
                 );

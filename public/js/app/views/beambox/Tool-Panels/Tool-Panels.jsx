@@ -210,8 +210,8 @@ define([
             return (
                 <div className="tool-block">
                         <div className="btn-h-group">
+                            <button className="btn btn-default primary" onClick={() => {_onYes()}}>{LANG.confirm}</button>
                             <button className="btn btn-default" onClick={_onCancel}>{LANG.cancel}</button>
-                            <button className="btn btn-default" onClick={() => {_onYes()}}>{LANG.confirm}</button>
                         </div>
                 </div>
             );
