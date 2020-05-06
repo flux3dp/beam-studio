@@ -176,12 +176,16 @@ define([
         _getPreviewBoundary() {
             const previewBoundaryId = 'previewBoundary';
             const color = 'rgba(204,204,204,0.8)';
+            const stripeColor = 'rgba(102,102,102,0.8)';
+            const stripeWidth = 60;
             const uncapturabledHeight = (this.cameraOffset.y * Constant.dpmm) - (Constant.camera.imgHeight * this.cameraOffset.scaleRatioY / 2);
-
             const svgdoc = document.getElementById('svgcanvas').ownerDocument;
             const NS = svgedit.NS;
             const boundaryGroup = svgdoc.createElementNS(NS.SVG, 'svg');
             const borderTop = svgdoc.createElementNS(NS.SVG, 'rect');
+            const borderPattern = svgdoc.createElementNS(NS.SVG, 'pattern');
+            const patternRect = svgdoc.createElementNS(NS.SVG, 'rect');
+            const patternLine = svgdoc.createElementNS(NS.SVG, 'line');
             const descText = svgdoc.createElementNS(NS.SVG, 'text');
 
             svgedit.utilities.assignAttributes(boundaryGroup, {
@@ -194,20 +198,50 @@ define([
                 'style': 'pointer-events:none'
             });
 
+            svgedit.utilities.assignAttributes(borderPattern, {
+                'id': 'border-pattern',
+                'width': stripeWidth,
+                'height': stripeWidth,
+                'patternUnits': 'userSpaceOnUse',
+                'patternTransform': 'rotate(45 100 100)',
+                'style': 'pointer-events:none'
+            });
+
+            svgedit.utilities.assignAttributes(patternRect, {
+                'id': 'pattern-rect',
+                'width': stripeWidth,
+                'height': stripeWidth,
+                'fill': color,
+                'style': 'pointer-events:none'
+            });
+
+            svgedit.utilities.assignAttributes(patternLine, {
+                'id': 'pattern-line',
+                'stroke': stripeColor,
+                'stroke-width': stripeWidth,
+                'patternUnits': 'userSpaceOnUse',
+                'y2': stripeWidth,
+                'style': 'pointer-events:none'
+            });
+
             svgedit.utilities.assignAttributes(borderTop, {
                 'width': Constant.dimension.getWidth(),
                 'height': uncapturabledHeight,
                 'x': 0,
                 'y': 0,
-                'fill': color,
+                'fill': 'url(#border-pattern)',
                 'style': 'pointer-events:none'
             });
 
             svgedit.utilities.assignAttributes(descText, {
-                'font-size': 30,
-                'x': 10,
-                'y': 30,
+                'font-size': 60,
+                'x': (uncapturabledHeight - 60) / 2,
+                'y': (uncapturabledHeight + 60) / 2 - 10,
+                'font-weight': 'bold',
                 'fill': '#fff',
+                'stroke': '#666',
+                'stroke-width': 5,
+                'paint-order': 'stroke',
                 'style': 'pointer-events:none'
             });
 
@@ -215,7 +249,11 @@ define([
 
             descText.appendChild(textNode);
 
+            borderPattern.appendChild(patternRect);
+            borderPattern.appendChild(patternLine);
+
             boundaryGroup.appendChild(borderTop);
+            boundaryGroup.appendChild(borderPattern);
             boundaryGroup.appendChild(descText);
 
             return boundaryGroup;

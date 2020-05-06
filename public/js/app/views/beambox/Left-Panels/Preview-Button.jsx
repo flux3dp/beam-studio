@@ -1,7 +1,6 @@
 define([
     'jquery',
     'jsx!widgets/Modal',
-    'jsx!views/beambox/Left-Panels/Clear-Preview-Graffiti-Button',
     'jsx!views/beambox/Left-Panels/Image-Trace-Button',
     'jsx!views/Printer-Selector',
     'app/contexts/AlertCaller',
@@ -24,7 +23,6 @@ define([
 ], function(
     $,
     Modal,
-    ClearPreviewGraffitiButton,
     ImageTraceButton,
     PrinterSelector,
     Alert,
@@ -57,7 +55,9 @@ define([
                 isPreviewMode: false,
                 isImageTraceMode: false,
                 isDrawing: false,
-                isDrawn: false
+                isDrawn: false,
+                isClearPreviewButtonShowing: false,
+                isClearPreviewButtonActive: false
             };
         }
 
@@ -276,7 +276,10 @@ define([
                     self.endPreviewMode();
                     return false;
                 });
-                ClearPreviewGraffitiButton.activate(this.endPreviewMode.bind(this));
+                this.setState({
+                    isClearPreviewButtonShowing: true,
+                    isClearPreviewButtonActive: true
+                })
             };
 
 
@@ -302,6 +305,8 @@ define([
         resetPreviewButton() {
             FnWrapper.useSelectTool();
             this.setState({
+                isClearPreviewButtonActive: false,
+                isClearPreviewButtonShowing: !PreviewModeBackgroundDrawer.isClean(),
                 isPreviewMode: false,
                 isImageTraceMode: false
             });
@@ -315,10 +320,6 @@ define([
             } catch (error) {
                 console.log(error);
             } finally {
-                ClearPreviewGraffitiButton.deactivate();
-                if (PreviewModeBackgroundDrawer.isClean()) {
-                    ClearPreviewGraffitiButton.hide();
-                }
                 this.resetPreviewButton();
                 this.props.passEndPreview(()=>{});
                 shortcuts.off(['esc']);
@@ -327,21 +328,68 @@ define([
             }
         }
 
+        onClearPreviewGraffitiClick = () => {
+            if (!PreviewModeBackgroundDrawer.isClean()) {
+                PreviewModeBackgroundDrawer.resetCoordinates();
+                PreviewModeBackgroundDrawer.clear();
+                BeamboxActions.clearCameraCanvas();
+            }
+            this.endPreviewMode();
+            $('.svg-nest-buttons').removeClass('previewing');
+            this.setState({
+                isClearPreviewButtonShowing: false
+            })
+        }
+
+        renderClearPreviewButton = () => {
+            const {
+                isClearPreviewButtonShowing,
+                isClearPreviewButtonActive
+            } = this.state;
+            const borderless = BeamboxPreference.read('borderless') || false;
+
+            if (!isClearPreviewButtonShowing) {
+                return null;
+            }
+            return (
+                <div
+                    id='clear-preview-graffiti-button-placeholder'
+                    className={classNames('preview-control-button', {'active': isClearPreviewButtonActive})}
+                    onClick={() => {this.onClearPreviewGraffitiClick()}}
+                >
+                    <img src={'img/left-bar/icon-camera.svg'}/>
+                    <div className='text with-img'>{`${LANG.preview} ${borderless ? LANG.borderless : ''}`}</div>
+                    <div className='cross-wrapper'>
+                        <div class="bars bar1 shadow"></div>
+                        <div class="bars bar2 shadow"></div>
+                        <div class="bars bar1"></div>
+                    </div>
+                </div>
+            );
+        }
+
+        renderImageTraceButton = () => {
+            const {
+                isDrawing,
+                isPreviewMode
+            } = this.state;
+
+            const imageTraceActive = !(PreviewModeBackgroundDrawer.isClean() || isDrawing);
+            const imageTraceShow = (isPreviewMode || !PreviewModeBackgroundDrawer.isClean());
+
+            return <ImageTraceButton
+                        onClick={imageTraceActive ? () => this.handleImageTraceClick() : () => {}}
+                        active={imageTraceActive}
+                        show={imageTraceShow}
+                    />
+        }
+
         render() {
             const {
                 isPreviewMode,
-                isImageTraceMode,
-                isDrawing,
-                isDrawn
             } = this.state;
-            const imageTraceActive = !(PreviewModeBackgroundDrawer.isClean() || isDrawing);
-            const imageTraceShow = (isPreviewMode || !PreviewModeBackgroundDrawer.isClean());
-            const borderless = BeamboxPreference.read('borderless') || false;
-            const ImageTrace = (<ImageTraceButton
-                onClick={imageTraceActive ? () => this.handleImageTraceClick() : () => {}}
-                active={imageTraceActive}
-                show={imageTraceShow}
-                />)
+            const clearButton = this.renderClearPreviewButton();
+            const imageTraceButton = this.renderImageTraceButton();
             return (
                 <div className='preview'>
                     <div
@@ -352,15 +400,10 @@ define([
                         <img src={'img/left-bar/icon-camera.svg'} draggable="false"/>
                     </div>
                     <span id='printer-selector-placeholder' />
-                    <div
-                        id='clear-preview-graffiti-button-placeholder'
-                        className={`hide  ${borderless ? 'borderless' : ''}`}
-                        onClick={this.endPreviewMode.bind(this)}
-                    >
-                        <img src={'img/left-bar/icon-camera.svg'}/>
-                        <div className={`text`}>{`${LANG.preview} ${borderless ? LANG.borderless : ''}`}&nbsp;&nbsp;×</div>
+                    <div className='preview-buttons'>
+                        {clearButton}
+                        {imageTraceButton}
                     </div>
-                    {ImageTrace}
                 </div>
             );
         }

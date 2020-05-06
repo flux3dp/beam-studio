@@ -51,11 +51,13 @@ define([
 
         render() {
             const active = this.props.active && !(PreviewModeBackgroundDrawer.isClean());
-            const borderless = BeamboxPreference.read('borderless') || false; 
+            if (!this.props.show) {
+                return null;
+            }
             return (
                 <div
                     id='image-trace-button'
-                    className={classNames({'active': active}, {'hide': !this.props.show}, {'borderless': borderless})}
+                    className={classNames({'active': active}, 'preview-control-button')}
                     onClick={() => this._handleClick()}
                 >
                     <div className={'text'}>{LANG.image_trace}</div>

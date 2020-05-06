@@ -1,7 +1,6 @@
 define([
     'Rx',
     'app/actions/beambox/preview-mode-background-drawer',
-    'jsx!views/beambox/Left-Panels/Clear-Preview-Graffiti-Button',
     'helpers/device-master',
     'app/constants/device-constants',
     'app/actions/progress-actions',
@@ -16,7 +15,6 @@ define([
 ], function (
     Rx,
     PreviewModeBackgroundDrawer,
-    ClearPreviewGraffitiButton,
     DeviceMaster,
     DeviceConstants,
     ProgressActions,
@@ -39,8 +37,6 @@ define([
             this.cameraOffset = null;
             this.lastPosition = [0, 0]; // in mm
             this.errorCallback = function(){};
-
-            ClearPreviewGraffitiButton.init(() => PreviewModeBackgroundDrawer.clear());
         }
 
         //main functions

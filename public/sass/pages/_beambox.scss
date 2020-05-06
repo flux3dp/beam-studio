@@ -37,72 +37,63 @@
             }
         }
         .preview {
-            #clear-preview-graffiti-button-placeholder {
-                background: #999;
-                color: white;
+            .preview-buttons {
                 position: absolute;
+                width: 100vw;
                 left: 90px;
                 top: 30px;
-                width: 110px;
-                height: 32px;
                 z-index: 2;
-                border-radius: 20px;
-                &.active {
-                    background: #0099cc;
-                }
-                .text {
-                    position: absolute;
-                    top: 0px;
-                    left: 31px;
-                    width: 80px;
-                    height: 36px;
-                    line-height: 32px;
-                    font-size: 9pt;
-                    text-align: center;
-                }
-                img {
-                    margin: 8px 0px 0px 15px;
-                    height: 16px;
-                    filter: brightness(0) invert(100%);
-                }
-                &.borderless {
-                    width: 165px;
+                pointer-events: none;
+                .preview-control-button {
+                    cursor: pointer;
+                    pointer-events: initial;
+                    float: left;
+                    border-radius: 20px;
+                    height: 32px;
+                    background: #999;
+                    margin-right: 15px;
                     .text {
-                        width: 135px;
+                        padding: 0 20px;
+                        color: white;
+                        top: 0px;
+                        left: 31px;
+                        line-height: 32px;
+                        font-size: 9pt;
+                        text-align: center;
+                        float: left;
+                        &.with-img {
+                            padding-left: 4px;
+                            padding-right: 4px;
+                        }
                     }
-                }
-            }
-
-            #image-trace-button {
-                background: #999;
-                color: white;
-                position: absolute;
-                left: 215px;
-                top: 30px;
-                width: 80px;
-                height: 32px;
-                z-index: 2;
-                border-radius: 20px;
-                &.active {
-                    background: #0099cc;
-                }
-                .text {
-                    position: absolute;
-                    top: 0px;
-                    left: 0px;
-                    width: 80px;
-                    height: 36px;
-                    line-height: 32px;
-                    font-size: 9pt;
-                    text-align: center;
-                }
-                img {
-                    margin: 8px 0px 0px 15px;
-                    height: 16px;
-                    filter: brightness(0) invert(100%);
-                }
-                &.borderless {
-                    left: 265px; 
+                    img {
+                        float: left;
+                        margin: 8px 0px 0px 13px;
+                        height: 16px;
+                        filter: brightness(0) invert(100%);
+                    }
+                    .cross-wrapper {
+                        padding: 11px 0px 0px 3px;
+                        float: left;
+                        width: 20px;
+                        height: 10px;
+                        .bars {
+                            display: block;
+                            position: absolute;
+                            background-color: white;
+                            width: 1px;
+                            height: 10px;
+                        }
+                        .bar1 {
+                            transform: translateX(4px) rotate(45deg);
+                        }
+                        .bar2 {
+                            transform: translateX(4px) rotate(-45deg);
+                        }
+                    }
+                    &.active {
+                        background: #0099cc;
+                    }
                 }
             }
         }
@@ -432,7 +423,7 @@
                 background: #0099cc;
             }
             .text {
-                height: 36px;
+                height: 32px;
                 line-height: 32px;
                 font-size: 9pt;
                 text-align: center;
