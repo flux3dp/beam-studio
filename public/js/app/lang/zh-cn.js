@@ -244,7 +244,7 @@ define(function() {
 
             set_connection: '设定 %s 连线',
             please_goto_touchpad: '请使用 %s 触控面板进行 WiFi 连线设定',
-            tutorial: '1. 点选触控面板「设定」 > 「网际网路」 > 「设定」\n2. 选取欲连线的WiFi 名称并输入密码\n3. 稍待10 秒，若于「设定」 > 「网际网路」 成功显示无线网路IP，即代表连线成功\n4. 如果没有WiFi，可以使用机器后方的乙太网路埠，路由器需开启DHCP 功能\n5. 在此输入无线或有线网路IP   ',
+            tutorial: '1. 点选触控面板「网路」 > 「设定 Wi-Fi」\n2. 选取欲连线的WiFi 名称并输入密码\n3. 稍待10 秒，若于「设定」 > 「网际网路」 成功显示无线网路IP，即代表连线成功\n4. 如果没有WiFi，可以使用机器后方的乙太网路埠，路由器需开启DHCP 功能\n5. 在此输入无线或有线网路IP   ',
             please_see_tutorial_video: '观看教学影片',
             tutorial_url: 'https://tw.flux3dp.com/%s-tutorial/',
             ip_wrong: 'IP 格式错误，请重新输入',

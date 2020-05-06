@@ -244,7 +244,7 @@ define(function() {
 
             set_connection: '%s Connection Setup',
             please_goto_touchpad: 'Please go to Beambox touchpad',
-            tutorial: '1. Click touchpad "Setting" > "Internet" > "Setting."\n2. Select your WiFi and enter the password.\n3. Wait 10 seconds, the Wireless IP Address would show at "Setting" > "Internet".\n4. If WiFi is unavailable, you connect with the ethernet port, with routers which enabled DHCP.\n5. Enter Machine IP here  ',
+            tutorial: '1. On the Click touch panel of the machine, cloick "Network" > "WiFi Settings"\n2. Select your WiFi and enter the password.\n3. Wait 10 seconds, the Wireless IP Address would show at "Setting" > "Internet".\n4. If WiFi is unavailable, kindly connect with the ethernet port, with DHCP enabled routers.\n5. Enter Machine IP here  ',
             please_see_tutorial_video: 'Tutorial Video',
             tutorial_url: 'https://flux3dp.com/beambox-tutorial/',
             ip_wrong: 'IP Format is wrong. Please re-enter.',
