@@ -217,10 +217,24 @@
         font-size: 14px;
         color: white;
         padding: 0 20px;
-        margin: 20px 0;
+        margin: 20px 20px 20px 0px;
         display: inline-block;
         &:hover{
             background: #222;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+    }
+    .btn-cancel {
+        border: 1px solid rgba(29, 28, 29, 0.3);
+        border-radius: 4px;
+        line-height: 34px;
+        font-size: 14px;
+        color: #333333;
+        padding: 0 20px;
+        margin: 20px 0px;
+        display: inline-block;
+        &:hover{
+            background: rgba(0, 0, 0, 0.03);
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
     }

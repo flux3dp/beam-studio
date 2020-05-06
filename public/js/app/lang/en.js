@@ -418,7 +418,7 @@ define(function() {
             close: 'Close',
             enabled: 'Enabled',
             disabled: 'Disabled',
-            cancel: 'CANCEL',
+            cancel: 'Cancel',
             done: 'Apply',
             groups: {
                 general: 'General',
@@ -1139,7 +1139,7 @@ define(function() {
                 image_trace: 'Trace Image',
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
                 end_preview: 'End Preview Mode',
-                unpreviewable_area: 'The area is not allowed to preview',
+                unpreviewable_area: 'Blind Area',
                 borderless_preview: 'Borderless Mode Camera Preview',
                 rectangle: 'Rectangle',
                 ellipse: 'Ellipse',

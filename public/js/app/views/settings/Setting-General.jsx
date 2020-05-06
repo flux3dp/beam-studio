@@ -48,6 +48,10 @@ define([
             this.state = {
                 lang: i18n.lang
             };
+            this.origLang = i18n.getActiveLang();
+            this.isDefaultMachineRemoved = false;
+            this.beamboxPreferenceChanges = {};
+            this.configChanges = {};
         }
 
         _checkIPFormat = (e) => {
@@ -67,9 +71,8 @@ define([
                 }
             });
 
-
             if(isCorrectFormat) {
-                Config().write('poke-ip-addr', me.value);
+                this.configChanges['poke-ip-addr'] = me.value;
             }
         }
 
@@ -81,24 +84,38 @@ define([
             this.props.onLangChange(e);
         }
 
-        _updateOptions = (id, e) => {
-            Config().write(id, e.target.value);
+        _updateConfigChange = (id, val) => {
+            this.configChanges[id] = val;
             this.forceUpdate();
         }
 
-        _updateBeamboxPreference = (item_key, val) => {
+        _getConfigEditingValue = (key) => {
+            if (key in this.configChanges) {
+                return this.configChanges[key];
+            }
+            return Config().read(key);
+        }
+
+        _updateBeamboxPreferenceChange = (item_key, val) => {
             if (val === 'true') {
                 val = true;
             } else if (val === 'false') {
                 val = false;
             }
-            BeamboxPreference.write(item_key, val);
+            this.beamboxPreferenceChanges[item_key] = val;
             this.forceUpdate();
+        }
+
+        _getBeamboxPreferenceEditingValue = (key) => {
+            if (key in this.beamboxPreferenceChanges) {
+                return this.beamboxPreferenceChanges[key];
+            }
+            return BeamboxPreference.read(key);
         }
 
         _removeDefaultMachine = () => {
             if(confirm(this.state.lang.settings.confirm_remove_default)) {
-                initializeMachine.defaultPrinter.clear();
+                this.isDefaultMachineRemoved = true;
                 this.forceUpdate();
             }
         }
@@ -111,13 +128,28 @@ define([
         }
 
         _handleDone = () => {
+            for (let key in this.configChanges) {
+                Config().write(key, this.configChanges[key]);
+            }
+            for (let key in this.beamboxPreferenceChanges) {
+                BeamboxPreference.write(key, this.beamboxPreferenceChanges[key]);
+            }
+            if (this.isDefaultMachineRemoved) {
+                initializeMachine.defaultPrinter.clear();
+            }
+            location.hash = 'studio/beambox';
+            location.reload();
+        }
+
+        _handleCancel = () => {
+            i18n.setActiveLang(this.origLang);
             location.hash = 'studio/beambox';
             location.reload();
         }
 
         render() {
             let { supported_langs } = this.props,
-                printer = initializeMachine.defaultPrinter.get(),
+                printer = this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get(),
                 default_machine_button,
                 tableStyle = {width: '70%'},
                 pokeIP = Config().read('poke-ip-addr'),
@@ -136,12 +168,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: Config().read('notification') === '0'
+                    selected: (this.configChanges['notification'] || Config().read('notification')) === '0'
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: Config().read('notification') === '1'
+                    selected: (this.configChanges['notification'] || Config().read('notification')) === '1'
                 }
             ];
 
@@ -149,12 +181,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: Config().read('auto_check_update') === '0'
+                    selected: (this.configChanges['auto_check_update'] || Config().read('auto_check_update'))  === '0'
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: Config().read('auto_check_update') === '1' || !Config().read('auto_check_update')
+                    selected: (this.configChanges['auto_check_update'] || Config().read('auto_check_update')) !== '0'
                 }
             ];
 
@@ -162,58 +194,25 @@ define([
                 {
                     value: 0,
                     label: lang.settings.off,
-                    selected: Config().read('guessing_poke') === '0'
+                    selected: (this.configChanges['guessing_poke'] || Config().read('guessing_poke')) === '0'
                 },
                 {
                     value: 1,
                     label: lang.settings.on,
-                    selected: Config().read('guessing_poke') === '1' || !Config().read('guessing_poke')
+                    selected: (this.configChanges['guessing_poke'] || Config().read('guessing_poke')) !== '0'
                 }
-            ];
-
-            const defaultAppOptions = [
-                {
-                    value: 'print',
-                    label: lang.menu.print,
-                    selected: Config().read('default-app') === 'print'
-                },
-                {
-                    value: 'laser',
-                    label: lang.menu.laser,
-                    selected: Config().read('default-app') === 'laser'
-                },
-                {
-                    value: 'scan',
-                    label: lang.menu.scan,
-                    selected: Config().read('default-app') === 'scan'
-                },
-                {
-                    value: 'draw',
-                    label: lang.menu.draw,
-                    selected: Config().read('default-app') === 'draw'
-                },
-                {
-                    value: 'cut',
-                    label: lang.menu.cut,
-                    selected: Config().read('default-app') === 'cut'
-                },
-                {
-                    value: 'beambox',
-                    label: lang.menu.beambox,
-                    selected: Config().read('default-app') === 'beambox'
-                },
             ];
 
             const defaultUnitsOptions = [
                 {
                     value: 'mm',
                     label: lang.menu.mm,
-                    selected: Config().read('default-units') === 'mm'
+                    selected: (this.configChanges['default-units'] || Config().read('default-units')) === 'mm'
                 },
                 {
                     value: 'inches',
                     label: lang.menu.inches,
-                    selected: Config().read('default-units') === 'inches'
+                    selected: (this.configChanges['default-units'] || Config().read('default-units')) === 'inches'
                 },
             ];
 
@@ -221,12 +220,12 @@ define([
                 {
                     value: 'false',
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('show_guides') === false
+                    selected: this._getBeamboxPreferenceEditingValue('show_guides') === false
                 },
                 {
                     value: 'true',
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('show_guides') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('show_guides') !== false
                 }
             ];
 
@@ -234,12 +233,12 @@ define([
                 {
                     value: 'false',
                     label: lang.settings.high,
-                    selected: BeamboxPreference.read('image_downsampling') === false
+                    selected: this._getBeamboxPreferenceEditingValue('image_downsampling') === false
                 },
                 {
                     value: 'true',
                     label: lang.settings.low,
-                    selected: BeamboxPreference.read('image_downsampling') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('image_downsampling') !== false
                 }
             ];
 
@@ -247,12 +246,12 @@ define([
                 {
                     value: 'false',
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('fast_gradient') === false
+                    selected: this._getBeamboxPreferenceEditingValue('fast_gradient') === false
                 },
                 {
                     value: 'true',
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('fast_gradient') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('fast_gradient') !== false
                 }
             ];
 
@@ -260,43 +259,24 @@ define([
                 {
                     value: 'false',
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('vector_speed_contraint') === false
+                    selected: this._getBeamboxPreferenceEditingValue('vector_speed_contraint') === false
                 },
                 {
                     value: 'true',
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('vector_speed_contraint') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('vector_speed_contraint') !== false
                 }
             ];
-
             const precutSwitchOptions = [
                 {
                     value: 'false',
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('blade_precut') !== true
+                    selected: this._getBeamboxPreferenceEditingValue('blade_precut') !== true
                 },
                 {
                     value: 'true',
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('blade_precut') === true
-                }
-            ];
-
-            const defaultModelOptions = [
-                {
-                    value: '',
-                    label: lang.settings.none,
-                    selected: Config().read('default-model') === ''
-                },
-                {
-                    value: 'fd1',
-                    label: lang.settings.fd1,
-                    selected: Config().read('default-model') === 'fd1'
-                },
-                {
-                    value: 'fd1p',
-                    label: lang.settings.fd1p,
-                    selected: Config().read('default-model') === 'fd1p'
+                    selected: this._getBeamboxPreferenceEditingValue('blade_precut') === true
                 }
             ];
 
@@ -304,17 +284,17 @@ define([
                 {
                     value: 'fbm1',
                     label: 'Beamo',
-                    selected: BeamboxPreference.read('model') === 'fbm1'
+                    selected: this._getBeamboxPreferenceEditingValue('model') === 'fbm1'
                 },
                 {
                     value: 'fbb1b',
                     label: 'Beambox',
-                    selected: BeamboxPreference.read('model') === 'fbb1b'
+                    selected: this._getBeamboxPreferenceEditingValue('model') === 'fbb1b'
                 },
                 {
                     value: 'fbb1p',
                     label: 'Beambox Pro',
-                    selected: BeamboxPreference.read('model') === 'fbb1p'
+                    selected: this._getBeamboxPreferenceEditingValue('model') === 'fbb1p'
                 }
             ];
 
@@ -322,12 +302,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('stripe_compensation') === true
+                    selected: this._getBeamboxPreferenceEditingValue('stripe_compensation') === true
                 },
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: !BeamboxPreference.read('stripe_compensation')
+                    selected: this._getBeamboxPreferenceEditingValue('stripe_compensation') !== true
                 }
             ];
 
@@ -335,12 +315,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('enable_mask') === true
+                    selected: this._getBeamboxPreferenceEditingValue('enable_mask') === true
                 },
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: !BeamboxPreference.read('enable_mask')
+                    selected: this._getBeamboxPreferenceEditingValue('enable_mask') !== true
                 }
             ];
 
@@ -348,12 +328,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('TextbyFluxsvg') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('TextbyFluxsvg') !== false
                 },
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('TextbyFluxsvg') === false
+                    selected: this._getBeamboxPreferenceEditingValue('TextbyFluxsvg') === false
                 }
             ];
 
@@ -361,12 +341,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('font-substitute') !== false
+                    selected: this._getBeamboxPreferenceEditingValue('font-substitute') !== false
                 },
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: BeamboxPreference.read('font-substitute') === false
+                    selected: this._getBeamboxPreferenceEditingValue('font-substitute') === false
                 }
             ];
 
@@ -374,12 +354,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.on,
-                    selected: BeamboxPreference.read('default-borderless')
+                    selected: this._getBeamboxPreferenceEditingValue('default-borderless') === true
                 },
                 {
                     value: false,
                     label: lang.settings.off,
-                    selected: !BeamboxPreference.read('default-borderless')
+                    selected: this._getBeamboxPreferenceEditingValue('default-borderless') !== true
                 }
             ];
 
@@ -387,12 +367,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.enabled,
-                    selected: BeamboxPreference.read('default-autofocus')
+                    selected: this._getBeamboxPreferenceEditingValue('default-autofocus') === true
                 },
                 {
                     value: false,
                     label: lang.settings.disabled,
-                    selected: !BeamboxPreference.read('default-autofocus')
+                    selected: this._getBeamboxPreferenceEditingValue('default-autofocus') !== true
                 }
             ];
 
@@ -400,12 +380,12 @@ define([
                 {
                     value: true,
                     label: lang.settings.enabled,
-                    selected: BeamboxPreference.read('default-diode')
+                    selected: this._getBeamboxPreferenceEditingValue('default-diode') == true
                 },
                 {
                     value: false,
                     label: lang.settings.disabled,
-                    selected: !BeamboxPreference.read('default-diode')
+                    selected: this._getBeamboxPreferenceEditingValue('default-diode') !== true
                 }
             ];
 
@@ -437,7 +417,7 @@ define([
                         <SelectView
                             className='font3'
                             options={notificationOptions}
-                            onChange={this._updateOptions.bind(null, 'notification')}
+                            onChange={(e) => this._updateConfigChange('notification', e.target.value)}
                         />
                     </Controls>
 
@@ -446,7 +426,7 @@ define([
                         <SelectView
                             className='font3'
                             options={updateNotificationOptions}
-                            onChange={this._updateOptions.bind(null, 'auto_check_update')}
+                            onChange={(e) => this._updateConfigChange('auto_check_update', e.target.value)}
                         />
                     </Controls>
 
@@ -465,7 +445,7 @@ define([
                         <SelectView
                             className='font3'
                             options={GuessingPokeOptions}
-                            onChange={(e) => this._updateOptions('guessing_poke', e)}
+                            onChange={(e) => this._updateConfigChange('guessing_poke', e.target.value)}
                         />
                     </Controls>
 
@@ -486,7 +466,7 @@ define([
                         <SelectView
                             className='font3'
                             options={defaultUnitsOptions}
-                            onChange={this._updateOptions.bind(null, 'default-units')}
+                            onChange={(e) => this._updateConfigChange('default-units', e.target.value)}
                         />
                     </Controls>
 
@@ -494,7 +474,7 @@ define([
                         <SelectView
                             className='font3'
                             options={defaultBeamboxModelOptions}
-                            onChange={e => this._updateBeamboxPreference('model', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('model', e.target.value)}
                         />
                     </Controls>
 
@@ -503,7 +483,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={guideSelectionOptions}
-                            onChange={e => this._updateBeamboxPreference('show_guides', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('show_guides', e.target.value)}
                         />
                     </Controls>
                     <Controls label={lang.settings.guides_origin}>
@@ -512,8 +492,8 @@ define([
                             unit='mm'
                             min={0}
                             max={BeamboxConstant.dimension.getWidth()/10}
-                            defaultValue={BeamboxPreference.read('guide_x0')}
-                            getValue={val => this._updateBeamboxPreference('guide_x0', val)}
+                            defaultValue={this._getBeamboxPreferenceEditingValue('guide_x0')}
+                            getValue={val => this._updateBeamboxPreferenceChange('guide_x0', val)}
                             className={{half: true}}
                         />
                         <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -521,8 +501,8 @@ define([
                             unit='mm'
                             min={0}
                             max={BeamboxConstant.dimension.getHeight()/10}
-                            defaultValue={BeamboxPreference.read('guide_y0')}
-                            getValue={val => this._updateBeamboxPreference('guide_y0', val)}
+                            defaultValue={this._getBeamboxPreferenceEditingValue('guide_y0')}
+                            getValue={val => this._updateBeamboxPreferenceChange('guide_y0', val)}
                             className={{half: true}}
                         />
                     </Controls>
@@ -531,7 +511,7 @@ define([
                         <SelectView
                             className='font3'
                             options={imageDownsamplingOptions}
-                            onChange={e => this._updateBeamboxPreference('image_downsampling', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
                         />
                     </Controls>
 
@@ -541,7 +521,7 @@ define([
                         <SelectView
                             className='font3'
                             options={fastGradientOptions}
-                            onChange={e => this._updateBeamboxPreference('fast_gradient', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('fast_gradient', e.target.value)}
                         />
                     </Controls>
 
@@ -551,7 +531,7 @@ define([
                         <SelectView
                             className='font3'
                             options={vectorSpeedConstraintOptions}
-                            onChange={e => this._updateBeamboxPreference('vector_speed_contraint', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('vector_speed_contraint', e.target.value)}
                         />
                     </Controls>
 
@@ -560,8 +540,8 @@ define([
                             unit='mm'
                             min={0}
                             max={20}
-                            defaultValue={Number(localStorage.getItem('loop_compensation') || '0') / 10}
-                            getValue={val => localStorage.setItem('loop_compensation', Number(val) * 10)}
+                            defaultValue={Number(this._getConfigEditingValue('loop_compensation') || '0') / 10}
+                            getValue={(val) => this._updateConfigChange('loop_compensation', Number(val) * 10)}
                             className={{half: true}}
                         />
                     </Controls>
@@ -574,8 +554,8 @@ define([
                                     min={0}
                                     max={30}
                                     step={0.01}
-                                    defaultValue={BeamboxPreference.read('blade_radius') || 0}
-                                    getValue={val => this._updateBeamboxPreference('blade_radius', val)}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('blade_radius') || 0}
+                                    getValue={val => this._updateBeamboxPreferenceChange('blade_radius', val)}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -584,7 +564,7 @@ define([
                                 <SelectView
                                     className='font3'
                                     options={precutSwitchOptions}
-                                    onChange={e => this._updateBeamboxPreference('blade_precut', e.target.value)}
+                                    onChange={e => this._updateBeamboxPreferenceChange('blade_precut', e.target.value)}
                                 />
                             </Controls>
 
@@ -594,8 +574,8 @@ define([
                                     unit='mm'
                                     min={0}
                                     max={BeamboxConstant.dimension.getWidth()/10}
-                                    defaultValue={BeamboxPreference.read('precut_x') || 0}
-                                    getValue={val => this._updateBeamboxPreference('precut_x', val)}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('precut_x') || 0}
+                                    getValue={val => this._updateBeamboxPreferenceChange('precut_x', val)}
                                     className={{half: true}}
                                 />
                                 <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -603,8 +583,8 @@ define([
                                     unit='mm'
                                     min={0}
                                     max={BeamboxConstant.dimension.getHeight()/10}
-                                    defaultValue={BeamboxPreference.read('precut_y')}
-                                    getValue={val => this._updateBeamboxPreference('precut_y', val) || 0}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('precut_y')}
+                                    getValue={val => this._updateBeamboxPreferenceChange('precut_y', val) || 0}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -618,10 +598,10 @@ define([
                             id='select-lang'
                             className='font3'
                             options={stripeOptions}
-                            onChange={e => this._updateBeamboxPreference('stripe_compensation', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('stripe_compensation', e.target.value)}
                         />
                     </Controls>
-                    { BeamboxPreference.read('stripe_compensation') ?
+                    { this._getBeamboxPreferenceEditingValue('stripe_compensation') ?
                         <div>
                             <Controls label={lang.settings.stripe_calibration_initial}>
                                 <UnitInput
@@ -629,8 +609,8 @@ define([
                                     min={0}
                                     max={3000}
                                     step={0.01}
-                                    defaultValue={BeamboxPreference.read('stripe_compensation_y0') || 0}
-                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_y0', val)}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_y0') || 0}
+                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_y0', val)}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -641,8 +621,8 @@ define([
                                     min={0}
                                     max={3000}
                                     step={0.01}
-                                    defaultValue={BeamboxPreference.read('stripe_compensation_interval') || 0}
-                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_interval', val)}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_interval') || 0}
+                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_interval', val)}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -654,8 +634,8 @@ define([
                                     max={100}
                                     step={1}
                                     decimal={0}
-                                    defaultValue={BeamboxPreference.read('stripe_compensation_power') || 100}
-                                    getValue={val => this._updateBeamboxPreference('stripe_compensation_power', val)}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_power') || 100}
+                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_power', val)}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -670,7 +650,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={maskOptions}
-                            onChange={e => this._updateBeamboxPreference('enable_mask', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('enable_mask', e.target.value)}
                         />
                     </Controls>
 
@@ -681,7 +661,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={textToPathOptions}
-                            onChange={e => this._updateBeamboxPreference('TextbyFluxsvg', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
                         />
                     </Controls>
 
@@ -690,7 +670,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={fontSubstituteOptions}
-                            onChange={e => this._updateBeamboxPreference('font-substitute', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('font-substitute', e.target.value)}
                         />
                     </Controls>
 
@@ -701,7 +681,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={borderlessModeOptions}
-                            onChange={e => this._updateBeamboxPreference('default-borderless', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('default-borderless', e.target.value)}
                         />
                     </Controls>
 
@@ -710,7 +690,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={autofocusModuleOptions}
-                            onChange={e => this._updateBeamboxPreference('default-autofocus', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
                         />
                     </Controls>
 
@@ -719,7 +699,7 @@ define([
                             id='select-lang'
                             className='font3'
                             options={diodeModuleOptions}
-                            onChange={e => this._updateBeamboxPreference('default-diode', e.target.value)}
+                            onChange={e => this._updateBeamboxPreferenceChange('default-diode', e.target.value)}
                         />
                     </Controls>
 
@@ -729,8 +709,8 @@ define([
                             unit='mm'
                             min={0}
                             max={BeamboxConstant.dimension.getWidth()/10}
-                            defaultValue={BeamboxPreference.read('diode_offset_x') || 0}
-                            getValue={val => this._updateBeamboxPreference('diode_offset_x', val)}
+                            defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
+                            getValue={val => this._updateBeamboxPreferenceChange('diode_offset_x', val)}
                             className={{half: true}}
                         />
                         <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -738,8 +718,8 @@ define([
                             unit='mm'
                             min={0}
                             max={BeamboxConstant.dimension.getHeight()/10}
-                            defaultValue={BeamboxPreference.read('diode_offset_y')}
-                            getValue={val => this._updateBeamboxPreference('diode_offset_y', val) || 0}
+                            defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y')}
+                            getValue={val => this._updateBeamboxPreferenceChange('diode_offset_y', val) || 0}
                             className={{half: true}}
                         />
                     </Controls>
@@ -749,6 +729,7 @@ define([
                     </a>
                     <div className="clearfix" />
                     <a className="btn btn-done" onClick={this._handleDone}>{lang.settings.done}</a>
+                    <a className="btn btn-cancel" onClick={this._handleCancel}>{lang.settings.cancel}</a>
                 </div>
             );
         }
