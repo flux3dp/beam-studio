@@ -9,7 +9,7 @@ define([
 
     const _defaultConfig = {
         configName: '',
-        speed: 50,
+        speed: 20,
         strength: 15,
         repeat: 1,
         af: 0,
@@ -171,6 +171,10 @@ define([
         }
 
         render(name) {
+            if (_getLayer(name).length < 1) {
+                return;
+            }
+
             const speed = _getSpeed(name);
             const strength = _getStrength(name);
             const repeat = _getRepeat(name);
