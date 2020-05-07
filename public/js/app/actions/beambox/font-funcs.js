@@ -81,11 +81,25 @@ define([
             return 0;
         });
     })();
-    const requestFontStylesOfTheFontFamily = memoize((family) => {
-        const fonts = ipc.sendSync(events.FIND_FONTS, { family: family});
-        const fontStyles = Array.from(fonts).map(font => font.style);
+    const getFontOfPostscriptName = memoize((postscriptName) => {
+        if (process.platform === 'darwin') {
+            const font = FontManager.findFontSync({ postscriptName });
+            return font;
+        } else {
+            const allFonts = FontManager.getAvailableFontsSync();
+            const fit = allFonts.filter((f) => f.postscriptName === postscriptName);
+            console.log(fit);
+            if (fit.length > 0) {
+                return fit[0];
+            }
+            return allFonts[0];
+        }
+    });
 
-        return fontStyles;
+
+    const requestFontsOfTheFontFamily = memoize((family) => {
+        const fonts = ipc.sendSync(events.FIND_FONTS, { family: family});
+        return Array.from(fonts);
     });
     const requestFontByFamilyAndStyle = ({family, style, weight, italic}) => {
         const font = ipc.sendSync(events.FIND_FONT, {
@@ -97,40 +111,21 @@ define([
         return font;
     };
 
-    function findFontSync(arg) {
-        arg.style = arg.style || 'Regular';
-        const availableFonts = FontManager.getAvailableFontsSync();
-        let font = availableFonts[0];
-        let match = availableFonts.filter(font => font.family === arg.family);
-        font = match[0] || font;
-        if (arg.italic != null) {
-            match = match.filter(font => font.italic === arg.italic);
-            font = match[0] || font;
-        }
-        match = match.filter(font => font.style === arg.style);
-        font = match[0] || font;
-        if (arg.weight != null) {
-            match = match.filter(font => font.weight === arg.weight);
-        }
-        font = match[0] || font;
-        return font;
-    };
-
-    const substitutedFamily = function($textElement){
+    const substitutedFont = function($textElement){
+        const originFont = getFontOfPostscriptName($textElement.attr('font-postscript'));
         const fontFamily = $textElement.attr('font-family');
-        const fontStyle = $textElement.attr('font-style');
         const text = $textElement.text();
         
         // Escape for Whitelists
         const whiteList = ['標楷體'];
         const whiteKeyWords = ['華康', 'Adobe'];
         if (whiteList.indexOf(fontFamily) >= 0) {
-            return {fontFamily};
+            return {font: originFont};
         }
         for (let i = 0; i < whiteKeyWords.length; i++) {
             let keyword = whiteKeyWords[i];
             if (fontFamily && fontFamily.indexOf(keyword) >= 0) {
-                return {fontFamily};
+                return {font: originFont};
             }
         }
         //if only contain basic character (123abc!@#$...), don't substitute.
@@ -140,12 +135,8 @@ define([
             return char.charCodeAt(0) <= 0x007F;
         });
         if (textOnlyContainBasicLatin) {
-            return {fontFamily};
+            return {font: originFont};
         }
-        const originFont = findFontSync({
-            family: fontFamily,
-            style: fontStyle
-        });
         // array of used family which are in the text
         
         const originPostscriptName = originFont.postscriptName;
@@ -155,42 +146,34 @@ define([
             if (sub.postscriptName !== originPostscriptName) unSupportedChar.push(char);
             return sub;
         });
-        let familyList = fontList.map(font => font.family);
-        let postscriptList = fontList.map(font => font.postscriptName);
-        // make unique
-        familyList = [...new Set(familyList)];
-        postscriptList = [...new Set(postscriptList)];
 
-        if (familyList.length === 1) {
+        if (fontList.length === 1) {
             return {
-                fontFamily: familyList[0],
+                font: fontList[0],
                 unSupportedChar
             };
         } else {
             // Test all found fonts if they contain all 
-            for (let i = 0; i < postscriptList.length; ++i) {
+            for (let i = 0; i < fontList.length; ++i) {
                 let allFit = true;
                 for (let j = 0; j < text.length; ++j) {
-                    if (fontList[j].postscriptName === postscriptList[i]) {
-                        continue;
-                    }
-                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]);
-                    if (postscriptList[i] !== foundfont.postscriptName) {
+                    const foundfont = FontManager.substituteFontSync(fontList[i].postscriptName, text[j]);
+                    if (fontList[i].postscriptName !== foundfont.postscriptName) {
                         allFit = false;
                         break;
                     }
                 }
                 if (allFit) {
-                    console.log(`Find ${postscriptList[i]} fit for all char`);
+                    console.log(`Find ${fontList[i].postscriptName} fit for all char`);
                     return {
-                        fontFamily: FontManager.findFontSync({ postscriptName: postscriptList[i] }).family,
+                        font: fontList[i],
                         unSupportedChar
                     };
                 }
             }
             console.log('Cannot find a font fit for all');
             return {
-                fontFamily: (familyList.filter(family => family !== fontFamily))[0],
+                font: (fontList.filter(font => font.family !== fontFamily))[0],
                 unSupportedChar
             };;
         }
@@ -238,18 +221,28 @@ define([
         }
         let isUnsupported = false;
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
-        const origFontFamily = $textElement.attr('font-family');
+        const origFontPostscriptName = $textElement.attr('font-postscript');
         if (BeamboxPreference.read('font-substitute') !== false) {
-            const {fontFamily: newFontFamily, unSupportedChar} = substitutedFamily($textElement);
-            if (newFontFamily !== origFontFamily) {
+            const {font: newFont, unSupportedChar} = substitutedFont($textElement);
+            if (newFont.postscriptName !== origFontPostscriptName && unSupportedChar && unSupportedChar.length > 0) {
                 isUnsupported = true;
-                const doSub = await showsubstitutedFamilyPopup($textElement, newFontFamily, origFontFamily, unSupportedChar);
+                const doSub = await showsubstitutedFamilyPopup($textElement, newFont.family, $textElement.attr('font-family'), unSupportedChar);
                 if (doSub) {
-                    $textElement.attr('font-family', newFontFamily);
+                    svgCanvas.undoMgr.beginUndoableChange('font-family', Array.from($textElement));
+                    $textElement.attr('font-family', newFont.family);
+                    batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
+                    svgCanvas.undoMgr.beginUndoableChange('font-postscript', Array.from($textElement));
+                    $textElement.attr('font-postscript', newFont.postscriptName);
+                    batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
                 }
             }
         }
-        console.log($textElement.attr('font-family'));
+        if (process.platform === 'darwin') {
+            svgCanvas.undoMgr.beginUndoableChange('font-family', Array.from($textElement));
+            $textElement.attr('font-family', $textElement.attr('font-postscript'));
+            batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
+        }
+        console.log($textElement.attr('font-family'), $textElement.attr('font-postscript'));
         $textElement.removeAttr('stroke-width');
         const isFill = calculateFilled($textElement);
         let color = $textElement.attr('stroke');
@@ -549,11 +542,12 @@ define([
     return {
         availableFontFamilies: availableFontFamilies,
         fontNameMap: fontNameMap,
-        requestFontStylesOfTheFontFamily: requestFontStylesOfTheFontFamily,
+        requestFontsOfTheFontFamily: requestFontsOfTheFontFamily,
         requestFontByFamilyAndStyle: requestFontByFamilyAndStyle,
         requestToConvertTextToPath: requestToConvertTextToPath,
         convertTextToPathFluxsvg: convertTextToPathFluxsvg,
         tempConvertTextToPathAmoungSvgcontent: tempConvertTextToPathAmoungSvgcontent,
-        revertTempConvert: revertTempConvert
+        revertTempConvert: revertTempConvert,
+        getFontOfPostscriptName: getFontOfPostscriptName
     };
 });

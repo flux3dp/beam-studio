@@ -38,31 +38,28 @@ define([
         constructor(props) {
             super(props);
 
-            //should handle imported unusable font in other place,
-            //font should e sanitized when user import new file
-
+            const font = FontFuncs.getFontOfPostscriptName(props.postscriptName);
+            console.log(font);
             const sanitizedDefaultFontFamily = (() => {
-                // use these font if props.fontFamily cannot find in user PC
+                // use these font if postscriptName cannot find in user PC
                 const fontFamilyFallback = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', FontFuncs.availableFontFamilies[0]];
-                const sanitizedFontFamily = [props.fontFamily, ...fontFamilyFallback].find(
+                const sanitizedFontFamily = [font.family, ...fontFamilyFallback].find(
                     f => FontFuncs.availableFontFamilies.includes(f)
                 );
 
                 return sanitizedFontFamily;
             })();
 
-            if (sanitizedDefaultFontFamily !== props.fontFamily) {
-                console.log(`unsupported font ${props.fontFamily}, fallback to ${sanitizedDefaultFontFamily}`);
-                FnWrapper.update_font_family(sanitizedDefaultFontFamily);
+            if (sanitizedDefaultFontFamily !== font.family) {
+                console.log(`unsupported font ${font.family}, fallback to ${sanitizedDefaultFontFamily}`);
+                svgCanvas.setFontFamily(sanitizedDefaultFontFamily, true);
+                svgCanvas.setFontPostscriptName(newFont.postscriptName, true);
+                const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedDefaultFontFamily)[0];
             }
 
             this.state = {
                 fontFamily: sanitizedDefaultFontFamily,
-                fontStyle: FontFuncs.requestFontByFamilyAndStyle({
-                    family: props.fontFamily,
-                    weight: props.fontWeight,
-                    italic: props.italic
-                }).style,
+                fontStyle: font.style,
                 fontSize: props.fontSize,
                 letterSpacing: props.letterSpacing,
                 lineSpacing: props.lineSpacing,
@@ -72,24 +69,37 @@ define([
         }
 
         handleFontFamilyChange(newFamily) {
+            const newFont = FontFuncs.requestFontsOfTheFontFamily(newFamily)[0];
             // update family
-            FnWrapper.update_font_family(newFamily);
-
-            // new style
-            const newStyle = FontFuncs.requestFontStylesOfTheFontFamily(newFamily)[0];
-
-            // set fontFamily and change fontStyle
+            const batchCmd = new svgedit.history.BatchCommand('Change Font family');
+            let cmd = svgCanvas.setFontPostscriptName(newFont.postscriptName, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setItalic(newFont.italic, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setFontWeight(newFont.weight, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setFontFamily(newFamily, true);
+            batchCmd.addSubCommand(cmd);
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+            const newStyle = newFont.style;
             this.setState({
-                fontFamily: newFamily
-            }, () => {this.handleFontStyleChange(newStyle)});
+                fontFamily: newFamily,
+                fontStyle: newStyle
+            });
         }
         handleFontStyleChange(val) {
             const font = FontFuncs.requestFontByFamilyAndStyle({
                 family: this.state.fontFamily,
                 style: val
             });
-            FnWrapper.update_font_italic(font.italic);
-            FnWrapper.update_font_weight(font.weight);
+            const batchCmd = new svgedit.history.BatchCommand('Change Font Style');
+            let cmd = svgCanvas.setFontPostscriptName(font.postscriptName, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setItalic(font.italic, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setFontWeight(font.weight, true);
+            batchCmd.addSubCommand(cmd);
+            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
             this.setState({
                 fontStyle: val
             });
@@ -152,7 +162,7 @@ define([
         }
 
         render() {
-            const fontStyles = FontFuncs.requestFontStylesOfTheFontFamily(this.state.fontFamily);
+            const fontStyles = FontFuncs.requestFontsOfTheFontFamily(this.state.fontFamily).map((f) => f.style);
             return (
                 <div className='object-panel text-panel'>
                     <label className='controls accordion'>

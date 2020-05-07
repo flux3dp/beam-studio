@@ -189,7 +189,8 @@ define([
             fill_opacity: curConfig.text.fill_opacity,
             stroke_width: curConfig.text.stroke_width,
             font_size: curConfig.text.font_size,
-            font_family: curConfig.text.font_family
+            font_family: curConfig.text.font_family,
+            font_postscriptName: curConfig.text.font_postscriptName
         });
 
         // Current shape style properties
@@ -1726,6 +1727,7 @@ define([
                                 'stroke-width': 2,
                                 'font-size': cur_text.font_size,
                                 'font-family': cur_text.font_family,
+                                'font-postscript': cur_text.font_postscriptName,
                                 'text-anchor': cur_text.text_anchor,
                                 'xml:space': 'preserve',
                                 opacity: cur_shape.opacity
@@ -7651,15 +7653,22 @@ define([
         //
         // Parameters:
         // b - Boolean indicating italic (true) or normal (false)
-        this.setItalic = function (i) {
+        this.setItalic = function (i, isSubCmd) {
             var selected = selectedElements[0];
-            if (selected != null && selected.tagName === 'text' &&
-                selectedElements[1] == null) {
-                changeSelectedAttribute('font-style', i ? 'italic' : 'normal');
+            let cmd = null;
+            if (selected != null && selected.tagName === 'text' && selectedElements[1] == null) {
+                if (isSubCmd) {
+                    canvas.undoMgr.beginUndoableChange('font-style', [selected]);
+                    changeSelectedAttributeNoUndo('font-style', i ? 'italic' : 'normal', [selected]);
+                    cmd = canvas.undoMgr.finishUndoableChange();
+                } else {
+                    changeSelectedAttribute('font-style', i ? 'italic' : 'normal');
+                }
             }
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
             }
+            return cmd;
         };
 
         this.getFontWeight = function () {
@@ -7671,15 +7680,22 @@ define([
             return false;
         };
 
-        this.setFontWeight = function (i) {
+        this.setFontWeight = function (i, isSubCmd) {
             var selected = selectedElements[0];
-            if (selected != null && selected.tagName === 'text' &&
-                selectedElements[1] == null) {
-                changeSelectedAttribute('font-weight', i ? i : 'normal');
+            let cmd = null;
+            if (selected != null && selected.tagName === 'text' && selectedElements[1] == null) {
+                if (isSubCmd) {
+                    canvas.undoMgr.beginUndoableChange('font-weight', [selected]);
+                    changeSelectedAttributeNoUndo('font-weight', i ? i : 'normal', [selected]);
+                    cmd = canvas.undoMgr.finishUndoableChange();
+                } else {
+                    changeSelectedAttribute('font-weight', i ? i : 'normal');
+                }
             }
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
             }
+            return cmd;
         };
 
         this.getFontIsFill = function () {
@@ -7762,12 +7778,41 @@ define([
         //
         // Parameters:
         // val - String with the new font family
-        this.setFontFamily = function (val) {
+        this.setFontFamily = function (val, isSubCmd) {
+            let cmd = null;
             cur_text.font_family = val;
-            changeSelectedAttribute('font-family', val);
+            if (isSubCmd) {
+                canvas.undoMgr.beginUndoableChange('font-family', selectedElements);
+                changeSelectedAttributeNoUndo('font-family', val, selectedElements);
+                cmd = canvas.undoMgr.finishUndoableChange();
+            } else {
+                changeSelectedAttribute('font-family', val);
+            }
             if (selectedElements[0] && !selectedElements[0].textContent) {
                 textActions.setCursor();
             }
+            return cmd;
+        };
+
+        this.getFontPostscriptName = function () {
+            const selected = selectedElements[0];
+            if (selected) {
+                return selected.getAttribute('font-postscript');
+            }
+            return cur_text.font_postscriptName;
+        };
+
+        this.setFontPostscriptName = function (val, isSubCmd) {
+            let cmd = null;
+            cur_text.font_postscriptName = val;
+            if (isSubCmd) {
+                canvas.undoMgr.beginUndoableChange('font-postscript', selectedElements);
+                changeSelectedAttributeNoUndo('font-postscript', val, selectedElements);
+                cmd = canvas.undoMgr.finishUndoableChange();
+            } else {
+                changeSelectedAttribute('font-postscript', val);
+            }
+            return cmd;
         };
 
         this.setTextLineSpacing = function (val) {

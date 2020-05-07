@@ -54,7 +54,7 @@ define([
                     threshold:undefined, shading:undefined
                 },
                 font: {
-                    fontFamily:undefined, fontSize:undefined, fontWeight:undefined, italic:undefined, leterSpacing: undefined, isFill: undefined
+                    fontFamily:undefined, fontSize:undefined, fontWeight:undefined, italic:undefined, letterSpacing: undefined, isFill: undefined
                 }
             };
 
@@ -139,6 +139,10 @@ define([
         }
         setImageThreshold(val) {
             this.data.image.threshold = val;
+        }
+
+        setFontPostscriptName(val) {
+            this.data.font.postscriptName = val;
         }
 
         setFontFamily(val) {

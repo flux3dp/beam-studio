@@ -178,6 +178,7 @@ define([
                     stroke_width: 1,
                     font_size: 100,
                     font_family: 'Arial',
+                    font_postscriptName: 'ArialMT',
                     fill: '#fff',
                     fill_opacity: '0',
                     text_anchor: 'start'
@@ -1921,7 +1922,6 @@ define([
                             } else {
                                 $('#tool_bold').removeClass('push_button_pressed').addClass('tool_button');
                             }
-                            $('#font_family').val(elem.getAttribute('font-family'));
                             $('#font_size').val(elem.getAttribute('font-size'));
                             let multiLineTextContent = Array.from(elem.childNodes).map(child => child.textContent).join('\x0b');
                             $('#text').val(multiLineTextContent);
@@ -1931,6 +1931,7 @@ define([
                                     $('#text').focus().select();
                                 }, 100);
                             }
+                            ObjectPanelsController.setFontPostscriptName(svgCanvas.getFontPostscriptName());
                             ObjectPanelsController.setFontFamily(svgCanvas.getFontFamily());
                             ObjectPanelsController.setFontSize(Number(svgCanvas.getFontSize()));
 
