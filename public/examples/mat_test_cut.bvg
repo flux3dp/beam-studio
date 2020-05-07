@@ -5697,7 +5697,7 @@
    </g>
   </symbol>
  </defs>
- <g data-configName="MDF - (3mm) Cut" data-repeat="1" data-strength="50" data-speed="10" class="layer">
+ <g data-configName="MDF - (3mm) Cut" data-repeat="1" data-strength="60" data-speed="5" class="layer">
   <title>#000000</title>
   <use x="106.37148" y="41.51082" data-xform="x=150.82630920410156 y=99.20514678955078 width=1299.2283935546875 height=850.0291748046875 " data-ref="[object SVGSymbolElement]" data-symbol="[object SVGSymbolElement]" xlink:href="#svg_1" id="svg_112"/>
  </g>
