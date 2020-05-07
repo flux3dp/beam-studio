@@ -213,14 +213,27 @@ define([
         }
     }
 
+    const setTextPostscriptnameIfNeeded = ($textElement) => {
+        if (!$textElement.attr('font-postscript')) {
+            const font = requestFontByFamilyAndStyle({
+                family: $textElement.attr('font-family'),
+                weight: $textElement.attr('font-weight'),
+                italic: ($textElement.attr('font-style') === 'italic')
+            });
+            $textElement.attr('font-postscript', font.postscriptName);
+        }
+    }
+
     const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert) => {
         if (!$textElement.text()) {
             svgCanvas.clearSelection();
             $textElement.remove();
             return;
         }
+        setTextPostscriptnameIfNeeded($textElement);
         let isUnsupported = false;
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
+        const origFontFamily = $textElement.attr('font-family');
         const origFontPostscriptName = $textElement.attr('font-postscript');
         if (BeamboxPreference.read('font-substitute') !== false) {
             const {font: newFont, unSupportedChar} = substitutedFont($textElement);

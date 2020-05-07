@@ -37,8 +37,18 @@ define([
     class Text extends React.Component {
         constructor(props) {
             super(props);
+            console.log(props.postscriptName);
+            let font;
+            if (props.postscriptName) {
+                font = FontFuncs.getFontOfPostscriptName(props.postscriptName);
+            } else {
+                font = FontFuncs.requestFontByFamilyAndStyle({
+                    family: props.fontFamily,
+                    weight: props.fontWeight,
+                    italic: props.italic
+                });
+            }
 
-            const font = FontFuncs.getFontOfPostscriptName(props.postscriptName);
             console.log(font);
             const sanitizedDefaultFontFamily = (() => {
                 // use these font if postscriptName cannot find in user PC
