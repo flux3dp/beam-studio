@@ -936,7 +936,7 @@ define([
                 const path = paths[j],
                     fill = $(path).attr('fill'),
                     fill_op = $(path).attr('fill-opacity');
-                if (!fill || fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
+                if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
                     hasVector = true;
                     break;
                 }
