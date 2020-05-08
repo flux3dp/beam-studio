@@ -47,7 +47,7 @@ function createLogFile() {
 }
 
 var DEBUG = false;
-const logger = (false && process.stderr.isTTY) ? process.stderr : createLogFile();
+const logger = process.stderr.isTTY ? process.stderr : createLogFile();
 
 if (process.argv.indexOf('--debug') > 0) {
     DEBUG = true;
