@@ -1,7 +1,7 @@
 {
   "name": "beam-studio",
   "productName": "Beam Studio",
-  "version": "1.2.4-beta",
+  "version": "1.2.5-alpha",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -23,6 +23,7 @@
     "jsdom-global": "^1.6.2",
     "nan": "^2.4.0",
     "net-ping": "^1.2.3",
+    "node-machine-id": "^1.1.12",
     "react": "^16.9.0",
     "react-dom": "^16.13.0",
     "serialport": "^8.0.5",
@@ -78,6 +79,7 @@
   "scripts": {
     "test": "mocha '_test/unit/slicer.js' --compilers js:babel-core/register",
     "start": "electron .",
+    "start-debug": "electron . --debug",
     "start-server": "electron . --server",
     "postinstall": "electron-rebuild",
     "pack": "electron-builder --dir",
