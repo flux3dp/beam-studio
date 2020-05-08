@@ -44,6 +44,10 @@ class BackendManager extends EventEmitter {
         } else {
             this._args = ['--port', '0'];
         }
+        if(options.debug) {
+            console.log(this._args);
+            this._args.push('--debug');
+        }
 
         if(!options.location) { throw 'backend location not given'; }
         this._ghost_location = options.location;

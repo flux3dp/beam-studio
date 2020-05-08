@@ -2,26 +2,37 @@ define([
     'app/actions/beambox/beambox-init',
     'app/actions/beambox/beambox-global-interaction',
     'app/actions/beambox/beambox-preference',
+    'helpers/i18n',
+    'helpers/local-storage',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Network-Testing-Panel',
     'jsx!pages/svg-editor',
     'jsx!/views/Alert',
     'jsx!/views/Dialog',
     'jsx!/contexts/AlertContext',
-    'jsx!/contexts/DialogContext'
+    'jsx!/contexts/DialogContext',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
+    'helpers/output-error',
 ], function (
     BeamboxInit,
     BeamboxGlobalInteraction,
     BeamboxPreference,
+    i18n,
+    localStorage,
     LeftPanel,
     NetworkTestingPanel,
     SvgEditor,
     { Alert },
     { Dialog },
     { AlertContextProvider },
-    { DialogContextProvider }
+    { DialogContextProvider },
+    AlertCaller,
+    AlertConstants,
+    outputError
 ) {
     const React = require('react');
+    const LANG = i18n.lang.beambox;
     BeamboxInit.init();
 
     class view extends React.Component {
@@ -39,6 +50,17 @@ define([
             let ipc = electron.ipc;
             let events = electron.events;
             ipc.send(events.FRONTEND_READY);
+            if (!FLUX.backendAlive && !localStorage.get('port')){
+                AlertCaller.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.popup.backend_connect_failed_ask_to_upload,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
+                        outputError.uploadBackendErrorLog();
+                    }
+                });
+            }
+            
         }
         componentWillUnmount() {
             BeamboxGlobalInteraction.detach();

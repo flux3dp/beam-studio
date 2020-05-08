@@ -49,22 +49,30 @@
         if (window["electron"]) {
             let ipc = electron.ipc,
                 events = electron.events;
+            let backendDownCount = 0;
 
             ipc.on(events.BACKEND_UP, (sender, status) => {
                 window.FLUX.ghostPort = status.port;
                 window.FLUX.logfile = status.logfile;
+                window.FLUX.backendAlive = status.backend.alive;
                 getStarted(status.port);
                 console.log(`Backend start at ${status.port}`);
             });
 
-            ipc.on(events.BACKEND_DOWN, () => {});
+            ipc.on(events.BACKEND_DOWN, (sender) => {
+                window.FLUX.backendAlive = false;
+            });
 
             ipc.on(events.NOTIFY_BACKEND_STATUS, (sender, status) => {
+                console.log(status);
+                window.FLUX.ghostPort = status.backend.port;
+                window.FLUX.logfile = status.backend.logfile;
+                window.FLUX.backendAlive = status.backend.alive;
+                getStarted(status.backend.port);
                 if (status.backend.alive) {
-                    window.FLUX.ghostPort = status.backend.port;
-                    window.FLUX.logfile = status.backend.logfile;
-                    getStarted(status.backend.port);
                     console.log(`Backend ready at ${status.backend.port}`);
+                } else {
+                    console.log('Backend Down');
                 }
             });
 

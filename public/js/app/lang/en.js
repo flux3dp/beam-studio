@@ -1129,7 +1129,8 @@ define(function() {
                 dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD softwate, or make sure that the unit is set correctly.',
                 progress: {
                     uploading: 'Uploading'
-                }
+                },
+                backend_connect_failed_ask_to_upload: 'Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
             },
             left_panel: {
                 insert_object: 'Insert Object',

@@ -1126,7 +1126,8 @@ define(function() {
                 dxf_bounding_box_size_over: '图像超出工作范围，请在 CAD 软体中将图像放置于原点附近，或确定图档单位是否正确设定。',
                 progress: {
                     uploading: '上传中'
-                }
+                },
+                backend_connect_failed_ask_to_upload: '连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
             },
             left_panel: {
                 insert_object: '插入对象',

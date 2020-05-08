@@ -47,7 +47,7 @@ function createLogFile() {
 }
 
 var DEBUG = false;
-const logger = process.stderr.isTTY ? process.stderr : createLogFile();
+const logger = (false && process.stderr.isTTY) ? process.stderr : createLogFile();
 
 if (process.argv.indexOf('--debug') > 0) {
     DEBUG = true;
@@ -73,7 +73,7 @@ function onGhostDown() {
     global.backend.alive = false;
     global.backend.port = undefined;
     if(mainWindow) {
-        mainWindow.webContents.send('backend-down');
+        mainWindow.webContents.send(events.BACKEND_DOWN);
     }
 }
 
@@ -127,6 +127,7 @@ const backendManager = new BackendManager({
     on_device_updated: onDeviceUpdated,
     on_stderr: (data) => logger.write(`${data}`),
     on_stopped: onGhostDown,
+    debug: DEBUG,
     c: console
 });
 backendManager.start();

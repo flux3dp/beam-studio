@@ -1,14 +1,16 @@
 define([
     'helpers/is-json',
     'helpers/i18n',
-    'app/stores/alert-store',
+    'app/contexts/AlertCaller',
+    'app/constants/alert-constants',
     'helpers/output-error',
     'helpers/logger',
     'helpers/blob-segments',
 ], function(
     isJson,
     i18n,
-    AlertStore,
+    Alert,
+    AlertConstants,
     outputError,
     Logger,
     blobSegments
@@ -25,7 +27,8 @@ define([
     var hadConnected = false,
         showProgramErrorPopup = true,
         WsLogger = new Logger('websocket'),
-        logLimit = 100;
+        logLimit = 100,
+        wsErrorCount = 0;
 
     // options:
     //      hostname      - host name (Default: 127.0.0.1)
@@ -42,7 +45,7 @@ define([
             { dev } = window.FLUX,
             dev = false,
             customHost = localStorage.getItem('host'),
-            customPort = localStorage.getItem('port'),
+            customPort = localStorage.getItem('port') || 8000,
             defaultCallback = function(result) {},
             defaultOptions = {
                 hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
@@ -78,8 +81,25 @@ define([
                 return opts;
             },
             createWebSocket = function(options) {
-                var url = 'ws://' + options.hostname + ':' + options.port + '/ws/' + options.method,
+                let url = 'ws://' + options.hostname + ':' + options.port + '/ws/' + options.method,
                     _ws = new WebSocket(url);
+
+                _ws.onerror = (e) => {
+                    wsErrorCount += 1;
+                    // If ws error count exceed certian number Alert user there may be problems with backend
+                    if (wsErrorCount === 50) {
+                        const LANG = i18n.lang.beambox.popup;
+                        
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: LANG.backend_connect_failed_ask_to_upload,
+                            buttonType: AlertConstants.YES_NO,
+                            onYes: () => {
+                                outputError.uploadBackendErrorLog();
+                            }
+                        });
+                    }
+                }
 
                 _ws.onopen = function(e) {
                     socketOptions.onOpen(e);
@@ -171,7 +191,7 @@ define([
                     socketOptions.onClose(result);
 
                     var outputLog = function() {
-                            outputError().done(onCancel);
+                            outputError.downloadErrorLog().done(onCancel);
                         },
                         onCancel = function() {
                             removeListener();

@@ -17,7 +17,7 @@ define([
 
     const LANG = i18n.lang.beambox;
     return {
-        uploadToS3: function(fileName, body) {
+        uploadToS3: async (fileName, body) => {
             if (body.length > 10000000) { // 10M
                 setTimeout(() => {
                     Alert.popUp({
@@ -29,30 +29,50 @@ define([
             }
 
             ProgressActions.open(ProgressConstants.NONSTOP, LANG.popup.progress.uploading);
-            $.ajax({
-                url: `https://beamstudio-bug-report.s3.amazonaws.com/${new Date().toString()}-${process.platform}-v${window.FLUX.version}-${fileName}`,
-                type: 'PUT',
-                contentType: 'text/html; charset=UTF-8',
-                data: body,
-                success: (data, textStatus, jqXHR) => {
-                    ProgressActions.close();
-                    console.log(data, textStatus, jqXHR);
+
+            try {
+                let report_file = new Blob([body], {type: 'application/octet-stream'});
+                report_file.lastModifiedDate = new Date();
+                report_file.name = `${Math.floor(Date.now() / 1000)}-${fileName}-${process.platform}-v${window.FLUX.version}-${fileName}`;
+
+                const uploadFormData = new FormData();
+                uploadFormData.append('file', report_file);
+                uploadFormData.append('Content-Type', report_file.type);
+                uploadFormData.append('acl', 'bucket-owner-full-control');
+                uploadFormData.append('key', `svg&bvg/${report_file.name}`);
+
+                const url = `https://beamstudio-bug-report.s3.amazonaws.com/svg&bvg/${report_file.name}`;
+                const config = {
+                    method: "PUT",
+                    headers: new Headers({
+                        "Accept": 'application/xml',
+                        'Content-Type': 'multipart/form-data'
+                      }),
+                    body: uploadFormData,
+                };
+                let r = await fetch(url, config);
+                if (r.status === 200) {
+                    console.log('Success', r);
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_INFO,
                         message: LANG.popup.successfully_uploaded
                     });
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    ProgressActions.close();
-                    console.log(jqXHR, textStatus, errorThrown);
+                } else {
+                    console.log('Failed', r);
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: `${LANG.popup.upload_failed}\n${textStatus}: ${errorThrown}`
+                        message: `${LANG.popup.upload_failed}\n${r.status}`
                     });
-                },
-                complete: () => {
                 }
-            });
+            } catch (e) {
+                console.log(e);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: `${LANG.popup.upload_failed}\n${e}`
+                });
+            } finally {
+                ProgressActions.close();
+            }
         }
     }
 });

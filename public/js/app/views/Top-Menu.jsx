@@ -488,7 +488,7 @@ define([
                 };
 
                 _action['BUG_REPORT'] = () => {
-                    OutputError();
+                    OutputError.downloadErrorLog();
                 };
 
                 _action['SIGN_IN'] = () => {

@@ -1129,7 +1129,8 @@ define(function() {
                 dxf_bounding_box_size_over: '図面サイズがワークエリア外です。図面をCADソフトウェアの原点に近づけるか、単位が正しく設定されていることを確認してください。',
                 progress: {
                     uploading: 'Uploading'
-                }
+                },
+                backend_connect_failed_ask_to_upload: 'バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
             },
             left_panel: {
                 insert_object: 'オブジェクトを挿入',
