@@ -1181,7 +1181,7 @@ define(function() {
                     speed: 'Speed',
                     repeat: 'Execute',
                     focus_adjustment: 'Focus Adjustment',
-                    height: 'Height',
+                    height: 'Object Height',
                     z_step: 'Z Step',
                     diode: 'Diode Laser',
                     times: 'times',
