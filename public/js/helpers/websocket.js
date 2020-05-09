@@ -45,7 +45,7 @@ define([
             { dev } = window.FLUX,
             dev = false,
             customHost = localStorage.getItem('host'),
-            customPort = localStorage.getItem('port') || 8000,
+            customPort = localStorage.getItem('port'),
             defaultCallback = function(result) {},
             defaultOptions = {
                 hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
