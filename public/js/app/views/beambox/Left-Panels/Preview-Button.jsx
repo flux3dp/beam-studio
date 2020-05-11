@@ -360,9 +360,9 @@ define([
                     <img src={'img/left-bar/icon-camera.svg'}/>
                     <div className='text with-img'>{`${LANG.preview} ${borderless ? LANG.borderless : ''}`}</div>
                     <div className='cross-wrapper'>
-                        <div class="bars bar1 shadow"></div>
-                        <div class="bars bar2 shadow"></div>
-                        <div class="bars bar1"></div>
+                        <div className="bars bar1 shadow"></div>
+                        <div className="bars bar2 shadow"></div>
+                        <div className="bars bar1"></div>
                     </div>
                 </div>
             );
