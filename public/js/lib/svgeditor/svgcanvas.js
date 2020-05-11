@@ -6355,6 +6355,7 @@ define([
                     drawing.layer_map[name].setColor(getRandomLayerColor());
                 }
             }
+            this.updateLayerColorFilter(new_layer);
             clearSelection();
             call('changed', [new_layer]);
             return new_layer;
@@ -6573,8 +6574,56 @@ define([
             });
         };
 
+        let hexToRgb = (hexColorCode) => {
+            let res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColorCode);
+            if (res) {
+                return {
+                    r: parseInt(res[1], 16),
+                    g: parseInt(res[2], 16),
+                    b: parseInt(res[3], 16),
+                }
+            }
+            return {r: 0, g: 0, b: 0};
+        };
+
+        this.updateLayerColorFilter = (layer) => {
+            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            const {r, g, b} = hexToRgb(color);
+            let filter = Array.from(layer.childNodes).filter((child) => child.tagName === 'filter')[0];
+            if (filter && color !== '#000') {
+                filter.setAttribute('id', `filter${color}`);
+                let colorMatrix = Array.from(filter.childNodes).filter((child) => child.tagName === 'feColorMatrix')[0];
+                if (colorMatrix) {
+                    colorMatrix.setAttribute('values', `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`);
+                } else {
+                    colorMatrix = svgdoc.createElementNS(NS.SVG, 'feColorMatrix');
+                    svgedit.utilities.assignAttributes(colorMatrix, {
+                        'type': 'matrix',
+                        'values': `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`,
+                    });
+                    filter.appendChild(colorMatrix);
+                }
+            } else {
+                const colorFilter = svgdoc.createElementNS(NS.SVG, 'filter');
+                const colorMatrix = svgdoc.createElementNS(NS.SVG, 'feColorMatrix');
+                svgedit.utilities.assignAttributes(colorFilter, {
+                    'id': `filter${color}`,
+                    'filterUnits': 'objectBoundingBox',
+                    'primitiveUnits': 'userSpaceOnUse',
+                    'color-interpolation-filters': 'linearRGB'
+                });
+                svgedit.utilities.assignAttributes(colorMatrix, {
+                    'type': 'matrix',
+                    'values': `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`,
+                });
+                colorFilter.appendChild(colorMatrix);
+                layer.appendChild(colorFilter);
+            }
+        }
+
         this.updateLayerColor = function(layer) {
             const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            this.updateLayerColorFilter(layer);
             this.setElementsColor(layer.childNodes, color);
         };
 
@@ -6605,6 +6654,12 @@ define([
                     }
                     if (attrFill && attrFill !== 'none') {
                         $(elem).attr('fill', color); 
+                    }
+                } else if (elem.tagName === 'image') {
+                    if (color === '#000') {
+                        elem.removeAttribute('filter');
+                    } else {
+                        $(elem).attr('filter', `url(#filter${color})`);
                     }
                 } else if (['g', 'svg', 'symbol'].includes(elem.tagName)) {
                     if ($(elem).data('color')) {

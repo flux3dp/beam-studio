@@ -5585,7 +5585,7 @@ define([
                                         }
                                     }
                                 );
-
+                                svgCanvas.updateElementColor(newImage);
                                 svgCanvas.selectOnly([newImage]);
                                 svgCanvas.undoMgr.addCommandToHistory(new svgedit.history.InsertElementCommand(newImage));
                                 if (!offset) {
@@ -5978,8 +5978,10 @@ define([
                             let elem, match, id, wireframe, xform;
 
                             tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
-                            match = tmp[i].match(/id="svg_\d+"/)[0];
-                            id = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            match = tmp[i].match(/id="svg_\d+"/);
+                            if (match) {
+                                id = match[0].substring(match.indexOf('"')+1, match.lastIndexOf('"'));
+                            }
                             match = tmp[i].match(/data-xform="[^"]*"/);
                             if (match) {
                                 match = match[0];
@@ -5992,8 +5994,10 @@ define([
                             }
 
                             elem = document.getElementById(id);
-                            elem.setAttribute('data-xform', xform);
-                            elem.setAttribute('data-wireframe', wireframe === 'true');
+                            if (elem) {
+                                elem.setAttribute('data-xform', xform);
+                                elem.setAttribute('data-wireframe', wireframe === 'true');
+                            }
                         }
                         match = str.match(/data-rotary_mode="[a-zA-Z]+"/);
                         if (match) {
