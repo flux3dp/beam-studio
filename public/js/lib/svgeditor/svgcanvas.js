@@ -1161,16 +1161,16 @@ define([
                 current_mode = 'select';
                 $('.tool-btn').removeClass('active');
                 $('#left-Cursor').addClass('active');
-                const elemsToAdd = $(current_group || current_layer).children();
-                if((elemsToAdd.length === 1) && (elemsToAdd[0].tagName === 'title')){
+                const elemsToAdd = Array.from($(current_group || current_layer).children()).filter(c => !['title', 'filter'].includes(c.tagName));
+                if(elemsToAdd < 1){
                     console.warn('Selecting empty layer in "selectAllInCurrentLayer"');
                     return;
                 } else {
-                    selectOnly(elemsToAdd);
+                    selectOnly(elemsToAdd, false);
                     if (elemsToAdd.length > 1) {
                         svgCanvas.tempGroupSelectedElements();
-                        window.updateContextPanel();
                     }
+                    window.updateContextPanel();
                 }
             }
         };
@@ -6510,6 +6510,11 @@ define([
             var batchCmd = new svgedit.history.BatchCommand('Move Elements to Layer');
 
             // loop for each selected element and move it
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+
             var selElems = selectedElements;
             i = selElems.length;
             while (i--) {
@@ -9705,7 +9710,7 @@ define([
                         continue;
                     }
 
-                    const original_layer = getCurrentDrawing().getLayerByName($(elem).data('original-layer'));
+                    const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     if (original_layer) {
                         original_layer.appendChild(elem);
                         if (this.isUseLayerColor) {
@@ -9761,7 +9766,6 @@ define([
                 }
                 const original_layer = this.getObjectLayer(elem).title;
                 $(elem).attr('data-original-layer', original_layer);
-
                 g.appendChild(elem);
             }
 
@@ -9823,8 +9827,7 @@ define([
                         oldParent.removeChild(elem);
                         continue;
                     }
-                    
-                    const original_layer = getCurrentDrawing().getLayerByName($(elem).data('original-layer'));
+                    const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     if (original_layer) {
                         original_layer.appendChild(elem);
                         if (this.isUseLayerColor) {
