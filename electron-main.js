@@ -73,7 +73,7 @@ function onGhostDown() {
     global.backend.alive = false;
     global.backend.port = undefined;
     if(mainWindow) {
-        mainWindow.webContents.send(events.BACKEND_DOWN);
+        //mainWindow.webContents.send(events.BACKEND_DOWN);
     }
 }
 
