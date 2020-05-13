@@ -1018,8 +1018,6 @@ define([
                 call('selected', selectedElements);
             }
             TopbarActions.updateTopMenu();
-            const currentLayerName = getCurrentDrawing().getCurrentLayerName();
-            LaserPanelController.render(currentLayerName);
         };
 
         // TODO: do we need to worry about selectedBBoxes here?
@@ -1103,6 +1101,8 @@ define([
                 selectedElements.shift(0);
             }
             TopbarActions.updateTopMenu();
+            const currentLayerName = getCurrentDrawing().getCurrentLayerName();
+            LaserPanelController.render(currentLayerName);
         };
 
         // Function: selectOnly()
