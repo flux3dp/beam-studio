@@ -8962,7 +8962,21 @@ define([
                 }
             });
             co.Execute(solution_paths, Math.abs(dist * scale));
-            solution_paths = (dir === 1) ? [solution_paths[0]] : solution_paths.slice(1);
+            if (dir === 1) {
+                if (solution_paths.length > 0) {
+                    let clipper = new ClipperLib.Clipper();
+                    let res = [solution_paths[0]];
+                    let succeeded = true;
+                    for (let i = 1; i < solution_paths.length; i++) {
+                        clipper.AddPaths(res, ClipperLib.PolyType.ptSubject, true);
+                        clipper.AddPaths([solution_paths[i]], ClipperLib.PolyType.ptClip, true);
+                        succeeded = clipper.Execute(1, res, 1, 1);
+                    }
+                    solution_paths = res;
+                } 
+            } else {
+                solution_paths = solution_paths.slice(1);
+            }
             if (solution_paths.length === 0 || !solution_paths[0]) {
                 if (isContainNotSupportTag) {
                     Alert.popUp({
