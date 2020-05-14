@@ -3327,6 +3327,43 @@ define([
                         textinput.selectionStart = textinput.selectionEnd;
                     }
                 },
+                copyText: async () => {
+                    if (textinput.selectionStart === textinput.selectionEnd) {
+                        console.log('No selection');
+                        return;
+                    }
+                    const selectedText = textinput.value.substring(textinput.selectionStart, textinput.selectionEnd);
+                    try {
+                        await navigator.clipboard.writeText(selectedText);
+                        console.log('Copying to clipboard was successful!', selectedText);
+                    } catch (err) {
+                        console.error('Async: Could not copy text: ', err);
+                    }
+                },
+                cutText: async () => {
+                    if (textinput.selectionStart === textinput.selectionEnd) {
+                        console.log('No selection');
+                        return;
+                    }
+                    const selectedText = textinput.value.substring(textinput.selectionStart, textinput.selectionEnd);
+                    const start = textinput.selectionStart;
+                    try {
+                        await navigator.clipboard.writeText(selectedText);
+                        console.log('Copying to clipboard was successful!', selectedText);
+                    } catch (err) {
+                        console.error('Async: Could not copy text: ', err);
+                    }
+                    textinput.value = textinput.value.substring(0, textinput.selectionStart) + textinput.value.substring(textinput.selectionEnd);
+                    textinput.selectionStart = textinput.selectionEnd = start;
+                    svgCanvas.setTextContent(textinput.value);
+                },
+                pasteText: async () => {
+                    let clipboardText = await navigator.clipboard.readText();
+                    const start = textinput.selectionStart;
+                    textinput.value = textinput.value.substring(0, textinput.selectionStart) + clipboardText + textinput.value.substring(textinput.selectionEnd);
+                    textinput.selectionStart = textinput.selectionEnd = start + clipboardText.length;
+                    svgCanvas.setTextContent(textinput.value);
+                },
                 toEditMode: function (x, y) {
                     allow_dbl = false;
                     current_mode = 'textedit';

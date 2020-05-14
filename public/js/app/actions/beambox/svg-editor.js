@@ -3318,6 +3318,18 @@ define([
                 }
                 if (!evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
                     svgCanvas.textActions.toSelectMode(true);
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_C) ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && KeycodeConstants.KEY_C)) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.copyText();
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_X) ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && KeycodeConstants.KEY_X)) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.cutText();
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_V) ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && KeycodeConstants.KEY_V)) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.pasteText();
                 }
             });
 
@@ -6241,6 +6253,8 @@ define([
                         }
                     }
                     if (!importedFromClipboard) {
+                        e.stopPropagation();
+                        e.preventDefault();
                         pasteInCenter();
                     }
                 }, false);
