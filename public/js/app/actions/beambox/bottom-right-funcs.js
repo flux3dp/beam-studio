@@ -105,8 +105,6 @@ define([
                     if (img.getAttribute('origImage')) {
                         ImageData(
                             img.getAttribute('origImage'), {
-                                width: $(img).width(),
-                                height: $(img).height(),
                                 grayscale: {
                                     is_rgba: true,
                                     is_shading: $(img).attr('data-shading') === 'true',
