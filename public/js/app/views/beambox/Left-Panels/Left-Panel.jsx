@@ -45,13 +45,6 @@ define([
                 GlobalActions.monitorClosed();
             });
 
-            $('#layerpanel').mouseup(() => {
-                this._toggleInsert(false);
-                this._toggleAdvanced(false);
-                FnWrapper.clearSelection();
-                GlobalActions.monitorClosed();
-            });
-
             $('#layer-laser-panel-placeholder').mouseup(() => {
                 this._toggleInsert(false);
                 this._toggleAdvanced(false);
