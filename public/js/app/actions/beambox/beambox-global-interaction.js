@@ -69,6 +69,7 @@ define([
                 'IMAGE_SHARPEN': () => DialogCaller.showPhotoEditPanel('sharpen'),
                 'IMAGE_CROP': () => DialogCaller.showPhotoEditPanel('crop'),
                 'IMAGE_INVERT': () => DialogCaller.showPhotoEditPanel('invert'),
+                'IMAGE_STAMP': () => DialogCaller.showPhotoEditPanel('stamp'),
                 'IMAGE_VECTORIZE': () => svgCanvas.imageToSVG(),
                 'IMAGE_CURVE': () => DialogCaller.showPhotoEditPanel('curve'),
                 'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),

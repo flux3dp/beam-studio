@@ -4,6 +4,7 @@ define([
     'jquery',
     'helpers/i18n',
     'helpers/image-data',
+    'helpers/JimpHelper',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'jsx!widgets/Modal',
@@ -15,6 +16,7 @@ define([
     $,
     i18n,
     ImageData,
+    JimpHelper,
     ProgressActions,
     ProgressConstants,
     Modal,
@@ -59,12 +61,12 @@ define([
                 case 'invert':
                     this._handleInvertAndComplete();
                     break;
+                case 'stamp':
+                    this._handleStamp();
+                    break;
                 default:
                     break;
             }
-        }
-
-        componentWillUnmount() {
         }
 
         async _handlePreprocess() {
@@ -157,6 +159,10 @@ define([
             if (this.props.mode === 'invert') {
                 this._handleSetAttribute('data-threshold', this.state.threshold);
             }
+            if (this.props.mode === 'stamp') {
+                this._handleSetAttribute('data-threshold', 255);
+                this._handleSetAttribute('data-shading', true);
+            }
 
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             ImageData(
@@ -193,7 +199,9 @@ define([
             svgCanvas.undoMgr.beginUndoableChange(attr, [elem]);
             elem.setAttribute(attr, value);
             let cmd = svgCanvas.undoMgr.finishUndoableChange();
-            this.batchCmd.addSubCommand(cmd);
+            if (!cmd.isEmpty()) {
+                this.batchCmd.addSubCommand(cmd);
+            }
         }
 
         _handleGoBack() {
@@ -439,6 +447,40 @@ define([
             }
         }
 
+        // STAMP
+        _handleStamp = async () => {
+            let imgBlobUrl = this.state.src;
+            try {
+                let image = await fetch(imgBlobUrl);
+                image = await image.blob();
+                image = await new Response(image).arrayBuffer(); 
+                image = await jimp.read(image);
+                const w = image.bitmap.width;
+                const h = image.bitmap.height;
+                await JimpHelper.binarizeImage(image, this.state.shading ? 128 : this.state.threshold);
+                const origImage = image.clone();
+                await JimpHelper.stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
+                // await origImage.blur(Math.ceil(Math.min(w, h) / 40));
+                JimpHelper.regulateBlurredImage(origImage);
+                await image.composite(origImage, 0, 0, {
+                    mode: jimp.BLEND_OVERLAY
+                });
+                image = await image.getBufferAsync(jimp.MIME_PNG);
+
+                image = new Blob([image]);
+                const src = URL.createObjectURL(image);
+                this.state.srcHistory.push(this.state.src);
+                this.state.shading = true;
+                this.state.threshold = 255;
+                this.state.src = src;
+                ProgressActions.close();
+                this._handleComplete();
+            } catch(e) {
+                console.error(e);
+                ProgressActions.close();
+            }
+        }
+
         // CURVE
         _renderCurvePanel() {
             return (
@@ -577,6 +619,7 @@ define([
                     renderContent = this._renderPhotoEditeModal();
                     break;
                 case 'invert':
+                case 'stamp':
                     ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
                     renderContent = (<div/>)
                     break;
