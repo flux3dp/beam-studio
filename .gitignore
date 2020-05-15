@@ -11,6 +11,7 @@ public/js/jsx
 public/css/main.css
 public/node_modules/*
 backend
+utils
 dist
 tmp/*
 
