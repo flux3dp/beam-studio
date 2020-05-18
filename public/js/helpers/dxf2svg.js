@@ -1792,7 +1792,7 @@
         let rgb = getLayerColor(entity);
 
         var p2 = polyline.map(function (p) {
-          return [bbox.maxX - p[0] * scale, bbox.maxY - p[1] * scale];
+          return [p[0] * scale - bbox.minX, bbox.maxY - p[1] * scale];
         });
         let polylinePathContent = polylineToPath(rgb, p2);
         if (!outputLayers[entity.layer]) {
