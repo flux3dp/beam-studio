@@ -103,6 +103,7 @@ define([
 
                 _ws.onopen = function(e) {
                     socketOptions.onOpen(e);
+                    wsErrorCount = 0;
                 };
 
                 _ws.onmessage = function(result) {
