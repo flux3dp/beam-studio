@@ -1131,6 +1131,10 @@ define(function() {
                     uploading: 'Uploading'
                 },
                 backend_connect_failed_ask_to_upload: 'Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
+                pdf2svg: {
+                    error_when_converting_pdf: 'Error when converting pdf to svg:',
+                    error_pdf2svg_not_found: 'Error: Command pdf2svg not found. Please install pdf2svg with your package manager (e.g., "yum install pdf2svg" or "apt-get install pdf2svg").',
+                },
             },
             left_panel: {
                 insert_object: 'Insert Object',

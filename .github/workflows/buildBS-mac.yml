@@ -57,7 +57,7 @@ jobs:
 
       - name: Create Apple Certs
         uses: apple-actions/import-codesign-certs@v1
-        with: 
+        with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 
@@ -79,6 +79,8 @@ jobs:
           cp -R lib/monitorexe-osx backend/monitorexe-osx
           ./backend/flux_api/flux_api --test --without_pcl
 
+          cp -R util/mac utils
+
 
           echo "Signing *.so files..."
           find ./backend -name "*.so" | while read f ; do
@@ -94,7 +96,7 @@ jobs:
           PUBLISH_PATH: ""
           APPLEID: ${{ secrets.APPLEID_DEAN }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS_DEAN }}
-      
+
       - name: Cleanup artifacts
         run: |
           mkdir artifacts

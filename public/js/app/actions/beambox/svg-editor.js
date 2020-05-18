@@ -36,6 +36,7 @@ define([
     'helpers/aws-helper',
     'helpers/beam-file-helper',
     'helpers/image-data',
+    'helpers/pdf-helper',
     'helpers/shortcuts',
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
@@ -58,6 +59,7 @@ define([
     AwsHelper,
     BeamFileHelper,
     ImageData,
+    PdfHelper,
     Shortcuts,
     i18n,
     BeamboxPreference,
@@ -5666,6 +5668,15 @@ define([
                         var reader = new FileReader();
                         reader.onloadend = function (e) {
                             let svgString = e.target.result;
+                            if (type !== 'color') {
+                                svgString = svgString.replace(/<svg[^>]*>/, (svgTagString) => {
+                                    svgTagString = svgTagString.replace(/"([^"]*)pt"/g, (_, valWithoutPt) => {
+                                        return `"${valWithoutPt}"`
+                                    });
+                                    return svgTagString;
+                                })
+
+                            }
 
                             if (blob.path) {
                                 svgString = svgString.replace('xlink:href="../', 'xlink:href="' + getBasename(blob.path) + '/../');
@@ -5843,6 +5854,7 @@ define([
                         ]
                     });
                 };
+                editor.importSvg = importSvg;
                 const importBitmap = file => {
                     readImage(file);
                 };
@@ -6279,6 +6291,9 @@ define([
                         if (file.name.toLowerCase().includes('.js')) {
                             return 'js';
                         }
+                        if (file.name.toLowerCase().endsWith('.pdf') || (file.path && file.path.toLowerCase().endsWith('.pdf'))) {
+                            return 'pdf';
+                        }
                         if (file.name.toLowerCase().endsWith('.ai') || (file.path && file.path.toLowerCase().endsWith('.ai'))) {
                             return 'ai';
                         }
@@ -6301,7 +6316,9 @@ define([
                         case 'dxf':
                             importDxf(file);
                             break;
+                        case 'pdf':
                         case 'ai':
+                            PdfHelper.pdf2svg(file);
                             Alert.popUp({
                                 id: 'import_ai',
                                 message: LANG.svg_editor.unnsupport_ai_file_directly,

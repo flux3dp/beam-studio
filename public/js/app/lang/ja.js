@@ -1131,6 +1131,10 @@ define(function() {
                     uploading: 'Uploading'
                 },
                 backend_connect_failed_ask_to_upload: 'バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
+                pdf2svg: {
+                    error_when_converting_pdf: 'エラー，PDFをSVGに変換するときのエラー：',
+                    error_pdf2svg_not_found: 'エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
+                },
             },
             left_panel: {
                 insert_object: 'オブジェクトを挿入',

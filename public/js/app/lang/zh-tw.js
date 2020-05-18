@@ -1128,6 +1128,10 @@ define(function() {
                     uploading: '上傳中'
                 },
                 backend_connect_failed_ask_to_upload: '連接後端程式時持續發生錯誤，請問您是否要將錯誤報告上傳到雲端?',
+                pdf2svg: {
+                    error_when_converting_pdf: '將 pdf 轉換成 svg 時發生錯誤：',
+                    error_pdf2svg_not_found: '無法找到 pdf2svg 指令，請使用您的套件管理裝置安裝 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
+                },
             },
             left_panel: {
                 insert_object: '插入物件',
