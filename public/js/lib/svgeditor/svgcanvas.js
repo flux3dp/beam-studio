@@ -8714,8 +8714,9 @@ define([
                     (current_group || drawing.getCurrentLayer()).appendChild(copy);
                 }
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
-
-                restoreRefElems(copy);
+                if (copy.tagName !== 'image') {
+                    restoreRefElems(copy);
+                }
             }
 
             selectOnly(pasted);
