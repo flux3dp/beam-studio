@@ -6182,14 +6182,13 @@ define([
                     // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
                     $(this).attr('value', '');
                 };
-                let pasteTimer = new Date();
-                window.addEventListener('paste', async function (e) {
-                    const timeNow = new Date();
-                    console.log('Paste Timer', timeNow - pasteTimer);
-                    if (timeNow - pasteTimer < 15) {
+                let pasteFlag = false;
+                document.addEventListener('paste', async function (e) {
+                    //Platforms except ios paste event will be triggered 2 times
+                    pasteFlag = !pasteFlag;
+                    if (process.platform !== 'darwin' && !pasteFlag) {
                         return;
                     }
-                    pasteTimer = timeNow;
                     const clipboardData = e.clipboardData;
                     let importedFromClipboard = false;
                     if (clipboardData) {
