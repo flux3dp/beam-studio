@@ -50,17 +50,6 @@ define([
             let ipc = electron.ipc;
             let events = electron.events;
             ipc.send(events.FRONTEND_READY);
-            if (!FLUX.backendAlive && !localStorage.get('port')){
-                AlertCaller.popUp({
-                    type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: LANG.popup.backend_connect_failed_ask_to_upload,
-                    buttonType: AlertConstants.YES_NO,
-                    onYes: () => {
-                        outputError.uploadBackendErrorLog();
-                    }
-                });
-            }
-            
         }
         componentWillUnmount() {
             BeamboxGlobalInteraction.detach();
