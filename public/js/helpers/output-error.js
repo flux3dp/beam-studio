@@ -120,7 +120,7 @@ define([
             let output = getOutput();
             let report_file = new Blob(output, {type: 'application/octet-stream'});
             report_file.lastModifiedDate = new Date();
-            report_file.name = `bugreport_${Math.floor(Date.now() / 1000)}_${process.platform}_${FLUX.version}.txt`;
+            report_file.name = `bugreport_${Math.floor(Date.now() / 1000)}_${process.platform}_${FLUX.version}.log`;
             const uploadFormData = new FormData();
             uploadFormData.append('file', report_file);
             uploadFormData.append('Content-Type', report_file.type);
