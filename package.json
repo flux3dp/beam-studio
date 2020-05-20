@@ -90,7 +90,8 @@
     "generateUpdatesFilesForAllChannels": true,
     "afterSign": "./scripts/notarize.js",
     "extraResources": [
-      "backend"
+      "backend",
+      "utils"
     ],
     "files": [
       "!**/*.{jsx,scss}"
