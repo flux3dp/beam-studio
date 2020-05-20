@@ -502,6 +502,9 @@ define([
             var o, i, l,
                 attrs = $(elem).attr(ref_attrs);
             for (o in attrs) {
+                if (o === 'filter' && elem.tagName === 'image') {
+                    continue;
+                }
                 var val = attrs[o];
                 if (val && val.indexOf('url(') === 0) {
                     var id = svgedit.utilities.getUrlFromAttr(val).substr(1);
@@ -6217,8 +6220,14 @@ define([
                 symbol.setAttribute(attr.nodeName, attr.value);
             }
             symbol.id = getNextId();
-            if (elem.firstChild && elem.firstChild.id) {
-                symbol.setAttribute('data-id', elem.firstChild.id);
+            if (elem.firstChild && (elem.firstChild.id || elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label'))) {
+                if (elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label')) {
+                    let id = elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label');
+                    symbol.setAttribute('data-id', id);
+                    elem.firstChild.removeAttributeNS(svgedit.NS.INKSCAPE, 'label');
+                } else {
+                    symbol.setAttribute('data-id', elem.firstChild.id);
+                }
             }
             if (elem.firstChild && elem.firstChild.getAttribute('data-color')) {
                 symbol.setAttribute('data-color', elem.firstChild.getAttribute('data-color'));
@@ -8714,9 +8723,7 @@ define([
                     (current_group || drawing.getCurrentLayer()).appendChild(copy);
                 }
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
-                if (copy.tagName !== 'image') {
-                    restoreRefElems(copy);
-                }
+                restoreRefElems(copy);
             }
 
             selectOnly(pasted);
