@@ -18,7 +18,7 @@ define([
     const child_process = require('child_process');
     const exec = util.promisify(child_process.exec);
     const execFile = util.promisify(child_process.execFile);
-    const resourcesRoot = (true || process.defaultApp) ? process.cwd() : process.resourcesPath;
+    const resourcesRoot = process.defaultApp ? process.cwd() : process.resourcesPath;
     const lang = i18n.lang.beambox.popup.pdf2svg;
     let pdf2svgPath = null;
     if (process.platform === 'darwin') {
@@ -26,10 +26,9 @@ define([
     } else if (process.platform === 'win32') {
         pdf2svgPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'pdf2svg.exe');
     }
-    const outPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'out.svg');
 
     const pdf2svg = async (file) => {
-        console.log(file);
+        const outPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'out.svg');
         if (pdf2svgPath) {
             //mac or windows, using packed binary executable
             try {
@@ -47,6 +46,7 @@ define([
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e);
                 const message = lang.error_when_converting_pdf + '\n' + e.message;
+                Alert.popAlertStackById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message
@@ -54,11 +54,13 @@ define([
             }
         } else {
             //Linux 
+            const outPath = path.join(resourcesRoot, 'out.svg');
             try {
                 await exec('type pdf2svg');
             } catch(e) {
                 console.log(e);
                 const message = lang.error_pdf2svg_not_found;
+                Alert.popAlertStackById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message
@@ -66,9 +68,9 @@ define([
                 return;
             }
             try {
-                const {stdout, stderr} = await execFile('pdf2svg', [file.path, outPath]);
+                const {stdout, stderr} = await exec(`pdf2svg ${file.path} ${outPath}`);
+                console.log('out', stdout, 'err', stderr);
                 if (!stderr) {
-                    console.log(outPath);
                     let data = await fetch(outPath);
                     data = await data.blob();
                     data.name = file.name + '.svg';
@@ -80,6 +82,7 @@ define([
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e.message);
                 const message = lang.error_when_converting_pdf + '\n' + e.message;
+                Alert.popAlertStackById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message

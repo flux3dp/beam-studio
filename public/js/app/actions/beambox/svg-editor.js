@@ -6319,11 +6319,6 @@ define([
                         case 'pdf':
                         case 'ai':
                             PdfHelper.pdf2svg(file);
-                            Alert.popUp({
-                                id: 'import_ai',
-                                message: LANG.svg_editor.unnsupport_ai_file_directly,
-                                type: AlertConstants.SHOW_POPUP_WARNING,
-                            });
                             break;
                         case 'js':
                             importJsScript(file);
@@ -6390,7 +6385,7 @@ define([
                 $('#tool_open').show().prepend(open);
 
                 // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
-                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam" data-file-input="import_image">').change(importImage);
+                var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">').change(importImage);
                 $('#tool_import').show().prepend(imgImport);
 
                 window.populateLayers = populateLayers;
