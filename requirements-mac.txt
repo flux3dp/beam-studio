@@ -1,6 +1,6 @@
 altgraph==0.16.1
 astroid==2.2.5
-cairocffi==1.0.2
+cairocffi==1.1.0
 cffi==1.14.0
 cssselect2==0.2.1
 cycler==0.10.0
