@@ -51,7 +51,7 @@ define([
                 hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
                 method: '',
                 get port() {
-                    return customPort ? customPort : dev ? '8000' : window.FLUX.ghostPort || '8000';
+                    return customPort ? customPort : dev ? '8000' : window.FLUX.ghostPort;
                 },
                 autoReconnect: true,
                 ignoreAbnormalDisconnect: false,
