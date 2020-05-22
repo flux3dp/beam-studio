@@ -845,6 +845,7 @@ define([
         // Parameters:
         // newDoc - The SVG DOM document
         this.prepareSvg = function (newDoc) {
+            console.log(newDoc.documentElement);
             this.sanitizeSvg(newDoc.documentElement);
 
             // convert paths into absolute commands
@@ -6308,6 +6309,16 @@ define([
                 return prefix + match;
             });
             prefixedStyle = prefixedStyle + `
+                *[data-color] ellipse[fill=none],
+                *[data-color] circle[fill=none],
+                *[data-color] rect[fill=none],
+                *[data-color] path[fill=none],
+                *[data-color] polygon[fill=none] {
+                    fill-opacity: 0 !important;
+                    stroke-width: 1 !important;
+                    vector-effect: non-scaling-stroke !important;
+                }
+
                 *[data-color] ellipse[stroke=none],
                 *[data-color] circle[stroke=none],
                 *[data-color] rect[stroke=none],
