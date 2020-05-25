@@ -5899,9 +5899,18 @@ define([
                     });
 
                     const originLayerNodes = Array.from(svg.childNodes).filter(child => child.tagName === 'g');
-
+                    originLayerNodes.forEach((node) => {
+                        const uses = Array.from(node.getElementsByTagName('use'));
+                        uses.forEach((use) => {
+                            const href = $(svg).find(use.getAttribute('xlink:href'));
+                            if (href.length > 0) {
+                                const newElem = href[0].cloneNode(true);
+                                use.parentNode.appendChild(newElem);
+                                use.remove();
+                            }
+                        });
+                    });
                     const availableColors = getAllColorInNodes(originLayerNodes);
-
                     // re-classify elements by their color
                     const groupColorMap = {};
                     originLayerNodes.map(child => {
@@ -6316,6 +6325,7 @@ define([
                 *[data-color] polygon[fill=none] {
                     fill-opacity: 0 !important;
                     stroke-width: 1 !important;
+                    stroke-opacity: 1 !important;
                     vector-effect: non-scaling-stroke !important;
                 }
 

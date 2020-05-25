@@ -5674,8 +5674,7 @@ define([
                                         return `"${valWithoutPt}"`
                                     });
                                     return svgTagString;
-                                })
-
+                                });
                             }
 
                             if (blob.path) {
@@ -5695,8 +5694,12 @@ define([
                             }
 
                             if (type !== 'color') {
-                                svgString = svgString.replace(/<image(.|\n)+\/image>/g, '');
-                                svgString = svgString.replace(/<image(.|\n)+\/>/g, '');
+                                svgString = svgString.replace(/<image(.|\n)+\/image>/g, (match) => {
+                                    return '';
+                                });
+                                svgString = svgString.replace(/<image[^>]*>/g, (match) => {
+                                    return '';
+                                });
                             }
 
                             // Insert CSS style into the node
