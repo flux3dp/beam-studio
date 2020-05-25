@@ -81,6 +81,9 @@ jobs:
 
           cp -R util/win32 utils
 
+          rm -rf util
+          rm -rf lib
+
           cp -Force ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
 
           if (${{ matrix.arch }} -eq 64) {
