@@ -3,6 +3,7 @@ define([
     'helpers/device-master',
     'helpers/i18n',
     'helpers/image-data',
+    'helpers/symbol-maker',
     'helpers/version-checker',
     'app/actions/beambox/beambox-preference',
     'app/actions/progress-actions',
@@ -18,6 +19,7 @@ define([
     DeviceMaster,
     i18n,
     ImageData,
+    SymbolMaker,
     VersionChecker,
     BeamboxPreference,
     ProgressActions,
@@ -64,6 +66,7 @@ define([
             const ctx = canvas.getContext('2d');
 
             //cropping
+            console.log($('#svgcontent').width(), $('#svgroot').width());
             const ratio = img.width / $('#svgroot').width();
             const W = ratio * $('#svgroot').width();
             const H = ratio * $('#svgroot').height();
@@ -135,7 +138,9 @@ define([
 
     //return {uploadFile, thumbnailBlobURL}
     const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
+        svgedit.utilities.moveDefsIntoSvgContent();
         const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
+        svgedit.utilities.moveDefsOutfromSvgContent();
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.retreive_image_data);
         await updateImageResolution();
         ProgressActions.close();
@@ -174,6 +179,7 @@ define([
         ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
         await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
         ProgressActions.close();
+        SymbolMaker.switchImageSymbolForAll(false);
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
             model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
@@ -202,6 +208,7 @@ define([
             },
         });
         await FontFuncs.revertTempConvert();
+        SymbolMaker.switchImageSymbolForAll(true);
         if (isErrorOccur) {
             return {fcodeBlob: null};
         }

@@ -20,6 +20,7 @@ define([
                 savedValue:     Number(this.props.defaultValue).toFixed(this.props.decimal)
             };
             this._handleBlur = this._handleBlur.bind(this);
+            this._handleKeyUp = this._handleKeyUp.bind(this);
             this._handleKeyDown = this._handleKeyDown.bind(this);
             this._handleChange = this._handleChange.bind(this);
             this._handleInput = this._handleInput.bind(this);
@@ -70,6 +71,7 @@ define([
         // UI Events
         _handleBlur(e) {
             this._updateValue(e.target.value);
+            this.props.onBlur();
         }
 
         _handleChange(e) {
@@ -80,6 +82,11 @@ define([
             if (this.props.isDoOnInput && !e.nativeEvent.inputType) {
                 this._updateValue(e.target.value);
             }
+        }
+
+        _handleKeyUp(e) {
+            e.stopPropagation();
+            this.props.onKeyUp(e);
         }
 
         _handleKeyDown(e) {
@@ -150,6 +157,7 @@ define([
                         step={this.props.step}
                         value={this.state.displayValue}
                         onBlur={this._handleBlur}
+                        onKeyUp={this._handleKeyUp}
                         onKeyDown={this._handleKeyDown}
                         onChange={this._handleChange}
                         onInput={this._handleInput}
@@ -172,7 +180,9 @@ define([
         decimal: PropTypes.number,
         disabled: PropTypes.bool,
         abbr: PropTypes.bool,
-        isDoOnInput: PropTypes.bool
+        isDoOnInput: PropTypes.bool,
+        onKeyUp: PropTypes.func,
+        onBlur: PropTypes.func,
     };
     UnitInput.defaultProps = {
         getValue: function(NewValue) {},
@@ -186,7 +196,9 @@ define([
         decimal: 2,
         disabled: false,
         abbr: false,
-        isDoOnInput: false
+        isDoOnInput: false,
+        onKeyUp: () => {},
+        onBlur: () => {},
     };
     return UnitInput;
 });

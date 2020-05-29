@@ -139,6 +139,34 @@ const monitorManager = new MonitorManager({
 monitorManager.killProcSync();
 monitorManager.startProc();
 
+let shadowWindow;
+
+const createShadowWindow = () => {
+    if (!shadowWindow) {
+        shadowWindow = new BrowserWindow({
+            width: 10,
+            height: 10,
+            maxHeight: 100,
+            maxHeight: 100,
+            show: false,
+            webPreferences: {
+                nodeIntegration: true
+            },
+        });
+        shadowWindow.webContents.openDevTools();
+        loadShadowWindow();
+    }
+};
+
+const loadShadowWindow = () => {
+    if (shadowWindow) {
+        shadowWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'public/shadow-index.html'),
+            protocol: 'file:'
+        }));
+    }
+}
+
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -180,12 +208,14 @@ function createWindow () {
                 if (!isSaveDialogPopped) {
                     isCloseConfirm = true;
                     mainWindow.close();
+                    shadowWindow.close();
                 }
             }, 10000);
             ipcMain.once('CLOSE_REPLY', (event, reply) => {
                 if (reply) {
                     isCloseConfirm = true;
                     mainWindow.close();
+                    shadowWindow.close();
                 }
             });
         }
@@ -211,6 +241,7 @@ function createWindow () {
             protocol: 'file:',
             slashes: true,
         }));
+        loadShadowWindow();
     });
 
     menuManager.on('DEBUG-INSPECT', () => {
@@ -240,6 +271,18 @@ ipcMain.on(events.GET_AVAILABLE_FONTS , (event, arg) => {
     const fonts = FontManager.getAvailableFontsSync();
 	fontsListCache = fonts;
     event.returnValue = fonts;
+});
+
+ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
+    const {svgUrl: url, imgWidth: width, imgHeight: height, bb, imageRatio, id} = data;
+    if (shadowWindow) {
+        shadowWindow.send(events.SVG_URL_TO_IMG_URL, {url, width, height, bb, imageRatio, id});
+    }
+});
+
+ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
+    const {imageUrl, id} = data;
+    mainWindow.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 function findFontsSync(arg) {
@@ -470,11 +513,11 @@ app.on('ready', () => {
 
     if(!mainWindow) {
         createWindow();
+        createShadowWindow();
     } else {
         console.log("MainWindow instance", mainWindow);
         mainWindow.focus();
     }
-
 });
 
 

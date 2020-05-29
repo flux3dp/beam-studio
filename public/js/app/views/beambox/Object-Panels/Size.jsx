@@ -4,8 +4,19 @@ define([
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
     'helpers/i18n',
-    'app/actions/beambox/constant'
-], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+    'helpers/symbol-maker',
+    'app/actions/beambox/constant',
+    'app/constants/keycode-constants'
+], function(
+    $,
+    PropTypes,
+    FnWrapper,
+    UnitInput,
+    i18n,
+    SymbolMaker,
+    Constant,
+    KeycodeConstants,
+) {
     const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
@@ -128,6 +139,21 @@ define([
             }
         }
 
+        handleKeyUp = (e) => {
+            if (this.props.type === 'use' && (e.keyCode === KeycodeConstants.KEY_UP || e.keyCode === KeycodeConstants.KEY_DOWN)) {
+                SymbolMaker.reRenderDxfImageSymbol(svgCanvas.getSelectedElems()[0]);
+            }
+        }
+
+        handleBlur = async () => {
+            if (this.props.type === 'use') {
+                SymbolMaker.reRenderDxfImageSymbolArray([svgCanvas.getSelectedElems()[0]]);
+            } else if (this.props.type === 'g') {
+                const allUses = Array.from(svgCanvas.getSelectedElems()[0].querySelectorAll('use'));
+                SymbolMaker.reRenderDxfImageSymbolArray(allUses);
+            }
+        }
+
         render() {
             const {
                 width,
@@ -151,6 +177,8 @@ define([
                                     <UnitInput
                                         min={0}
                                         unit='mm'
+                                        onBlur={this.handleBlur}
+                                        onKeyUp={this.handleKeyUp}
                                         defaultValue={width}
                                         getValue={(val) => this.handleUpdateWidth(val)}
                                     />
@@ -160,6 +188,8 @@ define([
                                     <UnitInput
                                         min={0}
                                         unit='mm'
+                                        onBlur={this.handleBlur}
+                                        onKeyUp={this.handleKeyUp}
                                         defaultValue={height}
                                         getValue={(val) => this.handleUpdateHeight(val)}
                                     />

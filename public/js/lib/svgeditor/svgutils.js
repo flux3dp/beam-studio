@@ -304,12 +304,70 @@ svgedit.utilities.setHref = function(elem, val) {
 	elem.setAttributeNS(NS.XLINK, 'xlink:href', val);
 };
 
+// Function: svgedit.utilities.moveDefs
+// Because symbol elements in svgcontent will cause severe lag when zooming,
+// we wants defs to be out of svgcontent when editing. However, we need defs
+// in svgcontent when exporting and saving. So we use these to functions to
+// move in and out defs.
+svgedit.utilities.moveDefsIntoSvgContent = () => {
+	const svgContents = editorContext_.getSVGContent();
+	const defs = svgedit.utilities.findDefs();
+	svgContents.prepend(defs);
+};
+
+svgedit.utilities.moveDefsOutfromSvgContent = () => {
+	const svgContents = editorContext_.getSVGContent();
+	let defs = svgContents.getElementsByTagNameNS(NS.SVG, 'defs');
+	if (defs.length > 0) {
+		defs = defs[0];
+		const origDefs = svgedit.utilities.findDefs();
+		Array.from(defs.childNodes).forEach((child) => {
+			origDefs.appendChild(child);
+		});
+		defs.remove();
+	}
+};
+
+// Function: findDefs
+//
+// Returns:
+// The document's <defs> element, create it first if necessary
+svgedit.utilities.findTempUse = function() {
+	//var svgElement = editorContext_.getSVGContent();
+	let svgElement = document.getElementById('svg_defs');
+	if (!svgElement) {
+		const svgCanvas = document.getElementById('svgcanvas');
+		const svgdoc = svgCanvas.ownerDocument;
+		const NS = svgedit.NS;
+		svgElement = svgdoc.createElementNS(NS.SVG, 'svg');
+		svgElement.setAttribute('id', 'svg_defs');
+		svgCanvas.appendChild(svgElement);
+	}
+	var uses = svgElement.getElementsByTagNameNS(NS.SVG, 'use');
+	if (uses.length > 0) {
+		uses = uses[0];
+	} else {
+		uses = svgElement.ownerDocument.createElementNS(NS.SVG, 'use');
+		svgElement.appendChild(uses);
+	}
+	return uses;
+};
+
 // Function: findDefs
 //
 // Returns:
 // The document's <defs> element, create it first if necessary
 svgedit.utilities.findDefs = function() {
-	var svgElement = editorContext_.getSVGContent();
+	//var svgElement = editorContext_.getSVGContent();
+	let svgElement = document.getElementById('svg_defs');
+	if (!svgElement) {
+		const svgCanvas = document.getElementById('svgcanvas');
+		const svgdoc = svgCanvas.ownerDocument;
+		const NS = svgedit.NS;
+		svgElement = svgdoc.createElementNS(NS.SVG, 'svg');
+		svgElement.setAttribute('id', 'svg_defs');
+		svgCanvas.appendChild(svgElement);
+	}
 	var defs = svgElement.getElementsByTagNameNS(NS.SVG, 'defs');
 	if (defs.length > 0) {
 		defs = defs[0];

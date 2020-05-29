@@ -43,6 +43,7 @@ define([
     'helpers/beam-file-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
+    'helpers/symbol-maker',
     'lib/svgeditor/imagetracer'
 ], function (
     i18n,
@@ -60,6 +61,7 @@ define([
     BeamFileHelper,
     LocalStorage,
     shortcuts,
+    SymbolMaker,
     ImageTracer
 ) {
     const LANG = i18n.lang.beambox;
@@ -845,7 +847,7 @@ define([
         // Parameters:
         // newDoc - The SVG DOM document
         this.prepareSvg = function (newDoc) {
-            console.log(newDoc.documentElement);
+            //console.log(newDoc.documentElement);
             this.sanitizeSvg(newDoc.documentElement);
 
             // convert paths into absolute commands
@@ -881,13 +883,22 @@ define([
         };
 
         this.getObjectLayer = function(elem) {
-            while (elem) {
-                elem = elem.parentNode;
-                if (elem && elem.getAttribute && elem.getAttribute('class') && elem.getAttribute('class').indexOf('layer') >= 0) {
-                    var title = $(elem).find('title')[0];
+            let p = elem;
+            while (p) {
+                p = p.parentNode;
+                if (p && p.getAttribute && p.getAttribute('class') && p.getAttribute('class').indexOf('layer') >= 0) {
+                    var title = $(p).find('title')[0];
                     if (title) {
-                        return { elem: elem, title: title.innerHTML };
+                        return { elem: p, title: title.innerHTML };
                     }
+                }
+            }
+            // When multi selecting, elements does not belong to any layer, so get layer from data original layer
+            const origLayer = elem.getAttribute('data-original-layer');
+            if (origLayer) {
+                const layer = getCurrentDrawing().getLayerByName(origLayer);
+                if (layer) {
+                    return {elem: layer, title: origLayer};
                 }
             }
             return null;
@@ -1245,6 +1256,9 @@ define([
             while (mouse_target.parentNode.parentNode.tagName === 'g') {
             	mouse_target = mouse_target.parentNode;
             }
+            if (mouse_target.parentNode.tagName === 'g' && mouse_target.parentNode.getAttribute('data-tempgroup') === 'true') {
+            	mouse_target = mouse_target.parentNode;
+            }
             // Webkit bubbles the mouse event all the way up to the div, so we
             // set the mouse_target to the svgroot like the other browsers
             // if (mouse_target.nodeName.toLowerCase() === 'div') {
@@ -1450,8 +1464,8 @@ define([
                         if ($('#selectorGroup0').css('display') === 'inline') {
                             justClearSelection = true;
                         }
-                        //console.log(svgCanvas.getObjectLayer(mouse_target).elem);
-                        if (mouse_target !== svgroot && !svgCanvas.getObjectLayer(mouse_target).elem.getAttribute('data-lock')) {
+                        const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouse_target);
+                        if (mouse_target !== svgroot && (!mouseTargetObjectLayer || !mouseTargetObjectLayer.elem.getAttribute('data-lock'))) {
                             // if this element is not yet selected, clear selection and select it
                             if (selectedElements.indexOf(mouse_target) === -1) {
                                 // only clear selection if shift is not pressed (otherwise, add
@@ -2339,7 +2353,7 @@ define([
             // - in move/resize mode, the element's attributes which were affected by the move/resize are
             // identified, a ChangeElementCommand is created and stored on the stack for those attrs
             // this is done in when we recalculate the selected dimensions()
-            var mouseUp = function (evt) {
+            var mouseUp = async function (evt) {
                 ObjectPanelsController.setEditable(true);
                 if (evt.button === 2) {
                     return;
@@ -2393,7 +2407,6 @@ define([
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
                         }
-                        current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
                     case 'select':
@@ -2433,11 +2446,22 @@ define([
                             // if it was being dragged/resized
                             if (real_x !== r_start_x || real_y !== r_start_y) {
                                 var i, len = selectedElements.length;
+                                if (current_mode === 'resize') {
+                                    const allSelectedUses = [];
+                                    selectedElements.forEach((e) => {
+                                        if (e.tagName === 'use') {
+                                            allSelectedUses.push(e);
+                                        } else if (e.tagName === 'g') {
+                                            allSelectedUses.push(...Array.from(e.querySelectorAll('use')));
+                                        }
+                                    });
+                                    SymbolMaker.reRenderDxfImageSymbolArray(allSelectedUses);
+                                }
                                 for (i = 0; i < len; ++i) {
                                     if (selectedElements[i] == null) {
                                         break;
                                     }
-                                    if (!selectedElements[i].firstChild) {
+                                    if (!selectedElements[i].firstChild && selectedElements[i].tagName !== 'use') {
                                         // Not needed for groups (incorrectly resizes elems), possibly not needed at all?
                                         selectorManager.requestSelector(selectedElements[i]).resize();
                                     }
@@ -2487,6 +2511,7 @@ define([
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
                         }
+                        current_mode = 'select';
 
                         return;
                         //zoom is broken
@@ -4621,6 +4646,14 @@ define([
                 if (id && defelem_uses.includes(id)) {
                     return true;
                 }
+                const originSymbol = node.getAttribute('data-origin-symbol');
+                if (originSymbol && defelem_uses.includes(originSymbol)) {
+                    return true;
+                }
+                const imageSymbol = node.getAttribute('data-image-symbol');
+                if (imageSymbol && defelem_uses.includes(imageSymbol)) {
+                    return true;
+                }
                 return false;
             };
 
@@ -4663,6 +4696,7 @@ define([
         // String containing the SVG image for output
         this.svgCanvasToString = function () {
             // keep calling it until there are none to remove
+            svgedit.utilities.moveDefsIntoSvgContent();
             while (removeUnusedDefElems() > 0) {}
             pathActions.clear(true);
 
@@ -4719,7 +4753,7 @@ define([
                     groupSvgElem(this);
                 });
             }
-
+            svgedit.utilities.moveDefsOutfromSvgContent();
             console.log(output);
 
             return output;
@@ -5840,7 +5874,7 @@ define([
                     }
 
                     const symbols = layerNodes.map(node => {
-                        const symbol = svgCanvas.makeSymbol(_symbolWrapper(node), [], batchCmd, defChildren, 'layer');
+                        const symbol = SymbolMaker.makeSymbol(_symbolWrapper(node), [], batchCmd, defChildren, 'layer');
                         return symbol;
                     });
 
@@ -5933,7 +5967,7 @@ define([
                         if (color) {
                             wrappedSymbolContent.setAttribute('data-color', color);
                         }
-                        const symbol = svgCanvas.makeSymbol(wrappedSymbolContent, [], batchCmd, defChildren, 'color');
+                        const symbol = SymbolMaker.makeSymbol(wrappedSymbolContent, [], batchCmd, defChildren, 'color');
                         return symbol;
                     });
                     return symbols;
@@ -5949,7 +5983,7 @@ define([
                     defChildren = defChildren.concat(styleNodes);
 
                     const layerNodes = Array.from(svg.childNodes).filter(node => !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName));
-                    const symbol = svgCanvas.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren, type);
+                    const symbol = SymbolMaker.makeSymbol(_symbolWrapper(layerNodes), [], batchCmd, defChildren, type);
 
                     return [symbol];
                 }
@@ -6164,222 +6198,6 @@ define([
             // we want to return the element so we can automatically select it
             return use_elements[use_elements.length - 1];
 
-        };
-
-        this.makeSymbol = function (elem, attrs, batchCmd, defs, type) {
-            const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');
-            const symbol_defs = svgdoc.createElementNS(NS.SVG, 'defs');
-            const oldLinkMap = new Map();
-
-            defs.map(def => {
-                this.clipCount = this.clipCount || 1;
-                const clonedDef = def.cloneNode(true);
-                const oldId = clonedDef.id;
-                if (oldId) {
-                    const newId = 'def' + (this.clipCount++);
-                    oldLinkMap.set(oldId, newId);
-                    clonedDef.id = newId;
-                }
-                symbol_defs.appendChild(clonedDef);
-            });
-
-            symbol.appendChild(symbol_defs);
-
-            symbol.appendChild(elem);
-            function traverseForRemappingId(node) {
-                if (!node.attributes) {
-                    return;
-                }
-                for (let attr of node.attributes) {
-                    const re = /url\(#([^)]+)\)/g;
-                    const linkRe = /\#(.+)/g;
-                    const urlMatch = attr.nodeName === 'xlink:href' ? linkRe.exec(attr.value) : re.exec(attr.value);
-
-                    if (urlMatch) {
-                        const oldId = urlMatch[1];
-                        if (oldLinkMap.get(oldId)) {
-                            node.setAttribute(attr.nodeName, attr.value.replace('#' + oldId, '#' + oldLinkMap.get(oldId)));
-                        }
-                    }
-                }
-                if (!node.childNodes) {
-                    return;
-                }
-                Array.from(node.childNodes).map( child => traverseForRemappingId(child) );
-            }
-            traverseForRemappingId(symbol);
-
-            (function remapIdOfStyle(){
-                Array.from(symbol_defs.childNodes).map(child => {
-                    if (child.tagName !== 'style') {
-                        return;
-                    }
-                    const originStyle = child.innerHTML;
-                    const re = /url\(#([^)]+)\)/g;
-                    let mappedStyle = originStyle.replace(re, function replacer(match, p1, offset, string) {
-                        if (oldLinkMap.get(p1)) {
-                            return `url(#${oldLinkMap.get(p1)})`;
-                        }
-                    });
-                    child.innerHTML = mappedStyle;
-                });
-            })();
-
-            for (var i = 0; i < attrs.length; i++) {
-                var attr = attrs[i];
-                symbol.setAttribute(attr.nodeName, attr.value);
-            }
-            symbol.id = getNextId();
-            if (elem.firstChild && (elem.firstChild.id || elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label'))) {
-                if (elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label')) {
-                    let id = elem.firstChild.getAttributeNS(svgedit.NS.INKSCAPE, 'label');
-                    symbol.setAttribute('data-id', id);
-                    elem.firstChild.removeAttributeNS(svgedit.NS.INKSCAPE, 'label');
-                } else {
-                    symbol.setAttribute('data-id', elem.firstChild.id);
-                }
-            }
-            if (elem.firstChild && elem.firstChild.getAttribute('data-color')) {
-                symbol.setAttribute('data-color', elem.firstChild.getAttribute('data-color'));
-            }
-
-            svgedit.utilities.findDefs().appendChild(symbol);
-
-            //remove invisible nodes (such as invisible layer in Illustrator)
-            $(symbol).find('*').filter(function () {
-                return ($(this).css('display') === 'none');
-            }).remove();
-
-            $(symbol).find('use').filter(function () {
-                return $(symbol).find(getHref(this)).length === 0;
-            }).remove();
-
-            //add prefix(which constrain css selector to symbol's id) to prevent class style pollution
-            let originStyle = $(symbol).find('style').text();
-            if (type === 'nolayer') {
-                originStyle = originStyle.replace(/stroke[^a-zA-Z]*:[^;]*;/g,'');
-                originStyle = originStyle.replace(/stroke-width[^a-zA-Z]*:[^;]*;/g,'');
-            }
-
-            const svgPixelTomm = 254 / 72; //本來 72 個點代表 1 inch, 現在 254 個點代表 1 inch.
-            const unitMap = {
-                'in': 25.4 * 10 / svgPixelTomm,
-                'cm': 10 * 10 / svgPixelTomm,
-                'mm': 10 / svgPixelTomm,
-                'px': 1
-            };
-            const getFontSizeInPixel = (fontSizeCss) => {
-                if (!isNaN(fontSizeCss)) {
-                    return fontSizeCss;
-                }
-                const unit = fontSizeCss.substr(-2);
-                const num = fontSizeCss.substr(0, fontSizeCss.length-2);
-                if (!unit || !unitMap[unit]) {
-                    return num;
-                } else {
-                    return num * unitMap[unit];
-                }
-            }
-
-            let textElems = $(symbol).find('text');
-            for (let i = 0; i < textElems.length; i++) {
-                // Remove text in <text> to <tspan>
-                const textElem = textElems[i];
-                const fontFamily = $(textElem).css('font-family');
-                $(textElem).attr('font-family', fontFamily);
-                const fontSize = getFontSizeInPixel($(textElem).css('font-size'));
-                $(textElem).attr('font-size', fontSize);
-                $(textElem).attr('stroke-width', 2);
-                
-                if (!$(textElem).attr('x')) {
-                    $(textElem).attr('x', 0);
-                }
-                if (!$(textElem).attr('y')) {
-                    $(textElem).attr('y', 0);
-                }
-                let texts = Array.from(textElem.childNodes).filter((child) => child.nodeType === 3);
-                for (let j = texts.length - 1; j >= 0; j--) {
-                    let t = texts[j];
-                    const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
-                    textElem.prepend(tspan);
-                    tspan.textContent = t.textContent;
-                    $(t).remove();
-                    $(tspan).attr({
-                        'x': $(textElem).attr('x'),
-                        'y': $(textElem).attr('y'),
-                        'vector-effect': 'non-scaling-stroke',
-                    });
-                }
-            }
-            //the regex indicate the css selector, but the selector may contain comma, so we replace it again.
-            let prefixedStyle = originStyle.replace(/([^{}]+){/g, function replacer(match, p1, offset, string) {
-                const prefix = '#' + symbol.id + ' ';
-                match = match.replace(',', ',' + prefix);
-                return prefix + match;
-            });
-            prefixedStyle = prefixedStyle + `
-                *[data-color] ellipse[fill=none],
-                *[data-color] circle[fill=none],
-                *[data-color] rect[fill=none],
-                *[data-color] path[fill=none],
-                *[data-color] polygon[fill=none] {
-                    fill-opacity: 0 !important;
-                    stroke-width: 1 !important;
-                    stroke-opacity: 1 !important;
-                    vector-effect: non-scaling-stroke !important;
-                }
-
-                *[data-color] ellipse[stroke=none],
-                *[data-color] circle[stroke=none],
-                *[data-color] rect[stroke=none],
-                *[data-color] path[stroke=none],
-                *[data-color] polygon[stroke=none],
-                *[data-color] ellipse:not([stroke]),
-                *[data-color] circle:not([stroke]),
-                *[data-color] rect:not([stroke]),
-                *[data-color] path:not([stroke]),
-                *[data-color] polygon:not([stroke]) {
-                    fill-opacity: 1 !important;
-                    stroke-width: 0 !important;
-                }
-
-                *[data-wireframe] {
-                    stroke-width: 1px !important;
-                    stroke-opacity: 1.0 !important;
-                    stroke-dasharray: 0 !important;
-                    opacity: 1 !important;
-                    vector-effect: non-scaling-stroke !important;
-                    filter: none !important;
-                }
-
-                #svg_editor:not(.color) #${symbol.id} * {
-                    fill-opacity: 0;
-                    stroke: #000 !important;
-                    filter: none;
-                    stroke-width: 1px !important;
-                    vector-effect: non-scaling-stroke !important;
-                    stroke-opacity: 1.0;
-                    stroke-dasharray: 0;
-                    opacity: 1;
-                    filter: none;
-                }
-                #${symbol.id} {
-                    overflow: visible;
-                }
-
-            `;
-
-            if ($(symbol).find('style').length) {
-                $(symbol).find('style').text(prefixedStyle);
-            } else {
-                $(symbol).find('defs').append(
-                    `<style>${prefixedStyle}</style>`
-                );
-            }
-
-            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(symbol));
-
-            return symbol;
         };
 
         // TODO(codedread): Move all layer/context functions in draw.js
@@ -9196,6 +9014,7 @@ define([
                 if (!elem || elem.tagName !== 'use') {
                     continue;
                 }
+                SymbolMaker.switchImageSymbol(elem, false);
 
                 const layer = this.getObjectLayer(elem).elem;
                 const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
@@ -9832,6 +9651,8 @@ define([
                     'data-tempgroup': true
                 }
             });
+            // Move to direct under svgcontent to avoid group under invisible layer
+            $('#svgcontent')[0].appendChild(g);
 
             // now move all children into the group
             var i = selectedElements.length;
@@ -9908,13 +9729,17 @@ define([
                         continue;
                     }
                     const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
+                    const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
                         original_layer.appendChild(elem);
                         if (this.isUseLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
-                        elem = parent.insertBefore(elem, anchor);
+                        currentLayer.appendChild(elem);
+                        if (this.isUseLayerColor) {
+                            this.updateElementColor(elem);
+                        }
                     }
                     children[i++] = elem;
                 }

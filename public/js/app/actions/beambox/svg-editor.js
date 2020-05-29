@@ -38,6 +38,7 @@ define([
     'helpers/image-data',
     'helpers/pdf-helper',
     'helpers/shortcuts',
+    'helpers/symbol-maker',
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
@@ -61,6 +62,7 @@ define([
     ImageData,
     PdfHelper,
     Shortcuts,
+    SymbolMaker,
     i18n,
     BeamboxPreference,
     Constant,
@@ -5944,54 +5946,52 @@ define([
                             type: AlertConstants.SHOW_POPUP_WARNING,
                         });
                     }
-
+                    const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+                    const NS = svgedit.NS;
                     for (let i in outputLayers) {
-                        let layerName = i;
-                        let layer = outputLayers[i];
-                        const isLayerExist = svgCanvas.setCurrentLayer(layerName);
-                        if (!isLayerExist) {
-                            const drawing = svgCanvas.getCurrentDrawing();
-                            const newLayer = svgCanvas.createLayer(layerName, null, layer.rgbCode);
-                        }
+                        const layerName = i;
+                        const layer = outputLayers[i];
+                        console.log(i);
+                        let t = new Date();
                         const id = svgCanvas.getNextId();
-                        let g = svgCanvas.addSvgElementFromJson({
-                            'element': 'g',
-                            'attr': {
-                                'id': id
-                            }
-                        });
+                        const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');
+                        symbol.setAttribute('overflow', 'visible');
+                        symbol.id = id;
+                        svgedit.utilities.findDefs().appendChild(symbol);
                         ImageTracer.appendSVGString(layer.paths.join(''), id);
-                        for (let j = 0; j < g.childNodes.length; j++) {
-                            let child = g.childNodes[j];
+                        for (let j = 0; j < symbol.childNodes.length; j++) {
+                            let child = symbol.childNodes[j];
                             if (child.tagName === 'path' && !$(child).attr('d')) {
                                 child.remove();
-                                j --;
+                                j--;
                             } else {
                                 $(child).attr('id', svgCanvas.getNextId());
-                                $(child).attr('vector-effect', "non-scaling-stroke");
                             }
                         }
-                        svgCanvas.updateElementColor(g);
+                        console.log('dxf string to svg', new Date() - t);
+                        t = new Date();
+                        const use_el = svgdoc.createElementNS(NS.SVG, 'use');
+                        use_el.id = svgCanvas.getNextId();
+                        svgedit.utilities.setHref(use_el, `#${symbol.id}`);
+                        svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(use_el);
+                        console.log('append child', new Date() - t);
+
+                        const imageSymbol = await SymbolMaker.makeDxfImageSymbol(symbol);
+                        svgedit.utilities.setHref(use_el, `#${imageSymbol.id}`);
+                        const isLayerExist = svgCanvas.setCurrentLayer(layerName);
+                        if (!isLayerExist) {
+                            svgCanvas.getCurrentDrawing();
+                            svgCanvas.createLayer(layerName, null, layer.rgbCode);
+                        }
+
+                        const bb = svgedit.utilities.getBBox(use_el);
+                        let xform = '';
+                        for (let key in bb) {
+                            xform += `${key}=${bb[key]} `;
+                        }
+                        use_el.setAttribute('data-xform', xform);
+                        svgCanvas.updateElementColor(use_el);
                     }
-                    //importBvgString(resizedSvg);
-
-                    /* const newElement = svgCanvas.importSvgString(resizedSvg, 'layer');
-
-                    svgCanvas.ungroupSelectedElement();
-                    svgCanvas.ungroupSelectedElement();
-                    svgCanvas.groupSelectedElements();
-                    svgCanvas.alignSelectedElements('m', 'page');
-                    svgCanvas.alignSelectedElements('c', 'page');
-                    // highlight imported element, otherwise we get strange empty selectbox
-                    try {
-                        svgCanvas.selectOnly([newElement]);
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                    svgCanvas.setSvgElemPosition('x', 0);
-                    svgCanvas.setSvgElemPosition('y', 0);*/
-                    // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
                     Alert.popAlertStackById('loading_image');
                 };
 
@@ -6155,6 +6155,9 @@ define([
                             $('#workarea').scrollTop(top);
                         }
                     }
+                    await SymbolMaker.reRenderAllDxfImageSymbol();
+                    svgedit.utilities.findDefs().remove();
+                    svgedit.utilities.moveDefsOutfromSvgContent();
                 }
                 editor.importBvgStringAsync = importBvgStringAsync;
 
