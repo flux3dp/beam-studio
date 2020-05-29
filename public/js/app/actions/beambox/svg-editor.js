@@ -44,6 +44,7 @@ define([
     'app/actions/beambox/constant',
     'helpers/dxf2svg',
     'app/constants/keycode-constants',
+    'helpers/api/alert-config',
     'helpers/api/svg-laser-parser',
     'lib/svgeditor/imagetracer'
 ], function (
@@ -68,6 +69,7 @@ define([
     Constant,
     Dxf2Svg,
     KeycodeConstants,
+    AlertConfig,
     SvgLaserParser,
     ImageTracer
 ) {
@@ -5869,21 +5871,19 @@ define([
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = evt => {
-                            if (BeamboxPreference.read('dxf_version_warning') !== false) {
+                            if (!AlertConfig.read('skip_dxf_version_warning')) {
                                 let autoCadVersion = evt.target.result.match(/AC\d+/);
                                 if (autoCadVersion) {
                                     autoCadVersion = autoCadVersion[0].substring(2 ,autoCadVersion[0].length);
                                     if (autoCadVersion !== '1027') {
                                         Alert.popUp({
-                                            id: 'dxf_version_warning',
+                                            id: 'skip_dxf_version_warning',
                                             message: LANG.popup.dxf_version_waring,
                                             type: AlertConstants.SHOW_POPUP_WARNING,
                                             callbacks: () => {console.log('unchecked')},
                                             checkBox: {
                                                 text: LANG.popup.dont_show_again,
-                                                callbacks: () => {
-                                                    console.log('checked');
-                                                }
+                                                callbacks: () => {AlertConfig.write('skip_dxf_version_warning', true)}
                                             }
                                         });
                                     }

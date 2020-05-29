@@ -1119,6 +1119,7 @@ define(function() {
                 upload_failed: '档案上传失败。',
                 or_turn_off_borderless_mode: '或是关闭开盖模式',
                 svg_1_1_waring: '此档案标示之 svg 版本为 1.1 版，可能有潜在的不相容风险。',
+                svg_image_path_waring: '此档案内含有以路径读取的图片，可能会有读取失败的风险。请在做图汇出 SVG 时，当点阵图相关选项改成嵌入。',
                 dxf_version_waring: '此 Dxf 档版本非 2013 版，可能有潜在的不相容风险。',
                 dont_show_again: '别再显示此提醒',
                 convert_to_path_fail: '转换成路径失败。',

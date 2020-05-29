@@ -1122,6 +1122,7 @@ define(function() {
                 upload_failed: 'ファイルのアップロードに失敗しました。',
                 or_turn_off_borderless_mode: ' または、ボーダーレスモードをオフにします。',
                 svg_1_1_waring: 'このSVGファイルのバージョンはv 1.1です。非互換性の問題が発生する可能性があります。',
+                svg_image_path_waring: 'このSVGファイルには、ファイルパスからロードされた<image>が含まれています。ロード時に失敗する可能性があります。\nこの可能性を回避するには、SVGをエクスポートするときに埋め込み画像（embed）を使用してください。',
                 dxf_version_waring: 'このDXFファイルのバージョンは2013ではありません。非互換性の問題が発生する可能性があります。',
                 dont_show_again: '次回から表示しない',
                 convert_to_path_fail: 'パスへの変換に失敗しました。',

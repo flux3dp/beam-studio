@@ -1122,6 +1122,7 @@ define(function() {
                 upload_failed: 'File upload failed.',
                 or_turn_off_borderless_mode: ' Or turn off Open Bottom mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
+                svg_image_path_waring: 'This SVG file contains <image> loading from file path. This might cause fails when loading.\nTo avoid this risk, Please kindly use embed image when exporting SVG.',
                 dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
                 dont_show_again: 'Don\'t Show Again',
                 convert_to_path_fail: 'Failed to convert to path.',

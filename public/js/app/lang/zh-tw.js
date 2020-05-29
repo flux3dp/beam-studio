@@ -1119,6 +1119,7 @@ define(function() {
                 upload_failed: '檔案上傳失敗。',
                 or_turn_off_borderless_mode: '或是關閉開蓋模式',
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
+                svg_image_path_waring: '此檔案內含有以路徑讀取的圖片，可能會有讀取失敗的風險。請在做圖匯出 SVG 時，當點陣圖相關選項改成嵌入。',
                 dxf_version_waring: '此 Dxf 檔版本非 2013 版，可能有潛在的不相容風險。',
                 dont_show_again: '別再顯示此提醒',
                 convert_to_path_fail: '轉換成路徑失敗。',

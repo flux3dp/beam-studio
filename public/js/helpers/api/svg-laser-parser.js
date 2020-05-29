@@ -10,6 +10,7 @@ define([
     'helpers/websocket',
     'helpers/convertToTypedArray',
     'helpers/data-history',
+    'helpers/api/alert-config',
     'helpers/api/set-params',
     'helpers/i18n'
 ], function(
@@ -20,6 +21,7 @@ define([
     Websocket,
     convertToTypedArray,
     history,
+    AlertConfig,
     setParams,
     i18n
 ) {
@@ -461,6 +463,7 @@ define([
                     let svgString = e.target.result;
                     const matchImages = svgString.match(/<image[^>]+>/g);
                     let allImageValid = true;
+                    let hasPath = false;
                     if (matchImages) {
                         const fs = require('fs');
                         const path = require('path');
@@ -477,6 +480,7 @@ define([
                             }
                             let newPath = origPath.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
                             // Test Abosulte Path
+                            hasPath = true;
                             if (fs.existsSync(newPath)) {
                                 continue;
                             }
@@ -495,7 +499,7 @@ define([
                     }
                     let version;
                     const LANG = i18n.lang.beambox.popup;
-                    if (BeamboxPreference.read('svg_version_warning') !== false) {
+                    if (!AlertConfig.read('skip_svg_version_warning')) {
                         const matchSVG = svgString.match(/<svg[^>]*>/g)[0];
                         version = matchSVG.match(/ version="[^"]+"/);
                         if (version) {
@@ -506,10 +510,22 @@ define([
                                     message: LANG.svg_1_1_waring,
                                     checkBox: {
                                         text: LANG.dont_show_again,
-                                        callbacks: () => {BeamboxPreference.write('svg_version_warning', false)}
+                                        callbacks: () => {AlertConfig.write('skip_svg_version_warning', false)}
                                     }
                                 });
                             }
+                        }
+                    }
+                    if (allImageValid && hasPath) {
+                        if (!AlertConfig.read('skip_image_path_warning')) {
+                            Alert.popUp({
+                                type: AlertConstants.SHOW_POPUP_WARNING,
+                                message: LANG.svg_image_path_waring,
+                                checkBox: {
+                                    text: LANG.dont_show_again,
+                                    callbacks: () => {AlertConfig.write('skip_image_path_warning', true)}
+                                }
+                            });
                         }
                     }
 
