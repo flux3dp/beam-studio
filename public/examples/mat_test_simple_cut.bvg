@@ -3262,7 +3262,7 @@
   <title>#1E87E5</title>
   <use data-xform="x=1205.590576171875 y=1018.5772094726562 width=78.851318359375 height=47.30792236328125 " data-ref="[object SVGSymbolElement]" data-symbol="[object SVGSymbolElement]" xlink:href="#svg_22" id="svg_83"/>
  </g>
- <g data-repeat="1" data-strength="100" data-speed="12" class="layer">
+ <g data-repeat="1" data-strength="30" data-speed="12" class="layer">
   <title>#1976D1</title>
   <use data-xform="x=1205.590576171875 y=1079.3487548828125 width=78.851318359375 height=47.3079833984375 " data-ref="[object SVGSymbolElement]" data-symbol="[object SVGSymbolElement]" xlink:href="#svg_23" id="svg_84"/>
  </g>
