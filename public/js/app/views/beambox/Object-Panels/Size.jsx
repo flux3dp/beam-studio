@@ -141,16 +141,16 @@ define([
 
         handleKeyUp = (e) => {
             if (this.props.type === 'use' && (e.keyCode === KeycodeConstants.KEY_UP || e.keyCode === KeycodeConstants.KEY_DOWN)) {
-                SymbolMaker.reRenderDxfImageSymbol(svgCanvas.getSelectedElems()[0]);
+                SymbolMaker.reRenderImageSymbol(svgCanvas.getSelectedElems()[0]);
             }
         }
 
         handleBlur = async () => {
             if (this.props.type === 'use') {
-                SymbolMaker.reRenderDxfImageSymbolArray([svgCanvas.getSelectedElems()[0]]);
+                SymbolMaker.reRenderImageSymbolArray([svgCanvas.getSelectedElems()[0]]);
             } else if (this.props.type === 'g') {
                 const allUses = Array.from(svgCanvas.getSelectedElems()[0].querySelectorAll('use'));
-                SymbolMaker.reRenderDxfImageSymbolArray(allUses);
+                SymbolMaker.reRenderImageSymbolArray(allUses);
             }
         }
 

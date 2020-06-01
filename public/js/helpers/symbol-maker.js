@@ -175,7 +175,7 @@ define([
             *[data-color] path[fill=none],
             *[data-color] polygon[fill=none] {
                 fill-opacity: 0 !important;
-                stroke-width: 1 !important;
+                stroke-width: 1px !important;
                 stroke-opacity: 1 !important;
                 vector-effect: non-scaling-stroke !important;
             }
@@ -269,7 +269,7 @@ define([
         });
     }
 
-    const makeDxfImageSymbol = async (symbol, scale=1, imageSymbol=null) => {
+    const makeImageSymbol = async (symbol, scale=1, imageSymbol=null) => {
         const NS = svgedit.NS;
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
         return new Promise(async (resolve, reject) => {
@@ -287,7 +287,12 @@ define([
                 svgedit.utilities.setHref(useElemForBB, '');
                 bb.height = Math.max(1, bb.height);
                 bb.width = Math.max(1, bb.width);
-                const obj = {x: bb.x, y: bb.y, width: bb.width.toFixed(5), height: bb.height.toFixed(5)};
+                const obj = {
+                    x: parseFloat(bb.x.toFixed(5)),
+                    y: parseFloat(bb.y.toFixed(5)),
+                    width: parseFloat(bb.width.toFixed(5)),
+                    height: parseFloat(bb.height.toFixed(5))
+                };
                 symbol.setAttribute('data-bbox', JSON.stringify(obj));
             } else {
                 bb = JSON.parse(bb);
@@ -298,6 +303,13 @@ define([
             const descendants = Array.from(tempSymbol.querySelectorAll('*'));
             descendants.forEach((d) => {
                 d.setAttribute('stroke-width', `${strokeWidth}px`);
+            });
+            const styles = Array.from(tempSymbol.querySelectorAll('style'));
+            styles.forEach((styleNode) => {
+                console.log(styleNode.textContent);
+                let styleText = styleNode.textContent;
+                styleText = styleText.replace(/stroke-width: 1px !important;/g, `stroke-width: ${strokeWidth}px !important;`);
+                styleNode.textContent = styleText;
             });
             tempUse.setAttribute('transform', `scale(${imageRatio})`);
 
@@ -332,7 +344,7 @@ define([
         });
     };
 
-    const reRenderDxfImageSymbol = async (useElement) => {
+    const reRenderImageSymbol = async (useElement) => {
         const {width, height} = svgCanvas.getSvgRealLocation(useElement);
         const {width: origWidth, height: origHeight} = useElement.getBBox();
 
@@ -344,25 +356,25 @@ define([
             if (origSymbolId) {
                 const origSymbol = $(`#${origSymbolId}`)[0];
                 if (origSymbol && origSymbol.tagName === 'symbol') {
-                    await makeDxfImageSymbol(origSymbol, scale, currentSymbol);
+                    await makeImageSymbol(origSymbol, scale, currentSymbol);
                 }
             }
         }
     }
 
-    const reRenderDxfImageSymbolArray = async (useElements) => {
-        const convertAllUses = useElements.map((use) => reRenderDxfImageSymbol(use));
+    const reRenderImageSymbolArray = async (useElements) => {
+        const convertAllUses = useElements.map((use) => reRenderImageSymbol(use));
         await Promise.all(convertAllUses);
     }
 
-    const reRenderAllDxfImageSymbol = async () => {
+    const reRenderAllImageSymbol = async () => {
         const useElements = [];
         const layers = $('#svgcontent > g.layer').toArray();
         layers.forEach((layer) => {
             const uses = Array.from(layer.querySelectorAll('use'));
             useElements.push(...uses);
         });
-        await reRenderDxfImageSymbolArray(useElements);
+        await reRenderImageSymbolArray(useElements);
     }
 
     const switchImageSymbol = (elem, shouldUseImage) => {
@@ -409,10 +421,10 @@ define([
 
     return {
         makeSymbol,
-        makeDxfImageSymbol,
-        reRenderDxfImageSymbol,
-        reRenderDxfImageSymbolArray,
-        reRenderAllDxfImageSymbol,
+        makeImageSymbol,
+        reRenderImageSymbol,
+        reRenderImageSymbolArray,
+        reRenderAllImageSymbol,
         switchImageSymbol,
         switchImageSymbolForAll
     }

@@ -5976,7 +5976,7 @@ define([
                         svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(use_el);
                         console.log('append child', new Date() - t);
 
-                        const imageSymbol = await SymbolMaker.makeDxfImageSymbol(symbol);
+                        const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
                         svgedit.utilities.setHref(use_el, `#${imageSymbol.id}`);
                         const isLayerExist = svgCanvas.setCurrentLayer(layerName);
                         if (!isLayerExist) {
@@ -6155,7 +6155,7 @@ define([
                             $('#workarea').scrollTop(top);
                         }
                     }
-                    await SymbolMaker.reRenderAllDxfImageSymbol();
+                    await SymbolMaker.reRenderAllImageSymbol();
                     svgedit.utilities.findDefs().remove();
                     svgedit.utilities.moveDefsOutfromSvgContent();
                 }

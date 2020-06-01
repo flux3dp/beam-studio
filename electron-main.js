@@ -144,10 +144,6 @@ let shadowWindow;
 const createShadowWindow = () => {
     if (!shadowWindow) {
         shadowWindow = new BrowserWindow({
-            width: 10,
-            height: 10,
-            maxHeight: 100,
-            maxHeight: 100,
             show: false,
             webPreferences: {
                 nodeIntegration: true

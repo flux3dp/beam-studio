@@ -2455,7 +2455,7 @@ define([
                                             allSelectedUses.push(...Array.from(e.querySelectorAll('use')));
                                         }
                                     });
-                                    SymbolMaker.reRenderDxfImageSymbolArray(allSelectedUses);
+                                    SymbolMaker.reRenderImageSymbolArray(allSelectedUses);
                                 }
                                 for (i = 0; i < len; ++i) {
                                     if (selectedElements[i] == null) {
@@ -4646,6 +4646,9 @@ define([
                 if (id && defelem_uses.includes(id)) {
                     return true;
                 }
+                if (node.nodeType === 3 || !node.getAttribute) {
+                    return false;
+                }
                 const originSymbol = node.getAttribute('data-origin-symbol');
                 if (originSymbol && defelem_uses.includes(originSymbol)) {
                     return true;
@@ -5785,7 +5788,7 @@ define([
         // arbitrary transform lists, but makes some assumptions about how the transform list
         // was obtained
         // * import should happen in top-left of current zoomed viewport
-        this.importSvgString = function (xmlString, _type, layerName) {
+        this.importSvgString = async function (xmlString, _type, layerName) {
             const batchCmd = new svgedit.history.BatchCommand('Import Image');
 
             function parseSvg(svg, type) {
@@ -6023,7 +6026,7 @@ define([
                         };
                 }
             }
-            function appendUseElement(symbol, type, layerName) {
+            async function appendUseElement(symbol, type, layerName) {
                 // create a use element
                 const use_el = svgdoc.createElementNS(NS.SVG, 'use');
                 use_el.id = getNextId();
@@ -6094,6 +6097,9 @@ define([
                         }
                     }
                 }
+
+                const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
+                setHref(use_el, '#' + imageSymbol.id);
 
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(use_el));
 
@@ -6179,7 +6185,7 @@ define([
             const svg = svgdoc.adoptNode(newDoc.documentElement);
             const {symbols, confirmedType} = parseSvg(svg, _type);
 
-            const use_elements = symbols.map(symbol => appendUseElement(symbol, _type, layerName));
+            const use_elements = await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)));
 
             use_elements.forEach(elem => {
                 if (_type === 'nolayer' && this.isUseLayerColor) {
