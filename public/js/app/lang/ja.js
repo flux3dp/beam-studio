@@ -1260,6 +1260,7 @@ define(function() {
                 low: '低',
                 medium: '中',
                 high: '高',
+                ultra: '超高',
                 enable: '有効',
                 disable: '無効',
                 cancel: 'キャンセル',

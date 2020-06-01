@@ -1289,6 +1289,7 @@ define(function() {
                 low: '低',
                 medium: '中',
                 high: '高',
+                ultra: '極高',
                 enable: '啟用',
                 disable: '關閉',
                 cancel: '取消',

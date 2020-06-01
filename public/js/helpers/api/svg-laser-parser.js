@@ -652,6 +652,9 @@ define([
                                 case 'high':
                                     args.push('-hdpi');
                                     break;
+                                case 'ultra':
+                                    args.push('-udpi');
+                                    break;
                             }
                             if (opts.enableMask) {
                                 args.push('-mask');

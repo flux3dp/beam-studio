@@ -1260,6 +1260,7 @@ define(function() {
                 low: 'Low',
                 medium: 'Medium',
                 high: 'High',
+                ultra: 'Ultra High',
                 enable: 'Enable',
                 disable: 'Disable',
                 cancel: 'Cancel',

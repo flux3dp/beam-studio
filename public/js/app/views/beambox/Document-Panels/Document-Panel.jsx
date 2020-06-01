@@ -27,6 +27,7 @@ define([
             'low',
             'medium',
             'high',
+            'ultra',
         ];
 
         const sliderValue = dpiMap.indexOf(value);
@@ -45,7 +46,7 @@ define([
                         className='slider'
                         type='range'
                         min={0}
-                        max={2}
+                        max={3}
                         value={sliderValue}
                         onChange={onSliderValueChange}
                     />
