@@ -1182,6 +1182,7 @@ define(function() {
                     layer_cutting: 'Cutting',
                     notification: {
                         dupeLayerName: 'There is already a layer named that!',
+                        newName: 'NEW NAME',
                         enterUniqueLayerName: 'Please enter a unique layer name',
                         enterNewLayerName: 'Please enter the new layer name',
                         layerHasThatName: 'Layer already has that name',
@@ -1624,6 +1625,7 @@ define(function() {
             cancel: 'Cancel',
             close: 'Close',
             ok: 'Ok',
+            ok2: 'Ok',
             yes: 'Yes',
             no: 'No',
             stop: 'Stop',

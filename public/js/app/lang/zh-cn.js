@@ -1180,6 +1180,7 @@ define(function() {
                     layer_cutting: '切割图层',
                     notification: {
                         dupeLayerName: '已存在同名的图层!',
+                        newName: '新图层名称',
                         enterUniqueLayerName: '请输入一个唯一的图层名称',
                         enterNewLayerName: '请输入新的图层名称',
                         layerHasThatName: '图层已经采用了该名称',
@@ -1622,6 +1623,7 @@ define(function() {
             cancel: '取消',
             close: '关闭',
             ok: '确定',
+            ok2: '好',
             yes: ' 是',
             no: '否',
             stop: '停止',

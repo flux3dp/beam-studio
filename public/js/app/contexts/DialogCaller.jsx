@@ -1,6 +1,7 @@
 define([
     'jsx!widgets/Modal',
-    'jsx!/views/Dialog',
+    'jsx!views/dialogs/Dialog',
+    'jsx!views/dialogs/Prompt',
     'jsx!views/beambox/Camera-Calibration',
     'jsx!views/beambox/Diode-Calibration',
     'jsx!views/beambox/Document-Panels/Document-Panel',
@@ -11,6 +12,7 @@ define([
 ], function (
     Modal,
     Dialog,
+    Prompt,
     CameraCalibration,
     DiodeCalibration,
     DocumentPanel,
@@ -44,6 +46,8 @@ define([
             Dialog.DialogContextCaller.popDialogById(id);
         }
     };
+
+    let promptIndex = 0;
 
     return {
         addDialogComponent,
@@ -142,6 +146,18 @@ define([
                 <SvgNestButtons
                     onClose={() => {
                         popDialogById('svg-nest')
+                    }}
+                />
+            );
+        },
+        promptDialog: (args) => {
+            const id = `prompt-${promptIndex}`;
+            promptIndex = (promptIndex + 1) % 10000;
+            addDialogComponent(id,
+                <Prompt
+                    {...args}
+                    onClose={() => {
+                        popDialogById(id)
                     }}
                 />
             );

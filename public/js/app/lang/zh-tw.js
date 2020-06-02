@@ -1180,6 +1180,7 @@ define(function() {
                     layer_cutting: '切割圖層',
                     notification: {
                         dupeLayerName: '喔不！已經有另一個同樣名稱的圖層了！',
+                        newName: '新圖層名稱',
                         enterUniqueLayerName: '請輸入一個不重複的名稱',
                         enterNewLayerName: '請輸入新圖層的名稱',
                         layerHasThatName: '圖層本來就是這個名稱（抱怨）',
@@ -1623,6 +1624,7 @@ define(function() {
             cancel: '取消',
             close: '關閉',
             ok: '確定',
+            ok2: '好',
             yes: ' 是',
             no: '否',
             stop: '停止',

@@ -1450,3 +1450,42 @@
         }
     }
 }
+.prompt-dialog-container {
+    display: block;
+    background-color: #FFFFFF;
+    padding: 0px 20px;
+    border-radius: 3px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+    .caption {
+        padding: 10px 0px;
+        font-size: 12px;
+        letter-spacing: 1.1px;
+        color: #bbbbbb;
+    }
+    .text-input {
+        width: 300px;
+        border: 0px;
+        border-bottom: 1px solid #cccccc;
+        border-radius: 0px;
+        font-size: 13px;
+    }
+    .button-group {
+        width: 100%;
+        padding: 10px 0px;
+        display: flex;
+        &.btn-right {
+            justify-content: flex-end;
+        }
+        &.btn-center {
+            justify-content: center;
+        }
+        &.btn-left {
+            justify-content: flex-start;
+        }
+    }
+    .btn-default {
+        font-size: 13px;
+        height: 29px;
+        line-height: 25px;
+    }
+}

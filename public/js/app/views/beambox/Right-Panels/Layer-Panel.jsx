@@ -1,12 +1,14 @@
 define([
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/views/beambox/Color-Picker-Panel',
+    'jsx!contexts/DialogCaller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'helpers/i18n'
 ], function(
     LaserPanelController,
     ColorPickerPanel,
+    DialogCaller,
     Alert,
     AlertConstants,
     i18n
@@ -47,27 +49,30 @@ define([
         };
 
         addNewLayer = () => {
-            let uniqName;
             let i = svgCanvas.getCurrentDrawing().getNumLayers();
+            let uniqName = LANG.layers.layer + ' ' + (++i);
             while (svgCanvas.getCurrentDrawing().hasLayer(uniqName)) {
                 uniqName = LANG.layers.layer + ' ' + (++i);
             }
-
-            $.prompt(LANG.notification.enterUniqueLayerName, uniqName, (newName) => {
-                if (!newName) {
-                    return;
-                }
-                if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                    Alert.popUp({
-                        id: 'dupli layer name',
-                        message: LANG.notification.dupeLayerName,
-                    });
-                    return;
-                }
-                svgCanvas.createLayer(newName);
-                window.updateContextPanel();
-                this.addLayerLaserConfig(newName);
-                this.setState(this.state);
+            DialogCaller.promptDialog({
+                caption: LANG.notification.newName,
+                defaultValue: uniqName,
+                onYes: (newName) => {
+                    if (!newName) {
+                            return;
+                        }
+                    if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+                        Alert.popUp({
+                            id: 'dupli layer name',
+                            message: LANG.notification.dupeLayerName,
+                        });
+                        return;
+                    }
+                    svgCanvas.createLayer(newName);
+                    window.updateContextPanel();
+                    this.addLayerLaserConfig(newName);
+                    this.setState(this.state);
+                },
             });
         }
 
@@ -75,21 +80,25 @@ define([
             const oldName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
             var name = oldName + ' copy';
 
-            $.prompt(LANG.notification.enterUniqueLayerName, name, (newName) => {
-                if (!newName) {
-                    return;
-                }
-                if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                    Alert.popUp({
-                        id: 'dupli layer name',
-                        message: uiStrings.notification.dupeLayerName,
-                    });
-                    return;
-                }
-                svgCanvas.cloneLayer(newName);
-                window.updateContextPanel();
-                this.cloneLayerLaserConfig(newName, oldName);
-                this.setState(this.state);
+            DialogCaller.promptDialog({
+                caption: LANG.notification.newName,
+                defaultValue: name,
+                onYes: (newName) => {
+                    if (!newName) {
+                        return;
+                    }
+                    if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+                        Alert.popUp({
+                            id: 'dupli layer name',
+                            message: uiStrings.notification.dupeLayerName,
+                        });
+                        return;
+                    }
+                    svgCanvas.cloneLayer(newName);
+                    window.updateContextPanel();
+                    this.cloneLayerLaserConfig(newName, oldName);
+                    this.setState(this.state);
+                },
             });
         }
 
@@ -126,21 +135,26 @@ define([
         renameLayer = () => {
             const drawing = svgCanvas.getCurrentDrawing();
             const oldName = drawing.getCurrentLayerName();
-            $.prompt(LANG.notification.enterNewLayerName, '', (newName) => {
-                if (!newName) {
-                    return;
-                }
-                if (oldName === newName || svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                    Alert.popUp({
-                        id: 'old_layer_name',
-                        message: LANG.notification.layerHasThatName,
-                    });
-                    return;
-                }
 
-                svgCanvas.renameCurrentLayer(newName);
-                this.cloneLayerLaserConfig(oldName, newName);
-                this.setState(this.state);
+            DialogCaller.promptDialog({
+                caption: LANG.notification.newName,
+                defaultValue: '',
+                onYes: (newName) => {
+                    if (!newName) {
+                        return;
+                    }
+                    if (oldName === newName || svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+                        Alert.popUp({
+                            id: 'old_layer_name',
+                            message: LANG.notification.layerHasThatName,
+                        });
+                        return;
+                    }
+    
+                    svgCanvas.renameCurrentLayer(newName);
+                    this.cloneLayerLaserConfig(oldName, newName);
+                    this.setState(this.state);
+                },
             });
         }
 
@@ -295,10 +309,7 @@ define([
                         onDragEnter={(e) => {this.layerDragEnter(layerName)}}
                         onDragEnd={(e) => {this.layerDragEnd()}}
                     >
-                        <td
-                            className='layercolor'
-                            onClick={(e) => {this.openLayerColorPanel(e, layerName)}}
-                        >
+                        <td className='layercolor' onClick={(e) => {this.openLayerColorPanel(e, layerName)}}>
                             <div style={{backgroundColor: drawing.getLayerColor(layerName)}}/>
                         </td>
                         <td className='layername' onDoubleClick={() => this.layerDoubleClick(layerName)}>{layerName}</td>

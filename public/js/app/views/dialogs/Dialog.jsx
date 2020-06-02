@@ -8,6 +8,7 @@ define([
     const React = require('react');
     let ret = {};
 
+
     class Dialog extends React.Component {
         constructor(props) {
             super(props);
@@ -34,6 +35,5 @@ define([
     };
     Dialog.contextType = DialogContext;
     ret.Dialog = Dialog;
-
     return ret;
 });

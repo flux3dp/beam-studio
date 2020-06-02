@@ -1,5 +1,5 @@
 define([
-    'jsx!/views/Alert'
+    'jsx!views/dialogs/Alert'
 ], function (
     Alert
 ) {

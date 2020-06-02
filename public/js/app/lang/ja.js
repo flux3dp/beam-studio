@@ -1196,6 +1196,7 @@ define(function() {
                     },
                     notification: {
                         dupeLayerName: '同名のレイヤーが既に存在します。',
+                        newName: '新しい名前',
                         enterUniqueLayerName: '新規レイヤの一意な名前を入力してください。',
                         enterNewLayerName: 'レイヤの新しい名前を入力してください。',
                         layerHasThatName: '既に同名が付いています。',
@@ -1623,6 +1624,7 @@ define(function() {
             cancel: 'キャンセル',
             close: '閉じる',
             ok: 'OK',
+            ok2: 'はい',
             yes: 'はい',
             no: 'いいえ',
             stop: '停止',

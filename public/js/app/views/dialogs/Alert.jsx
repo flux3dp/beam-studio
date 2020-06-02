@@ -46,7 +46,7 @@ define([
             );
         }
 
-        render() {
+        renderAlert = () => {
             const { index } = this.props;
             const {checkboxChecked} = this.state;
             const { alertStack, popAlertStack } = this.context;
@@ -84,15 +84,29 @@ define([
             });
 
             let checkBox = alert.checkBoxText ? this._renderCheckbox(alert.checkBoxText) : null;
+
+            return (
+                <div className="modal-alert">
+                    {this._renderCaption(alert.caption)}
+                    {this._renderMessage(alert)}
+                    {checkBox}
+                    <ButtonGroup buttons={buttons}/>
+                </div>
+            );
+
+        }
+
+        render() {
+            const { index } = this.props;
+            const { alertStack } = this.context;
+            if (alertStack.length <= index) {
+                return null;
+            } 
+
             
             return (
                 <Modal>
-                    <div className="modal-alert">
-                        {this._renderCaption(alert.caption)}
-                        {this._renderMessage(alert)}
-                        {checkBox}
-                        <ButtonGroup buttons={buttons}/>
-                    </div>
+                    {this.renderAlert()}
                     <Alert 
                         index={index+1}
                     />
