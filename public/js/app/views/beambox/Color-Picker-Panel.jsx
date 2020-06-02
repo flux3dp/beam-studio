@@ -21,10 +21,11 @@ define([
             this.width = 200;
         }
 
-        init(reactRoot, layer, $me) {
+        init(reactRoot, layer, $me, callBack) {
             this.reactRoot = reactRoot;
             this.layer = layer;
             this.$me = $me;
+            this.callBack = callBack;
         }
 
         render() {
@@ -74,7 +75,7 @@ define([
             if (svgCanvas.isUseLayerColor) {
                 svgCanvas.updateLayerColor(this.layer);
             }
-            this.$me.find('div').css('background', hexColor);
+            this.callBack();
             this.unmount();
         }
 
@@ -86,8 +87,8 @@ define([
         _renderfooter() {
             return (
                 <div className='footer'>
-                    {this._renderFooterButton(LANG.okay, this.onApply.bind(this))}
                     {this._renderFooterButton(LANG.cancel, this.unmount.bind(this))}
+                    {this._renderFooterButton(LANG.okay, this.onApply.bind(this))}
                 </div>
             );
         }

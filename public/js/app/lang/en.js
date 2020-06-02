@@ -1180,6 +1180,28 @@ define(function() {
                     layer_bitmap: 'Bitmap',
                     layer_engraving: 'Engraving',
                     layer_cutting: 'Cutting',
+                    notification: {
+                        dupeLayerName: 'There is already a layer named that!',
+                        enterUniqueLayerName: 'Please enter a unique layer name',
+                        enterNewLayerName: 'Please enter the new layer name',
+                        layerHasThatName: 'Layer already has that name',
+                        QmoveElemsToLayer: 'Move selected elements to layer \'%s\'?',
+                    },
+                    layers: {
+                        layer: 'Layer',
+                        layers: 'Layers',
+                        del: 'Delete Layer',
+                        move_down: 'Move Layer Down',
+                        new: 'New Layer',
+                        rename: 'Rename Layer',
+                        move_up: 'Move Layer Up',
+                        dupe: 'Duplicate Layer',
+                        lock: 'Lock Layer',
+                        merge_down: 'Merge Down',
+                        merge_all: 'Merge All',
+                        move_elems_to: 'Move elements to:',
+                        move_selected: 'Move selected elements to a different layer'
+                    },
                 },
                 laser_panel: {
                     parameters: 'Parameters',

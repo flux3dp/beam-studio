@@ -159,7 +159,7 @@ requirejs.config({
 define([
     'helpers/i18n',
     'jsx!views/beambox/Task-Interpreter-Panel',
-    'jsx!views/beambox/Layer-Color-Config',
+    'jsx!views/beambox/Right-Panels/Right-Panel',
 
     'jsHotkeys',
     'jquerybbq',
@@ -206,12 +206,12 @@ define([
 
 ], function (
     i18n,
-    TaskInterpreterPanel
+    TaskInterpreterPanel,
+    RightPanel
 ) {
+    'use strict';
     const React = require('react');
     let LANG = i18n.lang.beambox;
-
-    'use strict';
 
     class view extends React.Component {
         componentDidMount(node) {
@@ -261,80 +261,7 @@ define([
                                 }}
                             />
                         </div>
-                        <div id="sidepanels">
-                            <div id="layerpanel">
-                                <fieldset id="layerbuttons">
-                                    <div
-                                        id="layer_new"
-                                        className="layer_button"
-                                        title="New Layer"
-                                    >
-                                        <i className="fa fa-plus" />
-                                    </div>
-                                    <div
-                                        id="layer_delete"
-                                        className="layer_button"
-                                        title="Delete Layer"
-                                    >
-                                        <i className="fa fa-trash-o" />
-                                    </div>
-                                    <div
-                                        id="layer_rename"
-                                        className="layer_button"
-                                        title="Rename Layer"
-                                    >
-                                        <i className="fa fa-font" />
-                                    </div>
-                                    <div
-                                        id="layer_up"
-                                        className="layer_button"
-                                        title="Move Layer Up"
-                                    >
-                                        <i className="fa fa-arrow-up" />
-                                    </div>
-                                    <div
-                                        id="layer_down"
-                                        className="layer_button"
-                                        title="Move Layer Down"
-                                    >
-                                        <i className="fa fa-arrow-down" />
-                                    </div>
-                                    <div
-                                        id="layer_moreopts"
-                                        className="layer_button"
-                                        title="More Options"
-                                    >
-                                        <i className="fa fa-bars" />
-                                    </div>
-                                </fieldset>
-                                <div id="layerlist_container">
-                                    <div id="color_picker_placeholder"></div>
-                                    <table id="layerlist">
-                                        <tbody>
-                                            <tr className="layer">
-                                                <td className="layervis" />
-                                                <td className="layername">Layer 1</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                            <div className='selLayerBlock controls'>
-                                <span id="selLayerLabel">Move elements to:</span>
-                                <select
-                                    value={LANG.right_panel.layer_panel.layer1}
-                                    id="selLayerNames"
-                                    title="Move selected elements to a different layer"
-                                    disabled="disabled"
-                                >
-                                    <option value={LANG.right_panel.layer_panel.layer1}>
-                                        {LANG.right_panel.layer_panel.layer1}
-                                    </option>
-                                </select>
-                            </div>
-                            <div id="layer-laser-panel-placeholder" />
-                        </div>
+                        <RightPanel />
                         <div id="main_button">
                             <div id="main_icon" className="tool_button" title="Main Menu">
                                 <span>SVG-Edit</span>

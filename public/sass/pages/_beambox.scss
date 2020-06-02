@@ -565,6 +565,22 @@
                         }
                     }
                 }
+                .react-contextmenu--visible {
+                    background-color: rgba($color: #FFFFFF, $alpha: 1.0);
+                    border: 1px solid rgba(0, 0, 0, 0.33);
+                    border-radius: 4px;
+                    padding: 5px 0px;
+                    .react-contextmenu-item {
+                        padding: 0px 20px;
+                        line-height: 20px;
+                        height: 20px;
+                        font-size: 12px;
+                        &:hover {
+                            color: #FFFFFF;
+                            background-color: #2e5dea;
+                        }
+                    }
+                }
             }
             &.layerblock-activated {
                 #layerlist_container {

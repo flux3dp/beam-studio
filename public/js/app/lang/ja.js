@@ -1180,6 +1180,27 @@ define(function() {
                     layer_bitmap: 'ビットマップ',
                     layer_engraving: '彫る',
                     layer_cutting: '切る',
+                    layers: {
+                        layer: 'レイヤ',
+                        layers: 'Layers',
+                        del: 'レイヤの削除',
+                        move_down: 'レイヤを下へ移動',
+                        new: '新規レイヤ',
+                        rename: 'レイヤの名前を変更',
+                        move_up: 'レイヤを上へ移動',
+                        dupe: 'Duplicate Layer',
+                        merge_down: 'Merge Down',
+                        merge_all: 'Merge All',
+                        move_elems_to: '移動先レイヤ:',
+                        move_selected: '選択対象を別のレイヤに移動'
+                    },
+                    notification: {
+                        dupeLayerName: '同名のレイヤーが既に存在します。',
+                        enterUniqueLayerName: '新規レイヤの一意な名前を入力してください。',
+                        enterNewLayerName: 'レイヤの新しい名前を入力してください。',
+                        layerHasThatName: '既に同名が付いています。',
+                        QmoveElemsToLayer: '選択した要素をレイヤー \'%s\' に移動しますか？',
+                    },
                 },
                 laser_panel: {
                     parameters: 'パラメーター',

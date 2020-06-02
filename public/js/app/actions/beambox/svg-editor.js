@@ -1067,105 +1067,6 @@ define([
                 LaserPanelController.render(currentLayerName);
             };
 
-            var populateLayers = function () {
-                svgCanvas.clearSelection();
-                var layerlist = $('#layerlist tbody').empty();
-                var selLayerNames = $('#selLayerNames').empty();
-                var drawing = svgCanvas.getCurrentDrawing();
-                var currentLayerName = drawing.getCurrentLayerName();
-                const layerCount = svgCanvas.getCurrentDrawing().getNumLayers();
-
-                let layer = layerCount - 1;
-                while (layer >= 0) {
-                    var name = drawing.getLayerName(layer);
-                    const lay = drawing.getLayerByName(name);
-                    var layerTr = $('<tr class="layer">').toggleClass('layersel', name === currentLayerName);
-                    layerTr.toggleClass('lock', 'true' === lay.getAttribute('data-lock'))
-                    let layerLock = $('<td class="layerlock">')
-                    var layerVis = $('<td class="layervis">').toggleClass('layerinvis', !drawing.getLayerVisibility(name));
-                    var layerColor = $('<td class="layercolor"><div style="background:' + drawing.getLayerColor(name) + '"></div></td>');
-                    var layerName = $('<td class="layername">' + name + '</td>');
-                    layerlist.append(layerTr.append(layerColor, layerName, layerLock, layerVis));
-                    selLayerNames.append('<option value="' + name + '">' + name + '</option>');
-                    layer--;
-                }
-
-                displayChangeLayerBlock(true);
-
-                $('td.layervis', layerlist).append('<i class="fa fa-eye"></i>');
-                $('td.layerlock', layerlist).append('<img src=img/icon-lock.svg>');
-
-                renderLayerLaserConfigs();
-
-                // handle selection of layer
-                $('#layerlist td.layername')
-                    .mouseup(function (evt) {
-                        $('#layerlist tr.layer').removeClass('layersel');
-                        $(this.parentNode).addClass('layersel');
-                        svgCanvas.setCurrentLayer(this.textContent);
-                        renderLayerLaserConfigs();
-                        svgCanvas.selectAllInCurrentLayer();
-                        evt.preventDefault();
-                    })
-                    .mouseover(function () {
-                        toggleHighlightLayer(this.textContent);
-                    })
-                    .mouseout(function () {
-                        toggleHighlightLayer();
-                    });
-                $('#layerlist td.layervis').click(function () {
-                    var row = $(this.parentNode).prevAll().length;
-                    var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
-                    var vis = $(this).hasClass('layerinvis');
-                    svgCanvas.setLayerVisibility(name, vis);
-                    $(this).toggleClass('layerinvis');
-                });
-
-                $('#layerlist td.layerlock').click(function (evt) {
-                    if ($(this.parentNode).hasClass('lock')) {
-                        const layerName = $(this).parent().find('.layername').text();
-                        const layer = drawing.getLayerByName(layerName);
-                        $(this.parentNode).removeClass('lock');
-                        svgCanvas.unlockLayer(layer);
-                    } else {
-                        $('#layerlist tr.layer').removeClass('layersel');
-                        $(this.parentNode).addClass('layersel');
-                        svgCanvas.setCurrentLayer(this.textContent);
-                        renderLayerLaserConfigs();
-                        svgCanvas.selectAllInCurrentLayer();
-                        evt.preventDefault();
-                    }
-                });
-
-                $('#layerlist td.layercolor').click(function (e) {
-                    const layerName = $(this).parent().find('.layername').text();
-                    const layer = drawing.getLayerByName(layerName);
-                    ColorPickerPanel.init('color_picker_placeholder', layer, $(this));
-                    ColorPickerPanel.setPosition(e.clientX, e.clientY)
-                    ColorPickerPanel.render();
-                    ColorPickerPanel.renderPickr();
-                });
-
-                // if there were too few rows, let's add a few to make it not so lonely
-                var num = 5 - $('#layerlist tr.layer').size();
-                while (num-- > 0) {
-                    // FIXME: there must a better way to do this
-                    layerlist.append('<tr><td style="color:white">_</td><td/></tr>');
-                }
-            };
-
-            var addLayerLaserConfig = function (layername) {
-                LaserPanelController.initConfig(layername);
-            };
-
-            var cloneLayerLaserConfig = function (oldName, newName) {
-                // const oldConfig = $('#layerLaserConfigs > table').filter(function(){return $(this).find('.layername').text() === oldName;});
-                // const newConfig = oldConfig.clone();
-                // newConfig.find('.layername').text(newName);
-                // $('#layerLaserConfigs').append(newConfig);
-                LaserPanelController.cloneConfig(oldName, newName);
-            };
-
             var showSourceEditor = function (e, forSaving) {
                 if (editingsource) {
                     return;
@@ -2144,7 +2045,7 @@ define([
 
                     var isSvgElem = (elem && elem.tagName === 'svg');
                     if (isSvgElem || isLayer(elem)) {
-                        populateLayers();
+                        window.populateLayers();
                         // if the element changed was the svg, then it could be a resolution change
                         if (isSvgElem) {
                             updateCanvas();
@@ -3266,7 +3167,7 @@ define([
                     promptMoveLayerOnce = true;
                     svgCanvas.moveSelectedToLayer(destLayer);
                     svgCanvas.clearSelection();
-                    populateLayers();
+                    window.populateLayers();
                 };
                 if (destLayer) {
                     if (promptMoveLayerOnce) {
@@ -3984,7 +3885,7 @@ define([
                         svgCanvas.setResolution(dims[0], dims[1]);
                         updateCanvas(true);
                         unzoom();
-                        populateLayers();
+                        window.populateLayers();
                         updateContextPanel();
                         prepPaints();
                         svgCanvas.runExtensions('onNewDocument');
@@ -4075,7 +3976,7 @@ define([
             var clickUndo = function () {
                 if (undoMgr.getUndoStackSize() > 0) {
                     undoMgr.undo();
-                    populateLayers();
+                    window.populateLayers();
                 }
             };
             editor.clickUndo = clickUndo;
@@ -4084,7 +3985,7 @@ define([
             var clickRedo = function () {
                 if (undoMgr.getRedoStackSize() > 0) {
                     undoMgr.redo();
-                    populateLayers();
+                    window.populateLayers();
                 }
             };
             editor.clickRedo = clickRedo;
@@ -4202,7 +4103,7 @@ define([
                     svgCanvas.clearSelection();
                     hideSourceEditor();
                     unzoom();
-                    populateLayers();
+                    window.populateLayers();
                     updateTitle();
                     prepPaints();
                 };
@@ -4671,111 +4572,7 @@ define([
                 $(this).removeClass('push_button_pressed').addClass('push_button');
             });
 
-            // ask for a layer name
-            $('#layer_new').click(function () {
-                var uniqName,
-                    i = svgCanvas.getCurrentDrawing().getNumLayers();
-                do {
-                    uniqName = uiStrings.layers.layer + ' ' + (++i);
-                } while (svgCanvas.getCurrentDrawing().hasLayer(uniqName));
-
-                $.prompt(uiStrings.notification.enterUniqueLayerName, uniqName, function (newName) {
-                    if (!newName) {
-                        return;
-                    }
-                    if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        Alert.popUp({
-                            id: 'dupli layer name',
-                            message: uiStrings.notification.dupeLayerName,
-                        });
-                        return;
-                    }
-                    svgCanvas.createLayer(newName);
-                    updateContextPanel();
-                    addLayerLaserConfig(newName);
-                    populateLayers();
-                });
-            });
-
-            function deleteLayer() {
-                if (svgCanvas.deleteCurrentLayer()) {
-                    updateContextPanel();
-                }
-            }
-
-            function cloneLayer() {
-                const oldName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
-                var name = oldName + ' copy';
-
-                $.prompt(uiStrings.notification.enterUniqueLayerName, name, function (newName) {
-                    if (!newName) {
-                        return;
-                    }
-                    if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        Alert.popUp({
-                            id: 'dupli layer name',
-                            message: uiStrings.notification.dupeLayerName,
-                        });
-                        return;
-                    }
-                    svgCanvas.cloneLayer(newName);
-                    updateContextPanel();
-                    cloneLayerLaserConfig(newName, oldName);
-                    populateLayers();
-                });
-            }
-
-            function mergeLayer() {
-                if ($('#layerlist tr.layersel').index() === $('#layerlist tr.layer').length - 1) {
-                    return;
-                }
-                svgCanvas.mergeLayer();
-                updateContextPanel();
-                populateLayers();
-            }
-
-            function moveLayer(pos) {
-                var total = svgCanvas.getCurrentDrawing().getNumLayers();
-                var curIndex = total - 1 - $('#layerlist tr.layersel').index();
-                if (curIndex > 0 || curIndex < total - 1) {
-                    curIndex += pos;
-                    svgCanvas.setCurrentLayerPosition(curIndex);
-                    populateLayers();
-                }
-            }
-
-            $('#layer_delete').click(deleteLayer);
-
-            $('#layer_up').click(function () {
-                moveLayer(1);
-            });
-
-            $('#layer_down').click(function () {
-                moveLayer(-1);
-            });
-
-            $('#layer_rename').click(function () {
-                // var curIndex = $('#layerlist tr.layersel').prevAll().length; // Currently unused
-                var oldName = $('#layerlist tr.layersel td.layername').text();
-                $.prompt(uiStrings.notification.enterNewLayerName, '', function (newName) {
-                    if (!newName) {
-                        return;
-                    }
-                    if (oldName === newName || svgCanvas.getCurrentDrawing().hasLayer(newName)) {
-                        Alert.popUp({
-                            id: 'old_layer_name',
-                            message: uiStrings.notification.layerHasThatName,
-                        });
-                        return;
-                    }
-
-                    svgCanvas.renameCurrentLayer(newName);
-                    cloneLayerLaserConfig(oldName, newName);
-                    populateLayers();
-                });
-            });
-
-            populateLayers();
+            window.populateLayers();
 
             //	function changeResolution(x,y) {
             //		var zoom = svgCanvas.getResolution().zoom;
@@ -5473,40 +5270,6 @@ define([
             });
 
             editor.setWorkAreaContextMenu()
-
-            var lmenu_func = function (action, el, pos) {
-                switch (action) {
-                    case 'dupe':
-                        cloneLayer();
-                        break;
-                    case 'lock':
-                        svgCanvas.lockLayer();
-                        break;
-                    case 'merge_down':
-                        mergeLayer();
-                        break;
-                    case 'merge_all':
-                        svgCanvas.mergeAllLayers();
-                        updateContextPanel();
-                        populateLayers();
-                        break;
-                }
-            };
-
-            $('#layerlist').contextMenu({
-                menu: 'cmenu_layers',
-                inSpeed: 0
-            },
-            lmenu_func
-            );
-
-            $('#layer_moreopts').contextMenu({
-                menu: 'cmenu_layers',
-                inSpeed: 0,
-                allowLeft: true
-            },
-            lmenu_func
-            );
 
             $('.contextMenu li').mousedown(function (ev) {
                 ev.preventDefault();
@@ -6394,7 +6157,6 @@ define([
                 var imgImport = $('<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">').change(importImage);
                 $('#tool_import').show().prepend(imgImport);
 
-                window.populateLayers = populateLayers;
                 window.updateContextPanel = updateContextPanel;
             }
 
@@ -6432,7 +6194,7 @@ define([
 
                 if (rename_layer) {
                     svgCanvas.renameCurrentLayer(uiStrings.common.layer + ' 1');
-                    populateLayers();
+                    window.populateLayers();
                 }
 
                 // In case extensions loaded before the locale, now we execute a callback on them

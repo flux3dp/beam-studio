@@ -317,6 +317,26 @@
     };
 
     /**
+     * Get the current layer's position.
+     * @returns {number}  The zero-based index of current layer position.
+     */
+    svgedit.draw.Drawing.prototype.getCurrentLayerPosition = function () {
+        var layer_count = this.getNumLayers();
+        if (!this.current_layer) {
+            return null;
+        }
+
+        let pos;
+        for (pos = 0; pos < layer_count; ++pos) {
+            if (this.all_layers[pos] === this.current_layer) { break; }
+        }
+        // some unknown error condition (current_layer not in all_layers)
+        if (pos == layer_count) { return null; }
+
+        return pos;
+    };
+
+    /**
      * Set the current layer's position.
      * @param {number} newpos - The zero-based index of the new position of the layer. Range should be 0 to layers-1
      * @returns {Object} If the name was changed, returns {title:SVGGElement, previousName:string}; otherwise null.
@@ -496,7 +516,6 @@
             var child = this.svgElem_.childNodes.item(i);
             // for each g, find its layer name
             if (child && child.nodeType === 1) {
-                console.log("Checking child", child);
                 if (child.tagName === 'g') {
                     childgroups = true;
                     var name = findLayerNameInGroup(child);
@@ -579,7 +598,8 @@
 
         // Create new group and add to DOM just after current_layer
         var currentGroup = this.current_layer.getGroup();
-        var layer = new svgedit.draw.Layer(name, currentGroup, this.svgElem_);
+        const currentColor = this.current_layer.getColor();
+        var layer = new svgedit.draw.Layer(name, currentGroup, this.svgElem_, currentColor);
         var group = layer.getGroup();
 
         // Clone children

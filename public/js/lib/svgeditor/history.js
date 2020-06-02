@@ -554,6 +554,7 @@ svgedit.history.UndoManager.prototype.addCommandToHistory = function(cmd) {
 	}
 	this.undoStack.push(cmd);
 	this.undoStackPointer = this.undoStack.length;
+	console.log(this.undoStack);
 };
 
 

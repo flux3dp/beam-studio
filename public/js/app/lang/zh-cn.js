@@ -1178,6 +1178,27 @@ define(function() {
                     layer_bitmap: '位图层',
                     layer_engraving: '雕刻图层',
                     layer_cutting: '切割图层',
+                    notification: {
+                        dupeLayerName: '已存在同名的图层!',
+                        enterUniqueLayerName: '请输入一个唯一的图层名称',
+                        enterNewLayerName: '请输入新的图层名称',
+                        layerHasThatName: '图层已经采用了该名称',
+                        QmoveElemsToLayer: '您确定移动所选元素到图层\'%s\'吗?',
+                    },
+                    layers: {
+                        layer: '图层',
+                        layers: '图层',
+                        del: '删除图层',
+                        move_down: '向下移动图层',
+                        new: '新建图层',
+                        rename: '重命名图层',
+                        move_up: '向上移动图层',
+                        dupe: '复制图层',
+                        merge_down: '向下合并',
+                        merge_all: '全部合并',
+                        move_elems_to: '移动元素至:',
+                        move_selected: '移动元素至另一个图层'
+                    },
                 },
                 laser_panel: {
                     parameters: '選擇參數',

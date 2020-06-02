@@ -1178,6 +1178,28 @@ define(function() {
                     layer_bitmap: '點陣圖層',
                     layer_engraving: '雕刻圖層',
                     layer_cutting: '切割圖層',
+                    notification: {
+                        dupeLayerName: '喔不！已經有另一個同樣名稱的圖層了！',
+                        enterUniqueLayerName: '請輸入一個不重複的名稱',
+                        enterNewLayerName: '請輸入新圖層的名稱',
+                        layerHasThatName: '圖層本來就是這個名稱（抱怨）',
+                        QmoveElemsToLayer: '要搬移所選取的物件到\'%s\'層嗎?',
+                    },
+                    layers: {
+                        layer: '圖層',
+                        layers: 'Layers',
+                        del: '刪除圖層',
+                        move_down: '向下移動圖層',
+                        new: '新增圖層',
+                        rename: '重新命名圖層',
+                        move_up: '向上移動圖層',
+                        dupe: '複製圖層',
+                        lock: '鎖定圖層',
+                        merge_down: '向下合併圖層',
+                        merge_all: '合併全部圖層',
+                        move_elems_to: '移動物件',
+                        move_selected: '移動被點選的物件其他圖層'
+                    },
                 },
                 laser_panel: {
                     parameters: '選擇參數',

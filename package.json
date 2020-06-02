@@ -12,8 +12,9 @@
   "dependencies": {
     "@simonwep/pickr": "^1.2.6",
     "bufferpack": "^0.0.6",
+    "classnames": "^2.2.6",
     "cropperjs": "^1.4.1",
-    "custom-electron-titlebar": "^3.0.10",
+    "custom-electron-titlebar": "^3.2.2",
     "electron-notarize": "^0.2.0",
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
@@ -25,6 +26,7 @@
     "net-ping": "^1.2.3",
     "node-machine-id": "^1.1.12",
     "react": "^16.9.0",
+    "react-contextmenu": "^2.13.0",
     "react-dom": "^16.13.0",
     "serialport": "^8.0.5",
     "socket.io-client": "^1.4.6",

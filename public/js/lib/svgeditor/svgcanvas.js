@@ -6434,7 +6434,6 @@ define([
             currentLayer.setAttribute('class', 'layer lock');
             $('.layersel').addClass('lock');
             getCurrentDrawing().setCurrentLayerPosition(0);
-            window.populateLayers();
             clearSelection();
             leaveContext();
         };
@@ -6450,6 +6449,8 @@ define([
             getCurrentDrawing().mergeLayer(historyRecordingService(hrService));
             clearSelection();
             leaveContext();
+            const currentLayer = getCurrentDrawing().getCurrentLayer();
+            this.updateLayerColor(currentLayer);
             call('changed', [svgcontent]);
         };
 
@@ -6457,6 +6458,8 @@ define([
             getCurrentDrawing().mergeAllLayers(historyRecordingService(hrService));
             clearSelection();
             leaveContext();
+            const currentLayer = getCurrentDrawing().getCurrentLayer();
+            this.updateLayerColor(currentLayer);
             call('changed', [svgcontent]);
         };
 
