@@ -3237,6 +3237,10 @@ define([
                     (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_V)) {
                     evt.preventDefault();
                     svgCanvas.textActions.pasteText();
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_A) ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_A)) {
+                    evt.preventDefault();
+                    svgCanvas.textActions.selectAll();
                 }
             });
 

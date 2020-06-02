@@ -3393,6 +3393,11 @@ define([
                     textinput.selectionStart = textinput.selectionEnd = start + clipboardText.length;
                     svgCanvas.setTextContent(textinput.value);
                 },
+                selectAll: () => {
+                    textinput.selectionStart = 0;
+                    textinput.selectionEnd = textinput.value.length;
+                    svgCanvas.setTextContent(textinput.value);
+                },
                 toEditMode: function (x, y) {
                     allow_dbl = false;
                     current_mode = 'textedit';
