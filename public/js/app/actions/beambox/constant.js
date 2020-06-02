@@ -51,6 +51,10 @@ define([
             limitY: 10, //mm
             defaultOffsetX: 69, //mm
             defaultOffsetY: 6, //mm
+            safeDistance: {
+                X: 45, //mm
+                Y: 15  //mm
+            }
         },
         allowedWorkarea: {
             'laser-b1': ['fbb1p', 'fbb1b', 'fbm1'],

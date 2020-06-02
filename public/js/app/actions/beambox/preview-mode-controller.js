@@ -239,12 +239,17 @@ define([
         }
 
         _constrainPreviewXY(x, y) {
-            const maxWidth = Constant.dimension.getWidth();
-            const maxHeight = Constant.dimension.getHeight();
+            const diodeEnabled = BeamboxPreference.read('enable-diode');
+            let maxWidth = Constant.dimension.getWidth();
+            let maxHeight = Constant.dimension.getHeight();
+            if (diodeEnabled) {
+                maxWidth -= Constant.diode.safeDistance.X * Constant.dpmm;
+                maxHeight -= Constant.diode.safeDistance.Y * Constant.dpmm;
+            }
 
-            x = Math.max(x, this._getCameraOffset().x * 10);
+            x = Math.max(x, this._getCameraOffset().x * Constant.dpmm);
             x = Math.min(x, maxWidth);
-            y = Math.max(y, this._getCameraOffset().y * 10);
+            y = Math.max(y, this._getCameraOffset().y * Constant.dpmm);
             y = Math.min(y, maxHeight);
             return {
                 x: x,
