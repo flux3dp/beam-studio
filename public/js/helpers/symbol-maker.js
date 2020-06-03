@@ -306,7 +306,6 @@ define([
             });
             const styles = Array.from(tempSymbol.querySelectorAll('style'));
             styles.forEach((styleNode) => {
-                console.log(styleNode.textContent);
                 let styleText = styleNode.textContent;
                 styleText = styleText.replace(/stroke-width: 1px !important;/g, `stroke-width: ${strokeWidth}px !important;`);
                 styleNode.textContent = styleText;
