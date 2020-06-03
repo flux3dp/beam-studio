@@ -20,6 +20,8 @@ define([
     CloudApi) {
     'use strict';
 
+    const dns = require('dns');
+    const dnsPromise = dns.promises;
     var ws = ws || new Websocket({
             method: 'discover'
         }),
@@ -101,6 +103,49 @@ define([
 
     ws.onMessage(onMessage);
 
+    const initSmartUpnp = async () => {
+        try {
+            const lookupOptions = {
+                all: true
+            };
+            const res = await dnsPromise.lookup('raspberrypi.local', lookupOptions);
+            res.forEach((ipAddress) => {
+                if (ipAddress.family === 4 && !pokeIPs.includes(ipAddress.address)) {
+                    console.log(`Add ${ipAddress.address} to Poke ips`);
+                    pokeIPs.push(ipAddress.address);
+                }
+            });
+        } catch (e) {
+            if (e.toString().includes('ENOTFOUND')) {
+                console.log('DNS server not found raspberrypi.local');
+            } else {
+                console.log(`Error when dns looking up raspberrypi:\n${e}`);
+            }
+        }
+
+        SmartUpnp.init(self());
+        for(var i in pokeIPs){
+            SmartUpnp.startPoke(pokeIPs[i]);
+        }
+    }
+    initSmartUpnp();
+
+    CloudApi.getDevices().then(resp => {
+        if (resp.ok) {
+            resp.json().then(content => {
+                if (content.devices) {
+                    content.devices.map(device => {
+                        console.log(device.alias, device.ip_addr);
+                        if (device.ip_addr) {
+                            // console.log("Start poking cloud device IP:", device.ip_addr);
+                            SmartUpnp.startPoke(device.ip_addr.trim().replace(/\u0000/g, ''));
+                        }
+                    });
+                }
+            });
+        }
+    });
+
     var self = function(id, getPrinters) {
         getPrinters = getPrinters || function() {};
 
@@ -148,27 +193,6 @@ define([
             }
         };
     };
-
-    SmartUpnp.init(self());
-    for(var i in pokeIPs){
-        SmartUpnp.startPoke(pokeIPs[i]);
-    }
-
-    CloudApi.getDevices().then(resp => {
-        if (resp.ok) {
-            resp.json().then(content => {
-                if (content.devices) {
-                    content.devices.map(device => {
-                        console.log(device.alias, device.ip_addr);
-                        if (device.ip_addr) {
-                            // console.log("Start poking cloud device IP:", device.ip_addr);
-                            SmartUpnp.startPoke(device.ip_addr.trim().replace(/\u0000/g, ''));
-                        }
-                    });
-                }
-            });
-        }
-    });
 
     return self;
 });
