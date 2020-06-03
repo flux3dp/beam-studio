@@ -3892,6 +3892,7 @@ define([
                         window.populateLayers();
                         updateContextPanel();
                         prepPaints();
+                        svgedit.transformlist.resetListMap();
                         svgCanvas.runExtensions('onNewDocument');
                     }
                 });
