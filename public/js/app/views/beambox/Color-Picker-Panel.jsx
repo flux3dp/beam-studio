@@ -10,6 +10,7 @@ define([
     const LANG = i18n.lang.beambox.photo_edit_panel;
     const React = require('react');
     const ReactDOM = require('react-dom');
+    const classNames = require('classnames');
     
     class ColorPickerPanel extends React.Component{
         constructor(props) {
@@ -87,16 +88,16 @@ define([
         _renderfooter() {
             return (
                 <div className='footer'>
-                    {this._renderFooterButton(LANG.cancel, this.unmount.bind(this))}
-                    {this._renderFooterButton(LANG.okay, this.onApply.bind(this))}
+                    {this._renderFooterButton(LANG.cancel, this.unmount.bind(this), classNames('btn', 'btn-default', 'pull-right'))}
+                    {this._renderFooterButton(LANG.okay, this.onApply.bind(this), classNames('btn', 'btn-default', 'pull-right', 'primary'))}
                 </div>
             );
         }
 
-        _renderFooterButton(label, onClick) {
+        _renderFooterButton(label, onClick, className) {
             return(
                 <button
-                        className={`btn btn-default pull-right`}
+                        className={className}
                         onClick={() => {onClick()}}
                     >
                         {label}
