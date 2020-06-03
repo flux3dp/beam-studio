@@ -10342,10 +10342,6 @@ define([
         }
 
         this.flipSelectedElements = async function (horizon=1, vertical=1) {
-            if (tempGroup) {
-                let children = this.ungroupTempGroup();
-                this.selectOnly(children, false);
-            }
             let len = selectedElements.length;
             for (let i = 0; i < selectedElements.length; ++i) {
                 if (!selectedElements[i]) {
@@ -10415,7 +10411,7 @@ define([
                     }
                 }
                 selectorManager.requestSelector(elem).resize();
-                selectorManager.requestSelector(elem).showGrips(false);
+                selectorManager.requestSelector(elem).showGrips(len === 1);
                 window.updateContextPanel();
             }
             addCommandToHistory(batchCmd);
