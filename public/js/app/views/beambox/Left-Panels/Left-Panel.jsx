@@ -55,7 +55,7 @@ define([
             $('.selLayerBlock').mouseup(() => {
                 GlobalActions.monitorClosed();
             });
-_
+
             $('#tools_top').mouseup(() => {
                 this._toggleAdvanced(false);
                 this._toggleInsert(false);
