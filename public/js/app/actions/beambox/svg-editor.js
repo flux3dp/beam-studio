@@ -3774,6 +3774,18 @@ define([
             // Current Electron version does not support navigator.read so I can't get clipboard data from navigator.
             // Moreover, update electron will cause font manage module build fail.
             // In order to get clip board data, I use paste event listener.
+            const waitForClipData = () => {
+                return new Promise((resolve, reject) => {
+                    const interval = setInterval(() => {
+                        if (editor.isClipboardDataReady) {
+                            resolve();
+                            editor.isClipboardDataReady = false;
+                            clearInterval(interval);
+                        }
+                    }, 100);
+                })
+            }
+
             document.addEventListener('paste', async function (e) {
                 const clipboardData = e.clipboardData;
                 editor.clipboardData = {types: clipboardData.types};
@@ -3782,11 +3794,13 @@ define([
                 } else if (clipboardData.types.includes('text/html')) {
                     editor.clipboardData.htmlData = clipboardData.getData('text/html');
                 }
+                editor.isClipboardDataReady = true;
                 e.stopPropagation();
                 e.preventDefault();
             }, false);
 
             const handlePaste = async () => {
+                await waitForClipData();
                 const clipboardData = editor.clipboardData;
                 let importedFromClipboard = false;
                 if (clipboardData) {

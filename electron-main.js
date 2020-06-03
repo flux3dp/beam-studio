@@ -1,4 +1,5 @@
 const {app, ipcMain, BrowserWindow, dialog} = require('electron');
+const electronLocalshortcut = require('electron-localshortcut')
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 const BackendManager = require('./src/backend-manager.js');
@@ -249,6 +250,24 @@ function createWindow () {
     if(process.defaultApp || DEBUG) {
         mainWindow.webContents.openDevTools();
     }
+    
+    // Windows and Linux cut copy paste accelerations somehow don't work, so register them again.
+    if (process.platform !== 'darwin') {
+        electronLocalshortcut.unregisterAll(mainWindow);
+        electronLocalshortcut.register(mainWindow, 'CommandOrControl+X', () => {
+            const event = {id: 'CUT'};
+            menuManager._on_menu_click(event);
+        });
+        electronLocalshortcut.register(mainWindow, 'CommandOrControl+C', () => {
+            const event = {id: 'COPY'};
+            menuManager._on_menu_click(event);
+        });
+        electronLocalshortcut.register(mainWindow, 'CommandOrControl+V', () => {
+            const event = {id: 'PASTE'};
+            menuManager._on_menu_click(event);
+        });
+    }
+
     updateManager.setMainWindow(mainWindow);
 }
 
