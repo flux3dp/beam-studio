@@ -62,6 +62,10 @@ define([
                 'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
                 'UNDO': () => svgEditor.clickUndo(),
                 'REDO': () => svgEditor.clickRedo(),
+                'CUT': () => svgEditor.cutSelected(),
+                'COPY': () => svgEditor.copySelected(),
+                'PASTE': () => svgEditor.handlePaste(),
+
                 'GROUP': () => FnWrapper.groupSelected(),
                 'UNGROUP': () => FnWrapper.ungroupSelected(),
                 'DUPLICATE': () => FnWrapper.cloneSelectedElement(),

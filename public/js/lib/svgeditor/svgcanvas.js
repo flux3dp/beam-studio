@@ -8577,6 +8577,7 @@ define([
                 }
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
                 restoreRefElems(copy);
+                this.updateElementColor(copy);
             }
 
             selectOnly(pasted);

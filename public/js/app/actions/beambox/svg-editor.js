@@ -3762,12 +3762,99 @@ define([
                     svgCanvas.cutSelectedElements();
                 }
             };
+            editor.cutSelected = cutSelected;
 
             var copySelected = function () {
                 if (selectedElement != null || multiselected) {
                     svgCanvas.copySelectedElements();
                 }
             };
+            editor.copySelected = copySelected;
+
+            // Current Electron version does not support navigator.read so I can't get clipboard data from navigator.
+            // Moreover, update electron will cause font manage module build fail.
+            // In order to get clip board data, I use paste event listener.
+            document.addEventListener('paste', async function (e) {
+                const clipboardData = e.clipboardData;
+                editor.clipboardData = {types: clipboardData.types};
+                if (clipboardData.types.includes('Files')) {
+                    editor.clipboardData.files = clipboardData.files;
+                } else if (clipboardData.types.includes('text/html')) {
+                    editor.clipboardData.htmlData = clipboardData.getData('text/html');
+                }
+                e.stopPropagation();
+                e.preventDefault();
+            }, false);
+
+            const handlePaste = async () => {
+                const clipboardData = editor.clipboardData;
+                let importedFromClipboard = false;
+                if (clipboardData) {
+                    if (clipboardData.types.includes('Files')) {
+                        console.log('handle clip board file');
+                        for(let i = 0; i < clipboardData.files.length; i++) {
+                            let file = clipboardData.files[i];
+                            handleFile(file);
+                            importedFromClipboard = true;
+                        }
+                    } else if (clipboardData.types.includes('text/html')) {
+                        const matchImgs = clipboardData.htmlData.match(/<img[^>]+>/);
+                        if (matchImgs) {
+                            console.log('handle clip board html img');
+                            for (let i=0; i < matchImgs.length; i++) {
+                                const matchSrc = matchImgs[i].match(/src="([^"]+)"/);
+                                if (matchSrc && matchSrc[1]) {
+                                    importedFromClipboard = true;
+                                    console.log(matchSrc[1]);
+                                    let res = await fetch(matchSrc[1]);
+                                    if (res.ok) {
+                                        res = await res.blob();
+                                        const blobSrc = URL.createObjectURL(res);
+                                        ImageData(
+                                            blobSrc,
+                                            {
+                                                grayscale: {
+                                                    is_rgba: true,
+                                                    is_shading: false,
+                                                    is_svg: false
+                                                },
+                                                onComplete: function (result) {
+                                                    let newImage = svgCanvas.addSvgElementFromJson({
+                                                        element: 'image',
+                                                        attr: {
+                                                            x: 0,
+                                                            y: 0,
+                                                            width: result.canvas.width,
+                                                            height: result.canvas.height,
+                                                            id: svgCanvas.getNextId(),
+                                                            style: 'pointer-events:inherit',
+                                                            preserveAspectRatio: 'none',
+                                                            'data-threshold': 128,
+                                                            'data-shading': false,
+                                                            origImage: blobSrc,
+                                                            'xlink:href': result.canvas.toDataURL()
+                                                        }
+                                                    });
+                                                    svgCanvas.updateElementColor(newImage);
+                                                }
+                                            }
+                                        );
+                                    } else {
+                                        Alert.popUp({
+                                            type: AlertConstants.SHOW_POPUP_WARNING,
+                                            message: LANG.svg_editor.unable_to_fetch_clipboard_img,
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!importedFromClipboard) {
+                    pasteInCenter();
+                }
+            };
+            editor.handlePaste = handlePaste;
 
             var pasteInCenter = function () {
                 var zoom = svgCanvas.getZoom();
@@ -5024,10 +5111,6 @@ define([
 
                         // 'fnkey' means 'cmd' or 'ctrl'
                         Shortcuts.on(['del'], deleteSelected);
-                        Shortcuts.on(['fnkey', 'x'], cutSelected);
-                        Shortcuts.on(['fnkey', 'c'], copySelected);
-                        // Move to event listener 'paste'
-                        //Shortcuts.on(['fnkey', 'v'], pasteInCenter);
                         Shortcuts.on(['fnkey', 'shift', 'v'], () => {
                             svgCanvas.pasteElements('in_place');
                         });
@@ -5968,81 +6051,6 @@ define([
                     // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
                     $(this).attr('value', '');
                 };
-                let pasteFlag = false;
-                document.addEventListener('paste', async function (e) {
-                    //Platforms except ios paste event will be triggered 2 times
-                    pasteFlag = !pasteFlag;
-                    if (process.platform !== 'darwin' && !pasteFlag) {
-                        return;
-                    }
-                    const clipboardData = e.clipboardData;
-                    let importedFromClipboard = false;
-                    if (clipboardData) {
-                        if (clipboardData.types.includes('Files')) {
-                            console.log('handle clip board file');
-                            for(let i = 0; i < clipboardData.files.length; i++) {
-                                let file = clipboardData.files[i];
-                                handleFile(file);
-                                importedFromClipboard = true;
-                            }
-                        } else if (clipboardData.types.includes('text/html')) {
-                            const matchImgs = clipboardData.getData('text/html').match(/<img[^>]+>/);
-                            if (matchImgs) {
-                                console.log('handle clip board html img');
-                                for (let i=0; i < matchImgs.length; i++) {
-                                    const matchSrc = matchImgs[i].match(/src="([^"]+)"/);
-                                    if (matchSrc && matchSrc[1]) {
-                                        importedFromClipboard = true;
-                                        console.log(matchSrc[1]);
-                                        let res = await fetch(matchSrc[1]);
-                                        if (res.ok) {
-                                            res = await res.blob();
-                                            const blobSrc = URL.createObjectURL(res);
-                                            ImageData(
-                                                blobSrc,
-                                                {
-                                                    grayscale: {
-                                                        is_rgba: true,
-                                                        is_shading: false,
-                                                        is_svg: false
-                                                    },
-                                                    onComplete: function (result) {
-                                                        let newImage = svgCanvas.addSvgElementFromJson({
-                                                            element: 'image',
-                                                            attr: {
-                                                                x: 0,
-                                                                y: 0,
-                                                                width: result.canvas.width,
-                                                                height: result.canvas.height,
-                                                                id: svgCanvas.getNextId(),
-                                                                style: 'pointer-events:inherit',
-                                                                preserveAspectRatio: 'none',
-                                                                'data-threshold': 128,
-                                                                'data-shading': false,
-                                                                origImage: blobSrc,
-                                                                'xlink:href': result.canvas.toDataURL()
-                                                            }
-                                                        });
-                                                    }
-                                                }
-                                            );
-                                        } else {
-                                            Alert.popUp({
-                                                type: AlertConstants.SHOW_POPUP_WARNING,
-                                                message: LANG.svg_editor.unable_to_fetch_clipboard_img,
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!importedFromClipboard) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        pasteInCenter();
-                    }
-                }, false);
 
                 const handleFile = (file) => {
                     const fileType = (function() {
