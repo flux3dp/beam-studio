@@ -319,7 +319,7 @@ define([
                         >
                             <i className="fa fa-eye"></i>
                         </td>
-                        <td className='layerlock' onClick={isLocked ? (e) => this.unLockLayer(e, layerName) : this.highlightLayer(layerName)}>
+                        <td className='layerlock' onClick={isLocked ? (e) => this.unLockLayer(e, layerName) : () => {this.selectLayer(layerName)}}>
                             <img src='img/icon-lock.svg'/>
                         </td>
                     </tr>
