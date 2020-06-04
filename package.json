@@ -11,10 +11,12 @@
   "main": "electron-main.js",
   "dependencies": {
     "@simonwep/pickr": "^1.2.6",
+    "animate.css": "^4.1.0",
     "bufferpack": "^0.0.6",
     "classnames": "^2.2.6",
     "cropperjs": "^1.4.1",
     "custom-electron-titlebar": "^3.2.2",
+    "electron-localshortcut": "^3.2.1",
     "electron-notarize": "^0.2.0",
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
