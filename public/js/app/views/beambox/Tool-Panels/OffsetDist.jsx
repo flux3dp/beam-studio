@@ -33,7 +33,7 @@ define([
 
         _getValueCaption() {
             const dist = this.state.distance, 
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(dist/25.4).toFixed(3)}\"`;
             } else {

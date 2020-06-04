@@ -131,7 +131,7 @@ define([
         getValueCaption = () => {
             const width = this.state.width, 
                 height = this.state.height,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(width/25.4).toFixed(3)}\" x ${Number(height/25.4).toFixed(3)}\"`;
             } else {

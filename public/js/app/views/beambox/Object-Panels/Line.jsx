@@ -52,7 +52,7 @@ define([
                 y1 = this.state.y1,
                 x2 = this.state.x2, 
                 y2 = this.state.y2,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `A (${Number(x1/25.4).toFixed(1)}, ${Number(y1/25.4).toFixed(1)}), B (${Number(x2/25.4).toFixed(1)}, ${Number(y2/25.4).toFixed(1)})`;
             } else {

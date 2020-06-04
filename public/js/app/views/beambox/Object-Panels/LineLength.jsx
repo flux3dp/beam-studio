@@ -20,7 +20,7 @@ define([
                 y1 = this.props.y1,
                 x2 = this.props.x2, 
                 y2 = this.props.y2,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 x1 /= 25.4;
                 x2 /= 25.4;

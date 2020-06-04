@@ -48,7 +48,7 @@ define([
         getValueCaption() {
             const x = this.state.x, 
                 y = this.state.y,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(x/25.4).toFixed(3)}\", ${Number(y/25.4).toFixed(3)}\"`;
             } else {

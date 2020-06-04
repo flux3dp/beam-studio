@@ -46,7 +46,7 @@ define([
         getValueCaption = () => {
             const dx = this.state.dx, 
                 dy = this.state.dy,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(dx/25.4).toFixed(3)}\", ${Number(dy/25.4).toFixed(3)}\"`;
             } else {

@@ -59,7 +59,7 @@ define([
         getValueCaption() {
             const rx = this.state.rx, 
                 ry = this.state.ry,
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(rx*2/25.4).toFixed(3)}\", ${Number(ry*2/25.4).toFixed(3)}\"`;
             } else {

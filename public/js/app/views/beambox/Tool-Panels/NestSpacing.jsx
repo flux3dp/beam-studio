@@ -27,7 +27,7 @@ define([
 
         _getValueCaption() {
             const spacing = this.state.spacing, 
-                units = localStorage.getItem('default-units', 'mm') ;
+                units = localStorage.getItem('default-units') | 'mm';
             if (units === 'inches') {
                 return `${Number(spacing/25.4).toFixed(3)}\"`;
             } else {
