@@ -1796,6 +1796,8 @@ define(function() {
             rotation_angle: 'Rotation',
             x_ratio: 'X Ratio',
             y_ratio: 'Y Ratio',
+            show_last_config: 'Show Last Result',
+            hide_last_config: 'Hide Last Result',
             taking_picture: 'Taking Picture...',
             start_engrave: 'START ENGRAVE',
             analyze_result_fail: 'Fail to analyze captured image.<br/>Please make sure:<br/>1. Captured picture fully coverd with white paper.<br/>2. The platform is focus properly.',

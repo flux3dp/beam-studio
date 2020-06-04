@@ -1793,6 +1793,8 @@ define(function() {
             rotation_angle: '旋转角度',
             x_ratio: '水平比例',
             y_ratio: '垂直比例',
+            show_last_config: '显示前次校正结果',
+            hide_last_config: '隐藏前次校正结果',
             taking_picture: '截取图片中...',
             start_engrave: '开始绘制校正图片',
             analyze_result_fail: '校正失败<br/>请确认:<br/>1. 校正图片完整画在 A4 纸上<br/>2. 已旋转升降平台旋钮，直到轻触焦距螺丝，完成对焦',

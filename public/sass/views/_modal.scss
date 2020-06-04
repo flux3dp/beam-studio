@@ -488,24 +488,6 @@
     }
 }
 
-.modal-camera-calibration {
-    .button-group {
-        .btn {
-            
-            &.btn-alone-right-1 {
-                position: absolute;            
-                width: 80px;
-                right: 19px;
-            }
-            &.btn-alone-right-2 {
-                position: absolute;            
-                width: 80px;
-                right: 110px;
-            }
-        }
-    }
-}
-
 .shadow-modal {
     .modal-body {
         box-shadow: 0 7px 15px rgba(0, 0, 0, .2), 0 10px 20px rgba(0, 0, 0, 0.1);

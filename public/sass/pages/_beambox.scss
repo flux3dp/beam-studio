@@ -1142,10 +1142,12 @@
 .modal-camera-calibration {
     .message {
         overflow: visible;
+        margin: 0px 0px 10px 0px;
     }
     .img-center {
         background-size: cover !important;
         background-position: 50% 50% !important;
+        overflow: hidden;
         width: 50%;
         height: 200px;
         margin-bottom: 20px;
@@ -1153,7 +1155,11 @@
         position: relative;
         .virtual-square {
             position: absolute;
-            border: 1px dashed #FF3300;
+            border: 3px dashed #FF3300;
+            &.last-config {
+                opacity: 0.5;
+                border-color: grey;
+            }
         }
         .camera-control {
             position: absolute;
@@ -1262,12 +1268,31 @@
             margin-right: 0;
         }
     }
+    .btn-last-config {
+        height: 25px;
+        font-size: 12px;
+        line-height: 12px;
+        margin-top: 10px;
+        width: 100%;
+    }
     .btn-alone-right, .btn-alone-right-1 {
         background: #555 !important;
         border: 0;
         color: white;
         &:hover {
             opacity: 0.8;
+        }
+    }
+    .btn {
+        &.btn-alone-right-1 {
+            position: absolute;            
+            width: 80px;
+            right: 19px;
+        }
+        &.btn-alone-right-2 {
+            position: absolute;            
+            width: 80px;
+            right: 110px;
         }
     }
 }

@@ -1795,6 +1795,8 @@ define(function() {
             rotation_angle: '回転',
             x_ratio: 'X比',
             y_ratio: 'Y比',
+            show_last_config: '前回の結果を表示',
+            hide_last_config: '前回の結果を非表示',
             taking_picture: '写真撮影中…',
             start_engrave: '彫刻開始',
             analyze_result_fail: 'キャプチャした画像を分析することができません。<br/>次のことを確認してください：<br/>1. キャプチャした画像が白い紙で完全に覆われている。<br/>2. プラットフォームは適切にフォーカスされている。',

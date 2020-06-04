@@ -45,6 +45,7 @@ define([
     DeviceErrorHandler
 ) {
     const React = require('react');
+    const classNames = require('classnames');
     const LANG = i18n.lang.camera_calibration;
 
     const cameraCalibrationWebSocket = CameraCalibration();
@@ -65,7 +66,8 @@ define([
                 currentStep: STEP_REFOCUS,
                 currentOffset: {X: 15, Y: 30, R: 0, SX: 1.625, SY: 1.625},
                 imgBlobUrl: '',
-                showHint: false
+                showHint: false,
+                shouldShowLastConfig: true
             };
 
             this.updateCurrentStep = this.updateCurrentStep.bind(this);
@@ -100,6 +102,10 @@ define([
             this.setState({showHint: show});
         }
 
+        toggleShowLastConfig() {
+            this.setState({shouldShowLastConfig: !this.state.shouldShowLastConfig});
+        }
+
         render() {
             const stepsMap = {
                 [STEP_REFOCUS]:
@@ -116,7 +122,7 @@ define([
                         updateImgBlobUrl={this.updateImgBlobUrl}
                         model={this.props.model}
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
-                        self={this}
+                        parent={this}
                     />,
                 [STEP_BEFORE_ANALYZE_PICTURE]:
                     <StepBeforeAnalyzePicture
@@ -128,12 +134,12 @@ define([
                         updateOffsetDataCb={this.updateOffsetData.bind(this)}
                         showHint={this.state.showHint}
                         updateShowHint={this.updateShowHint.bind(this)}
-                        self={this}
+                        parent={this}
 
                     />,
                 [STEP_FINISH]:
                     <StepFinish
-                        self={this}
+                        parent={this}
                         onClose={this.onClose}
                     />
             };
@@ -167,19 +173,19 @@ define([
         />
     );
 
-    const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, self}) => {
-        const cutThenCapture = async function(updateOffsetDataCb, self) {
-            await _doCuttingTask(self);
+    const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, parent}) => {
+        const cutThenCapture = async function(updateOffsetDataCb, parent) {
+            await _doCuttingTask(parent);
             let blobUrl = await _doCaptureTask(true);
             await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
             updateImgBlobUrl(blobUrl);
             return;
         };
-        const _doCuttingTask = async function(self) {
+        const _doCuttingTask = async function(parent) {
             await DeviceMaster.select(device);
             const laserPower = Number((await DeviceMaster.getLaserPower()).value);
             const fanSpeed = Number((await DeviceMaster.getFan()).value);
-            self.origFanSpeed = fanSpeed;
+            parent.origFanSpeed = fanSpeed;
 
             const deviceInfo = await DeviceMaster.getDeviceInfo();
             const vc = VersionChecker(deviceInfo.version);
@@ -210,7 +216,7 @@ define([
             let blobUrl;
             try {
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
-
+                parent.lastConfig = PreviewModeController._getCameraOffset();
                 ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
                 const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
                 const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
@@ -233,7 +239,7 @@ define([
                         className: 'btn-default btn-alone-right',
                         onClick: async ()=>{
                             try {
-                                await cutThenCapture(updateOffsetDataCb, self);
+                                await cutThenCapture(updateOffsetDataCb, parent);
                                 gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                             } catch (error) {
                                 console.log(error);
@@ -377,7 +383,7 @@ define([
         }
     };
 
-    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, self}) => {
+    const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, parent}) => {
         const imageScale = 200 / 280;
         const mmToImage = 10 * imageScale;
         let imgBackground = {
@@ -388,11 +394,18 @@ define([
             height: 25 * mmToImage / currentOffset.SY //px
         };
 
-        
         squareStyle.left = 100 - squareStyle.width / 2 - (currentOffset.X - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / currentOffset.SX;
         squareStyle.top = 100 - squareStyle.height / 2 - (currentOffset.Y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / currentOffset.SY;
         squareStyle.transform = `rotate(${-currentOffset.R * 180 / Math.PI}deg)`;
         console.log('SquareStyle', squareStyle);
+
+        let lastConfigSquareStyle = {
+            width: 25 * mmToImage / parent.lastConfig.scaleRatioX, //px
+            height: 25 * mmToImage / parent.lastConfig.scaleRatioY //px
+        };
+        lastConfigSquareStyle.left = 100 - lastConfigSquareStyle.width / 2 - (parent.lastConfig.x - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / parent.lastConfig.scaleRatioX;
+        lastConfigSquareStyle.top = 100 - lastConfigSquareStyle.height / 2 - (parent.lastConfig.y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / parent.lastConfig.scaleRatioY;
+        lastConfigSquareStyle.transform = `rotate(${-parent.lastConfig.angle * 180 / Math.PI}deg)`;
 
         let handleValueChange = function (key, val) {
             console.log('Key', key , '=', val);
@@ -400,11 +413,13 @@ define([
             updateOffsetDataCb(currentOffset);
         };
 
-        let hint_modal = showHint ? renderHintModal(updateShowHint) : null;
+        const hint_modal = showHint ? renderHintModal(updateShowHint) : null;
+        const lastConfigSquare = parent.state.shouldShowLastConfig ? <div className="virtual-square last-config" style={lastConfigSquareStyle} /> : null;
         let manual_calibration = (
             <div>
                 <div className="img-center" style={imgBackground}>
                     <div className="virtual-square" style={squareStyle} />
+                    {lastConfigSquare}
                     <div className="camera-control up" onClick={() => moveAndRetakePicture('up', updateImgBlobUrl)}/>
                     <div className="camera-control down" onClick={() => moveAndRetakePicture('down', updateImgBlobUrl)}/>
                     <div className="camera-control left" onClick={() => moveAndRetakePicture('left', updateImgBlobUrl)}/>
@@ -488,6 +503,12 @@ define([
                             isDoOnInput={true}
                         />
                     </div>
+                    <button
+                        className={classNames('btn', 'btn-default', 'btn-last-config', {primary: !parent.state.shouldShowLastConfig})}
+                        onClick={() => {parent.toggleShowLastConfig()}}
+                    >
+                        {parent.state.shouldShowLastConfig ? LANG.hide_last_config : LANG.show_last_config}
+                    </button>
                 </div>
                 {hint_modal}
             </div>
@@ -504,7 +525,7 @@ define([
                         onClick: async () => {
                             try {
                                 await PreviewModeController.end();
-                                await sendPictureThenSetConfig(currentOffset, imgBlobUrl, self.props.borderless);
+                                await sendPictureThenSetConfig(currentOffset, imgBlobUrl, parent.props.borderless);
                                 gotoNextStep(STEP_FINISH);
                             } catch (error) {
                                 console.log(error);
@@ -588,7 +609,7 @@ define([
         );
     };
 
-    const StepFinish = ({self, onClose}) => (
+    const StepFinish = ({parent, onClose}) => (
         <AlertDialog
             caption={LANG.camera_calibration}
             message={LANG.calibrate_done}
@@ -598,7 +619,7 @@ define([
                     className: 'btn-default btn-alone-right',
                     onClick: () => {
                         BeamboxPreference.write('should_remind_calibrate_camera', false);
-                        svgCanvas.toggleBorderless(self.props.borderless);
+                        svgCanvas.toggleBorderless(parent.props.borderless);
                         onClose();
                     }
                 }]
