@@ -81,8 +81,8 @@ jobs:
 
           cp -R util/win32 utils
 
-          rm -rf util
-          rm -rf lib
+          Remove-Item util -Recurse -Force
+          Remove-Item lib -Recurse -Force
 
           cp -Force ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
 
