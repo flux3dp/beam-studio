@@ -46,7 +46,7 @@ define([
                         className='slider'
                         type='range'
                         min={0}
-                        max={3}
+                        max={2}
                         value={sliderValue}
                         onChange={onSliderValueChange}
                     />
