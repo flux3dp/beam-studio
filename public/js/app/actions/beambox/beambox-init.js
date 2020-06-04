@@ -7,7 +7,7 @@ define([
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
 ], function (
-    ConfigHelper,
+    Config,
     BeamboxPreference,
     Constant,
     ObjectPanelsController,
@@ -30,6 +30,14 @@ define([
             BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
         } else {
             BeamboxPreference.write('borderless', defaultBorderless);
+        }
+        const config = Config();
+        if (!config.read('default-units')) {
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const isEn = navigator.language.slice(0, 2).toLocaleLowerCase() === 'en';
+            if (timeZone.startsWith('America') && isEn) {
+                config.write('default-units', 'inches');
+            }
         }
     };
 

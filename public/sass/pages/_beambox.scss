@@ -864,23 +864,18 @@
 
                     .right {
                         float: right;
-                        padding: 4% 0;
+                        padding: 10px 0;
                     }
 
                     .left {
                         float: left;
-                        padding: 4% 0;
+                        padding: 10px 0;
                     }
 
                     .btn {
-                        border-radius: 0;
                         font-size: 15px;
                         line-height: 30px;
                         margin: 0 10px 0 0;
-                        &:hover {
-                            border: 2px solid #424242;
-                            color: #424242;
-                        }
                     }
 
                     .btn:last-child {

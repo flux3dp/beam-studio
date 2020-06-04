@@ -1,6 +1,5 @@
 define([
     'jquery',
-    'reactClassset',
     'reactPropTypes',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/svgeditor-function-wrapper',
@@ -9,21 +8,15 @@ define([
     'jsx!widgets/Unit-Input-v2',
     'jsx!widgets/Button-Group',
     'jsx!widgets/Dropdown-Control',
-    'jsx!widgets/List',
     'jsx!widgets/Modal',
+    'jsx!views/beambox/Right-Panels/Laser-Manage-Modal',
     'helpers/local-storage',
     'helpers/i18n',
-    'plugins/classnames/index',
-    'app/actions/beambox/bottom-right-funcs',
-    'app/actions/beambox/preview-mode-controller',
-    'jsx!views/Printer-Selector',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'helpers/version-checker',
     'app/actions/beambox/diode-boundary-drawer'
 ], function(
     $,
-    ReactCx,
     PropTypes,
     BeamboxPreference,
     FnWrapper,
@@ -32,25 +25,19 @@ define([
     UnitInput,
     ButtonGroup,
     DropdwonControl,
-    List,
     Modal,
+    LaserManageModal,
     LocalStorage,
     i18n,
-    ClassNames,
-    BottomRightFuncs,
-    PreviewModeController,
-    PrinterSelector,
     Alert,
     AlertConstants,
-    VersionChecker,
     DiodeBoundaryDrawer
 ) {
     'use strict';
     const React = require('react');
-    const ReactDOM = require('react-dom');
+    const classNames = require('classnames');
 
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
-    const LANG2 = i18n.lang;
     const defaultLaserOptions = [
         'parameters',
         'wood_3mm_cutting',
@@ -82,53 +69,7 @@ define([
     class LaserPanel extends React.Component{
         constructor(props) {
             super(props);
-            if (!LocalStorage.get('defaultLaserConfigsInUse')) {
-                const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
-                    const {speed, power, repeat} = this._getDefaultParameters(e);
-                    return {
-                        name: LANG.dropdown[e],
-                        speed,
-                        power,
-                        repeat,
-                        isDefault: true,
-                        key: e
-                    }
-                });
-                let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-                customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
-                const defaultLaserConfigsInUse = {};
-                defaultLaserOptions.forEach(e => {
-                    defaultLaserConfigsInUse[e] = true;
-                });
-                LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-            } else {
-                let customized = LocalStorage.get('customizedLaserConfigs');
-                const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
-                for (let i = 0; i < customized.length; i++) {
-                    if (customized[i].isDefault) {
-                        customized[i].name = LANG.dropdown[customized[i].key];
-                        switch(model) {
-                            case 'fbm1':
-                                customized[i].speed = RightPanelConstants.BEAMO[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMO[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMO[customized[i].key].repeat || 1;
-                                break;
-                            case 'fbb1b':
-                                customized[i].speed = RightPanelConstants.BEAMBOX[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMBOX[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMBOX[customized[i].key].repeat || 1;
-                                break;
-                            case 'fbb1p':
-                                customized[i].speed = RightPanelConstants.BEAMBOX_PRO[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMBOX_PRO[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMBOX_PRO[customized[i].key].repeat || 1;
-                                break;
-                        }
-                    }
-                }
-                LocalStorage.set('customizedLaserConfigs', customized);
-            };
+            this.initDefaultConfig();
             this.state = {
                 speed:          this.props.speed,
                 strength:       this.props.strength,
@@ -138,7 +79,6 @@ define([
                 isDiode:        this.props.isDiode > 0,
                 original:       defaultLaserOptions[0],
                 modal:          '',
-                isPrinterSelectorOpen: false,
                 selectedItem:   LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : '',
                 isSelectingCustomized: true
             };
@@ -176,6 +116,57 @@ define([
             });
         }
 
+        initDefaultConfig = () => {
+            const unit = localStorage.getItem('default-units') || 'mm';
+            if (!LocalStorage.get('defaultLaserConfigsInUse')) {
+                const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
+                    const {speed, power, repeat} = this._getDefaultParameters(e);
+                    return {
+                        name: LANG.dropdown[unit][e],
+                        speed,
+                        power,
+                        repeat,
+                        isDefault: true,
+                        key: e
+                    }
+                });
+                let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+                customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
+                const defaultLaserConfigsInUse = {};
+                defaultLaserOptions.forEach(e => {
+                    defaultLaserConfigsInUse[e] = true;
+                });
+                LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
+                LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+            } else {
+                let customized = LocalStorage.get('customizedLaserConfigs');
+                const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
+                for (let i = 0; i < customized.length; i++) {
+                    if (customized[i].isDefault) {
+                        customized[i].name = LANG.dropdown[unit][customized[i].key];
+                        switch(model) {
+                            case 'fbm1':
+                                customized[i].speed = RightPanelConstants.BEAMO[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMO[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMO[customized[i].key].repeat || 1;
+                                break;
+                            case 'fbb1b':
+                                customized[i].speed = RightPanelConstants.BEAMBOX[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMBOX[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMBOX[customized[i].key].repeat || 1;
+                                break;
+                            case 'fbb1p':
+                                customized[i].speed = RightPanelConstants.BEAMBOX_PRO[customized[i].key].speed;
+                                customized[i].power = RightPanelConstants.BEAMBOX_PRO[customized[i].key].power;
+                                customized[i].repeat = RightPanelConstants.BEAMBOX_PRO[customized[i].key].repeat || 1;
+                                break;
+                        }
+                    }
+                }
+                LocalStorage.set('customizedLaserConfigs', customized);
+            };
+        }
+
         updateData = () => {
             const layerData = FnWrapper.getCurrentLayerData();
 
@@ -189,7 +180,10 @@ define([
             });
         }
 
-        _handleSpeedChange = (val) => {
+        _handleSpeedChange = (val, unit) => {
+            if (unit === 'inches') {
+                val *= 25.4;
+            }
             this.setState({speed: val});
             this.props.funcs.writeSpeed(this.props.layerName, val);
         }
@@ -259,65 +253,11 @@ define([
             }
 
             this.setState({ modal: '' });
-            
-        }
-
-        _handleDeleteConfig = () => {
-            const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-            const index = customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
-            if (index > -1) {
-                if (customizedLaserConfigs[index].isDefault) {
-                    const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
-                    defaultLaserConfigsInUse[customizedLaserConfigs[index].key] = false;
-                    LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-                }
-                customizedLaserConfigs.splice(index, 1);
-                LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                this.setState({ selectedItem: customizedLaserConfigs[0] ? customizedLaserConfigs[0].name : '' });
-            }
         }
 
         _handleCancelModal = () => {
             document.getElementById('laser-config-dropdown').value = this.state.original;
             this.setState({ modal: '' });
-        }
-
-        _handleSave = () => {
-            if (this.state.selectedItem != '') {
-                const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-                let newSpeed = ReactDOM.findDOMNode(this.refs.configSpeed).value;
-                let newPower = ReactDOM.findDOMNode(this.refs.configPower).value;
-                const index = customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
-                if (!customizedLaserConfigs[index].isDefault) {
-                    customizedLaserConfigs[index].speed = newSpeed;
-                    customizedLaserConfigs[index].power = newPower;
-                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                }
-            }
-        }
-
-        _handleApply = () => {
-            if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
-                this._handleSave();
-                document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
-                const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-                const selectedConfig = customizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
-                const speed = selectedConfig.speed;
-                const power = selectedConfig.power;
-                const repeat = selectedConfig.repeat || 1;
-                this.props.funcs.writeSpeed(this.props.layerName, speed);
-                this.props.funcs.writeStrength(this.props.layerName, power);
-                this.props.funcs.writeRepeat(this.props.layerName, repeat);
-
-                this.setState({ 
-                    modal: '',
-                    speed: speed,
-                    strength: power,
-                    repeat: repeat
-                });
-            } else {
-                this.setState({ modal: '' })
-            }
         }
 
         _handleParameterTypeChanged = (id, value) => {
@@ -437,10 +377,9 @@ define([
                         <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.strength}%`}}/>
                     </div>
                 </div>
-                 
             );
         }
-        _renderSpeed = (hasVector) => {
+        _renderSpeed = (hasVector, unit) => {
             const maxValue = 300;
             const minValue = 3;
             const onSlideBarClick = (e) => {
@@ -459,19 +398,24 @@ define([
                 let newValue = Math.round((x - l) / w * (maxValue - minValue) + minValue);
                 this._handleSpeedChange(newValue);
             };
+            const maxValueDisplay = {mm: 300, inches: 12}[unit];
+            const minValueDisplay = {mm: 3, inches: 0.118}[unit];
+            const unitDisplay = {mm: 'mm/s', inches: 'in/s'}[unit];
+            const valueDisplay = this.state.speed / {mm: 1, inches: 25.4}[unit];
+            const decimalDisplay = {mm: 1, inches: 2}[unit];
             return (
                 <div className='panel'>
                     <span className='title'>{LANG.speed}</span>
                     <UnitInput
-                        min={minValue}
-                        max={maxValue}
-                        unit="mm/s"
-                        defaultValue={this.state.speed}
-                        getValue={this._handleSpeedChange}
-                        decimal={1}
+                        min={minValueDisplay}
+                        max={maxValueDisplay}
+                        unit={unitDisplay}
+                        defaultValue={valueDisplay}
+                        getValue={(val) => {this._handleSpeedChange(val, unit)}}
+                        decimal={decimalDisplay}
                     />
-                    <div className={`rainbow-sidebar${hasVector ? ' speed-for-vector' : ''}`} onClick={onSlideBarClick.bind(this)}>
-                        <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.speed/3}%`}} /> 
+                    <div className={classNames('rainbow-sidebar', {'speed-for-vector': hasVector})} onClick={onSlideBarClick.bind(this)}>
+                        <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.speed/3}%`}} />
                     </div>
                 </div>
             );
@@ -559,7 +503,7 @@ define([
             return (
                 <Modal>
                     <div className="save-config-panel">
-                        <div className="title">{LANG.dropdown.save}</div>
+                        <div className="title">{LANG.dropdown.mm.save}</div>
                         <div className="name">
                             <span>{LANG.name}</span>
                             <input className="configName" type="text" />
@@ -607,258 +551,24 @@ define([
         }
 
         _renderMoreModal = () => {
-            const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-            const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
-            const selectedConfig = customizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
-            let customizedEntries,
-                defaultEntries,
-                entryClass;
-
-            const handleCustomizedEntryClick = (name) => {
-                const selectedConfig = customizedLaserConfigs.find((e) => e.name === name);
-                this.setState({ 
-                    isSelectingCustomized: true,
-                    selectedItem: name,
-                    displaySpeed: selectedConfig.speed,
-                    displayPower: selectedConfig.power
-                });
-            }
-
-            const handleDefaultEntryClick = (name) => {
-                const {speed, power, repeat} = this._getDefaultParameters(name);
-                this.setState({ 
-                    isSelectingCustomized: false,
-                    selectedItem: name,
-                    displaySpeed: speed,
-                    displayPower: power
-                });
-            }
-
-            const addSelectDefaultsToCustom = () => {
-                if (!this.state.isSelectingCustomized && this.state.selectedItem != '') {
-                    if (defaultLaserConfigsInUse[this.state.selectedItem]) {
-                        this.setState({
-                            selectedItem: LANG.dropdown[this.state.selectedItem],
-                            isSelectingCustomized: true});
-                        return;
-                    }
-                    const {speed, power, repeat} = this._getDefaultParameters(this.state.selectedItem);
-                    defaultLaserConfigsInUse[this.state.selectedItem] = true;
-                    customizedLaserConfigs.push({
-                        name: LANG.dropdown[this.state.selectedItem],
-                        speed: speed,
-                        power: power,
-                        repeat: repeat,
-                        isDefault: true,
-                        key: this.state.selectedItem
-                    });
-                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                    LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-                    this.setState({
-                        selectedItem: LANG.dropdown[this.state.selectedItem],
-                        isSelectingCustomized: true,
-                    }, () => {$('#custom-config-list').scrollTop(customizedLaserConfigs.length * 20)});
-                }
-            };
-
-            const removeDefaultfromCustom = () => {
-                if (this.state.selectedItem != '') {
-                    let index;
-                    if (this.state.isSelectingCustomized) {
-                        index = customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
-                    } else {
-                        index = customizedLaserConfigs.findIndex((e) => e.name === LANG.dropdown[this.state.selectedItem]);
-                    }
-                    if (index > -1 && customizedLaserConfigs[index].isDefault) {
-                        const key = customizedLaserConfigs[index].key;
-                        const index2 = defaultLaserOptions.findIndex((e) => e === key);
-                        defaultLaserConfigsInUse[key] = false;
-                        LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-                        customizedLaserConfigs.splice(index, 1);
-                        LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                        this.setState({isSelectingCustomized: false, selectedItem: key},
-                            () => {$('#default-config-list').scrollTop((index2 - 1) * 20)});
-                    }
-                }
-            };
-
-            const onEntryDragStart = (e) => {
-                this.draggingEntry = $(e.target).closest('.config-entry')[0];
-                const name = $(this.draggingEntry).children('span').first().text();
-                const index = customizedLaserConfigs.findIndex((e) => e.name === name);
-                this.draggingIndex = index;
-                const selectedConfig = customizedLaserConfigs.find((e) => e.name === name);
-                this.setState({ 
-                    isSelectingCustomized: true,
-                    selectedItem: name,
-                    displaySpeed: selectedConfig.speed,
-                    displayPower: selectedConfig.power
-                });
-            };
-
-            const onEntryDragOver = (e) => {
-                if (this.draggingEntry) {
-                    if ($(e.target).closest('.config-entry')[0] != this.draggingEntry) {
-                        const name = $(e.target).closest('.config-entry').children('span').first().text();
-                        const index = customizedLaserConfigs.findIndex((e) => e.name === name);
-                        const temp = customizedLaserConfigs[index];
-                        customizedLaserConfigs[index] = customizedLaserConfigs[this.draggingIndex];
-                        customizedLaserConfigs[this.draggingIndex] = temp;
-                        this.draggingIndex = index;
-                        LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                        this.setState(this.state);
-                    }
-                }
-            };
-
-            const onEntryDragEnd = (e) => {
-                this.draggingEntry = false;
-            }
-
-            const onControlClick = () => {
-                if (!selectedConfig) {
-                    Alert.popUp({
-                        type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: 'Not selecting',
-                    });
-                }
-            };
-
-            customizedEntries = customizedLaserConfigs.map((entry) => {
-                entryClass = ClassNames('config-entry', {'selected': (this.state.isSelectingCustomized && this.state.selectedItem === entry.name)});
-                return (
-                    <div
-                        className={entryClass}
-                        key={entry.name}
-                        onClick={()=>{ handleCustomizedEntryClick(entry.name)}}
-                        draggable={true}
-                        onDragStart={onEntryDragStart.bind(this)}
-                        onDragOver={onEntryDragOver.bind(this)}
-                        onDragEnd={onEntryDragEnd.bind(this)}
-                    >
-                        <span>{entry.name}</span>
-                        <span className='sub-text'>{entry.isDefault ? LANG.default : ''}</span>
-                    </div>
-                );
-            });
-
-            defaultEntries = defaultLaserOptions.slice(1).map((entry) => {
-                const inUse = defaultLaserConfigsInUse[entry];
-                entryClass = ClassNames('config-entry', {'selected': (!this.state.isSelectingCustomized && this.state.selectedItem === entry)});
-                return (
-                    <div className={entryClass} key={entry} onClick={()=>{ handleDefaultEntryClick(entry)}}>
-                        <span>{LANG.dropdown[entry]}</span>
-                        <span className='sub-text'>{inUse ? LANG.inuse : ''}</span>
-                    </div>
-                );
-            });
-
-            const disableControl = Boolean(!this.state.isSelectingCustomized) || Boolean(!selectedConfig) || Boolean(selectedConfig.isDefault);
-
-            this.state.displaySpeed = this.state.displaySpeed || (selectedConfig ? selectedConfig.speed : 0);
-            this.state.displayPower = this.state.displayPower || (selectedConfig ? selectedConfig.power : 0);
             return (
-                <Modal>
-                    <div className="more-config-panel">
-                        <div className="title">{LANG.more}</div>
-                        <div className="config-list-columns">
-                            <div className='config-list-column'>
-                                <div className='title'>{LANG.default}</div>
-                                <div id='default-config-list' className="config-list">
-                                    {defaultEntries}
-                                </div>
-                            </div>
-                            <div className='operation-buttons'>
-                                <div className='operation-button' onClick={addSelectDefaultsToCustom.bind(this)}>{'>>'}</div>
-                                <div className='operation-button' onClick={removeDefaultfromCustom.bind(this)}>{'<<'}</div>
-                            </div>
-                            <div className='config-list-column'>
-                                <div className='title'>{LANG.customized}</div>
-                                <div id='custom-config-list' className="config-list" >
-                                    {customizedEntries}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={`controls ${disableControl ? 'disable' : ''}`} >
-                            <div className="control" onClick={onControlClick.bind(this)}>
-                                <span className="label">{LANG.power.text}</span>
-                                <input
-                                    type="range"
-                                    ref="configPower"
-                                    disabled={disableControl}
-                                    min={LANG.power.min}
-                                    max={LANG.power.max}
-                                    step={LANG.power.step}
-                                    value={this.state.displayPower}
-                                    onChange={(e) => {this.setState({displayPower: e.target.value})}}
-                                />
-                                <UnitInput
-                                    min={LANG.power.min}
-                                    max={LANG.power.max}
-                                    disabled={disableControl}
-                                    unit={'%'}
-                                    getValue={(val) => {this.setState({displayPower: val})}}
-                                    defaultValue={this.state.displayPower}
-                                    decimal={1}
-                                    step={LANG.power.step}
-                                />
-                            </div>
-                            <div className="control" onClick={onControlClick.bind(this)}>
-                                <span className="label">{LANG.laser_speed.text}</span>
-                                <input
-                                    type="range"
-                                    ref="configSpeed"
-                                    disabled={disableControl}
-                                    min={LANG.laser_speed.min}
-                                    max={LANG.laser_speed.max}
-                                    step={LANG.laser_speed.step}
-                                    value={this.state.displaySpeed}
-                                    onChange={(e) => {this.setState({displaySpeed: e.target.value})}}
-                                />
-                                <UnitInput
-                                    min={LANG.laser_speed.min}
-                                    max={LANG.laser_speed.max}
-                                    disabled={disableControl}
-                                    unit={'mm/s'}
-                                    getValue={(val) => {this.setState({displaySpeed: val})}}
-                                    defaultValue={this.state.displaySpeed}
-                                    decimal={1}
-                                    step={0.1}
-                                />
-                            </div>
-                        </div>
-                        <div className="footer">
-                            <div className="left">
-                                <button
-                                    className='btn btn-default pull-right'
-                                    onClick={() => this._handleDeleteConfig()}
-                                >
-                                    {LANG.delete}
-                                </button>
-                            </div>
-                            <div className="right">
-                                <button
-                                    className='btn btn-default'
-                                    onClick={() => this._handleCancelModal()}
-                                >
-                                    {LANG.cancel}
-                                </button>
-                                <button
-                                    className='btn btn-default'
-                                    onClick={() => this._handleSave()}
-                                >
-                                    {LANG.save}
-                                </button>
-                                <button
-                                    className='btn btn-default pull-right'
-                                    onClick={() => this._handleApply()}
-                                >
-                                    {LANG.apply}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </Modal>
+                <LaserManageModal
+                    selectedItem={this.state.selectedItem}
+                    _handleCancelModal = {this._handleCancelModal}
+                    onClose = {() => this.setState({modal: ''})}
+                    onApply = {(speed, power, repeat, selectedItem) => {
+                        this.props.funcs.writeSpeed(this.props.layerName, speed);
+                        this.props.funcs.writeStrength(this.props.layerName, power);
+                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                        this.setState({
+                            modal: '',
+                            speed: speed,
+                            strength: power,
+                            repeat: repeat,
+                            selectedItem: selectedItem
+                        });
+                    }}
+                />
             );
         }
 
@@ -871,61 +581,6 @@ define([
                 default:
                     return null;
             }
-        }
-
-        _renderPrinterSelectorWindow = () => {
-            const onGettingPrinter = async (selected_item) => {
-                //export fcode
-                if (selected_item === 'export_fcode') {
-                    BottomRightFuncs.exportFcode();
-                    this.setState({
-                        isPrinterSelectorOpen: false
-                    });
-
-                    return;
-                }
-
-                //check firmware
-                if (!VersionChecker(selected_item.version).meetRequirement('USABLE_VERSION')) {
-                    console.error('Not a valid firmware version');
-                    Alert.popUp({
-                        type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: lang.beambox.popup.should_update_firmware_to_continue,
-                    });
-                    this.setState({
-                        isPrinterSelectorOpen: false
-                    });
-
-                    return;
-                }
-
-                // start task
-                this.setState({
-                    isPrinterSelectorOpen: false,
-                });
-                BottomRightFuncs.uploadFcode(selected_item);
-            };
-
-            const onClose = () => {
-                this.setState({
-                    isPrinterSelectorOpen: false
-                });
-            };
-
-            const content = (
-                <PrinterSelector
-                    uniqleId="laser"
-                    className="laser-device-selection-popup"
-                    modelFilter={PrinterSelector.BEAMBOX_FILTER}
-                    showExport={true}
-                    onClose={onClose}
-                    onGettingPrinter={onGettingPrinter}
-                />
-            );
-
-            return (
-                <Modal content={content} onClose={onClose} />
-            );
         }
 
         render() {
@@ -941,8 +596,8 @@ define([
                     break;
                 }
             }
-
-            const speedPanel = this._renderSpeed(hasVector);
+            const unit = localStorage.getItem('default-units') || 'mm';
+            const speedPanel = this._renderSpeed(hasVector, unit);
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();
             const enableHeightPanel = this._renderEnableHeight();
@@ -961,14 +616,14 @@ define([
                 return {
                     value : item,
                     key: item,
-                    label: (LANG.dropdown[item] ? LANG.dropdown[item] : item)
+                    label: (LANG.dropdown[unit][item] ? LANG.dropdown[unit][item] : item)
                 };
             });
             const functionalOptions = functionalLaserOptions.map((item) => {
                 return {
                     value : item,
                     key: item,
-                    label: LANG.dropdown[item]
+                    label: LANG.dropdown[unit][item]
                 };
             });
             const customizedConfigs = LocalStorage.get('customizedLaserConfigs');
@@ -986,7 +641,6 @@ define([
                     defaultOptions.concat(functionalOptions)
             );
 
-            const printerSelector = this._renderPrinterSelectorWindow();
             return (
                 <div>
                     <div className="layername">
@@ -1007,7 +661,6 @@ define([
                         {zStepPanel}
                         {diodePanel}
                         {modalDialog}
-                        {this.state.isPrinterSelectorOpen ? printerSelector : ''}
                     </div>
                 </div>
             );
