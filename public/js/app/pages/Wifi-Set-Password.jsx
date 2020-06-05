@@ -43,7 +43,7 @@ define([
                 delete wifi.plain_password;
                 initializeMachine.settingWifi.set(wifi);
 
-                location.hash = '#initialize/wifi/select';
+                location.hash = '#initialize/connect/select';
             }
 
             _handleSetPassword = (e) => {
@@ -118,11 +118,11 @@ define([
                                         localStorage.setItem('poke-ip-addr', response.ipaddr[0]);
                                     }
 
-                                    location.hash = '#initialize/wifi/setup-complete';
+                                    location.hash = '#initialize/connect/setup-complete';
                                     usb.close();
                                 } else if (response.action === 'PREVIOUS_SSID') {
                                     genericPerviousSSIDError();
-                                    location.hash = '#initialize/wifi/select';
+                                    location.hash = '#initialize/connect/select';
                                 };
                             });
                         }, 2000);

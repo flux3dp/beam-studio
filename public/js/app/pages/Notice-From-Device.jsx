@@ -70,7 +70,7 @@ define([
                                     <button data-ga-event="restart-flux-studio" className="btn btn-action btn-large" onClick={this._restartStudio}>
                                         {localLang.restart}
                                     </button>
-                                    <a href="#initialize/wifi/select" data-ga-event="back" className="btn btn-link btn-large">
+                                    <a href="#initialize/connect/select" data-ga-event="back" className="btn btn-link btn-large">
                                         {lang.initialize.back}
                                     </a>
                                 </div>

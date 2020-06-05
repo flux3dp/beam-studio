@@ -55,7 +55,7 @@ define([
 
                         // temporary store for setup
                         initializeMachine.settingPrinter.set(currentPrinter);
-                        location.hash = '#initialize/wifi/set-printer';
+                        location.hash = '#initialize/connect/set-printer';
                     }),
                     timer = setTimeout(function() {
                         ProgressActions.close();
@@ -87,7 +87,7 @@ define([
                                     <button data-ga-event="retry-getting-device-from-wifi" className="btn btn-action btn-large" onClick={this._retrieveDevice}>
                                         {lang.initialize.retry}
                                     </button>
-                                    <a href="#initialize/wifi/connect-machine" data-ga-event="back" className="btn btn-link btn-large">
+                                    <a href="#initialize/connect/connect-machine" data-ga-event="back" className="btn btn-link btn-large">
                                         {lang.initialize.back}
                                     </a>
                                 </div>

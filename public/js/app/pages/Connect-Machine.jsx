@@ -57,7 +57,7 @@ define([
             _setSettingPrinter = (printer) => {
                 // temporary store for setup
                 initializeMachine.settingPrinter.set(printer);
-                location.hash = '#initialize/wifi/set-printer';
+                location.hash = '#initialize/connect/set-printer';
             }
 
             _onUsbStartingSetUp = (e) => {
@@ -109,7 +109,7 @@ define([
                 timer = setTimeout(function() {
                     clearTimeout(timer);
                     self._toggleBlocker(false);
-                    location.hash = '#initialize/wifi/not-found';
+                    location.hash = '#initialize/connect/not-found';
                 }, 1000);
 
                 self._toggleBlocker(true);
@@ -238,7 +238,7 @@ define([
                         <img className="brand-image" src="img/menu/main_logo.svg"/>
                         <div className="connecting-means">
                             {innerContent}
-                            <a href="#initialize/wifi/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
+                            <a href="#initialize/connect/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
                                 {lang.initialize.no_machine}
                             </a>
                         </div>

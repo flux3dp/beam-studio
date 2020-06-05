@@ -22,7 +22,7 @@ function(
                 });   
             },
             ADD_NEW_MACHINE: () => {
-                location.hash = '#initialize/wifi/select-machine-type';
+                location.hash = '#initialize/connect/select-machine-type';
             },
             RELOAD_APP: () => {
                 location.reload();

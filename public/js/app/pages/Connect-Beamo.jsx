@@ -62,7 +62,7 @@ define([
                         label: LANG.start,
                         className: 'btn btn-action btn-large start',
                         onClick: this.onStart,
-                        href: '#initialize/wifi/setup-complete/with-usb'
+                        href: '#initialize/connect/setup-complete/with-usb'
                     }
                 ];
                 return (

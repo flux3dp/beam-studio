@@ -167,10 +167,10 @@ define([
 
             // Private methods
             _onCancel = (id) => {
-                if ('#initialize/wifi/select' === location.hash) {
+                if ('#initialize/connect/select' === location.hash) {
                     usbSocket.close();
                     usbSocket = usbConfig();
-                    location.hash = 'initialize/wifi/connect-machine';
+                    location.hash = 'initialize/connect/connect-machine';
                 }
             }
 
@@ -199,7 +199,7 @@ define([
                     this._settingWifiViaWifi();
                 }
                 else {
-                    location.hash = '#initialize/wifi/set-password';
+                    location.hash = '#initialize/connect/set-password';
                 }
             }
 
@@ -229,7 +229,7 @@ define([
                     pass,
                     {
                         onSuccess: function(response) {
-                            location.hash = 'initialize/wifi/setup-complete/station-mode';
+                            location.hash = 'initialize/connect/setup-complete/station-mode';
                         },
                         onError: function(response) {
                             AlertActions.showPopupError('ap-mode-fail', lang.initialize.errors.select_wifi.ap_mode_fail);
@@ -245,7 +245,7 @@ define([
 
                 globalWifiAPI.setAPMode(name, pass).
                 done(function(response) {
-                    location.hash = 'initialize/wifi/setup-complete/station-mode';
+                    location.hash = 'initialize/connect/setup-complete/station-mode';
                 }).
                 fail(function(response) {
                     AlertActions.showPopupError('ap-mode-fail', lang.initialize.errors.select_wifi.ap_mode_fail);
@@ -266,7 +266,7 @@ define([
                 }).
                 done(function(response) {
                     console.log('done', response);
-                    location.hash = '#initialize/wifi/notice-from-device';
+                    location.hash = '#initialize/connect/notice-from-device';
                 }).
                 fail(function(response) {
                     console.log('fail', response);
@@ -283,7 +283,7 @@ define([
                     this._settingWifiViaWifi();
                 }
                 else {
-                    location.hash = '#initialize/wifi/setup-complete/with-wifi';
+                    location.hash = '#initialize/connect/setup-complete/with-wifi';
                 }
             }
 
@@ -374,7 +374,7 @@ define([
                 this._stopScan();
                 usbSocket.joinWifiNetwork(wifi, wepkey, true).then((result) => {
                     if(result.status === 'ok') {
-                        location.hash = '#initialize/wifi/notice-from-device';
+                        location.hash = '#initialize/connect/notice-from-device';
                     }
                 }).fail((error) => {
                     console.log(error);
@@ -658,7 +658,7 @@ define([
                         onClick: (e) => {
                             this._stopScan();
                         },
-                        href: '#initialize/wifi/setup-complete/with-usb'
+                        href: '#initialize/connect/setup-complete/with-usb'
                     }],
                     passwordForm = this._renderPasswordForm(lang),
                     apModeForm = this._renderApModeForm(lang),

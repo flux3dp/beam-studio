@@ -20,13 +20,13 @@ define([
                         <div className="btn-h-group">
                             <button
                                 className="btn btn-action btn-large"
-                                onClick={() => location.hash = '#initialize/wifi/connect-beambox'}
+                                onClick={() => location.hash = '#initialize/connect/connect-beambox'}
                             >
                                 <p className="subtitle">Beambox</p>
                             </button>
                             <button
                                 className="btn btn-action btn-large"
-                                onClick={() => location.hash = '#initialize/wifi/connect-beambox#Pro' }
+                                onClick={() => location.hash = '#initialize/connect/connect-beambox#Pro' }
                             >
                                 <p className="subtitle">Beambox Pro</p>
                             </button>
@@ -47,7 +47,7 @@ define([
                         <img className="brand-image" src="img/menu/main_logo.svg" />
                         <div className="connecting-means">
                             {innerContent}
-                            <a href="#initialize/wifi/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
+                            <a href="#initialize/connect/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
                                 {lang.initialize.no_machine}
                             </a>
                         </div>

@@ -56,7 +56,7 @@ define([
             _monitorUsb = (usbOn) => {
                 if(!usbOn) {
                     AlertActions.showPopupError('USB_UNPLUGGED', this.state.lang.message.usb_unplugged);
-                    location.hash = '#initialize/wifi/connect-machine';
+                    location.hash = '#initialize/connect/connect-machine';
                 }
             }
 
@@ -81,7 +81,7 @@ define([
                     goNext = function() {
                         self.state.settingPrinter.name = name;
                         initializeMachine.settingPrinter.set(self.state.settingPrinter);
-                        location.hash = '#initialize/wifi/select';
+                        location.hash = '#initialize/connect/select';
                         ProgressActions.close();
                     },
                     setPassword = function(password) {
@@ -289,7 +289,7 @@ define([
                                 <button type="submit" className="btn btn-action btn-large" data-ga-event="next">
                                     {lang.initialize.next}
                                 </button>
-                                <a href="#initialize/wifi/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
+                                <a href="#initialize/connect/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
                                     {lang.initialize.skip}
                                 </a>
                             </div>
