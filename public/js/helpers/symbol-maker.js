@@ -90,6 +90,12 @@ define([
                 symbol.setAttribute('data-id', elem.firstChild.id);
             }
         }
+        // If import by layer but no valid layer available, use current layer
+        const drawing = svgCanvas.getCurrentDrawing();
+        const currentLayerName = drawing.getCurrentLayerName();
+        if (type === 'layer' && !symbol.getAttribute('data-id')) {
+            symbol.setAttribute('data-id', currentLayerName);
+        }
         if (elem.firstChild && elem.firstChild.getAttribute('data-color')) {
             symbol.setAttribute('data-color', elem.firstChild.getAttribute('data-color'));
         }
@@ -102,7 +108,7 @@ define([
         }).remove();
 
         $(symbol).find('use').filter(function () {
-            return $(symbol).find(getHref(this)).length === 0;
+            return $(symbol).find(svgedit.utilities.getHref(this)).length === 0;
         }).remove();
 
         //add prefix(which constrain css selector to symbol's id) to prevent class style pollution
@@ -303,6 +309,7 @@ define([
             const descendants = Array.from(tempSymbol.querySelectorAll('*'));
             descendants.forEach((d) => {
                 d.setAttribute('stroke-width', `${strokeWidth}px`);
+                d.setAttribute('vector-effect', 'non-scaling-stroke');
             });
             const styles = Array.from(tempSymbol.querySelectorAll('style'));
             styles.forEach((styleNode) => {

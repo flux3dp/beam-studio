@@ -5877,9 +5877,6 @@ define([
                         // svg software like inkscape may add additioal tag like "sodipodi:namedview", so we return true as default
                         return true;
                     });
-                    if(!isValidLayeredSvg) {
-                        return false;
-                    }
 
                     const symbols = layerNodes.map(node => {
                         const symbol = SymbolMaker.makeSymbol(_symbolWrapper(node), [], batchCmd, defChildren, 'layer');
