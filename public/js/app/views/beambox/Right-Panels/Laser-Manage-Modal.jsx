@@ -48,7 +48,7 @@ define([
                 displaySpeed: null,
                 displayPower: null
             };
-            this.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
+            this.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
             this.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
             this.unit = localStorage.getItem('default-units') || 'mm';
         }
@@ -133,7 +133,6 @@ define([
                 }
                 if (index > -1 && this.customizedLaserConfigs[index].isDefault) {
                     const key = this.customizedLaserConfigs[index].key;
-                    const index = defaultLaserOptions.findIndex((e) => e === key);
                     this.defaultLaserConfigsInUse[key] = false;
                     LocalStorage.set('defaultLaserConfigsInUse', this.defaultLaserConfigsInUse);
                     this.customizedLaserConfigs.splice(index, 1);

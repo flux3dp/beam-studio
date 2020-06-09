@@ -118,7 +118,7 @@ define([
 
         initDefaultConfig = () => {
             const unit = localStorage.getItem('default-units') || 'mm';
-            if (!LocalStorage.get('defaultLaserConfigsInUse')) {
+            if (!LocalStorage.get('defaultLaserConfigsInUse') || !LocalStorage.get('customizedLaserConfigs')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
                     const {speed, power, repeat} = this._getDefaultParameters(e);
                     return {
@@ -131,6 +131,7 @@ define([
                     }
                 });
                 let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+                customizedLaserConfigs = customizedLaserConfigs.filter((config) => !config.isDefault);
                 customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
                 const defaultLaserConfigsInUse = {};
                 defaultLaserOptions.forEach(e => {
@@ -139,7 +140,7 @@ define([
                 LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             } else {
-                let customized = LocalStorage.get('customizedLaserConfigs');
+                let customized = LocalStorage.get('customizedLaserConfigs') || [];
                 const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
                 for (let i = 0; i < customized.length; i++) {
                     if (customized[i].isDefault) {
@@ -276,9 +277,9 @@ define([
                             repeat: RightPanelConstants.BEAMO[value].repeat || 1
                         });
 
-                        this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
-                        this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                        this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMO[value].speed);
+                        this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMO[value].power);
+                        this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMO[value].repeat || 1);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -292,7 +293,7 @@ define([
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                        this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMBOX[value].repeat || 1);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -306,7 +307,7 @@ define([
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].power);
-                        this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                        this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].repeat || 1);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
