@@ -34,6 +34,7 @@ function(
             },
             {
                 key: 'ok',
+                className: 'btn-default primary',
                 label: lang.alert.ok,
                 right: true,
                 onClick: () => submitValue()
