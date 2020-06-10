@@ -32,7 +32,7 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                     [/^.*$/, 'e404', this.e404],
                     // initialize Flux Printer
                     [
-                        /^initialize\/connect\/?(select-machine-type|connect-beambox|connect-beamo|connect-machine|select|not-found|notice-from-device|set-printer|set-password|setup-complete)\/?(.*)?/,
+                        /^initialize\/connect\/?(select-machine-type|select-connection-type|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-beambox|connect-beamo|connect-machine|select|not-found|notice-from-device|set-printer|set-password|setup-complete)\/?(.*)?/,
                         'initial',
                         this.initial
                     ],
@@ -70,6 +70,11 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
         initial: function(step, other) {
             var map = {
                     'select-machine-type': 'Select-Machine-Type',
+                    'select-connection-type': 'Select-Connection-Type',
+                    'connect-wi-fi': 'Connect-Wi-Fi',
+                    'connect-wired': 'Connect-Wired',
+                    'connect-ethernet': 'Connect-Ethernet',
+                    'connect-machine-ip': 'Connect-Machine-Ip',
                     'connect-beambox': 'Connect-Beambox',
                     'connect-beamo': 'Connect-Beamo',
                     'connect-machine': 'Connect-Machine',

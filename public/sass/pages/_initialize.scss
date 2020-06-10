@@ -48,98 +48,236 @@
     }
 
     .connect-machine {
-        .scene {
-            height: 209px;
-            margin: 0 0 10px 0;
-            width: 209px;
+        .main-title {
+            margin-bottom: 50px;
+            color: #333333
         }
-
-        .select-printer {
-            bottom: 0;
-            right: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.5);
-
-            .arrow {
-                display: none;
-            }
-        }
-
-        .connecting-means {
-            @include absolute-center();
-            height: 556px;
-            width: 755px;
-        }
-
         .btn-h-group {
-            margin: 0 auto 75px auto;
+            margin: 0 auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
-
-        .btn-action,
-        .btn-action:hover {
+        .btn-action {
+            border-radius: 2px;
+            transition: all .3s ease;
             background: transparent;
-            height: 458px;
-            max-width: initial;
             opacity: 1;
-            transition: box-shadow .3s ease;
-            width: 335px;
-
-            .headline,
-            .subtitle {
-                color: #666;
-                font-size: 24px;
-                line-height: 30px;
-                margin: 0;
-                text-align: center;
-            }
-
-            .subtitle {
-                margin: 0 0 30px 0;
-            }
+            color: #333333;
+            font-weight: 700;
+            text-align: start;
+            font-size: 27px;
         }
-
         .btn-action:hover {
-            box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+            background-color: #333333;
+            color: #f8f8f8;
+            box-shadow: none;
         }
-
-        .btn-action:first-child {
-            margin: 0 85px 0 0;
-        }
-
         .select-machine-type {
-            .main-title {
-                margin-bottom: 50px;
-            }
+            padding: 0 0 60px 0;
             .btn-h-group {
-                display: block !important;
-                width: 300px;
-                margin: auto auto;
+                width: 240px;
             }
-            .btn-action,
-            .btn-action:hover {
-                background: #333;
-                height: 60px !important;
-                line-height: 60px !important;
-                width: 300px;
-                margin-bottom: 25px;
-                border-radius: 4px;
-                transition: all .3s ease;                                
-    
-                .headline,
-                .subtitle {
-                    transition: all .3s ease;                
-                    color: white;
-                    line-height: 60px;
-                    font-size: 18px !important;
+            .btn-action {
+                width: 240px;
+                height: 54px;
+                line-height: 54px;
+                padding-left: 30px;
+                margin: 0 0 10px 0;
+            }
+        }
+
+        .select-connection-type {
+            padding: 0 0 60px 0;
+            .btn-container {
+                display: flex;
+                margin: 0 0 10px 0;
+                .connect-btn-icon {
+                    margin: 0 25px 0 0;
+                    width: 30px;
                 }
             }
-    
-            .btn-action:hover {
-                box-shadow: 0 0 10px rgba(0, 0, 0, .3);
-                background-color: #ddd;
-                .headline,
-                .subtitle {
-                    color: #333;
+            .btn-action {
+                width: 400px;
+                height: 54px;
+                line-height: 54px;
+                padding-left: 30px;
+            }
+        }
+        .connection-wired,
+        .connection-wifi,
+        .connection-ethernet,
+        .connection-machine-ip {
+            margin-top: 150px;
+            height: 480px;
+            .image-container {
+                float: left;
+                width: 200px;
+                .touch-panel-icon {
+                    width: 200px;
                 }
+                .hint-circle {
+                    position: absolute;
+                    width: 122px;
+                    height: 122px;
+                    border-radius: 61px;
+                    border: 5px solid #0091FF;
+                    margin: 202px 0 0 -4px;
+                    &.ip {
+                        width: 160px;
+                        height: 20px;
+                        border-radius: 10px;
+                        margin: 73px 0 0 0;
+                    }
+                }
+                .ethernet-icon {
+                    width: 200px;
+                    padding: 40px 0;
+                }
+                .arrow-icon {
+                    margin: 0 30px;
+                    width: 140px;
+                    &.top {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+            .text-container {
+                margin-left: 80px;
+                width: 500px;
+                float: right;
+                .title {
+                    font-size: 30px;
+                    font-weight: bold;
+                    letter-spacing: 0.5px;
+                    color: #333333;
+                    padding-bottom: 25px;
+                }
+                .contents {
+                    font-size: 12px;
+                    line-height: 23px;
+                    letter-spacing: 0.1px;
+                    white-space: pre;
+                    color: #999999;
+                    a {
+                        color: #999999;
+                    }
+                    &.tutorial {
+                        padding-bottom: 25px;
+                    }
+                    &.what-if {
+                        transition: all 0.3s ease;
+                        .collapse-title {
+                            cursor: pointer;
+                            font-weight: 500;
+                            width: fit-content;
+                        }
+                        .collapse-arrow {
+                            transform: rotate(90deg);
+                            float: right;
+                            border-style: solid;
+                            border-color: transparent transparent transparent #999999;
+                            border-width: 4px 0 4px 4px;
+                            margin: 7.5px 0 7.5px 10px;
+                        }
+                        .collapse-contents {
+                            overflow: hidden;
+                            white-space: pre-wrap;
+                            padding: 5px 0 10px 10px;
+                            animation: slideDown 300ms linear;
+                        }
+                        &.collapsed {
+                            .collapse-arrow {
+                                transform: rotate(0deg);
+                            }
+                            .collapse-contents {
+                                display: none;
+                            }
+                        }
+                    }
+                    .test-infos {
+                        font-weight: 600;
+                        height: 80px;
+                        .test-info {
+                            padding: 5px 0;
+                            color: #333333;
+                        }
+                    }
+                }
+                .ip-input {
+                    width: 100%;
+                    background-color: unset;
+                    color: #999999;
+                    border-radius: 0px;
+                    border-width: 0px;
+                    border-bottom-width: 1px;
+                    font-size: 30px;
+                    padding: 10px 0;
+                    height: 50px;
+                    margin-bottom: 10px;
+                    &:focus {
+                        border-radius: 0px;
+                        border-width: 0px;
+                        border-bottom-width: 1px;
+                        outline: none;
+                    }
+                }
+            }
+        }
+
+        .btn-page {
+            cursor: pointer;
+            height: 49px;
+            line-height: 39px;
+            padding: 5px 10px;
+            font-size: 27px;
+            font-weight: bold;
+            color: #333333;
+            &.disabled {
+                cursor: unset;
+                opacity: 0.3;
+            }
+            &.back {
+                position: absolute;
+                left: 45px;
+                top: 65px;
+            }
+            &.next {
+                float: right;
+            }
+            .left-arrow {
+                float: left;
+                border-style: solid;
+                border-color: transparent #333333 transparent transparent;
+                border-width: 13px 21px 13px 0;
+                margin: 6.5px 20px 6.5px 0;
+            }
+            .right-arrow {
+                float: right;
+                border-style: solid;
+                border-color: transparent transparent transparent #333333;
+                border-width: 13px 0 13px 21px;
+                margin: 6.5px 0 6.5px 20px;
+            }
+            &:hover:not(.disabled) {
+                border-radius: 2px;
+                background-color: #333333;
+                color: #f8f8f8;
+                .left-arrow {
+                    border-color: transparent #f8f8f8 transparent transparent;
+                }
+                .right-arrow {
+                    border-color: transparent transparent transparent #f8f8f8;
+                }
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                max-height: 0;
+            }
+            to {
+                max-height: 400px;
             }
         }
     }

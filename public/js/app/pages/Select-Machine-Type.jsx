@@ -1,8 +1,12 @@
 define([
     'jsx!widgets/Modal',
+    'app/actions/beambox/beambox-preference',
+    'app/actions/beambox/constant',
     'helpers/i18n',
 ], function (
     Modal,
+    BeamboxPreference,
+    Constant,
     i18n
 ) {
     'use strict';
@@ -13,28 +17,34 @@ define([
     return function () {
         return class SelectMachineType extends React.Component{
 
-            _renderSelectMachineStep = () => {
+            onSelectMachine = (model) => {
+                BeamboxPreference.write('model', model);
+                BeamboxPreference.write('workarea', model);
+                location.hash = '#initialize/connect/select-connection-type';
+            }
+
+            renderSelectMachineStep = () => {
                 return (
                     <div className="select-machine-type">
                         <h1 className="main-title">{lang.initialize.select_machine_type}</h1>
                         <div className="btn-h-group">
                             <button
-                                className="btn btn-action btn-large"
-                                onClick={() => location.hash = '#initialize/connect/connect-beamo'}
+                                className="btn btn-action"
+                                onClick={() => this.onSelectMachine('fbm1')}
                             >
-                                <p className="subtitle">FLUX beamo</p>
+                                {'beamo'}
                             </button>
                             <button
-                                className="btn btn-action btn-large"
-                                onClick={() => location.hash = '#initialize/connect/connect-beambox'}
+                                className="btn btn-action"
+                                onClick={() => this.onSelectMachine('fbb1b')}
                             >
-                                <p className="subtitle">FLUX Beambox</p>
+                                {'Beambox'}
                             </button>
                             <button
-                                className="btn btn-action btn-large"
-                                onClick={() => location.hash = '#initialize/connect/connect-beambox#Pro'}
+                                className="btn btn-action"
+                                onClick={() => this.onSelectMachine('fbb1p')}
                             >
-                                <p className="subtitle">FLUX Beambox Pro</p>
+                                {'Beambox Pro'}
                             </button>
                         </div>
                     </div>
@@ -47,16 +57,11 @@ define([
                 const wrapperClassName = {
                     'initialization': true
                 };
-                const innerContent = this._renderSelectMachineStep();
+                const innerContent = this.renderSelectMachineStep();
                 const content = (
-                    <div className="connect-machine text-center">
-                        <img className="brand-image" src="img/menu/main_logo.svg" />
-                        <div className="connecting-means">
-                            {innerContent}
-                            <a href="#initialize/connect/setup-complete/with-usb" data-ga-event="skip" className="btn btn-link btn-large">
-                                {lang.initialize.no_machine}
-                            </a>
-                        </div>
+                    <div className="connect-machine">
+                        <div className="top-bar"/>
+                        {innerContent}
                     </div>
                 );
 

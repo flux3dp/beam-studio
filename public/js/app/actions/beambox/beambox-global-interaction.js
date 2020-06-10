@@ -65,7 +65,6 @@ define([
                 'CUT': () => svgEditor.cutSelected(),
                 'COPY': () => svgEditor.copySelected(),
                 'PASTE': () => svgEditor.handlePaste(),
-
                 'GROUP': () => FnWrapper.groupSelected(),
                 'UNGROUP': () => FnWrapper.ungroupSelected(),
                 'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
