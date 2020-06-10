@@ -167,7 +167,7 @@ const loadShadowWindow = () => {
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1080,
+        width: 1300,
         height: 650,
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : null,
         frame: process.platform === 'win32' ? false : null,
@@ -212,7 +212,11 @@ function createWindow () {
                 if (reply) {
                     isCloseConfirm = true;
                     mainWindow.close();
-                    shadowWindow.close();
+                    try {
+                        shadowWindow.close();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
             });
         }
