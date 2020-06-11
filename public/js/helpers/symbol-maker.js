@@ -240,10 +240,11 @@ define([
     };
 
     const getStrokeWidth = (imageRatio, scale) => {
-        let strokeWidth = 4 * imageRatio / scale;
+        let strokeWidth = 0.8 * imageRatio / scale;
         if (strokeWidth < 1.5) {
             strokeWidth = (strokeWidth / 1.5) ** (1 / 3) * 1.5;
         }
+        strokeWidth /= svgCanvas.getZoom() ;
         return strokeWidth;
     };
 
