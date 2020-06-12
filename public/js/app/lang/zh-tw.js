@@ -1175,6 +1175,7 @@ define(function() {
                     error_when_converting_pdf: '將 pdf 轉換成 svg 時發生錯誤：',
                     error_pdf2svg_not_found: '無法找到 pdf2svg 指令，請使用您的套件管理裝置安裝 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
+                ungroup_use: '正要解散外部匯入的 dxf 或是 svg ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
             },
             left_panel: {
                 insert_object: '插入物件',

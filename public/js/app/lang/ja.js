@@ -1179,6 +1179,7 @@ define(function() {
                     error_when_converting_pdf: 'エラー，PDFをSVGに変換するときのエラー：',
                     error_pdf2svg_not_found: 'エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
+                ungroup_use: 'これにより、インポートされた dxf または svg がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
             },
             left_panel: {
                 insert_object: 'オブジェクトを挿入',
