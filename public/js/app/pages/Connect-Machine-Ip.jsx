@@ -23,6 +23,7 @@ define([
 
     const lang = i18n.lang.initialize;
     const TIMEOUT = 20;
+    const ipRex = /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
 
     return function () {
         return class ConnectMachine extends React.Component{
@@ -148,12 +149,15 @@ define([
             }
 
             renderTestInfos = () => {
-                const {machineIp, ipAvailability, firmwareVersion, cameraAvailability, ipTestCountDown} = this.state;
+                const {machineIp, isIPValid, ipAvailability, firmwareVersion, cameraAvailability, ipTestCountDown} = this.state;
                 if (machineIp !== null) {
                     let ipStatus = `${ipTestCountDown}s`;
                     let cameraStatus = '';
                     if (ipAvailability !== null) {
                         ipStatus = ipAvailability ? 'OK' : 'Fail';
+                    }
+                    if (!isIPValid) {
+                        ipStatus = 'Invalid IP';
                     }
                     if (cameraAvailability !== null) {
                         cameraStatus = cameraAvailability ? 'OK' : 'Fail';
@@ -178,15 +182,24 @@ define([
 
             startTesting = () => {
                 const ip = this.refs.ipInput.value;
+                const isIPValid = ipRex.test(ip);
+                if (!isIPValid) {
+                    this.setState({
+                        machineIp: ip,
+                        isIPValid
+                    });
+                    return;
+                }
                 this.setState({
                     machineIp: ip,
+                    isIPValid,
                     ipAvailability: null,
                     firmwareVersion: null,
                     cameraAvailability: null,
                     device: null,
                     isTesting: true,
                     hadTested: false,
-                    ipTestCountDown: TIMEOUT
+                    ipTestCountDown: TIMEOUT,
                 });
                 this.discover.poke(ip);
                 clearInterval(this.testCountDown);
@@ -203,7 +216,7 @@ define([
                             clearInterval(this.testCountDown);
                         }
                     }
-                }, 1000)
+                }, 1000);
             }
 
             onFinish = () => {

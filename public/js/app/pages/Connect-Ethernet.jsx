@@ -40,15 +40,6 @@ define([
                                 </div>
                                 <div>{lang.connect_ethernet.tutorial3}</div>
                             </div>
-                            <div className={classNames('contents', 'what-if', {collapsed: !this.state.showCollapse})}>
-                                <div className="collapse-title" onClick={() => {this.setState({showCollapse: !this.state.showCollapse})}}>
-                                    {lang.connect_ethernet.what_if}
-                                    <div className="collapse-arrow"/>
-                                </div>
-                                <div className="collapse-contents">
-                                    {lang.connect_ethernet.what_if_content}
-                                </div>
-                            </div>
                             {this.renderNextButton()}
                         </div>
                     </div>
