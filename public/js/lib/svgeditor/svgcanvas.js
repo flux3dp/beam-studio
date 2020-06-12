@@ -5800,7 +5800,7 @@ define([
                 function _removeSvgText() {
                     if($(svg).find('text').length) {
                         Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_INFO,Alert,
+                            type: AlertConstants.SHOW_POPUP_INFO,
                             message: LANG.popup.no_support_text,
                         });
                         $(svg).find('text').remove();
@@ -8840,13 +8840,13 @@ define([
                 if (isContainNotSupportTag) {
                     Alert.popUp({
                         id: 'Offset',
-                        type: AlertConstants.SHOW_POP_WARNING,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
                         message: LANG.tool_panels._offset.not_support_message,
                     });
                 } else {
                     Alert.popUp({
                         id: 'Offset',
-                        type: AlertConstants.SHOW_POP_ERROR,
+                        type: AlertConstants.SHOW_POPUP_WARNING,
                         message: LANG.tool_panels._offset.fail_message,
                     });
                 }
@@ -9021,70 +9021,77 @@ define([
             if (!elems) {
                 elems = selectedElements;
             }
-            for (let i = 0; i < elems.length; ++i) {
-                elem = elems[i];
-                if (!elem || elem.tagName !== 'use') {
-                    continue;
-                }
-                SymbolMaker.switchImageSymbol(elem, false);
-
-                const layer = this.getObjectLayer(elem).elem;
-                const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
-                const drawing = getCurrentDrawing();
-
-                const wireframe = $(elem).data('wireframe');
-                let transform = $(elem).attr('transform') || '';
-                const translate = `translate(${$(elem).attr('x') || 0},${$(elem).attr('y') || 0})`
-                transform = `${transform} ${translate}`;
-                const href = this.getHref(elem);
-                const svg = $(href).toArray()[0];
-                let children = [...Array.from($(svg)[0].childNodes).reverse()];
-                let g = addSvgElementFromJson({
-                    'element': 'g',
-                    'attr': {
-                        'id': getNextId(),
-                        'transform': transform,
-                    }
-                });
-                while (children.length > 0) {
-                    topChild = children.pop();
-                    let copy = drawing.copyElem(topChild);
-                    if (topChild.tagName !== 'defs') {
-                        g.appendChild(copy);
-                    }
-                }
-                // apply style
-                let ascendents = [...g.childNodes];
-                while (ascendents.length > 0) {
-                    const topChild = ascendents.pop();
-                    if (topChild.tagName === 'g') {
-                        ascendents.push(...topChild.childNodes);
-                    } else {
-                        if (wireframe) {
-                            $(topChild).attr('stroke', color);
-                            $(topChild).attr('fill-opacity', 0);
-                            $(topChild).attr('fill', '#FFF');
+            Alert.popUp({
+                type: AlertConstants.SHOW_POPUP_WARNING,
+                message: LANG.popup.ungroup_use,
+                buttonType: AlertConstants.YES_NO,
+                onYes: () => {
+                    for (let i = 0; i < elems.length; ++i) {
+                        elem = elems[i];
+                        if (!elem || elem.tagName !== 'use') {
+                            continue;
                         }
+                        SymbolMaker.switchImageSymbol(elem, false);
+
+                        const layer = this.getObjectLayer(elem).elem;
+                        const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+                        const drawing = getCurrentDrawing();
+
+                        const wireframe = $(elem).data('wireframe');
+                        let transform = $(elem).attr('transform') || '';
+                        const translate = `translate(${$(elem).attr('x') || 0},${$(elem).attr('y') || 0})`
+                        transform = `${transform} ${translate}`;
+                        const href = this.getHref(elem);
+                        const svg = $(href).toArray()[0];
+                        let children = [...Array.from($(svg)[0].childNodes).reverse()];
+                        let g = addSvgElementFromJson({
+                            'element': 'g',
+                            'attr': {
+                                'id': getNextId(),
+                                'transform': transform,
+                            }
+                        });
+                        while (children.length > 0) {
+                            topChild = children.pop();
+                            let copy = drawing.copyElem(topChild);
+                            if (topChild.tagName !== 'defs') {
+                                g.appendChild(copy);
+                            }
+                        }
+                        // apply style
+                        let ascendents = [...g.childNodes];
+                        while (ascendents.length > 0) {
+                            const topChild = ascendents.pop();
+                            if (topChild.tagName === 'g') {
+                                ascendents.push(...topChild.childNodes);
+                            } else {
+                                if (wireframe) {
+                                    $(topChild).attr('stroke', color);
+                                    $(topChild).attr('fill-opacity', 0);
+                                    $(topChild).attr('fill', '#FFF');
+                                }
+                            }
+                            $(topChild).removeAttr('stroke-width');
+                            $(topChild).attr('vector-effect', 'non-scaling-stroke');
+                            $(topChild).attr('id', getNextId());
+                            $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                            svgedit.recalculate.recalculateDimensions(topChild);
+                        }
+                        //svg.parentNode.removeChild(svg);
+                        elem.parentNode.removeChild(elem);
+                        let angle = svgedit.utilities.getRotationAngle(g);
+                        if (angle) canvas.setRotationAngle(0, true, g);
+                        svgedit.recalculate.recalculateDimensions(g);
+                        if (angle) canvas.setRotationAngle(angle, true, g);
+                        selectOnly([g], true);
+                        // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
+                        this.ungroupSelectedElement();
+                        this.ungroupSelectedElement();
+                        this.ungroupSelectedElement();
+                        this.ungroupSelectedElement();
                     }
-                    $(topChild).removeAttr('stroke-width');
-                    $(topChild).attr('vector-effect', 'non-scaling-stroke');
-                    $(topChild).attr('id', getNextId());
-                    $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
-                    svgedit.recalculate.recalculateDimensions(topChild);
                 }
-                //svg.parentNode.removeChild(svg);
-                elem.parentNode.removeChild(elem);
-                let angle = svgedit.utilities.getRotationAngle(g);
-                if (angle) canvas.setRotationAngle(0, true, g);
-                svgedit.recalculate.recalculateDimensions(g);
-                if (angle) canvas.setRotationAngle(angle, true, g);
-                selectOnly([g], true);
-                // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
-                this.ungroupSelectedElement();
-                this.ungroupSelectedElement();
-                this.ungroupSelectedElement();
-                this.ungroupSelectedElement();
-            }
+            })
         }
 
         this.toggleBezierPathAlignToEdge = () => {
