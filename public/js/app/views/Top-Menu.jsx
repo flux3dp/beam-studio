@@ -643,17 +643,6 @@ define([
                     const diode = Number(layer.getAttribute('data-diode'));
                     return strength > 80 && diode !== 1;
                 });
-                const imageElems = document.querySelectorAll('image');
-                let isSpeedTooHigh = false;
-                for (let i = 1; i < imageElems.length; i++) {
-                    if (imageElems[i].getAttribute('data-shading') === 'true' && (
-                            (dpi === 'medium' && imageElems[i].parentNode.getAttribute('data-speed') > 135) ||
-                            (dpi === 'high' && imageElems[i].parentNode.getAttribute('data-speed') > 90)
-                    )) {
-                        isSpeedTooHigh = true;
-                        break;
-                    }
-                }
 
                 let isTooFastForPath = false;
                 const tooFastLayers = [];
@@ -674,19 +663,9 @@ define([
                     }
                 }
 
-                if (isPowerTooHigh && isSpeedTooHigh) {
-                    Alert.popUp({
-                        message: lang.beambox.popup.both_power_and_speed_too_high,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                    });
-                } else if (isPowerTooHigh) {
+                if (isPowerTooHigh) {
                     Alert.popUp({
                         message: lang.beambox.popup.power_too_high_damage_laser_tube,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                    });
-                } else if (isSpeedTooHigh) {
-                    Alert.popUp({
-                        message: lang.beambox.popup.speed_too_high_lower_the_quality,
                         type: AlertConstants.SHOW_POPUP_WARNING,
                     });
                 } else if (isTooFastForPath) {
@@ -702,13 +681,11 @@ define([
                             type: AlertConstants.SHOW_POPUP_WARNING,
                         });
                     }
-                        
                 }
 
                 Discover(
                     'top-menu',
                     function (machines) {
-                        //machines = Object.values(machines).filter(m => ['fbm1', 'fbb1b', 'fbb1p', 'laser-b1'].includes(m.model));
                         machines = DeviceList(machines);
                         refreshOption(machines);
                     }
