@@ -10729,6 +10729,12 @@ define([
                 d_x: x - old_x,
                 d_y: y - old_y
             });
+
+            clearTimeout(this.renderSymbolTimeout);
+            this.renderSymbolTimeout = setTimeout(() => {
+                SymbolMaker.reRenderAllImageSymbol();
+            }, 1000);
+
             return {
                 x: x,
                 y: y,

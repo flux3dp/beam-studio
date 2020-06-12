@@ -244,7 +244,8 @@ define([
         if (strokeWidth < 1.5) {
             strokeWidth = (strokeWidth / 1.5) ** (1 / 3) * 1.5;
         }
-        strokeWidth /= svgCanvas.getZoom() ;
+        const zoomRatio = Math.max(1, svgCanvas.getZoom());
+        strokeWidth /= zoomRatio;
         return strokeWidth;
     };
 
@@ -268,12 +269,19 @@ define([
         return new Promise((resolve, reject) => {
             data.id = requestId;
             electron.ipc.once(`SVG_URL_TO_IMG_URL_DONE_${requestId}`, (sender, url) => {
-                console.log(url);
                 resolve(url);
             });
             electron.ipc.send('SVG_URL_TO_IMG_URL', data);
             requestId = requestId + 1 % 10000;
         });
+    }
+
+    const calculateImageRatio = (bb) => {
+        const zoomRatio = Math.max(1, svgCanvas.getZoom());
+        const widthRatio = Math.min(4096, $(window).width() * zoomRatio) / bb.width;
+        const heightRatio = Math.min(4096, $(window).height() * zoomRatio) / bb.height;
+        const imageRatio = 2 * Math.ceil(10000 * Math.min(widthRatio, heightRatio)) / 10000;
+        return imageRatio;
     }
 
     const makeImageSymbol = async (symbol, scale=1, imageSymbol=null) => {
@@ -305,7 +313,7 @@ define([
                 bb = JSON.parse(bb);
             }
             const bbObject = {x: bb.x, y: bb.y, width: bb.width, height: bb.height};
-            const imageRatio = 2 * Math.ceil(10000 * Math.min($(window).width() / bb.width, $(window).height() / bb.height)) / 10000;
+            const imageRatio = calculateImageRatio(bb);
             const strokeWidth = getStrokeWidth(imageRatio, scale);
             const descendants = Array.from(tempSymbol.querySelectorAll('*'));
             descendants.forEach((d) => {
@@ -325,7 +333,7 @@ define([
             const svgUrl = URL.createObjectURL(svgBlob);
             const imgWidth = Math.max((bb.x + bb.width) * imageRatio, 1);
             const imgHeight = Math.max((bb.y + bb.height) * imageRatio, 1);
-            const imageUrl = await svgToImgUrlByShadowWindow ({svgUrl, imgWidth, imgHeight, bb: bbObject, imageRatio});
+            const imageUrl = await svgToImgUrlByShadowWindow({svgUrl, imgWidth, imgHeight, bb: bbObject, imageRatio});
             URL.revokeObjectURL(svgUrl);
             if (!imageSymbol) {
                 const image = svgdoc.createElementNS(NS.SVG, 'image');
