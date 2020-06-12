@@ -230,6 +230,7 @@ define([
                     pokeIPs.push(machineIp);
                     localStorage.setItem('poke-ip-addr', pokeIPs.join(','));
                 }
+                localStorage.setItem('printer-is-ready', true);
                 location.hash = '#studio/beambox';
                 location.reload();
             }
