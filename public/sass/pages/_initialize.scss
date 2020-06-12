@@ -168,9 +168,11 @@
                     &.what-if {
                         transition: all 0.3s ease;
                         .collapse-title {
+                            width: fit-content;
+                            height: 23px;
+                            line-height: 23px;
                             cursor: pointer;
                             font-weight: 500;
-                            width: fit-content;
                         }
                         .collapse-arrow {
                             transform: rotate(90deg);
