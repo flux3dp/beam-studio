@@ -196,7 +196,7 @@ define([
     const binarizeImage = async (image, threshold) => {
         await image.greyscale();
         for (let i=0; i<image.bitmap.data.length; i+=4) {
-            if(image.bitmap.data[i] >= threshold) {
+            if(image.bitmap.data[i] >= threshold || image.bitmap.data[i+3] === 0) {
                 image.bitmap.data[i] = 255;
                 image.bitmap.data[i+1] = 255;
                 image.bitmap.data[i+2] = 255;
