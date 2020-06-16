@@ -1216,6 +1216,10 @@ define(function() {
                 },
             },
             right_panel: {
+                tabs: {
+                    layers: '圖層',
+                    objects: '物件',
+                },
                 layer_panel: {
                     layer1: '預設圖層',
                     layer_bitmap: '點陣圖層',

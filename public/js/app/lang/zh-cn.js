@@ -1215,6 +1215,10 @@ define(function() {
                 },
             },
             right_panel: {
+                tabs: {
+                    layers: '图层',
+                    objects: '物件',
+                },
                 layer_panel: {
                     layer1: '默认图层',
                     layer_bitmap: '位图层',

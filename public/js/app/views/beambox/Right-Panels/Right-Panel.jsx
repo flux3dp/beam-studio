@@ -35,7 +35,6 @@ define([
 
         componentDidUpdate() {
             const { selectedElement } = this.context;
-            //console.log(selectedElement);
             const { selectedTab } = this.state;
             if (!selectedElement && selectedTab !== 'layers') {
                 this.setState({selectedTab: 'layers'});
@@ -55,15 +54,17 @@ define([
                     <div
                         className={classNames('tab', 'layers', {selected: selectedTab === 'layers'})}
                         onClick={() => {this.setState({selectedTab: 'layers'})}}>
+                        <img className="tab-icon" src="img/right-panel/icon-layers.svg"/>
                         <div className="tab-title">
-                            {'Layers'}   
+                            {LANG.tabs.layers}
                         </div>
                     </div>
                     <div
                         className={classNames('tab', 'objects', {disabled: isObjectDisabled, selected: selectedTab === 'objects'})}
                         onClick={() => {if (!isObjectDisabled) this.setState({selectedTab: 'objects'})}}>
+                        <img className="tab-icon" src="img/right-panel/icon-layers.svg"/>
                         <div className="tab-title">
-                            {'Objects'}   
+                            {LANG.tabs.objects}   
                         </div>
                     </div>
                 </div>
@@ -81,11 +82,9 @@ define([
         renderObjectPanel() {
             const { selectedElement } = this.context;
             return (
-                <ObjectPanelContextProvider>
                     <ObjectPanel
                         elem={selectedElement}
                     />
-                </ObjectPanelContextProvider>
             );
         }
 
@@ -102,7 +101,9 @@ define([
                 <div id="right-panel">
                     <div id="sidepanels">
                         {this.renderTabs()}
-                        {content}
+                        <ObjectPanelContextProvider>
+                            {content}
+                        </ObjectPanelContextProvider>
                     </div>
                 </div>
             );

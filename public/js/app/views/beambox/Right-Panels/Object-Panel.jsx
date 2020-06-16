@@ -109,13 +109,13 @@ define([
         }
 
         renderDimensionPanel = () => {
-            const { dimensionValues, updateDimensionValues } = this.context;
+            const { updateDimensionValues, getDimensionValues } = this.context;
             const { elem } = this.props;
             return (
                 <DimensionPanel 
                     elem={elem}
-                    dimensionValues={dimensionValues}
                     updateDimensionValues={updateDimensionValues}
+                    getDimensionValues={getDimensionValues}
                 />
             );
         }

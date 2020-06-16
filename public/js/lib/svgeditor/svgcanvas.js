@@ -2057,7 +2057,6 @@ define([
                         }
 
                         translateOrigin.setTranslate(-(left + tx), -(top + ty));
-                        console.log('TODO Object panel fix ratio')
                         if (evt.shiftKey) {
                             if (sx === 1) {
                                 sx = sy;

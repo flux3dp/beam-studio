@@ -22,15 +22,22 @@ define([
     const LANG = i18n.lang.beambox.right_panel.object_panel;
 
     const panelMap = {
-        'g': ['x', 'y', 'rot', 'w', 'h'],
-        'path': ['x', 'y', 'rot', 'w', 'h'],
-        'polygon': ['x', 'y', 'rot', 'w', 'h'],
-        'rect': ['x', 'y', 'rot', 'w', 'h'],
-        'ellipse': ['cx', 'cy', 'rot', 'rx', 'ry'],
+        'g': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'path': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'polygon': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'rect': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'ellipse': ['cx', 'cy', 'rot', 'rx', 'lock', 'ry'],
         'line': ['x1', 'y1', 'rot', 'x2', 'y2'],
-        'image': ['x', 'y', 'rot', 'w', 'h'],
-        'text': ['x', 'y', 'rot', 'w', 'h'],
-        'use': ['x', 'y', 'rot', 'w', 'h'],
+        'image': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'text': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'use': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+    };
+
+    const fixedSizeMapping = {
+        'width': 'height',
+        'height': 'width',
+        'rx': 'ry',
+        'ry': 'rx'
     };
 
     class DimensionPanel extends React.Component {
@@ -38,7 +45,6 @@ define([
             super(props);
             this.state = {
             };
-            console.log("ToDo: ratio fix");
         }
 
         componentWillUnmount() {
@@ -75,12 +81,14 @@ define([
             const newDimensionValue = {};
             newDimensionValue[type] = val;
             updateDimensionValues(newDimensionValue);
+            this.setState(this.state);
         }
 
         handleRotationChange = (val) => {
             const { elem, updateDimensionValues } = this.props;
             svgCanvas.setRotationAngle(val, false, elem);
             updateDimensionValues({rotation: val});
+            this.setState(this.state);
         }
 
         changeSize = (type, val) => {
@@ -114,22 +122,39 @@ define([
 
         handleSizeChange = (type, val) => {
             const batchCmd = new svgedit.history.BatchCommand('Object Panel Size Change');
-            const isRatioFixed = false;
+            const { updateDimensionValues, getDimensionValues } = this.props;
+            const dimensionValues = getDimensionValues();
+            const isRatioFixed = dimensionValues.isRatioFixed || false;
+
             const newDimensionValue = {};
             val *= Constant.dpmm;
             if (isRatioFixed) {
+                const ratio = val / parseFloat(dimensionValues[type]);
+                const otherType = fixedSizeMapping[type];
+                const newOtherTypeVal = ratio * parseFloat(dimensionValues[otherType]);
 
-            } else {
                 let cmd = this.changeSize(type, val);
-                newDimensionValue[type] = val;
                 if (cmd && !cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
                 }
+                cmd = this.changeSize(otherType, newOtherTypeVal);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
+                }
+                newDimensionValue[type] = val;
+                newDimensionValue[otherType] = newOtherTypeVal;
+            } else {
+                let cmd = this.changeSize(type, val);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
+                }
+                newDimensionValue[type] = val;
             }
             if (batchCmd && !batchCmd.isEmpty()) {
                 svgCanvas.undoMgr.addCommandToHistory(batchCmd);
             }
             updateDimensionValues(newDimensionValue);
+            this.setState(this.state);
         }
 
         handleSizeKeyUp = (e) => {
@@ -149,6 +174,13 @@ define([
             }
         }
 
+        handleFixRatio = () => {
+            const { getDimensionValues, updateDimensionValues } = this.props;
+            const isRatioFixed = getDimensionValues('isRatioFixed') || false;
+            updateDimensionValues({isRatioFixed: !isRatioFixed});
+            this.setState(this.state);
+        }
+
         getDisplayValue = (val) => {
             if (!val) {
                 return 0;
@@ -157,7 +189,9 @@ define([
         }
 
         renderDimensionPanel = (type) => {
-            const { dimensionValues } = this.props;
+            const { getDimensionValues } = this.props;
+            const dimensionValues = getDimensionValues();
+            const isRatioFixed = dimensionValues.isRatioFixed || false;
             const unit = localStorage.getItem('default-units') || 'mm';
             const isInch = unit === 'inches';
             switch(type) {
@@ -285,7 +319,7 @@ define([
                     )
                 case 'w':
                     return (
-                        <div className="dimension-container" key={type}>
+                        <div className="dimension-container lock-behind" key={type}>
                             <div className="label">{'W'}</div>
                             <UnitInput
                                 unit={isInch ? 'in' : 'mm'}
@@ -313,7 +347,7 @@ define([
                     );
                 case 'rx':
                     return (
-                        <div className="dimension-container" key={type}>
+                        <div className="dimension-container lock-behind" key={type}>
                             <div className="label">{'W'}</div>
                             <UnitInput
                                 unit={isInch ? 'in' : 'mm'}
@@ -331,8 +365,14 @@ define([
                                 unit={isInch ? 'in' : 'mm'}
                                 className={{'dimension-input': true}}
                                 defaultValue={this.getDisplayValue(dimensionValues.ry * 2)}
-                                getValue={(val) => this.handlePositionChange('ry', val / 2)}
+                                getValue={(val) => this.handleSizeChange('ry', val / 2)}
                             />
+                        </div>
+                    );
+                case 'lock':
+                    return (
+                        <div className='dimension-lock' key={type} onClick={() => this.handleFixRatio()}>
+                            <img src={isRatioFixed ? "img/right-panel/icon-lock.svg" : "img/right-panel/icon-padlock.svg"}/>
                         </div>
                     );
                 default:

@@ -1219,6 +1219,10 @@ define(function() {
                 },
             },
             right_panel: {
+                tabs: {
+                    layers: 'Layers',
+                    objects: 'Objects',
+                },
                 layer_panel: {
                     layer1: 'Layer 1',
                     layer_bitmap: 'Bitmap',

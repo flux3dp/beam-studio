@@ -25,6 +25,13 @@ define([
             };
         }
 
+        getDimensionValues = (key) => {
+            if (key) {
+                return this.dimensionValues[key];
+            }
+            return this.dimensionValues;
+        }
+
         updateObjectPanel = () => {
             clearTimeout(this.updateTimeout);
             const time = Date.now();
@@ -45,12 +52,14 @@ define([
             const {
                 dimensionValues,
                 updateDimensionValues,
+                getDimensionValues,
                 updateObjectPanel
             } = this;
             return (
                 <ObjectPanelContext.Provider value={{
                     dimensionValues,
                     updateDimensionValues,
+                    getDimensionValues,
                     updateObjectPanel
                 }}>
                     {this.props.children}

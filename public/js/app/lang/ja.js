@@ -1219,6 +1219,10 @@ define(function() {
                 },
             },
             right_panel: {
+                tabs: {
+                    layers: 'レイヤ',
+                    objects: 'オブジェクト',
+                },
                 layer_panel: {
                     layer1: 'レイヤ 1',
                     layer_bitmap: 'ビットマップ',

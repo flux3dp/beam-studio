@@ -14,6 +14,14 @@ define([
         }
     };
 
+    getDimensionValues = (key) => {
+        if (!ObjectPanel.contextCaller) {
+            //console.log('ObjectPanel is not mounted now.');
+        } else {
+            return ObjectPanel.contextCaller.getDimensionValues(key);
+        }
+    }
+
     updateObjectPanel = () => {
         if (!ObjectPanel.contextCaller) {
             //console.log('ObjectPanel is not mounted now.');
@@ -25,5 +33,6 @@ define([
     return {
         updateObjectPanel: updateObjectPanel,
         updateDimensionValues: updateDimensionValues,
+        getDimensionValues: getDimensionValues
     }
 });

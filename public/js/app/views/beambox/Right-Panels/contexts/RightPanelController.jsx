@@ -10,7 +10,7 @@ define([
         if (!elem) {
             BeamboxGlobalInteraction.onObjectBlur();
         } else {
-            BeamboxGlobalInteraction.onObjectFocus();
+            BeamboxGlobalInteraction.onObjectFocus([elem]);
         }
         if (!RightPanel.contextCaller) {
             console.log('RightPanel is not mounted now.');

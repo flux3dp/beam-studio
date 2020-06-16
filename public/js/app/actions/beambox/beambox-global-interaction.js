@@ -118,9 +118,9 @@ define([
             ]);
             ElectronUpdater.autoCheck();
         }
-        onObjectFocus() {
+        onObjectFocus(elems) {
             this.enableMenuItems(['DUPLICATE', 'PATH']);
-            let selectedElements = svgCanvas.getSelectedElems().filter((elem) => elem);
+            let selectedElements = elems || svgCanvas.getSelectedElems().filter((elem) => elem);
             if (selectedElements.length > 0 && selectedElements[0].getAttribute('data-tempgroup') === 'true') {
                 selectedElements = Array.from(selectedElements[0].childNodes);
             }
