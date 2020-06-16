@@ -54,7 +54,7 @@ define([
                     <div
                         className={classNames('tab', 'layers', {selected: selectedTab === 'layers'})}
                         onClick={() => {this.setState({selectedTab: 'layers'})}}>
-                        <img className="tab-icon" src="img/right-panel/icon-layers.svg"/>
+                        <img className="tab-icon" src="img/right-panel/icon-layers.svg" draggable={false}/>
                         <div className="tab-title">
                             {LANG.tabs.layers}
                         </div>
@@ -62,7 +62,7 @@ define([
                     <div
                         className={classNames('tab', 'objects', {disabled: isObjectDisabled, selected: selectedTab === 'objects'})}
                         onClick={() => {if (!isObjectDisabled) this.setState({selectedTab: 'objects'})}}>
-                        <img className="tab-icon" src="img/right-panel/icon-layers.svg"/>
+                        <img className="tab-icon" src="img/right-panel/icon-layers.svg" draggable={false}/>
                         <div className="tab-title">
                             {LANG.tabs.objects}   
                         </div>

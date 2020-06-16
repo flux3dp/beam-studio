@@ -103,7 +103,7 @@ define([
             }
             return (
                 <div className={className} onClick={() => {onClick()}} title={label}>
-                    <img src={src}/>
+                    <img src={src} draggable={false}/>
                 </div>
             );
         }
