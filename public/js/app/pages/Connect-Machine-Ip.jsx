@@ -41,6 +41,11 @@ define([
                     hadTested: false
                 };
 
+                const queryString = location.hash.split('?')[1] || '';
+                const urlParams = new URLSearchParams(queryString);
+
+                this.isWired = urlParams.get('wired') === '1';
+
                 this.discover = Discover('connect-machine-ip', (machines) => {
                     const deviceList = DeviceList(machines);
                     const {ipAvailability, machineIp} = this.state;
@@ -127,8 +132,8 @@ define([
                 return (
                     <div className="connection-machine-ip">
                         <div className="image-container">
-                            <div className="hint-circle ip"/>
-                            <img className="touch-panel-icon" src="img/init-panel/network-panel-en.png" draggable="false"/>
+                            <div className={classNames('hint-circle', 'ip', {wired: this.isWired})}/>
+                            <img className="touch-panel-icon" src={this.isWired ? "img/init-panel/network-panel-wired.png" : "img/init-panel/network-panel-wireless.png"} draggable="false"/>
                         </div>
                         <div className="text-container">
                             <div className="title">{lang.connect_machine_ip.enter_ip}</div>

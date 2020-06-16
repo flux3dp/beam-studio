@@ -128,6 +128,9 @@
                         height: 20px;
                         border-radius: 10px;
                         margin: 73px 0 0 0;
+                        &.wired {
+                            margin: 118px 0 0 0;
+                        }
                     }
                 }
                 .ethernet-icon {

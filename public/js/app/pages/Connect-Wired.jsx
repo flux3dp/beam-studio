@@ -69,7 +69,7 @@ define([
 
             renderNextButton = () => {
                 return (
-                    <div className="btn-page next" onClick={() => {location.hash='#initialize/connect/connect-machine-ip'}} >
+                    <div className="btn-page next" onClick={() => {location.hash='#initialize/connect/connect-machine-ip?wired=1'}} >
                         <div className="right-arrow"/>
                         {lang.next}
                     </div>
