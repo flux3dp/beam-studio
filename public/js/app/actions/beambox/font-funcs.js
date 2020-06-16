@@ -96,6 +96,11 @@ define([
         }
     });
 
+    const init = () => {
+        getFontOfPostscriptName('ArialMT');
+    }
+    init();
+
 
     const requestFontsOfTheFontFamily = memoize((family) => {
         const fonts = ipc.sendSync(events.FIND_FONTS, { family: family});

@@ -183,6 +183,10 @@ define([
             const zStep = _getZStep(name);
             const configName = getConfigName(name);
 
+            if (!document.getElementById(this.reactRoot)) {
+                return;
+            }
+
             ReactDOM.render(
                 <LaserPanel
                     configName={configName}

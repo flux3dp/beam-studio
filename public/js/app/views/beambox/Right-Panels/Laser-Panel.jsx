@@ -374,8 +374,13 @@ define([
                         getValue={this._handleStrengthChange}
                         decimal={1}
                         />
-                     <div className="rainbow-sidebar" onClick={onSlideBarClick.bind(this)}>
-                        <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.strength}%`}}/>
+                    <div className="slider-container">
+                        <input className={classNames('rainbow-slider')} type="range"
+                            min={minValue}
+                            max={maxValue}
+                            step={1}
+                            value={this.state.strength}
+                            onChange={(e) => {this._handleStrengthChange(e.target.value)}} />
                     </div>
                 </div>
             );
@@ -383,22 +388,6 @@ define([
         _renderSpeed = (hasVector, unit) => {
             const maxValue = 300;
             const minValue = 3;
-            const onSlideBarClick = (e) => {
-                const l = $('.rainbow-sidebar').offset().left;
-                const w = $('.rainbow-sidebar').width();
-                const newValue = Math.round((e.clientX - l) / w * (maxValue - minValue) + minValue);
-                this._handleSpeedChange(newValue);
-            };
-            const _handleDrag = (e) => {
-                const l = $('.rainbow-sidebar').offset().left;
-                const w = $('.rainbow-sidebar').width();
-                const x = e.clientX;
-                if (x < l || x > w + l) {
-                    return;
-                }
-                let newValue = Math.round((x - l) / w * (maxValue - minValue) + minValue);
-                this._handleSpeedChange(newValue);
-            };
             const maxValueDisplay = {mm: 300, inches: 12}[unit];
             const minValueDisplay = {mm: 3, inches: 0.118}[unit];
             const unitDisplay = {mm: 'mm/s', inches: 'in/s'}[unit];
@@ -415,8 +404,13 @@ define([
                         getValue={(val) => {this._handleSpeedChange(val, unit)}}
                         decimal={decimalDisplay}
                     />
-                    <div className={classNames('rainbow-sidebar', {'speed-for-vector': hasVector})} onClick={onSlideBarClick.bind(this)}>
-                        <div className="rainbow-drag" draggable="true" onDrag={_handleDrag.bind(this)} style={{left: `${this.state.speed/3}%`}} />
+                    <div className="slider-container">
+                        <input className={classNames('rainbow-slider', {'speed-for-vector': hasVector})} type="range"
+                            min={minValue}
+                            max={maxValue}
+                            step={1}
+                            value={this.state.speed}
+                            onChange={(e) => {this._handleSpeedChange(e.target.value)}} />
                     </div>
                 </div>
             );

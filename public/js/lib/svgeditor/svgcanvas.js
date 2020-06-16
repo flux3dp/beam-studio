@@ -32,9 +32,10 @@ define([
     'app/actions/beambox/beambox-preference',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'jsx!app/actions/beambox/Object-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'app/actions/beambox/preview-mode-controller',
+    'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
+    'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/progress-actions',
@@ -50,9 +51,10 @@ define([
     BeamboxPreference,
     Alert,
     AlertConstants,
-    ObjectPanelsController,
     LaserPanelController,
     PreviewModeController,
+    LayerPanelController,
+    ObjectPanelController,
     BeamboxActions,
     Constant,
     ProgressActions,
@@ -633,7 +635,7 @@ define([
                         svgcontent: svgcontent,
                         nonce: getCurrentDrawing().getNonce(),
                         selectorManager: selectorManager,
-                        ObjectPanelsController: ObjectPanelsController
+                        ObjectPanelController: ObjectPanelController,
                     }));
                 } else {
                     ext = ext_func;
@@ -1116,8 +1118,7 @@ define([
                 selectedElements.shift(0);
             }
             TopbarActions.updateTopMenu();
-            const currentLayerName = getCurrentDrawing().getCurrentLayerName();
-            LaserPanelController.render(currentLayerName);
+            LayerPanelController.updateLayerPanel();
         };
 
         // Function: selectOnly()
@@ -1292,6 +1293,7 @@ define([
                 r_start_x = null,
                 r_start_y = null,
                 init_bbox = {},
+                selectedBBox = null,
                 freehand = {
                     minx: null,
                     miny: null,
@@ -1520,7 +1522,6 @@ define([
                                 'height': 0,
                                 'display': 'inline'
                             }, 100);
-                            ObjectPanelsController.setEditable(false);
                         }
                         break;
                     case 'zoom':
@@ -1663,7 +1664,6 @@ define([
                             canvas.updateElementColor(newRect);
                         }
                         selectOnly([newRect], true);
-                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'line':
                         started = true;
@@ -1691,7 +1691,6 @@ define([
                             canvas.updateElementColor(newLine);
                         }
                         selectOnly([newLine], true);
-                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'circle':
                         started = true;
@@ -1707,7 +1706,6 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
-                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'ellipse':
                         started = true;
@@ -1729,7 +1727,6 @@ define([
                             canvas.updateElementColor(newElli);
                         }
                         selectOnly([newElli], true);
-                        ObjectPanelsController.setEditable(false);
                         break;
                     case 'text':
                         started = true;
@@ -1794,8 +1791,14 @@ define([
                     start_x: start_x,
                     start_y: start_y,
                     selectedElements: selectedElements,
-                    ObjectPanelsController: ObjectPanelsController
+                    ObjectPanelController: ObjectPanelController,
                 }, true);
+
+                if (selectedElements.length > 0 && selectedElements[0]) {
+                    selectedBBox = canvas.getSvgRealLocation(selectedElements[0]);
+                } else {
+                    selectedBBox = null;
+                }
 
                 $.each(ext_result, function (i, r) {
                     if (r && r.started) {
@@ -1912,8 +1915,19 @@ define([
                                     canvas.sensorAreaInfo.dy = dy * current_zoom;
                                 }
 
+                                if (selectedBBox) {
+                                    if (selectedElements[0].tagName === 'ellipse') {
+                                        ObjectPanelController.updateDimensionValues({
+                                            cx: selectedBBox.x + selectedBBox.width / 2 + dx,
+                                            cy: selectedBBox.y + selectedBBox.height / 2 + dy
+                                        });
+                                    } else {
+                                        ObjectPanelController.updateDimensionValues({x: selectedBBox.x + dx, y: selectedBBox.y + dy});
+                                    }
+                                }
+                                ObjectPanelController.updateObjectPanel();
+
                                 call('transition', selectedElements);
-                                ObjectPanelsController.setEditable(false);
                             }
                         }
                         break;
@@ -2043,7 +2057,8 @@ define([
                         }
 
                         translateOrigin.setTranslate(-(left + tx), -(top + ty));
-                        if (ObjectPanelsController.isResizeFixed() || evt.shiftKey) {
+                        console.log('TODO Object panel fix ratio')
+                        if (evt.shiftKey) {
                             if (sx === 1) {
                                 sx = sy;
                             } else {
@@ -2086,14 +2101,9 @@ define([
                                 const newTop = newCy - 0.5 * newHeight;
                                 
                                 if (selected.tagName === 'ellipse') {
-                                    ObjectPanelsController.setEllipsePositionX(newCx);
-                                    ObjectPanelsController.setEllipsePositionY(newCy);
-                                    ObjectPanelsController.setEllipseRadiusX(newWidth / 2);
-                                    ObjectPanelsController.setEllipseRadiusY(newHeight / 2);
+                                    ObjectPanelController.updateDimensionValues({cx: newCx, cy: newCy, rx: newWidth / 2, ry: newHeight / 2});
                                 } else {
-                                    ObjectPanelsController.setPosition(newLeft, newTop);
-                                    ObjectPanelsController.setWidth(newWidth);
-                                    ObjectPanelsController.setHeight(newHeight);
+                                    ObjectPanelController.updateDimensionValues({x: newLeft, y: newTop, width: newWidth, height: newHeight});
                                 }
                                 break;
                             case 'text':
@@ -2108,7 +2118,7 @@ define([
                         
                         selectorManager.requestSelector(selected).resize();
                         call('transition', selectedElements);
-                        ObjectPanelsController.setEditable(false);
+                        ObjectPanelController.updateObjectPanel();
                         if (svgedit.utilities.getElem('text_cursor')) {
                             svgCanvas.textActions.init();
                         }
@@ -2146,8 +2156,8 @@ define([
                         selectorManager.requestSelector(selected).resize();
                         shape.setAttributeNS(null, 'x2', x2);
                         shape.setAttributeNS(null, 'y2', y2);
-                        ObjectPanelsController.setLineX2(x2);
-                        ObjectPanelsController.setLineY2(y2);
+                        ObjectPanelController.updateDimensionValues({x2, y2});
+                        ObjectPanelController.updateObjectPanel();
                         break;
                     case 'foreignObject':
                         // fall through
@@ -2182,9 +2192,8 @@ define([
                             'x': new_x,
                             'y': new_y
                         }, 1000);
-                        ObjectPanelsController.setPosition(new_x, new_y);
-                        ObjectPanelsController.setWidth(w);
-                        ObjectPanelsController.setHeight(h);
+                        ObjectPanelController.updateDimensionValues({x: new_x, y: new_y, width: w, height: h});
+                        ObjectPanelController.updateObjectPanel();
                         selectorManager.requestSelector(selected).resize();
                         break;
                     case 'circle':
@@ -2206,8 +2215,8 @@ define([
                         var ry = Math.abs(evt.shiftKey ? (x - cx) : (y - cy));
                         shape.setAttributeNS(null, 'ry', ry);
 
-                        ObjectPanelsController.setEllipseRadiusX(Math.abs(x - cx));
-                        ObjectPanelsController.setEllipseRadiusY(ry);
+                        ObjectPanelController.updateDimensionValues({rx: Math.abs(x - cx), ry: ry});
+                        ObjectPanelController.updateObjectPanel();
                         selectorManager.requestSelector(selected).resize();
                         break;
                     case 'fhellipse':
@@ -2331,8 +2340,8 @@ define([
 
                         canvas.setRotationAngle(angle < -180 ? (360 + angle) : angle, true);
                         call('transition', selectedElements);
-                        ObjectPanelsController.setRotation(angle < -180 ? (360 + angle) : angle);
-                        ObjectPanelsController.setEditable(false);
+                        ObjectPanelController.updateDimensionValues({rotation: angle < -180 ? (360 + angle) : angle});
+                        ObjectPanelController.updateObjectPanel();
                         break;
                     default:
                         break;
@@ -2343,7 +2352,7 @@ define([
                     mouse_x: mouse_x,
                     mouse_y: mouse_y,
                     selected: selected,
-                    ObjectPanelsController: ObjectPanelsController
+                    ObjectPanelController: ObjectPanelController,
                 });
 
             }; // mouseMove()
@@ -2354,7 +2363,6 @@ define([
             // identified, a ChangeElementCommand is created and stored on the stack for those attrs
             // this is done in when we recalculate the selected dimensions()
             var mouseUp = async function (evt) {
-                ObjectPanelsController.setEditable(true);
                 if (evt.button === 2) {
                     return;
                 }
@@ -2484,7 +2492,7 @@ define([
                                 const targetLayer = svgCanvas.getObjectLayer(mouse_target);
                                 if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== current_layer) {
                                     svgCanvas.setCurrentLayer(targetLayer.title);
-                                    window.populateLayers();
+                                    LayerPanelController.updateLayerPanel();
                                     selectOnly([mouse_target], true);
                                 }
                             } // no change in mouse position
@@ -6116,7 +6124,7 @@ define([
                         svgCanvas.setCurrentLayer(defaultLayerName);
                         svgCanvas.deleteCurrentLayer();
                         window.updateContextPanel();
-                        window.populateLayers();
+                        LayerPanelController.updateLayerPanel();
                     }
                 }
             }
@@ -6302,7 +6310,7 @@ define([
         this.setCurrentLayer = function (name) {
             var result = getCurrentDrawing().setCurrentLayer(svgedit.utilities.toXml(name));
             if (result) {
-                clearSelection();
+                //clearSelection();
             }
             return result;
         };
@@ -7595,8 +7603,8 @@ define([
         //
         // Returns:
         // Boolean indicating whether or not element is italic
-        this.getItalic = function () {
-            var selected = selectedElements[0];
+        this.getItalic = function (elem) {
+            var selected = elem || selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 return (selected.getAttribute('font-style') === 'italic');
@@ -7627,8 +7635,8 @@ define([
             return cmd;
         };
 
-        this.getFontWeight = function () {
-            var selected = selectedElements[0];
+        this.getFontWeight = function (elem) {
+            var selected = elem || selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 return selected.getAttribute('font-weight');
@@ -7687,8 +7695,8 @@ define([
             }
         };
 
-        this.getLetterSpacing = function () {
-            var selected = selectedElements[0];
+        this.getLetterSpacing = function (elem) {
+            var selected = elem || selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 let val = selected.getAttribute('letter-spacing');
@@ -7721,8 +7729,8 @@ define([
 
         // Function: getFontFamily
         // Returns the current font family
-        this.getFontFamily = function () {
-            const selected = selectedElements[0];
+        this.getFontFamily = function (elem) {
+            const selected = elem || selectedElements[0];
             if (selected) {
                 return selected.getAttribute('font-family');
             }
@@ -7750,8 +7758,8 @@ define([
             return cmd;
         };
 
-        this.getFontPostscriptName = function () {
-            const selected = selectedElements[0];
+        this.getFontPostscriptName = function (elem) {
+            const selected = elem || selectedElements[0];
             if (selected) {
                 return selected.getAttribute('font-postscript');
             }
@@ -8227,7 +8235,7 @@ define([
         // attr - String with the attribute name
         // newValue - String or number with the new attribute value
         // elems - The DOM elements to apply the change to
-        var changeSelectedAttributeNoUndo = function (attr, newValue, elems) {
+        var changeSelectedAttributeNoUndo = this.changeSelectedAttributeNoUndo = function (attr, newValue, elems) {
             if (current_mode === 'pathedit') {
                 // Editing node
                 pathActions.moveNode(attr, newValue);
@@ -9655,11 +9663,15 @@ define([
 
                 // update selection
                 addToSelection(children);
+                this.tempGroupSelectedElements();
                 return children;
             }
         };
 
         this.tempGroupSelectedElements = function () {
+            if (selectedElements.length <= 1) {
+                return;
+            }
             const type = 'g';
 
             // create and insert the group element
@@ -10047,6 +10059,7 @@ define([
             const len = realSelectedElements.length;
 
             if (len < 3) {
+                this.tempGroupSelectedElements();
                 return;
             }
 
@@ -10066,6 +10079,7 @@ define([
             }
 
             if (indexMin === indexMax || maxX === minX) {
+                this.tempGroupSelectedElements();
                 return;
             }
 
@@ -10086,7 +10100,7 @@ define([
                 }
                 j = j+1;
             }
-
+            this.tempGroupSelectedElements();
         };
 
         this.distVert = function () {
@@ -10104,6 +10118,7 @@ define([
             const len = realSelectedElements.length;
 
             if (len < 3) {
+                this.tempGroupSelectedElements();
                 return;
             }
 
@@ -10123,6 +10138,7 @@ define([
             }
 
             if (indexMin === indexMax || maxY === minY) {
+                this.tempGroupSelectedElements();
                 return;
             }
 
@@ -10143,7 +10159,7 @@ define([
                 }
                 j = j+1;
             }
-
+            this.tempGroupSelectedElements();
         };
 
         this.distEven = function () {
@@ -10879,6 +10895,9 @@ define([
 
 
         this.getSvgRealLocation = function (elem) {
+            if (elem.tagName === 'text') {
+                return this.calculateTransformedBBox(elem);
+            }
             if (elem.tagName !== 'use') {
                 return elem.getBBox();
             }

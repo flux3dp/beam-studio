@@ -23,13 +23,14 @@ TODOS
 1. JSDoc
 */
 define([
-    'jsx!app/actions/beambox/Object-Panels-Controller',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'app/actions/beambox/preview-mode-controller',
     'jsx!app/actions/announcement',
     'jsx!app/views/beambox/DxfDpiSelector',
-    'jsx!app/views/beambox/Color-Picker-Panel',
+    'jsx!app/views/beambox/Right-Panels/contexts/RightPanelController',
+    'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
+    'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/topbar',
@@ -46,15 +47,16 @@ define([
     'app/constants/keycode-constants',
     'helpers/api/alert-config',
     'helpers/api/svg-laser-parser',
-    'lib/svgeditor/imagetracer'
+    'lib/svgeditor/imagetracer',
 ], function (
-    ObjectPanelsController,
     ToolPanelsController,
     LaserPanelController,
     PreviewModeController,
     Announcement,
     DxfDpiSelector,
-    ColorPickerPanel,
+    RightPanelController,
+    LayerPanelController,
+    ObjectPanelController,
     Alert,
     AlertConstants,
     TopbarActions,
@@ -1060,13 +1062,6 @@ define([
                 }
             };
 
-            var renderLayerLaserConfigs = function () {
-                var drawing = svgCanvas.getCurrentDrawing();
-                var currentLayerName = drawing.getCurrentLayerName();
-
-                LaserPanelController.render(currentLayerName);
-            };
-
             var showSourceEditor = function (e, forSaving) {
                 if (editingsource) {
                     return;
@@ -1518,7 +1513,6 @@ define([
                     $('#dialog_box').hide();
                 }
 
-                ObjectPanelsController.render();
             };
 
             var updateToolButtonState = function () {
@@ -1639,11 +1633,13 @@ define([
                 // updates the context panel tools based on the selected element
             var updateContextPanel = function () {
                 var elem = selectedElement;
-                ObjectPanelsController.setMe($(elem));
+                console.log(elem);
                 // If element has just been deleted, consider it null
                 if (elem != null && !elem.parentNode) {
                     elem = null;
                 }
+                RightPanelController.setSelectedElement(elem);
+                LayerPanelController.updateLayerPanel();
                 var currentLayerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
                 var currentMode = svgCanvas.getMode();
                 var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
@@ -1655,7 +1651,6 @@ define([
                         ' #use_panel, #a_panel').hide();
                 if (elem != null) {
                     var elname = elem.nodeName;
-                    ObjectPanelsController.setType(elname);
                     // If this is a link with no transform and one child, pretend
                     // its child is selected
                     //					if (elname === 'a') { // && !$(elem).attr('transform')) {
@@ -1664,7 +1659,7 @@ define([
 
                     var angle = svgCanvas.getRotationAngle(elem);
                     $('#angle').val(angle);
-                    ObjectPanelsController.setRotation(angle);
+                    ObjectPanelController.updateDimensionValues({rotation: angle});
 
                     var blurval = svgCanvas.getBlur(elem);
                     $('#blur').val(blurval);
@@ -1698,10 +1693,20 @@ define([
                                     y = bb.y;
                                     if (elname !== 'polyline') {
                                         let bbox = elem.getBBox();
-                                        ObjectPanelsController.setWidth(bbox.width);
-                                        ObjectPanelsController.setHeight(bbox.height);
+                                        ObjectPanelController.updateDimensionValues({
+                                            width: bbox.width,
+                                            height: bbox.height
+                                        });
                                     }
                                 }
+                            } else if (['text'].includes(elname)) {
+                                const bb = svgCanvas.calculateTransformedBBox(elem);
+                                x = bb.x;
+                                y = bb.y;
+                                ObjectPanelController.updateDimensionValues({
+                                    width: bb.width,
+                                    height: bb.height
+                                });
                             } else {
                                 x = elem.getAttribute('x');
                                 y = elem.getAttribute('y');
@@ -1715,7 +1720,10 @@ define([
                             $('#selected_x').val(x || 0);
                             $('#selected_y').val(y || 0);
                             $('#xy_panel').show();
-                            ObjectPanelsController.setPosition(x || 0, y || 0);
+                            ObjectPanelController.updateDimensionValues({
+                                x: parseFloat(x) || 0,
+                                y: parseFloat(y) || 0
+                            });
                         }
 
                         // Elements in this array cannot be converted to a path
@@ -1762,24 +1770,8 @@ define([
                         text: [],
                         use: []
                     };
-                    const objectPanelsControllerSetter = {
-                        width: ObjectPanelsController.setWidth,
-                        height: ObjectPanelsController.setHeight,
-                        cx: ObjectPanelsController.setEllipsePositionX,
-                        cy: ObjectPanelsController.setEllipsePositionY,
-                        rx: (elem.tagName === 'rect') ? ObjectPanelsController.setRectRoundedCornerRadiusX : ObjectPanelsController.setEllipseRadiusX,
-                        ry: ObjectPanelsController.setEllipseRadiusY,
-                        x1: ObjectPanelsController.setLineX1,
-                        y1: ObjectPanelsController.setLineY1,
-                        x2: ObjectPanelsController.setLineX2,
-                        y2: ObjectPanelsController.setLineY2,
-                    };
 
                     var el_name = elem.tagName;
-
-                    //					if ($(elem).data('gsvg')) {
-                    //						$('#g_panel').show();
-                    //					}
 
                     var link_href = null;
                     if (el_name === 'a') {
@@ -1805,6 +1797,7 @@ define([
                         const cur_panels = panels[el_name];
 
                         $('#' + el_name + '_panel').show();
+                        const newDimensionValue = {};
 
                         $.each(cur_panels, function (i, item) {
                             var attrVal = elem.getAttribute(item);
@@ -1813,8 +1806,9 @@ define([
                                 attrVal = svgedit.units.convertUnit(bv);
                             }
                             $('#' + el_name + '_' + item).val(attrVal || 0);
-                            objectPanelsControllerSetter[item](attrVal);
+                            newDimensionValue[item] = attrVal;
                         });
+                        ObjectPanelController.updateDimensionValues(newDimensionValue);
 
                         if (el_name === 'text') {
                             $('#text_panel').css('display', 'inline');
@@ -1838,18 +1832,6 @@ define([
                                     $('#text').focus().select();
                                 }, 100);
                             }
-                            ObjectPanelsController.setFontPostscriptName(svgCanvas.getFontPostscriptName());
-                            ObjectPanelsController.setFontFamily(svgCanvas.getFontFamily());
-                            ObjectPanelsController.setFontSize(Number(svgCanvas.getFontSize()));
-
-                            ObjectPanelsController.setFontStyle({
-                                weight: Number(svgCanvas.getFontWeight()),
-                                italic: svgCanvas.getItalic()
-                            });
-                            ObjectPanelsController.setLetterSpacing(svgCanvas.getLetterSpacing());
-                            ObjectPanelsController.setLineSpacing(svgCanvas.getTextLineSpacing());
-                            ObjectPanelsController.setTextIsVertical(svgCanvas.getTextIsVertical());
-                            ObjectPanelsController.setFontIsFill(svgCanvas.getFontIsFill());
                         } // text
                         else if (el_name === 'image') {
                             if (svgCanvas.getMode() === 'image') {
@@ -1863,8 +1845,6 @@ define([
                             } else {
                                 shading = Boolean(shading);
                             }
-                            ObjectPanelsController.setImageShading(shading);
-                            ObjectPanelsController.setImageThreshold(threshold);
                         } // image
                         else if (el_name === 'g' || el_name === 'use') {
                             $('#container_panel').show();
@@ -1876,9 +1856,12 @@ define([
 
                             if ((el_name === 'use') && ($(elem).attr('data-xform'))) {
                                 const location = svgCanvas.getSvgRealLocation(elem);
-                                ObjectPanelsController.setPosition(location.x, location.y);
-                                ObjectPanelsController.setWidth(location.width);
-                                ObjectPanelsController.setHeight(location.height);
+                                ObjectPanelController.updateDimensionValues({
+                                    x: location.x,
+                                    y: location.y,
+                                    width: location.width,
+                                    height: location.height
+                                });
                             }
                         }
                         else if (el_name === 'path') {
@@ -1895,7 +1878,6 @@ define([
                         menu_items[((el_name === 'g' || !multiselected) ? 'dis' : 'en') + 'ableContextMenuItems']('#group');
                     }
 
-                    ObjectPanelsController.render();
                 } // if (elem != null)
                 else if (multiselected) {
                     $('#multiselected_panel').show();
@@ -1922,6 +1904,8 @@ define([
                     $('#selLayerNames').attr('disabled', 'disabled');
                     displayChangeLayerBlock(false);
                 }
+
+                ObjectPanelController.updateObjectPanel();
             };
 
             var updateWireFrame = function () {
@@ -2045,7 +2029,7 @@ define([
 
                     var isSvgElem = (elem && elem.tagName === 'svg');
                     if (isSvgElem || isLayer(elem)) {
-                        window.populateLayers();
+                        LayerPanelController.updateLayerPanel();
                         // if the element changed was the svg, then it could be a resolution change
                         if (isSvgElem) {
                             updateCanvas();
@@ -3167,7 +3151,7 @@ define([
                     promptMoveLayerOnce = true;
                     svgCanvas.moveSelectedToLayer(destLayer);
                     svgCanvas.clearSelection();
-                    window.populateLayers();
+                    LayerPanelController.updateLayerPanel();
                 };
                 if (destLayer) {
                     if (promptMoveLayerOnce) {
@@ -3701,8 +3685,6 @@ define([
                         ToolPanelsController.setVisibility(ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible);
                         ToolPanelsController.setType('gridArray');
                         ToolPanelsController.render();
-                        ObjectPanelsController.setVisibility(false);
-                        ObjectPanelsController.render();
                     } else {
                         Alert.popUp({
                             id: 'select first',
@@ -3720,8 +3702,6 @@ define([
                     ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
                     ToolPanelsController.setType('offset');
                     ToolPanelsController.render();
-                    ObjectPanelsController.setVisibility(false);
-                    ObjectPanelsController.render();
                 } else {
                     Alert.popUp({
                         id: 'select first',
@@ -3737,8 +3717,6 @@ define([
                     ToolPanelsController.setVisibility(ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible);
                     ToolPanelsController.setType('nest');
                     ToolPanelsController.render();
-                    ObjectPanelsController.setVisibility(false);
-                    ObjectPanelsController.render();
                 } else {
                     Alert.popUp({
                         id: 'select first',
@@ -3958,26 +3936,6 @@ define([
                 path.opencloseSubPath();
             };
 
-            var selectNext = function () {
-                svgCanvas.cycleElement(1);
-            };
-
-            var selectPrev = function () {
-                svgCanvas.cycleElement(0);
-            };
-
-            var rotateSelected = function (cw, step) {
-                if (selectedElement == null || multiselected) {
-                    return;
-                }
-                if (!cw) {
-                    step *= -1;
-                }
-                var angle = parseFloat($('#angle').val()) + step;
-                svgCanvas.setRotationAngle(angle);
-                updateContextPanel();
-            };
-
             var clickClear = function() {
                 var dims = curConfig.dimensions;
                 Alert.popUp({
@@ -3990,7 +3948,7 @@ define([
                         svgCanvas.setResolution(dims[0], dims[1]);
                         updateCanvas(true);
                         unzoom();
-                        window.populateLayers();
+                        LayerPanelController.updateLayerPanel();
                         updateContextPanel();
                         prepPaints();
                         svgedit.transformlist.resetListMap();
@@ -4082,7 +4040,7 @@ define([
             var clickUndo = function () {
                 if (undoMgr.getUndoStackSize() > 0) {
                     undoMgr.undo();
-                    window.populateLayers();
+                    LayerPanelController.updateLayerPanel();
                 }
             };
             editor.clickUndo = clickUndo;
@@ -4091,7 +4049,7 @@ define([
             var clickRedo = function () {
                 if (undoMgr.getRedoStackSize() > 0) {
                     undoMgr.redo();
-                    window.populateLayers();
+                    LayerPanelController.updateLayerPanel();
                 }
             };
             editor.clickRedo = clickRedo;
@@ -4209,7 +4167,7 @@ define([
                     svgCanvas.clearSelection();
                     hideSourceEditor();
                     unzoom();
-                    window.populateLayers();
+                    LayerPanelController.updateLayerPanel();
                     updateTitle();
                     prepPaints();
                 };
@@ -4365,7 +4323,6 @@ define([
 
             (function () {
                 workarea.scroll(function () {
-                    ObjectPanelsController.render();
                     // TODO: jQuery's scrollLeft/Top() wouldn't require a null check
                     if ($('#ruler_x').length !== 0) {
                         $('#ruler_x')[0].scrollLeft = workarea[0].scrollLeft;
@@ -4678,7 +4635,7 @@ define([
                 $(this).removeClass('push_button_pressed').addClass('push_button');
             });
 
-            window.populateLayers();
+            LayerPanelController.updateLayerPanel();
 
             //	function changeResolution(x,y) {
             //		var zoom = svgCanvas.getResolution().zoom;
@@ -5492,6 +5449,62 @@ define([
                         reader.readAsArrayBuffer(file);
                     });
                 }
+                replaceBitmap = async (file, imageElem) => {
+                    Alert.popUp({id: 'loading_image', message: uiStrings.notification.loadingImage,});
+                    return new Promise((resolve, reject) => {
+                        reader = new FileReader();
+                        reader.onloadend = async function (e) {
+                            let rotationFlag = getExifRotationFlag(e.target.result);
+                            console.log(rotationFlag);
+                            var img = new Image();
+                            var blob = new Blob([reader.result]);
+                            const src = URL.createObjectURL(blob);
+                            img.src = src;
+                            img.style.opacity = 0;
+                            img.onload = function () {
+                                let imgWidth = img.width;
+                                let imgHeight = img.height;
+                                console.log(imgWidth, imgHeight);
+                                ImageData(
+                                    src, {
+                                        width: imgWidth,
+                                        height: imgHeight,
+                                        rotationFlag,
+                                        grayscale: {
+                                            is_rgba: true,
+                                            is_shading: imageElem.getAttribute('data-shading') === 'true',
+                                            threshold: parseInt(imageElem.getAttribute('data-threshold')),
+                                            is_svg: false
+                                        },
+                                        onComplete: function (result) {
+                                            const batchCmd = new svgedit.history.BatchCommand('Replace Image');
+                                            let cmd;
+                                            svgCanvas.undoMgr.beginUndoableChange('origImage', [imageElem]);
+                                            imageElem.setAttribute('origImage', src);
+                                            cmd = svgCanvas.undoMgr.finishUndoableChange();
+                                            if (!cmd.isEmpty()) {
+                                                batchCmd.addSubCommand(cmd);
+                                            }
+                                            svgCanvas.undoMgr.beginUndoableChange('xlink:href', [imageElem]);
+                                            imageElem.setAttribute('xlink:href', result.canvas.toDataURL());
+                                            cmd = svgCanvas.undoMgr.finishUndoableChange();
+                                            if (!cmd.isEmpty()) {
+                                                batchCmd.addSubCommand(cmd);
+                                            }
+                                            svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+                                            updateContextPanel();
+                                            Alert.popAlertStackById('loading_image');
+                                            resolve();
+                                        }
+                                    }
+                                );
+                            };
+                        };
+                        reader.readAsArrayBuffer(file);
+                    });
+                }
+                editor.replaceBitmap = replaceBitmap;
+
                 // Get exif rotation data ref: https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side
                 getExifRotationFlag = (arrayBuffer) => {
                     let view = new DataView(arrayBuffer);
@@ -5913,7 +5926,6 @@ define([
                             } else {
                                 BeamboxPreference.write('enable-diode', false);
                             }
-                            renderLayerLaserConfigs();
                         }
                         match = str.match(/data-en_af="([a-zA-Z]+)"/);
                         if (match && match[1]) {
@@ -5922,8 +5934,8 @@ define([
                             } else {
                                 BeamboxPreference.write('enable-autofocus', false);
                             }
-                            renderLayerLaserConfigs();
                         }
+                        LayerPanelController.updateLayerPanel();
                         match = str.match(/data-zoom="[0-9\.]+"/);
                         if (match) {
                             let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
@@ -5991,7 +6003,6 @@ define([
                             } else {
                                 BeamboxPreference.write('enable-diode', false);
                             }
-                            renderLayerLaserConfigs();
                         }
                         match = str.match(/data-en_af="([a-zA-Z]+)"/);
                         if (match && match[1]) {
@@ -6000,8 +6011,8 @@ define([
                             } else {
                                 BeamboxPreference.write('enable-autofocus', false);
                             }
-                            renderLayerLaserConfigs();
                         }
+                        LayerPanelController.updateLayerPanel();
                         match = str.match(/data-zoom="[0-9\.]+"/);
                         if (match) {
                             let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
@@ -6221,7 +6232,7 @@ define([
 
                 if (rename_layer) {
                     svgCanvas.renameCurrentLayer(uiStrings.common.layer + ' 1');
-                    window.populateLayers();
+                    LayerPanelController.updateLayerPanel();
                 }
 
                 // In case extensions loaded before the locale, now we execute a callback on them
@@ -6298,7 +6309,7 @@ define([
         };
 
         editor.resetView = function() {
-            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 20) / Constant.dimension.getWidth(), ($('#workarea').height() - 20) / Constant.dimension.getHeight());
+            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 70) / Constant.dimension.getWidth(), ($('#workarea').height() - 20) / Constant.dimension.getHeight());
             const zoomLevel = workareaToDimensionRatio;
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel

@@ -27,6 +27,7 @@ define([
     TextPanel,
     ShadingThresholdPanel
 ) {
+    // OLD Object Panels, deprecated now. Use object panel in right panels folder.
     const React = require('react');
 
     const validPanelsMap = {

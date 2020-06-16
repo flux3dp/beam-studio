@@ -9,6 +9,7 @@ define([
     Constant,
     BeamboxGlobalInteraction
 ){
+    // Old Object Panel, Deprecated now.
     const React = require('react');
     const ReactDOM = require('react-dom');
     let _pixel2mm = function(pixel_input) {

@@ -3,6 +3,7 @@ define([
     'jsx!app/views/beambox/Color-Picker-Panel',
     'jsx!contexts/DialogCaller',
     'app/contexts/AlertCaller',
+    'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
     'app/constants/alert-constants',
     'helpers/i18n'
 ], function(
@@ -10,12 +11,15 @@ define([
     ColorPickerPanel,
     DialogCaller,
     Alert,
+    { LayerPanelContext },
     AlertConstants,
     i18n
 ) {
     const React = require('react');
     const classNames = require('classnames');
     const LANG = i18n.lang.beambox.right_panel.layer_panel;
+
+    let ret = {};
 
     class LayerPanel extends React.Component {
         constructor() {
@@ -28,9 +32,17 @@ define([
         }
 
         componentDidMount() {
+            ret.contextCaller = this.context;
+            this.renderLayerLaserConfigs();
+        }
+
+        componentDidUpdate() {
+            this.renderLayerLaserConfigs();
         }
 
         componentWillUnmount() {
+            window.populateLayers = () => {};
+            ret.contextCaller = null;
         }
 
         addLayerLaserConfig = (layername) => {
@@ -42,10 +54,11 @@ define([
         };
 
         renderLayerLaserConfigs = () => {
-            const drawing = svgCanvas.getCurrentDrawing();
-            const currentLayerName = drawing.getCurrentLayerName();
-
-            LaserPanelController.render(currentLayerName);
+            if (window.svgCanvas) {
+                const drawing = svgCanvas.getCurrentDrawing();
+                const currentLayerName = drawing.getCurrentLayerName();
+                LaserPanelController.render(currentLayerName);
+            }
         };
 
         addNewLayer = () => {
@@ -183,7 +196,6 @@ define([
                 svgCanvas.moveSelectedToLayer(destLayer);
                 drawing.setCurrentLayer(destLayer);
                 this.setState(this.state);
-                svgCanvas.clearSelection();
             };
             if (destLayer) {
                 if (this.promptMoveLayerOnce) {
@@ -200,10 +212,10 @@ define([
         }
 
         selectLayer = (layerName) => {
+            svgCanvas.clearSelection();
             const drawing = svgCanvas.getCurrentDrawing();
             const res = drawing.setCurrentLayer(layerName);
             if (res) {
-                svgCanvas.clearSelection();
                 this.renderLayerLaserConfigs();
                 svgCanvas.selectAllInCurrentLayer();
                 this.setState(this.state);
@@ -288,7 +300,6 @@ define([
         }
 
         renderLayerList = () => {
-            svgCanvas.clearSelection();
             const layers = [];
             const drawing = svgCanvas.getCurrentDrawing();
             const layerCount = drawing.getNumLayers();
@@ -349,16 +360,26 @@ define([
 
             return (
                 <div className='selLayerBlock controls'>
-                    <span id="selLayerLabel">Move elements to:</span>
+                    <span id="selLayerLabel">{LANG.move_elems_to}</span>
                     <select
                         value={currentLayerName}
                         id="selLayerNames"
                         title="Move selected elements to a different layer"
-                        disabled="disabled"
                         onChange={(e) => this.moveToOtherLayer(e)}
+                        disabled={options.length < 2}
                     >
                         {options}
                     </select>
+                </div>
+            );
+        }
+
+        renderAddLayerButton() {
+            return (
+                <div className="add-layer-btn" onClick={() => {this.addNewLayer()}}>
+                    <div className= "bar bar1"/>
+                    <div className= "bar bar2"/>
+                    <div className= "bar bar3"/>
                 </div>
             );
         }
@@ -372,47 +393,33 @@ define([
                 return null;
             }
             return (
-                <div id="layerpanel" onMouseOut={() => this.highlightLayer()}>
-                    <fieldset id="layerbuttons">
-                        <div id="layer_new" className="layer_button" title="New Layer" onClick={this.addNewLayer}>
-                            <i className="fa fa-plus" />
-                        </div>
-                        <div id="layer_delete" className="layer_button" title="Delete Layer" onClick={this.deleteLayer}>
-                            <i className="fa fa-trash-o" />
-                        </div>
-                        <div id="layer_rename" className="layer_button" title="Rename Layer" onClick={this.renameLayer}>
-                            <i className="fa fa-font" />
-                        </div>
-                        <div id="layer_up" className="layer_button" title="Move Layer Up" onClick={() => {this.moveLayerRel(1)}}>
-                            <i className="fa fa-arrow-up" />
-                        </div>
-                        <div id="layer_down" className="layer_button" title="Move Layer Down" onClick={() => {this.moveLayerRel(-1)}}>
-                            <i className="fa fa-arrow-down" />
-                        </div>
-                        <ContextMenuTrigger id="layer-contextmenu" holdToDisplay={0}>
-                            <div id="layer_moreopts" className="layer_button" title="More Options">
-                                <i className="fa fa-bars" />
+                <div id="layer-and-laser-panel">
+                    <div id="layerpanel" onMouseOut={() => this.highlightLayer()}>
+                        
+                        <ContextMenuTrigger id="layer-contextmenu" holdToDisplay={-1}>
+                            <div id="layerlist_container">
+                                <div id="color_picker_placeholder"></div>
+                                {this.renderLayerList()}
                             </div>
                         </ContextMenuTrigger>
-                    </fieldset>
-                    <ContextMenuTrigger id="layer-contextmenu" holdToDisplay={-1}>
-                        <div id="layerlist_container">
-                            <div id="color_picker_placeholder"></div>
-                            {this.renderLayerList()}
-                        </div>
-                    </ContextMenuTrigger>
-                    {this.renderSelLayerBlock()}
+                        {this.renderAddLayerButton()}
+                        {this.renderSelLayerBlock()}
 
-                    <ContextMenu id="layer-contextmenu">
-                        <MenuItem onClick={this.cloneLayer}>{LANG.layers.dupe}</MenuItem>
-                        <MenuItem onClick={this.lockLayer}>{LANG.layers.lock}</MenuItem>
-                        <MenuItem onClick={this.mergeLayer}>{LANG.layers.merge_down}</MenuItem>
-                        <MenuItem onClick={this.mergeAllLayer}>{LANG.layers.merge_all}</MenuItem>
-                    </ContextMenu>
+                        <ContextMenu id="layer-contextmenu">
+                            <MenuItem onClick={this.cloneLayer}>{LANG.layers.dupe}</MenuItem>
+                            <MenuItem onClick={this.lockLayer}>{LANG.layers.lock}</MenuItem>
+                            <MenuItem onClick={this.deleteLayer}>{LANG.layers.del}</MenuItem>
+                            <MenuItem onClick={this.mergeLayer}>{LANG.layers.merge_down}</MenuItem>
+                            <MenuItem onClick={this.mergeAllLayer}>{LANG.layers.merge_all}</MenuItem>
+                        </ContextMenu>
+                    </div>
+                    <div id="layer-laser-panel-placeholder"/>
                 </div>
             );
         }
-    } 
+    }
+    LayerPanel.contextType = LayerPanelContext;
+    ret.LayerPanel = LayerPanel;
 
-    return LayerPanel;
+    return ret;
 });

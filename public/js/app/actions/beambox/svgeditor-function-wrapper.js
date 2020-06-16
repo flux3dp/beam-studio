@@ -43,6 +43,7 @@ define([
         const len = selectedElements.filter(e => e).length;
         const mode = len > 1 ? 'selected' : 'page';
         svgCanvas.alignSelectedElements(types, mode);
+        svgCanvas.tempGroupSelectedElements();
     };
 
     const funcs =  {

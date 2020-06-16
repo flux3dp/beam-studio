@@ -146,7 +146,6 @@ svgEditor.addExtension('polygon', function (S) {
                     svgCanvas.updateElementColor(newPoly);
                 }
                 svgCanvas.clearSelection();
-                opts.ObjectPanelsController.setEditable(false);
                 return {
                     started: true
                 };
@@ -194,9 +193,8 @@ svgEditor.addExtension('polygon', function (S) {
                 } else {
                     svgCanvas.selectorManager.requestSelector(opts.selected).resize();
                     const bbox = newPoly.getBBox();
-                    opts.ObjectPanelsController.setPosition(bbox.x, bbox.y);
-                    opts.ObjectPanelsController.setWidth(bbox.width);
-                    opts.ObjectPanelsController.setHeight(bbox.height);
+                    opts.ObjectPanelController.updateDimensionValues({x: bbox.x, y: bbox.y, width: bbox.width, height: bbox.height});
+                    opts.ObjectPanelController.updateObjectPanel();
                 }
                 return {
                     started: true

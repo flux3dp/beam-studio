@@ -74,6 +74,10 @@ define([
             this.props.onBlur();
         }
 
+        _handleFocus(e) {
+            this.props.onFocus();
+        }
+
         _handleChange(e) {
             this.setState({displayValue: e.target.value});
         }
@@ -110,10 +114,10 @@ define([
                     this.setState({displayValue: this.getTransformedValue(this.state.savedValue)});
                     return;
                 case keyCodeConstants.KEY_UP:
-                    if (!this.props.isDoOnInput) this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step + step);
+                    if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step + step);
                     return;
                 case keyCodeConstants.KEY_DOWN:
-                    if (!this.props.isDoOnInput) this._updateValue(Math.round( parseFloat(this.state.savedValue / step) ) * step - step);
+                    if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step - step);
                     return;
                 default:
                     return;
@@ -156,6 +160,7 @@ define([
                         type={this.props.type}
                         step={this.props.step}
                         value={this.state.displayValue}
+                        onFocus={(e) => {this._handleFocus(e)}}
                         onBlur={this._handleBlur}
                         onKeyUp={this._handleKeyUp}
                         onKeyDown={this._handleKeyDown}
@@ -183,6 +188,7 @@ define([
         isDoOnInput: PropTypes.bool,
         onKeyUp: PropTypes.func,
         onBlur: PropTypes.func,
+        onFocus: PropTypes.func,
     };
     UnitInput.defaultProps = {
         getValue: function(NewValue) {},
@@ -199,6 +205,7 @@ define([
         isDoOnInput: false,
         onKeyUp: () => {},
         onBlur: () => {},
+        onFocus: () => {},
     };
     return UnitInput;
 });

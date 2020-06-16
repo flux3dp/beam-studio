@@ -160,6 +160,7 @@ define([
     'helpers/i18n',
     'jsx!views/beambox/Task-Interpreter-Panel',
     'jsx!views/beambox/Right-Panels/Right-Panel',
+    'jsx!views/beambox/Right-Panels/contexts/RightPanelContext',
 
     'jsHotkeys',
     'jquerybbq',
@@ -207,11 +208,14 @@ define([
 ], function (
     i18n,
     TaskInterpreterPanel,
-    RightPanel
+    RightPanel,
+    RightPanelContext
 ) {
     'use strict';
     const React = require('react');
     let LANG = i18n.lang.beambox;
+    RightPanel = RightPanel.RightPanel;
+    const RightPanelContextProvider = RightPanelContext.RightPanelContextProvider;
 
     class view extends React.Component {
         componentDidMount(node) {
@@ -261,7 +265,9 @@ define([
                                 }}
                             />
                         </div>
-                        <RightPanel />
+                        <RightPanelContextProvider>
+                            <RightPanel />
+                        </RightPanelContextProvider>
                         <div id="main_button">
                             <div id="main_icon" className="tool_button" title="Main Menu">
                                 <span>SVG-Edit</span>
@@ -1413,20 +1419,6 @@ define([
                             <a href="#move_back" onClick={this._handleDisableHref}>
                                 Send to Back
                             </a>
-                        </li>
-                    </ul>
-                    <ul id="cmenu_layers" className="contextMenu">
-                        <li>
-                            <a href="#dupe" onClick={this._handleDisableHref}>Duplicate Layer...</a>
-                        </li>
-                        <li>
-                            <a href="#lock" onClick={this._handleDisableHref}>Lock Layer</a>
-                        </li>
-                        <li>
-                            <a href="#merge_down" onClick={this._handleDisableHref}>Merge Down</a>
-                        </li>
-                        <li>
-                            <a href="#merge_all" onClick={this._handleDisableHref}>Merge All</a>
                         </li>
                     </ul>
                 </div>

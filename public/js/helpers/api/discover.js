@@ -117,7 +117,7 @@ define([
             });
         } catch (e) {
             if (e.toString().includes('ENOTFOUND')) {
-                console.log('DNS server not found raspberrypi.local');
+                console.log('raspberrypi.local not found by DNS server.');
             } else {
                 console.log(`Error when dns looking up raspberrypi:\n${e}`);
             }

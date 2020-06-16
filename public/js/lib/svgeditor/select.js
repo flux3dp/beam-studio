@@ -16,10 +16,8 @@
 // 4) math.js
 // 5) svgutils.js
 define([
-	'jsx!app/actions/beambox/Object-Panels-Controller',
 	'jsx!app/actions/beambox/Tool-Panels-Controller'
 ], function(
-	ObjectPanelsController,
 	ToolPanelsController
 ){
 'use strict';
@@ -157,8 +155,6 @@ svgedit.select.Selector.prototype.showGrips = function(show) {
 		this.updateGripCursors(svgedit.utilities.getRotationAngle(elem));
 	}
 	ToolPanelsController.unmount();
-	ObjectPanelsController.setVisibility(show);
-	ObjectPanelsController.render();
 };
 
 // Function: svgedit.select.Selector.resize
@@ -292,7 +288,6 @@ svgedit.select.Selector.prototype.resize = function(bbox) {
 		mgr.rotateGrip.setAttribute('cx', nbax + (nbaw)/2);
 		mgr.rotateGrip.setAttribute('cy', nbay - (gripRadius*5));
 //	}
-	ObjectPanelsController.render();
 };
 
 
@@ -502,7 +497,6 @@ svgedit.select.SelectorManager.prototype.releaseSelector = function(elem) {
 		}
 	}
 	
-	ObjectPanelsController.unmount();
 	ToolPanelsController.unmount();
 };
 
