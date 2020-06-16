@@ -148,6 +148,7 @@ define([
                                 options={workareaOptions}
                                 default={this.state.workarea}
                                 onChange={(id, val) => this._handleWorkareaChange(val)} />
+                            <div className='sub-title'>{LANG.add_on}</div>
                             <SwitchControl
                                 id="rotary_mode"
                                 name="rotary_mode"

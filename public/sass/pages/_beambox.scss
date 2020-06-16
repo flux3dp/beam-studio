@@ -178,6 +178,13 @@
                 letter-spacing: 0.5px;
                 margin-bottom: 15px;
             }
+            .sub-title {
+                height: 40px;
+                line-height: 40px;
+                color: #626262;
+                font-size: 13px;
+                font-weight: 600;
+            }
             .control {
                 display: flex;
                 align-items: center;
@@ -472,6 +479,9 @@
                 border-width: 0 1px 0 0;
                 &:last-of-type {
                     border-width: 0;
+                }
+                .tab-icon {
+                    float: left;
                 }
                 .tab-title {
                     font-size: 12px;
