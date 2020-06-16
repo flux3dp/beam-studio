@@ -1261,7 +1261,7 @@ define(function() {
                     focus_adjustment: 'Focus Adjustment',
                     height: 'Object Height',
                     z_step: 'Z Step',
-                    diode: 'Hybrid Laser',
+                    diode: 'Diode Laser',
                     times: 'times',
                     cut: 'Cut',
                     engrave: 'Engrave',

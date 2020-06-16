@@ -1257,7 +1257,7 @@ define(function() {
                     focus_adjustment: '对焦调整',
                     height: '物件高度',
                     z_step: '每次递降',
-                    diode: '混合雷射',
+                    diode: '二极体雷射',
                     times: '次',
                     cut: '切割',
                     engrave: '雕刻',

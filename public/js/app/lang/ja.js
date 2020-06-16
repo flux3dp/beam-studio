@@ -1261,7 +1261,7 @@ define(function() {
                     focus_adjustment: 'フォーカスを調整する',
                     height: '高さ',
                     z_step: 'Z Step',
-                    diode: 'ハイブリッドレーザー',
+                    diode: 'ダイオードレーザー',
                     times: '回数',
                     cut: 'カット',
                     engrave: '彫刻する',
