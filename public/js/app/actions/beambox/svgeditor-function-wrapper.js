@@ -329,6 +329,7 @@ define([
             const ImageSource = await svgCanvas.getImageSource();
             const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.bvg_files, ['beam'], defaultFileName);
             if (currentFilePath) {
+                svgCanvas.currentFilePath = currentFilePath;
                 await BeamFileHelper.saveBeam(currentFilePath, output, ImageSource);
                 this.setCurrentFileName(currentFilePath);
                 return true;
