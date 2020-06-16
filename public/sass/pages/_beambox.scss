@@ -473,17 +473,21 @@
             display: flex;
             cursor: pointer;
             .tab {
-                width: 50%;
-                padding: 0 0 0 20px;
+                display: inline-flex;
+                width: 32px;
                 border: 1px solid #e0e0e0;
                 border-width: 0 1px 0 0;
+                transition: all 0.2s ease-in-out;
                 &:last-of-type {
                     border-width: 0;
                 }
                 .tab-icon {
                     float: left;
+                    width: 16px;
+                    margin: 0 8px;
                 }
                 .tab-title {
+                    display: none;
                     font-size: 12px;
                     font-weight: bold;
                     line-height: 38px;
@@ -491,7 +495,11 @@
                     opacity: 0.8;
                 }
                 &.selected {
+                    width: calc(100% - 32px);
                     background-color: #ffffff;
+                    .tab-title {
+                        display: block;
+                    }
                 }
                 &.disabled {
                     opacity: 0.3;
@@ -757,6 +765,21 @@
                                 img {
                                     width: 12px;
                                 }
+                            }
+                        }
+                        &.lock-behind {
+                            width: 60px;
+                            padding-right: 0px;
+                        }
+                    }
+                    .dimension-lock {
+                        display: inline-flex;
+                        width: 13px;
+                        padding-left: 4px;
+                        img {
+                            opacity: 0.5;
+                            &:hover {
+                                opacity: 0.7;
                             }
                         }
                     }
@@ -1786,6 +1809,7 @@
     padding: 0px 20px;
     border-radius: 3px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+    animation-duration: 0.3s;
     .caption {
         padding: 10px 0px;
         font-size: 12px;

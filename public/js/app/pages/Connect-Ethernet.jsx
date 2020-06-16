@@ -24,10 +24,10 @@ define([
                 const guideHref = process.platform === 'darwin' ? lang.connect_ethernet.tutorial2_a_href_mac : lang.connect_ethernet.tutorial2_a_href_win
                 return (
                     <div className="connection-ethernet">
-                        <div className="image-container">
-                            <img className="arrow-icon top" src="img/init-panel/icon-arrow.svg" draggable="false"/>
-                            <img className="ethernet-icon" src="img/init-panel/ethernet.svg" draggable="false"/>
-                            <img className="arrow-icon bot" src="img/init-panel/icon-arrow.svg" draggable="false"/>
+                        <div className="image-container ether">
+                            <div className="circle c1" />
+                            <img className="ethernet-icon" src="img/init-panel/icon-dual-cable.svg" draggable="false"/>
+                            <div className="circle c2" />
                         </div>
                         <div className="text-container">
                             <div className="title">{lang.connect_ethernet.title}</div>
