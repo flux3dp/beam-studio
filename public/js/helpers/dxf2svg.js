@@ -1773,6 +1773,9 @@
       console.log(polylines.length);
       for (let i = 0; i < polylines.length - 1; i++) {
         let polyline = polylines[i];
+        if (polyline.length === 0 || polylines[i+1].length === 0) {
+          continue;
+        }
         if (polyline.length > 0 && polyline[0][0] === polyline[polyline.length - 1][0] && polyline[0][1] === polyline[polyline.length - 1][1]) {
           continue;
         }
