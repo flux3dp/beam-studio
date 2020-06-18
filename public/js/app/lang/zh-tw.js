@@ -33,6 +33,7 @@ define(function() {
             hflip: '水平翻轉',
             vflip: '垂直翻轉',
             export: 'GO',
+            preview: '相機預覽',
             tag_names: {
                 rect: '矩形',
                 ellipse: '橢圓',
@@ -1217,7 +1218,9 @@ define(function() {
                     pen: '鋼筆',
                     array: '陣列',
                     offset: '偏移',
-                    preview: '相機預覽'
+                    preview: '相機預覽',
+                    trace: '影像描圖',
+                    clear_preview: '清除預覽'
                 },
                 insert_object_submenu: {
                     rectangle: '矩形',

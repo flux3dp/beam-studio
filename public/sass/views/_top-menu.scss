@@ -336,7 +336,7 @@
         position: absolute;
         display: inline-flex;
         justify-content: space-between;
-        width: 140px;
+        min-width: 140px;
         height: $topBarHeight;
         margin-left: 80px;
         .img-container {

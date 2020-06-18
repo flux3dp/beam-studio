@@ -33,6 +33,7 @@ define(function() {
             hflip: '左右反転',
             vflip: '上下反転',
             export: 'ゴー',
+            preview: 'カメラプレビュー',
             tag_names: {
                 rect: '矩形',
                 ellipse: '楕円',
@@ -1220,7 +1221,9 @@ define(function() {
                     polygon: '多角形',
                     pen: 'ペン',
                     array: '配列',
-                    preview: 'カメラプレビュー'
+                    preview: 'カメラプレビュー',
+                    trace: 'トレース画像',
+                    clear_preview: 'プレビューをクリア'
                 },
                 insert_object_submenu: {
                     rectangle: '長方形',

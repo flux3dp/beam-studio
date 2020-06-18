@@ -28,9 +28,6 @@ define([
     class LeftPanel extends React.Component {
         constructor() {
             super();
-            this.state = {
-                // preview button is managed by itself
-            };
         }
 
         componentDidMount() {
@@ -116,13 +113,13 @@ define([
                 const isDrawn = !PreviewModeBackgroundDrawer.isClean();
                 return (
                     <div className={leftPanelClass}>
-                        {this._renderToolButton('shoot','Shoot', LANG.label.cursor, () => {
+                        {this._renderToolButton('shoot', 'Shoot', LANG.label.preview, () => {
                             if (!PreviewModeController.isPreviewMode()) {
                                 this.props.setShouldStartPreviewController(true)
                             }
                         }, 'active')}
-                        {this._renderToolButton('trace','Trace', 'trace', () => this.startImageTrace(), '', isDrawing || !isDrawn)}
-                        {this._renderToolButton('trash','Trash', 'clear', () => {this.clearPreview()}, '', isDrawing || !isDrawn)}
+                        {this._renderToolButton('trace', 'Trace', LANG.label.trace, () => this.startImageTrace(), '', isDrawing || !isDrawn)}
+                        {this._renderToolButton('trash', 'Trash', LANG.label.clear_preview, () => {this.clearPreview()}, '', isDrawing || !isDrawn)}
                     </div>
                 );
             }

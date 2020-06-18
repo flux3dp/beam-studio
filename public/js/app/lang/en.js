@@ -33,6 +33,7 @@ define(function() {
             hflip: 'HFlip',
             vflip: 'VFlip',
             export: 'Export',
+            preview: 'PREVIEW',
             tag_names: {
                 rect: 'Rectangle',
                 ellipse: 'Oval',
@@ -1220,7 +1221,9 @@ define(function() {
                     polygon: 'Polygon',
                     pen: 'Pen',
                     array: 'Array',
-                    preview: 'Camera Preview'
+                    preview: 'Camera Preview',
+                    trace: 'Trace Image',
+                    clear_preview: 'Clear Preview'
                 },
                 insert_object_submenu: {
                     rectangle: 'Rectangle',

@@ -83,7 +83,7 @@ define([
                     <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>
                         <img src="img/top-bar/icon-camera.svg" draggable={false}/>
                     </div>
-                    {isPreviewing ? <div className="title">{'PREVIEW'}</div> : null}
+                    {isPreviewing ? <div className="title">{LANG.preview}</div> : null}
                     {isPreviewing ?
                         <div className='cross-wrapper' onClick={() => {this.endPreviewMode()}}>
                             <div className="bars bar1 shadow"></div>
