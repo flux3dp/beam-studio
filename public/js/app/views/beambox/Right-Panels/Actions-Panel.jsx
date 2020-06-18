@@ -140,6 +140,12 @@ define([
             return content;
         }
 
+        renderUseActions = () => {
+            let content = [];
+            content.push(this.renderButtons(LANG.disassemble_use, () => svgCanvas.disassembleUse2Group(), false));
+            return content;
+        }
+
         renderGroupActions = () => {
         }
 
@@ -169,6 +175,8 @@ define([
                     content = this.renderPolygonActions();
                 } else if (tagName === 'line') {
                     content = this.renderLineActions();
+                } else if (tagName === 'use') {
+                    content = this.renderUseActions();
                 } else if (tagName === 'g') {
                     if (isMultiSelect) {
                         content = this.renderMultiSelectActions();

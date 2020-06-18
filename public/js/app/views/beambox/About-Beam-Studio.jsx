@@ -15,51 +15,29 @@ define([
         constructor(props) {
             super(props);
             this.state = {
-                show: false
             };
         }
 
-        componentDidMount() {
-            BeamboxStore.onShowAboutBeambox(this._show.bind(this));
-
-        }
-
-        componentWillUnmount() {
-        }
-
-        _show = () => {
-            this.setState({
-                show: true
-            });
-        }
-
         _close = () => {
-            this.setState({show: false});
+            this.props.onClose();
         }
 
         render() {
-            if (this.state.show) {
-                return (
-                    <Modal onClose={() => {this._close()}}>
-                        <div className='about-beam-studio'>
-                            <img src='icon.png'/>
-                            <div className='app-name'>{'Beam Studio'}</div>
-                            <div className='version'>{`${LANG.version} ${window.FLUX.version}`}</div>
-                            <div className='copyright'>{'Copyright ⓒ 2019 FLUX Inc.'}</div>
-                            <button
-                                className='btn btn-default'
-                                onClick={() => this._close()}
-                            >{LANG.ok}
-                            </button>
-                        </div>
-                    </Modal>
-                );
-            } else {
-                return (
-                    <div></div>
-                )
-            }
-            
+            return (
+                <Modal onClose={() => {this._close()}}>
+                    <div className='about-beam-studio'>
+                        <img src='icon.png'/>
+                        <div className='app-name'>{'Beam Studio'}</div>
+                        <div className='version'>{`${LANG.version} ${window.FLUX.version}`}</div>
+                        <div className='copyright'>{'Copyright ⓒ 2019 FLUX Inc.'}</div>
+                        <button
+                            className='btn btn-default'
+                            onClick={() => this._close()}
+                        >{LANG.ok}
+                        </button>
+                    </div>
+                </Modal>
+            )
         }
     };
 

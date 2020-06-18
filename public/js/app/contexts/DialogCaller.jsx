@@ -2,6 +2,7 @@ define([
     'jsx!widgets/Modal',
     'jsx!views/dialogs/Dialog',
     'jsx!views/dialogs/Prompt',
+    'jsx!views/beambox/About-Beam-Studio',
     'jsx!views/beambox/Camera-Calibration',
     'jsx!views/beambox/Diode-Calibration',
     'jsx!views/beambox/Document-Panels/Document-Panel',
@@ -13,6 +14,7 @@ define([
     Modal,
     Dialog,
     Prompt,
+    AboutBeamStudio,
     CameraCalibration,
     DiodeCalibration,
     DocumentPanel,
@@ -52,6 +54,16 @@ define([
     return {
         addDialogComponent,
         popDialogById,
+        showAboutBeamStudio: () => {
+            if (isIdExist('about-bs')) return;
+            addDialogComponent('about-bs',
+                <AboutBeamStudio
+                    onClose={() => {
+                        popDialogById('about-bs')
+                    }}
+                />
+            );
+        },
         showCameraCalibration: (device, isBorderless) => {
             if (isIdExist('camera-cali')) return;
             addDialogComponent('camera-cali',

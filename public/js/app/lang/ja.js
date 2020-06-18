@@ -32,7 +32,20 @@ define(function() {
             difference: '差',
             hflip: '左右反転',
             vflip: '上下反転',
-            export: 'ゴー'
+            export: 'ゴー',
+            tag_names: {
+                rect: '矩形',
+                ellipse: '楕円',
+                path: 'パス',
+                polygon: 'ポリゴン',
+                image: 'イメージ',
+                text: 'テキスト',
+                g: 'グループ',
+                multi_select: '複数選択',
+                use: 'インポートされたファイル',
+                svg: 'インポートされた svg',
+                dxf: 'インポートされた dxf',
+            }
         },
         support: {
             no_webgl: 'WebGLはサポートされていません。他のデバイスを使用してください。',
@@ -1389,6 +1402,7 @@ define(function() {
                         wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
                         offset: 'オフセット',
                         decompose_path: '離散パスを分解する',
+                        disassemble_use: '逆アセンブル',
                     }
                 },
             },

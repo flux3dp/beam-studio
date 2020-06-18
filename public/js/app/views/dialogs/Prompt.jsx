@@ -64,7 +64,7 @@ define([
         render() {
             return (
                 <Modal
-                    onClose={this.props.onClose}
+                    onClose={this.props.closeOnBackgroundClick ? this.props.onClose : () => {}}
                 >
                     <div className={classNames('prompt-dialog-container', 'animate__animated', 'animate__bounceIn')}>
                         <div className="caption">{this.props.caption}</div>

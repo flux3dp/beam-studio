@@ -311,11 +311,12 @@ define([
                         }
                         console.log('saved');
                     });
-                    svgCanvas.changed = false;
+                    svgCanvas.setHasUnsavedChange(false);
                     return true;
                 } else if (svgCanvas.currentFilePath.endsWith('.beam')) {
                     const ImageSource = await svgCanvas.getImageSource();
                     await BeamFileHelper.saveBeam(svgCanvas.currentFilePath, output, ImageSource);
+                    svgCanvas.setHasUnsavedChange(false);
                     return true;
                 }
             }
@@ -364,12 +365,12 @@ define([
             svgCanvas.setLatestImportFileName(currentFileName);
             svgCanvas.filePath = filePath;
             svgCanvas.updateRecentFiles(filePath);
-            svgCanvas.changed = false;
+            svgCanvas.setHasUnsavedChange(false);
         },
 
         toggleUnsavedChangedDialog: function (callback) {
             window.electron.ipc.send('SAVE_DIALOG_POPPED');
-            if (!svgCanvas.changed) {
+            if (!svgCanvas.getHasUnsaveChanged()) {
                 callback();
             } else {
                 Alert.popUp({

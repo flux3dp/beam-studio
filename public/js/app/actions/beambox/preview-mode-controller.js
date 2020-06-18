@@ -30,6 +30,7 @@ define([
 
     class PreviewModeController {
         constructor() {
+            this.isDrawing = false;
             this.originalSpeed = 1;
             this.storedPrinter = null;
             this.isPreviewModeOn = false;
@@ -92,34 +93,40 @@ define([
             }
         }
 
-        async preview(x, y, last = false) {
+        async preview(x, y, last = false, callback = () => {}) {
             if (this.isPreviewBlocked) {
                 return;
             }
+            this.isDrawing = true;
             this.isPreviewBlocked = true;
             const constrainedXY = this._constrainPreviewXY(x, y);
             x = constrainedXY.x;
             y = constrainedXY.y;
 
             $(workarea).css('cursor', 'wait');
-
             try {
                 const imgUrl = await this._getPhotoAfterMove(x, y);
                 const p = PreviewModeBackgroundDrawer.draw(imgUrl, x, y, last);
 
                 $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
                                 this.isPreviewBlocked = false;
+                if (last) {
+                    this.isDrawing = false;
+                }
                 return true;
             } catch (error) {
                 console.log(error);
                 if (!PreviewModeBackgroundDrawer.isClean()) {
                     BeamboxActions.endDrawingPreviewBlob();
+                    this.isDrawing = false;
                 }
                 this.end();
+            } finally {
+                callback();
             }
         }
 
-        async previewRegion(x1, y1, x2, y2) {
+        async previewRegion(x1, y1, x2, y2, callback = () => {}) {
             const points = (() => {
                 const size = (() => {
                     const h = Constant.camera.imgHeight;
@@ -170,9 +177,11 @@ define([
 
                 if (!result) {
                     BeamboxActions.endDrawingPreviewBlob();
+                    this.isDrawing = false;
                     return
                 }
             }
+            callback();
         }
 
         // x, y in mm

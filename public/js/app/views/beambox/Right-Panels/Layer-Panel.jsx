@@ -217,7 +217,6 @@ define([
             const res = drawing.setCurrentLayer(layerName);
             if (res) {
                 this.renderLayerLaserConfigs();
-                svgCanvas.selectAllInCurrentLayer();
                 this.setState(this.state);
             }
         }

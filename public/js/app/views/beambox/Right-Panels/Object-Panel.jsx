@@ -146,7 +146,6 @@ define([
         }
 
         render() {
-            //console.log(this.props);
             return (
                 <div id="object-panel">
                     {this.renderToolBtns()}

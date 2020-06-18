@@ -205,7 +205,11 @@ function createWindow () {
                 if (!isSaveDialogPopped) {
                     isCloseConfirm = true;
                     mainWindow.close();
-                    shadowWindow.close();
+                    try {
+                        shadowWindow.close();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
             }, 10000);
             ipcMain.once('CLOSE_REPLY', (event, reply) => {

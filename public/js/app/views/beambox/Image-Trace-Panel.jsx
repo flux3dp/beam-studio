@@ -386,8 +386,8 @@ define([
             const coordinates = PreviewModeBackgroundDrawer.getCoordinates();
             const sourceWidth = (coordinates.maxX - coordinates.minX) + 465.17;
             const sourceHeight = (coordinates.maxY - coordinates.minY) + 465.17;
-            const maxAllowableWidth = $('.top-menu').width() - 100;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 120;
+            const maxAllowableWidth = $('.top-bar').width() - 100;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 120;
             const ratio = Math.min(maxAllowableHieght / sourceHeight, maxAllowableWidth / sourceWidth);
             const destWidth = sourceWidth * ratio;
             const destHeight = sourceHeight * ratio;
@@ -513,8 +513,8 @@ define([
             } = this.state;
             const footer = this._renderImageTraceFooter();
             const it = ((currentStep === STEP_APPLY) && (imageTrace!=='')) ? this._getImageTraceDom() : null;
-            const maxAllowableWidth = $('.top-menu').width() - 390;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 160;
+            const maxAllowableWidth = $('.top-bar').width() - 390;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 160;
             const containerStyle = (TESTING_IT || (cropData.width / maxAllowableWidth > cropData.height / maxAllowableHieght)) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
 

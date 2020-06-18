@@ -11,7 +11,7 @@
         background: #F8F8F8;
         border: 1px solid #E0E0E0;
         position: absolute;
-        top: 85px;
+        top: 40px;
         &.windows {
             top: 70px;
         }
@@ -20,6 +20,7 @@
         .tool-btn {
             text-align: center;
             line-height: 24px;
+            filter: brightness(0);
             img {
                 height: 24px;
             }
@@ -28,11 +29,15 @@
             width: 36px;
             opacity: 0.5;
             &.active {
-                filter: brightness(0);
                 opacity: 1.0;
             }
-            &:hover {
-                filter: brightness(0);
+            &.disabled {
+                opacity: 0.3;
+            }
+            &:not(.disabled) {
+                cursor: pointer;
+            }
+            &:hover:not(.disabled) {
                 opacity: 0.8;
             }
         }
@@ -449,10 +454,13 @@
     }
     #svg_editor {
         color: #000;
+        top: 40px;
+        left: 50px;
+        width: calc(100vw - 50px - 242px);
         #workarea {
             border: none;
-            top: 105px;
-            left: 15px;
+            top: 0px;
+            left: 0px;
             right: 0px;
             bottom: 0px;
             #svgcanvas {
@@ -469,7 +477,7 @@
             height: 40px;
             background-color: #f8f8f8;
             border: 1px solid #e0e0e0;
-            border-width: 1px 0 1px 1px;
+            border-width: 0px 0 1px 1px;
             display: flex;
             cursor: pointer;
             .tab {
@@ -513,8 +521,8 @@
             padding: 0px;
             opacity: 1.0;
             z-index: 2;
-            top: 85px;
-            height: calc(100% - 85px);
+            top: 40px;
+            height: calc(100% - 40px);
             right: 0;
             transition: opacity 0.3s;
             &:hover {
@@ -1209,7 +1217,7 @@
                                 padding: 3px 0px 3px 5px;
                             }
                             .unit {
-                                margin-left: -30px;
+                                margin-left: -35px;
                             }
                         }
                         .value-text {
@@ -1387,6 +1395,9 @@
                 }
             }
         }
+        #rulers {
+            display: none;
+        }
         #ruler_unit_shower {
             top: 89px;
             right: 0px;
@@ -1402,6 +1413,11 @@
             @include force-hide();
         }
         #tools_top {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 1px;
+            height: 1px;
             opacity: 0;
             // if display: none, text mode will break.
             // this is just a quick workaround. maybe using @include force-hide() is more beautiful.

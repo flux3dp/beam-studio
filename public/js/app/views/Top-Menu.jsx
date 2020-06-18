@@ -533,9 +533,9 @@ define([
             ipc.removeAllListeners(events.MENU_CLICK);
         };
 
-        if (!window.menuEventRegistered) {
-            registerAllDeviceMenuClickEvents();
-        }
+        // if (!window.menuEventRegistered) {
+        //     registerAllDeviceMenuClickEvents();
+        // }
         // registerMenuItemClickEvents();
         class TopMenu extends React.Component{
             constructor(props){

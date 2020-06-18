@@ -352,7 +352,7 @@ svgedit.history.ChangeElementCommand.prototype.unapply = function(handler) {
 	if (!bChangedTransform) {
 		var angle = svgedit.utilities.getRotationAngle(this.elem);
 		if (angle) {
-			var bbox = elem.getBBox();
+			var bbox = this.elem.getBBox();
 			var cx = bbox.x + bbox.width/2,
 				cy = bbox.y + bbox.height/2;
 			var rotate = ["rotate(", angle, " ", cx, ",", cy, ")"].join('');
@@ -522,6 +522,7 @@ svgedit.history.UndoManager.prototype.getNextRedoCommandText = function() {
 // Performs an undo step
 svgedit.history.UndoManager.prototype.undo = function() {
 	if (this.undoStackPointer > 0) {
+		svgCanvas.setHasUnsavedChange(true);
 		var cmd = this.undoStack[--this.undoStackPointer];
 		cmd.unapply(this.handler_);
 	}
@@ -531,6 +532,7 @@ svgedit.history.UndoManager.prototype.undo = function() {
 // Performs a redo step
 svgedit.history.UndoManager.prototype.redo = function() {
 	if (this.undoStackPointer < this.undoStack.length && this.undoStack.length > 0) {
+		svgCanvas.setHasUnsavedChange(true);
 		var cmd = this.undoStack[this.undoStackPointer++];
 		cmd.apply(this.handler_);
 	}
@@ -554,6 +556,9 @@ svgedit.history.UndoManager.prototype.addCommandToHistory = function(cmd) {
 	}
 	this.undoStack.push(cmd);
 	this.undoStackPointer = this.undoStack.length;
+	if (window.svgCanvas && this.undoStack.length > 1) {
+		svgCanvas.setHasUnsavedChange(true);
+	}
 	console.log(this.undoStack);
 };
 

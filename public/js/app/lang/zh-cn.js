@@ -32,7 +32,20 @@ define(function() {
             difference: '相异',
             hflip: '水平翻转',
             vflip: '垂直翻转',
-            export: 'GO'
+            export: 'GO',
+            tag_names: {
+                rect: '矩形',
+                ellipse: '椭圆',
+                path: '路径',
+                polygon: '多边形',
+                image: '影像',
+                text: '文本',
+                g: '群组',
+                multi_select: '多选',
+                use: '汇入图档',
+                svg: '汇入 svg 档',
+                dxf: '汇入 dxf 档',
+            }
         },
         support: {
             no_webgl: '您的系统不支持 WebGL，建议您使用其他电脑开启 Mozu Studio',
@@ -1385,6 +1398,7 @@ define(function() {
                         wait_for_parsing_font: '解析字体中... 请稍待 10 秒',
                         offset: '位移複製',
                         decompose_path: '解散非连续路径',
+                        disassemble_use: '解散图档',
                     }
                 },
             },

@@ -36,6 +36,7 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
+    'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/progress-actions',
@@ -55,6 +56,7 @@ define([
     PreviewModeController,
     LayerPanelController,
     ObjectPanelController,
+    TopBarController,
     BeamboxActions,
     Constant,
     ProgressActions,
@@ -1805,7 +1807,6 @@ define([
                         started = true;
                     }
                 });
-                canvas.changed = true;
             };
 
             // in this function we do not record any state changes yet (but we do update
@@ -2387,7 +2388,6 @@ define([
                 var attrs, t;
 
                 selectedElems = selectedElements.filter((e) => e !== null);
-
                 switch (current_mode) {
                     case 'preview':
                         if (rubberBox != null) {
@@ -2400,13 +2400,19 @@ define([
                         BeamboxActions.startDrawingPreviewBlob();
 
                         if (start_x === real_x && start_y === real_y) {
-                            PreviewModeController.preview(real_x, real_y, true);
+                            PreviewModeController.preview(real_x, real_y, true, () => {
+                                TopBarController.updateTopBar();
+                            });
                         } else {
-                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y);
+                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
+                                TopBarController.updateTopBar();
+                            });
                         }
                         current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
+                        $('#left-Shoot').addClass('active');
+                        break;
                         // intentionally fall-through to select here
                     case 'resize':
                     case 'multiselect':
@@ -2473,9 +2479,11 @@ define([
                                         selectorManager.requestSelector(selectedElements[i]).resize();
                                     }
                                 }
+                                current_mode = 'select';
                             }
                             // no change in position/size, so maybe we should move to pathedit
                             else {
+                                current_mode = 'select';
                                 t = evt.target;
                                 if (selectedElements[0].nodeName === 'path' && selectedElements[1] == null) {
                                     pathActions.select(selectedElements[0]);
@@ -2512,13 +2520,14 @@ define([
                                 canvas.sensorAreaInfo.dx = 0;
                                 canvas.sensorAreaInfo.dy = 0;
                             }
+                        } else {
+                            current_mode = 'select';
                         }
 
                         if (selectedElems.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
                         }
-                        current_mode = 'select';
 
                         return;
                         //zoom is broken
@@ -6092,6 +6101,7 @@ define([
 
                 use_el.setAttribute('data-symbol', symbol);
                 use_el.setAttribute('data-ref', symbol);
+                use_el.setAttribute('data-svg', true);
 
                 if (type === 'nolayer') {
                     use_el.setAttribute('data-wireframe', true);
@@ -8617,11 +8627,22 @@ define([
             call('changed', pasted);
         };
 
+        // Function: set
+        this.setHasUnsavedChange = (hasUnsaveChanged) => {
+            canvas.changed = hasUnsaveChanged;
+            TopBarController.setHasUnsavedChange(hasUnsaveChanged);
+        }
+
+        this.getHasUnsaveChanged = () => {
+            return canvas.changed;
+        }
+
         // Function: getLatestImportFileName
         // Get latest imported file name
         this.setLatestImportFileName = (fileName) => {
             this.latestImportFileName = fileName;
             this.currentFileName = fileName;
+            TopBarController.setFileName(fileName);
             if (process.platform === 'win32') {
                 window.titlebar.updateTitle(fileName);
             } else {
@@ -8661,6 +8682,7 @@ define([
                         res = await res.blob();
                         svgEditor.importBvg(res);
                     }
+                    this.setHasUnsavedChange(false);
                 } finally {
                     Alert.popAlertStackById('load-recent');
                 }
@@ -9096,9 +9118,10 @@ define([
                         this.ungroupSelectedElement();
                         this.ungroupSelectedElement();
                         this.ungroupSelectedElement();
+                        svgCanvas.setHasUnsavedChange(true);
                     }
                 }
-            })
+            });
         }
 
         this.toggleBezierPathAlignToEdge = () => {

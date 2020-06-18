@@ -235,8 +235,8 @@ define([
                 default:
                     break;
             }
-            const maxAllowableWidth = $('.top-menu').width() - rightWidth;
-            const maxAllowableHieght = $(window).height() - 2 * $('.top-menu').height() - 180;
+            const maxAllowableWidth = $('.top-bar').width() - rightWidth;
+            const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 180;
             const containerStyle = (this.state.imageWidth / maxAllowableWidth > this.state.imageHeight / maxAllowableHieght) ? 
                 {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
             const footer = this._renderPhotoEditFooter();

@@ -91,7 +91,7 @@ define([
                 'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
                 'NETWORK_TESTING': () => DialogCaller.showNetworkTestingPanel(),
-                'ABOUT_BEAM_STUDIO': () => BeamboxActions.showAboutBeamStudio(),
+                'ABOUT_BEAM_STUDIO': () => DialogCaller.showAboutBeamStudio(),
                 'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
                 'UPDATE_BS': () => ElectronUpdater.checkForUpdate()
             };

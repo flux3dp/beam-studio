@@ -32,7 +32,20 @@ define(function() {
             difference: 'Difference',
             hflip: 'HFlip',
             vflip: 'VFlip',
-            export: 'Export'
+            export: 'Export',
+            tag_names: {
+                rect: 'Rectangle',
+                ellipse: 'Ellipse',
+                path: 'Path',
+                polygon: 'Polygon',
+                image: 'Image',
+                text: 'Text',
+                g: 'Group',
+                multi_select: 'Multi Select',
+                use: 'Imported File',
+                svg: 'Imported svg',
+                dxf: 'Imported dxf',
+            }
         },
         support: {
             no_webgl: 'WebGL is not supported. Please use other devices.',
@@ -1387,6 +1400,7 @@ define(function() {
                         wait_for_parsing_font: 'Parsing font... Please wait a second',
                         offset: 'Offset',
                         decompose_path: 'Decompose',
+                        disassemble_use: 'Disassemble',
                     }
                 },
             },

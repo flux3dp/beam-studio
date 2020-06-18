@@ -31,6 +31,7 @@ define([
     'jsx!app/views/beambox/Right-Panels/contexts/RightPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
+    'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/topbar',
@@ -57,6 +58,7 @@ define([
     RightPanelController,
     LayerPanelController,
     ObjectPanelController,
+    TopBarController,
     Alert,
     AlertConstants,
     TopbarActions,
@@ -213,7 +215,7 @@ define([
                 gridColor: 'rgba(0,0,0,0.18)',
                 baseUnit: 'px',
                 snappingStep: 10,
-                showRulers: true,
+                showRulers: false,
                 // URL BEHAVIOR CONFIGURATION
                 preventAllURLConfig: true,
                 preventURLContentLoading: true,
@@ -1633,12 +1635,12 @@ define([
                 // updates the context panel tools based on the selected element
             var updateContextPanel = function () {
                 var elem = selectedElement;
-                console.log(elem);
                 // If element has just been deleted, consider it null
                 if (elem != null && !elem.parentNode) {
                     elem = null;
                 }
                 RightPanelController.setSelectedElement(elem);
+                TopBarController.setElement(elem);
                 LayerPanelController.updateLayerPanel();
                 var currentLayerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
                 var currentMode = svgCanvas.getMode();
@@ -5867,6 +5869,7 @@ define([
                         for (let key in bb) {
                             xform += `${key}=${bb[key]} `;
                         }
+                        use_el.setAttribute('data-dxf', true);
                         use_el.setAttribute('data-xform', xform);
                         svgCanvas.updateElementColor(use_el);
                     }
@@ -6047,7 +6050,7 @@ define([
                         };
                         reader.readAsText(file);
                     });
-                    svgCanvas.changed = false;
+                    svgCanvas.setHasUnsavedChange(false);
                 };
 
                 editor.importBvg = importBvg;
@@ -6078,6 +6081,7 @@ define([
                 };
 
                 const handleFile = (file) => {
+                    svgCanvas.clearSelection();
                     const fileType = (function() {
                         if (file.name.toLowerCase().includes('.beam')) {
                             return 'beam';
@@ -6145,12 +6149,12 @@ define([
                             svgCanvas.setLatestImportFileName(fileName);
                             svgCanvas.currentFilePath = file.path;
                             svgCanvas.updateRecentFiles(file.path);
-                            svgCanvas.changed = false;
+                            svgCanvas.setHasUnsavedChange(false);
                             break;
                         case 'dxf':
                             svgCanvas.setLatestImportFileName(fileName);
                             svgCanvas.currentFilePath = null;
-                            svgCanvas.changed = true;
+                            svgCanvas.setHasUnsavedChange(true);
                             break;
                         case 'svg':
                         case 'bitmap':
@@ -6158,7 +6162,7 @@ define([
                             if (!svgCanvas.getLatestImportFileName()) {
                                 svgCanvas.setLatestImportFileName(fileName);
                             }
-                            svgCanvas.changed = true;
+                            svgCanvas.setHasUnsavedChange(true);
                             break;
                     }
                 }

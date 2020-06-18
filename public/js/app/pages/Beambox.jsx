@@ -4,8 +4,8 @@ define([
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
     'helpers/local-storage',
-    'jsx!views/beambox/Left-Panels/Left-Panel',
-    'jsx!views/beambox/Network-Testing-Panel',
+    'jsx!views/beambox/Top-Bar/Top-Bar',
+    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
     'jsx!pages/svg-editor',
     'jsx!views/dialogs/Alert',
     'jsx!views/dialogs/Dialog',
@@ -20,8 +20,8 @@ define([
     BeamboxPreference,
     i18n,
     localStorage,
-    LeftPanel,
-    NetworkTestingPanel,
+    { TopBar },
+    { TopBarContextProvider },
     SvgEditor,
     { Alert },
     { Dialog },
@@ -60,7 +60,9 @@ define([
                 <AlertContextProvider>
                     <DialogContextProvider>
                         <div className="studio-container beambox-studio">
-                            <LeftPanel />
+                            <TopBarContextProvider>
+                                <TopBar />
+                            </TopBarContextProvider>
                             <SvgEditor />
                             <div id='object-panels-placeholder' />
                             <div id='tool-panels-placeholder' />

@@ -32,7 +32,20 @@ define(function() {
             difference: '相異',
             hflip: '水平翻轉',
             vflip: '垂直翻轉',
-            export: 'GO'
+            export: 'GO',
+            tag_names: {
+                rect: '矩形',
+                ellipse: '橢圓',
+                path: '路徑',
+                polygon: '多邊形',
+                image: '影像',
+                text: '文字',
+                g: '群組',
+                multi_select: '多選',
+                use: '匯入圖檔',
+                svg: '匯入 svg 檔',
+                dxf: '匯入 dxf 檔',
+            }
         },
         support: {
             no_webgl: '您的系統不支援 WebGL，建議您使用其他電腦開啟 Beam Studio',
@@ -1386,6 +1399,7 @@ define(function() {
                         wait_for_parsing_font: '解析字體中... 請稍待 10 秒',
                         offset: '位移複製',
                         decompose_path: '解散非連續路徑',
+                        disassemble_use: '解散圖檔',
                     }
                 },
             },

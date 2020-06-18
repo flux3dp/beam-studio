@@ -54,7 +54,6 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
         },
 
         home: function(name) {
-            this.appendSideBar(false);
 
             requirejs(['jsx!pages/Home', 'app/app-settings'], function(view, settings) {
                 var args = {
@@ -90,8 +89,6 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
             if (true === map.hasOwnProperty(step)) {
                 view_name = map[step];
             }
-
-            this.appendSideBar(false);
 
             requirejs(['jsx!pages/' + view_name], function(view) {
                 _display(
@@ -152,8 +149,6 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
             if (true === map.hasOwnProperty(page)) {
                 func = map[page];
             }
-            
-            this.appendSideBar(page !== 'settings', page);
 
             if (false === detectWebgl() && -1 < needWebGL.indexOf(page)) {
                 location.hash = '#studio/laser';

@@ -5,7 +5,7 @@ define([
     const { createContext } = React;
     const ObjectPanelContext = createContext();
 
-    const minRenderInterval = 50;
+    const minRenderInterval = 200;
 
     class ObjectPanelContextProvider extends React.Component {
         constructor(props) {
