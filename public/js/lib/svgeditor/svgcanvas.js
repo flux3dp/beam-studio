@@ -1398,6 +1398,7 @@ define([
                     current_mode = 'select';
                     $('.tool-btn').removeClass('active');
                     $('#left-Cursor').addClass('active');
+                    $('#left-Shoot').addClass('active');
                     lastClickPoint = pt;
                 }
 
@@ -1503,6 +1504,9 @@ define([
                             clearSelection();
                             if (PreviewModeController.isPreviewMode()) {
                                 current_mode = 'preview';
+                            } else if (TopBarController.getTopBarPreviewMode()) {
+                                started = false;
+                                TopBarController.setShouldStartPreviewController(true);
                             } else {
                                 current_mode = 'multiselect';
                             }
@@ -1512,10 +1516,6 @@ define([
                             }
                             r_start_x *= current_zoom;
                             r_start_y *= current_zoom;
-                            //					console.log('p',[evt.pageX, evt.pageY]);
-                            //					console.log('c',[evt.clientX, evt.clientY]);
-                            //					console.log('o',[evt.offsetX, evt.offsetY]);
-                            //					console.log('s',[start_x, start_y]);
 
                             svgedit.utilities.assignAttributes(rubberBox, {
                                 'x': r_start_x,
@@ -2398,21 +2398,21 @@ define([
                             justClearSelection = false;
                         } 
                         BeamboxActions.startDrawingPreviewBlob();
-
-                        if (start_x === real_x && start_y === real_y) {
-                            PreviewModeController.preview(real_x, real_y, true, () => {
-                                TopBarController.updateTopBar();
-                            });
-                        } else {
-                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
-                                TopBarController.updateTopBar();
-                            });
+                        if (PreviewModeController.isPreviewMode()) {
+                            if (start_x === real_x && start_y === real_y) {
+                                PreviewModeController.preview(real_x, real_y, true, () => {
+                                    TopBarController.updateTopBar();
+                                });
+                            } else {
+                                PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
+                                    TopBarController.updateTopBar();
+                                });
+                            }
                         }
                         current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
                         $('#left-Shoot').addClass('active');
-                        break;
                         // intentionally fall-through to select here
                     case 'resize':
                     case 'multiselect':
@@ -2422,6 +2422,7 @@ define([
                         }
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
+                        $('#left-Shoot').addClass('active');
                     case 'select':
                         if (selectedElements[0] != null) {
                             // if we only have one selected element

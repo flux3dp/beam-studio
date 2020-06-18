@@ -34,11 +34,36 @@ define([
             TopBar.contextCaller.setHasUnsavedChange(hasUnsavedChange);
         }
     }
+    setTopBarPreviewMode = (isPreviewMode) => {
+        if (!TopBar.contextCaller) {
+            console.log('TopBar is not mounted now.');
+        } else {
+            TopBar.contextCaller.setTopBarPreviewMode(isPreviewMode);
+        }
+    }
+    getTopBarPreviewMode = () => {
+        if (!TopBar.contextCaller) {
+            console.log('TopBar is not mounted now.');
+            return false;
+        } else {
+            return TopBar.contextCaller.getTopBarPreviewMode();
+        }
+    }
+    setShouldStartPreviewController = (shouldStartPreviewController) => {
+        if (!TopBar.contextCaller) {
+            console.log('TopBar is not mounted now.');
+        } else {
+            TopBar.contextCaller.setShouldStartPreviewController(shouldStartPreviewController);
+        }
+    }
 
     return {
         updateTopBar,
         setElement,
         setFileName,
         setHasUnsavedChange,
+        setTopBarPreviewMode,
+        getTopBarPreviewMode,
+        setShouldStartPreviewController,
     }
 });

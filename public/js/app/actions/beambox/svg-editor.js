@@ -1002,7 +1002,7 @@ define([
                 }
                 svgCanvas.setMode('select');
                 workarea.css('cursor', 'auto');
-                if (PreviewModeController.isPreviewMode()) {
+                if (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) {
                     $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
                 }
             };

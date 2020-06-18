@@ -35,11 +35,12 @@ define(function() {
             export: 'Export',
             tag_names: {
                 rect: 'Rectangle',
-                ellipse: 'Ellipse',
+                ellipse: 'Oval',
                 path: 'Path',
                 polygon: 'Polygon',
                 image: 'Image',
                 text: 'Text',
+                line: 'Line',
                 g: 'Group',
                 multi_select: 'Multi Select',
                 use: 'Imported File',

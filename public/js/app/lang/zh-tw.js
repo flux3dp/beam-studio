@@ -40,6 +40,7 @@ define(function() {
                 polygon: '多邊形',
                 image: '影像',
                 text: '文字',
+                line: '線段',
                 g: '群組',
                 multi_select: '多選',
                 use: '匯入圖檔',

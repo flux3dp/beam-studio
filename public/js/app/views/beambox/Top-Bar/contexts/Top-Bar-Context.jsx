@@ -43,17 +43,34 @@ define([
             this.setState({isDrawn})
         }
 
+        setTopBarPreviewMode = (isPreviewMode) => {
+            this.isPreviewMode = isPreviewMode;
+        }
+
+        getTopBarPreviewMode = () => {
+            return this.isPreviewMode;
+        }
+
+        setShouldStartPreviewController = (shouldStartPreviewController) => {
+            this.setState({shouldStartPreviewController});
+        }
+
         render() {
             const {
                 updateTopBar,
                 setElement,
                 setFileName,
                 setHasUnsavedChange,
+                setTopBarPreviewMode,
+                getTopBarPreviewMode,
+                setShouldStartPreviewController,
+                isPreviewMode,
             } = this;
             const {
                 fileName,
                 selectedElem,
                 hasUnsavedChange,
+                shouldStartPreviewController,
             } = this.state;
             return (
                 <TopBarContext.Provider value={{
@@ -61,9 +78,14 @@ define([
                     setElement,
                     setFileName,
                     setHasUnsavedChange,
+                    setTopBarPreviewMode,
+                    getTopBarPreviewMode,
+                    setShouldStartPreviewController,
+                    isPreviewMode,
                     fileName,
                     selectedElem,
                     hasUnsavedChange,
+                    shouldStartPreviewController,
                 }}>
                     {this.props.children}
                 </TopBarContext.Provider>

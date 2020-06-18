@@ -60,7 +60,7 @@ define([
                 <div className="option-block" key="infill">
                     <div className="label">{LANG.fill}</div>
                     <div className={classNames('onoffswitch', {'partially-filled': elem.tagName === 'g' && isPartiallyFilled})} onClick={() => this.onClick()}>
-                        <input type="checkbox" className="onoffswitch-checkbox" checked={isAnyFilled} readOnly={true}/>
+                        <input type="checkbox" className="onoffswitch-checkbox" checked={isAnyFilled || false} readOnly={true}/>
                         <label className="onoffswitch-label">
                             <span className="onoffswitch-inner"></span>
                             <span className="onoffswitch-switch"></span>

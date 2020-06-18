@@ -40,6 +40,7 @@ define(function() {
                 polygon: 'ポリゴン',
                 image: 'イメージ',
                 text: 'テキスト',
+                line: 'ライン',
                 g: 'グループ',
                 multi_select: '複数選択',
                 use: 'インポートされたファイル',

@@ -1,4 +1,5 @@
 define([
+    'app/actions/default-machine',
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
@@ -21,6 +22,7 @@ define([
     'helpers/version-checker',
     'helpers/i18n'
 ], function(
+    DefaultMachine,
     FnWrapper,
     Alert,
     AlertConstants,
@@ -55,7 +57,7 @@ define([
             super();
             this.state = {
                 isPreviewing: false,
-                showDeviceList: false,
+                shouldShowDeviceList: false,
                 deviceList: [],
                 deviceListDir: 'right',
                 selectDeviceCallback: () => {},
@@ -66,34 +68,19 @@ define([
             ret.contextCaller = this.context;
         }
 
-        showDeviceList = (type, selectDeviceCallback) => {
-            this.discover = Discover(
-                'top-bar',
-                (machines) => {
-                    machines = DeviceList(machines);
-                    this.setState({deviceList: machines});
-                }
-            );
-            this.setState({
-                showDeviceList: true,
-                deviceListType: type,
-                selectDeviceCallback
-            });
-        }
-
-        hideDeviceList = () => {
-            this.discover.removeListener('top-bar');
-            this.setState({
-                showDeviceList: false,
-                onSelectClick: () => {}
-            });
+        componentDidUpdate() {
+            const { setShouldStartPreviewController, shouldStartPreviewController } = this.context;
+            if (shouldStartPreviewController) {
+                this.showCameraPreviewDeviceList();
+                setShouldStartPreviewController(false);
+            }
         }
 
         renderPreviewButton = () => {
             const { isPreviewing } = this.state;
             return (
                 <div className={classNames('preview-button-container', {previewing: isPreviewing})}>
-                    <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.showCameraPreviewDeviceList()}}>
+                    <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>
                         <img src="img/top-bar/icon-camera.svg" draggable={false}/>
                     </div>
                     {isPreviewing ? <div className="title">{'PREVIEW'}</div> : null}
@@ -108,7 +95,8 @@ define([
             );
         }
 
-        showCameraPreviewDeviceList = () => {
+        changeToPreviewMode = () => {
+            const { setTopBarPreviewMode } = this.context;
             if (BeamboxPreference.read('should_remind_calibrate_camera')) {
                 Alert.popUp({
                     type: AlertConstants.SHOW_INFO,
@@ -118,14 +106,25 @@ define([
                 return;
             }
 
-            this.showDeviceList('camera', (device) => {this.startPreviewMode(device)});
+            $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
+            $('#workarea').contextMenu({menu: []},()=>{});
+            $('#workarea').contextmenu(() => {
+                this.endPreviewMode();
+                return false;
+            });
+            setTopBarPreviewMode(true);
+            this.setState({ isPreviewing: true });
         }
 
-        startPreviewMode = async (device) => {
+        showCameraPreviewDeviceList = () => {    
+            this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)}, true);
+        }
+
+        startPreviewModeController = async (device) => {
+            const { setTopBarPreviewMode } = this.context;
             FnWrapper.useSelectTool();
             svgCanvas.clearSelection();
             const vc = VersionChecker(device.version);
-            console.log(device);
 
             ProgressActions.open(ProgressConstants.NONSTOP, lang.message.tryingToConenctMachine);
             if (!vc.meetRequirement('USABLE_VERSION')) {
@@ -157,17 +156,11 @@ define([
                         type: AlertConstants.SHOW_POPUP_ERROR,
                         message: errMessage,
                     });
+                    setTopBarPreviewMode(false);
                     this.setState({ isPreviewing: false });
                     $(workarea).css('cursor', 'auto');
                 });
                 $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
-                $('#workarea').contextMenu({menu: []},()=>{});
-                $('#workarea').contextmenu(() => {
-                    //console.log(self.endPreviewMode);
-                    this.endPreviewMode();
-                    return false;
-                });
-                this.setState({ isPreviewing: true });
             } catch (error) {
                 console.log(error);
                 Alert.popUp({
@@ -180,6 +173,7 @@ define([
         }
 
         endPreviewMode() {
+            const { setTopBarPreviewMode } = this.context;
             try {
                 if (PreviewModeController.isPreviewMode()) {
                     PreviewModeController.end();
@@ -190,6 +184,7 @@ define([
                 FnWrapper.useSelectTool();
                 $('#workarea').off('contextmenu');
                 svgEditor.setWorkAreaContextMenu();
+                setTopBarPreviewMode(false);
                 this.setState({
                     isPreviewing: false,
                 });
@@ -205,13 +200,10 @@ define([
         }
 
         handleExportClick = async () => {
-            if (PreviewModeController.isPreviewMode()) {
-                await PreviewModeController.end();
-                this.setState({isPreviewing: false});
-            }
+            this.endPreviewMode();
 
             this.handleExportAlerts();
-            this.showDeviceList('export', (device) => {this.exportTask(device)});
+            this.showDeviceList('export', (device) => {this.exportTask(device)}, true);
         }
 
         handleExportAlerts = () => {
@@ -297,9 +289,43 @@ define([
             }
         }
 
+        showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
+            this.discover = Discover(
+                'top-bar',
+                (machines) => {
+                    machines = DeviceList(machines);
+                    if (useDefaultMachine) {
+                        const defaultMachine = DefaultMachine.get();
+                        if (DefaultMachine.exist()) {
+                            for (let i=0; i < machines.length; i++) {
+                                if (defaultMachine.uuid === machines[i].uuid) {
+                                    this.handleSelectDevice(machines[i], (device) => {selectDeviceCallback(device)});
+                                }
+                            }
+                        }
+                    }
+                    this.setState({deviceList: machines});
+                }
+            );
+            this.waitForMachine();
+            this.setState({
+                shouldShowDeviceList: true,
+                deviceListType: type,
+                selectDeviceCallback
+            });
+        }
+
+        hideDeviceList = () => {
+            this.discover.removeListener('top-bar');
+            this.setState({
+                shouldShowDeviceList: false,
+                selectDeviceCallback: () => {}
+            });
+        }
+
         renderDeviceList() {
-            const { showDeviceList, deviceList, selectDeviceCallback, deviceListType } = this.state;
-            if (!showDeviceList) {
+            const { shouldShowDeviceList, deviceList, selectDeviceCallback, deviceListType } = this.state;
+            if (!shouldShowDeviceList) {
                 return null;
             }
             let status = lang.machine_status;
@@ -375,11 +401,32 @@ define([
                     });
                 }
             } catch (e) {
+                console.error(e.toString());
                 ProgressActions.close();
                 Alert.popUp({
                     id: 'fatal-occurred',
-                    message: e,
+                    message: e.toString(),
                     type: AlertConstants.SHOW_POPUP_ERROR,
+                });
+            }
+        }
+
+        waitForMachine = () => {
+            if (this.waitForMachineTimeout) {
+                clearTimeout(this.waitForMachineTimeout);
+            }
+            this.waitForMachineTimeout = setTimeout(() => this.openNoMachineAlert(), 5000);
+        }
+
+        openNoMachineAlert = () => {
+            this.waitForMachineTimeout = null;
+            const { deviceList, shouldShowDeviceList } = this.state;
+            if (0 === deviceList.length && shouldShowDeviceList) {
+                Alert.popUp({
+                    id: 'no-machine',
+                    message: lang.device_selection.no_beambox,
+                    buttonType: AlertConstants.RETRY_CANCEL,
+                    onRetry: () => {this.waitForMachine()}
                 });
             }
         }
@@ -434,6 +481,7 @@ define([
 
         render() {
             const { isPreviewing } = this.state;
+            const { setShouldStartPreviewController } = this.context;
             let leftPanelClass = 'left-toolbar';
             if (process.platform === 'win32') {
                 leftPanelClass += ' windows';
@@ -442,6 +490,7 @@ define([
                 <div className="top-bar-left-panel-container">
                     <LeftPanel
                         isPreviewing={isPreviewing}
+                        setShouldStartPreviewController={setShouldStartPreviewController}
                         endPreviewMode={() => this.endPreviewMode()}
                         />
                     <div className="top-bar">

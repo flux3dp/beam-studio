@@ -49,6 +49,25 @@ define([
             const { selectedElement } = this.context;
             const { selectedTab } = this.state;
             const isObjectDisabled = (!selectedElement || selectedElement.length < 1);
+            let objectTitle = LANG.tabs.objects;
+            const LangTopBar = i18n.lang.topbar;
+            if (selectedElement) {
+                if (selectedElement.getAttribute('data-tempgroup') === 'true') {
+                    objectTitle = LangTopBar.tag_names.multi_select;
+                } else {
+                    if (selectedElement.tagName !== 'use') {
+                        objectTitle = LangTopBar.tag_names[selectedElement.tagName];
+                    } else {
+                        if (selectedElement.getAttribute('data-svg') === 'true') {
+                            objectTitle = LangTopBar.tag_names.svg;
+                        } else if (selectedElement.getAttribute('data-dxf') === 'true') {
+                            objectTitle = LangTopBar.tag_names.dxf;
+                        } else {
+                            objectTitle = LangTopBar.tag_names.use;
+                        }
+                    }
+                }
+            }
             return (
                 <div className="right-panel-tabs">
                     <div
@@ -64,7 +83,7 @@ define([
                         onClick={() => {if (!isObjectDisabled) this.setState({selectedTab: 'objects'})}}>
                         <img className="tab-icon" src="img/right-panel/icon-layers.svg" draggable={false}/>
                         <div className="tab-title">
-                            {LANG.tabs.objects}   
+                            {objectTitle}   
                         </div>
                     </div>
                 </div>

@@ -73,13 +73,15 @@ define([
 
         _renderToolButton(iconName, id, label, onClick, className, disabled) {
             const cx = classNames('tool-btn', className, {disabled});
-
+            const { isPreviewing } = this.props;
             const setActiveAndOnClick = () => {
                 if (disabled) {
                     return;
                 }
-                $('.tool-btn').removeClass('active');
-                $(`#left-${id}`).addClass('active');
+                if (!isPreviewing) {
+                    $('.tool-btn').removeClass('active');
+                    $(`#left-${id}`).addClass('active');
+                }
                 onClick();
             }
             return (
@@ -112,10 +114,13 @@ define([
             } else {
                 const isDrawing = PreviewModeController.isDrawing;
                 const isDrawn = !PreviewModeBackgroundDrawer.isClean();
-                console.log(isDrawing, isDrawn);
                 return (
                     <div className={leftPanelClass}>
-                        {this._renderToolButton('shoot','Shoot', LANG.label.cursor, () => {}, 'active')}
+                        {this._renderToolButton('shoot','Shoot', LANG.label.cursor, () => {
+                            if (!PreviewModeController.isPreviewMode()) {
+                                this.props.setShouldStartPreviewController(true)
+                            }
+                        }, 'active')}
                         {this._renderToolButton('trace','Trace', 'trace', () => this.startImageTrace(), '', isDrawing || !isDrawn)}
                         {this._renderToolButton('trash','Trash', 'clear', () => {this.clearPreview()}, '', isDrawing || !isDrawn)}
                     </div>
