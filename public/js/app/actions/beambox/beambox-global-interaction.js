@@ -127,7 +127,7 @@ define([
             if (selectedElements[0].tagName ==='image') {
                 this.enableMenuItems(['PHOTO_EDIT']);
             } else if (selectedElements[0].tagName ==='use') {
-                this.enableMenuItems(['DISASSEMBLE_USE']);
+                this.enableMenuItems(['SVG_EDIT']);
             } else if (selectedElements[0].tagName ==='path') {
                 this.enableMenuItems(['DECOMPOSE_PATH']);
             }
@@ -139,7 +139,7 @@ define([
             }
         }
         onObjectBlur() {
-            this.disableMenuItems(['DUPLICATE', 'PATH', 'DECOMPOSE_PATH', 'PHOTO_EDIT', 'DISASSEMBLE_USE']);
+            this.disableMenuItems(['DUPLICATE', 'PATH', 'DECOMPOSE_PATH', 'PHOTO_EDIT', 'SVG_EDIT']);
         }
     }
     const instance = new BeamboxGlobalInteraction();

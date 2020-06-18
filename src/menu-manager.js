@@ -92,10 +92,11 @@ function buildMenu(callback) {
             { 'id': 'CUT', label: r.cut, click: callback, 'accelerator': `${fnKey}+X`},
             { 'id': 'COPY', label: r.copy, click: callback, 'accelerator': `${fnKey}+C`},
             { 'id': 'PASTE', label: r.paste, click: callback, 'accelerator': `${fnKey}+V`},
+            { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { type:'separator'},
             { 'id': 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
             { 'id': 'UNGROUP', label: r.ungroup || 'Ungroup', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+G` },
-            { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
+            { type:'separator'},
             { 'id': 'PATH', label: r.path, enabled: false, submenu: [
                 { 'id': 'OFFSET', label: r.offset || 'Offset', click: callback},
                 { 'id': 'DECOMPOSE_PATH', label: r.decompose_path, enabled: false, click: callback},
@@ -108,11 +109,15 @@ function buildMenu(callback) {
                 { 'id': 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
                 { 'id': 'IMAGE_CURVE', label: r.image_curve, click: callback },
             ]},
+            { 'id': 'SVG_EDIT', label: r.svg_edit || 'Edit Photo', enabled: false, submenu: [
+                { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', click: callback },
+            ]},
             { 'id': 'LAYER', label: r.layer_setting, submenu: [
                 { 'id': 'LAYER_COLOR_CONFIG', label: r.layer_color_config || 'Color Configuration', click: callback }
             ]},
+            { type:'separator'},
             { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type:'checkbox'},
-            { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', enabled: false, click: callback },
+            { type:'separator'},
             { 'id': 'OPTIMIZATION', label: r.optimization, submenu: [
                 { 'id': 'SVG_NEST', label: r.arrangement_optimization, click: callback }
             ]},
