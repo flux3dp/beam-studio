@@ -49,7 +49,7 @@ define([
     const classNames = require('classnames');
     const lang = i18n.lang;
     const LANG = i18n.lang.topbar;
-    const isWin = process.platform === 'win32';
+    const isNotMac = process.platform !== 'darwin';
 
     let ret = {};
 
@@ -195,7 +195,7 @@ define([
         renderGoButton = () => {
             return (
                 <div className={classNames('go-button-container')} onClick={() => this.handleExportClick()}>
-                    { isWin ? <div className="go-text">{LANG.export}</div> : null}
+                    { isNotMac ? <div className="go-text">{LANG.export}</div> : null}
                     <div className={(classNames('go-btn'))}/>
                 </div>
             );
@@ -493,7 +493,7 @@ define([
                         setShouldStartPreviewController={setShouldStartPreviewController}
                         endPreviewMode={() => this.endPreviewMode()}
                         />
-                    <div className={classNames('top-bar', {win: isWin})}>
+                    <div className={classNames('top-bar', {win: isNotMac})}>
                         {this.renderFileName()}
                         {this.renderPreviewButton()}
                         {this.renderGoButton()}
