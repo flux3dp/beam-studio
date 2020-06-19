@@ -15,10 +15,6 @@ function(
         const Menu = require('electron').remote.Menu;
         const MenuItem = require('electron').remote.MenuItem;
         
-        $('.top-menu').css({
-            '-webkit-app-region': 'no-drag',
-            'height': '75px',
-        });
         $('.content').css({'height': 'calc(100% - 30px)'});
         let titlebar = new customTitlebar.Titlebar({
             backgroundColor: customTitlebar.Color.fromHex('#333'),

@@ -1845,7 +1845,13 @@ define([
                             if (dist < SENSOR_AREA_RADIUS) {
                                 $('#workarea').css('cursor', 'move');
                             } else {
-                                $('#workarea').css('cursor', 'default');
+                                if ($('#workarea').css('cursor') === 'move') {
+                                    if (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) {
+                                        $('#workarea').css('cursor', 'url(img/camera-cursor.svg), cell');
+                                    } else{
+                                        $('#workarea').css('cursor', 'auto');
+                                    }
+                                }
                             }
                         }
                     }

@@ -332,19 +332,83 @@
     height: $topBarHeight;
     background-color: #333;
     -webkit-app-region: drag;
+    &.win {
+        background-color: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        border-width: 0 0 1px 0;
+        -webkit-app-region: no-drag;
+        .preview-button-container {
+            position: relative;
+            float: left;
+            margin-left: 0px;
+            -webkit-app-region: no-drag;
+            overflow: hidden;
+            min-width: 50px;
+            max-width: 50px;
+            .img-container {
+                width: 50px;
+                padding: 0 13px;
+                img {
+                    padding: 12px 0;
+                    width: 24px;
+                    filter: brightness(0);
+                }
+            }
+            &.previewing {
+                background-color: unset;
+                min-width: 150px;
+                max-width: 210px;
+                border: 3px solid #595959;
+                border-width: 0 0 3px 0;
+                .img-container {
+                    opacity: 1;
+                }
+            }
+        }
+        .element-title {
+            position: relative;
+            float: left;
+            top: 0;
+            border: 3px solid #595959;
+            border-width: 0 0 3px 0;
+            margin-left: 0;
+            padding: 0 5px;
+            z-index: 1;
+        }
+        .go-button-container {
+            position: relative;
+            float: right;
+            .go-btn {
+                border-color: transparent transparent transparent #333333;
+            }
+        }
+        .menu {
+            &.camera {
+                left: 65px;
+                top: 80px;
+            }
+            &.export {
+                top: 37px;
+                right: 50px;
+            }
+        }
+    }
     .preview-button-container {
         position: absolute;
         display: inline-flex;
         justify-content: space-between;
-        min-width: 140px;
+        min-width: 40px;
+        max-width: 40px;
         height: $topBarHeight;
         margin-left: 80px;
+        transition: all 0.1s ease-in-out;
         .img-container {
             width: 40px;
             height: $topBarHeight;
             padding: 0 10px;
             display: inline-flex;
             opacity: 0.7;
+            cursor: pointer;
             img {
                 padding: 13px 0;
             }
@@ -353,6 +417,8 @@
             }
         }
         &.previewing {
+            min-width: 140px;
+            max-width: 200px;
             background-color: #eeeeee;
             img {
                 filter: brightness(0);
@@ -393,19 +459,29 @@
         }
     }
     .go-button-container {
+        display: inline-flex;
         position: absolute;
         right: 0;
-        width: 20px;
         height: $topBarHeight;
         margin: 0 13px 0 0;
-        padding: 13px 0;
         opacity: 0.85;
+        cursor: pointer;
         .go-btn {
             width: 0px;
             height: 0px;
             border-style: solid;
             border-color: transparent transparent transparent #ffffff;
             border-width: 7px 0px 7px 12px;
+            margin: 13px 0;
+        }
+        .go-text {
+            height: 40px;
+            margin-right: 9px;
+            line-height: 40px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.95px;
+            color: #353535;
         }
         &:hover {
             opacity: 1;

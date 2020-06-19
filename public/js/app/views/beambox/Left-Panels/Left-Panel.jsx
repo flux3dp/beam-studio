@@ -24,10 +24,12 @@ define([
 
     const LANG = i18n.lang.beambox.left_panel;
     const interProcessWebSocket = InterProcessApi() ;
+    const isWin = process.platform === 'win32';
 
     class LeftPanel extends React.Component {
         constructor() {
             super();
+            this.state = {};
         }
 
         componentDidMount() {
@@ -90,10 +92,7 @@ define([
 
         render() {
             const { isPreviewing } = this.props;
-            let leftPanelClass = 'left-toolbar';
-            if (process.platform === 'win32') {
-                leftPanelClass += ' windows';
-            }
+            const leftPanelClass = classNames('left-toolbar', {win: isWin});
             if (!isPreviewing) {
                 return (
                     <div className={leftPanelClass}>

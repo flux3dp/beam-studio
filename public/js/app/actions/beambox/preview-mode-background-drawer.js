@@ -45,8 +45,8 @@ define([
             }
         }
 
-        async draw(imgUrl, x, y, last = false) {
-            const p = this._prepareCroppedAndRotatedImgBlob(imgUrl, x, y, last);
+        async draw(imgUrl, x, y, last = false, callBack= () => {}) {
+            const p = this._prepareCroppedAndRotatedImgBlob(imgUrl, x, y, last, callBack);
 
             this.backgroundDrawerSubject.onNext(p);
             // await p;  if you want to know the time when image transfer to Blob, which is almost the same time background is drawn.
@@ -111,7 +111,7 @@ define([
             window.svgCanvas.setBackground('#fff', this.cameraCanvasUrl);
         }
 
-        _prepareCroppedAndRotatedImgBlob(imgUrl, x, y, last = false) {
+        _prepareCroppedAndRotatedImgBlob(imgUrl, x, y, last = false, callBack = () => {}) {
             const img = new Image();
             img.src = imgUrl;
 
@@ -137,12 +137,11 @@ define([
                     if (dstY < this.coordinates.minY) {
                         this.coordinates.minY = dstY;
                     }
-
                     this.canvas.getContext('2d').drawImage(img_regulated, dstX, dstY);
                     this.canvas.toBlob( (blob) => {
                         resolve(blob);
                         if (last) {
-                            setTimeout(() => BeamboxActions.endDrawingPreviewBlob(), 1000);
+                            setTimeout(callBack, 1000);
                         }
                     });
                 };

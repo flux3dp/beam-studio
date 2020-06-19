@@ -8,15 +8,13 @@
     user-select: none;
     padding: 5px;
     .left-toolbar {
-        background: #F8F8F8;
-        border: 1px solid #E0E0E0;
         position: absolute;
         top: 40px;
-        &.windows {
-            top: 70px;
-        }
         left: 0px;
         height: 100%;
+        background: #F8F8F8;
+        border: 1px solid #E0E0E0;
+        border-width: 0 1px 1px 1px;
         .tool-btn {
             text-align: center;
             line-height: 24px;
@@ -525,6 +523,11 @@
             height: calc(100% - 40px);
             right: 0;
             transition: opacity 0.3s;
+            &.win {
+                top: 70px;
+                width: $winSidePanelWidth;
+                height: calc(100% - 70px);
+            }
             &:hover {
                 opacity: 1;
                 z-index: 4;

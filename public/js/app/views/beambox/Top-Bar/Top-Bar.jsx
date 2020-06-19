@@ -49,6 +49,7 @@ define([
     const classNames = require('classnames');
     const lang = i18n.lang;
     const LANG = i18n.lang.topbar;
+    const isWin = process.platform === 'win32';
 
     let ret = {};
 
@@ -106,13 +107,13 @@ define([
                 return;
             }
 
-            $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
             $('#workarea').contextMenu({menu: []},()=>{});
             $('#workarea').contextmenu(() => {
                 this.endPreviewMode();
                 return false;
             });
             setTopBarPreviewMode(true);
+            $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
             this.setState({ isPreviewing: true });
         }
 
@@ -194,6 +195,7 @@ define([
         renderGoButton = () => {
             return (
                 <div className={classNames('go-button-container')} onClick={() => this.handleExportClick()}>
+                    { isWin ? <div className="go-text">{LANG.export}</div> : null}
                     <div className={(classNames('go-btn'))}/>
                 </div>
             );
@@ -471,7 +473,9 @@ define([
             } catch (e) {
                 console.error(e);
             }
-            
+            if (!content) {
+                return null
+            }
             return (
                 <div className="element-title">
                     {content}
@@ -482,10 +486,6 @@ define([
         render() {
             const { isPreviewing } = this.state;
             const { setShouldStartPreviewController } = this.context;
-            let leftPanelClass = 'left-toolbar';
-            if (process.platform === 'win32') {
-                leftPanelClass += ' windows';
-            }
             return (
                 <div className="top-bar-left-panel-container">
                     <LeftPanel
@@ -493,7 +493,7 @@ define([
                         setShouldStartPreviewController={setShouldStartPreviewController}
                         endPreviewMode={() => this.endPreviewMode()}
                         />
-                    <div className="top-bar">
+                    <div className={classNames('top-bar', {win: isWin})}>
                         {this.renderFileName()}
                         {this.renderPreviewButton()}
                         {this.renderGoButton()}

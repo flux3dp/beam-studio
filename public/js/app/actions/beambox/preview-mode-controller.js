@@ -106,7 +106,7 @@ define([
             $(workarea).css('cursor', 'wait');
             try {
                 const imgUrl = await this._getPhotoAfterMove(x, y);
-                const p = PreviewModeBackgroundDrawer.draw(imgUrl, x, y, last);
+                const p = PreviewModeBackgroundDrawer.draw(imgUrl, x, y, last, callback);
 
                 $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
                                 this.isPreviewBlocked = false;
@@ -121,7 +121,6 @@ define([
                     this.isDrawing = false;
                 }
                 this.end();
-            } finally {
                 callback();
             }
         }
