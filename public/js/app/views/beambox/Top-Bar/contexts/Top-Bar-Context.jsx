@@ -13,7 +13,7 @@ define([
             this.state = {
                 fileName: null,
                 selectedElem: null,
-                hasUnsavedChange: true,
+                hasUnsavedChange: false,
                 isDrawing: false,
                 isDrawn: false
             }

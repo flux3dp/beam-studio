@@ -1192,6 +1192,9 @@ define(function() {
                 },
                 ungroup_use: '正要解散外部匯入的 dxf 或是 svg ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
             },
+            zoom_block: {
+                fit_to_window: '配合視窗尺寸',
+            },
             left_panel: {
                 insert_object: '插入物件',
                 preview: '相機預覽',

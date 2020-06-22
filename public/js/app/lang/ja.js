@@ -1196,6 +1196,9 @@ define(function() {
                 },
                 ungroup_use: 'これにより、インポートされた dxf または svg がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
             },
+            zoom_block: {
+                fit_to_window: 'ウィンドウに合わせる',
+            },
             left_panel: {
                 insert_object: 'オブジェクトを挿入',
                 preview: 'プレビュー',

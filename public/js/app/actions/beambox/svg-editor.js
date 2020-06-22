@@ -6313,14 +6313,19 @@ define([
         };
 
         editor.resetView = function() {
-            let workareaToDimensionRatio = Math.min(($('#workarea').width() - 70) / Constant.dimension.getWidth(), ($('#workarea').height() - 20) / Constant.dimension.getHeight());
-            const zoomLevel = workareaToDimensionRatio;
+            const sidePanelsWidth = Constant.sidePanelsWidth;
+            const topBarHeight = Constant.topBarHeight;
+            const workareaToDimensionRatio = Math.min((window.innerWidth - sidePanelsWidth) / Constant.dimension.getWidth(), (window.innerHeight - topBarHeight) / Constant.dimension.getHeight());
+            const zoomLevel = workareaToDimensionRatio * 0.95;
+            const workAreaWidth = Constant.dimension.getWidth() * zoomLevel, workAreaHeight = Constant.dimension.getHeight() * zoomLevel;
+            const offsetX = (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2;
+            const offsetY = (window.innerHeight - topBarHeight - workAreaHeight) / 2;
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
             defaultScroll = {
-                x: ($('#canvasBackground').attr('x') - 10) / zoomLevel,
-                y: ($('#canvasBackground').attr('y') - 10) / zoomLevel
+                x: ($('#canvasBackground').attr('x') - offsetX) / zoomLevel,
+                y: ($('#canvasBackground').attr('y') - offsetY) / zoomLevel
             };
             $('#workarea')[0].scrollLeft = defaultScroll.x * zoomLevel;
             $('#workarea')[0].scrollTop = defaultScroll.y * zoomLevel;

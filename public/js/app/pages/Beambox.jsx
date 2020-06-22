@@ -6,6 +6,8 @@ define([
     'helpers/local-storage',
     'jsx!views/beambox/Top-Bar/Top-Bar',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
+    'jsx!views/beambox/Zoom-Block/Zoom-Block',
+    'jsx!views/beambox/Zoom-Block/contexts/Zoom-Block-Context',
     'jsx!pages/svg-editor',
     'jsx!views/dialogs/Alert',
     'jsx!views/dialogs/Dialog',
@@ -22,6 +24,8 @@ define([
     localStorage,
     { TopBar },
     { TopBarContextProvider },
+    { ZoomBlock },
+    { ZoomBlockContextProvider },
     SvgEditor,
     { Alert },
     { Dialog },
@@ -63,8 +67,10 @@ define([
                             <TopBarContextProvider>
                                 <TopBar />
                             </TopBarContextProvider>
+                            <ZoomBlockContextProvider>
+                                <ZoomBlock />
+                            </ZoomBlockContextProvider>
                             <SvgEditor />
-                            <div id='object-panels-placeholder' />
                             <div id='tool-panels-placeholder' />
                             <div id='image-trace-panel-placeholder' />
                             <Dialog index={0}/>

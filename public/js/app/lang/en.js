@@ -1196,6 +1196,9 @@ define(function() {
                 },
                 ungroup_use: 'This will ungroup imported dxf or svg. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
             },
+            zoom_block: {
+                fit_to_window: 'Fit to Window',
+            },
             left_panel: {
                 insert_object: 'Insert Object',
                 preview: 'Preview',

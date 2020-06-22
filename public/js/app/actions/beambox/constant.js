@@ -61,6 +61,10 @@ define([
             'fbb1p': ['fbb1p', 'fbb1b', 'fbm1'],
             'fbb1b': ['fbb1b', 'fbm1'],
             'fbm1': ['fbm1']
-        }
+        },
+        leftPanelWidth: 50, //px
+        rightPanelWidth: 242, //px
+        sidePanelsWidth: 292, //px
+        topBarHeight: process.platform === 'win32' ? 75 : 40,
     };
 });

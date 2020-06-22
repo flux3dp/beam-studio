@@ -37,6 +37,7 @@ define([
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
     'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/progress-actions',
@@ -57,6 +58,7 @@ define([
     LayerPanelController,
     ObjectPanelController,
     TopBarController,
+    ZoomBlockController,
     BeamboxActions,
     Constant,
     ProgressActions,
@@ -7039,6 +7041,7 @@ define([
                 selectorManager.requestSelector(elem).resize();
             });
             pathActions.zoomChange();
+            ZoomBlockController.updateZoomBlock();
             runExtensions('zoomChanged', zoomlevel);
         };
 
