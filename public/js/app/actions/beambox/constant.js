@@ -63,8 +63,8 @@ define([
             'fbm1': ['fbm1']
         },
         leftPanelWidth: 50, //px
-        rightPanelWidth: 242, //px
-        sidePanelsWidth: 292, //px
-        topBarHeight: process.platform === 'win32' ? 75 : 40,
+        rightPanelWidth: process.platform !== 'darwin' ? 258 : 242, //px
+        sidePanelsWidth: process.platform !== 'darwin' ? 308 : 292, //px
+        topBarHeight: process.platform === 'win32' ? 75 : 40, //px
     };
 });

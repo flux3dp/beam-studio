@@ -21,7 +21,7 @@ define([
         constructor() {
             super();
             this.state = {
-                dpmm: null
+                dpmm: 96 / 25.4,
             };
         }
 
@@ -31,25 +31,56 @@ define([
         }
 
         getDpmm = async () => {
-            if (process.platform === 'darwin') {
-                const res = await exec('/usr/sbin/system_profiler SPHardwareDataType | grep Identifier');
-                if (!res.stderr) {
-                    const match = res.stdout.match(/(?<=Model Identifier: ).+\b/);
-                    if (match) {
-                        const modelId = match[0];
-                        const monitorSize = macOSWindowSize[modelId];
-                        if (monitorSize) {
-                            const dpi = Math.hypot(screen.width, screen.height) / monitorSize;
-                            const dpmm = dpi / 25.4;
-                            this.setState({dpmm});
-                            return;
+            try {
+                if (process.platform === 'darwin') {
+                    const res = await exec('/usr/sbin/system_profiler SPHardwareDataType | grep Identifier');
+                    if (!res.stderr) {
+                        const match = res.stdout.match(/(?<=Model Identifier: ).+\b/);
+                        if (match) {
+                            const modelId = match[0];
+                            const monitorSize = macOSWindowSize[modelId];
+                            if (monitorSize) {
+                                const dpi = Math.hypot(screen.width, screen.height) / monitorSize;
+                                const dpmm = dpi / 25.4;
+                                this.setState({dpmm});
+                                return;
+                            }
+                        }
+                    }
+                } else if (process.platform === 'win32') {
+                    const res = await exec('powershell "Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBasicDisplayParams"');
+                    if (!res.stderr) {
+                        const matchWidth = res.stdout.match(/(?<=MaxHorizontalImageSize[\ ]*: )\d+\b/);
+                        const matchHeight = res.stdout.match(/(?<=MaxVerticalImageSize[\ ]*: )\d+\b/);
+                        if (matchWidth && matchHeight) {
+                            const width = Number(matchWidth);
+                            const height = Number(matchHeight);
+                            if (!isNaN(width) && !isNaN(height)) {
+                                const dpmm = (screen.width / (width * 10) + screen.height / (height * 10)) / 2;
+                                this.setState({dpmm});
+                                return;
+                            }
+                        } else if (matchWidth) {
+                            const width = Number(matchWidth);
+                            if (!isNaN(width)) {
+                                const dpmm = screen.width / (width * 10);
+                                this.setState({dpmm});
+                                return;
+                            }
+                        } else if (matchHeight) {
+                            const height = Number(matchHeight);
+                            if (!isNaN(height)) {
+                                const dpmm = screen.height / (height * 10);
+                                this.setState({dpmm});
+                                return;
+                            }
                         }
                     }
                 }
+            } catch (e) {
+                console.error(e);
             }
-            const dpiCalculator = $('#dpi-calculator');
-            const dpmm = dpiCalculator.width() / (100 * devicePixelRatio);
-
+            const dpmm = 96 / 25.4;
             this.setState({dpmm});
         }
 
@@ -63,14 +94,6 @@ define([
             }
             const ratio = svgCanvas.getZoom() * Constant.dpmm / dpmm;
             return ratio;
-        }
-
-        renderDpiCalculator() {
-            const { dpmm } = this.state;
-            if (!dpmm) {
-                return (<div id="dpi-calculator"/>);
-            }
-            return null;
         }
 
         setRatio = (ratio) => {
@@ -98,7 +121,6 @@ define([
             const { ContextMenu, MenuItem, ContextMenuTrigger } = require('react-contextmenu');
             return (
                 <div className="zoom-block">
-                    {this.renderDpiCalculator()}
                     <ContextMenuTrigger id="zoom-block-contextmenu" holdToDisplay={-1}>
                         <div className="zoom-btn zoom-out" onClick={() => this.zoomOut(ratio)}>
                             <div className="bar bar1"/>
