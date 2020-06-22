@@ -63,20 +63,24 @@ define([
                         buttonCallback();
                     }
                 } else {
+                    // Need to reset checkbox state after callback
                     if (typeof alert.checkBoxCallbacks === 'function') {
                         newButton.onClick = () => {
                             popAlertStack();
                             alert.checkBoxCallbacks();
+                            this.setState({checkboxChecked: false});
                         }
                     } else if (alert.checkBoxCallbacks.length > i){
                         newButton.onClick = () => {
                             popAlertStack();
                             alert.checkBoxCallbacks[i]();
+                            this.setState({checkboxChecked: false});
                         }
                     } else {
                         newButton.onClick = () => {
                             popAlertStack();
                             buttonCallback();
+                            this.setState({checkboxChecked: false});
                         };
                     }
                 }

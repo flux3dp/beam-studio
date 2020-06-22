@@ -510,7 +510,7 @@ define([
                                     message: LANG.svg_1_1_waring,
                                     checkBox: {
                                         text: LANG.dont_show_again,
-                                        callbacks: () => {AlertConfig.write('skip_svg_version_warning', false)}
+                                        callbacks: () => {AlertConfig.write('skip_svg_version_warning', true)}
                                     }
                                 });
                             }

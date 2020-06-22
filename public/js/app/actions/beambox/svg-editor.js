@@ -5760,7 +5760,6 @@ define([
                                             id: 'skip_dxf_version_warning',
                                             message: LANG.popup.dxf_version_waring,
                                             type: AlertConstants.SHOW_POPUP_WARNING,
-                                            callbacks: () => {console.log('unchecked')},
                                             checkBox: {
                                                 text: LANG.popup.dont_show_again,
                                                 callbacks: () => {AlertConfig.write('skip_dxf_version_warning', true)}
@@ -5819,11 +5818,15 @@ define([
                         return;
                     }
                     const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
-                    if (bbox.width > Constant.dimension.getWidth() || bbox.height > Constant.dimension.getHeight()) {
+                    if (!AlertConfig.read('skip_dxf_oversize_warning') && (bbox.width > Constant.dimension.getWidth() || bbox.height > Constant.dimension.getHeight())) {
                         Alert.popUp({
                             id: 'dxf_size_over_workarea',
                             message: LANG.popup.dxf_bounding_box_size_over,
                             type: AlertConstants.SHOW_POPUP_WARNING,
+                            checkBox: {
+                                text: LANG.popup.dont_show_again,
+                                callbacks: () => {AlertConfig.write('skip_dxf_oversize_warning', true)}
+                            }
                         });
                     }
                     const svgdoc = document.getElementById('svgcanvas').ownerDocument;

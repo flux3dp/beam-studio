@@ -535,12 +535,19 @@
                 opacity: 1;
                 z-index: 4;
             }
+            #layer-and-laser-panel {
+                width: 100%;
+                min-height: calc(100% - 40px);
+                background-color: #f8f8f8;
+                border: 1px solid #e0e0e0;
+                border-width: 0 0 1px 1px;
+            }
             #layerpanel {
                 background-color: $backgroundColor;
                 display: block;
                 overflow: initial;
                 border: 1px $panelBorderColor solid;
-                border-top: 0;
+                border-width: 0 0 1px 0;
 
                 #layerbuttons {
                     padding: 0;
@@ -993,6 +1000,7 @@
             height: 100%;
             margin-top: -1px;
             border: 1px $panelBorderColor solid;
+            border-width: 1px 0 0 0;
             border-radius: 4px;
             .layername {
                 padding: 10px 15px;

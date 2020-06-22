@@ -14,6 +14,7 @@ define([
     'jsx!widgets/Modal',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
+    'helpers/api/alert-config',
     'helpers/api/discover',
     'helpers/check-device-status',
     'helpers/device-list',
@@ -37,6 +38,7 @@ define([
     Modal,
     LeftPanel,
     { TopBarContext },
+    AlertConfig,
     Discover,
     checkDeviceStatus,
     DeviceList,
@@ -236,26 +238,55 @@ define([
                 }
             }
 
-            if (isPowerTooHigh) {
+            if (isPowerTooHigh && !AlertConfig.read('skip_power_warning')) {
                 Alert.popUp({
                     message: lang.beambox.popup.power_too_high_damage_laser_tube,
                     type: AlertConstants.SHOW_POPUP_WARNING,
+                    checkBox: {
+                        text: lang.beambox.popup.dont_show_again,
+                        callbacks: () => {
+                            AlertConfig.write('skip_power_warning', true);
+                        }
+                    }
                 });
             } else if (isTooFastForPath) {
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
-                    Alert.popUp({
-                        message: lang.beambox.popup.too_fast_for_path,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                    });
+                    if (!AlertConfig.read('skip_path_speed_warning')) {
+                        let message = lang.beambox.popup.too_fast_for_path;
+                        if (localStorage.getItem('default-units') === 'inches') {
+                            message = message.replace(/20mm\/s/g, '0.8in/s');
+                            console.log(message);
+                        }
+                        Alert.popUp({
+                            message,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                            checkBox: {
+                                text: lang.beambox.popup.dont_show_again,
+                                callbacks: () => {
+                                    AlertConfig.write('skip_path_speed_warning', true);
+                                }
+                            }
+                        });
+                    }
                 } else {
-                    let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
-                    Alert.popUp({
-                        message,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                    });
+                    if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
+                        let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
+                        if (localStorage.getItem('default-units') === 'inches') {
+                            message = message.replace(/20mm\/s/g, '0.8in/s');
+                        }
+                        Alert.popUp({
+                            message,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                            checkBox: {
+                                text: lang.beambox.popup.dont_show_again,
+                                callbacks: () => {
+                                    AlertConfig.write('skip_path_speed_constraint_warning', true);
+                                }
+                            }
+                        });
+                    }
                 }
             }
-
             return;
         }
 

@@ -4,6 +4,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/actions/beambox/svgeditor-function-wrapper',
+    'helpers/api/alert-config',
     'helpers/api/svg-laser-parser',
     'app/actions/beambox/beambox-preference',
     'helpers/i18n',
@@ -14,6 +15,7 @@ define([
     ProgressActions,
     ProgressConstants,
     FnWrapper,
+    AlertConfig,
     SvgLaserParser,
     BeamboxPreference,
     i18n,
@@ -323,6 +325,7 @@ define([
         } else {
             $textElement.attr({
                 'font-family': origFontFamily,
+                'font-postscript': origFontPostscriptName,
                 'stroke-width': 2,
                 'display': 'none',
                 'data-path-id': newPathId
@@ -420,13 +423,20 @@ define([
                 if (isFontSubstituted) {isSomeUnsupported = true}
             }
             
-            if (isSomeUnsupported) {
+            if (isSomeUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
                 ProgressActions.close();
                 await new Promise((resolve) => {
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_WARNING,
                         message: LANG.text_to_path.check_thumbnail_warning,
-                        callbacks: () => {resolve()}
+                        callbacks: () => {resolve()},
+                        checkBox: {
+                            text: i18n.lang.beambox.popup.dont_show_again,
+                            callbacks: () => {
+                                AlertConfig.write('skip_check_thumbnail_warning', true);
+                                resolve();
+                            }
+                        }
                     });
                 }); 
             }

@@ -15,7 +15,7 @@ define([
             return config.read('alert-config')[key];
         },
         write: (key, value) => {
-            const alertConfig = config.read('alert-config');
+            const alertConfig = config.read('alert-config') || {};
             alertConfig[key] = value;
             config.write('alert-config', alertConfig);
         }
