@@ -110,7 +110,8 @@ define([
         render() {
             const { selectedElement } = this.context;
             const { selectedTab } = this.state;
-            const isNotMac = process.platform !== 'darwin';
+            const isWin = process.platform === 'win32';
+            const isLinux = process.platform === 'linux';
             let content;
             if (!selectedElement || selectedElement.length < 1 || selectedTab === 'layers') {
                 content = this.renderLayerAndLaserPanel();
@@ -119,7 +120,7 @@ define([
             }
             return (
                 <div id="right-panel">
-                    <div id="sidepanels" className={classNames({win: isNotMac})}>
+                    <div id="sidepanels" className={classNames({win: isWin, linux: isLinux})}>
                         {this.renderTabs()}
                         <ObjectPanelContextProvider>
                             {content}

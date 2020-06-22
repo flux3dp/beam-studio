@@ -76,6 +76,24 @@ define([
                             }
                         }
                     }
+                } else if (process.platform === 'linux') {
+                    const res = await exec('xrandr | grep \' connected\'');
+                    if (!res.stderr) {
+                        const matches = res.stdout.match(/\d+x\d+\+\d+\+\d+ \d+mm x \d+mm\b/g);
+                        if (matches && matches.length > 0) {
+                            for (let i=0; i < matches.length; i++) {
+                                const match = matches[i].match(/(\d+)x(\d+)\+\d+\+\d+ (\d+)mm x (\d+)mm\b/);
+                                if (match) {
+                                    const [q, resW, resH, width, height] = match;
+                                    if (Number(resW) === screen.width && Number(resH) === screen.height && width > 0 && height > 0) {
+                                        const dpmm = (screen.width / width + screen.height / height) / 2;
+                                        this.setState({dpmm});
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             } catch (e) {
                 console.error(e);

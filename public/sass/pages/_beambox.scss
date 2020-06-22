@@ -528,6 +528,9 @@
                 width: $winSidePanelWidth;
                 height: calc(100% - 70px);
             }
+            &.linux {
+                width: $winSidePanelWidth;
+            }
             &:hover {
                 opacity: 1;
                 z-index: 4;
