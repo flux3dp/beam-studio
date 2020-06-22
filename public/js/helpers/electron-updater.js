@@ -1,6 +1,7 @@
 define([
     'helpers/i18n',
     'helpers/api/config',
+    'helpers/sprintf',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/progress-actions',
@@ -9,6 +10,7 @@ define([
 ],function(
     i18n,
     Config,
+    sprintf,
     Alert,
     AlertConstants,
     ProgressActions,
@@ -79,7 +81,7 @@ define([
             }
 
             if (res.isUpdateAvailable && channel === currentChannel) {
-                let msg = `Beam Studio v${res.info.version} ${LANG.available_update}`;
+                const msg = sprintf(LANG.available_update, res.info.version, window.FLUX.version);
                 Alert.popUp({
                     message: msg,
                     caption: LANG.check_update,
@@ -134,7 +136,7 @@ define([
                 return;
             }
             if (res.isUpdateAvailable) {
-                let msg = `Beam Studio v${res.info.version} ${LANG.available_switch}`;
+                const msg = sprintf(LANG.available_switch, res.info.version, window.FLUX.version);
                 Alert.popUp({
                     message: msg,
                     caption: LANG.switch_version,
