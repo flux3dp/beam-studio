@@ -39,8 +39,8 @@ svgEditor.addExtension('rotary_axis', function () {
         'y1': currentYRatio + '%',
         'x2': '100%',
         'y2': currentYRatio + '%',
-        'stroke-width': 1,
-        'stroke': 'rgb(0,128,255)',
+        'stroke-width': 3,
+        'stroke': 'rgba(0, 128, 255, 0.3)',
         'fill': 'none',
         'style': 'cursor:ns-resize',
         'display': svgCanvas.getRotaryMode() ? 'visible' : 'none'
