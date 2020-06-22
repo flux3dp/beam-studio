@@ -72,8 +72,8 @@ define([
                 defaultValue: uniqName,
                 onYes: (newName) => {
                     if (!newName) {
-                            return;
-                        }
+                        return;
+                    }
                     if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
                         Alert.popUp({
                             id: 'dupli layer name',

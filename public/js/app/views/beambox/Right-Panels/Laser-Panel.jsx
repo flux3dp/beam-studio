@@ -5,6 +5,7 @@ define([
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/constants/right-panel-constants',
     'app/stores/beambox-store',
+    'jsx!contexts/DialogCaller',
     'jsx!widgets/Unit-Input-v2',
     'jsx!widgets/Button-Group',
     'jsx!widgets/Dropdown-Control',
@@ -22,6 +23,7 @@ define([
     FnWrapper,
     RightPanelConstants,
     BeamboxStore,
+    DialogCaller,
     UnitInput,
     ButtonGroup,
     DropdwonControl,
@@ -221,19 +223,22 @@ define([
             this.props.funcs.writeDiode(this.props.layerName, val ? 1 : 0);
         }
 
-        _handleSaveConfig = () => {
-            const name = document.getElementsByClassName('configName')[0].value;
+        _handleSaveConfig = (name) => {
             const customizedConfigs = LocalStorage.get('customizedLaserConfigs');
-
             if (!customizedConfigs || customizedConfigs.length < 1) {
                 LocalStorage.set('customizedLaserConfigs', [{
                     name,
                     speed: this.state.speed,
                     power: this.state.strength,
-                    repeat: this.state.repeat
+                    repeat: this.state.repeat,
                 }]);
 
-                this.setState({ selectedItem: name });
+                this.setState({
+                    selectedItem: name,
+                    original: name
+                }, () => {
+                    document.getElementById('laser-config-dropdown').value = name;
+                });
                 this.props.funcs.writeConfigName(this.props.layerName, name);
             } else {
                 const index = customizedConfigs.findIndex((e) => e.name === name);
@@ -242,8 +247,14 @@ define([
                         name,
                         speed: this.state.speed,
                         power: this.state.strength,
-                        repeat: this.state.repeat
+                        repeat: this.state.repeat,
                     }]));
+                    this.setState({ 
+                        selectedItem: name,
+                        original: name
+                    }, () => {
+                        document.getElementById('laser-config-dropdown').value = name;
+                    });
                     this.props.funcs.writeConfigName(this.props.layerName, name);
                 } else {
                     Alert.popUp({
@@ -252,8 +263,6 @@ define([
                     });
                 }
             }
-
-            this.setState({ modal: '' });
         }
 
         _handleCancelModal = () => {
@@ -315,7 +324,18 @@ define([
                         console.error('wrong machine', model);
                 }
             } else if (value === 'save') {
-                this.setState({ modal: 'save' });
+                DialogCaller.promptDialog({
+                    caption: LANG.dropdown.mm.save,
+                    onYes: (name) => {
+                        if (!name) {
+                            return;
+                        }
+                        this._handleSaveConfig(name);
+                    },
+                    onCancel: () => {
+                        this._handleCancelModal();
+                    }
+                });
             } else if (value === 'more') {
                 this.setState({ modal: 'more' });
             } else {
@@ -328,6 +348,7 @@ define([
 
                 if (customizedConfigs) {
                     this.setState({
+                        original: value,
                         speed,
                         strength: power,
                         repeat
@@ -494,34 +515,6 @@ define([
             );
         }
 
-        _renderSaveModal = () => {
-            return (
-                <Modal>
-                    <div className="save-config-panel">
-                        <div className="title">{LANG.dropdown.mm.save}</div>
-                        <div className="name">
-                            <span>{LANG.name}</span>
-                            <input className="configName" type="text" />
-                        </div>
-                        <div className="footer">
-                            <button
-                                className='btn btn-default'
-                                onClick={() => this._handleCancelModal()}
-                            >
-                                {LANG.cancel}
-                            </button>
-                            <button
-                                className='btn btn-default pull-right'
-                                onClick={() => this._handleSaveConfig()}
-                            >
-                                {LANG.save}
-                            </button>
-                        </div>
-                    </div>
-                </Modal>
-            );
-        }
-
         _getDefaultParameters = (para_name) => {
             const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
             let speed, power, repeat;
@@ -569,8 +562,6 @@ define([
 
         _renderModal = () => {
             switch(this.state.modal) {
-                case 'save':
-                    return this._renderSaveModal();
                 case 'more':
                     return this._renderMoreModal();
                 default:
