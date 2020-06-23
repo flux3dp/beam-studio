@@ -5,6 +5,7 @@ define(function() {
         i18n : {
             default_lang : 'en',
             supported_langs : {
+                'de' : 'Deutsche',
                 'en' : 'English',
                 'zh-tw' : '繁體中文',
                 'ja' : '日本語',

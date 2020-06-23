@@ -102,6 +102,7 @@ define([
         editor.dimensions = [Constant.dimension.getWidth(), Constant.dimension.getHeight()];
 
         const availableLangMap = {
+            'de': 'de',
             'en': 'en',
             'ja': 'ja',
             'zh-tw': 'zh-TW',

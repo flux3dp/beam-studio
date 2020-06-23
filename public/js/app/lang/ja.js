@@ -283,8 +283,6 @@ define(function() {
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/en-us/articles/360001507715',
                 tutorial2_2: 'に従ってコンピュータをルーターにしてください。',
                 tutorial3: '3. Nextをクリックしてください。',
-                what_if: 'Do I need a crossover cable?',
-                what_if_content: '',
             },
             connect_machine_ip: {
                 enter_ip: 'マシン IP を入力してください',

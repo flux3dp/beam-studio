@@ -283,8 +283,6 @@ define(function() {
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/zh-tw/articles/360001507715',
                 tutorial2_2: '使您的電腦同時扮演路由器的角色。',
                 tutorial3: '3. 點選 Next 。',
-                what_if: 'Do I need a crossover cable?',
-                what_if_content: '',
             },
             connect_machine_ip: {
                 enter_ip: '請輸入機器 IP',
