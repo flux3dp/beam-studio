@@ -34,6 +34,7 @@ define(function() {
             vflip: 'VFlip',
             export: 'Export',
             preview: 'PREVIEW',
+            borderless: '(BORDERLESS)',
             tag_names: {
                 rect: 'Rectangle',
                 ellipse: 'Oval',

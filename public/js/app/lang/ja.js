@@ -33,7 +33,8 @@ define(function() {
             hflip: '左右反転',
             vflip: '上下反転',
             export: 'ゴー',
-            preview: 'カメラプレビュー',
+            preview: 'プレビュー',
+            borderless: '（ボーダーレス）',
             tag_names: {
                 rect: '矩形',
                 ellipse: '楕円',

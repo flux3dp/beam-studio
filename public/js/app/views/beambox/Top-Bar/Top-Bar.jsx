@@ -81,12 +81,14 @@ define([
 
         renderPreviewButton = () => {
             const { isPreviewing } = this.state;
+            const borderless = BeamboxPreference.read('borderless') || false;
+            const previewText = borderless ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
             return (
                 <div className={classNames('preview-button-container', {previewing: isPreviewing})}>
                     <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>
                         <img src="img/top-bar/icon-camera.svg" draggable={false}/>
                     </div>
-                    {isPreviewing ? <div className="title">{LANG.preview}</div> : null}
+                    {isPreviewing ? <div className="title">{previewText}</div> : null}
                     {isPreviewing ?
                         <div className='cross-wrapper' onClick={() => {this.endPreviewMode()}}>
                             <div className="bars bar1 shadow"></div>

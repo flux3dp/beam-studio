@@ -34,6 +34,7 @@ define(function() {
             vflip: '垂直翻转',
             export: 'GO',
             preview: '相机预览',
+            borderless: '(开盖模式)',
             tag_names: {
                 rect: '矩形',
                 ellipse: '椭圆',

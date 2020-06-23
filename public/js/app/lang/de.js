@@ -33,7 +33,8 @@ define(function() {
             hflip: 'h. Spiegeln',
             vflip: 'v. Spiegeln',
             export: 'Senden',
-            preview: 'VORBEREITUNG',
+            preview: 'VORSCHAU',
+            borderless: '(RANDLOS)',
             tag_names: {
                 rect: 'Rechteck',
                 ellipse: 'Oval',

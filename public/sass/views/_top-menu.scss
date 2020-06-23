@@ -356,7 +356,7 @@
             &.previewing {
                 background-color: unset;
                 min-width: 150px;
-                max-width: 210px;
+                max-width: 270px;
                 border: 3px solid #595959;
                 border-width: 0 0 3px 0;
                 .img-container {
@@ -417,7 +417,7 @@
         }
         &.previewing {
             min-width: 140px;
-            max-width: 200px;
+            max-width: 260px;
             background-color: #eeeeee;
             img {
                 filter: brightness(0);
