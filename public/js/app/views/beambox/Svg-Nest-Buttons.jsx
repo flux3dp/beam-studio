@@ -199,9 +199,8 @@ define([
         }
 
         render() {
-            const isPreviewing = $('#clear-preview-graffiti-button-placeholder').css('display') === 'block';
             return (
-                <div className={`svg-nest-buttons ${isPreviewing ? 'previewing': ''}`}>
+                <div className={`svg-nest-buttons`}>
                     {this.renderStartButton()}
                     <div className='svg-nest-button' onClick={() => this._close()}>
                         <div className={'text'}>{LANG._nest.end}</div>
