@@ -1403,6 +1403,7 @@ define(function() {
                         convert_to_path: '转换为路径',
                         wait_for_parsing_font: '解析字体中... 请稍待 10 秒',
                         offset: '位移複製',
+                        array: '阵列',
                         decompose_path: '解散非连续路径',
                         disassemble_use: '解散图档',
                     }

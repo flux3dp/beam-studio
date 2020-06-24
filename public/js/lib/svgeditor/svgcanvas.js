@@ -8815,6 +8815,7 @@ define([
             if (cmd) {
                 batchCmd.addSubCommand(cmd);
             }
+            this.tempGroupSelectedElements();
             canvas.undoMgr.undoStackPointer -= 1;
             canvas.undoMgr.undoStack.pop();
             addCommandToHistory(batchCmd);

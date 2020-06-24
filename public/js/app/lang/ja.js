@@ -1407,6 +1407,7 @@ define(function() {
                         convert_to_path: 'パスに変換',
                         wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
                         offset: 'オフセット',
+                        array: '配列',
                         decompose_path: '離散パスを分解する',
                         disassemble_use: '逆アセンブル',
                     }

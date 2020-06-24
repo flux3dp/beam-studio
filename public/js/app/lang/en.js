@@ -1405,6 +1405,7 @@ define(function() {
                         convert_to_path: 'Convert to Path',
                         wait_for_parsing_font: 'Parsing font... Please wait a second',
                         offset: 'Offset',
+                        array: 'Array',
                         decompose_path: 'Decompose',
                         disassemble_use: 'Disassemble',
                     }

@@ -100,12 +100,14 @@ define([
             content.push(this.renderButtons(LANG.crop, () => DialogCaller.showPhotoEditPanel('crop'), false));
             content.push(this.renderButtons(LANG.bevel, () => DialogCaller.showPhotoEditPanel('stamp'), false));
             content.push(this.renderButtons(LANG.invert, () => DialogCaller.showPhotoEditPanel('invert'), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderTextActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.convert_to_path, this.convertToPath, true));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
@@ -113,45 +115,55 @@ define([
             let content = [];
             content.push(this.renderButtons(LANG.decompose_path, () => svgCanvas.decomposePath(), true));
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderRectActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderEllipseActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderPolygonActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderLineActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderUseActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.disassemble_use, () => svgCanvas.disassembleUse2Group(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 
         renderGroupActions = () => {
+            let content = [];
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
+            return content;
         }
 
         renderMultiSelectActions = () => {
             let content = [];
             content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+            content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
             return content;
         }
 

@@ -1405,6 +1405,7 @@ define(function() {
                         convert_to_path: 'In Pfad konvertieren',
                         wait_for_parsing_font: 'Schriftart analysieren ... Bitte warten.',
                         offset: 'Offset',
+                        array: 'Anordnung',
                         decompose_path: 'Zerlegen',
                         disassemble_use: 'Zerlegen',
                     }

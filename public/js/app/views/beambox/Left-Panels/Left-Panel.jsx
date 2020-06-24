@@ -104,7 +104,6 @@ define([
                         {this._renderToolButton('oval','Ellipse', LANG.label.oval, FnWrapper.insertEllipse)}
                         {this._renderToolButton('polygon','Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
                         {this._renderToolButton('draw','Pen', LANG.label.pen, FnWrapper.insertPath)}
-                        {this._renderToolButton('grid','Grid', LANG.label.array, FnWrapper.gridArraySelected)}
                     </div>
                 );
             } else {

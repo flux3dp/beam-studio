@@ -1404,6 +1404,7 @@ define(function() {
                         convert_to_path: '轉換為路徑',
                         wait_for_parsing_font: '解析字體中... 請稍待 10 秒',
                         offset: '位移複製',
+                        array: '陣列',
                         decompose_path: '解散非連續路徑',
                         disassemble_use: '解散圖檔',
                     }

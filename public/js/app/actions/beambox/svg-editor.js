@@ -3682,7 +3682,7 @@ define([
                 }
             };
 
-            var clickGrid = function () {
+            var triggerGridTool = function () {
                 if (toolButtonClick('#tool_grid')) {
                     if (selectedElement != null || multiselected) {
                         ToolPanelsController.setVisibility(ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible);
@@ -3694,11 +3694,10 @@ define([
                             message: LANG.popup.select_first,
                             caption: LANG.left_panel.label.array
                         });
-                        $('#left-Grid').removeClass('active');
-                        $('#left-Cursor').addClass('active');
                     }
                 } 
             }
+            editor.triggerGridTool = triggerGridTool;
 
             let triggerOffsetTool = function () {
                 if (selectedElement != null || multiselected) {
@@ -4790,7 +4789,7 @@ define([
                 },
                 {
                     sel: '#tool_grid',
-                    fn: clickGrid,
+                    fn: triggerGridTool,
                     evt: 'mouseup'
                 },
                 {
