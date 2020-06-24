@@ -1640,14 +1640,14 @@ define([
                 if (elem != null && !elem.parentNode) {
                     elem = null;
                 }
-                RightPanelController.setSelectedElement(elem);
-                TopBarController.setElement(elem);
-                LayerPanelController.updateLayerPanel();
                 var currentLayerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
                 var currentMode = svgCanvas.getMode();
                 var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
 
                 var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
+                RightPanelController.setSelectedElement(is_node ? null : elem);
+                TopBarController.setElement(is_node ? null : elem);
+                LayerPanelController.updateLayerPanel();
                 var menu_items = $('#cmenu_canvas li');
                 $('#selected_panel, #multiselected_panel, #g_panel, #rect_panel, #circle_panel,' +
                         '#ellipse_panel, #line_panel, #text_panel, #image_panel, #container_panel,' +
@@ -5579,7 +5579,7 @@ define([
                             }
 
                             if (type !== 'color') {
-                                svgString = svgString.replace(/<image(.|\n)+\/image>/g, (match) => {
+                                svgString = svgString.replace(/<image[^>]*>[^<]*<[^\/]*\/image>/g, (match) => {
                                     return '';
                                 });
                                 svgString = svgString.replace(/<image[^>]*>/g, (match) => {

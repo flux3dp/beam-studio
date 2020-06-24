@@ -2582,20 +2582,16 @@ define([
                     case 'line':
                         attrs = $(element).attr(['x1', 'x2', 'y1', 'y2']);
                         keep = (attrs.x1 !== attrs.x2 || attrs.y1 !== attrs.y2);
-                        current_mode = 'select';
-                        $('.tool-btn').removeClass('active');
-                        $('#left-Cursor').addClass('active');
                         break;
                     case 'foreignObject':
                     case 'square':
                     case 'rect':
-                        current_mode = 'select';
-                        $('.tool-btn').removeClass('active');
-                        $('#left-Cursor').addClass('active');
-                    case 'image':
                         attrs = $(element).attr(['width', 'height']);
+                        keep = (attrs.width != 0 && attrs.height != 0);
+                        break;
+                    case 'image':
                         // Image should be kept regardless of size (use inherit dimensions later)
-                        keep = (attrs.width != 0 || attrs.height != 0) || current_mode === 'image';
+                        keep = true;
                         current_mode = 'select';
                         $('.tool-btn').removeClass('active');
                         $('#left-Cursor').addClass('active');
@@ -2605,10 +2601,7 @@ define([
                         break;
                     case 'ellipse':
                         attrs = $(element).attr(['rx', 'ry']);
-                        keep = (attrs.rx != null || attrs.ry != null);
-                        current_mode = 'select';
-                        $('.tool-btn').removeClass('active');
-                        $('#left-Cursor').addClass('active');
+                        keep = (attrs.rx > 0 && attrs.ry > 0);
                         break;
                     case 'fhellipse':
                         if ((freehand.maxx - freehand.minx) > 0 &&
@@ -2948,6 +2941,7 @@ define([
             var allow_dbl;
             let lineSpacing = 1;
             let isVertical = false;
+            let previousMode = 'select';
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
@@ -3425,6 +3419,7 @@ define([
                 },
                 toEditMode: function (x, y) {
                     allow_dbl = false;
+                    previousMode = current_mode;
                     current_mode = 'textedit';
                     selectorManager.requestSelector(curtext).showGrips(false);
                     // Make selector group accept clicks
@@ -3450,9 +3445,7 @@ define([
                     }, 300);
                 },
                 toSelectMode: function (selectElem) {
-                    current_mode = 'select';
-                    $('.tool-btn').removeClass('active');
-                    $('#left-Cursor').addClass('active');
+                    current_mode = previousMode;
                     clearInterval(blinker);
                     blinker = null;
                     if (selblock) {
@@ -3622,6 +3615,7 @@ define([
             var subpath = false;
             var current_path;
             var newPoint, firstCtrl;
+            let previousMode = 'select';
 
             function resetD(p) {
                 p.setAttribute('d', pathActions.convertPath(p));
@@ -3753,6 +3747,7 @@ define([
                     $('#x_align_line').remove();
                     $('#y_align_line').remove();
                     if (current_mode === 'path') {
+                        previousMode = 'path';
                         mouse_x = start_x;
                         mouse_y = start_y;
 
@@ -3804,8 +3799,7 @@ define([
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
                             svgedit.path.addPointGrip(index, mouse_x, mouse_y);
-                            shortcuts.off(['esc']);
-                            shortcuts.on(['esc'], function() {
+                            const endPathMode = () => {
                                 $('#x_align_line').remove();
                                 $('#y_align_line').remove();
                                 id = getId();
@@ -3826,14 +3820,14 @@ define([
                                 } else {
                                     $(element).remove();
                                     $('#pathpointgrip_container').remove();
-                                    current_mode = 'select';
-                                    $('.tool-btn').removeClass('active');
-                                    $('#left-Cursor').addClass('active');
+                                    canvas.setMode(previousMode);
                                 }
 
                                 shortcuts.off(['esc']);
                                 shortcuts.on(['esc'], svgEditor.clickSelect);
-                            });
+                            }
+                            shortcuts.off(['esc']);
+                            shortcuts.on(['esc'], endPathMode);
                         } else {
                             // determine if we clicked on an existing point
                             var seglist = drawn_path.pathSegList;
@@ -3896,6 +3890,8 @@ define([
                                     keep = false;
                                     return keep;
                                 }
+                                shortcuts.off(['esc']);
+                                shortcuts.on(['esc'], svgEditor.clickSelect);
                                 $(stretchy).remove();
 
                                 // This will signal to commit the path
@@ -4200,6 +4196,7 @@ define([
                 },
                 toEditMode: function (element) {
                     svgedit.path.path = svgedit.path.getPath_(element);
+                    previousMode = current_mode;
                     current_mode = 'pathedit';
                     clearSelection();
                     svgedit.path.path.show(true).update();
@@ -4208,9 +4205,7 @@ define([
                 },
                 toSelectMode: function (elem) {
                     var selPath = (elem === svgedit.path.path.elem);
-                    current_mode = 'select';
-                    $('.tool-btn').removeClass('active');
-                    $('#left-Cursor').addClass('active');
+                    current_mode = previousMode;
                     svgedit.path.path.show(false);
                     current_path = false;
                     clearSelection();
@@ -7064,6 +7059,31 @@ define([
             if (name === 'path') {
                 this.collectAlignPoints();
             }
+            $('.tool-btn').removeClass('active');
+            switch (name) {
+                case 'select':
+                    $('#left-Shoot').addClass('active');
+                    $('#left-Cursor').addClass('active');
+                    break;
+                case 'text':
+                    $('#left-Text').addClass('active');
+                    break;
+                case 'line':
+                    $('#left-Line').addClass('active');
+                    break;
+                case 'rect':
+                    $('#left-Rectangle').addClass('active');
+                    break;
+                case 'ellipse':
+                    $('#left-Ellipse').addClass('active');
+                    break;
+                case 'polygon':
+                    $('#left-Polygon').addClass('active');
+                    break;
+                case 'path':
+                    $('#left-Pen').addClass('active');
+                    break;
+            };
         };
 
         // Group: Element Styling
