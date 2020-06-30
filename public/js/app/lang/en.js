@@ -32,7 +32,7 @@ define(function() {
             difference: 'Difference',
             hflip: 'HFlip',
             vflip: 'VFlip',
-            export: 'Export',
+            export: 'GO',
             preview: 'PREVIEW',
             borderless: '(BORDERLESS)',
             tag_names: {

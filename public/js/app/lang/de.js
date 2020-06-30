@@ -32,7 +32,7 @@ define(function() {
             difference: 'Ausschluss',
             hflip: 'h. Spiegeln',
             vflip: 'v. Spiegeln',
-            export: 'Senden',
+            export: 'GEHEN',
             preview: 'VORSCHAU',
             borderless: '(RANDLOS)',
             tag_names: {
