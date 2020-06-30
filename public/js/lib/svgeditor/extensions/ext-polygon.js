@@ -205,8 +205,8 @@ svgEditor.addExtension('polygon', function (S) {
 
         mouseUp: function (opts) {
             if (svgCanvas.getMode() == 'polygon') {
-                var attrs = $(newPoly).attr('edge');
-                var keep = (attrs.edge != 0);
+                var edge = $(newPoly).attr('edge');
+                var keep = (edge !== 0);
                 return {
                     keep: keep,
                     element: newPoly

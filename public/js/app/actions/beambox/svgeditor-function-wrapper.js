@@ -6,6 +6,8 @@ define([
     'helpers/beam-file-helper',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'helpers/i18n'
 ], function(
     Constant,
@@ -15,6 +17,8 @@ define([
     BeamFileHelper,
     Alert,
     AlertConstants,
+    TutorialController,
+    TutorialConstants,
     i18n
 ){
     const LANG = i18n.lang.beambox;
@@ -261,10 +265,16 @@ define([
             $('#tool_select').click();
         },
         insertRectangle: function() {
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
+            TutorialController.handleNextStep();
+            }
             $('#tool_rect').mouseup();
             _setCrosshairCursor();
         },
         insertEllipse: function() {
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_CIRCLE) {
+                TutorialController.handleNextStep();
+            }
             $('#tool_ellipse').mouseup();
             _setCrosshairCursor();
         },

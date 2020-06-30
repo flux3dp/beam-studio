@@ -1,18 +1,22 @@
 define([
+    'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/views/beambox/Color-Picker-Panel',
     'jsx!contexts/DialogCaller',
     'app/contexts/AlertCaller',
-    'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
     'app/constants/alert-constants',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'helpers/i18n'
 ], function(
+    { LayerPanelContext },
     LaserPanelController,
     ColorPickerPanel,
     DialogCaller,
     Alert,
-    { LayerPanelContext },
     AlertConstants,
+    TutorialController,
+    TutorialConstants,
     i18n
 ) {
     const React = require('react');
@@ -82,6 +86,9 @@ define([
                         return;
                     }
                     svgCanvas.createLayer(newName);
+                    if (TutorialController.getNextStepRequirement() === TutorialConstants.ADD_NEW_LAYER) {
+                        TutorialController.handleNextStep();
+                    }
                     window.updateContextPanel();
                     this.addLayerLaserConfig(newName);
                     this.setState(this.state);
@@ -346,9 +353,13 @@ define([
         }
 
         renderSelLayerBlock = () => {
+            const { elem } = this.props;
             const options = [];
             const drawing = svgCanvas.getCurrentDrawing();
             const layerCount = svgCanvas.getCurrentDrawing().getNumLayers();
+            if ( !elem || layerCount === 1) {
+                return null;
+            }
             const currentLayerName = drawing.getCurrentLayerName();
             for (let i = layerCount - 1; i >= 0; i--) {
                 const layerName = drawing.getLayerName(i);

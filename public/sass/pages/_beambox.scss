@@ -1000,6 +1000,8 @@
             border-width: 1px 0 0 0;
             border-radius: 4px;
             .layername {
+                height: 40px;
+                line-height: 20px;
                 padding: 10px 15px;
                 background: #F2F2F2;
                 border-bottom: 1px $panelBorderColor solid;
@@ -1476,6 +1478,14 @@
                     }
                 }
             }
+        }
+    }
+    .tutorial-container {
+        .hint-circle {
+            position: absolute;
+            border: 2px solid #0091ff;
+            border-radius: 20px;
+            pointer-events: none;
         }
     }
 

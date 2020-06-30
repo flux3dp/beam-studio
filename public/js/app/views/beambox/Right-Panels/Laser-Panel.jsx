@@ -15,6 +15,8 @@ define([
     'helpers/i18n',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'app/actions/beambox/diode-boundary-drawer'
 ], function(
     $,
@@ -33,6 +35,8 @@ define([
     i18n,
     Alert,
     AlertConstants,
+    TutorialController,
+    TutorialConstants,
     DiodeBoundaryDrawer
 ) {
     'use strict';
@@ -323,6 +327,9 @@ define([
                     default:
                         console.error('wrong machine', model);
                 }
+                if (TutorialController.getNextStepRequirement() === TutorialConstants.SET_PRESET) {
+                    TutorialController.handleNextStep();
+                }
             } else if (value === 'save') {
                 DialogCaller.promptDialog({
                     caption: LANG.dropdown.mm.save,
@@ -343,7 +350,8 @@ define([
                 const {
                     speed,
                     power,
-                    repeat
+                    repeat,
+                    isDefault
                 } = customizedConfigs;
 
                 if (customizedConfigs) {
@@ -351,7 +359,7 @@ define([
                         original: value,
                         speed,
                         strength: power,
-                        repeat
+                        repeat,
                     })
 
                     this.props.funcs.writeSpeed(this.props.layerName, speed);
@@ -359,6 +367,9 @@ define([
                     this.props.funcs.writeRepeat(this.props.layerName, repeat);
                     this.props.funcs.writeConfigName(this.props.layerName, value);
 
+                    if (TutorialController.getNextStepRequirement() === TutorialConstants.SET_PRESET) {
+                        TutorialController.handleNextStep();
+                    }
                 } else {
                     console.error('No such value', value);
                 }
@@ -368,22 +379,6 @@ define([
         _renderStrength = () => {
             const maxValue = 100;
             const minValue = 1;
-            const onSlideBarClick = (e) => {
-                const l = $('.rainbow-sidebar').offset().left;
-                const w = $('.rainbow-sidebar').width();
-                const newValue = Math.round(((e.clientX - l) / w * (maxValue - minValue) + minValue) * 10) / 10;
-                this._handleStrengthChange(newValue);
-            };
-            const _handleDrag = (e) => {
-                const l = $('.rainbow-sidebar').offset().left;
-                const w = $('.rainbow-sidebar').width();
-                const x = e.clientX;
-                if (x < l || x > w + l) {
-                    return;
-                }
-                let newValue = Math.round(((x - l) / w * (maxValue - minValue) + minValue) * 10) / 10;
-                this._handleStrengthChange(newValue);
-            };
             return (
                 <div className='panel'>
                     <span className='title'>{LANG.strength}</span>

@@ -2,6 +2,7 @@ define([
     'jsx!widgets/Modal',
     'jsx!views/dialogs/Dialog',
     'jsx!views/dialogs/Prompt',
+    'jsx!views/tutorials/Tutorial',
     'jsx!views/beambox/About-Beam-Studio',
     'jsx!views/beambox/Camera-Calibration',
     'jsx!views/beambox/Diode-Calibration',
@@ -14,6 +15,7 @@ define([
     Modal,
     Dialog,
     Prompt,
+    { Tutorial },
     AboutBeamStudio,
     CameraCalibration,
     DiodeCalibration,
@@ -158,6 +160,19 @@ define([
                 <SvgNestButtons
                     onClose={() => {
                         popDialogById('svg-nest')
+                    }}
+                />
+            );
+        },
+        showTutorial: (tutorial, callback) => {
+            const { id } = tutorial;
+            if (isIdExist(id)) return;
+            addDialogComponent(id,
+                <Tutorial
+                    {...tutorial}
+                    onClose={() => {
+                        popDialogById(id);
+                        callback();
                     }}
                 />
             );

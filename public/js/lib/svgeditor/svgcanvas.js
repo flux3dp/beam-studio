@@ -37,6 +37,8 @@ define([
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
     'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
@@ -58,6 +60,8 @@ define([
     LayerPanelController,
     ObjectPanelController,
     TopBarController,
+    TutorialController,
+    TutorialConstants,
     ZoomBlockController,
     BeamboxActions,
     Constant,
@@ -2410,10 +2414,16 @@ define([
                             if (start_x === real_x && start_y === real_y) {
                                 PreviewModeController.preview(real_x, real_y, true, () => {
                                     TopBarController.updateTopBar();
+                                    if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                        TutorialController.handleNextStep();
+                                    }
                                 });
                             } else {
                                 PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
                                     TopBarController.updateTopBar();
+                                    if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                        TutorialController.handleNextStep();
+                                    }
                                 });
                             }
                         }
@@ -2588,6 +2598,9 @@ define([
                     case 'rect':
                         attrs = $(element).attr(['width', 'height']);
                         keep = (attrs.width != 0 && attrs.height != 0);
+                        if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT) {
+                            TutorialController.handleNextStep();
+                        }
                         break;
                     case 'image':
                         // Image should be kept regardless of size (use inherit dimensions later)
@@ -2602,6 +2615,9 @@ define([
                     case 'ellipse':
                         attrs = $(element).attr(['rx', 'ry']);
                         keep = (attrs.rx > 0 && attrs.ry > 0);
+                        if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE) {
+                            TutorialController.handleNextStep();
+                        }
                         break;
                     case 'fhellipse':
                         if ((freehand.maxx - freehand.minx) > 0 &&
@@ -2708,6 +2724,7 @@ define([
 
                 if (!keep && element != null) {
                     getCurrentDrawing().releaseId(getId());
+                    selectorManager.releaseSelector(element);
                     element.parentNode.removeChild(element);
                     element = null;
                     t = evt.target;
@@ -8140,6 +8157,9 @@ define([
                     console.log(`Not support type: ${elem.tagName}`)
                 }
             }
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.INFILL) {
+                TutorialController.handleNextStep();
+            }
             if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
         }
 
@@ -11092,61 +11112,6 @@ define([
 
         };
 
-        //   this.calcLocation = function(elem, para, val) {
-        // 		  const ts = $(elem).attr('transform');
-        // 		  const xform = $(elem).attr('data-xform');
-        // 		  const elemX = parseFloat($(elem).attr('x'));
-        // 		  const elemY = parseFloat($(elem).attr('y'));
-
-        // 		  const obj = {};
-        // 		  xform.split(" ").forEach((pair) => {
-        // 			  	[key, value] = pair.split("=");
-        // 			  	if (value === undefined) { return };
-        // 			  	obj[key] = parseFloat(value);
-        // 		  });
-
-        // 		  const matrix = ts.match(/matrix\(.*?\)/g);
-        // 		  const matr = matrix[0].substring(7, matrix[0].length - 1);
-        // 		  [a, b, c, d, e, f] = matr.split(',').map(parseFloat);
-
-        // 		  const x = a * obj.x + c * obj.y + e + a * elemX;
-        // 		  const y = b * obj.x + d * obj.y + f + d * elemY;
-        // 		  const width = obj.width * a;
-        // 		  const height = obj.height * d;
-
-        // 		  if (para === undefined) {
-        // 	        return {
-        // 		          x: x,
-        // 		          y: y,
-        // 		          width: width,
-        // 		          height: height
-        // 	        };
-        // 		  }
-
-        // 		  let offsetX, offsetY, scaleX, scaleY, newMatrix;
-        // 		  switch (para) {
-        // 				  case 'x':
-        // 						  offsetX = (val - x) / a + elemX;
-        // 						  return offsetX;
-        // 						  break;
-        // 				  case 'y':
-        // 						  offsetY = (val - y) / d + elemY;
-        // 						  return offsetY;
-        // 						  break;
-        // 				  case 'width':
-        // 						  scaleX = val / obj.width;
-        // 						  newMatrix = 'matrix({0}, {1}, {2}, {3}, {4}, {5})'.format(scaleX,b,c,d,e+(a-scaleX)*(obj.x+elemX),f);
-        // 						  return newMatrix;
-        // 						  break;
-        // 				  case 'height':
-        // 						  scaleY = val / obj.height;
-        // 						  newMatrix = 'matrix({0}, {1}, {2}, {3}, {4}, {5})'.format(a,b,c,scaleY,e,f+(b-scaleY)*(obj.y+elemY));
-        // 						  return newMatrix;
-        // 						  break;
-        // 				  default:
-        // 						  return 'default';
-        // 		  }
-        //   };
         this.setSvgElemPosition = function (para, val) {
             const selected = selectedElements[0];
             const realLocation = this.getSvgRealLocation(selected);

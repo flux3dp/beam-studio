@@ -14,6 +14,8 @@ define([
     'jsx!widgets/Modal',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'helpers/api/alert-config',
     'helpers/api/discover',
     'helpers/check-device-status',
@@ -38,6 +40,8 @@ define([
     Modal,
     LeftPanel,
     { TopBarContext },
+    TutorialController,
+    TutorialConstants,
     AlertConfig,
     Discover,
     checkDeviceStatus,
@@ -110,6 +114,7 @@ define([
                 BeamboxPreference.write('should_remind_calibrate_camera', false);
                 return;
             }
+            svgCanvas.setMode('select');
 
             $('#workarea').contextMenu({menu: []},()=>{});
             $('#workarea').contextmenu(() => {
@@ -119,6 +124,9 @@ define([
             setTopBarPreviewMode(true);
             $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
             this.setState({ isPreviewing: true });
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_PREVIEW_MODE) {
+                TutorialController.handleNextStep();
+            }
         }
 
         showCameraPreviewDeviceList = () => {    
@@ -209,6 +217,9 @@ define([
             this.endPreviewMode();
 
             this.handleExportAlerts();
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.SEND_FILE) {
+                TutorialController.handleNextStep();
+            }
             this.showDeviceList('export', (device) => {this.exportTask(device)}, true);
         }
 

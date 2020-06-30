@@ -99,10 +99,10 @@ define([
                         {this._renderToolButton('cursor','Cursor', LANG.label.cursor, FnWrapper.useSelectTool, 'active')}
                         {this._renderToolButton('photo','Photo', LANG.label.photo, FnWrapper.importImage)}
                         {this._renderToolButton('text','Text', LANG.label.text, FnWrapper.insertText)}
-                        {this._renderToolButton('line','Line', LANG.label.line, FnWrapper.insertLine)}
                         {this._renderToolButton('rect','Rectangle', LANG.label.rect, FnWrapper.insertRectangle)}
                         {this._renderToolButton('oval','Ellipse', LANG.label.oval, FnWrapper.insertEllipse)}
                         {this._renderToolButton('polygon','Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
+                        {this._renderToolButton('line','Line', LANG.label.line, FnWrapper.insertLine)}
                         {this._renderToolButton('draw','Pen', LANG.label.pen, FnWrapper.insertPath)}
                     </div>
                 );

@@ -1,0 +1,83 @@
+.dialog-box-container {
+    position: absolute;
+    z-index: 4;
+    .dialog-box {
+        //min-height: 75px;
+        border-radius: 9px;
+        color: #ffffff;
+        background-color: #0091ff;
+        .tutorial-dialog {
+            padding: 13px;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            white-space: pre-wrap;
+        }
+        .next-button {
+            cursor: pointer;
+            padding-top: 13px;
+            width: fit-content;
+            border: 1px solid #ffffff;
+            border-width: 0 0 1px 0;
+        }
+    }
+    .dialog-box-arrow {
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        &.left {
+            right: 100%;
+            border-width:  9px 21px 9px 0;
+            border-color: transparent #0091ff transparent transparent;
+        }
+        &.right {
+            left: 100%;
+            border-width:  9px 0 9px 21px;
+            border-color: transparent transparent transparent #0091ff;
+        }
+        &.top {
+            bottom: 100%;
+            border-width: 0 9px 21px 9px;
+            border-color: transparent transparent #0091ff transparent;
+        }
+        &.bottom {
+            top: 100%;
+            border-width: 21px 9px 0 9px;
+            border-color: #0091ff transparent transparent transparent;
+            
+        }
+    }
+    .close-btn {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+        top: -12px;
+        cursor: pointer;
+        &.left {
+            right: -12px;
+        }
+        &.right {
+            left: -12px;
+        }
+        .cross-wrapper {
+            margin: 8px 0 0 8px;
+        }
+        .bars {
+            display: block;
+            position: absolute;
+            background-color: #0091ff;
+            width: 2px;
+            height: 10px;
+        }
+        .bar1 {
+            transform: translateX(3px) rotate(45deg);
+        }
+        .bar2 {
+            transform: translateX(3px) rotate(-45deg);
+        }
+    }
+}

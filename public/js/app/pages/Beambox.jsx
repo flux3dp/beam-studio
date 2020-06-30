@@ -33,7 +33,7 @@ define([
     { DialogContextProvider },
     AlertCaller,
     AlertConstants,
-    outputError
+    outputError,
 ) {
     const React = require('react');
     const LANG = i18n.lang.beambox;
@@ -54,6 +54,7 @@ define([
             let ipc = electron.ipc;
             let events = electron.events;
             ipc.send(events.FRONTEND_READY);
+            BeamboxInit.showTutorial();
         }
         componentWillUnmount() {
             BeamboxGlobalInteraction.detach();

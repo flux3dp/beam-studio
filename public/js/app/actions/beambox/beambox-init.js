@@ -12,9 +12,11 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/constants/device-constants',
+    'app/constants/tutorial-constants',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
+    'helpers/api/alert-config',
     'helpers/api/config',
     'helpers/api/discover',
     'helpers/check-device-status',
@@ -38,9 +40,11 @@ define([
     ProgressActions,
     ProgressConstants,
     DeviceConstants,
+    TutorialConstants,
     ToolPanelsController,
     LaserPanelController,
     ImageTracePanelController,
+    AlertConfig,
     Config,
     Discover,
     checkDeviceStatus,
@@ -516,11 +520,41 @@ define([
         if (!window.menuEventRegistered) {
             registerAllDeviceMenuClickEvents();
         }
-    }
+    };
+
+    showTutorial = () => {
+        if (!AlertConfig.read('skip-interface-tutorial')) {
+            const LANG = i18n.lang.tutorial;
+            const isNewUser = localStorage.getItem('new-user') === 'true';
+            Alert.popUp({
+                id: 'ask-tutorial',
+                message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
+                buttonType: AlertConstants.YES_NO,
+                onYes: () => {
+                    let tutorial;
+                    if (isNewUser) {
+                        tutorial = TutorialConstants.NEW_USER_TUTORIAL;
+                    } else {
+                        tutorial = TutorialConstants.INTERFACE_TUTORIAL;
+                    }
+                    DialogCaller.showTutorial(tutorial, () => {
+                        //localStorage.removeItem('new-user');
+                        //AlertConfig.write('skip-interface-tutorial', true);
+                    });
+                },
+                onNo: () => {
+                    console.log('no thx');
+                    //localStorage.removeItem('new-user');
+                    //AlertConfig.write('skip-interface-tutorial', true);
+                }
+            });
+        }
+    };
 
     return {
         init: init,
         displayGuides: displayGuides,
         initMenuBarEvents: initMenuBarEvents,
+        showTutorial,
     };
 });

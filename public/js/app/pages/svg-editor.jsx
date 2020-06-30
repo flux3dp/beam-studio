@@ -220,6 +220,7 @@ define([
     class view extends React.Component {
         componentDidMount(node) {
             $(svgEditor.init);
+            svgEditor.resetView();
         }
 
         _handleDisableHref(e) {

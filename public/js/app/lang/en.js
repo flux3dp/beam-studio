@@ -1316,7 +1316,7 @@ define(function() {
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             save: 'Save',
                             more: 'Manage',
-                            parameters: 'Parameters...'
+                            parameters: 'Presets'
                         },
                         inches: {
                             wood_3mm_cutting: 'Wood - 0.1\'\' Cutting',
@@ -1340,7 +1340,7 @@ define(function() {
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             save: 'Save',
                             more: 'Manage',
-                            parameters: 'Parameters...'
+                            parameters: 'Presets'
                         },
                     },
                     laser_speed: {
@@ -2000,7 +2000,41 @@ define(function() {
             movementTestFailed: { caption: 'Unable to pass movement tests',  message: '1. Make sure the toolhead cable is stretched correctly.<br/>2. Make sure the connector of toolhead cable to the machine has inserted about half into the machine.<br/>3. Try to turn the connector on the printing toolhead 180 degrees.<br/>4. Check <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/115003674128">this article</a>.<br/> Try again?' },
             befaultTutorialWelcome: 'Thank you for ordering FLUX Delta+!<br/><br/> This guide will help you take you through the basic settings of the machine and help you set up.<br/><br/> Let’s watch the tutorial! Please turn on the subtitles.<br/><br/>',
             openBrowser: 'openBrowser',
-            welcome: 'WELCOME'
+            welcome: 'WELCOME',
+            needNewUserTutorial: 'Welcome!\nDo you need a tutorial on Beam Studio?',
+            needNewInterfaceTutorial: 'Welcome!\nDo you need an introduction to new interface of Beam Studio?',
+            next: 'NEXT',
+            newUser: {
+                draw_a_circle: 'Draw a Circle',
+                drag_to_draw: 'Drag to Draw',
+                infill: 'Infill',
+                switch_to_layer_panel: 'Switch to Layer Panel',
+                set_preset_engraving: 'Set Preset - Engraving',
+                set_preset_cut: 'Set Preset - Cutting',
+                add_new_layer: 'Add a Layer',
+                draw_a_rect: 'Draw a Rectangle',
+                switch_to_preview_mode: 'Switch to Preview Mode',
+                preview_the_platform: 'Preview the Platform',
+                send_the_file: 'Send the File',
+                end_alert: 'Are you sure to end tutorial?',
+            },
+            newInterface: {
+                camera_preview: 'Camera Preview',
+                select_image_text: 'Select / Image / Text',
+                basic_shapes: 'Basic Shapes',
+                pen_tool: 'Pen Tool',
+                add_new_layer: 'Add New Layer',
+                rename_by_double_click: 'Rename by double click',
+                drag_to_sort: 'Drag to sort',
+                layer_controls: 'Right Click to call Layer Controls:\nDuplicate / Merge / Lock / Delete Layers',
+                switch_between_layer_panel_and_object_panel: 'Switch between Layer Panel and Object Panel',
+                align_controls: 'Align Controls',
+                group_controls: 'Group Controls',
+                shape_operation: 'Shape Operation',
+                flip: 'Flip',
+                object_actions: 'Object Actions',
+                end_alert: 'Are you sure to end new UI introduction?',
+            },
         },
         slicer: {
             computing: 'Computing',

@@ -5,6 +5,8 @@ define([
     'jsx!views/beambox/Right-Panels/Object-Panel',
     'jsx!views/beambox/Right-Panels/Layer-Panel',
     'jsx!views/beambox/Right-Panels/Laser-Panel',
+    'jsx!views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
     'helpers/i18n'
 ], function(
     { RightPanelContext },
@@ -13,6 +15,8 @@ define([
     { ObjectPanel },
     { LayerPanel },
     LaserPanel,
+    TutorialController,
+    TutorialConstants,
     i18n
 ) {
     const React = require('react');
@@ -72,7 +76,14 @@ define([
                 <div className="right-panel-tabs">
                     <div
                         className={classNames('tab', 'layers', {selected: selectedTab === 'layers'})}
-                        onClick={() => {this.setState({selectedTab: 'layers'})}}>
+                        onClick={() => {
+                            this.setState({selectedTab: 'layers'});
+                            if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_LAYER_PANEL) {
+                                svgCanvas.clearSelection();
+                                TutorialController.handleNextStep();
+                            }
+                        }}
+                    >
                         <img className="tab-icon" src="img/right-panel/icon-layers.svg" draggable={false}/>
                         <div className="tab-title">
                             {LANG.tabs.layers}
@@ -91,9 +102,12 @@ define([
         }
 
         renderLayerAndLaserPanel() {
+            const { selectedElement } = this.context;
             return (
                 <LayerPanelContextProvider>
-                    <LayerPanel />
+                    <LayerPanel
+                        elem={selectedElement}
+                    />
                 </LayerPanelContextProvider>
             );
         }
