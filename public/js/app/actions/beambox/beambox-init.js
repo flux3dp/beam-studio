@@ -538,14 +538,13 @@ define([
                         tutorial = TutorialConstants.INTERFACE_TUTORIAL;
                     }
                     DialogCaller.showTutorial(tutorial, () => {
-                        //localStorage.removeItem('new-user');
-                        //AlertConfig.write('skip-interface-tutorial', true);
+                        localStorage.removeItem('new-user');
+                        AlertConfig.write('skip-interface-tutorial', true);
                     });
                 },
                 onNo: () => {
-                    console.log('no thx');
-                    //localStorage.removeItem('new-user');
-                    //AlertConfig.write('skip-interface-tutorial', true);
+                    localStorage.removeItem('new-user');
+                    AlertConfig.write('skip-interface-tutorial', true);
                 }
             });
         }
