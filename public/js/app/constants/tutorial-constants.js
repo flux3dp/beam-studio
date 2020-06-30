@@ -26,9 +26,6 @@ define([
     }
 
     const isMac = process.platform === 'darwin';
-    const isWin = process.platform === 'win32';
-
-    console.log('TODO: constants for windows');
 
     return {
         callbackConstants,
@@ -59,45 +56,45 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 50, top: 302},
+                        position: {right: 50 + Constant.rightPanelScrollBarWidth, top: 302},
                         arrowDirection:'right'
                     },
                     holePosition: {right: 15, top: 290},
-                    holeSize: {width: 30, height: 20},
-                    hintCircle: {right: 9, top: 282, width: 40, height: 40},
+                    holeSize: {width: 30 + Constant.rightPanelScrollBarWidth, height: 20},
+                    hintCircle: {right: 9, top: 282, width: 40 + Constant.rightPanelScrollBarWidth, height: 40},
                     text: LANG.newUser.infill,
                     nextStepRequirement: nextStepRequirements.INFILL
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: Constant.rightPanelWidth + 3, top: Constant.topBarHeight + 20},
+                        position: {right: Constant.rightPanelWidth + 3, top: Constant.topBarHeightWithoutTitleBar + 20},
                         arrowDirection:'right'
                     },
-                    holePosition: {right: 210, top: Constant.topBarHeight},
+                    holePosition: {right: Constant.rightPanelWidth - 32, top: Constant.topBarHeightWithoutTitleBar},
                     holeSize: {width: 32, height: 40},
-                    hintCircle: {right: Constant.rightPanelWidth - 37, top: Constant.topBarHeight, width: 40, height: 40},
+                    hintCircle: {right: Constant.rightPanelWidth - 37, top: Constant.topBarHeightWithoutTitleBar, width: 40, height: 40},
                     text: LANG.newUser.switch_to_layer_panel,
                     nextStepRequirement: nextStepRequirements.TO_LAYER_PANEL,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 240, top: 490},
+                        position: {right: Constant.rightPanelWidth - 2, top: 490},
                         arrowDirection:'right'
                     },
                     holePosition: {right: 15, top: 475},
-                    holeSize: {width: 220, height: 30},
-                    hintCircle: {right: 5, top: 471, width: 230, height: 40},
+                    holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
+                    hintCircle: {right: 5, top: 471, width: Constant.rightPanelWidth - 12, height: 40},
                     text: LANG.newUser.set_preset_engraving,
                     nextStepRequirement: nextStepRequirements.SET_PRESET
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 40, top: 402},
+                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: 402},
                         arrowDirection:'right'
                     },
                     holePosition: {right: 15, top: 390},
-                    holeSize: {width: 20, height: 20},
-                    hintCircle: {right: 14, top: 389, width: 25, height: 25},
+                    holeSize: {width: 20 + Constant.rightPanelScrollBarWidth, height: 20},
+                    hintCircle: {right: 14, top: 389, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
                     text: LANG.newUser.add_new_layer,
                     nextStepRequirement: nextStepRequirements.ADD_NEW_LAYER
                 },
@@ -123,34 +120,35 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: Constant.rightPanelWidth + 3, top: Constant.topBarHeight + 20},
+                        position: {right: Constant.rightPanelWidth + 3, top: Constant.topBarHeightWithoutTitleBar + 20},
                         arrowDirection:'right'
                     },
-                    holePosition: {right: 210, top: Constant.topBarHeight},
+                    holePosition: {right: Constant.rightPanelWidth - 32, top: Constant.topBarHeightWithoutTitleBar},
                     holeSize: {width: 32, height: 40},
-                    hintCircle: {right: Constant.rightPanelWidth - 37, top:Constant.topBarHeight, width: 40, height: 40},
+                    hintCircle: {right: Constant.rightPanelWidth - 37, top:Constant.topBarHeightWithoutTitleBar, width: 40, height: 40},
                     text: LANG.newUser.switch_to_layer_panel,
                     nextStepRequirement: nextStepRequirements.TO_LAYER_PANEL,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 240, top: 490},
+                        position: {right: Constant.rightPanelWidth - 2, top: 490},
                         arrowDirection:'right'
                     },
                     holePosition: {right: 15, top: 475},
-                    holeSize: {width: 220, height: 30},
-                    hintCircle: {right: 5, top: 471, width: 230, height: 40},
+                    holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
+                    hintCircle: {right: 5, top: 471, width: Constant.rightPanelWidth - 12, height: 40},
                     text: LANG.newUser.set_preset_cut,
                     nextStepRequirement: nextStepRequirements.SET_PRESET
                 },
                 {
                     dialogBoxStyles: {
-                        position: {left: 100, top: 50},
-                        arrowDirection:'top'
+                        position: {left: isMac ? 100 : 25, top: 50},
+                        arrowDirection:'top',
+                        arrowPadding: isMac ? undefined : 9
                     },
-                    holePosition: {left: 80, top: 0},
+                    holePosition: {left: isMac ? 80 : 3, top: 0},
                     holeSize: {width: 40, height: 40},
-                    hintCircle: {left: 82, top: 3, width: 36, height: 36},
+                    hintCircle: {left: isMac ? 82 : 7, top: 3, width: 36, height: 36},
                     text: LANG.newUser.switch_to_preview_mode,
                     nextStepRequirement: nextStepRequirements.TO_PREVIEW_MODE
                 },
@@ -172,7 +170,7 @@ define([
                     },
                     holePosition: {left: 0, top: 0},
                     holeSize: {},
-                    hintCircle: {right: 3, top: 3, width: 36, height: 36},
+                    hintCircle: {right: 3, top: 3, width: isMac ? 36 : 64, height: isMac ? 36 : 33},
                     text: LANG.newUser.send_the_file,
                     nextStepRequirement: nextStepRequirements.SEND_FILE
                 },
@@ -185,39 +183,40 @@ define([
             dialogStylesAndContents: [
                 {
                     dialogBoxStyles: {
-                        position: {left: 100, top: 50},
-                        arrowDirection:'top'
+                        position: {left: isMac ? 100 : 25, top: 50},
+                        arrowDirection:'top',
+                        arrowPadding: isMac ? undefined : 9
                     },
-                    hintCircle: {left: 82, top: 3, width: 36, height: 36},
+                    hintCircle: {left: isMac ? 82 : 7, top: 3, width: 36, height: 36},
                     text: LANG.newInterface.camera_preview,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {left: 56, top: Constant.topBarHeight + 40}
+                        position: {left: 56, top: Constant.topBarHeightWithoutTitleBar + 40}
                     },
-                    hintCircle: {left: 5, top: Constant.topBarHeight + 5, width: 40, height: 135},
+                    hintCircle: {left: 5, top: Constant.topBarHeightWithoutTitleBar + 5, width: 40, height: 135},
                     text: LANG.newInterface.select_image_text,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {left: 56, top: Constant.topBarHeight + 175}
+                        position: {left: 56, top: Constant.topBarHeightWithoutTitleBar + 175}
                     },
-                    hintCircle: {left: 5, top: Constant.topBarHeight + 150, width: 40, height: 190},
+                    hintCircle: {left: 5, top: Constant.topBarHeightWithoutTitleBar + 150, width: 40, height: 190},
                     text: LANG.newInterface.basic_shapes,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {left: 56, top: Constant.topBarHeight + 370}
+                        position: {left: 56, top: Constant.topBarHeightWithoutTitleBar + 370}
                     },
-                    hintCircle: {left: 5, top: Constant.topBarHeight + 350, width: 40, height: 40},
+                    hintCircle: {left: 5, top: Constant.topBarHeightWithoutTitleBar + 350, width: 40, height: 40},
                     text: LANG.newInterface.pen_tool,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 40, top: 402},
+                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: 402},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 14, top: 389, width: 25, height: 25},
+                    hintCircle: {right: 14, top: 389, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
                     text: LANG.newInterface.add_new_layer,
                 },
                 {
@@ -225,7 +224,7 @@ define([
                         position: {right: Constant.rightPanelWidth - 30, top: 100},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 50, top: 82, width: 155, height: 36},
+                    hintCircle: {right: 50 + Constant.rightPanelScrollBarWidth, top: 82, width: 155, height: 36},
                     text: LANG.newInterface.rename_by_double_click,
                 },
                 {
@@ -274,15 +273,15 @@ define([
                         position: {right: Constant.rightPanelWidth, top: 140},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 5, top: 123, width: 115, height: 36},
+                    hintCircle: {right: Constant.rightPanelScrollBarWidth + 5, top: 123, width: 115, height: 36},
                     text: LANG.newInterface.shape_operation,
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 95, top: 230},
+                        position: {right: Constant.rightPanelScrollBarWidth + 95, top: 230},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 25, top: 213, width: 66, height: 34},
+                    hintCircle: {right: Constant.rightPanelScrollBarWidth + 25, top: 213, width: 66, height: 34},
                     text: LANG.newInterface.flip,
                 },
                 {

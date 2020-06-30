@@ -64,7 +64,9 @@ define([
         },
         leftPanelWidth: 50, //px
         rightPanelWidth: process.platform !== 'darwin' ? 258 : 242, //px
+        rightPanelScrollBarWidth: process.platform !== 'darwin' ? 16 : 0, //px
         sidePanelsWidth: process.platform !== 'darwin' ? 308 : 292, //px
         topBarHeight: process.platform === 'win32' ? 75 : 40, //px
+        topBarHeightWithoutTitleBar: 40, //px
     };
 });
