@@ -45,6 +45,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/actions/topbar',
+    'helpers/api/config',
     'helpers/beam-file-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
@@ -68,6 +69,7 @@ define([
     ProgressActions,
     ProgressConstants,
     TopbarActions,
+    Config,
     BeamFileHelper,
     LocalStorage,
     shortcuts,
@@ -597,6 +599,12 @@ define([
 
             // Rotary Mode
             rotaryMode = BeamboxPreference.read('rotary_mode');
+
+        const defaultFont = Config().read('default-font');
+        if (defaultFont) {
+            cur_text.font_family = defaultFont.family;
+            cur_text.font_postscriptName = defaultFont.postscriptName;
+        }
 
         const { Menu, MenuItem } = require('electron').remote;
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
@@ -3472,11 +3480,15 @@ define([
                         $(cursor).attr('visibility', 'hidden');
                     }
                     $(curtext).css('cursor', 'move');
-
                     if (selectElem) {
                         clearSelection();
                         $(curtext).css('cursor', 'move');
 
+                        call('selected', [curtext]);
+                        addToSelection([curtext], true);
+                        svgedit.recalculate.recalculateDimensions(curtext);
+                    } else if (curtext) {
+                        $(curtext).css('cursor', 'move');
                         call('selected', [curtext]);
                         addToSelection([curtext], true);
                         svgedit.recalculate.recalculateDimensions(curtext);

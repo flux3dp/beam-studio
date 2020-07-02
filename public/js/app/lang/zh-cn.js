@@ -445,6 +445,8 @@ define(function() {
             updates_version: '版本',
             default_app: '默认功能',
             default_units: '预设单位',
+            default_font_family: '预设字体',
+            default_font_style: '预设字型',
             fast_gradient: '快速雕刻',
             vector_speed_constraint: '限制输出速度',
             loop_compensation: '封闭路径补偿',

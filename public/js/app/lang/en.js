@@ -447,6 +447,8 @@ define(function() {
             updates_version: 'Versions',
             default_app: 'Default App',
             default_units: 'Default Units',
+            default_font_family: 'Default Font',
+            default_font_style: 'Default Font Style',
             fast_gradient: 'Fast Engraving',
             vector_speed_constraint: 'Constrain Export Speed',
             loop_compensation: 'Loop Compensation',

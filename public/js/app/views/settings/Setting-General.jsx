@@ -9,6 +9,7 @@ define([
     'helpers/local-storage',
     'app/actions/beambox/constant',
     'app/actions/beambox/beambox-preference',
+    'app/actions/beambox/font-funcs',
     'app/actions/initialize-machine',
 ], function(
     $,
@@ -20,9 +21,11 @@ define([
     LocalStorage,
     BeamboxConstant,
     BeamboxPreference,
+    FontFuncs,
     initializeMachine
 ) {
     const React = require('react');
+    const FontManager = require('font-manager');
 
     const Controls = props => {
         const style = { width: 'calc(100% / 10 * 3 - 10px)' };
@@ -215,6 +218,47 @@ define([
                     selected: (this.configChanges['default-units'] || Config().read('default-units')) === 'inches'
                 },
             ];
+
+            const defaultFont = Config().read('default-font') || {
+                family: 'Arial',
+                style: 'Regular'
+            };
+            const fontOptions = FontFuncs.availableFontFamilies.map((family) => {
+                return {
+                    value: family,
+                    label: family,
+                    selected: family === defaultFont.family
+                }
+            });
+            const onSelectFont = (family) => {
+                const fonts = FontManager.findFontsSync({ family });
+                const newDefaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
+                const config = Config();
+                config.write('default-font', {
+                    family: newDefaultFont.family,
+                    postscriptName: newDefaultFont.postscriptName,
+                    style: newDefaultFont.style,
+                });
+                this.setState(this.state);
+            }
+            const fonts = FontManager.findFontsSync({family: defaultFont.family});
+            const fontStyleOptions = fonts.map((font) => {
+                return {
+                    value: font.postscriptName,
+                    label: font.style,
+                    selected: font.style === defaultFont.style
+                }
+            });
+            const onSelectFontStyle = (postscriptName) => {
+                const newDefaultFont = FontManager.findFontSync({ postscriptName });
+                const config = Config();
+                config.write('default-font', {
+                    family: newDefaultFont.family,
+                    postscriptName: newDefaultFont.postscriptName,
+                    style: newDefaultFont.style,
+                });
+                this.setState(this.state);
+            }
 
             const guideSelectionOptions = [
                 {
@@ -467,6 +511,22 @@ define([
                             className='font3'
                             options={defaultUnitsOptions}
                             onChange={(e) => this._updateConfigChange('default-units', e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.default_font_family}>
+                        <SelectView
+                            className='font3'
+                            options={fontOptions}
+                            onChange={(e) => onSelectFont(e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.default_font_style}>
+                        <SelectView
+                            className='font3'
+                            options={fontStyleOptions}
+                            onChange={(e) => onSelectFontStyle(e.target.value)}
                         />
                     </Controls>
 

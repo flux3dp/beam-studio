@@ -447,6 +447,8 @@ define(function() {
             updates_version: 'バージョン',
             default_app: 'デフォルトアプリ',
             default_units: 'デフォルト単位',
+            default_font_family: 'デフォルトのフォント',
+            default_font_style: 'デフォルトのフォントスタイル',
             fast_gradient: '高速彫刻',
             vector_speed_constraint: 'エクスポート速度を制限する',
             loop_compensation: 'ループ補正',

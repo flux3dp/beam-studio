@@ -447,6 +447,8 @@ define(function() {
             updates_version: 'Versionen',
             default_app: 'Standard-App',
             default_units: 'Standardeinheiten',
+            default_font_family: 'Standardschriftart',
+            default_font_style: 'Standardschriftstil',
             fast_gradient: 'Schnelle Gravur',
             vector_speed_constraint: 'Exportgeschwindigkeit einschränken',
             loop_compensation: 'Schleifenkompensation',

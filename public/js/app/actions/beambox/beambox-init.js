@@ -2,6 +2,7 @@ define([
     'jquery',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
+    'app/actions/beambox/font-funcs',
     'app/actions/initialize-machine',
     'app/actions/global-actions',
     'app/constants/global-constants',
@@ -12,6 +13,7 @@ define([
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/constants/device-constants',
+    'app/constants/font-constants',
     'app/constants/tutorial-constants',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
@@ -30,6 +32,7 @@ define([
     $,
     BeamboxPreference,
     Constant,
+    FontFuncs,
     InitializeMachine,
     GlobalActions,
     GlobalConstants,
@@ -40,6 +43,7 @@ define([
     ProgressActions,
     ProgressConstants,
     DeviceConstants,
+    FontConstants,
     TutorialConstants,
     ToolPanelsController,
     LaserPanelController,
@@ -77,6 +81,9 @@ define([
             if (timeZone.startsWith('America') && isEn) {
                 config.write('default-units', 'inches');
             }
+        }
+        if (!config.read('default-font')) {
+            initDefaultFont();
         }
         initMenuBarEvents();
     };
@@ -135,6 +142,26 @@ define([
         })();
 
         $('#canvasBackground').get(0).appendChild(guidesLines);
+    };
+
+    const initDefaultFont = () => {
+        const lang = navigator.language;
+        const os = process.platform;
+        const FontManager = require('font-manager');
+        const config = Config();
+        let defaultFontFamily = 'Arial'
+        if (FontConstants[lang] && FontConstants[lang][os]) {
+            defaultFontFamily = FontConstants[lang][os];
+        }
+        const fonts = FontManager.findFontsSync({ family: defaultFontFamily });
+        if (fonts.length > 0) {
+            const defaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
+            config.write('default-font', {
+                family: defaultFont.family,
+                postscriptName: defaultFont.postscriptName,
+                style: defaultFont.style,
+            });
+        }
     };
 
     const initMenuBarEvents = () => {
