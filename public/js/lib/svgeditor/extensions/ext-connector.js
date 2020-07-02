@@ -573,11 +573,13 @@ svgEditor.addExtension("Connector", function(S) {
 				}
 			}
 			// Update line if it's a connector
-			if (elem.getAttribute('class') == conn_sel.substr(1)) {
-				start = getElem(elData(elem, 'c_start'));
-				updateConnectors([start]);
-			} else {
-				updateConnectors();
+			if (elem) {
+				if (elem.getAttribute('class') == conn_sel.substr(1)) {
+					start = getElem(elData(elem, 'c_start'));
+					updateConnectors([start]);
+				} else {
+					updateConnectors();
+				}
 			}
 		},
 		toolButtonStateUpdate: function(opts) {
