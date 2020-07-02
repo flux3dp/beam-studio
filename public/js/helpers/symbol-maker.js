@@ -240,7 +240,7 @@ define([
     };
 
     const getStrokeWidth = (imageRatio, scale) => {
-        let strokeWidth = 2 * imageRatio / scale;
+        let strokeWidth = 4 * imageRatio / scale;
         if (strokeWidth < 1.5) {
             strokeWidth = (strokeWidth / 1.5) ** (1 / 3) * 1.5;
         }
