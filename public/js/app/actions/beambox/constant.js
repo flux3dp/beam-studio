@@ -68,5 +68,6 @@ define([
         sidePanelsWidth: process.platform !== 'darwin' ? 308 : 292, //px
         topBarHeight: process.platform === 'win32' ? 75 : 40, //px
         topBarHeightWithoutTitleBar: 40, //px
+        layerListHeight: 240, //px
     };
 });

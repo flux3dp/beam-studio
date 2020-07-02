@@ -78,23 +78,23 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: Constant.rightPanelWidth - 2, top: 490},
+                        position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 110},
                         arrowDirection:'right'
                     },
-                    holePosition: {right: 15, top: 475},
+                    holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
                     holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
-                    hintCircle: {right: 5, top: 471, width: Constant.rightPanelWidth - 12, height: 40},
+                    hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
                     text: LANG.newUser.set_preset_engraving,
                     nextStepRequirement: nextStepRequirements.SET_PRESET
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: 402},
+                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
                         arrowDirection:'right'
                     },
-                    holePosition: {right: 15, top: 390},
+                    holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 10},
                     holeSize: {width: 20 + Constant.rightPanelScrollBarWidth, height: 20},
-                    hintCircle: {right: 14, top: 389, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
+                    hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 9, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
                     text: LANG.newUser.add_new_layer,
                     nextStepRequirement: nextStepRequirements.ADD_NEW_LAYER
                 },
@@ -131,12 +131,12 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: Constant.rightPanelWidth - 2, top: 490},
+                        position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 110},
                         arrowDirection:'right'
                     },
-                    holePosition: {right: 15, top: 475},
+                    holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
                     holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
-                    hintCircle: {right: 5, top: 471, width: Constant.rightPanelWidth - 12, height: 40},
+                    hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
                     text: LANG.newUser.set_preset_cut,
                     nextStepRequirement: nextStepRequirements.SET_PRESET
                 },
@@ -213,10 +213,10 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: 402},
+                        position: {right: 40 + Constant.rightPanelScrollBarWidth, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 14, top: 389, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
+                    hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 9, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
                     text: LANG.newInterface.add_new_layer,
                 },
                 {
@@ -240,7 +240,7 @@ define([
                         position: {right: Constant.rightPanelWidth, top: 100},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: 10, top: 82, width: Constant.rightPanelWidth - 15, height: 336},
+                    hintCircle: {right: 10, top: 82, width: Constant.rightPanelWidth - 15, height: 236},
                     text: LANG.newInterface.layer_controls,
                 },
                 {
