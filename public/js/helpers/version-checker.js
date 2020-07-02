@@ -1,5 +1,6 @@
 define(function() {
     const requirement = {
+        RELOCATE_ORIGIN             : '3.2.2',
         FAST_GRADIENT               : '3.0.1',
         TEMP_I2C_CMD                : '3.0.1',
         DIODE_AND_AUTOFOCUS         : '3.0.0',
@@ -18,6 +19,9 @@ define(function() {
 
     // 1.7.0 > 1.5.0 > 1.5b12 > 1.5a12
     return function(sourceVersion) {
+        if (typeof sourceVersion === 'object') {
+            sourceVersion = sourceVersion.version;
+        }
         const currentVersion = sourceVersion.split('.');
         const meetVersion = (targetVersion) => {
             targetVersion = targetVersion.split('.');

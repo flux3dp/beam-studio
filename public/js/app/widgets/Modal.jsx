@@ -30,6 +30,7 @@ define([
 
         componentWillUnmount() {
             shortcuts.off(['esc']);
+            shortcuts.on(['esc'], svgEditor.clickSelect);
         }
 
         onOpen = () => {

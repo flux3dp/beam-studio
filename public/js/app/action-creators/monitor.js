@@ -57,6 +57,27 @@ define([
         isWaiting: false
     });
 
+    const setCameraOffset = (cameraOffset) => ({
+        type: C.SET_CAMERA_OFFSET,
+        cameraOffset
+    });
+
+    const setMaintainMoving = () => ({
+        type: C.SET_MAINTAIN_MOVING,
+        isMaintainMoving: true,
+    });
+
+    const setCurrentPosition = (currentPosition) => ({
+        type: C.SET_CURRENT_POSITION,
+        isMaintainMoving: false,
+        currentPosition
+    });
+
+    const setRelocateOrigin = (relocateOrigin) => ({
+        type: C.SET_RELOCATE_ORIGIN,
+        relocateOrigin
+    });
+
     return {
         changeMode          : changeMode,
         changePath          : changePath,
@@ -66,7 +87,11 @@ define([
         setDownloadProgress : setDownloadProgress,
         setUploadProgress   : setUploadProgress,
         showWait            : showWait,
-        closeWait           : closeWait
+        closeWait           : closeWait,
+        setCameraOffset     : setCameraOffset,
+        setMaintainMoving   : setMaintainMoving,
+        setCurrentPosition  : setCurrentPosition,
+        setRelocateOrigin   : setRelocateOrigin,
     };
 
 });

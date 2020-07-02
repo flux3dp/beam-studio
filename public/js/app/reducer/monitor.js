@@ -11,7 +11,11 @@ define([
         currentFolderContent: {},
         selectedFileInfo: [],
         downloadProgress: { size: '', left: ''},
-        isWaiting: false
+        isWaiting: false,
+        cameraOffset: null,
+        isMaintainMoving: false,
+        currentPosition: {x: 0, y: 0},
+        relocateOrigin: {x: 0, y: 0},
     };
 
     /***
@@ -71,6 +75,20 @@ define([
 
         _action[C.CLOSE_WAIT] = () => Object.assign({}, state, {
             isWaiting: action.isWaiting
+        });
+
+        _action[C.SET_CAMERA_OFFSET] = () => Object.assign({}, state, {
+            cameraOffset: action.cameraOffset
+        });
+
+        _action[C.SET_MAINTAIN_MOVING] = () => {return {...state, ...action}};
+
+        _action[C.SET_CURRENT_POSITION] = () => {return {...state, ...action}};
+
+        _action[C.SET_RELOCATE_ORIGIN] = () => {return {...state, ...action}};
+
+        _action[C.SET_CAMERA_OFFSET] = () => Object.assign({}, state, {
+            cameraOffset: action.cameraOffset
         });
 
         if (typeof _action[action.type] !== 'function') {

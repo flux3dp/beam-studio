@@ -3,8 +3,12 @@ define([
     'reactPropTypes',
     'plugins/classnames/index',
     'helpers/device-master',
+    'app/actions/beambox/beambox-preference',
+    'app/actions/beambox/constant',
     'app/actions/alert-actions',
     'app/stores/alert-store',
+    'app/actions/progress-actions',
+    'app/constants/progress-constants',
     'app/constants/device-constants',
     'app/actions/global-actions',
     'app/constants/global-constants',
@@ -18,14 +22,19 @@ define([
     'jsx!app/views/print/Monitor-Info',
     'app/action-creators/monitor',
     'app/action-creators/device',
-    'helpers/device-error-handler'
+    'helpers/device-error-handler',
+    'helpers/version-checker'
 ], function(
     $,
     PropTypes,
     ClassNames,
     DeviceMaster,
+    BeamboxPreference,
+    Constant,
     AlertActions,
     AlertStore,
+    ProgressActions,
+    ProgressConstants,
     DeviceConstants,
     GlobalActions,
     GlobalConstants,
@@ -39,7 +48,8 @@ define([
     MonitorInfo,
     MonitorActionCreator,
     DeviceActionCreator,
-    DeviceErrorHandler
+    DeviceErrorHandler,
+    VersionChecker
 ) {
     'use strict';
 
@@ -68,7 +78,9 @@ define([
         PRINT       : 'PRINT',
         PREVIEW     : 'PREVIEW',
         FILE        : 'FILE',
-        CAMERA      : 'CAMERA'
+        FILE_PREVIEW: 'FILE_PREVIEW',
+        CAMERA      : 'CAMERA',
+        CAMERA_RELOCATE: 'CAMERA_RELOCATE',
     };
 
     let type = {
@@ -148,6 +160,11 @@ define([
 
             let { Monitor } = store.getState();
             if(Monitor.mode === GlobalConstants.CAMERA) {
+                this._stopCamera();
+            }
+
+            if(Monitor.mode === GlobalConstants.CAMERA_RELOCATE) {
+                DeviceMaster.endMaintainMode();
                 this._stopCamera();
             }
             _history = [];
@@ -401,14 +418,22 @@ define([
 
             if(Monitor.mode === mode.CAMERA) {
                 this._stopCamera();
+            } else if (Monitor.mode === mode.CAMERA_RELOCATE) {
+                DeviceMaster.endMaintainMode();
+                this._stopCamera();
+            } else if (Monitor.mode === mode.PREVIEW || Monitor.mode === mode.FILE_PREVIEW) {
+                store.dispatch(MonitorActionCreator.setRelocateOrigin({x: 0, y: 0}));
             }
-
-            this._clearSelectedItem();
 
             let actions = {
                 'PREVIEW' : () => {},
-                'FILE': () => { this._dispatchFolderContent(lastAction.path); },
+                'FILE_PREVIEW' : () => {},
+                'FILE': () => {
+                    this._clearSelectedItem();
+                    this._dispatchFolderContent(lastAction.path);
+                },
                 'CAMERA': () => {},
+                'CAMERA_RELOCATE': () => {},
                 'PRINT': () => { store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.PRINT)); }
             };
 
@@ -511,10 +536,64 @@ define([
             }
         }
 
-        _handleGo = () => {
+        _getCameraOffset = async () => {
+            const isBorderless = BeamboxPreference.read('borderless') || false;
+            const configName = isBorderless ? 'camera_offset_borderless' : 'camera_offset';
+            const resp = await DeviceMaster.getDeviceSetting(configName);
+            console.log(`Reading ${configName}\nResp = ${resp.value}`);
+            resp.value = ` ${resp.value}`;
+            let cameraOffset = {
+                x:          Number(/ X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                y:          Number(/ Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                angle:      Number(/R:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
+                scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
+            };
+            console.log(`Got ${configName}`, cameraOffset);
+            if ((cameraOffset.x === 0) && (cameraOffset.y === 0)) {
+                cameraOffset = {
+                    x: Constant.camera.offsetX_ideal,
+                    y: Constant.camera.offsetY_ideal,
+                    angle: 0,
+                    scaleRatioX: Constant.camera.scaleRatio_ideal,
+                    scaleRatioY: Constant.camera.scaleRatio_ideal,
+                };
+            }
+            store.dispatch(MonitorActionCreator.setCameraOffset(cameraOffset));
+        }
+
+        _handleToggleRelocate = async () => {
+            const { Monitor } = store.getState();
+            if( Monitor.mode === mode.CAMERA_RELOCATE ) {
+                this._handleBack();
+            }
+            else {
+                this._addHistory();
+                const device = DeviceMaster.getSelectedDevice();
+                ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
+                await this._getCameraOffset();
+                await DeviceMaster.enterMaintainMode();
+                if (VersionChecker(device.version).meetRequirement('CLOSE_FAN')) {
+                    DeviceMaster.maintainCloseFan();
+                }
+                ProgressActions.close();
+                store.dispatch(MonitorActionCreator.setCurrentPosition({x: 0, y: 0}));
+                store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.CAMERA_RELOCATE));
+            }
+        }
+
+        _handleRelocate = () => {
+            const { Monitor } = store.getState();
+            const { currentPosition } = Monitor
+            store.dispatch(MonitorActionCreator.setRelocateOrigin(currentPosition));
+            this._handleBack();
+        }
+
+        _handleGo = async () => {
             messageViewed = false;
             let { Monitor, Device } = store.getState();
             let startingStatus = { st_label: 'INIT', st_id: 1 };
+            const { relocateOrigin } = Monitor;
 
             store.dispatch(DeviceActionCreator.updateDeviceStatus(startingStatus));
             store.dispatch(MonitorActionCreator.changeMode(
@@ -527,6 +606,13 @@ define([
             if(Device.status.st_label === DeviceConstants.IDLE) {
                 let { fCode } = this.props;
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.PRINT));
+
+                const device = DeviceMaster.getSelectedDevice();
+                const vc = VersionChecker(device.version);
+                if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                    await DeviceMaster.setOriginX(relocateOrigin.x);
+                    await DeviceMaster.setOriginY(relocateOrigin.y);
+                }
 
                 if(fCode) {
                     this._stopReport();
@@ -550,7 +636,9 @@ define([
                 }
                 else {
                     let executeGo = () => {
+                        this._stopReport();
                         DeviceMaster.goFromFile(Monitor.currentPath, Monitor.selectedItem.name);
+                        this._startReport();
                     };
 
                     if(this._isAbortedOrCompleted()) {
@@ -566,7 +654,13 @@ define([
             else if(this._isAbortedOrCompleted() && Monitor.mode === GlobalConstants.FILE_PREVIEW) {
                 // TODO: this to be changed when alert action is restructured
                 if(confirm(lang.monitor.forceStop)) {
-                    DeviceMaster.quit().then(() => {
+                    DeviceMaster.quit().then(async () => {
+                        const device = DeviceMaster.getSelectedDevice();
+                        const vc = VersionChecker(device.version);
+                        if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                            await DeviceMaster.setOriginX(relocateOrigin.x);
+                            await DeviceMaster.setOriginY(relocateOrigin.y);
+                        }
                         DeviceMaster.goFromFile(Monitor.currentPath, Monitor.selectedItem.name);
                     });
                 }
@@ -890,7 +984,8 @@ define([
                             onFolderDoubleClick = {this._handleFolderDoubleClick}
                             onFileClick = {this._handleFileClick}
                             onFileDoubleClick = {this._handleFileDoubleClick}
-                            onFileCrossIconClick = {this._handleFileCrossIconClick} />
+                            onFileCrossIconClick = {this._handleFileCrossIconClick}
+                            onToggleRelocate= {this._handleToggleRelocate}/>
                         <MonitorControl
                             source = {openedFrom}
                             previewUrl = {previewUrl}
@@ -900,7 +995,9 @@ define([
                             onStop = {this._handleStop}
                             onUpload = {this._handleUpload}
                             onDownload = {this._handleDownload}
-                            onToggleCamera = {this._handleToggleCamera} />
+                            onToggleCamera = {this._handleToggleCamera}
+                            onCancelRelocate = {this._handleBack}
+                            onRelocate = {this._handleRelocate} />
                     </div>
                     <div className={subClass}>
                         <MonitorInfo

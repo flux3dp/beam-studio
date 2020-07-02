@@ -120,6 +120,32 @@ define([
             };
         }
 
+        _renderRelocateButton = () => {
+            const { lang } = this.props.context;
+            const { Monitor } = this.props.context.store.getState();
+            const { isMaintainMoving } = Monitor;
+            const className = ClassNames('controls right', {'disabled': isMaintainMoving});
+            return (
+                <div className={className} onClick={this.props.onRelocate}>
+                    <div className="btn-control btn-relocate">
+                        <img src="img/beambox/icon-target.svg"/>
+                    </div>
+                    <div className="description">{lang.monitor.relocate}</div>
+                </div>
+            );
+        }
+
+        _renderCancelButton = () => {
+            const { lang } = this.props.context;
+            const className = ClassNames('controls left');
+            return (
+                <div className={className} onClick={this.props.onCancelRelocate}>
+                    <div className="btn-control btn-cancel" />
+                    <div className="description">{lang.monitor.cancel}</div>
+                </div>
+            );
+        }
+
         _isAbortedOrCompleted = (statusId) => {
             let { Device } = this.props.context.store.getState();
             statusId = statusId || Device.status.st_id;
@@ -274,17 +300,22 @@ define([
             let leftButton = Monitor.mode === GlobalConstants.FILE ? this._operation().upload : this._operation().stop,
                 middleButton = Monitor.mode === GlobalConstants.FILE ? this._operation().download : action,
                 rightButton = this._operation().camera;
+            if (Monitor.mode !== GlobalConstants.CAMERA_RELOCATE) {
+                if(leftButton !== '') {
+                    leftButton = leftButton(leftButtonOn);
+                }
 
-            if(leftButton !== '') {
-                leftButton = leftButton(leftButtonOn);
-            }
+                if(middleButton !== '') {
+                    middleButton = middleButton(middleButtonOn);
+                }
 
-            if(middleButton !== '') {
-                middleButton = middleButton(middleButtonOn);
-            }
-
-            if(rightButton !== '') {
-                rightButton = rightButton(rightButtonOn);
+                if(rightButton !== '') {
+                    rightButton = rightButton(rightButtonOn);
+                }
+            } else {
+                leftButton = this._renderCancelButton();
+                middleButton = null;
+                rightButton = this._renderRelocateButton();
             }
 
             return {

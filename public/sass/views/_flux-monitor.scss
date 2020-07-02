@@ -149,6 +149,61 @@
                         object-fit: contain;
                     }
                 }
+                .camera-relocate-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    position: absolute;
+                    width: calc(100% - 40px);
+                    .img-container {
+                        width: 100%;
+                        max-height: 145px;
+                        overflow-y: hidden;
+                    }
+                    .camera-image {
+                        width: 100%;
+                        min-height: 145px;
+                    }
+                    .bars {
+                        width: 1px;
+                        height: 15px;
+                        display: block;
+                        position: absolute;
+                        background-color: white;
+                        &.shadow {
+                            box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+                        }
+                    }
+                    .bar2 {
+                        transform: translateX(7px) translateY(-7px)  rotate(90deg);
+                    }
+                    .origin-mark-wrapper {
+                        position: absolute;
+                        width: 15px;
+                        height: 15px;
+                    }
+                    .relocate-origin-mark-wrapper {
+                        position: absolute;
+                        width: 15px;
+                        height: 15px;
+                        .bars {
+                            background-color: greenyellow;
+                        }
+                        .relocate-origin {
+                            position: absolute;
+                            top: 20px;
+                            width: 60px;
+                            color: greenyellow;
+                            font-size: 13px;
+                            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+                        }
+                    }
+                    .maintain-move-panel {
+                        width: 180px;
+                        height: 180px;
+                        margin: 10px 0 0 0;
+                    }
+                }
                 .status-info {
                     position: absolute;
                     width: 332px;
@@ -170,6 +225,35 @@
 
                         .status-info-duration {
                             // float: left;
+                        }
+                    }
+                    .btn-relocate-container {
+                        float: right;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        .btn-relocate {
+                            cursor: pointer;
+                            display: flex;
+                            height: 25px;
+                            background-color: #333;
+                            padding: 5px;
+                            border-radius: 5px;
+                            opacity: 0.7;
+                            box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+                            img {
+                                width: 15px;
+                                height: 15px;
+                            }
+                            .relocate-origin {
+                                padding-left: 5px;
+                                font-size: 13px;
+                                line-height: 15px;
+                                color: white;
+                            }
+                            &:hover {
+                                opacity: 1;
+                            }
                         }
                     }
                     .status-info-progress {
@@ -251,6 +335,19 @@
                 opacity: 0.4;
                 background-repeat: no-repeat;
                 cursor: pointer;
+            }
+            .btn-relocate {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                img {
+                    width: 30px;
+                    filter: brightness(0.3);
+                }
+            }
+            .btn-cancel {
+                background-image: url("../img/btn-run.svg");
+                transform: scaleX(-1);
             }
             .btn-go {
                 background-image: url("../img/btn-run.svg");

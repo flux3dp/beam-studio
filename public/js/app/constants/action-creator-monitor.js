@@ -12,6 +12,10 @@ define([], () => {
         SET_UPLOAD_PROGRESS     : 'flux-studio/monitor/SET_UPLOAD_PROGRESS',
         SHOW_WAIT               : 'flux-studio/monitor/SHOW_WAIT',
         CLOSE_WAIT              : 'flux-studio/monitor/CLOSE_WAIT',
+        SET_CAMERA_OFFSET       : 'beam-studio/monitor/SET_CAMERA_OFFSET',
+        SET_MAINTAIN_MOVING     : 'beam-studio/monitor/SET_MAINTAIN_MOVING',
+        SET_CURRENT_POSITION    : 'beam-studio/monitor/SET_CURRENT_POSITION',
+        SET_RELOCATE_ORIGIN     : 'beam-studio/monitor/SET_RELOCATE_ORIGIN',
     };
 
 });

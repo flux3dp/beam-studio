@@ -1,17 +1,23 @@
 define([
     'reactPropTypes',
+    'app/action-creators/monitor',
     'app/constants/global-constants',
     'app/constants/device-constants',
     'helpers/device-master',
+    'helpers/duration-formatter',
     'plugins/classnames/index',
-    'helpers/duration-formatter'
+    'jsx!app/widgets/Maintain-Move-Panel',
+    'helpers/version-checker'
 ], (
     PropTypes,
+    MonitorActionCreator,
     GlobalConstants,
     DeviceConstants,
     DeviceMaster,
+    FormatDuration,
     ClassNames,
-    FormatDuration
+    MaintainMovePanel,
+    VersionChecker
 ) => {
     const React = require('react');
 
@@ -192,6 +198,105 @@ define([
             );
         }
 
+        _renderOriginMark = () => {
+            const { Monitor } = this.props.context.store.getState();
+            const { cameraOffset, currentPosition } = Monitor;
+            const cameraStreamImg = this.refs.cameraStreamImg;
+            if (!cameraStreamImg || !cameraOffset) {
+                return;
+            }
+            const x = currentPosition.x + cameraOffset.x;
+            const y = currentPosition.y + cameraOffset.y;
+            const imageScale = cameraStreamImg.width / cameraStreamImg.naturalWidth;
+            let dx = x * 10 * imageScale / cameraOffset.scaleRatioX;
+            let dy = y * 10 * imageScale / cameraOffset.scaleRatioY;
+            if (dx > 100) {
+                // compensation when x is too large, calculated by regression
+                let compensationX = ((dx - 100) / 100) ^ 2 + 3.9 * ((dx - 100) / 100) + 0.95;
+                dx -= compensationX;
+            }
+            const centerX = cameraStreamImg.width / 2 - dx;
+            const centerY = cameraStreamImg.height / 2 - dy;
+            if (centerX < 0 || centerY < 0) {
+                return null;
+            }
+            return (
+                <div className="origin-mark-wrapper" style={{left: centerX, top: centerY}}>
+                    <div className="bars bar1 shadow"></div>
+                    <div className="bars bar2 shadow"></div>
+                    <div className="bars bar1"></div>
+                </div>
+            );
+        }
+
+        _renderRelocateOrigin = () => {
+            const { Monitor } = this.props.context.store.getState();
+            const { cameraOffset, currentPosition } = Monitor;
+            const cameraStreamImg = this.refs.cameraStreamImg;
+            if (!cameraStreamImg || !cameraOffset) {
+                return;
+            }
+            const imageScale = cameraStreamImg.width / cameraStreamImg.naturalWidth;
+            const dx = cameraOffset.x * 10 * imageScale / cameraOffset.scaleRatioX;
+            const dy = cameraOffset.y * 10 * imageScale / cameraOffset.scaleRatioY;
+            const centerX = cameraStreamImg.width / 2 - dx;
+            const centerY = cameraStreamImg.height / 2 - dy;
+            return (
+                <div className="relocate-origin-mark-wrapper" style={{left: centerX, top: centerY}}>
+                    <div className="bars bar1 shadow"></div>
+                    <div className="bars bar2 shadow"></div>
+                    <div className="bars bar1"></div>
+                    <div className="relocate-origin">
+                        {`${currentPosition.x}, ${currentPosition.y}`}
+                    </div>
+                </div>
+            );
+        }
+
+        _handleMaintainMoveStart = () => {
+            const { store } = this.props.context;
+            store.dispatch(MonitorActionCreator.setMaintainMoving());
+        }
+
+        _handleMaintainMoveEnd = (x, y) => {
+            x = Math.round(x * 10) / 10;
+            y = Math.round(y * 10) / 10;
+            const { store } = this.props.context;
+            const currentPosition = {x, y};
+            store.dispatch(MonitorActionCreator.setCurrentPosition(currentPosition));
+        }
+
+        _streamCameraRelocate = () => {
+            if(!this.cameraStream) {
+                let { selectedDevice } = this.props;
+                DeviceMaster.streamCamera(selectedDevice, false).then(
+                    stream => {
+                        this.cameraStream = stream;
+                        this.cameraStream.subscribe(this._processImage);
+                    }
+                );
+            }
+
+            let cameraClass = ClassNames(
+                'camera-image',
+                {'hd': this.state.isHd},
+                {'beambox-camera': (['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this.props.selectedDevice.model))}
+            );
+            return(
+                <div className="camera-relocate-container">
+                    <div className="img-container">
+                        <img className={cameraClass} ref='cameraStreamImg'/>
+                    </div>
+                    {this._renderOriginMark()}
+                    {this._renderRelocateOrigin()}
+                    <MaintainMovePanel
+                        onMoveStart={this._handleMaintainMoveStart}
+                        onMoveEnd={this._handleMaintainMoveEnd}
+                    />
+                </div>
+            );
+        }
+
         _processImage = (imageBlob)  => {
             let targetDevice = this.props.selectedDevice;
             if (targetDevice) {
@@ -258,7 +363,7 @@ define([
         }
 
         _renderDisplay = (mode) => {
-            if(mode !== GlobalConstants.CAMERA) {
+            if(mode !== GlobalConstants.CAMERA && mode !==GlobalConstants.CAMERA_RELOCATE) {
                 this.cameraStream = null;
             }
             let doMode = {};
@@ -267,6 +372,7 @@ define([
             doMode[GlobalConstants.PRINT] = this._showPreview;
             doMode[GlobalConstants.FILE] = this._listFolderContent;
             doMode[GlobalConstants.CAMERA] = this._streamCamera;
+            doMode[GlobalConstants.CAMERA_RELOCATE] = this._streamCameraRelocate;
             doMode[GlobalConstants.FILE_PREVIEW] = this._showPreview;
 
             if(typeof doMode[mode] !== 'function') {
@@ -276,9 +382,31 @@ define([
             return doMode[mode]();
         }
 
+        _renderRelocateButton = (Monitor) => {
+            const { selectedDevice } = this.props;
+            const { mode, relocateOrigin } = Monitor;
+            const vc = VersionChecker(selectedDevice.version);
+            if ([GlobalConstants.PREVIEW, GlobalConstants.FILE_PREVIEW].includes(mode) && !this._isAbortedOrCompleted() && vc.meetRequirement('RELOCATE_ORIGIN')) {
+                return (
+                    <div className="btn-relocate-container">
+                        <div className="btn-relocate" onClick={()=>this.props.onToggleRelocate()}>
+                            <img src="img/beambox/icon-target.svg"/>
+                            {(relocateOrigin.x !== 0 || relocateOrigin.y !== 0) ? 
+                                <div className="relocate-origin">{`(${relocateOrigin.x}, ${relocateOrigin.y})`}</div>
+                                : null
+                            }
+                        </div>
+                    </div>
+                );
+            } else {
+                return null;
+            }
+        }
+
         _renderJobInfo = () => {
             let { Monitor, Device } = this.props.context.store.getState();
-            if(Monitor.mode === GlobalConstants.FILE || Monitor.mode === GlobalConstants.CAMERA) {
+            const { selectedDevice } = this.props;
+            if([GlobalConstants.FILE, GlobalConstants.CAMERA, GlobalConstants.CAMERA_RELOCATE].includes(Monitor.mode)) {
                 return '';
             }
 
@@ -306,6 +434,7 @@ define([
                 let time = slicingResult.time || slicingResult.metadata.TIME_COST;
                 jobTime = FormatDuration(time);
             }
+            const relocateButton = this._renderRelocateButton(Monitor);
 
             return (
                 <div className={infoClass}>
@@ -313,6 +442,7 @@ define([
                         <div>{jobType}</div>
                         <div className="status-info-duration">{jobTime}</div>
                     </div>
+                    {relocateButton}
                     <div className="status-info-progress">{jobProgress}</div>
                 </div>
             );

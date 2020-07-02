@@ -18,8 +18,9 @@ define([
     const TIMEOUT = 15000;
     const LANG = i18n.lang;
     class Camera {
-        constructor() {
+        constructor(shouldCrop=true) {
             this.cameraNeedFlip = undefined;
+            this.shouldCrop = shouldCrop;
             this._device = '';
             this._ws = null;
             this._wsSubject = new Rx.Subject();
@@ -157,10 +158,18 @@ define([
                 return preprocessedBlob;
             };
 
+            const loadAndFlipImage = async () => {
+                const canvas = await imageLoadBlob();
+                const preprocessedBlob = await new Promise(resolve => canvas.toBlob(b => resolve(b)));
+                return preprocessedBlob;
+            }
+
             if (!['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this._device.model)) {
                 return blob;
             }
-
+            if (!this.shouldCrop) {
+                return await loadAndFlipImage();
+            }
             if (VersionChecker(this._device.version).meetRequirement('BEAMBOX_CAMERA_SPEED_UP')) {
                 return await crop640x480ImageTo640x280();
             } else {

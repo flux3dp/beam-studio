@@ -55,6 +55,10 @@ define([
                     return back();
                 };
 
+                go[GlobalConstants.CAMERA_RELOCATE] = () => {
+                    return back();
+                };
+
                 go[GlobalConstants.FILE] = () => {
                     if(Device.status.st_id === DeviceConstants.status.IDLE) {
                         return history.length >= 1 ? back() : none();

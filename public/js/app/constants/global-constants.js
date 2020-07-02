@@ -23,6 +23,7 @@ define([], function(){
         FILE                            : 'FILE',
         CAMERA                          : 'CAMERA',
         FILE_PREVIEW                    : 'FILE_PREVIEW',
+        CAMERA_RELOCATE                 : 'CAMERA_RELOCATE',
 
         DEFAULT_PRINT_SETTING_VERSION   : '0.75'
     };

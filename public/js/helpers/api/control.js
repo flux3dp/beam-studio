@@ -721,6 +721,48 @@ define([
                 return d.promise();
             },
 
+            setOriginX: (x) => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => {
+                    switch (response.status) {
+                        case 'ok':
+                            d.resolve(response);
+                            break;
+                        default:
+                            console.log('strange message', response);
+                            break;
+                    }
+                };
+
+                events.onError = (response) => { d.reject(response); console.log('on error', response); };
+                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+
+                ws.send(`play set_origin_x ${x}`);
+                return d.promise();
+            },
+
+            setOriginY: (y) => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => {
+                    switch (response.status) {
+                        case 'ok':
+                            d.resolve(response);
+                            break;
+                        default:
+                            console.log('strange message', response);
+                            break;
+                    }
+                };
+
+                events.onError = (response) => { d.reject(response); console.log('on error', response); };
+                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+
+                ws.send(`play set_origin_y ${y}`);
+                return d.promise();
+            },
+
             zprobe: () => {
                 let d = $.Deferred(),
                     errorCount = 0,

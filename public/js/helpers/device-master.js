@@ -23,7 +23,8 @@ define([
     'helpers/api/simple-websocket',
     'helpers/socket-master',
     'helpers/device-error-handler',
-    'helpers/array-findindex'
+    'helpers/version-checker',
+    'helpers/array-findindex',
 ], function (
     $,
     i18n,
@@ -48,7 +49,8 @@ define([
     Camera,
     SimpleWebsocket,
     Sm,
-    DeviceErrorHandler
+    DeviceErrorHandler,
+    VersionChecker
 ) {
 
 
@@ -536,7 +538,13 @@ define([
     function runMovementTests() {
         let d = $.Deferred();
 
-        fetch(DeviceConstants.MOVEMENT_TEST).then(res => res.blob()).then(blob => {
+        fetch(DeviceConstants.MOVEMENT_TEST).then(res => res.blob()).then(async blob => {
+            const device = getSelectedDevice();
+            const vc = VersionChecker(device.version);
+            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                await setOriginX(origin.x);
+                await setOriginY(origin.y);
+            }
             go(blob).fail(() => {
                 // Error while uploading task
                 d.reject(['UPLOAD_FAILED']);
@@ -559,7 +567,13 @@ define([
     function runBeamboxCameraTest() {
         let d = $.Deferred();
 
-        fetch(DeviceConstants.BEAMBOX_CAMERA_TEST).then(res => res.blob()).then(blob => {
+        fetch(DeviceConstants.BEAMBOX_CAMERA_TEST).then(res => res.blob()).then(async blob => {
+            const device = getSelectedDevice();
+            const vc = VersionChecker(device.version);
+            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                await setOriginX(origin.x);
+                await setOriginY(origin.y);
+            }
             go(blob)
                 .fail(() => {
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
@@ -597,7 +611,13 @@ define([
     function doDiodeCalibrationCut() {
         let d = $.Deferred();
 
-        fetch(DeviceConstants.DIODE_CALIBRATION).then(res => res.blob()).then(blob => {
+        fetch(DeviceConstants.DIODE_CALIBRATION).then(res => res.blob()).then(async blob => {
+            const device = getSelectedDevice();
+            const vc = VersionChecker(device.version);
+            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                await setOriginX(origin.x);
+                await setOriginY(origin.y);
+            }
             go(blob)
                 .fail(() => {
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
@@ -890,12 +910,22 @@ define([
         return d.promise();
     }
 
+    function maintainHome() {
+        return SocketMaster.addTask('maintainHome');
+    }
+
     function maintainCloseFan() {
         console.log('addTask maintainCloseFan');
         return SocketMaster.addTask('maintainCloseFan');
     }
 
-    function enterMaintainMode() {
+    async function enterMaintainMode() {
+        const device = getSelectedDevice();
+        const vc = VersionChecker(device.version);
+        if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+            await setOriginX(0);
+            await setOriginY(0);
+        }
         return SocketMaster.addTask('enterMaintainMode');
     }
 
@@ -937,6 +967,28 @@ define([
 
     function setFanTemp(fan) {
         return SocketMaster.addTask('setFanTemp', fan);
+    }
+
+    function setOriginX(x=0) {
+        const device = getSelectedDevice();
+        const vc = VersionChecker(device.version);
+        if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+            return SocketMaster.addTask('setOriginX', x);
+        } else {
+            console.warn('This device does not support command setOriginX');
+            return
+        }
+    }
+
+    function setOriginY(y=0) {
+        const device = getSelectedDevice();
+        const vc = VersionChecker(device.version);
+        if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+            return SocketMaster.addTask('setOriginY', y);
+        } else {
+            console.warn('This device does not support command setOriginY');
+            return
+        }
     }
 
     function reconnect() {
@@ -1065,8 +1117,8 @@ define([
         return _devices[index];
     }
 
-    async function connectCamera(device) {
-        _device.camera = new Camera();
+    async function connectCamera(device, shouldCrop=true) {
+        _device.camera = new Camera(shouldCrop);
         await _device.camera.createWs(device);
     }
 
@@ -1074,8 +1126,8 @@ define([
         return await _device.camera.oneShot();
     }
 
-    async function streamCamera(device) {
-        await this.connectCamera(device);
+    async function streamCamera(device, shouldCrop=true) {
+        await this.connectCamera(device, shouldCrop);
 
         // return an instance of RxJS Observable.
         return _device.camera.getLiveStreamSource();
@@ -1715,6 +1767,7 @@ define([
             this.ls = ls;
             this.lsusb = lsusb;
             this.maintainCloseFan = maintainCloseFan;
+            this.maintainHome = maintainHome;
             this.maintainMove = maintainMove;
             this.pause = pause;
             this.quit = quit;
@@ -1737,6 +1790,8 @@ define([
             this.setLaserSpeedTemp = setLaserSpeedTemp;
             this.setFan = setFan;
             this.setFanTemp = setFanTemp;
+            this.setOriginX = setOriginX;
+            this.setOriginY = setOriginY;
             this.showOutline = showOutline;
             this.startMonitoringUsb = startMonitoringUsb;
             this.startToolheadOperation = startToolheadOperation;
