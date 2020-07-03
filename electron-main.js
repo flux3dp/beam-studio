@@ -201,26 +201,26 @@ function createWindow () {
             ipcMain.once('SAVE_DIALOG_POPPED', () => {
                 isSaveDialogPopped = true;
             });
+            const closeBeamStudio = () => {
+                isCloseConfirm = true;
+                monitorManager.killProc();
+                backendManager.stop();
+                mainWindow.close();
+                try {
+                    shadowWindow.close();
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
             setTimeout(() => {
                 if (!isSaveDialogPopped) {
-                    isCloseConfirm = true;
-                    mainWindow.close();
-                    try {
-                        shadowWindow.close();
-                    } catch (e) {
-                        console.log(e);
-                    }
+                    closeBeamStudio();
                 }
             }, 10000);
             ipcMain.once('CLOSE_REPLY', (event, reply) => {
                 if (reply) {
-                    isCloseConfirm = true;
-                    mainWindow.close();
-                    try {
-                        shadowWindow.close();
-                    } catch (e) {
-                        console.log(e);
-                    }
+                    closeBeamStudio();
                 }
             });
         }
@@ -557,6 +557,4 @@ app.on('activate', function () {
 });
 
 app.on('before-quit', function() {
-    monitorManager.killProc();
-    backendManager.stop();
 });
