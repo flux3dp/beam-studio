@@ -100,7 +100,7 @@ define([
 
         UNSAFE_componentWillReceiveProps(nextProps) {
             if (nextProps.configName != '') {
-                if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || LocalStorage.get('customizedLaserConfigs').findIndex((e) => e.name === nextProps.configName) > -1) {
+                if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || LocalStorage.get('customizedLaserConfigs').findIndex((e) => e.name === String(nextProps.configName)) > -1) {
                     document.getElementById('laser-config-dropdown').value = nextProps.configName;
                 } else {
                     document.getElementById('laser-config-dropdown').value = defaultLaserOptions[0];
@@ -235,6 +235,7 @@ define([
                     speed: this.state.speed,
                     power: this.state.strength,
                     repeat: this.state.repeat,
+                    zStep: this.state.zStep,
                 }]);
 
                 this.setState({
@@ -252,6 +253,7 @@ define([
                         speed: this.state.speed,
                         power: this.state.strength,
                         repeat: this.state.repeat,
+                        zStep: this.state.zStep,
                     }]));
                     this.setState({ 
                         selectedItem: name,
@@ -287,12 +289,14 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMO[value].speed,
                             strength: RightPanelConstants.BEAMO[value].power,
-                            repeat: RightPanelConstants.BEAMO[value].repeat || 1
+                            repeat: RightPanelConstants.BEAMO[value].repeat || 1,
+                            zStep: RightPanelConstants.BEAMO[value].zStep || 0,
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMO[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMO[value].power);
                         this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMO[value].repeat || 1);
+                        this.props.funcs.writeZStep(this.props.layerName, RightPanelConstants.BEAMO[value].zStep || 0);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -301,12 +305,14 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMBOX[value].speed,
                             strength: RightPanelConstants.BEAMBOX[value].power,
-                            repeat: RightPanelConstants.BEAMBOX[value].repeat || 1
+                            repeat: RightPanelConstants.BEAMBOX[value].repeat || 1,
+                            zStep: RightPanelConstants.BEAMBOX[value].zStep || 0,
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX[value].power);
                         this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMBOX[value].repeat || 1);
+                        this.props.funcs.writeZStep(this.props.layerName, RightPanelConstants.BEAMBOX[value].zStep || 0);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -315,12 +321,14 @@ define([
                             original: value,
                             speed: RightPanelConstants.BEAMBOX_PRO[value].speed,
                             strength: RightPanelConstants.BEAMBOX_PRO[value].power,
-                            repeat: RightPanelConstants.BEAMBOX_PRO[value].repeat || 1
+                            repeat: RightPanelConstants.BEAMBOX_PRO[value].repeat || 1,
+                            zStep: RightPanelConstants.BEAMBOX_PRO[value].zStep || 0,
                         });
 
                         this.props.funcs.writeSpeed(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].speed);
                         this.props.funcs.writeStrength(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].power);
                         this.props.funcs.writeRepeat(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].repeat || 1);
+                        this.props.funcs.writeZStep(this.props.layerName, RightPanelConstants.BEAMBOX_PRO[value].zStep || 0);
                         this.props.funcs.writeConfigName(this.props.layerName, value);
 
                         break;
@@ -351,6 +359,7 @@ define([
                     speed,
                     power,
                     repeat,
+                    zStep,
                     isDefault
                 } = customizedConfigs;
 
@@ -360,11 +369,14 @@ define([
                         speed,
                         strength: power,
                         repeat,
+                        zStep,
+                        selectedItem: value,
                     })
 
                     this.props.funcs.writeSpeed(this.props.layerName, speed);
                     this.props.funcs.writeStrength(this.props.layerName, power);
                     this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                    this.props.funcs.writeZStep(this.props.layerName, zStep);
                     this.props.funcs.writeConfigName(this.props.layerName, value);
 
                     if (TutorialController.getNextStepRequirement() === TutorialConstants.SET_PRESET) {
@@ -538,17 +550,21 @@ define([
                 <LaserManageModal
                     selectedItem={this.state.selectedItem}
                     _handleCancelModal = {this._handleCancelModal}
+                    initDefaultConfig = {this.initDefaultConfig}
                     onClose = {() => this.setState({modal: ''})}
-                    onApply = {(speed, power, repeat, selectedItem) => {
+                    onApply = {(speed, power, repeat, zStep, selectedItem) => {
                         this.props.funcs.writeSpeed(this.props.layerName, speed);
                         this.props.funcs.writeStrength(this.props.layerName, power);
                         this.props.funcs.writeRepeat(this.props.layerName, repeat);
+                        this.props.funcs.writeZStep(this.props.layerName, zStep);
+                        this.props.funcs.writeConfigName(this.props.layerName, selectedItem);
                         this.setState({
                             modal: '',
-                            speed: speed,
+                            speed,
                             strength: power,
-                            repeat: repeat,
-                            selectedItem: selectedItem
+                            repeat,
+                            zStep,
+                            selectedItem,
                         });
                     }}
                 />

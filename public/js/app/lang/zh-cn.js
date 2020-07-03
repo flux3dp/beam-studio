@@ -1284,6 +1284,8 @@ define(function() {
                     engrave: '雕刻',
                     more: '管理',
                     delete: '删除',
+                    reset: '恢复预设',
+                    sure_to_reset: '这将会重置所有的预设参数，并保留您的自订参数，确定要继续进行吗？',
                     apply: '套用',
                     cancel: '取消',
                     save: '储存参数',

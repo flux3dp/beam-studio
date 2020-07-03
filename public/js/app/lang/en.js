@@ -1288,6 +1288,8 @@ define(function() {
                     engrave: 'Engrave',
                     more: 'Manage',
                     delete: 'Delete',
+                    reset: 'Reset',
+                    sure_to_reset: 'This will reset all presets and keep your customized configs, are you sure to proceed?',
                     apply: 'Apply',
                     cancel: 'Cancel',
                     save: 'Save',

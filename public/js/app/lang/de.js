@@ -1288,6 +1288,8 @@ define(function() {
                     engrave: 'Gravieren',
                     more: 'Verwalten',
                     delete: 'Löschen',
+                    reset: 'Zurücksetzen',
+                    sure_to_reset: 'Dadurch werden alle Voreinstellungen zurückgesetzt und Ihre benutzerdefinierten Konfigurationen werden beibehalten. Sind Sie sicher, dass Sie fortfahren?',
                     apply: 'Anwenden',
                     cancel: 'Stornieren',
                     save: 'Speichern',
