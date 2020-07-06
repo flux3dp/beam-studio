@@ -97,7 +97,7 @@
       "!**/*.{jsx,scss}"
     ],
     "asar": {
-      "unpack" : "*.node"
+      "asarUnpack" : "*.node"
     },
     "publish": [
       {
