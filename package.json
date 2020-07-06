@@ -96,9 +96,7 @@
     "files": [
       "!**/*.{jsx,scss}"
     ],
-    "asar": {
-      "asarUnpack" : "*.node"
-    },
+    "asarUnpack": "*.node",
     "publish": [
       {
         "provider": "s3",
