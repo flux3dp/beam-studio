@@ -48,6 +48,11 @@ define(function() {
                 use: '匯入圖檔',
                 svg: '匯入 svg 檔',
                 dxf: '匯入 dxf 檔',
+            },
+            alerts: {
+                start_preview_timeout: '啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+                fail_to_start_preview: '啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+
             }
         },
         support: {

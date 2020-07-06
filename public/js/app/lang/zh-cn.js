@@ -1347,6 +1347,11 @@ define(function() {
                             more: '管理',
                             parameters: '选择参数'
                         },
+                        alerts: {
+                            start_preview_timeout: '启动相机预览时超时，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+                            fail_to_start_preview: '启动相机预览失败，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+
+                        }
                     },
                     laser_speed: {
                         text: '激光速度',

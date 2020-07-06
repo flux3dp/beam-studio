@@ -165,10 +165,17 @@ define([
             $(workarea).css('cursor', 'wait');
             try {
                 await PreviewModeController.start(device, (errMessage) => {
-                    Alert.popUp({
-                        type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: errMessage,
-                    });
+                    if (errMessage === 'Timeout has occurred') {
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: LANG.alerts.start_preview_timeout,
+                        });
+                    } else {
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: errMessage,
+                        });
+                    }
                     setTopBarPreviewMode(false);
                     this.setState({ isPreviewing: false });
                     $(workarea).css('cursor', 'auto');
@@ -178,7 +185,7 @@ define([
                 console.log(error);
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: error.message || 'Fail to start preview mode',
+                    message: error.message || LANG.alerts.fail_to_start_preview,
                 });
                 FnWrapper.useSelectTool();
                 return;

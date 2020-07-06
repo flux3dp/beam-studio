@@ -48,6 +48,10 @@ define(function() {
                 use: 'インポートされたファイル',
                 svg: 'インポートされた svg',
                 dxf: 'インポートされた dxf',
+            },
+            alerts: {
+                start_preview_timeout: 'プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+                fail_to_start_preview: 'プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
             }
         },
         support: {
