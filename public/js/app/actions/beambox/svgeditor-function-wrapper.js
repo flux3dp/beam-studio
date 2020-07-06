@@ -8,6 +8,7 @@ define([
     'app/constants/alert-constants',
     'jsx!views/tutorials/Tutorial-Controller',
     'app/constants/tutorial-constants',
+    'helpers/symbol-maker',
     'helpers/i18n'
 ], function(
     Constant,
@@ -19,6 +20,7 @@ define([
     AlertConstants,
     TutorialController,
     TutorialConstants,
+    SymbolMaker,
     i18n
 ){
     const LANG = i18n.lang.beambox;
@@ -405,7 +407,9 @@ define([
 
         exportAsSVG: function() {
             svgCanvas.clearSelection();
+            SymbolMaker.switchImageSymbolForAll(false);
             const output = svgCanvas.getSvgString();
+            SymbolMaker.switchImageSymbolForAll(true);
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
             window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
