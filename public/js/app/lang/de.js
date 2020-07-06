@@ -332,7 +332,8 @@ define(function() {
                 station_ready_statement: 'Ihr Computer ist jetzt eine Wi-Fi-Station. Du kannst deinen Computer drahtlos verwenden, indem Du eine Verbindung zu Wi-Fi "%s" herstellst.',
                 brilliant: 'Brillant!',
                 begin_journey: 'Du kannst jetzt das USB / Micro-USB-Kabel ausziehen und die Reise der Kreativität kann beginnen.',
-                great: 'Willkommen bei FLUX Studio',
+                great: 'Willkommen bei Beam Studio',
+                setup_later: 'Sie können Ihren Computer jederzeit über die Titelleiste> "Maschinen"> "Maschineneinrichtung" einrichten.',
                 upload_via_usb: 'Die Wi-Fi-Verbindung kann später eingerichtet werden. <br/> Wenn Du kein WLAN hast, überprüfe <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215998327-Connection-Guide-for-Desktop-PCs"> Desktop-Verbindungshandbuch </a>.',
                 back: 'Zurück',
                 ok: 'STARTE EIN PROJEKT'
@@ -1209,6 +1210,7 @@ define(function() {
                 suggest_calibrate_camera_first: 'Bitte kalibriere die Kamera. (Menü> Maschine> [Ihre Maschine]> Kamera kalibrieren)\nRichte die Plattform jedes Mal neu aus, wenn du sie verwendest, um ein besseres Vorschauergebnis zu erzielen.',
                 end_preview: 'Vorschaumodus beenden',
                 unpreviewable_area: 'Blinder Bereich',
+                diode_blind_area: 'Blindbereich des Hybridmoduls',
                 borderless_preview: 'Kamera-Vorschau im randlosen Modus',
                 rectangle: 'Rechteck',
                 ellipse: 'Ellipse',

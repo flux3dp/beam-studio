@@ -332,6 +332,7 @@ define(function() {
                 brilliant: '太棒了!',
                 begin_journey: '你可以拔除 USB / Micro USB 傳輸線, 開始使用機器隨心所欲地進行創作囉！',
                 great: '歡迎使用 Beam Studio',
+                setup_later: '您可以隨時從選單 >「機器」>「新增或設定機器」來設定連線。',
                 upload_via_usb: '你可以稍後再設定 Wi-Fi 選項。<br/>如果你沒有 Wi-Fi 環境，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215998327-Connection-Guide-for-Desktop-PCs">PC連線指南</a>',
                 back: '回到 Wi-Fi 設定',
                 ok: '開始使用'
@@ -1205,6 +1206,7 @@ define(function() {
                 suggest_calibrate_camera_first: '提醒您：\n第一次使用相機，請先進行相機校正。並在每次使用時將平台對焦，以取得最好的效果。',
                 end_preview: '結束預覽模式',
                 unpreviewable_area: '非相機預覽範圍',
+                diode_blind_area: '非雕刻範圍',
                 borderless_preview: '開蓋模式相機預覽',
                 rectangle: '長方形',
                 ellipse: '橢圓形',

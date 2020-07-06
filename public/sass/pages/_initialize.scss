@@ -74,7 +74,12 @@
             box-shadow: none;
         }
         .select-machine-type {
+            display: flex;
+            flex-direction: column;
             padding: 0 0 60px 0;
+            .main-title {
+                text-align: center;
+            }
             .btn-h-group {
                 width: 240px;
             }
@@ -84,6 +89,22 @@
                 line-height: 54px;
                 padding-left: 30px;
                 margin: 0 0 10px 0;
+            }
+        }
+        .skip-connect-machine {
+            padding: 0 0 60px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .text-content {
+                padding-bottom: 30px;
+                font-size: 14px;
+                letter-spacing: 0.1px;
+                white-space: pre-wrap;
+                color: #999999;
+            }
+            .btn-action {
+                padding: 5px 15px;
             }
         }
 

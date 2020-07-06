@@ -332,7 +332,8 @@ define(function() {
                 station_ready_statement: 'Your machine is now a Wi-Fi station, you can use your machine wirelessly by connect to Wi-Fi “%s”',
                 brilliant: 'Brilliant!',
                 begin_journey: 'You can now detach USB / Micro USB Cable, and begin the journey of creativity.',
-                great: 'Welcome to FLUX Studio',
+                great: 'Welcome to Beam Studio',
+                setup_later: 'You can always set up your machine from Titlebar > "Machines" > "Machine Setup"',
                 upload_via_usb: 'You can setup Wi-Fi connection later. <br/>If you don\'t have Wi-Fi, check <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215998327-Connection-Guide-for-Desktop-PCs">Desktop Connection Guide</a>.',
                 back: 'Back',
                 ok: 'START CREATING'
@@ -1209,6 +1210,7 @@ define(function() {
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
                 end_preview: 'End Preview Mode',
                 unpreviewable_area: 'Blind Area',
+                diode_blind_area: 'Hybrid Module Blind Area',
                 borderless_preview: 'Borderless Mode Camera Preview',
                 rectangle: 'Rectangle',
                 ellipse: 'Ellipse',

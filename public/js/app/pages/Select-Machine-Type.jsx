@@ -23,6 +23,10 @@ define([
                 location.hash = '#initialize/connect/select-connection-type';
             }
 
+            skipConnectMachine = () => {
+                location.hash = '#initialize/connect/skip-connect-machine';
+            }
+
             renderSelectMachineStep = () => {
                 return (
                     <div className="select-machine-type">
@@ -47,11 +51,12 @@ define([
                                 {'Beambox Pro'}
                             </button>
                         </div>
+                        <div className="btn btn-link" onClick={() => this.skipConnectMachine()}>
+                            {lang.initialize.no_machine}
+                        </div>
                     </div>
                 );
             }
-
-
 
             render() {
                 const wrapperClassName = {

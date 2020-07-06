@@ -330,7 +330,8 @@ define(function() {
                 station_ready_statement: '你的机器已成为 Wi-Fi 热点，你可以借由无线连接 “%s” 这个热点操作 FLUX',
                 brilliant: '太棒了!',
                 begin_journey: '你可以拔除 USB / Micro USB 传输线, 开始使用机器随心所欲地进行创作啰！',
-                great: '欢迎使用 Mozu Studio',
+                great: '欢迎使用 Beam Studio',
+                setup_later: '您可以随时从选单 >「机器」>「新增或设定机器」来设定连线。',
                 upload_via_usb: '你可以稍后再设置 Wi-Fi 选项。<br/>如果你没有 Wi-Fi 环境，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215998327-Connection-Guide-for-Desktop-PCs">PC连接指南</a>',
                 back: '回到 Wi-Fi 设置',
                 ok: '开始使用'
@@ -1204,6 +1205,7 @@ define(function() {
                 suggest_calibrate_camera_first: '提醒您：\n第一次使用相机，请先进行相机校正。并在每次使用时将平台对焦，以取得最好的效果。',
                 end_preview: '结束预览模式',
                 unpreviewable_area: '非相机预览范围',
+                diode_blind_area: '非雕刻范围',
                 borderless_preview: '开盖模式相机预览',
                 rectangle: '长方形',
                 ellipse: '椭圆形',
