@@ -82,7 +82,11 @@ define(function() {
             metal_bw_engraving: {
                 power: 50,
                 speed: 80
-            }
+            },
+            stainless_steel_bw_engraving_diode: {
+                power: 100,
+                speed: 4
+            },
         },
 
         BEAMBOX: {
@@ -161,7 +165,11 @@ define(function() {
             metal_bw_engraving: {
                 power: 50,
                 speed: 120
-            }
+            },
+            stainless_steel_bw_engraving_diode: {
+                power: 100,
+                speed: 4
+            },
         },
 
         BEAMBOX_PRO: {
@@ -240,7 +248,11 @@ define(function() {
             metal_bw_engraving: {
                 power: 50,
                 speed: 140
-            }
+            },
+            stainless_steel_bw_engraving_diode: {
+                power: 100,
+                speed: 4
+            },
         }
     };
 });

@@ -1210,7 +1210,8 @@ define(function() {
                 suggest_calibrate_camera_first: 'カメラを較正してください。（メニュー>マシン>[お使いのマシン]>カメラを較正\nより良いプレビュー結果を実行するには、プラットフォームを使用するたびにプラットフォームを適切に再フォーカスします。',
                 end_preview: 'プレビューモードを終了',
                 unpreviewable_area: 'ブラインドエリア',
-                diode_blind_area: 'ハイブリッドモジュールのブラインドエリア',
+                diode_blind_area: 'ハイブリッドアドオンのブラインドエリア',
+                borderless_blind_area: '非彫刻エリア',
                 borderless_preview: 'ボーダーレスモードのカメラプレビュー',
                 rectangle: '長方形',
                 ellipse: '楕円',
@@ -1320,6 +1321,7 @@ define(function() {
                             rubber_bw_engraving: 'ゴム - モノクロ彫刻',
                             glass_bw_engraving:  'ガラス - モノクロ彫刻',
                             metal_bw_engraving: '金属 - モノクロ彫刻',
+                            stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
                             save: '保存する',
                             more: '管理する',
                             parameters: 'パラメーター…'
@@ -1344,6 +1346,7 @@ define(function() {
                             rubber_bw_engraving: 'ゴム - モノクロ彫刻',
                             glass_bw_engraving:  'ガラス - モノクロ彫刻',
                             metal_bw_engraving: '金属 - モノクロ彫刻',
+                            stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
                             save: '保存する',
                             more: '管理する',
                             parameters: 'パラメーター…'

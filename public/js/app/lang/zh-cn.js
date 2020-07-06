@@ -1206,6 +1206,7 @@ define(function() {
                 end_preview: '结束预览模式',
                 unpreviewable_area: '非相机预览范围',
                 diode_blind_area: '非雕刻范围',
+                borderless_blind_area: '非雕刻范围',
                 borderless_preview: '开盖模式相机预览',
                 rectangle: '长方形',
                 ellipse: '椭圆形',
@@ -1316,6 +1317,7 @@ define(function() {
                             rubber_bw_engraving: '印章垫 - 双色刻印',
                             glass_bw_engraving:  '玻璃 - 双色刻印',
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
+                            stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
                             save: '储存参数',
                             more: '管理',
                             parameters: '选择参数'
@@ -1340,6 +1342,7 @@ define(function() {
                             rubber_bw_engraving: '印章垫 - 双色刻印',
                             glass_bw_engraving:  '玻璃 - 双色刻印',
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
+                            stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
                             save: '储存参数',
                             more: '管理',
                             parameters: '选择参数'

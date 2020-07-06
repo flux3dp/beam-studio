@@ -64,7 +64,8 @@ define([
         'fabric_shading_engraving',
         'rubber_bw_engraving',
         'glass_bw_engraving',
-        'metal_bw_engraving'
+        'metal_bw_engraving',
+        'stainless_steel_bw_engraving_diode',
     ];
 
     const functionalLaserOptions = [
@@ -147,30 +148,31 @@ define([
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             } else {
                 let customized = LocalStorage.get('customizedLaserConfigs') || [];
-                const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
                 for (let i = 0; i < customized.length; i++) {
                     if (customized[i].isDefault) {
+                        const {speed, power, repeat} = this._getDefaultParameters(customized[i].key);
                         customized[i].name = LANG.dropdown[unit][customized[i].key];
-                        switch(model) {
-                            case 'fbm1':
-                                customized[i].speed = RightPanelConstants.BEAMO[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMO[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMO[customized[i].key].repeat || 1;
-                                break;
-                            case 'fbb1b':
-                                customized[i].speed = RightPanelConstants.BEAMBOX[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMBOX[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMBOX[customized[i].key].repeat || 1;
-                                break;
-                            case 'fbb1p':
-                                customized[i].speed = RightPanelConstants.BEAMBOX_PRO[customized[i].key].speed;
-                                customized[i].power = RightPanelConstants.BEAMBOX_PRO[customized[i].key].power;
-                                customized[i].repeat = RightPanelConstants.BEAMBOX_PRO[customized[i].key].repeat || 1;
-                                break;
-                        }
+                        customized[i].speed = speed;
+                        customized[i].power = power;
+                        customized[i].repeat = repeat || 1;
                     }
                 }
+                const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse') || {};
+                const newPreset = defaultLaserOptions.filter((option) => defaultLaserConfigsInUse[option] === undefined);
+                newPreset.forEach((preset) => {
+                    const {speed, power, repeat} = this._getDefaultParameters(preset);
+                    customized.push({
+                        name: LANG.dropdown[unit][preset],
+                        speed,
+                        power,
+                        repeat,
+                        isDefault: true,
+                        key: preset
+                    });
+                    defaultLaserConfigsInUse[preset] = true;
+                });
                 LocalStorage.set('customizedLaserConfigs', customized);
+                LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             };
         }
 

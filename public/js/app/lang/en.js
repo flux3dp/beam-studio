@@ -1210,7 +1210,8 @@ define(function() {
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
                 end_preview: 'End Preview Mode',
                 unpreviewable_area: 'Blind Area',
-                diode_blind_area: 'Hybrid Module Blind Area',
+                diode_blind_area: 'Hybrid Add-On Blind Area',
+                borderless_blind_area: 'Non-engraving Area',
                 borderless_preview: 'Borderless Mode Camera Preview',
                 rectangle: 'Rectangle',
                 ellipse: 'Ellipse',
@@ -1320,6 +1321,7 @@ define(function() {
                             rubber_bw_engraving: 'Rubber - Monochromic Engraving',
                             glass_bw_engraving:  'Glass - Monochromic Engraving',
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
+                            stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
                             save: 'Save',
                             more: 'Manage',
                             parameters: 'Presets'
@@ -1344,6 +1346,7 @@ define(function() {
                             rubber_bw_engraving: 'Rubber - Monochromic Engraving',
                             glass_bw_engraving:  'Glass - Monochromic Engraving',
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
+                            stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
                             save: 'Save',
                             more: 'Manage',
                             parameters: 'Presets'
