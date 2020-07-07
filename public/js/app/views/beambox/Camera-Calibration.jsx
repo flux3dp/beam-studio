@@ -248,6 +248,11 @@ define([
                                     id: 'menu-item',
                                     type: AlertConstants.SHOW_POPUP_ERROR,
                                     message: error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture',
+                                    callbacks: async () => {
+                                        const report = await DeviceMaster.getReport();
+                                        device.st_id = report.st_id;
+                                        await CheckDeviceStatus(device, false, true);
+                                    }
                                 });
                             }
                         }
