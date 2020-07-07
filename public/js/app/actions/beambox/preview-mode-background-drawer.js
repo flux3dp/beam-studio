@@ -1,12 +1,14 @@
 define([
     'Rx',
-    'app/actions/beambox/constant',
     'app/actions/beambox',
+    'app/actions/beambox/beambox-preference',
+    'app/actions/beambox/constant',
     'helpers/i18n'
 ], function (
     Rx,
-    Constant,
     BeamboxActions,
+    BeamboxPreference,
+    Constant,
     i18n
 ) {
     const LANG = i18n.lang.beambox.left_panel;
@@ -52,11 +54,14 @@ define([
             // await p;  if you want to know the time when image transfer to Blob, which is almost the same time background is drawn.
         }
 
+
+
         drawBoundary() {
             const canvasBackground = svgedit.utilities.getElem('canvasBackground');
+            const canvasGrid = svgedit.utilities.getElem('canvasGrid');
             const previewBoundary = this._getPreviewBoundary();
 
-            canvasBackground.appendChild(previewBoundary);
+            canvasBackground.insertBefore(previewBoundary, canvasGrid.nextSibling);
         }
 
         clearBoundary() {
@@ -245,17 +250,86 @@ define([
             });
 
             const textNode = document.createTextNode(LANG.unpreviewable_area);
-
             descText.appendChild(textNode);
 
             borderPattern.appendChild(patternRect);
             borderPattern.appendChild(patternLine);
 
             boundaryGroup.appendChild(borderTop);
+            if (BeamboxPreference.read('enable-diode')) {
+                const {hybridBorder, hybridDescText} = this._getHybridModulePreviewBoundary(uncapturabledHeight);
+                boundaryGroup.appendChild(hybridBorder);
+                boundaryGroup.appendChild(hybridDescText);
+            } else if (BeamboxPreference.read('borderless')) {
+                const {openBottomBoundary, openBottomDescText} = this._getOpenBottomModulePreviewBoundary(uncapturabledHeight);
+                boundaryGroup.appendChild(openBottomBoundary);
+                boundaryGroup.appendChild(openBottomDescText);
+            }
+
             boundaryGroup.appendChild(borderPattern);
             boundaryGroup.appendChild(descText);
 
             return boundaryGroup;
+        }
+
+        _getOpenBottomModulePreviewBoundary(uncapturabledHeight){
+            const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+            const NS = svgedit.NS;
+            const openBottomBoundary = svgdoc.createElementNS(NS.SVG, 'rect');
+            const openBottomDescText = svgdoc.createElementNS(NS.SVG, 'text');
+            svgedit.utilities.assignAttributes(openBottomBoundary, {
+                'width': Constant.borderless.safeDistance.X * Constant.dpmm,
+                'height': Constant.dimension.getHeight(),
+                'x': Constant.dimension.getWidth() - Constant.borderless.safeDistance.X * Constant.dpmm,
+                'y': 0,
+                'fill': 'url(#border-pattern)',
+                'style': 'pointer-events:none'
+            });
+            svgedit.utilities.assignAttributes(openBottomDescText, {
+                'font-size': 60,
+                'x': Constant.dimension.getWidth() -  (uncapturabledHeight - 60) / 2,
+                'y': (uncapturabledHeight + 60) / 2 - 10,
+                'text-anchor': 'end',
+                'font-weight': 'bold',
+                'fill': '#fff',
+                'stroke': '#666',
+                'stroke-width': 5,
+                'paint-order': 'stroke',
+                'style': 'pointer-events:none'
+            });
+            const textNode = document.createTextNode(LANG.borderless_blind_area);
+            openBottomDescText.appendChild(textNode);
+            return {openBottomBoundary, openBottomDescText};
+        }
+
+        _getHybridModulePreviewBoundary(uncapturabledHeight) {
+            const svgdoc = document.getElementById('svgcanvas').ownerDocument;
+            const NS = svgedit.NS;
+            const hybridBorder = svgdoc.createElementNS(NS.SVG, 'rect');
+            const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text');
+            svgedit.utilities.assignAttributes(hybridBorder, {
+                'width': Constant.diode.safeDistance.X * Constant.dpmm,
+                'height': Constant.dimension.getHeight(),
+                'x': Constant.dimension.getWidth() - Constant.diode.safeDistance.X * Constant.dpmm,
+                'y': 0,
+                'fill': 'url(#border-pattern)',
+                'style': 'pointer-events:none'
+            });
+            svgedit.utilities.assignAttributes(hybridDescText, {
+                'font-size': 60,
+                'x': Constant.dimension.getWidth() -  (uncapturabledHeight - 60) / 2,
+                'y': (uncapturabledHeight + 60) / 2 - 10,
+                'text-anchor': 'end',
+                'font-weight': 'bold',
+                'fill': '#fff',
+                'stroke': '#666',
+                'stroke-width': 5,
+                'paint-order': 'stroke',
+                'style': 'pointer-events:none'
+            });
+            const textNode = document.createTextNode(LANG.diode_blind_area);
+            hybridDescText.appendChild(textNode);
+            return {hybridBorder, hybridDescText};
         }
     }
 

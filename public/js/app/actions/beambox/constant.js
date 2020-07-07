@@ -46,6 +46,11 @@ define([
                 size: 25 //mm
             }
         },
+        borderless: {
+            safeDistance: {
+                X: 40, //mm
+            }
+        },
         diode: {
             limitX: 50, //mm
             limitY: 10, //mm

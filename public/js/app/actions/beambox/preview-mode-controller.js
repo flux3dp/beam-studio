@@ -247,12 +247,15 @@ define([
         }
 
         _constrainPreviewXY(x, y) {
-            const diodeEnabled = BeamboxPreference.read('enable-diode');
+            const isDiodeEnabled = BeamboxPreference.read('enable-diode');
+            const isBorderlessEnabled = BeamboxPreference.read('borderless');
             let maxWidth = Constant.dimension.getWidth();
             let maxHeight = Constant.dimension.getHeight();
-            if (diodeEnabled) {
+            if (isDiodeEnabled) {
                 maxWidth -= Constant.diode.safeDistance.X * Constant.dpmm;
                 maxHeight -= Constant.diode.safeDistance.Y * Constant.dpmm;
+            } else if (isBorderlessEnabled) {
+                maxWidth -= Constant.borderless.safeDistance.X * Constant.dpmm;
             }
 
             x = Math.max(x, this._getCameraOffset().x * Constant.dpmm);

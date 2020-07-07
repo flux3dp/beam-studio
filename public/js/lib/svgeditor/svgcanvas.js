@@ -2988,6 +2988,9 @@ define([
                 let charbb;
                 let {rowIndex, index: columnIndex} = indexToRowAndIndex(index);
                 charbb = chardata[rowIndex][columnIndex];
+                if (!charbb) {
+                    return;
+                }
 
                 cursor = svgedit.utilities.getElem('text_cursor');
 
@@ -10872,7 +10875,7 @@ define([
                         'width': '100%',
                         'height': '100%',
                         'preserveAspectRatio': 'xMinYMin',
-                        'style': 'pointer-events:none; opacity: 0.8;',
+                        'style': 'pointer-events:none; opacity: 1;',
                     });
                     bg.appendChild(bg_img);
                 }

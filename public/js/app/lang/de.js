@@ -1214,7 +1214,7 @@ define(function() {
                 suggest_calibrate_camera_first: 'Bitte kalibriere die Kamera. (Menü> Maschine> [Ihre Maschine]> Kamera kalibrieren)\nRichte die Plattform jedes Mal neu aus, wenn du sie verwendest, um ein besseres Vorschauergebnis zu erzielen.',
                 end_preview: 'Vorschaumodus beenden',
                 unpreviewable_area: 'Blinder Bereich',
-                diode_blind_area: 'Hybrid-Zusatz-Blindbereich',
+                diode_blind_area: 'Hybrid Laser Add-On Blindbereich',
                 borderless_blind_area: 'Nicht gravierender Bereich',
                 borderless_preview: 'Kamera-Vorschau im randlosen Modus',
                 rectangle: 'Rechteck',

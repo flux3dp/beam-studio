@@ -1214,7 +1214,7 @@ define(function() {
                 suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
                 end_preview: 'End Preview Mode',
                 unpreviewable_area: 'Blind Area',
-                diode_blind_area: 'Hybrid Add-On Blind Area',
+                diode_blind_area: 'Hybrid Laser Add-On Blind Area',
                 borderless_blind_area: 'Non-engraving Area',
                 borderless_preview: 'Borderless Mode Camera Preview',
                 rectangle: 'Rectangle',
