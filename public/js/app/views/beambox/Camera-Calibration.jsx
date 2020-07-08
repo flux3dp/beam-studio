@@ -174,6 +174,7 @@ define([
     );
 
     const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, parent}) => {
+        const [isCutButtonDisabled, setCutButtonDisabled] = React.useState(false);
         const cutThenCapture = async function(updateOffsetDataCb, parent) {
             await _doCuttingTask(parent);
             let blobUrl = await _doCaptureTask(true);
@@ -236,12 +237,17 @@ define([
                 buttons={
                     [{
                         label: LANG.start_engrave,
-                        className: 'btn-default btn-alone-right',
+                        className: classNames('btn-default btn-alone-right', {'disabled': isCutButtonDisabled}),
                         onClick: async ()=>{
+                            if (isCutButtonDisabled) {
+                                return;
+                            }
                             try {
+                                setCutButtonDisabled(true);
                                 await cutThenCapture(updateOffsetDataCb, parent);
                                 gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                             } catch (error) {
+                                setCutButtonDisabled(false);
                                 console.log(error);
                                 ProgressActions.close();
                                 Alert.popUp({

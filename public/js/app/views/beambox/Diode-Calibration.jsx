@@ -35,6 +35,7 @@ define([
     DeviceErrorHandler
 ) {
     const React = require('react');
+    const classNames = require('classnames');
     const LANG = i18n.lang.diode_calibration;
 
     //View render the following steps
@@ -56,7 +57,8 @@ define([
                 dx: 0,
                 dy: 0,
                 cameraMovedX: 0,
-                cameraMovedY: 0
+                cameraMovedY: 0,
+                isCutButtonDisabled: false
             };
         }
 
@@ -124,6 +126,7 @@ define([
         // Cut and Take Picture
         renderStepCut() {
             const { model, device } = this.props;
+            const { isCutButtonDisabled } = this.state;
             return (
                 <AlertDialog
                     caption={LANG.diode_calibration}
@@ -131,15 +134,20 @@ define([
                     buttons={
                         [{
                             label: LANG.start_engrave,
-                            className: 'btn-default btn-alone-right primary',
+                            className: classNames('btn-default btn-alone-right primary', {'disabled': isCutButtonDisabled}),
                             onClick: async ()=>{
+                                if (isCutButtonDisabled) {
+                                    return;
+                                }
                                 try {
+                                    this.setState({isCutButtonDisabled: true});
                                     await CheckDeviceStatus(device);
                                     await this.doCuttingTask();
                                     await this.doCaptureTask();
                                     await this.cropAndRotateImg();
                                     this.updateCurrentStep(STEP_ANALYZE);
                                 } catch (error) {
+                                    this.setState({isCutButtonDisabled: false});
                                     console.log(error);
                                     ProgressActions.close();
                                     Alert.popUp({

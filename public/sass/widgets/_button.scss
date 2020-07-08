@@ -51,7 +51,7 @@
     &.primary {
         background: #424242;
         color: white;
-        &:hover {
+        &:hover:not(.disabled) {
             background: #222;
         }
     }
