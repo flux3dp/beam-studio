@@ -5675,9 +5675,35 @@ define([
                     });
                 }
                 editor.readSVG = readSVG;
-                const importSvg = file => {
+                const importSvg = async (file, skipVersionWarning = false) => {
+                    const checkSvgfileSupportByLayer = async (file) => {
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = function (e) {
+                                const svgString = e.target.result;
+                                const matchAI = svgString.match(/<!-- Generator: Adobe Illustrator/);
+                                if (matchAI) {
+                                    resolve(true);
+                                    return;
+                                }
+                                const matchInkscape = svgString.match(/inkscape:version/);
+                                if (matchInkscape) {
+                                    resolve(true);
+                                    return;
+                                }
+                                const matchCoralDraw = svgString.match(/<!-- Creator: CorelDRAW/);
+                                if (matchCoralDraw) {
+                                    resolve(true);
+                                    return;
+                                }
+                                resolve(false);
+                            }
+                            reader.readAsText(file);
+
+                        });
+                    }
                     async function importAs(type) {
-                        const result = await svgWebSocket.uploadPlainSVG(file);
+                        const result = await svgWebSocket.uploadPlainSVG(file, skipVersionWarning);
                         if (result !== 'ok') {
                             Alert.popAlertStackById('loading_image');
                             switch (result) {
@@ -5728,21 +5754,14 @@ define([
                             await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
                     }
+                    const doesSupportByLayer = await checkSvgfileSupportByLayer(file);
+                    const buttonLabels = doesSupportByLayer ? [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer] : [LANG.popup.layer_by_color, LANG.popup.nolayer];
+                    const callbacks = doesSupportByLayer ? [() => importAs('layer'), () => importAs('color'), () => importAs('nolayer')] : [() => importAs('color'), () => importAs('nolayer')]
                     Alert.popUp({
                         id: 'confirm_mouse_input_device',
                         message: LANG.popup.select_import_method,
-                        buttonLabels: [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer],
-                        callbacks: [
-                            () => {
-                                importAs('layer');
-                            },
-                            () => {
-                                importAs('color');
-                            },
-                            () => {
-                                importAs('nolayer');
-                            }
-                        ]
+                        buttonLabels: buttonLabels,
+                        callbacks: callbacks,
                     });
                 };
                 editor.importSvg = importSvg;

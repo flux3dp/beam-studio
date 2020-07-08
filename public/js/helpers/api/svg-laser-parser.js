@@ -433,7 +433,7 @@ define([
                 ws.send(args.join(' '));
                 return $deferred.promise();
             },
-            uploadPlainSVG: function(file) {
+            uploadPlainSVG: function(file, skipVersionWarning = false) {
                 var $deferred = $.Deferred();
 
                 events.onMessage = function(data) {
@@ -499,7 +499,7 @@ define([
                     }
                     let version;
                     const LANG = i18n.lang.beambox.popup;
-                    if (!AlertConfig.read('skip_svg_version_warning')) {
+                    if (!skipVersionWarning && !AlertConfig.read('skip_svg_version_warning')) {
                         const matchSVG = svgString.match(/<svg[^>]*>/g)[0];
                         version = matchSVG.match(/ version="[^"]+"/);
                         if (version) {
