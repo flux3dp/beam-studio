@@ -141,6 +141,7 @@ monitorManager.killProcSync();
 monitorManager.startProc();
 
 let shadowWindow;
+let shouldCloseShadowWindow = false;
 
 const createShadowWindow = () => {
     if (!shadowWindow) {
@@ -152,6 +153,14 @@ const createShadowWindow = () => {
         });
         shadowWindow.webContents.openDevTools();
         loadShadowWindow();
+
+        shadowWindow.on('close', function(e) {
+            if (!shouldCloseShadowWindow) {
+                e.preventDefault();
+            } else {
+                console.log('Shadow window closed');
+            }
+        });
     }
 };
 
@@ -186,14 +195,14 @@ function createWindow () {
         slashes: true,
     }));
 
-    let isCloseConfirm = false;
+    let isCloseConfirmed = false;
     let isFrontEndReady = false;
     ipcMain.on(events.FRONTEND_READY, () => {
         isFrontEndReady = true;
     });
 
     mainWindow.on('close', function(e) {
-        if (isFrontEndReady && !isCloseConfirm) {
+        if (isFrontEndReady && !isCloseConfirmed) {
             e.preventDefault(); 
             mainWindow.webContents.send('WINDOW_CLOSE', e);
             // if save dialog does not pop in 10 seconds, something may goes wrong in frontend, close the app
@@ -202,10 +211,11 @@ function createWindow () {
                 isSaveDialogPopped = true;
             });
             const closeBeamStudio = () => {
-                isCloseConfirm = true;
+                isCloseConfirmed = true;
                 monitorManager.killProc();
                 backendManager.stop();
                 mainWindow.close();
+                shouldCloseShadowWindow = true;
                 try {
                     shadowWindow.close();
                 } catch (e) {
