@@ -116,15 +116,24 @@ define([
             }
         };
 
-        if(!WS) {
-            WS = new Websocket({
-                method: 'usb/interfaces',
-                onMessage: processResult,
-                onError: () => {},
-                onFatal: () => {console.log('usb checker onFatal')}
-            });
-        }
+        const createWebsocket = setInterval(() => {
+            if(!WS) {
+                WS = new Websocket({
+                    method: 'usb/interfaces',
+                    onMessage: processResult,
+                    onError: () => {},
+                    onFatal: () => {console.log('usb checker onFatal')}
+                });
+            }
+            try {
+                WS.send('list');
+            } catch (e) {
+                console.error(e);
+                return;
+            }
+            clearInterval(createWebsocket);
+        }, 500)
 
-        WS.send('list');
+
     };
 });

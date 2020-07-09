@@ -53,8 +53,7 @@
             ipc.on(events.BACKEND_UP, (sender, status) => {
                 window.FLUX.ghostPort = status.port;
                 window.FLUX.logfile = status.logfile;
-                window.FLUX.backendAlive = status.backend.alive;
-                getStarted(status.port);
+                window.FLUX.backendAlive = status.alive;
                 console.log(`Backend start at ${status.port}`);
             });
 

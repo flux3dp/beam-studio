@@ -28,7 +28,8 @@ define([
         showProgramErrorPopup = true,
         WsLogger = new Logger('websocket'),
         logLimit = 100,
-        wsErrorCount = 0;
+        wsErrorCount = 0,
+        wsCreateFailedCount = 0;
 
     // options:
     //      hostname      - host name (Default: 127.0.0.1)
@@ -81,16 +82,36 @@ define([
                 return opts;
             },
             createWebSocket = function(options) {
-                let url = 'ws://' + options.hostname + ':' + options.port + '/ws/' + options.method,
-                    _ws = new WebSocket(url);
+                const port = options.port || defaultOptions.port;
+                let url = 'ws://' + options.hostname + ':' + port + '/ws/' + options.method;
+                if (port === undefined) {
+                    wsCreateFailedCount += 1;
+                    if (wsCreateFailedCount === 100) {
+                        const LANG = i18n.lang.beambox.popup;
+                        Alert.popAlertStackById('backend-error');
+                        Alert.popUp({
+                            id: 'backend-error',
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: LANG.backend_connect_failed_ask_to_upload,
+                            buttonType: AlertConstants.YES_NO,
+                            onYes: () => {
+                                outputError.uploadBackendErrorLog();
+                            }
+                        });
+                    }
+                    return null;
+                }
+                let _ws = new WebSocket(url);
+                wsCreateFailedCount = 0;
 
                 _ws.onerror = (e) => {
                     wsErrorCount += 1;
                     // If ws error count exceed certian number Alert user there may be problems with backend
                     if (wsErrorCount === 50) {
                         const LANG = i18n.lang.beambox.popup;
-                        
+                        Alert.popAlertStackById('backend-error');
                         Alert.popUp({
+                            id: 'backend-error',
                             type: AlertConstants.SHOW_POPUP_ERROR,
                             message: LANG.backend_connect_failed_ask_to_upload,
                             buttonType: AlertConstants.YES_NO,
