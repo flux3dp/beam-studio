@@ -5820,6 +5820,15 @@ define([
                 const layers = $('#svgcontent > g.layer').toArray();
                 layers.forEach(layer => {
                     this.updateLayerColor(layer);
+                    const childNodes = Array.from(layer.childNodes);
+                    while (childNodes.length > 0) {
+                        const child = childNodes.pop();
+                        if (child.tagName !== 'g') {
+                            $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                        } else {
+                            childNodes.push(...Array.from(child.childNodes));
+                        }
+                    }
                 });
             } catch (e) {
                 console.log(e);
