@@ -3779,8 +3779,10 @@ define([
                     editor.clipboardData.htmlData = clipboardData.getData('text/html');
                 }
                 editor.isClipboardDataReady = true;
-                e.stopPropagation();
-                e.preventDefault();
+                if (selectedElement != null && selectedElement.tagName === 'text') {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
             }, false);
 
             const handlePaste = async () => {
