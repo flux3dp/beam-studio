@@ -123,13 +123,23 @@ define([
 
         zoomIn = (currentRatio) => {
             const ratioInPercent = Math.round(currentRatio * 100);
-            const targetRatio = ratioInPercent + ((10 - ratioInPercent % 10) || 10);
+            let targetRatio;
+            if (ratioInPercent < 500) {
+                targetRatio = ratioInPercent + ((10 - ratioInPercent % 10) || 10);
+            } else {
+                targetRatio = ratioInPercent + ((100 - ratioInPercent % 100) || 100);
+            }
             this.setRatio(targetRatio);
         }
 
         zoomOut = (currentRatio) => {
             const ratioInPercent = Math.round(currentRatio * 100);
-            const targetRatio = ratioInPercent - (ratioInPercent % 10 || 10);
+            let targetRatio;
+            if (ratioInPercent <= 500) {
+                targetRatio = ratioInPercent - (ratioInPercent % 10 || 10);
+            } else {
+                targetRatio = ratioInPercent - (ratioInPercent % 100 || 100);
+            }
             this.setRatio(targetRatio);
         }
 
