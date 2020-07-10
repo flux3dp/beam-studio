@@ -3,9 +3,9 @@ const main = async () => {
     console.log(electron);
     const {ipcRenderer: ipc} = electron;
     ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {
-        const {url, width, height, bb, imageRatio, id} = data;
+        const {url, width, height, bb, imageRatio, id, strokeWidth} = data;
         console.log(data);
-        const img = new Image(width, height);
+        const img = new Image(width + parseInt(strokeWidth / 2), height + parseInt(strokeWidth / 2));
         img.onload = async () => {
             const imgCanvas = document.createElement('canvas');
             imgCanvas.width = img.width + 1;
@@ -18,7 +18,7 @@ const main = async () => {
             outCanvas.height = Math.max(1, bb.height * imageRatio);
             const outCtx = outCanvas.getContext('2d');
             outCtx.imageSmoothingEnabled = false;
-            outCtx.drawImage(imgCanvas, bb.x * imageRatio, bb.y * imageRatio, outCanvas.width, outCanvas.height, 0, 0, outCanvas.width, outCanvas.height);
+            outCtx.drawImage(imgCanvas, 0, 0, outCanvas.width, outCanvas.height, 0, 0, outCanvas.width, outCanvas.height);
             const imageBase64 = outCanvas.toDataURL('image/png');
             const res = await fetch(imageBase64);
             const imageBlob = await res.blob();

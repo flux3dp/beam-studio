@@ -313,6 +313,8 @@ define([
                 bb = JSON.parse(bb);
             }
             const bbObject = {x: bb.x, y: bb.y, width: bb.width, height: bb.height};
+            tempSymbol.setAttribute('x', -bbObject.x);
+            tempSymbol.setAttribute('y', -bbObject.y);
             const imageRatio = calculateImageRatio(bb);
             const strokeWidth = getStrokeWidth(imageRatio, scale);
             const descendants = Array.from(tempSymbol.querySelectorAll('*'));
@@ -331,9 +333,9 @@ define([
             const svgString = new XMLSerializer().serializeToString(tempSvg);
             const svgBlob = await sendTaskToWorker({type: 'svgStringToBlob', svgString});
             const svgUrl = URL.createObjectURL(svgBlob);
-            const imgWidth = Math.max((bb.x + bb.width) * imageRatio, 1);
-            const imgHeight = Math.max((bb.y + bb.height) * imageRatio, 1);
-            const imageUrl = await svgToImgUrlByShadowWindow({svgUrl, imgWidth, imgHeight, bb: bbObject, imageRatio});
+            const imgWidth = Math.max(bb.width * imageRatio, 1);
+            const imgHeight = Math.max(bb.height * imageRatio, 1);
+            const imageUrl = await svgToImgUrlByShadowWindow({svgUrl, imgWidth, imgHeight, bb: bbObject, imageRatio, strokeWidth});
             URL.revokeObjectURL(svgUrl);
             if (!imageSymbol) {
                 const image = svgdoc.createElementNS(NS.SVG, 'image');
