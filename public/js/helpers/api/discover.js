@@ -54,7 +54,7 @@ define([
                 if (pokeIPAddr && pokeIPAddr !== '') {
                     const pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
 
-                    if (pokeIPAddrArr.indexOf(device.ipaddr) === -1) {
+                    if (pokeIPAddrArr.indexOf(device.ipaddr) === -1 && device.ipaddr !== 'raspberrypi.local') {
                         if (pokeIPAddrArr.length > 19) {
                             pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
                         }
@@ -90,6 +90,16 @@ define([
             printers = [];
             _devices = {};
             ws.send(JSON.stringify({ 'cmd' : 'poke', 'ipaddr': targetIP }));
+        },
+        pokeTcp = function(targetIP) {
+            if (targetIP == null) { return; };
+            printers = [];
+            _devices = {};
+            ws.send(JSON.stringify({ 'cmd' : 'poketcp', 'ipaddr': targetIP }));
+        },
+        testTcp = function(targetIP) {
+            if (targetIP == null) { return; };
+            ws.send(JSON.stringify({ 'cmd' : 'testtcp', 'ipaddr': targetIP }));
         },
         BUFFER = 100,
         pokeIPAddr = localStorage.getItem('poke-ip-addr'),
@@ -129,6 +139,15 @@ define([
         }
     }
     initSmartUpnp();
+
+    const startTcpPoke = () => {
+        let i = 0;
+        const tcpPokeInterval = setInterval(() => {
+            pokeTcp(pokeIPs[i]);
+            i = i + 1 < pokeIPs.length ? i + 1 : 0;
+        }, 1000); 
+    }
+    startTcpPoke();
 
     CloudApi.getDevices().then(resp => {
         if (resp.ok) {
@@ -174,7 +193,11 @@ define([
 
         return {
             connection: ws,
-            poke: poke,
+            poke: () => {
+                poke();
+                pokeTcp();
+            },
+            testTcp: testTcp,
             countDevices: function(){
                 let count = 0;
                 for(var i in _devices) count++;

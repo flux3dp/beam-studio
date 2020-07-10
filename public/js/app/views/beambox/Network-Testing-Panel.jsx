@@ -2,19 +2,19 @@ define([
     'jsx!widgets/Modal',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/stores/beambox-store',
     'app/actions/progress-actions',
     'app/constants/progress-constants',
     'app/constants/keycode-constants',
+    'helpers/api/discover',
     'helpers/i18n'
 ], function(
     Modal,
     Alert,
     AlertConstants,
-    BeamboxStore,
     ProgressActions,
     ProgressConstants,
     KeycodeConstants,
+    Discover,
     i18n
 ) {
     const React = require('react');
@@ -52,10 +52,16 @@ define([
                     local_ips.push(iface.address);
                 });
             });
+            //Just for tcppoke
+            this.discover = Discover('network-testing-panel', () => {});
             this.state = {
                 ip: ip,
                 localIp: local_ips
             };
+        }
+
+        componentWillUnmount() {
+            this.discover.removeListener('network-testing-panel');
         }
 
         _onStart() {
@@ -142,6 +148,8 @@ define([
             ProgressActions.close();
             const healthiness = parseInt(100 * this.success / this.pingTimes);
             if (healthiness !== 0) {
+                this.discover.poke(this.state.ip);
+                this.discover.testTcp(this.state.ip);
                 Alert.popUp({
                     type: AlertConstants.SHOW_INFO,
                     message: `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
