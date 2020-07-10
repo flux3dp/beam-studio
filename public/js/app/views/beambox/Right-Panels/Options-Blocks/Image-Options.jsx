@@ -101,7 +101,7 @@ define([
                     <div className="option-block with-slider">
                         <div className="label">{LANG.threshold}</div>
                         <UnitInput
-                            min={0}
+                            min={1}
                             max={255}
                             decimal={0}
                             unit={''}
@@ -112,7 +112,7 @@ define([
                     </div>
                     <div className="option-block slider-container">
                         <input className="threshold-slider" type="range"
-                            min={0}
+                            min={1}
                             max={255}
                             step={1}
                             value={threshold}
