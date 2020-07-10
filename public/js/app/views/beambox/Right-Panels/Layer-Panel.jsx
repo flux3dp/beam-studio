@@ -342,7 +342,7 @@ define([
                     </tr>
                 );
             }
-            this.renderLayerLaserConfigs();
+
             return (
                 <table id="layerlist">
                     <tbody>
