@@ -7,6 +7,7 @@ define([
     'app/actions/global-actions',
     'app/stores/beambox-store',
     'helpers/api/inter-process',
+    'helpers/shortcuts',
     'helpers/i18n'
 ], function(
     ImageTracePanelController,
@@ -17,6 +18,7 @@ define([
     GlobalActions,
     BeamboxStore,
     InterProcessApi,
+    shortcuts,
     i18n
 ) {
     const React = require('react');
@@ -45,6 +47,48 @@ define([
 
             // Add class color to #svg_editor
             $('#svg_editor').addClass('color');
+
+            shortcuts.on(['v'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.useSelectTool();
+                }
+            });
+
+            shortcuts.on(['t'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertText();
+                }
+            });
+
+            shortcuts.on(['m'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertRectangle();
+                }
+            });
+
+            shortcuts.on(['l'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertEllipse();
+                }
+            });
+
+            shortcuts.on(['l'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertEllipse();
+                }
+            });
+
+            shortcuts.on(['\\'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertLine();
+                }
+            });
+
+            shortcuts.on(['p'], () => {
+                if (!this.props.isPreviewing) {
+                    FnWrapper.insertPath();
+                }
+            });
         }
 
         componentWillUnmount() {
@@ -96,14 +140,14 @@ define([
             if (!isPreviewing) {
                 return (
                     <div className={leftPanelClass}>
-                        {this._renderToolButton('cursor','Cursor', LANG.label.cursor, FnWrapper.useSelectTool, 'active')}
+                        {this._renderToolButton('cursor','Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
                         {this._renderToolButton('photo','Photo', LANG.label.photo, FnWrapper.importImage)}
-                        {this._renderToolButton('text','Text', LANG.label.text, FnWrapper.insertText)}
-                        {this._renderToolButton('rect','Rectangle', LANG.label.rect, FnWrapper.insertRectangle)}
-                        {this._renderToolButton('oval','Ellipse', LANG.label.oval, FnWrapper.insertEllipse)}
+                        {this._renderToolButton('text','Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
+                        {this._renderToolButton('rect','Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
+                        {this._renderToolButton('oval','Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
                         {this._renderToolButton('polygon','Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
-                        {this._renderToolButton('line','Line', LANG.label.line, FnWrapper.insertLine)}
-                        {this._renderToolButton('draw','Pen', LANG.label.pen, FnWrapper.insertPath)}
+                        {this._renderToolButton('line','Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
+                        {this._renderToolButton('draw','Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
                     </div>
                 );
             } else {

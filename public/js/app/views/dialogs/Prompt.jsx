@@ -29,6 +29,7 @@ define([
                 }
                 onClose();
             }
+            e.stopPropagation();
         }
 
         renderButtons = () => {

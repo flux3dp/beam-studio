@@ -30,7 +30,8 @@ define([
             'DOWN'   : KeycodeConstants.KEY_DOWN,
             'PLUS'   : KeycodeConstants.KEY_PLUS,
             'MINUS'  : KeycodeConstants.KEY_MINUS,
-            'FNKEY'  : (process.platform === 'darwin') ? -91 : KeycodeConstants.KEY_CTRL
+            'FNKEY'  : (process.platform === 'darwin') ? -91 : KeycodeConstants.KEY_CTRL,
+            '\\'     : KeycodeConstants.KEY_BACKSLASH,
         },
         events = [],
         keyCodeStatus = [],
