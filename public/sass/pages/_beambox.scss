@@ -635,6 +635,7 @@
                     display: none;
                 }
                 .react-contextmenu--visible {
+                    z-index: 1;
                     display: unset;
                     background-color: rgba($color: #FFFFFF, $alpha: 1.0);
                     border: 1px solid rgba(0, 0, 0, 0.33);
