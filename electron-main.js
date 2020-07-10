@@ -307,9 +307,9 @@ ipcMain.on(events.GET_AVAILABLE_FONTS , (event, arg) => {
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
-    const {svgUrl: url, imgWidth: width, imgHeight: height, bb, imageRatio, id} = data;
+    const {svgUrl: url, imgWidth: width, imgHeight: height, bb, imageRatio, id, strokeWidth} = data;
     if (shadowWindow) {
-        shadowWindow.send(events.SVG_URL_TO_IMG_URL, {url, width, height, bb, imageRatio, id});
+        shadowWindow.send(events.SVG_URL_TO_IMG_URL, {url, width, height, bb, imageRatio, id, strokeWidth});
     }
 });
 
