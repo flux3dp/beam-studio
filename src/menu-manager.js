@@ -378,8 +378,14 @@ class MenuManager extends EventEmitter {
     }
     _on_menu_click(event) {
         if(event.id) {
-            this.emit(events.MENU_CLICK, event);
+            this.emit(events.MENU_CLICK, event, this._appmenu);
         }
+        if (process.platform === 'win32') {
+            this.reset_custom_electron_titlebar();
+        }
+    }
+    reset_custom_electron_titlebar() {
+        BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
     }
     setWindowOpened() {
     }
