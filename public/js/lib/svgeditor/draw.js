@@ -520,7 +520,10 @@
                     childgroups = true;
                     var name = findLayerNameInGroup(child);
                     var color = findLayerColorInGroup(child);
-                    console.log("Group ", name); 
+                    const isTempGroup = child.getAttribute('data-tempgroup');
+                    if (isTempGroup) {
+                        continue;
+                    }
                     if (name) {
                         layernames.push(name);
                         layer = new svgedit.draw.Layer(name, child, null, color);
@@ -539,10 +542,11 @@
 
         // If orphans or no layers found, create a new layer and add all the orphans to it
         if (orphans.length > 0 || !childgroups) {
-            layer = new svgedit.draw.Layer(getNewLayerName(layernames), null, this.svgElem_);
+            const newName = getNewLayerName(layernames);
+            layer = new svgedit.draw.Layer(newName, null, this.svgElem_);
             layer.appendChildren(orphans);
             this.all_layers.push(layer);
-            this.layer_map[name] = layer;
+            this.layer_map[newName] = layer;
         } else {
             layer.activate();
         }

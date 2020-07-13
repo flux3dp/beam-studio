@@ -313,6 +313,9 @@ define([
             for (let i = layerCount - 1; i >= 0; i--) {
                 const layerName = drawing.getLayerName(i);
                 const layer = drawing.getLayerByName(layerName);
+                if (!layer) {
+                    continue;
+                }
                 const isLocked = layer.getAttribute('data-lock') === 'true';
                 layers.push(
                     <tr 

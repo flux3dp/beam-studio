@@ -5222,6 +5222,7 @@ define([
             if (tempGroup) {
                 this.ungroupTempGroup();
             }
+            this.removeAllTempGroup();
             save_options.apply = false;
             return this.svgCanvasToString();
         };
@@ -9806,11 +9807,26 @@ define([
         };
 
         // Function: ungroupTempGroup
+        // Not sure why but sometimes tempgroup would not be removed
+        // Use this function to remove it
+        this.removeAllTempGroup = () => {
+            const allTempGroups = Array.from(svgcontent.childNodes).filter((child) => child.getAttribute('data-tempgroup') === 'true');
+            allTempGroups.forEach((tempGroup) => {
+                this.ungroupTempGroup(tempGroup);
+                console.log(tempGroup);
+                if (tempGroup) {
+                    tempGroup.remove();
+                }
+            });
+            this.clearSelection();
+        }
+
+        // Function: ungroupTempGroup
         // Unwraps all the elements in a selected group (g) element. This requires
         // significant recalculations to apply group's transforms, etc to its children
-        this.ungroupTempGroup = function () {
+        this.ungroupTempGroup = function (elem=null) {
 
-            var g = selectedElements[0];
+            var g = elem || selectedElements[0];
             if (!g) {
                 return;
             }
