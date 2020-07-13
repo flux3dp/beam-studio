@@ -178,8 +178,8 @@ define([
         }
 
         exportLaserConfigs = async () => {
-            const targetFilePath = await DialogCaller.saveFileDialog('Export Laser Configs', '', [
-                {extensionName: 'Beam Studio Laser Config', extensions: ['json']}
+            const targetFilePath = await DialogCaller.saveFileDialog(LANG.export_config, '', [
+                {extensionName: 'JSON', extensions: ['json']}
             ], true);
             if (targetFilePath) {
                 const fs = require('fs');
