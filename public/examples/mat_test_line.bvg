@@ -2,45 +2,57 @@
  <defs>
   <symbol id="svg_1">
    <defs>
-    <style>*[data-color] ellipse[stroke=none],
-                *[data-color] circle[stroke=none],
-                *[data-color] rect[stroke=none],
-                *[data-color] path[stroke=none],
-                *[data-color] polygon[stroke=none],
-                *[data-color] ellipse:not([stroke]),
-                *[data-color] circle:not([stroke]),
-                *[data-color] rect:not([stroke]),
-                *[data-color] path:not([stroke]),
-                *[data-color] polygon:not([stroke]) {
-                    fill-opacity: 1 !important;
-                    stroke-width: 0 !important;
-                }
+    <STYLE>
+        *[data-color] ellipse[fill=none],
+        *[data-color] circle[fill=none],
+        *[data-color] rect[fill=none],
+        *[data-color] path[fill=none],
+        *[data-color] polygon[fill=none] {
+            fill-opacity: 0 !important;
+            stroke-width: 1px !important;
+            stroke-opacity: 1 !important;
+            vector-effect: non-scaling-stroke !important;
+        }
+        *[data-color] ellipse[stroke=none],
+        *[data-color] circle[stroke=none],
+        *[data-color] rect[stroke=none],
+        *[data-color] path[stroke=none],
+        *[data-color] polygon[stroke=none],
+        *[data-color] ellipse:not([stroke]),
+        *[data-color] circle:not([stroke]),
+        *[data-color] rect:not([stroke]),
+        *[data-color] path:not([stroke]),
+        *[data-color] polygon:not([stroke]) {
+            fill-opacity: 1 !important;
+            stroke-width: 0 !important;
+        }
 
-                *[data-wireframe] {
-                    fill-opacity: 0 !important;
-                    stroke: #000 !important;
-                    stroke-width: 1px !important;
-                    stroke-opacity: 1.0 !important;
-                    stroke-dasharray: 0 !important;
-                    opacity: 1 !important;
-                    vector-effect: non-scaling-stroke !important;
-                    filter: none !important;
-                }
+        *[data-wireframe] {
+            fill-opacity: 0 !important;
+            stroke: #000 !important;
+            stroke-width: 1px !important;
+            stroke-opacity: 1.0 !important;
+            stroke-dasharray: 0 !important;
+            opacity: 1 !important;
+            vector-effect: non-scaling-stroke !important;
+            filter: none !important;
+        }
 
-                #svg_editor:not(.color) #svg_1 * {
-                    fill-opacity: 0;
-                    stroke: #000 !important;
-                    filter: none;
-                    stroke-width: 1px !important;
-                    vector-effect: non-scaling-stroke !important;
-                    stroke-opacity: 1.0;
-                    stroke-dasharray: 0;
-                    opacity: 1;
-                    filter: none;
-                }
-                #svg_1 {
-                    overflow: visible;
-                }</style>
+        #svg_editor:not(.color) #svg_1 * {
+            fill-opacity: 0;
+            stroke: #000 !important;
+            filter: none;
+            stroke-width: 1px !important;
+            vector-effect: non-scaling-stroke !important;
+            stroke-opacity: 1.0;
+            stroke-dasharray: 0;
+            opacity: 1;
+            filter: none;
+        }
+        #svg_1 {
+            overflow: visible;
+        }
+    </STYLE>
    </defs>
    <g id="svg_205" transform="scale(3.5277777777777777, 3.5277777777777772) ">
     <g id="svg_206">
