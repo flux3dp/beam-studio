@@ -11,6 +11,7 @@ define([
     'jsx!views/beambox/Photo-Edit-Panel',
     'jsx!views/beambox/Layer-Color-Config',
     'jsx!views/beambox/Svg-Nest-Buttons',
+    'helpers/i18n'
 ], function (
     Modal,
     Dialog,
@@ -23,9 +24,12 @@ define([
     NetworkTestingPanel,
     PhotoEditPanel,
     LayerColorConfigPanel,
-    SvgNestButtons
+    SvgNestButtons,
+    i18n
 ) {
     const React = require('react');
+    const electronRemote = require('electron').remote;
+    const { dialog } = electronRemote;
     const addDialogComponent = (id, component) => {
         if (!Dialog.DialogContextCaller) {
             console.log('Dialog context not loaded Yet');
@@ -188,6 +192,27 @@ define([
                     }}
                 />
             );
+        },
+        saveFileDialog: (title, filename, filters, isAllfileAvailable) => {
+            const isMac = (process.platform === 'darwin');
+            const langFile = i18n.lang.topmenu.file;
+            filters = filters.map((filter) => {
+                const { extensionName, extensions } = filter;
+                return {name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName, extensions: extensions};
+            });
+            if (isAllfileAvailable) {
+                filters.push({ name: langFile.all_files, extensions: ['*'] });
+            }
+            const options = {
+                defaultPath: filename,
+                title,
+                filters
+            };
+            return new Promise((resolve) => {
+                dialog.showSaveDialog(options, (filePath) => {
+                    resolve(filePath);
+                })
+            });
         }
     }
 });

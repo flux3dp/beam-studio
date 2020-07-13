@@ -1177,13 +1177,16 @@
                         border-bottom: 1px solid #E0E0DF;
                         color: $primaryColor;
                         cursor: pointer;
-                        height: 20px;
                         line-height: 20px;
+                        overflow-x: scroll;
 
-                        span {
+                        .entry-name {
+                            height: 19px;
                             margin-left: 10px;
+                            float: left;
                         }
                         .sub-text {
+                            height: 19px;
                             margin-left: 0px;
                             margin-right: 5px;
                             float: right;

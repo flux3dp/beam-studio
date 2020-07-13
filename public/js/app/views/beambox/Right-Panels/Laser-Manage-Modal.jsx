@@ -39,7 +39,8 @@ define([
         'fabric_shading_engraving',
         'rubber_bw_engraving',
         'glass_bw_engraving',
-        'metal_bw_engraving'
+        'metal_bw_engraving',
+        'stainless_steel_bw_engraving_diode',
     ];
 
     class LaserManageModal extends React.Component {
@@ -172,7 +173,7 @@ define([
 
         onEntryDragStart = (e) => {
             this.draggingEntry = $(e.target).closest('.config-entry')[0];
-            const name = $(this.draggingEntry).children('span').first().text();
+            const name = $(this.draggingEntry).children('.entry-name').text();
             const index = this.customizedLaserConfigs.findIndex((e) => e.name === name);
             this.draggingIndex = index;
             const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === name);
@@ -189,7 +190,7 @@ define([
         onEntryDragOver = (e) => {
             if (this.draggingEntry) {
                 if ($(e.target).closest('.config-entry')[0] != this.draggingEntry) {
-                    const name = $(e.target).closest('.config-entry').children('span').first().text();
+                    const name = $(e.target).closest('.config-entry').children('.entry-name').text();
                     const index = this.customizedLaserConfigs.findIndex((e) => e.name === name);
                     const temp = this.customizedLaserConfigs[index];
                     this.customizedLaserConfigs[index] = this.customizedLaserConfigs[this.draggingIndex];
@@ -222,7 +223,7 @@ define([
                         onDragOver={this.onEntryDragOver.bind(this)}
                         onDragEnd={this.onEntryDragEnd.bind(this)}
                     >
-                        <span>{entry.name}</span>
+                        <div className='entry-name'>{entry.name}</div>
                         <span className='sub-text'>{entry.isDefault ? LANG.default : ''}</span>
                     </div>
                 );
@@ -240,7 +241,7 @@ define([
                 });
                 return (
                     <div className={entryClass} key={entry} onClick={()=>{this.handleDefaultEntryClick(entry)}}>
-                        <span>{LANG.dropdown[this.unit][entry]}</span>
+                        <div className='entry-name'>{LANG.dropdown[this.unit][entry]}</div>
                         <span className='sub-text'>{inUse ? LANG.inuse : ''}</span>
                     </div>
                 );

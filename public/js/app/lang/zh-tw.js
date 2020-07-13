@@ -1302,6 +1302,8 @@ define(function() {
                     default: '預設',
                     customized: '自訂參數清單',
                     inuse: '使用中',
+                    export_config: '匯出參數',
+                    sure_to_load_config: '將要讀取預設參數的排序與使用狀況，並覆蓋所有同名的自訂參數，確定要繼續進行嗎？',
                     dropdown: {
                         mm: {
                             wood_3mm_cutting: '木板 - 3mm 切割',
@@ -1325,6 +1327,7 @@ define(function() {
                             metal_bw_engraving: '不鏽鋼噴劑 - 雙色刻印',
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 雙色刻印（二極體雷射）',
                             save: '儲存參數',
+                            export: '匯出參數',
                             more: '管理',
                             parameters: '選擇參數'
                         },
@@ -1350,6 +1353,7 @@ define(function() {
                             metal_bw_engraving: '不鏽鋼噴劑 - 雙色刻印',
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 雙色刻印（二極體雷射）',
                             save: '儲存參數',
+                            export: '匯出參數',
                             more: '管理',
                             parameters: '選擇參數'
                         },

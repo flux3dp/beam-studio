@@ -70,7 +70,8 @@ define([
 
     const functionalLaserOptions = [
         'save',
-        'more'
+        'export',
+        'more',
     ];
 
     class LaserPanel extends React.Component{
@@ -174,6 +175,20 @@ define([
                 LocalStorage.set('customizedLaserConfigs', customized);
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             };
+        }
+
+        exportLaserConfigs = async () => {
+            const targetFilePath = await DialogCaller.saveFileDialog('Export Laser Configs', '', [
+                {extensionName: 'Beam Studio Laser Config', extensions: ['json']}
+            ], true);
+            if (targetFilePath) {
+                const fs = require('fs');
+                const laserConfig = {};
+
+                laserConfig.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
+                laserConfig.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
+                fs.writeFileSync(targetFilePath, JSON.stringify(laserConfig));
+            }
         }
 
         updateData = () => {
@@ -355,6 +370,9 @@ define([
                 });
             } else if (value === 'more') {
                 this.setState({ modal: 'more' });
+            } else if (value === 'export') {
+                this.exportLaserConfigs();
+                this._handleCancelModal();
             } else {
                 const customizedConfigs = LocalStorage.get('customizedLaserConfigs').find((e) => e.name === value);
                 const {

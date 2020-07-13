@@ -1303,7 +1303,9 @@ define(function() {
                     name: 'Name',
                     default: 'Standard',
                     customized: 'Kundenspezifische Liste',
-                    inuse: 'Verwenden von',
+                    inuse: 'in Benutzung',
+                    export_config: 'Parameter exportieren',
+                    sure_to_load_config: 'Dadurch wird die Anordnung der Voreinstellungen geladen und die in der Datei festgelegten benutzerdefinierten Parameter ersetzt. Sind Sie sicher, dass Sie fortfahren?',
                     dropdown: {
                         mm: {
                             wood_3mm_cutting: 'Holz - 3mm Schneiden',
@@ -1327,6 +1329,7 @@ define(function() {
                             metal_bw_engraving: 'Metall - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur (Diodenlaser)',
                             save: 'Speichern',
+                            export: 'Export',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'
                         },
@@ -1352,6 +1355,7 @@ define(function() {
                             metal_bw_engraving: 'Metall - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur (Diodenlaser)',
                             save: 'Speichern',
+                            export: 'Export',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'
                         },

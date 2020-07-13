@@ -1296,7 +1296,7 @@ define(function() {
                     more: 'Manage',
                     delete: 'Delete',
                     reset: 'Reset',
-                    sure_to_reset: 'This will reset all presets and keep your customized configs, are you sure to proceed?',
+                    sure_to_reset: 'This will reset all presets and keep your customized parameters, are you sure to proceed?',
                     apply: 'Apply',
                     cancel: 'Cancel',
                     save: 'Save',
@@ -1304,6 +1304,8 @@ define(function() {
                     default: 'Default',
                     customized: 'Customized list',
                     inuse: 'Using',
+                    export_config: 'Export Parameters',
+                    sure_to_load_config: 'This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?',
                     dropdown: {
                         mm: {
                             wood_3mm_cutting: 'Wood - 3mm Cutting',
@@ -1327,6 +1329,7 @@ define(function() {
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
                             save: 'Save',
+                            export: 'Export',
                             more: 'Manage',
                             parameters: 'Presets'
                         },
@@ -1352,6 +1355,7 @@ define(function() {
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
                             save: 'Save',
+                            export: 'Export',
                             more: 'Manage',
                             parameters: 'Presets'
                         },

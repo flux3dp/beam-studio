@@ -6091,6 +6091,37 @@ define([
                     require(file.path);
                 };
 
+                const importLaserConfig = async (file) => {
+                    Alert.popAlertStackById('loading_image');
+                    Alert.popUp({
+                        buttonType: AlertConstants.CONFIRM_CANCEL,
+                        message: LANG.right_panel.laser_panel.sure_to_load_config,
+                        onConfirm: async () => {
+                            await new Promise(resolve => {
+                                const reader = new FileReader();
+                                reader.onloadend = (evt) => {
+                                    const configString = evt.target.result;
+                                    const newConfigs = JSON.parse(configString);
+                                    const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
+                                    const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
+                                    const currentConfig = JSON.parse(localStorage.getItem('customizedLaserConfigs'));
+                                    for (let i = 0; i < currentConfig.length; i++) {
+                                        const config = currentConfig[i];
+                                        if (!config.isDefault && !configNames.has(config.name)) {
+                                            customizedLaserConfigs.push(config);
+                                        }
+                                    }
+                                    localStorage.setItem('customizedLaserConfigs', JSON.stringify(customizedLaserConfigs));
+                                    localStorage.setItem('defaultLaserConfigsInUse', JSON.stringify(defaultLaserConfigsInUse));
+                                    LayerPanelController.updateLayerPanel();
+                                    resolve();
+                                };
+                                reader.readAsText(file);
+                            });
+                        }
+                    }); 
+                };
+
                 var importImage = function (e) {
                     Alert.popUp({id: 'loading_image', message: uiStrings.notification.loadingImage,});
                     e.stopPropagation();
@@ -6127,6 +6158,9 @@ define([
                         if (file.name.toLowerCase().includes('.dxf')) {
                             return 'dxf';
                         }
+                        if (file.name.toLowerCase().includes('.json')) {
+                            return 'json';
+                        }
                         if (file.name.toLowerCase().includes('.js')) {
                             return 'js';
                         }
@@ -6161,6 +6195,9 @@ define([
                             break;
                         case 'js':
                             importJsScript(file);
+                            break;
+                        case 'json':
+                            importLaserConfig(file);
                             break;
                         case 'unknown':
                             Alert.popUp({

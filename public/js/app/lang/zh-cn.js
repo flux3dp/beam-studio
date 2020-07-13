@@ -1296,6 +1296,8 @@ define(function() {
                     default: '预设',
                     customized: '自订参数清单',
                     inuse: '使用中',
+                    export_config: '汇出参数',
+                    sure_to_load_config: '将要读取预设参数的排序与使用状况，并覆盖所有同名的自订参数，确定要继续进行吗？',
                     dropdown: {
                         mm: {
                             wood_3mm_cutting: '木板 - 3mm 切割',
@@ -1319,6 +1321,7 @@ define(function() {
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
                             stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
                             save: '储存参数',
+                            export: '汇出参数',
                             more: '管理',
                             parameters: '选择参数'
                         },
@@ -1344,6 +1347,7 @@ define(function() {
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
                             stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
                             save: '储存参数',
+                            export: '汇出参数',
                             more: '管理',
                             parameters: '选择参数'
                         },

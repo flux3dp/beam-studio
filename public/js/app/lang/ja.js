@@ -1303,7 +1303,9 @@ define(function() {
                     name: '名前',
                     default: 'デフォルト',
                     customized: 'カスタマイズされたリスト',
-                    inuse: '使用する',
+                    inuse: '使用中',
+                    export_config: 'パラメータのエクスポート',
+                    sure_to_load_config: 'これにより、プリセットの配置が読み込まれ、ファイルに設定されているカスタマイズされたパラメーターが置き換えられます。続行しますか？',
                     dropdown: {
                         mm: {
                             wood_3mm_cutting: '木材 - 3mm 切断',
@@ -1327,6 +1329,7 @@ define(function() {
                             metal_bw_engraving: '金属 - モノクロ彫刻',
                             stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
                             save: '保存する',
+                            export: '書き出す',
                             more: '管理する',
                             parameters: 'パラメーター…'
                         },
@@ -1352,6 +1355,7 @@ define(function() {
                             metal_bw_engraving: '金属 - モノクロ彫刻',
                             stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
                             save: '保存する',
+                            export: '書き出す',
                             more: '管理する',
                             parameters: 'パラメーター…'
                         }
