@@ -365,9 +365,10 @@ ipcMain.on(events.FIND_FONT , (event, arg) => {
 });
 
 ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, extensions, filename, file) {
-    const isMac = (process.platform === 'darwin');
+    const isMac = process.platform === 'darwin';
+    const isLinux = process.platform === 'linux';
     const options = {
-        defaultPath: filename,
+        defaultPath: isLinux ? `${filename}.${extensions[0]}` : filename,
         title,
         filters: [
             { name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName ,extensions },

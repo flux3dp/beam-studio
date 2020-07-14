@@ -6142,15 +6142,17 @@ define([
                 const handleFile = (file) => {
                     svgCanvas.clearSelection();
                     const fileType = (function() {
-                        if (file.name.toLowerCase().includes('.beam')) {
+                        if (file.name.toLowerCase().endsWith('.beam')) {
                             return 'beam';
                         }
-                        if (file.name.toLowerCase().includes('.bvg')) {
+                        if (file.name.toLowerCase().endsWith('.bvg')) {
                             return 'bvg';
                         }
                         if (file.type.toLowerCase().includes('image')) {
                             if (file.type.toLowerCase().includes('svg')) {
                                 return 'svg';
+                            } else if (file.type.toLowerCase().endsWith('dxf')) {
+                                return 'dxf';
                             } else {
                                 return 'bitmap';
                             }

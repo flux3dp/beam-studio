@@ -74,12 +74,13 @@ define([
     const electronRemote = require('electron').remote;
     const { dialog } = electronRemote;
     const getFilePath = async (title, allFiles, extensionName, extensions, filename) => {
-        const isMac = (process.platform === 'darwin');
+        const isMac = process.platform === 'darwin';
+        const isLinux = process.platform === 'linux';
         const options = {
-            defaultPath: filename,
+            defaultPath: isLinux ? `${filename}.${extensions[0]}` : filename,
             title,
             filters: [
-                { name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName ,extensions },
+                { name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName, extensions },
                 { name: allFiles, extensions: ['*'] }
             ]
         }
