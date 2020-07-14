@@ -193,7 +193,9 @@ class BackendManager extends EventEmitter {
     stop() {
         if(this._running) {
             this._running = false;
-            this._proc.kill();
+            if (this._proc) {
+                this._proc.kill();
+            }
         }
     }
 
