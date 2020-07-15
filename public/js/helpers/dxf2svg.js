@@ -318,14 +318,31 @@
         var controlPoints = entity.controlPoints.map(function (p) {
           return [p.x, p.y];
         });
+        const reducedControlPoints = controlPoints.filter((point, i) => {
+          if (i === 0) {
+            return true;
+          }
+          try {
+            return point[0] !== controlPoints[i - 1][0] || point[1] !== controlPoints[i - 1][1];
+          } catch (err) {
+            console.log(err);
+            return false;
+          }
+        });
         var order = entity.degree + 1;
         var knots = entity.knots;
         polyline = [];
-        for (var t = 0; t <= 500; t += 1) {
-          var p = bspline(t / 500, order, controlPoints, knots);
-          polyline.push(p);
+        if (reducedControlPoints.length <= 2) {
+          // just a line
+          polyline = [bspline(0, order, controlPoints, knots), bspline(1, order, controlPoints, knots)];
+        } else {
+          for (var t = 0; t <= 500; t += 1) {
+            var p = bspline(t / 500, order, controlPoints, knots);
+            polyline.push(p);
+          }
         }
       }
+
 
       if (!polyline) {
         logger.warn('unsupported entity for converting to polyline:', entity.type);
@@ -1770,7 +1787,8 @@
         }
         return rgb;
       }
-      console.log(polylines.length);
+      entities = entities.filter((_, i) => polylines[i].length > 0);
+      polylines = polylines.filter((p) => p.length > 0);
       for (let i = 0; i < polylines.length - 1; i++) {
         let polyline = polylines[i];
         if (polyline.length === 0 || polylines[i+1].length === 0) {
@@ -1787,10 +1805,13 @@
           polylines[i] = [];
         }
       }
-      polylines = polylines.filter((p) => (p.length > 0));
-      console.log(polylines.length);
+      entities = entities.filter((_, i) => polylines[i].length > 0);
+      polylines = polylines.filter((p) => p.length > 0);
 
       polylines.forEach(function (polyline, i) {
+        if (polyline.length === 0) {
+          return;
+        }
         var entity = entities[i];
         let rgb = getLayerColor(entity);
 

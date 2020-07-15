@@ -5773,7 +5773,7 @@ define([
                 const importDxf = async file => {
                     let defaultDpiValue = 25.4;
                     let parsed = null;
-                    const parsedSvg = await new Promise(resolve => {
+                    await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = evt => {
                             if (!AlertConfig.read('skip_dxf_version_warning')) {
@@ -5812,7 +5812,7 @@ define([
                             if (parsed.header.insunits == '6') {
                                 defaultDpiValue = 100;
                             }
-                            resolve();
+                            resolve(parsed, defaultDpiValue);
                         };
                         reader.readAsText(file);
                     });
@@ -5860,7 +5860,11 @@ define([
                         const layerName = i;
                         const layer = outputLayers[i];
                         console.log(i);
-                        let t = new Date();
+                        const isLayerExist = svgCanvas.setCurrentLayer(layerName);
+                        if (!isLayerExist) {
+                            svgCanvas.getCurrentDrawing();
+                            svgCanvas.createLayer(layerName, null, layer.rgbCode);
+                        }
                         const id = svgCanvas.getNextId();
                         const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');
                         symbol.setAttribute('overflow', 'visible');
@@ -5876,21 +5880,13 @@ define([
                                 $(child).attr('id', svgCanvas.getNextId());
                             }
                         }
-                        console.log('dxf string to svg', new Date() - t);
-                        t = new Date();
                         const use_el = svgdoc.createElementNS(NS.SVG, 'use');
                         use_el.id = svgCanvas.getNextId();
                         svgedit.utilities.setHref(use_el, `#${symbol.id}`);
                         svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(use_el);
-                        console.log('append child', new Date() - t);
 
                         const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
                         svgedit.utilities.setHref(use_el, `#${imageSymbol.id}`);
-                        const isLayerExist = svgCanvas.setCurrentLayer(layerName);
-                        if (!isLayerExist) {
-                            svgCanvas.getCurrentDrawing();
-                            svgCanvas.createLayer(layerName, null, layer.rgbCode);
-                        }
 
                         const bb = svgedit.utilities.getBBox(use_el);
                         let xform = '';
