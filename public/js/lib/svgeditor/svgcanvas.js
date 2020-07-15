@@ -145,7 +145,8 @@ define([
                 overflow: curConfig.show_outside_canvas ? 'visible' : 'hidden',
                 xmlns: NS.SVG,
                 'xmlns:se': NS.SE,
-                'xmlns:xlink': NS.XLINK
+                'xmlns:xlink': NS.XLINK,
+                style: 'will-change: scroll-position, contents, transform;'
             }).appendTo(svgroot);
 
         };
@@ -700,13 +701,17 @@ define([
             }
 
             var resultList = null;
-            if (!svgedit.browser.isIE) {
-                if (typeof (svgroot.getIntersectionList) === 'function') {
-                    // Offset the bbox of the rubber box by the offset of the svgcontent element.
-                    rubberBBox.x += parseInt(svgcontent.getAttribute('x'), 10);
-                    rubberBBox.y += parseInt(svgcontent.getAttribute('y'), 10);
 
-                    resultList = svgroot.getIntersectionList(rubberBBox, parent);
+            // Fail when selecting <use>, another method is pretty fast anyway
+            if (!svgedit.browser.isIE() && false) {
+                if (typeof (svgcontent.getIntersectionList) === 'function') {
+                    // Offset the bbox of the rubber box by the offset of the svgcontent element.
+                    rubberBBox.x = rubberBBox.x * current_zoom + parseInt(svgcontent.getAttribute('x'), 10);
+                    rubberBBox.y = rubberBBox.y * current_zoom + parseInt(svgcontent.getAttribute('y'), 10);
+                    rubberBBox.width *= current_zoom;
+                    rubberBBox.height *= current_zoom;
+
+                    resultList = svgcontent.getIntersectionList(rubberBBox, null);
                 }
             }
 
@@ -1155,7 +1160,7 @@ define([
         //
         // Parameters:
         // elemsToRemove - an array of elements to remove from selection
-        var removeFromSelection = this.removeFromSelection = function (elemsToRemove) {
+        var removeFromSelection = this.removeFromSelection = function (elemsToRemove, noCall) {
             if (selectedElements[0] == null) {
                 return;
             }
@@ -1182,7 +1187,10 @@ define([
                 }
             }
             // the copy becomes the master now
-            selectedElements = newSelectedItems;
+            selectedElements = newSelectedItems.filter((elem) => elem);
+            if (selectedElements.length === 0 && !noCall) {
+                call('selected', selectedElements);
+            }
         };
 
         // Function: selectAllInCurrentLayer
@@ -1289,7 +1297,7 @@ define([
         // handle for pure contour elements, enlarge sensor area;
         this.handleGenerateSensorArea = (evt) => {
             // if dx or dy !== 0, then we are moving elements. Don't update sensor area info.
-            if (!this.sensorAreaInfo || (this.sensorAreaInfo.dx === 0 && this.sensorAreaInfo.dy === 0)) {
+            if (current_mode === 'select' && (!this.sensorAreaInfo || (this.sensorAreaInfo.dx === 0 && this.sensorAreaInfo.dy === 0))) {
                 if (evt.target.id.match(/grip/i) || evt.target.id.includes('stretch')) {
                     return;
                 }
@@ -1929,6 +1937,11 @@ define([
                                     }
 
                                     // update our internal bbox that we're tracking while dragging
+                                    // if (tempGroup) {
+                                    //     Array.from(tempGroup.childNodes).forEach((child) => {
+                                    //         selectorManager.requestSelector(child).resize();
+                                    //     });
+                                    // }
                                     selectorManager.requestSelector(selected).resize();
                                 }
                                 if (canvas.sensorAreaInfo) {
@@ -1972,41 +1985,8 @@ define([
                             'height': Math.abs(real_y - r_start_y)
                         }, 100);
 
-                        // for each selected:
-                        // - if newList contains selected, do nothing
-                        // - if newList doesn't contain selected, remove it from selected
-                        // - for any newList that was not in selectedElements, add it to selected
-                        var elemsToRemove = selectedElements.slice(),
-                            elemsToAdd = [],
-                            newList = getIntersectionList();
-
-                        // For every element in the intersection, add if not present in selectedElements.
-                        len = newList.length;
-                        for (i = 0; i < len; ++i) {
-                            var intElem = newList[i];
-                            // Found an element that was not selected before, so we should add it.
-                            if (selectedElements.indexOf(intElem) === -1) {
-                                const layer = svgCanvas.getObjectLayer(intElem).elem;
-                                if (layer.getAttribute('data-lock') || layer.getAttribute('display') === 'none') {
-                                    continue;
-                                }
-                                elemsToAdd.push(intElem);
-                            }
-                            // Found an element that was already selected, so we shouldn't remove it.
-                            var foundInd = elemsToRemove.indexOf(intElem);
-                            if (foundInd !== -1) {
-                                elemsToRemove.splice(foundInd, 1);
-                            }
-                        }
-
-                        if (elemsToRemove.length > 0) {
-                            canvas.removeFromSelection(elemsToRemove);
-                        }
-
-                        if (elemsToAdd.length > 0) {
-                            //Call change Only when first element added
-                            canvas.addToSelection(elemsToAdd, false, selectedElements.length !== 0);
-                        }
+                        // Stop adding elements to selection when mouse moving
+                        // Select all intersected elements when mouse up
 
                         break;
                     case 'resize':
@@ -2442,6 +2422,22 @@ define([
                         // intentionally fall-through to select here
                     case 'resize':
                     case 'multiselect':
+                        if (current_mode === 'multiselect') {
+                            let intersectedElements = getIntersectionList();
+                            intersectedElements = intersectedElements.filter((elem) => {
+                                const layer = svgCanvas.getObjectLayer(elem);
+                                if (!layer) {
+                                    return false;
+                                }
+                                const layerElem = layer.elem;
+                                if (layerElem.getAttribute('data-lock') || layerElem.getAttribute('display') === 'none') {
+                                    return false;
+                                }
+                                return true;
+                            });
+                            selectedElements = intersectedElements;
+                            selectedElems = intersectedElements;
+                        }
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
@@ -2497,13 +2493,16 @@ define([
                                     });
                                     SymbolMaker.reRenderImageSymbolArray(allSelectedUses);
                                 }
-                                for (i = 0; i < len; ++i) {
-                                    if (selectedElements[i] == null) {
-                                        break;
-                                    }
-                                    if (!selectedElements[i].firstChild && selectedElements[i].tagName !== 'use') {
-                                        // Not needed for groups (incorrectly resizes elems), possibly not needed at all?
-                                        selectorManager.requestSelector(selectedElements[i]).resize();
+                                if (current_mode !== 'multiselect') {
+                                    // Not sure if this is necessary, but multiselect does not need this
+                                    for (i = 0; i < len; ++i) {
+                                        if (selectedElements[i] == null) {
+                                            break;
+                                        }
+                                        if (!selectedElements[i].firstChild && selectedElements[i].tagName !== 'use') {
+                                            // Not needed for groups (incorrectly resizes elems), possibly not needed at all?
+                                            selectorManager.requestSelector(selectedElements[i]).resize();
+                                        }
                                     }
                                 }
                                 current_mode = 'select';
@@ -8751,7 +8750,7 @@ define([
                 this.updateRecentFiles(filePath);
                 try {
                     if (filePath.endsWith('beam')) {
-                        BeamFileHelper.readBeam(filePath);
+                        await BeamFileHelper.readBeam(filePath);
                     } else if (filePath.endsWith('bvg')) {
                         let res = await fetch(filePath);
                         res = await res.blob();

@@ -479,7 +479,7 @@ svgedit.select.SelectorManager.prototype.releaseSelector = function(elem) {
 		sel = this.selectorMap[elem.id];
 	if (!sel || !sel.locked) {
 		// TODO(codedread): Ensure this exists in this module.
-		console.log('WARNING! selector was released but was already unlocked');
+		//console.log('WARNING! selector was released but was already unlocked');
 	}
 	for (i = 0; i < N; ++i) {
 		if (this.selectors[i] && this.selectors[i] == sel) {
@@ -514,7 +514,7 @@ svgedit.select.SelectorManager.prototype.getRubberBandBox = function() {
 					'stroke': '#22C',
 					'stroke-width': 0.5,
 					'display': 'none',
-					'style': 'pointer-events:none'
+					'style': 'pointer-events:none;will-change: transform, x, y, width, height, scroll-position;',
 				}
 			})
 		);

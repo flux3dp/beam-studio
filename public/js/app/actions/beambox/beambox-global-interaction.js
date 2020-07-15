@@ -22,7 +22,6 @@ define([
                 var oReq = new XMLHttpRequest();
                 oReq.open('GET', path, true);
                 oReq.responseType = 'blob';
-                console.log(path);
 
                 oReq.onload = async function(oEvent) {
                     let res = oReq.response;
@@ -31,7 +30,6 @@ define([
                     if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
                         const LANG = i18n.lang.beambox.right_panel.layer_panel;
                         string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
-                        console.log(string);
                     }
                     svgEditor.importBvgString(string);
                 };

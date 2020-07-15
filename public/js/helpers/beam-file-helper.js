@@ -261,7 +261,7 @@ define([
         console.log('Signature:', signatureBuffer.toString());
         offset += 5;
         const version = signatureBuffer.readUInt8(4);
-        console.log('Bvg Version: ', version);
+        console.log('Beam Version: ', version);
         vint = readVInt(buf, offset);
         const headerSize = vint.value;
         offset = vint.offset;

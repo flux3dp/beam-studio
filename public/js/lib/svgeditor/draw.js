@@ -140,6 +140,10 @@
         return $(this.svgElem_).find('[id=' + id + ']')[0];
     };
 
+    svgedit.draw.Drawing.prototype.getDefElem_ = function (id) {
+        return $(`#svg_defs #${id}`)[0];
+    };
+
     /**
      * @returns {SVGSVGElement}
      */
@@ -203,7 +207,7 @@
 
         // Ensure the ID does not exist.
         var id = this.getId();
-        while (this.getElem_(id)) {
+        while (this.getElem_(id) || this.getDefElem_(id)) {
             if (restoreOldObjNum) {
                 this.obj_num = oldObjNum;
                 restoreOldObjNum = false;
