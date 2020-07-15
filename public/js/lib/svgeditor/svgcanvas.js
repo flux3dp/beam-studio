@@ -6557,12 +6557,12 @@ define([
                 filter.setAttribute('id', `filter${color}`);
                 let colorMatrix = Array.from(filter.childNodes).filter((child) => child.tagName === 'feColorMatrix')[0];
                 if (colorMatrix) {
-                    colorMatrix.setAttribute('values', `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`);
+                    colorMatrix.setAttribute('values', `0 0 0 0 ${r/255}, 0 0 0 0 ${g/255}, 0 0 0 0 ${b/255}, 0 0 0 1 0`);
                 } else {
                     colorMatrix = svgdoc.createElementNS(NS.SVG, 'feColorMatrix');
                     svgedit.utilities.assignAttributes(colorMatrix, {
                         'type': 'matrix',
-                        'values': `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`,
+                        'values': `0 0 0 0 ${r/255}, 0 0 0 0 ${g/255}, 0 0 0 0 ${b/255}, 0 0 0 1 0`,
                     });
                     filter.appendChild(colorMatrix);
                 }
@@ -6573,7 +6573,7 @@ define([
                     'id': `filter${color}`,
                     'filterUnits': 'objectBoundingBox',
                     'primitiveUnits': 'userSpaceOnUse',
-                    'color-interpolation-filters': 'linearRGB'
+                    'color-interpolation-filters': 'sRGB'
                 });
                 svgedit.utilities.assignAttributes(colorMatrix, {
                     'type': 'matrix',
@@ -9137,7 +9137,9 @@ define([
                         }
                         SymbolMaker.switchImageSymbol(elem, false);
 
-                        const layer = this.getObjectLayer(elem).elem;
+                        const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
+                        svgCanvas.setCurrentLayer(layerTitle);
+                        LayerPanelController.updateLayerPanel();
                         const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
                         const drawing = getCurrentDrawing();
 
@@ -9193,6 +9195,9 @@ define([
                         this.ungroupSelectedElement();
                         this.ungroupSelectedElement();
                         this.ungroupSelectedElement();
+                        if (!tempGroup) {
+                            this.tempGroupSelectedElements();
+                        }
                         svgCanvas.setHasUnsavedChange(true);
                     }
                 }
