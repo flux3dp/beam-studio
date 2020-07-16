@@ -126,7 +126,7 @@ define([
 
             $('#dialog_box').hide();
         },
-        insertImage: function(insertedImageSrc, cropData, preCrop, sizeFactor = 1, threshold = 128, imageTrace = false) {
+        insertImage: function(insertedImageSrc, cropData, preCrop, sizeFactor = 1, threshold = 255, imageTrace = false) {
 
             // let's insert the new image until we know its dimensions
             const insertNewImage = function (img, cropData, preCrop, sizeFactor, threshold) {
@@ -144,7 +144,7 @@ define([
                         style: 'pointer-events:inherit',
                         preserveAspectRatio: 'none',
                         'data-threshold': parseInt(threshold),
-                        'data-shading': false,
+                        'data-shading': true,
                         origImage: img.src
                     }
                 });
@@ -155,7 +155,7 @@ define([
                         width,
                         grayscale: {
                             is_rgba: true,
-                            is_shading: false,
+                            is_shading: true,
                             threshold: parseInt(threshold),
                             is_svg: false
                         },

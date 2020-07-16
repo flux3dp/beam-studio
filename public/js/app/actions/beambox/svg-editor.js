@@ -3815,8 +3815,9 @@ define([
                                             {
                                                 grayscale: {
                                                     is_rgba: true,
-                                                    is_shading: false,
-                                                    is_svg: false
+                                                    is_shading: true,
+                                                    is_svg: false,
+                                                    threshold: 255,
                                                 },
                                                 onComplete: function (result) {
                                                     let newImage = svgCanvas.addSvgElementFromJson({
@@ -3829,8 +3830,8 @@ define([
                                                             id: svgCanvas.getNextId(),
                                                             style: 'pointer-events:inherit',
                                                             preserveAspectRatio: 'none',
-                                                            'data-threshold': 128,
-                                                            'data-shading': false,
+                                                            'data-threshold': 255,
+                                                            'data-shading': true,
                                                             origImage: blobSrc,
                                                             'xlink:href': result.canvas.toDataURL()
                                                         }
@@ -5412,9 +5413,9 @@ define([
                                         id: svgCanvas.getNextId(),
                                         style: 'pointer-events:inherit',
                                         preserveAspectRatio: 'none',
-                                        'data-threshold': 128,
-                                        'data-shading': false,
-                                        origImage: img.src
+                                        'data-threshold': 255,
+                                        'data-shading': true,
+                                        origImage: img.src,
                                     }
                                 });
                                 ImageData(
@@ -5424,8 +5425,8 @@ define([
                                         rotationFlag,
                                         grayscale: {
                                             is_rgba: true,
-                                            is_shading: false,
-                                            threshold: parseInt(newImage.getAttribute('data-threshold')),
+                                            is_shading: true,
+                                            threshold: 255,
                                             is_svg: false
                                         },
                                         onComplete: function (result) {
