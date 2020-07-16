@@ -651,58 +651,6 @@ define([
                         </div> : null
                     }
 
-                    <div className='subtitle'>{lang.settings.groups.stripe_calibration}</div>
-
-                    <Controls label={lang.settings.stripe_calibration}>
-                        <SelectView
-                            id='select-lang'
-                            className='font3'
-                            options={stripeOptions}
-                            onChange={e => this._updateBeamboxPreferenceChange('stripe_compensation', e.target.value)}
-                        />
-                    </Controls>
-                    { this._getBeamboxPreferenceEditingValue('stripe_compensation') ?
-                        <div>
-                            <Controls label={lang.settings.stripe_calibration_initial}>
-                                <UnitInput
-                                    unit='mm'
-                                    min={0}
-                                    max={3000}
-                                    step={0.01}
-                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_y0') || 0}
-                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_y0', val)}
-                                    className={{half: true}}
-                                />
-                            </Controls>
-
-                            <Controls label={lang.settings.stripe_calibration_interval}>
-                                <UnitInput
-                                    unit='mm'
-                                    min={0}
-                                    max={3000}
-                                    step={0.01}
-                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_interval') || 0}
-                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_interval', val)}
-                                    className={{half: true}}
-                                />
-                            </Controls>
-
-                            <Controls label={lang.settings.stripe_calibration_power}>
-                                <UnitInput
-                                    unit='%'
-                                    min={0}
-                                    max={100}
-                                    step={1}
-                                    decimal={0}
-                                    defaultValue={this._getBeamboxPreferenceEditingValue('stripe_compensation_power') || 100}
-                                    getValue={val => this._updateBeamboxPreferenceChange('stripe_compensation_power', val)}
-                                    className={{half: true}}
-                                />
-                            </Controls>
-                        </div>
-                        : null
-                    }
-
                     <div className='subtitle'>{lang.settings.groups.mask}</div>
 
                     <Controls label={lang.settings.mask}>
