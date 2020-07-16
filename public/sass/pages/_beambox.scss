@@ -5,6 +5,13 @@
     #svg_editor:not(.color) #svgcontent{
         filter: saturate(0%);
     }
+    #svgcontent{
+        *[data-tempgroup=true] {
+            rect, path, ellipse, circle, polygon, g, line, text {
+                stroke: #0091ff !important;
+            }
+        }
+    }
     user-select: none;
     padding: 5px;
     .left-toolbar {

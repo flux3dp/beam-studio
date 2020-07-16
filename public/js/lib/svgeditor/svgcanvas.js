@@ -6252,7 +6252,7 @@ define([
             const use_elements = await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)));
 
             use_elements.forEach(elem => {
-                if (_type === 'nolayer' && this.isUseLayerColor) {
+                if (this.isUseLayerColor) {
                     this.updateElementColor(elem);
                 }
                 $(use_elements).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
@@ -6557,12 +6557,12 @@ define([
                 filter.setAttribute('id', `filter${color}`);
                 let colorMatrix = Array.from(filter.childNodes).filter((child) => child.tagName === 'feColorMatrix')[0];
                 if (colorMatrix) {
-                    colorMatrix.setAttribute('values', `0 0 0 0 ${r/255}, 0 0 0 0 ${g/255}, 0 0 0 0 ${b/255}, 0 0 0 1 0`);
+                    colorMatrix.setAttribute('values', `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`);
                 } else {
                     colorMatrix = svgdoc.createElementNS(NS.SVG, 'feColorMatrix');
                     svgedit.utilities.assignAttributes(colorMatrix, {
                         'type': 'matrix',
-                        'values': `0 0 0 0 ${r/255}, 0 0 0 0 ${g/255}, 0 0 0 0 ${b/255}, 0 0 0 1 0`,
+                        'values': `1 0 0 0 ${r/255}, 0 1 0 0 ${g/255}, 0 0 1 0 ${b/255}, 0 0 0 1 0`,
                     });
                     filter.appendChild(colorMatrix);
                 }
@@ -9724,11 +9724,15 @@ define([
                 var children = new Array(g.childNodes.length);
 
                 var i = 0;
-
+                console.log(`Ungrouped ${g.childNodes.length} nodes`);
                 while (g.firstChild) {
                     var elem = g.firstChild;
                     var oldNextSibling = elem.nextSibling;
                     var oldParent = elem.parentNode;
+                    if (elem.getAttribute('data-imageborder') === 'true') {
+                        elem.remove();
+                        continue;
+                    }
 
                     // Remove child title elements
                     if (elem.tagName === 'title') {
@@ -9801,6 +9805,35 @@ define([
                 const original_layer = this.getObjectLayer(elem).title;
                 $(elem).attr('data-original-layer', original_layer);
                 g.appendChild(elem);
+                if (['image', 'use'].includes(elem.tagName)) {
+                    const imageBorder = svgdoc.createElementNS(NS.SVG, 'rect');
+                    if (elem.tagName === 'image') {
+                        svgedit.utilities.assignAttributes(imageBorder, {
+                            x: elem.getAttribute('x'),
+                            y: elem.getAttribute('y'),
+                            width: elem.getAttribute('width'),
+                            height: elem.getAttribute('height'),
+                            transform: elem.getAttribute('transform') || '',
+                        });
+                    } else if (elem.tagName === 'use') {
+                        const realLocation = this.getUseElementLocationBeforeTransform(elem);
+                        svgedit.utilities.assignAttributes(imageBorder, {
+                            x: realLocation.x,
+                            y: realLocation.y,
+                            width: realLocation.width,
+                            height: realLocation.height,
+                            transform: elem.getAttribute('transform') || '',
+                        });
+                    }
+                    svgedit.utilities.assignAttributes(imageBorder, {
+                        fill: 'none',
+                        stroke: 'none',
+                        'vector-effect': 'non-scaling-stroke',
+                        style: 'pointer-events:none',
+                        'data-imageborder': true,
+                    });
+                    g.appendChild(imageBorder);
+                }
             }
 
             // update selection
@@ -9869,6 +9902,11 @@ define([
                     var elem = g.firstChild;
                     var oldNextSibling = elem.nextSibling;
                     var oldParent = elem.parentNode;
+
+                    if (elem.getAttribute('data-imageborder') === 'true') {
+                        elem.remove();
+                        continue;
+                    }
 
                     // Remove child title elements
                     if (elem.tagName === 'title') {
@@ -11010,6 +11048,28 @@ define([
             return obj;
         };
 
+        this.getUseElementLocationBeforeTransform = function(elem) {
+            const xform = $(elem).attr('data-xform');
+            const elemX = parseFloat($(elem).attr('x') || '0');
+            const elemY = parseFloat($(elem).attr('y') || '0');
+            const obj = {};
+            if (xform) {
+                xform.split(' ').forEach((pair) => {
+                    [key, value] = pair.split('=');
+                    if (value === undefined) {
+                        return;
+                    };
+                    obj[key] = parseFloat(value);
+                });
+            } else {
+                obj = elem.getBBox();
+                obj.x = 0;
+                obj.y = 0;
+            }
+            obj.x += elemX;
+            obj.y += elemY;
+            return obj;
+        }
 
         this.getSvgRealLocation = function (elem) {
             if (elem.tagName === 'text') {

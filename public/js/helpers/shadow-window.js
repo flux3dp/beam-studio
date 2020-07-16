@@ -12,12 +12,13 @@ const main = async () => {
             imgCanvas.height = img.height + 1;
             const ctx = imgCanvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0, width, height);
             const outCanvas =  document.createElement('canvas');
             outCanvas.width = Math.max(1, bb.width * imageRatio);
             outCanvas.height = Math.max(1, bb.height * imageRatio);
             const outCtx = outCanvas.getContext('2d');
             outCtx.imageSmoothingEnabled = false;
+            outCtx.filter = 'brightness(0%)'
             outCtx.drawImage(imgCanvas, 0, 0, outCanvas.width, outCanvas.height, 0, 0, outCanvas.width, outCanvas.height);
             const imageBase64 = outCanvas.toDataURL('image/png');
             const res = await fetch(imageBase64);
