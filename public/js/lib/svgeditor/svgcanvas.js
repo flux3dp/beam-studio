@@ -285,7 +285,7 @@ define([
         var transformListToTransform = canvas.transformListToTransform = svgedit.math.transformListToTransform;
         var snapToAngle = svgedit.math.snapToAngle;
         var getMatrix = svgedit.math.getMatrix;
-        const SENSOR_AREA_RADIUS = 5;
+        const SENSOR_AREA_RADIUS = 10;
 
         // initialize from units.js
         // send in an object implementing the ElementContainer interface (see units.js)
@@ -2812,7 +2812,7 @@ define([
                 var mouse_target = getMouseTarget(evt);
                 var tagName = mouse_target.tagName;
 
-                if (tagName === 'text' && current_mode !== 'textedit') {
+                if (tagName === 'text' && !['textedit', 'text'].includes(current_mode)) {
                     var pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm);
                     textActions.select(mouse_target, pt.x, pt.y);
                 }
