@@ -2437,6 +2437,7 @@ define([
                             });
                             selectedElements = intersectedElements;
                             selectedElems = intersectedElements;
+                            call('selected', selectedElements);
                         }
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
