@@ -2887,7 +2887,7 @@ define([
                     function _zoomProcess() {
                         // End of animation
                         const currentZoom = svgCanvas.getZoom();
-                        if ((currentZoom === targetZoom) || (Date.now() - trigger > 500)) {
+                        if ((currentZoom === targetZoom) || (Date.now() - trigger > 5000)) {
                             clearInterval(timer);
                             timer = undefined;
                             return;
