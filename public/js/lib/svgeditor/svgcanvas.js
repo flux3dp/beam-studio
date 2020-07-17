@@ -2914,9 +2914,9 @@ define([
                     function _zoomAsIllustrator() {
                         const delta = (evt.wheelDelta) ? evt.wheelDelta : (evt.detail) ? -evt.detail : 0;
                         if (isTouchpad) {
-                            targetZoom = targetZoom * 1.1 ** (delta / 500);
+                            targetZoom = targetZoom * 1.5 ** (delta / 500);
                         } else {
-                            targetZoom = targetZoom * 1.1 ** (delta / 250);
+                            targetZoom = targetZoom * 1.5 ** (delta / 250);
                         }
 
                         targetZoom = Math.min(20, targetZoom);
