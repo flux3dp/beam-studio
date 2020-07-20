@@ -1749,6 +1749,257 @@
       return `<path fill="none" stroke="#000000" stroke-width="1px" vector-effect="non-scaling-stroke" d="${d}"/>`;
     };
 
+    const applyTransforms = (points, transforms) => {
+      transforms.forEach(function (transform) {
+        points = points.map(function (p) {
+          // Use a copy to avoid side effects
+          var p2 = [p[0], p[1]];
+          if (transform.xScale) {
+            p2[0] = p2[0] * transform.xScale;
+          }
+          if (transform.yScale) {
+            p2[1] = p2[1] * transform.yScale;
+          }
+          if (transform.rotation) {
+            var angle = transform.rotation / 180 * Math.PI;
+            p2 = [p2[0] * Math.cos(angle) - p2[1] * Math.sin(angle), p2[1] * Math.cos(angle) + p2[0] * Math.sin(angle)];
+          }
+          if (transform.x) {
+            p2[0] = p2[0] + transform.x;
+          }
+          if (transform.y) {
+            p2[1] = p2[1] + transform.y;
+          }
+          return p2;
+        });
+      });
+      return points;
+    };
+
+    const cubicBezierFromEllipse = (cx, cy, rx, ry, start, end, axisAngle=0) => {
+      const ret = [];
+      if (start > end) {
+        start -= Math.PI * 2;
+      }
+      const maxCurveRadius = Math.PI / 4;
+      const curveNumbers = Math.ceil(Math.abs(end - start) / maxCurveRadius);
+      for (let i = 0; i < curveNumbers; i++) {
+        const startRad = start + maxCurveRadius * i;
+        const endRad = i === curveNumbers - 1 ? end : (start + maxCurveRadius * (i + 1));
+        const phi = endRad - startRad;
+        const alpha = 4 * Math.tan(phi / 4) / 3;
+        const controlPoints = [[0, 0], [0, 0], [0, 0], [0, 0]];
+        const p1n = [rx * Math.cos(startRad), ry * Math.sin(startRad)];
+        const p1t = [-rx * Math.sin(startRad), ry * Math.cos(startRad)];
+        const p2n = [rx * Math.cos(endRad), ry * Math.sin(endRad)];
+        const p2t = [-rx * Math.sin(endRad), ry * Math.cos(endRad)];
+        controlPoints[0] = [p1n[0], p1n[1]];
+        controlPoints[3] = [p2n[0], p2n[1]];
+        controlPoints[1] = [controlPoints[0][0] + alpha * p1t[0], controlPoints[0][1] + alpha * p1t[1]];
+        controlPoints[2] = [controlPoints[3][0] - alpha * p2t[0], controlPoints[3][1] - alpha * p2t[1]];
+        controlPoints.forEach((p) => {
+          const newX = p[0] * Math.cos(axisAngle) - p[1] * Math.sin(axisAngle);
+          const newY = p[0] * Math.sin(axisAngle) + p[1] * Math.cos(axisAngle);
+          p[0] = newX + cx;
+          p[1] = newY + cy;
+        });
+        ret.push(controlPoints);
+      }
+      return ret;
+    };
+
+    const entitiesToPathSegs = (entities, polylines) => {
+      const ret = entities.map((entity, i) => {
+        const { type } = entity;
+        if (type === 'SPLINE') {
+          const {degree, knots, transforms} = entity;
+          if (degree === 3 && knots[1] === knots[2] && knots[2] === knots[3]) {
+            const controlPoints = applyTransforms(entity.controlPoints.map(function (p) {
+              return [p.x, p.y];
+            }), transforms);
+
+            // Convert to bezier
+            // refs: An Introduction to B-Spline Curves (Thomas W. Sederberg, 2005); https://pdfs.semanticscholar.org/4ab6/8a5eac3829db3020b1f44f58b939e5ffac47.pdf
+            const affineCombination = (p1, p2, t1, t2, tp) => {
+              //Basically interpolation
+              if (t2 === t1) {
+                return p1;
+              }
+              const w1 = (t2 - tp) / (t2 - t1);
+              const w2 = (tp - t1) / (t2 - t1);
+              const pp = p1.map((_, i) => w1 * p1[i] + w2 * p2[i]);
+              return pp;
+            };
+            const pathSeg = [];
+            // I meant to handle for all degree but current only for degree 3
+            //P(a,a,a), P(a,a,b), P(a,b,c), P(b,c,d) for clamped knots
+            let polarValues = controlPoints.slice(0, degree + 1);
+            for (let i = 0; i < controlPoints.length - degree; i++) {
+              const knotsABCD = knots.slice(i + degree, i + 2 * degree + 1);
+              const polarABB = affineCombination(polarValues[1], polarValues[2], knotsABCD[0], knotsABCD[2], knotsABCD[1]);
+              const polarBBC = affineCombination(polarValues[2], polarValues[3], knotsABCD[0], knotsABCD[3], knotsABCD[1]);
+              const polarBBB = affineCombination(polarABB, polarBBC, knotsABCD[0], knotsABCD[2], knotsABCD[1]);
+              if (i === 0) {
+                pathSeg.push({type: 'M', points: [polarValues[0]]});
+              }
+              pathSeg.push({type: 'C', points: [polarValues[1], polarABB, polarBBB]});
+
+              polarValues = [polarBBB, polarBBC, polarValues[3], controlPoints[i + entity.degree + 1]];
+            }
+            return pathSeg;
+          } else {
+            console.log(entity, 'can not converted to bezier');
+            return polylines[i].map((p, i) => {
+              return {type: i === 0 ? 'M': 'L', points: [p]};
+            });
+          }
+        } else if (type === 'CIRCLE' || type === 'ARC') {
+          const startAngle = type === 'CIRCLE' ? 0 : entity.startAngle;
+          const endAngle = type === 'CIRCLE' ? (Math.PI * 2) : entity.endAngle;
+          const {x, y, r, transforms, extrusionZ} = entity;
+          let cubicBezierCurves = cubicBezierFromEllipse(x, y, r, r, startAngle, endAngle);
+          const _flipY = (extrusionZ === -1);
+          cubicBezierCurves = cubicBezierCurves.map((controlPoints) => {
+            if (_flipY) {
+              controlPoints = controlPoints.map((points) => {
+                return [-points[0], points[1]];
+              });
+            }
+            controlPoints = applyTransforms(controlPoints, transforms);
+            return controlPoints;
+          });
+          //Should always > 0 though
+          if (cubicBezierCurves.length > 0) {
+            const pathSeg = [];
+            pathSeg.push({type: 'M', points: [cubicBezierCurves[0][0]]});
+            cubicBezierCurves.forEach((curve) => {
+              pathSeg.push({type: 'C', points: curve.slice(1)});
+            });
+            return pathSeg;
+          } else {
+            return polylines[i].map((p, i) => {
+              return {type: i === 0 ? 'M': 'L', points: [p]};
+            });
+          }
+        } else if (type === 'ELLIPSE') {
+          console.log(entity);
+          const {x, y, startAngle, endAngle, axisRatio, majorX, majorY, extrusionZ, transforms} = entity;
+          const rx = Math.sqrt(majorX * majorX + majorY * majorY);
+          const ry = axisRatio * rx;
+          const axisAngle = -Math.atan2(-majorY, majorX);
+          let cubicBezierCurves = cubicBezierFromEllipse(x, y, rx, ry, startAngle, endAngle, axisAngle);
+          const _flipY = (extrusionZ === -1);
+          cubicBezierCurves = cubicBezierCurves.map((controlPoints) => {
+            if (_flipY) {
+              controlPoints = controlPoints.map((points) => {
+                return [-points[0] + 2 * x, points[1]];
+              });
+            }
+            controlPoints = applyTransforms(controlPoints, transforms);
+            return controlPoints;
+          });
+          //Should always > 0 though
+          if (cubicBezierCurves.length > 0) {
+            const pathSeg = [];
+            pathSeg.push({type: 'M', points: [cubicBezierCurves[0][0]]});
+            cubicBezierCurves.forEach((curve) => {
+              pathSeg.push({type: 'C', points: curve.slice(1)});
+            });
+            return pathSeg;
+          } else {
+            return polylines[i].map((p, i) => {
+              return {type: i === 0 ? 'M': 'L', points: [p]};
+            });
+          }
+        } else {
+          return polylines[i].map((p, i) => {
+            return {type: i === 0 ? 'M': 'L', points: [p]};
+          });
+        }
+      });
+      return ret;
+    }
+
+    const reducePathSeg = (pathSeg) => {
+      if (!pathSeg) {
+        return;
+      }
+
+      const reducePoints = (points) => {
+        return points.filter((point, i) => {
+          if (i === 0) {
+            return true;
+          }
+          try {
+            return point[0] !== points[i - 1][0] || point[1] !== points[i - 1][1];
+          } catch (err) {
+            console.log(err);
+            return false;
+          }
+        });
+      }
+
+      let currentPoint = [0, 0];
+
+      for (let i = 0;  i< pathSeg.length; i++) {
+        const seg = pathSeg[i];
+        const {type, points} = seg;
+        if (type === 'M') {
+          currentPoint = points[0];
+          continue;
+        }
+        const reducedPoints = reducePoints([currentPoint, ...points]);
+        if (reducedPoints.length === 2 && type === 'C') {
+          pathSeg[i] = {type: 'L', points: [reducedPoints[1]]};
+        } else if (reducedPoints.length === 1) {
+          pathSeg[i] = null;
+        }
+        currentPoint = points[points.length - 1];
+      }
+      pathSeg = pathSeg.filter((seg) => seg);
+      return pathSeg;
+    }
+
+    const connectPathSegs = (pathSegs) => {
+      const getFirstPointAndLastPoints = (pathSeg) => {
+        const firstPoint = pathSeg[0].points[0];
+        const segLen = pathSeg.length;
+        const lastPoint = pathSeg[segLen - 1].points[pathSeg[segLen - 1].points.length - 1];
+        return {firstPoint, lastPoint};
+      };
+
+      for (let i = 0; i < pathSegs.length - 1; i++) {
+        let pathSeg = pathSegs[i];
+        const {firstPoint, lastPoint} = getFirstPointAndLastPoints(pathSeg);
+        if (firstPoint[0] === lastPoint[0] && firstPoint[1] === lastPoint[1]) {
+          continue;
+        }
+        const {firstPoint: nextSegfirstPoint, lastPoint: nextSegLastPoint} = getFirstPointAndLastPoints(pathSegs[i+1]);
+        // Every pathSeg start with a 'M', so if there are continouous path segments, just remove the 'M' segment.
+        if (Math.hypot(lastPoint[0] - nextSegfirstPoint[0], lastPoint[1] - nextSegfirstPoint[1]) < 1e-7) {
+          pathSegs[i + 1].splice(0, 1);
+          pathSegs[i + 1] = [...pathSeg, ...pathSegs[i + 1]];
+          pathSegs[i] = [];
+        } else if (Math.hypot(firstPoint[0] - nextSegLastPoint[0], firstPoint[1] - nextSegLastPoint[1]) < 1e-7) {
+          pathSeg.splice(0, 1);
+          pathSegs[i+1] = [...pathSegs[i+1], ...pathSeg];
+          pathSegs[i] = [];
+        }
+      }
+      return pathSegs;
+    };
+
+    const pathSegToPath = (pathSeg) => {
+      let d = '';
+      pathSeg.forEach((seg) => {
+        d += seg.type;
+        seg.points.forEach((p) => {
+          d += `${Math.round(p[0] * 10000)/10000},${Math.round(p[1] * 10000)/10000} `;
+        });
+      });
+      return `<path fill="none" stroke="#000000" stroke-width="1px" vector-effect="non-scaling-stroke" d="${d}"/>`;
+    };
+
     /**
      * Convert the interpolate polylines to SVG
      */
@@ -1768,8 +2019,8 @@
           bbox.expandByPoint(point[0] * scale, point[1] * scale);
         });
       });
-
-      var paths = [];
+      let pathSegs = entitiesToPathSegs(entities, polylines);
+      pathSegs = pathSegs.map(pathSeg => reducePathSeg(pathSeg));
       var outputLayers = {};
       function getLayerColor(entity) {
         try {
@@ -1787,47 +2038,28 @@
         }
         return rgb;
       }
-      entities = entities.filter((_, i) => polylines[i].length > 0);
-      polylines = polylines.filter((p) => p.length > 0);
-      for (let i = 0; i < polylines.length - 1; i++) {
-        let polyline = polylines[i];
-        if (polyline.length === 0 || polylines[i+1].length === 0) {
-          continue;
-        }
-        if (polyline.length > 0 && polyline[0][0] === polyline[polyline.length - 1][0] && polyline[0][1] === polyline[polyline.length - 1][1]) {
-          continue;
-        }
-        if (Math.hypot(polyline[polyline.length - 1][0] - polylines[i+1][0][0], polyline[polyline.length - 1][1] - polylines[i+1][0][1]) < 1e-7) {
-          polylines[i+1] = [...polyline, ...polylines[i+1]];
-          polylines[i] = [];
-        } else if (Math.hypot(polyline[0][0] - polylines[i+1][polylines[i+1].length - 1][0], polyline[0][1] - polylines[i+1][polylines[i+1].length - 1][1]) < 1e-7) {
-          polylines[i+1] = [...polylines[i+1], ...polyline];
-          polylines[i] = [];
-        }
-      }
-      entities = entities.filter((_, i) => polylines[i].length > 0);
-      polylines = polylines.filter((p) => p.length > 0);
 
-      polylines.forEach(function (polyline, i) {
-        if (polyline.length === 0) {
-          return;
-        }
-        var entity = entities[i];
-        let rgb = getLayerColor(entity);
+      entities = entities.filter((_, i) => (pathSegs[i] && pathSegs[i].length > 0));
+      pathSegs = pathSegs.filter((ps) => (ps && ps.length > 0));
+      pathSegs = connectPathSegs(pathSegs);
+      entities = entities.filter((_, i) => pathSegs[i].length > 0);
+      pathSegs = pathSegs.filter((ps) => ps.length > 0);
 
-        var p2 = polyline.map(function (p) {
-          return [p[0] * scale - bbox.minX, bbox.maxY - p[1] * scale];
+      pathSegs.forEach((pathSeg, i) => {
+        let entity = entities[i];
+        pathSeg.forEach((seg) => {
+          seg.points = seg.points.map((p) => [p[0] * scale - bbox.minX, bbox.maxY - p[1] * scale]);
         });
-        let polylinePathContent = polylineToPath(rgb, p2);
+        const pathContent = pathSegToPath(pathSeg);
         if (!outputLayers[entity.layer]) {
           outputLayers[entity.layer] = {
             entity: entity,
             paths: []
           };
         }
-        outputLayers[entity.layer].paths.push(polylinePathContent);
-        paths.push(polylinePathContent);
+        outputLayers[entity.layer].paths.push(pathContent);
       });
+
       let groupContents = [];
       for (var i in outputLayers) {
         let layer = outputLayers[i];
