@@ -2732,10 +2732,12 @@ define([
 
                 if (!keep && element != null) {
                     getCurrentDrawing().releaseId(getId());
+                    svgedit.transformlist.removeElementFromListMap(element);
                     selectorManager.releaseSelector(element);
                     element.parentNode.removeChild(element);
                     element = null;
                     t = evt.target;
+                    clearSelection();
 
                     // if this element is in a group, go up until we reach the top-level group
                     // just below the layer groups
