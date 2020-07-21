@@ -13,6 +13,7 @@ define([
         }
 
         setSelectedElement = (elems) => {
+            document.activeElement.blur();
             this.setState({selectedElement: elems});
         }
 
