@@ -1876,6 +1876,7 @@ define(function() {
             50: 'Pause',
             64: 'Abgeschlossen',
             66: 'Abschluss',
+            68: 'Vorbereiten',
             128: 'Abgebrochen',
             UNKNOWN: 'Unbekannt'
         },

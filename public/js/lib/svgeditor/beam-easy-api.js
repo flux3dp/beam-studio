@@ -31,6 +31,7 @@ define([
         50: 'Pausing',
         64: 'Completed',
         66: 'Completing',
+        68: 'Preparing',
         128: 'Aborted',
         UNKNOWN: 'Unknown'
     };
