@@ -9131,12 +9131,16 @@ define([
                 message: LANG.popup.ungroup_use,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
+                    let batchCmd = new svgedit.history.BatchCommand('Disassemble Use');
                     for (let i = 0; i < elems.length; ++i) {
                         elem = elems[i];
                         if (!elem || elem.tagName !== 'use') {
                             continue;
                         }
-                        SymbolMaker.switchImageSymbol(elem, false);
+                        const cmd = SymbolMaker.switchImageSymbol(elem, false);
+                        if (cmd && !cmd.isEmpty()) {
+                            batchCmd.addSubCommand(cmd);
+                        }
 
                         const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
                         svgCanvas.setCurrentLayer(layerTitle);
@@ -9184,7 +9188,8 @@ define([
                             $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                             svgedit.recalculate.recalculateDimensions(topChild);
                         }
-                        //svg.parentNode.removeChild(svg);
+                        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+                        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
                         elem.parentNode.removeChild(elem);
                         let angle = svgedit.utilities.getRotationAngle(g);
                         if (angle) canvas.setRotationAngle(0, true, g);
@@ -9192,14 +9197,20 @@ define([
                         if (angle) canvas.setRotationAngle(angle, true, g);
                         selectOnly([g], true);
                         // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
-                        this.ungroupSelectedElement();
-                        this.ungroupSelectedElement();
-                        this.ungroupSelectedElement();
-                        this.ungroupSelectedElement();
+                        for (let j = 0; j < 4; j ++) {
+                            const res = this.ungroupSelectedElement(true);
+                            const cmd = res ? res.batchCmd : null;
+                            if (cmd && !cmd.isEmpty()) {
+                                batchCmd.addSubCommand(cmd);
+                            }
+                        }
                         if (!tempGroup) {
                             this.tempGroupSelectedElements();
                         }
                         svgCanvas.setHasUnsavedChange(true);
+                    }
+                    if (batchCmd && !batchCmd.isEmpty()) {
+                        addCommandToHistory(batchCmd);
                     }
                 }
             });
@@ -9687,7 +9698,7 @@ define([
         // Function: ungroupSelectedElement
         // Unwraps all the elements in a selected group (g) element. This requires
         // significant recalculations to apply group's transforms, etc to its children
-        this.ungroupSelectedElement = function () {
+        this.ungroupSelectedElement = function (isSubCmd = false) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9763,15 +9774,14 @@ define([
                 var gNextSibling = g.nextSibling;
                 g = parent.removeChild(g);
                 batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(g, gNextSibling, parent));
-
-                if (!batchCmd.isEmpty()) {
-                    addCommandToHistory(batchCmd);
-                }
-
                 // update selection
                 addToSelection(children);
                 this.tempGroupSelectedElements();
-                return children;
+                if (!batchCmd.isEmpty() && !isSubCmd) {
+                    addCommandToHistory(batchCmd);
+                }
+
+                return {batchCmd, children};
             }
         };
 

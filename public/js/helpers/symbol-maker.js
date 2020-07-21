@@ -344,8 +344,8 @@ define([
                 imageSymbol.appendChild(image);
                 image.setAttribute('x', bb.x);
                 image.setAttribute('y', bb.y);
-                image.setAttribute('width', bb.width);
-                image.setAttribute('height', bb.height);
+                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
+                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
                 image.setAttribute('href', imageUrl);
                 imageSymbol.setAttribute('overflow', 'visible');
                 imageSymbol.setAttribute('id', `${symbol.id}_image`);
@@ -355,6 +355,8 @@ define([
                 const image = imageSymbol.firstChild;
                 const oldImageUrl = image.getAttribute('href');
                 URL.revokeObjectURL(oldImageUrl);
+                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
+                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
                 image.setAttribute('href', imageUrl);
             }
             resolve(imageSymbol);
@@ -414,8 +416,11 @@ define([
             }
             const targetSymbol = $(`#${targetId}`);
             if (targetSymbol.length > 0 && targetSymbol[0].tagName === 'symbol') {
+                svgCanvas.undoMgr.beginUndoableChange('xlink:href', [elem]);
                 elem.setAttribute('xlink:href', `#${targetId}`);
+                const cmd = svgCanvas.undoMgr.finishUndoableChange();
                 svgCanvas.updateElementColor(elem);
+                return cmd;
             } else {
                 console.warn(`Switcing failed, Unable to find symbol ${targetId}.`);
             }
