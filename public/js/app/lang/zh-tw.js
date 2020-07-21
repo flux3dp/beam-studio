@@ -2017,8 +2017,8 @@ define(function() {
             befaultTutorialWelcome: '非常感謝您購買 FLUX Delta+！<br/><br/>以下內容能幫助您快速瞭解並使用您的 FLUX Delta+<br/>期待 FLUX Delta+ 能陪伴您度過美好的時光<br/><br/>＊請務必先觀看教學影片！請打開中文字幕',
             openBrowser: '開啟網頁',
             welcome: '歡迎使用',
-            needNewUserTutorial: '歡迎使用！\n請問您是否需要 Beam Studio 的教學？',
-            needNewInterfaceTutorial: '歡迎使用！\n請問是否需要為您介紹 Beam Studio 的新介面？',
+            needNewUserTutorial: '請問您是否需要 Beam Studio 的教學？',
+            needNewInterfaceTutorial: '請問是否需要為您介紹 Beam Studio 的新介面？',
             next: '下一步',
             newUser: {
                 draw_a_circle: '畫一個圓',

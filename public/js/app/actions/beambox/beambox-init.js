@@ -555,6 +555,7 @@ define([
             const isNewUser = localStorage.getItem('new-user') === 'true';
             Alert.popUp({
                 id: 'ask-tutorial',
+                caption: LANG.welcome,
                 message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
