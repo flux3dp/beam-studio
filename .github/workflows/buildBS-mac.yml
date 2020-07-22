@@ -20,6 +20,11 @@ jobs:
       #   uses: actions/setup-python@v1
       #   with:
       #     python-version: ${{ matrix.python-version }}
+      - name: Install Cairo
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+          brew install cairo
+
       - name: Setup Python
         run: |
           curl -O "https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.9.pkg"
@@ -39,11 +44,6 @@ jobs:
           pip3 install -r requirements.txt
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
-          
-      - name: Install Cairo
-        run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-          brew install cairo
 
       # using https://github.com/InVisionApp/private-action-loader for private repo.
       - name: Install Beamify
