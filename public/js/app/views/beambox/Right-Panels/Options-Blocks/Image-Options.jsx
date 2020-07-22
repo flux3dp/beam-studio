@@ -59,7 +59,7 @@ define([
             const isGradient = elem.getAttribute('data-shading') === 'true';
             const isTurningOnGradient = !isGradient;
             elem.setAttribute('data-shading', isTurningOnGradient);
-            elem.setAttribute('data-threshold', isTurningOnGradient ? 255 : 128);
+            elem.setAttribute('data-threshold', isTurningOnGradient ? 254 : 128);
             this.setState(this.state);
             this.updateImage();
         }

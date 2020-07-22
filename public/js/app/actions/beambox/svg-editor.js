@@ -3817,7 +3817,7 @@ define([
                                                     is_rgba: true,
                                                     is_shading: true,
                                                     is_svg: false,
-                                                    threshold: 255,
+                                                    threshold: 254,
                                                 },
                                                 onComplete: function (result) {
                                                     let newImage = svgCanvas.addSvgElementFromJson({
@@ -3830,7 +3830,7 @@ define([
                                                             id: svgCanvas.getNextId(),
                                                             style: 'pointer-events:inherit',
                                                             preserveAspectRatio: 'none',
-                                                            'data-threshold': 255,
+                                                            'data-threshold': 254,
                                                             'data-shading': true,
                                                             origImage: blobSrc,
                                                             'xlink:href': result.canvas.toDataURL()
@@ -5413,7 +5413,7 @@ define([
                                         id: svgCanvas.getNextId(),
                                         style: 'pointer-events:inherit',
                                         preserveAspectRatio: 'none',
-                                        'data-threshold': 255,
+                                        'data-threshold': 254,
                                         'data-shading': true,
                                         origImage: img.src,
                                     }
@@ -5426,7 +5426,7 @@ define([
                                         grayscale: {
                                             is_rgba: true,
                                             is_shading: true,
-                                            threshold: 255,
+                                            threshold: 254,
                                             is_svg: false
                                         },
                                         onComplete: function (result) {
