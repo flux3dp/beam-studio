@@ -12,7 +12,7 @@ isort==4.3.21
 kiwisolver==1.1.0
 lazy-object-proxy==1.4.1
 lxml==4.3.4; platform_system != "Darwin"
-lxml==4.3.4; --no-binary=lxml platform_system == "Darwin"
+lxml==4.3.4; platform_system == "Darwin" --no-binary=lxml
 macholib==1.11
 matplotlib==3.1.2
 mccabe==0.6.1
