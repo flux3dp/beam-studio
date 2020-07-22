@@ -3029,6 +3029,11 @@ define([
             }
 
             let calculateCharbb = () => {
+                if (!curtext) {
+                    let bb = {x: 0, y: 0, width: 0, height: 0};
+                    chardata.push([bb]);
+                    return;
+                }
                 let tspans = Array.from(curtext.childNodes).filter((child) => child.tagName === 'tspan');
                 let rowNumbers = tspans.length;
                 const charHeight = parseFloat(canvas.getFontSize());
@@ -3098,6 +3103,9 @@ define([
 
             function indexToRowAndIndex(index) {
                 let rowIndex = 0;
+                if (!chardata || chardata.length === 0) {
+                    calculateCharbb();
+                }
                 while (index >= chardata[rowIndex].length) {
                     index -= chardata[rowIndex].length;
                     rowIndex += 1;

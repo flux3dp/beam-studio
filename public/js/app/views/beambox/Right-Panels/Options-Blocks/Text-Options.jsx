@@ -68,8 +68,8 @@ define([
             if (sanitizedDefaultFontFamily !== font.family) {
                 console.log(`unsupported font ${font.family}, fallback to ${sanitizedDefaultFontFamily}`);
                 svgCanvas.setFontFamily(sanitizedDefaultFontFamily, true);
-                svgCanvas.setFontPostscriptName(newFont.postscriptName, true);
                 const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedDefaultFontFamily)[0];
+                svgCanvas.setFontPostscriptName(newFont.postscriptName, true);
             }
             updateDimensionValues({fontStyle: font.style});
             return {

@@ -11,7 +11,7 @@ define(function() {
             win32: 'Microsoft YaHei',
         },
         'zh-TW': {
-            darwin: 'STHeiti',
+            darwin: 'Heiti TC',
             win32: '微軟正黑體',
         },
         'ja': {
