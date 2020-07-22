@@ -54,7 +54,29 @@ define([
             // await p;  if you want to know the time when image transfer to Blob, which is almost the same time background is drawn.
         }
 
+        updateCanvasSize() {
+            const newWidth = Constant.dimension.getWidth();
+            const newHeight = Constant.dimension.getHeight();
+            const ctx = this.canvas.getContext('2d');
+            const data = ctx.getImageData(0, 0, newWidth, newHeight);
+            this.canvas.width = newWidth;
+            this.canvas.height = newHeight;
+            ctx.putImageData(data, 0, 0);
+            this.resetBoundary();
+            this.canvas.toBlob((blob) => {
+                this._drawBlobToBackground(blob);
+            });
+        }
 
+        resetBoundary() {
+            const canvasBackground = svgedit.utilities.getElem('canvasBackground');
+            const previewBoundary = svgedit.utilities.getElem('previewBoundary');
+
+            if (previewBoundary) {
+                canvasBackground.removeChild(previewBoundary);
+                this.drawBoundary();
+            }
+        }
 
         drawBoundary() {
             const canvasBackground = svgedit.utilities.getElem('canvasBackground');

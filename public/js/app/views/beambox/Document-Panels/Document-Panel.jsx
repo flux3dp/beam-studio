@@ -6,6 +6,7 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
+    'app/actions/beambox/preview-mode-background-drawer',
     'helpers/i18n',
 ], function(
     Modal,
@@ -15,6 +16,7 @@ define([
     BeamboxActions,
     BeamboxPreference,
     Constant,
+    PreviewModeBackgroundDrawer,
     i18n
 ) {
     const React = require('react');
@@ -129,6 +131,7 @@ define([
                 BeamboxPreference.write('workarea', this.state.workarea);
                 svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
                 svgEditor.resetView();
+                PreviewModeBackgroundDrawer.updateCanvasSize();
             }
         }
 
