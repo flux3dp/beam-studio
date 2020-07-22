@@ -22,15 +22,15 @@ define([
     const LANG = i18n.lang.beambox.right_panel.object_panel;
 
     const panelMap = {
-        'g': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'path': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'polygon': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'rect': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'ellipse': ['cx', 'cy', 'rot', 'rx', 'lock', 'ry'],
+        'g': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'path': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'polygon': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'rect': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'ellipse': ['cx', 'cy', 'rot', 'rx', 'ry', 'lock',],
         'line': ['x1', 'y1', 'rot', 'x2', 'y2'],
-        'image': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'text': ['x', 'y', 'rot', 'w', 'lock', 'h'],
-        'use': ['x', 'y', 'rot', 'w', 'lock', 'h'],
+        'image': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'text': ['x', 'y', 'rot', 'w', 'h', 'lock'],
+        'use': ['x', 'y', 'rot', 'w', 'h', 'lock'],
     };
 
     const fixedSizeMapping = {
@@ -319,7 +319,7 @@ define([
                     )
                 case 'w':
                     return (
-                        <div className="dimension-container lock-behind" key={type}>
+                        <div className="dimension-container" key={type}>
                             <div className="label">{'W'}</div>
                             <UnitInput
                                 unit={isInch ? 'in' : 'mm'}
@@ -347,7 +347,7 @@ define([
                     );
                 case 'rx':
                     return (
-                        <div className="dimension-container lock-behind" key={type}>
+                        <div className="dimension-container" key={type}>
                             <div className="label">{'W'}</div>
                             <UnitInput
                                 unit={isInch ? 'in' : 'mm'}

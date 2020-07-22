@@ -777,7 +777,7 @@
                         display: inline-flex;
                         width: 73px;
                         height: 45px;
-                        padding: 0 13px 0 4px;
+                        padding: 0 0px 0 4px;
                         .label {
                             width: 16px;
                             line-height: 45px;
@@ -788,27 +788,27 @@
                                 align-items: center;
                                 justify-content: flex-start;
                                 img {
-                                    width: 12px;
+                                    width: 9px;
                                 }
                             }
                         }
-                        &.lock-behind {
-                            width: 60px;
-                            padding-right: 0px;
+                        input {
+                            width: 50px;
                         }
                     }
                     .dimension-lock {
                         display: inline-flex;
-                        width: 13px;
+                        width: 15px;
                         padding-left: 4px;
                         img {
                             opacity: 0.5;
                             &:hover {
-                                opacity: 0.7;
+                                opacity: 1;
                             }
                         }
                     }
                     .flip-btn-container {
+                        padding-left: 5px;
                         height: 45px;
                         .tool-btn {
                             width: 25px;
