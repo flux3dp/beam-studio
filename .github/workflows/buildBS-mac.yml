@@ -41,7 +41,7 @@ jobs:
         run: |
           python3 --version
           python3 -m pip install --upgrade pip
-          pip3 install -r requirements.txt
+          pip3 install -r requirements.txt --no-binary=lxml
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 

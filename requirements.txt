@@ -11,8 +11,7 @@ future==0.17.1
 isort==4.3.21
 kiwisolver==1.1.0
 lazy-object-proxy==1.4.1
-lxml==4.3.4; platform_system != "Darwin"
-lxml==4.3.4; platform_system == "Darwin" --no-binary=lxml
+lxml==4.3.4
 macholib==1.11
 matplotlib==3.1.2
 mccabe==0.6.1
