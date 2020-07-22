@@ -38,6 +38,7 @@ define([
 
     let _setCrosshairCursor = function() {
         $('#workarea').css('cursor', 'crosshair');
+        $('#svg_editor g').css('cursor', 'crosshair');
     };
 
     let _align = function(types) {
@@ -75,6 +76,7 @@ define([
         //main panel
         importImage: function() {
             $('#tool_import input').click();
+            this.useSelectTool();
         },
 
         insertSvg: function(svgString, type, cropData = { x: 0, y: 0 }, preCrop = { offsetX: 0, offsetY: 0 }) {

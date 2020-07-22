@@ -467,6 +467,7 @@ define(function() {
             guides_origin: 'Guides Herkunft',
             guides: 'Anleitungen',
             image_downsampling: 'Bitmap-Qualität',
+            continuous_drawing: 'Kontinuierliches Zeichnen',
             mask: 'Workarea Clipping',
             optimization: 'Optimierung',
             font_substitute: 'Ersetzen Sie nicht unterstützte Zeichen',

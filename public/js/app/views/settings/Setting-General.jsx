@@ -286,6 +286,19 @@ define([
                 }
             ];
 
+            const continuousDrawingOptions = [
+                {
+                    value: 'false',
+                    label: lang.settings.off,
+                    selected: !this._getBeamboxPreferenceEditingValue('continuous_drawing')
+                },
+                {
+                    value: 'true',
+                    label: lang.settings.on,
+                    selected: this._getBeamboxPreferenceEditingValue('continuous_drawing')
+                }
+            ];
+
             const fastGradientOptions = [
                 {
                     value: 'false',
@@ -572,6 +585,14 @@ define([
                             className='font3'
                             options={imageDownsamplingOptions}
                             onChange={e => this._updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
+                        />
+                    </Controls>
+
+                    <Controls label={lang.settings.continuous_drawing}>
+                        <SelectView
+                            className='font3'
+                            options={continuousDrawingOptions}
+                            onChange={e => this._updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
                         />
                     </Controls>
 

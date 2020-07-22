@@ -207,6 +207,10 @@ svgEditor.addExtension('polygon', function (S) {
             if (svgCanvas.getMode() == 'polygon') {
                 var edge = $(newPoly).attr('edge');
                 var keep = (edge !== 0);
+
+                if (!opts.isContinuousDrawing) {
+                    svgCanvas.setMode('select');
+                }
                 return {
                     keep: keep,
                     element: newPoly

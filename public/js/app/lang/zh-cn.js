@@ -460,6 +460,7 @@ define(function() {
             guides_origin: '参考线座标',
             guides: '参考线',
             image_downsampling: '点阵图画质',
+            continuous_drawing: '连续绘制',
             mask: '工作范围剪裁',
             optimization: '优化',
             font_substitute: '自动替换字体',

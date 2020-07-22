@@ -467,6 +467,7 @@ define(function() {
             guides_origin: 'ガイドの原点',
             guides: 'ガイド',
             image_downsampling: 'ビットマップの品質',
+            continuous_drawing: '連続描画',
             mask: 'ワークエリアのクリッピング',
             optimization: '最適化',
             font_substitute: 'サポートされていない文字を置き換える',

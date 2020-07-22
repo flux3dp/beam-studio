@@ -2386,6 +2386,7 @@ define([
                 var useUnit = false; // (curConfig.baseUnit !== 'px');
                 started = false;
                 var attrs, t;
+                const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
 
                 selectedElems = selectedElements.filter((e) => e !== null);
                 switch (current_mode) {
@@ -2600,6 +2601,9 @@ define([
                     case 'line':
                         attrs = $(element).attr(['x1', 'x2', 'y1', 'y2']);
                         keep = (attrs.x1 !== attrs.x2 || attrs.y1 !== attrs.y2);
+                        if (!isContinuousDrawing) {
+                            canvas.setMode('select');
+                        }
                         break;
                     case 'foreignObject':
                     case 'square':
@@ -2608,6 +2612,9 @@ define([
                         keep = (attrs.width != 0 && attrs.height != 0);
                         if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT) {
                             TutorialController.handleNextStep();
+                        }
+                        if (!isContinuousDrawing) {
+                            canvas.setMode('select');
                         }
                         break;
                     case 'image':
@@ -2625,6 +2632,9 @@ define([
                         keep = (attrs.rx > 0 && attrs.ry > 0);
                         if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE) {
                             TutorialController.handleNextStep();
+                        }
+                        if (!isContinuousDrawing) {
+                            canvas.setMode('select');
                         }
                         break;
                     case 'fhellipse':
@@ -2719,7 +2729,8 @@ define([
                 var ext_result = runExtensions('mouseUp', {
                     event: evt,
                     mouse_x: mouse_x,
-                    mouse_y: mouse_y
+                    mouse_y: mouse_y,
+                    isContinuousDrawing
                 }, true);
 
                 $.each(ext_result, function (i, r) {
@@ -2789,7 +2800,7 @@ define([
                         cleanupElement(element);
                         if (current_mode === 'path') {
                             pathActions.toEditMode(element);
-                        } else if (curConfig.selectNew) {
+                        } else if (curConfig.selectNew && !(isContinuousDrawing && current_mode !== 'textedit')) {
                             selectOnly([element], true);
                         }
                         // we create the insert command that is stored on the stack
@@ -2798,6 +2809,9 @@ define([
 
                         call('changed', [element]);
                     }, ani_dur * 1000);
+                }
+                if (isContinuousDrawing && current_mode !== 'textedit') {
+                    clearSelection();
                 }
 
                 startTransform = null;
@@ -3457,7 +3471,8 @@ define([
                 },
                 toEditMode: function (x, y) {
                     allow_dbl = false;
-                    previousMode = current_mode;
+                    const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+                    previousMode = isContinuousDrawing ? current_mode : 'select';
                     current_mode = 'textedit';
                     selectorManager.requestSelector(curtext).showGrips(false);
                     // Make selector group accept clicks
@@ -3789,7 +3804,8 @@ define([
                     $('#x_align_line').remove();
                     $('#y_align_line').remove();
                     if (current_mode === 'path') {
-                        previousMode = 'path';
+                        const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+                        previousMode = isContinuousDrawing ? 'path' : 'select';
                         mouse_x = start_x;
                         mouse_y = start_y;
 
@@ -4238,7 +4254,8 @@ define([
                 },
                 toEditMode: function (element) {
                     svgedit.path.path = svgedit.path.getPath_(element);
-                    previousMode = current_mode;
+                    const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
+                    previousMode = isContinuousDrawing ? current_mode : 'select';
                     current_mode = 'pathedit';
                     clearSelection();
                     svgedit.path.path.show(true).update();
@@ -7114,6 +7131,7 @@ define([
             $('.tool-btn').removeClass('active');
             switch (name) {
                 case 'select':
+                    $('#svg_editor g').css('cursor', 'move');
                     $('#left-Shoot').addClass('active');
                     $('#left-Cursor').addClass('active');
                     break;

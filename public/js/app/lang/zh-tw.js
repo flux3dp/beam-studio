@@ -466,6 +466,7 @@ define(function() {
             guides_origin: '參考線座標',
             guides: '參考線',
             image_downsampling: '點陣圖畫質',
+            continuous_drawing: '連續繪製',
             mask: '工作範圍剪裁',
             optimization: '優化',
             font_substitute: '自動替換字體',
