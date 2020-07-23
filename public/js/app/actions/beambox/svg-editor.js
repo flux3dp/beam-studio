@@ -3794,7 +3794,7 @@ define([
                         console.log('handle clip board file');
                         for(let i = 0; i < clipboardData.files.length; i++) {
                             let file = clipboardData.files[i];
-                            handleFile(file);
+                            svgEditor.handleFile(file);
                             importedFromClipboard = true;
                         }
                     } else if (clipboardData.types.includes('text/html')) {
@@ -6230,6 +6230,7 @@ define([
                             break;
                     }
                 }
+                editor.handleFile = handleFile;
 
                 workarea[0].addEventListener('dragenter', onDragEnter, false);
                 workarea[0].addEventListener('dragover', onDragOver, false);
