@@ -126,13 +126,13 @@ define([
             BeamboxPreference.write('borderless', this.state.borderlessMode);
             BeamboxPreference.write('enable-diode', this.state.enableDiode);
             BeamboxPreference.write('enable-autofocus', this.state.enableAutofocus);
-            BeamboxActions.updateLaserPanel();
             if (this.state.workarea != BeamboxPreference.read('workarea')) {
                 BeamboxPreference.write('workarea', this.state.workarea);
                 svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
                 svgEditor.resetView();
                 PreviewModeBackgroundDrawer.updateCanvasSize();
             }
+            BeamboxActions.updateLaserPanel();
         }
 
         render() {

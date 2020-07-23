@@ -93,6 +93,7 @@ define([
         }
 
         componentDidMount() {
+            BeamboxStore.removeAllUpdateLaserPanelListeners();
             BeamboxStore.onUpdateLaserPanel(() => this.updateData());
         }
 
@@ -192,6 +193,7 @@ define([
         }
 
         updateData = () => {
+            this.initDefaultConfig();
             const layerData = FnWrapper.getCurrentLayerData();
 
             this.setState({
