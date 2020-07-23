@@ -209,8 +209,10 @@
                 }
                 .switch-container {
                     margin-left: 0;
+                    width: 145px;
                     .onoffswitch {
-                        margin-left: 20px;
+                        position: relative;
+                        float: right;
                     }
                 }
                 .dropdown-container {
