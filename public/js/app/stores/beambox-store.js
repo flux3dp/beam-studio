@@ -64,6 +64,11 @@ define([
             return beamboxStore;
         },
 
+        removeAllUpdateLaserPanelListeners: function() {
+            this.removeAllListeners(Constants.UPDATE_LASER_PANEL);
+            return beamboxStore;
+        },
+
         removeEndDrawingPreviewBlobListener: function(callback) {
             this.removeListener(Constants.END_DRAWINGk_PREVIEW_BLOB, callback);
             return beamboxStore;

@@ -5904,11 +5904,11 @@ define([
                         use_el.id = svgCanvas.getNextId();
                         svgedit.utilities.setHref(use_el, `#${symbol.id}`);
                         svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(use_el);
+                        const bb = svgedit.utilities.getBBox(use_el);
 
                         const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
                         svgedit.utilities.setHref(use_el, `#${imageSymbol.id}`);
 
-                        const bb = svgedit.utilities.getBBox(use_el);
                         let xform = '';
                         for (let key in bb) {
                             xform += `${key}=${bb[key]} `;

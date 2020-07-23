@@ -1960,14 +1960,14 @@
       return pathSeg;
     }
 
-    const connectPathSegs = (pathSegs) => {
-      const getFirstPointAndLastPoints = (pathSeg) => {
-        const firstPoint = pathSeg[0].points[0];
-        const segLen = pathSeg.length;
-        const lastPoint = pathSeg[segLen - 1].points[pathSeg[segLen - 1].points.length - 1];
-        return {firstPoint, lastPoint};
-      };
+    const getFirstPointAndLastPoints = (pathSeg) => {
+      const firstPoint = pathSeg[0].points[0];
+      const segLen = pathSeg.length;
+      const lastPoint = pathSeg[segLen - 1].points[pathSeg[segLen - 1].points.length - 1];
+      return {firstPoint, lastPoint};
+    };
 
+    const connectPathSegs = (pathSegs) => { 
       for (let i = 0; i < pathSegs.length - 1; i++) {
         let pathSeg = pathSegs[i];
         const {firstPoint, lastPoint} = getFirstPointAndLastPoints(pathSeg);
@@ -1997,6 +1997,14 @@
           d += `${Math.round(p[0] * 10000)/10000},${Math.round(p[1] * 10000)/10000} `;
         });
       });
+      const {firstPoint, lastPoint} = getFirstPointAndLastPoints(pathSeg);
+      if (
+        (Math.round(firstPoint[0] * 10000) / 10000) === (Math.round(lastPoint[0] * 10000) / 10000) &&
+        (Math.round(firstPoint[1] * 10000) / 10000) === (Math.round(lastPoint[1] * 10000) / 10000)
+        ) {
+        d += 'z';
+      }
+      
       return `<path fill="none" stroke="#000000" stroke-width="1px" vector-effect="non-scaling-stroke" d="${d}"/>`;
     };
 
