@@ -2056,9 +2056,9 @@ define([
                             top = svgedit.utilities.snapToGrid(top);
                             ty = svgedit.utilities.snapToGrid(ty);
                         }
-
+                        const isRatioFixed = ObjectPanelController.getDimensionValues('isRatioFixed');
                         translateOrigin.setTranslate(-(left + tx), -(top + ty));
-                        if (evt.shiftKey) {
+                        if (isRatioFixed ^ evt.shiftKey) {
                             if (sx === 1) {
                                 sx = sy;
                             } else {
@@ -6175,6 +6175,7 @@ define([
                 use_el.setAttribute('data-symbol', symbol);
                 use_el.setAttribute('data-ref', symbol);
                 use_el.setAttribute('data-svg', true);
+                use_el.setAttribute('data-ratiofixed', true);
 
                 if (type === 'nolayer') {
                     use_el.setAttribute('data-wireframe', true);
@@ -9485,7 +9486,8 @@ define([
             var g = addSvgElementFromJson({
                 'element': type,
                 'attr': {
-                    'id': getNextId()
+                    'id': getNextId(),
+                    'data-ratiofixed': true,
                 }
             });
             if (type === 'a') {
@@ -9824,7 +9826,8 @@ define([
                 'element': type,
                 'attr': {
                     'id': getNextId(),
-                    'data-tempgroup': true
+                    'data-tempgroup': true,
+                    'data-ratiofixed': true,
                 }
             });
             // Move to direct under svgcontent to avoid group under invisible layer

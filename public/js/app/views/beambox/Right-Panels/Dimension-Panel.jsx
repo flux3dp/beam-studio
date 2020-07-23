@@ -175,8 +175,9 @@ define([
         }
 
         handleFixRatio = () => {
-            const { getDimensionValues, updateDimensionValues } = this.props;
-            const isRatioFixed = getDimensionValues('isRatioFixed') || false;
+            const { elem, updateDimensionValues } = this.props;
+            const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true' || false;
+            elem.setAttribute('data-ratiofixed', !isRatioFixed);
             updateDimensionValues({isRatioFixed: !isRatioFixed});
             this.setState(this.state);
         }
