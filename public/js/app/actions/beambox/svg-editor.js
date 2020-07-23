@@ -5390,6 +5390,19 @@ define([
             // and provide a file input to click. When that change event fires, it will
             // get the text contents of the file and send it to the canvas
             if (window.FileReader) {
+                const imageToPngBlob = async (image) => {
+                    return new Promise((resolve, reject) => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(image, 0, 0);
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        });
+                    });
+                }
+
                 function readImage(file, scale = 1, offset = null) {
                     return new Promise((resolve, reject) => {
                         var defaultX = 0, defaultY = 0;
@@ -5402,7 +5415,7 @@ define([
                             let rotationFlag = getExifRotationFlag(e.target.result);
 
                             // let's insert the new image until we know its dimensions
-                            var insertNewImage = function (img, width, height) {
+                            var insertNewImage = async function (img, width, height) {
                                 var newImage = svgCanvas.addSvgElementFromJson({
                                     element: 'image',
                                     attr: {
@@ -5418,6 +5431,12 @@ define([
                                         origImage: img.src,
                                     }
                                 });
+                                if (file.type === 'image/webp') {
+                                    const pngBlob = await imageToPngBlob(img);
+                                    const newSrc = URL.createObjectURL(pngBlob);
+                                    URL.revokeObjectURL(img.src);
+                                    newImage.setAttribute('origImage', newSrc);
+                                }
                                 ImageData(
                                     newImage.getAttribute('origImage'), {
                                         height: height,
