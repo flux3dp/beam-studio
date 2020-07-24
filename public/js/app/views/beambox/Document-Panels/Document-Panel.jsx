@@ -32,6 +32,13 @@ define([
             'ultra',
         ];
 
+        const dpiValueMap = {
+            low: 100,
+            medium: 250,
+            high: 500,
+            ultra: 1000,
+        };
+
         const sliderValue = dpiMap.indexOf(value);
 
         const onSliderValueChange = (e) => {
@@ -55,7 +62,7 @@ define([
                     <input
                         className='value'
                         type='text'
-                        value={LANG[value]}
+                        value={LANG[value] + ` (${dpiValueMap[value]} DPI)`}
                         disabled={true}
                     />
                 </div>
