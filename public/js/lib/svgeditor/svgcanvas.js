@@ -4652,26 +4652,21 @@ define([
                     // Adds an extra segment if the last seg before a Z doesn't end
                     // at its M point
                     // M0,0 L0,100 L100,100 z
-                    var segList = elem.pathSegList;
-                    var len = segList.numberOfItems;
-                    var i, last_m;
-                    for (i = 0; i < len; ++i) {
-                        var item = segList.getItem(i);
-                        if (item.pathSegType === 2) {
-                            last_m = item;
+                    let last_m;
+                    for (let i = 0; i < elem.pathSegList.numberOfItems; ++i) {
+                        let seg = elem.pathSegList.getItem(i);
+                        if (seg.pathSegType === 2) {
+                            last_m = seg;
                         }
 
-                        if (item.pathSegType === 1) {
-                            var prev = segList.getItem(i - 1);
+                        if (seg.pathSegType === 1 && i > 0) {
+                            let prev = elem.pathSegList.getItem(i - 1);
                             if (prev.x != last_m.x || prev.y != last_m.y) {
                                 // Add an L segment here
                                 var newseg = elem.createSVGPathSegLinetoAbs(last_m.x, last_m.y);
                                 svgedit.path.insertItemBefore(elem, newseg, i);
-                                // Can this be done better?
-                                pathActions.fixEnd(elem);
-                                break;
+                                i++;
                             }
-
                         }
                     }
                     if (svgedit.browser.isWebkit()) {
