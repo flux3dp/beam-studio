@@ -328,7 +328,7 @@ define([
                 }).fail((status) => {
                     Alert.popUp({
                         id: 'fatal-occurred',
-                        message: status,
+                        message: `#813 ${status}`,
                         type: AlertConstants.SHOW_POPUP_ERROR,
                         callbacks: () => {this._onCancel('fatal-occurred')}
                     });

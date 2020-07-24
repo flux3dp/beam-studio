@@ -197,7 +197,7 @@ define([
                 ProgressActions.close();
                 Alert.popUp({
                     id: 'get-taskcode-error',
-                    message: `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+                    message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     buttonType: AlertConstants.YES_NO,
                     onYes: () => {
@@ -240,7 +240,7 @@ define([
                         ProgressActions.close();
                         Alert.popUp({
                             id: 'get-taskcode-error',
-                            message: `${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+                            message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
                             type: AlertConstants.SHOW_POPUP_ERROR,
                             buttonType: AlertConstants.YES_NO,
                             onYes: () => {
@@ -292,7 +292,7 @@ define([
                 .fail((errMsg) => {
                     Alert.popUp({
                         id: 'menu-item',
-                        message: errMsg,
+                        message: `#807 ${errMsg}`,
                         type: AlertConstants.SHOW_POPUP_ERROR,
                     });
                 });

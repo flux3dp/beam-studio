@@ -152,7 +152,7 @@ define([
             }
 
             if (BeamboxPreference.read('borderless') && !vc.meetRequirement('BORDERLESS_MODE')) {
-                const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2} ${lang.beambox.popup.or_turn_off_borderless_mode}`;
+                const message = `#814 ${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2} ${lang.beambox.popup.or_turn_off_borderless_mode}`;
                 const caption = lang.beambox.left_panel.borderless_preview;
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
@@ -175,7 +175,7 @@ define([
                     } else {
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: errMessage,
+                            message: `#803 ${errMessage}`,
                         });
                     }
                     setTopBarPreviewMode(false);
@@ -187,7 +187,7 @@ define([
                 console.log(error);
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: error.message || LANG.alerts.fail_to_start_preview,
+                    message: error.message ? (`#803 ${error.message}`) : LANG.alerts.fail_to_start_preview,
                 });
                 FnWrapper.useSelectTool();
                 return;
@@ -475,7 +475,7 @@ define([
                 ProgressActions.close();
                 Alert.popUp({
                     id: 'fatal-occurred',
-                    message: e.toString(),
+                    message: '#813' + e.toString(),
                     type: AlertConstants.SHOW_POPUP_ERROR,
                 });
             }

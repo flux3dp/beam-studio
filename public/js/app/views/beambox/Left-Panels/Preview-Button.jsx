@@ -203,7 +203,7 @@ define([
                     const errorCallback = (errMessage) => {
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: errMessage,
+                            message: `#803 ${errMessage}`,
                         });
                         this.setState({ isPreviewMode: false });
                         $(workarea).css('cursor', 'auto');
@@ -221,7 +221,7 @@ define([
                         console.log(error);
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: error.message || 'Fail to start preview mode',
+                            message: '#803 ' + (error.message || 'Fail to start preview mode'),
                         });
                         FnWrapper.useSelectTool();
                     }
@@ -243,7 +243,7 @@ define([
 
                 if (BeamboxPreference.read('borderless')) {
                     if (!isFirmwareBorderlessAvailable(device)) {
-                        const message = `${i18n.lang.camera_calibration.update_firmware_msg1} 2.5.1 ${i18n.lang.camera_calibration.update_firmware_msg2} ${i18n.lang.beambox.popup.or_turn_off_borderless_mode}`;
+                        const message = `#814 ${i18n.lang.camera_calibration.update_firmware_msg1} 2.5.1 ${i18n.lang.camera_calibration.update_firmware_msg2} ${i18n.lang.beambox.popup.or_turn_off_borderless_mode}`;
                         const caption = i18n.lang.beambox.left_panel.borderless_preview;
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,

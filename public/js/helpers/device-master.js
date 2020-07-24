@@ -116,7 +116,7 @@ define([
 
                         Alert.popUp({
                             id: 'device-auth-fail',
-                            message,
+                            message: `#811 ${message}`,
                             type: AlertConstants.SHOW_POPUP_ERROR
                         });
                     });
@@ -212,7 +212,7 @@ define([
                             success(false);
                             Alert.popUp({
                                 id: 'unhandle-exception',
-                                message,
+                                message: `#821 ${message}`,
                                 type: AlertConstants.SHOW_POPUP_ERROR
                             });
                     }
@@ -915,7 +915,6 @@ define([
     }
 
     function maintainCloseFan() {
-        console.log('addTask maintainCloseFan');
         return SocketMaster.addTask('maintainCloseFan');
     }
 

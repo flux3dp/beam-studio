@@ -64,7 +64,7 @@ define(function() {
         },
         device_selection: {
             no_printers: '无法透过 Wi-Fi 侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215394548">暸解更多</a>',
-            no_beambox: '无法透过 Wi-Fi 侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
+            no_beambox: '#801 无法透过 Wi-Fi 侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
             module: 'MODULE',
             status: 'STATUS'
         },
@@ -82,7 +82,7 @@ define(function() {
                 confirm: '上传',
                 upload_file: '固件上传',
                 update_success: '固件更新上传成功',
-                update_fail: '更新失败'
+                update_fail: '#822 更新失败'
             },
             software: {
                 checking: '检查更新中',
@@ -123,7 +123,7 @@ define(function() {
             preparing: '准备中...',
             later: '稍候',
             download: '在线更新',
-            cannot_reach_internet: '服务器无法连接<br/>请确认网络连接',
+            cannot_reach_internet: '#823 服务器无法连接<br/>请确认网络连接',
             install: '下载',
             upload: '上传'
         },
@@ -312,7 +312,7 @@ define(function() {
                 set_station_mode: '设置成无线基地台',
                 password_placeholder: '使用密码保护你的机器',
                 incorrect_old_password: '旧密码错误',
-                incorrect_password: '密码错误',
+                incorrect_password: '#828 密码错误',
                 ap_mode_name: '网络名称',
                 ap_mode_pass: '密码',
                 ap_mode_name_format: '只接受英文及数字',
@@ -1161,16 +1161,16 @@ define(function() {
                 too_fast_for_path: '含有路径物件的图层速度过快，可能导致切割时位置误差。\n不建议超过在切割路径时超过 20mm/s。',
                 too_fast_for_path_and_constrain: '以下图层： %s\n含有向量路径物件且速度超过 20mm/s，为维持雕刻的精度，向量路径速度将被限制在 20mm/s，您可以在偏好设定解除此限制。',
                 both_power_and_speed_too_high: '激光管在高功率下耗损较快，使用低功率可以延长雷试管使用寿命。\n同时在此雕刻分辨率使用过高速度，可能导致渐层雕刻較差品质。',
-                should_update_firmware_to_continue: '您的固件版本不支持最新的软件改善。为了更良好的使用经验与雕刻品质，请先更新手机切膜机的固件以继续。 (主菜单 > 机器 > [ Your手机切膜机] > 固件更新)',
+                should_update_firmware_to_continue: '#814 您的固件版本不支持最新的软件改善。为了更良好的使用经验与雕刻品质，请先更新手机切膜机的固件以继续。 (主菜单 > 机器 > [ Your手机切膜机] > 固件更新)',
                 more_than_two_object: '太多物件，只支援两物件操作',
                 not_support_object_type: '不支援的物件类型',
                 select_first: '请先选取物件以继续',
                 select_at_least_two: '请选取两个物件以继续',
-                import_file_contain_invalid_path: '汇入的SVG档案中含有不存在的图片路径，请确认档案中所有连结之图片皆存在，或改将图片嵌入档案中。',
+                import_file_contain_invalid_path: '#808 汇入的SVG档案中含有不存在的图片路径，请确认档案中所有连结之图片皆存在，或改将图片嵌入档案中。',
                 import_file_error_ask_for_upload: '读取 SVG 档时发生错误，是否愿意上传档案回报错误给开发团队？',
-                upload_file_too_large: '档案大小过大，请联络客服。',
+                upload_file_too_large: '#819 档案大小过大，请联络客服。',
                 successfully_uploaded: '档案已成功上传。',
-                upload_failed: '档案上传失败。',
+                upload_failed: '#819 档案上传失败。',
                 or_turn_off_borderless_mode: '或是关闭开盖模式',
                 svg_1_1_waring: '此档案标示之 svg 版本为 1.1 版，可能有潜在的不相容风险。',
                 svg_image_path_waring: '此档案内含有以路径读取的图片，可能会有读取失败的风险。请在做图汇出 SVG 时，当点阵图相关选项改成嵌入。',
@@ -1182,10 +1182,10 @@ define(function() {
                 progress: {
                     uploading: '上传中'
                 },
-                backend_connect_failed_ask_to_upload: '连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
+                backend_connect_failed_ask_to_upload: '#802 连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
                 pdf2svg: {
-                    error_when_converting_pdf: '将 pdf 转换成 svg 时发生错误：',
-                    error_pdf2svg_not_found: '无法找到 pdf2svg 指令，请使用您的套件管理装置安装 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
+                    error_when_converting_pdf: '#824 将 pdf 转换成 svg 时发生错误：',
+                    error_pdf2svg_not_found: '#825 无法找到 pdf2svg 指令，请使用您的套件管理装置安装 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
                 ungroup_use: '正要解散外部汇入的 dxf 或是 svg ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
             },
@@ -1348,8 +1348,8 @@ define(function() {
                             parameters: '选择参数'
                         },
                         alerts: {
-                            start_preview_timeout: '启动相机预览时超时，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
-                            fail_to_start_preview: '启动相机预览失败，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+                            start_preview_timeout: '#803 启动相机预览时超时，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+                            fail_to_start_preview: '#803 启动相机预览失败，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
 
                         }
                     },
@@ -1540,11 +1540,11 @@ define(function() {
                 network_testing: '网路检测',
                 local_ip: '本机 IP 位置：',
                 insert_ip: '目标 IP 位置：',
-                empty_ip: '请先输入目标 IP 位置',
+                empty_ip: '#818 请先输入目标 IP 位置',
                 start: '检测',
                 end: '結束',
                 testing: '网路检测中...',
-                invalid_ip: '错误的 IP 位置',
+                invalid_ip: '#818 错误的 IP 位置',
                 network_healthiness: '连线健康度',
                 average_response: '平均回覆时间',
                 test_completed: '检测完成',
@@ -1552,7 +1552,7 @@ define(function() {
                 cannot_connect_1: '无法与目标 IP 建立连线',
                 cannot_connect_2: '无法与目标 IP 建立连线，请确认是否与目标 IP 在同一网路',
                 cannot_get_local: '无法取得本地 IP 位置',
-                fail_to_start_network_test: '無法開始网路检测。'
+                fail_to_start_network_test: '#817 無法開始网路检测。'
             },
             layer_color_config_panel: {
                 layer_color_config: '图层颜色参数设定',
@@ -1585,9 +1585,9 @@ define(function() {
             notification: '"%s" 需要密码',
             submit: '送出',
             please_enter_password: '"密码',
-            auth_failure: '认证失败',
+            auth_failure: '#811 认证失败',
             retry: '重新选择',
-            unable_to_connect: '#008 无法与机器创建稳定连接'
+            unable_to_connect: '#810 无法与机器创建稳定连接'
         },
         device: {
             pause: '暂停',
@@ -1802,10 +1802,10 @@ define(function() {
             machineNotConnected: 'Machine is not connected',
             notPrinting: 'Printing is not in progress',
             nothingToPrint: 'Nothing to print (source blob missing)',
-            connectionTimeout: '请确认你的网络状态和机器的 Wi-Fi 指示灯是否为恒亮',
+            connectionTimeout: '#805 请确认你的网络状态和机器的 Wi-Fi 指示灯是否为恒亮',
             device_not_found: {
                 caption: '找不到默认机器',
-                message: '请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器'
+                message: '#812 请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器'
             },
             device_busy: {
                 caption: '机器忙碌中',
@@ -1823,7 +1823,7 @@ define(function() {
             image_is_too_small: '图档内容有误',
             monitor_too_old: {
                 caption: '固件需要更新',
-                content: '请按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此说明</a>安装最新固件版本'
+                content: '#814 请按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此说明</a>安装最新固件版本'
             },
             cant_establish_connection: '无法正常启动 Mozu Studio API，建议手动安装 Visual C++ Redistributable 2015，如持续发生，请<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/requests/new" target="_blank">联系 FLUX 客服</a>',
             application_occurs_error: '应用程序发生异常，请使用“功能表 > 说明 > 错误回报”',
@@ -1834,29 +1834,29 @@ define(function() {
             confirmSceneImport: '加载.fsc文件将清除目前所有场景，是否继续？',
             brokenFcode: '无法开启 %s',
             slicingFatalError: '切片时发生错误，请上传模型文件给 FLUX 客服',
-            unknown_error: '无法与机器创建连接，请使用“功能表 > 说明 > 错误回报”',
-            unknown_device: '无法与机器创建连接，请确认 USB 有连接于机器',
+            unknown_error: '#821 无法与机器创建连接，请使用“功能表 > 说明 > 错误回报”',
+            unknown_device: '#826 无法与机器创建连接，请确认 USB 有连接于机器',
             important_update: {
                 caption: '重要更新',
                 message: 'Delta 有重要固件更新，是否要现在更新？',
             },
             unsupport_osx_version: '不支持此 Mac OS X 版本',
             need_password: '需要密码与机器创建连接',
-            unavailableWorkarea: '目前设定的工作范围超过目标机器的工作范围。请确认选择的机器型号，或从 编辑 > 文件设定 更改工作范围。',
+            unavailableWorkarea: '#804 目前设定的工作范围超过目标机器的工作范围。请确认选择的机器型号，或从 编辑 > 文件设定 更改工作范围。',
             new_app_downloading: 'Mozu Studio 下载中',
             new_app_download_canceled: 'Mozu Studio 下载已被取消',
             new_app_downloaded: '新版Mozu Studio 下载完毕',
             ask_for_upgrade: '马上升级吗?',
             please_enter_dpi: '请输入该文件的 dpi',
-            reset_sd_card: '請重置 SD 卡',
+            reset_sd_card: '#820 请重置 SD 卡',
             gcode_area_too_big: '导入的 gcode 文件超过打印范围',
             empty_file: '文件内容不存在',
             usb_unplugged: 'USB 连接逾时，请确认与机器的连接',
             launghing_from_installer_warning: 'Mozu Studio 不是从应用程序文件夹开启，可能会产生问题。请将 Mozu Studio 移到应用程序文件夹再使用。',
             uploading_fcode: '正在上传 fcode',
-            cant_connect_to_device: '无法链接机器，请确认机器是否开启，以及与机器的链接方式',
+            cant_connect_to_device: '#827 无法链接机器，请确认机器是否开启，以及与机器的链接方式',
             unable_to_find_machine: '无法连接到机器 ',
-            unable_to_start: '无法开始工作，如果持续发生，请附上错误回报，与我们联系:\n',
+            unable_to_start: '#830 无法开始工作，如果持续发生，请附上错误回报，与我们联系:\n',
             camera_fail_to_transmit_image: '相机传输照片异常，请将 Beambox 重新开机。如果问题持续发生，请与我们联系。'
         },
         machine_status: {

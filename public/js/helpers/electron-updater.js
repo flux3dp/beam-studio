@@ -69,7 +69,7 @@ define([
                 console.log(res.error);
                 if (!isAutoCheck) {
                     Alert.popUp({
-                        message: `Error: ${res.error.code} `,
+                        message: `#829 Error: ${res.error.code} `,
                         caption: LANG.check_update
                     });
                 }
@@ -130,7 +130,7 @@ define([
             if (res.error) {
                 console.log(res.error);
                 Alert.popUp({
-                    message: `Error: ${res.error.code} `,
+                    message: `#829 Error: ${res.error.code} `,
                     caption: LANG.switch_version
                 });
                 return;

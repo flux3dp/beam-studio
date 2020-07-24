@@ -50,8 +50,8 @@ define(function() {
                 dxf: 'Imported dxf',
             },
             alerts: {
-                start_preview_timeout: 'Timeout has occured when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
-                fail_to_start_preview: 'Fail to start preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
+                start_preview_timeout: '#803 Timeout has occured when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
+                fail_to_start_preview: '#803 Fail to start preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
             }
         },
         support: {
@@ -68,7 +68,7 @@ define(function() {
         },
         device_selection: {
             no_printers: 'Cannot detect any machine through the Wi-Fi. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">More Info</a>',
-            no_beambox: 'Cannot detect any machine through the Wi-Fi. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">More Info</a>',
+            no_beambox: '#801 Cannot detect any machine through the Wi-Fi. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">More Info</a>',
             module: 'MODULE',
             status: 'STATUS'
         },
@@ -86,7 +86,7 @@ define(function() {
                 confirm: 'UPLOAD',
                 upload_file: 'Firmware upload (*.bin / *.fxfw)',
                 update_success: 'Firmware update successfully uploaded',
-                update_fail: 'Update Fail'
+                update_fail: '#822 Update Fail'
             },
             software: {
                 checking: 'Checking for Update',
@@ -127,7 +127,7 @@ define(function() {
             preparing: 'Preparing...',
             later: 'LATER',
             download: 'ONLINE UPDATE',
-            cannot_reach_internet: 'Server is unreachable<br/>Please checking internet connection',
+            cannot_reach_internet: '#823 Server is unreachable<br/>Please checking internet connection',
             install: 'INSTALL',
             upload: 'UPLOAD'
         },
@@ -318,7 +318,7 @@ define(function() {
                 set_station_mode: 'Create a Network',
                 password_placeholder: 'Secure your machine with password',
                 incorrect_old_password: 'Incorrect Current Password',
-                incorrect_password: 'Incorrect Password',
+                incorrect_password: '#828 Incorrect Password',
                 ap_mode_name: 'Network Name',
                 ap_mode_pass: 'Password',
                 ap_mode_name_format: 'Only accept alphabets or numbers',
@@ -1170,16 +1170,16 @@ define(function() {
                 both_power_and_speed_too_high: 'Using lower laser power will extends laser tube\'s lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.',
                 too_fast_for_path: 'Using too high speed in layers containing path objects may result in lower precision when cutting.\nWe don\'t recommend using speed faster than 20mm/s when cutting.',
                 too_fast_for_path_and_constrain: 'Following layers: %s\ncontain vector path objects, and have speed exceeding 20mm/s.\nThe cutting speed of vector path objects will be contrained to 20mm/s.\nYou can remove this limit at Preferens Settings.',
-                should_update_firmware_to_continue: 'Your firmware does not support this version of Beam Studio. Kindly update firmware to continue. (Menu > Machine > [Your Machine] > Update Firmware)',
+                should_update_firmware_to_continue: '#814 Your firmware does not support this version of Beam Studio. Kindly update firmware to continue. (Menu > Machine > [Your Machine] > Update Firmware)',
                 more_than_two_object: 'Too many objects. Only support for 2 objects',
                 not_support_object_type: 'Not support object type',
                 select_first: 'Select an object first.',
                 select_at_least_two: 'Select two objects to proceed',
-                import_file_contain_invalid_path: 'Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
+                import_file_contain_invalid_path: '#808 Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
                 import_file_error_ask_for_upload: 'Failed to Imported SVG file. Are you willing to provide file to develop team for bug report ?',
-                upload_file_too_large: 'File is too large for upload.',
+                upload_file_too_large: '#819 File is too large for upload.',
                 successfully_uploaded: 'File upload successed.',
-                upload_failed: 'File upload failed.',
+                upload_failed: '#819 File upload failed.',
                 or_turn_off_borderless_mode: ' Or turn off Open Bottom mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
                 svg_image_path_waring: 'This SVG file contains <image> loading from file path. This might cause fails when loading.\nTo avoid this risk, Please kindly use embed image when exporting SVG.',
@@ -1191,10 +1191,10 @@ define(function() {
                 progress: {
                     uploading: 'Uploading'
                 },
-                backend_connect_failed_ask_to_upload: 'Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
+                backend_connect_failed_ask_to_upload: '#802 Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
                 pdf2svg: {
-                    error_when_converting_pdf: 'Error when converting pdf to svg:',
-                    error_pdf2svg_not_found: 'Error: Command pdf2svg not found. Please install pdf2svg with your package manager (e.g., "yum install pdf2svg" or "apt-get install pdf2svg").',
+                    error_when_converting_pdf: '#824 Error when converting pdf to svg:',
+                    error_pdf2svg_not_found: '#825 Error: Command pdf2svg not found. Please install pdf2svg with your package manager (e.g., "yum install pdf2svg" or "apt-get install pdf2svg").',
                 },
                 ungroup_use: 'This will ungroup imported dxf or svg. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
             },
@@ -1540,11 +1540,11 @@ define(function() {
                 network_testing: 'Network Testing',
                 local_ip: 'Local IP address:',
                 insert_ip: 'Target device IP address:',
-                empty_ip: 'Please enter target device IP first.',
+                empty_ip: '#818 Please enter target device IP first.',
                 start: 'Start',
                 end: 'End',
                 testing: 'Testing Network...',
-                invalid_ip: 'Invalid IP address',
+                invalid_ip: '#818 Invalid IP address',
                 network_healthiness: 'Network Healthiness',
                 average_response: 'Average Response Time',
                 test_completed: 'Test Completed',
@@ -1552,7 +1552,7 @@ define(function() {
                 cannot_connect_1: 'Fail to connect to target IP.',
                 cannot_connect_2: 'Fail to connect to target IP. Please make sure that the target is in the same network.',
                 cannot_get_local: 'Access to local IP address failed.',
-                fail_to_start_network_test: 'Fail to start network testing.'
+                fail_to_start_network_test: '#817 Fail to start network testing.'
             },
             layer_color_config_panel: {
                 layer_color_config: 'Layer Color Configurations',
@@ -1585,9 +1585,9 @@ define(function() {
             notification: '"%s" requires a password',
             submit: 'SUBMIT',
             please_enter_password: 'Password',
-            auth_failure: 'Authentication fail',
+            auth_failure: '#811 Authentication fail',
             retry: 'Retry',
-            unable_to_connect: '#008 Unable to build a stable connection with machine'
+            unable_to_connect: '#810 Unable to build a stable connection with machine'
         },
         device: {
             pause: 'Pause',
@@ -1802,10 +1802,10 @@ define(function() {
             machineNotConnected: 'Machine is not connected',
             notPrinting: 'Printing is not in progress',
             nothingToPrint: 'Nothing to print (source blob missing)',
-            connectionTimeout: 'Please check your network state and your machine\'s Wi-Fi indicator.',
+            connectionTimeout: '#805 Please check your network state and your machine\'s Wi-Fi indicator.',
             device_not_found: {
                 caption: 'Default Machine not found',
-                message: 'Please check your machine\'s Wi-Fi indicator'
+                message: '#812 Please check your machine\'s Wi-Fi indicator'
             },
             device_busy: {
                 caption: 'Machine Busy',
@@ -1823,7 +1823,7 @@ define(function() {
             image_is_too_small: 'The file contains unsupported information',
             monitor_too_old: {
                 caption: 'Firmware Outdated',
-                content: 'Please install the latest firmware with <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">this guide</a>.'
+                content: '#814 Please install the latest firmware with <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">this guide</a>.'
             },
             cant_establish_connection: 'Unable to connect FLUX Studio API. Please <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/requests/new" target="_blank">contact FLUX support.</a>',
             application_occurs_error: 'The application has encountered an unhandled error.',
@@ -1834,29 +1834,29 @@ define(function() {
             confirmSceneImport: 'Importing .fsc will remove all objects on the scene, are you sure?',
             brokenFcode: 'Unable to open %s',
             slicingFatalError: 'Error encountered during slicing. Kindly report STL file to customer support.',
-            unknown_error: 'The application has encountered an unknown error, please use Help > Menu > Bug Report.',
-            unknown_device: 'Cannot connect to the machine, please make sure USB is attached to the machine',
+            unknown_error: '#821 The application has encountered an unknown error, please use Help > Menu > Bug Report.',
+            unknown_device: '#826 Cannot connect to the machine, please make sure USB is attached to the machine',
             important_update: {
                 caption: 'Important Update',
                 message: 'Important Machine firmware update is available. Do you wish to update now?',
             },
             unsupport_osx_version: 'Unsupported Mac OS X Version Detected',
             need_password: 'Need Password to Connect to the Machine',
-            unavailableWorkarea: 'Current workarea exceeds the workarea of this machine. Please check the workarea of selected machine or set workarea from Edit > Document Setting.',
+            unavailableWorkarea: '#804 Current workarea exceeds the workarea of this machine. Please check the workarea of selected machine or set workarea from Edit > Document Setting.',
             new_app_downloading: 'FLUX Studio is Downloading',
             new_app_download_canceled: 'FLUX Studio download has been canceled',
             new_app_downloaded: 'Newest FLUX Studio has been downloaded',
             ask_for_upgrade: 'Do you wish to upgrade now?',
             please_enter_dpi: 'Please enter the Unit of your file',
-            reset_sd_card: 'Please reset machine\'s SD card',
+            reset_sd_card: '#820 Please reset machine\'s SD card',
             gcode_area_too_big: 'Imported GCode exceed the printable area.',
             empty_file: 'File is empty',
             usb_unplugged: 'USB connection is lost. Please check your USB connection',
             launghing_from_installer_warning: 'You are launching FLUX Studio from the installer, and this may cause problems. Please move the FLUX Studio to the Application folder.',
             uploading_fcode: 'Uploading FCode',
-            cant_connect_to_device: 'Unable to connect the machine, please check your connection',
+            cant_connect_to_device: '#827 Unable to connect the machine, please check your connection',
             unable_to_find_machine: 'Unable to find machine ',
-            unable_to_start: 'Unable to start the task. Please try again. If this happens again, please contact us with bug report:\n',
+            unable_to_start: '#830 Unable to start the task. Please try again. If this happens again, please contact us with bug report:\n',
             camera_fail_to_transmit_image: 'Something went wrong with image transmission. Please try restarting your Beambox or contact us.'
         },
         machine_status: {

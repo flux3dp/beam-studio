@@ -50,8 +50,8 @@ define(function() {
                 dxf: 'Importierte dxf',
             },
             alerts: {
-                start_preview_timeout: 'Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
-                fail_to_start_preview: 'Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+                start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+                fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
             }
         },
         support: {
@@ -68,7 +68,7 @@ define(function() {
         },
         device_selection: {
             no_printers: 'Kein Computer kann über das WLAN erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">Mehr Info</a>',
-            no_beambox: 'Kein Computer kann über das WLAN erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">Mehr Info</a>',
+            no_beambox: '#801 Kein Computer kann über das WLAN erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">Mehr Info</a>',
             module: 'MODUL',
             status: 'STATUS'
         },
@@ -86,7 +86,7 @@ define(function() {
                 confirm: 'HOCHLADEN',
                 upload_file: 'Firmware-Upload (* .bin / * .fxfw)',
                 update_success: 'Firmware-Update erfolgreich hochgeladen',
-                update_fail: 'Update fehlgeschlagen'
+                update_fail: '#822 Update fehlgeschlagen'
             },
             software: {
                 checking: 'Suche nach Updates',
@@ -127,7 +127,7 @@ define(function() {
             preparing: 'Vorbereiten...',
             later: 'SPÄTER',
             download: 'ONLINE-UPDATE',
-            cannot_reach_internet: 'Server ist nicht erreichbar <br/> Bitte überprüfe die Internetverbindung',
+            cannot_reach_internet: '#823 Server ist nicht erreichbar <br/> Bitte überprüfe die Internetverbindung',
             install: 'INSTALLIEREN',
             upload: 'HOCHLADEN'
         },
@@ -318,7 +318,7 @@ define(function() {
                 set_station_mode: 'Erstelle ein Netzwerk',
                 password_placeholder: 'Sichere deinen Computer mit einem Passwort',
                 incorrect_old_password: 'Falsches aktuelles Passwort',
-                incorrect_password: 'Falsches Passwort',
+                incorrect_password: '#828 Falsches Passwort',
                 ap_mode_name: 'Netzwerkname',
                 ap_mode_pass: 'Passwort',
                 ap_mode_name_format: 'Akzeptiere nur Buchstaben oder Zahlen',
@@ -1170,16 +1170,16 @@ define(function() {
                 both_power_and_speed_too_high: 'Die Verwendung einer niedrigeren Laserleistung verlängert die Lebensdauer der Laserröhre!\nAußerdem kann eine zu hohe Geschwindigkeit bei dieser Auflösung zu einer schlechteren Qualität der Gravur führen.',
                 too_fast_for_path: 'Die Verwendung einer zu hohen Geschwindigkeit in Ebenen mit Pfadobjekten, kann zu einer geringeren Präzision beim Schneiden führen.\nWir empfehlen, beim Schneiden keine Geschwindigkeit von mehr als 20 mm/s zu verwenden.',
                 too_fast_for_path_and_constrain: 'Folgende Ebenen: %s\nenthalten Vektorpfadobjekte und eine Geschwindigkeit von mehr als 20 mm/s \nDie Schnittgeschwindigkeit von Vektorpfadobjekten wird auf 20 mm/s reduziert.\nDu kannst diese Beschränkung unter Präferenzen-Einstellungen entfernen.',
-                should_update_firmware_to_continue: 'Deine Firmware unterstützt diese Version von Beam Studio nicht. Bitte aktualisiere die Firmware, um fortzufahren. (Menü > Maschine > [Ihre Maschine] > Firmware aktualisieren)',
+                should_update_firmware_to_continue: '#814 Deine Firmware unterstützt diese Version von Beam Studio nicht. Bitte aktualisiere die Firmware, um fortzufahren. (Menü > Maschine > [Ihre Maschine] > Firmware aktualisieren)',
                 more_than_two_object: 'Zu viele Objekte. Es werden nur 2 Objekte unterstützt.',
                 not_support_object_type: 'Objekttyp wird nicht unterstützt.',
                 select_first: 'Wähle zunächst ein Objekt aus.',
                 select_at_least_two: 'Wähle zwei Objekte zum Fortfahren aus.',
-                import_file_contain_invalid_path: 'Importierte SVG-Datei enthält ungültigen Bildpfad. Bitte stelle sicher, dass alle Bilddateien existieren oder betten Sie das Bild in die Datei',
+                import_file_contain_invalid_path: '#808 Importierte SVG-Datei enthält ungültigen Bildpfad. Bitte stelle sicher, dass alle Bilddateien existieren oder betten Sie das Bild in die Datei',
                 import_file_error_ask_for_upload: 'Importierte SVG-Datei konnte nicht importiert werden. Bist du bereit, dem Entwicklerteam eine Datei für den Fehlerbericht zur Verfügung zu stellen ?',
-                upload_file_too_large: 'Datei ist zu groß zum Hochladen.',
+                upload_file_too_large: '#819 Datei ist zu groß zum Hochladen.',
                 successfully_uploaded: 'Datei-Upload erfolgreich.',
-                upload_failed: 'Datei-Upload fehlgeschlagen.',
+                upload_failed: '#819 Datei-Upload fehlgeschlagen.',
                 or_turn_off_borderless_mode: ' Oder deaktivieren Sie den Open Bottom Modus.',
                 svg_1_1_waring: 'Die Version dieser SVG-Datei ist Version 1.1. Möglicherweise treten Inkompatibilitätsprobleme auf.',
                 svg_image_path_waring: 'Diese SVG-Datei enthält das Laden von <image> aus dem Dateipfad. Dies kann beim Laden zu Fehlern führen.\nUm dieses Risiko zu vermeiden, verwenden Sie beim Exportieren von SVG bitte das eingebettete Bild.',
@@ -1191,10 +1191,10 @@ define(function() {
                 progress: {
                     uploading: 'Hochladen'
                 },
-                backend_connect_failed_ask_to_upload: 'Beim Versuch, eine Verbindung zum Server herzustellen, treten immer wieder Fehler auf. Möchtest du Ihr Fehlerberichtsprotokoll hochladen?',
+                backend_connect_failed_ask_to_upload: '#802 Beim Versuch, eine Verbindung zum Server herzustellen, treten immer wieder Fehler auf. Möchtest du Ihr Fehlerberichtsprotokoll hochladen?',
                 pdf2svg: {
-                    error_when_converting_pdf: 'Fehler beim Konvertieren von PDF in SVG:',
-                    error_pdf2svg_not_found: 'Fehler: Befehl pdf2svg nicht gefunden. Bitte installieren Sie pdf2svg mit Ihrem Paketmanager (z. B. "yum install pdf2svg" oder "apt-get install pdf2svg").',
+                    error_when_converting_pdf: '#824 Fehler beim Konvertieren von PDF in SVG:',
+                    error_pdf2svg_not_found: '#825 Fehler: Befehl pdf2svg nicht gefunden. Bitte installieren Sie pdf2svg mit Ihrem Paketmanager (z. B. "yum install pdf2svg" oder "apt-get install pdf2svg").',
                 },
                 ungroup_use: 'Dadurch wird die Gruppierung von importiertem dxf oder svg aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
             },
@@ -1540,11 +1540,11 @@ define(function() {
                 network_testing: 'Netzwerktests',
                 local_ip: 'Lokale IP-Adresse:',
                 insert_ip: 'IP-Adresse des Zielgeräts:',
-                empty_ip: 'Bitte gebe zuerst die IP des Zielgeräts ein.',
+                empty_ip: '#818 Bitte gebe zuerst die IP des Zielgeräts ein.',
                 start: 'Start',
                 end: 'Ende',
                 testing: 'Netzwerk testen ...',
-                invalid_ip: 'ungültige IP-Adresse',
+                invalid_ip: '#818 ungültige IP-Adresse',
                 network_healthiness: 'Netzwerkgesundheit',
                 average_response: 'Durchschnittliche Reaktionszeit',
                 test_completed: 'Test abgeschlossen',
@@ -1552,7 +1552,7 @@ define(function() {
                 cannot_connect_1: 'Verbindung zur Ziel-IP fehlgeschlagen.',
                 cannot_connect_2: 'Verbindung zur Ziel-IP fehlgeschlagen. Stelle sicher, dass sich das Ziel im selben Netzwerk befindet.',
                 cannot_get_local: 'Der Zugriff auf die lokale IP-Adresse ist fehlgeschlagen.',
-                fail_to_start_network_test: 'Starte den Netzwerktest nicht.'
+                fail_to_start_network_test: '#817 Starte den Netzwerktest nicht.'
             },
             layer_color_config_panel: {
                 layer_color_config: 'Ebenenfarbkonfigurationen',
@@ -1585,9 +1585,9 @@ define(function() {
             notification: '%s erfordert ein Passwort',
             submit: 'EINREICHEN',
             please_enter_password: 'Passwort',
-            auth_failure: 'Authentifizierung fehlgeschlagen',
+            auth_failure: '#811 Authentifizierung fehlgeschlagen',
             retry: 'Wiederholen',
-            unable_to_connect: '#008 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
+            unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
         },
         device: {
             pause: 'Pause',
@@ -1802,10 +1802,10 @@ define(function() {
             machineNotConnected: 'Maschine ist nicht angeschlossen',
             notPrinting: 'Der Druck ist nicht im Gange',
             nothingToPrint: 'Nichts zu drucken (Quell-Blob fehlt)',
-            connectionTimeout: 'Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
+            connectionTimeout: '#805 Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
             device_not_found: {
                 caption: 'Standard-Maschine nicht gefunden',
-                message: 'Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts'
+                message: '#812 Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts'
             },
             device_busy: {
                 caption: 'Maschine beschäftigt',
@@ -1823,7 +1823,7 @@ define(function() {
             image_is_too_small: 'Die Datei enthält nicht unterstützte Informationen',
             monitor_too_old: {
                 caption: 'Veraltete Firmware',
-                content: 'Bitte installieren Sie die neueste Firmware mit <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">dieser Anleitung</a>.'
+                content: '#814 Bitte installieren Sie die neueste Firmware mit <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">dieser Anleitung</a>.'
             },
             cant_establish_connection: 'Die Verbindung mit der FLUX Studio API ist nicht möglich. Bitte <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/requests/new" target=""_blank"">kontaktieren Sie die FLUX-Unterstützung.</a>.',
             application_occurs_error: 'Die Anwendung ist auf einen unbehandelten Fehler gestoßen.',
@@ -1834,29 +1834,29 @@ define(function() {
             confirmSceneImport: 'Wenn Sie .fsc importieren, werden alle Objekte in der Szene entfernt, sind Sie sicher?',
             brokenFcode: '%s kann nicht geöffnet werden',
             slicingFatalError: 'Beim Slicen aufgetretener Fehler. Bitte melden Sie die STL-Datei an den Kundensupport.',
-            unknown_error: 'Die Anwendung ist auf einen unbekannten Fehler gestoßen, bitte benutzen Sie Hilfe > Menü > Fehlerbericht.',
-            unknown_device: 'Die Verbindung zum Gerät kann nicht hergestellt werden, Bitte stelle sicher, dass USB an das Gerät angeschlossen ist.',
+            unknown_error: '#821 Die Anwendung ist auf einen unbekannten Fehler gestoßen, bitte benutzen Sie Hilfe > Menü > Fehlerbericht.',
+            unknown_device: '#826 Die Verbindung zum Gerät kann nicht hergestellt werden, Bitte stelle sicher, dass USB an das Gerät angeschlossen ist.',
             important_update: {
                 caption: 'Wichtiges Update',
                 message: 'Wichtig Firmware-Update der Maschine ist verfügbar. Möchtest du jetzt aktualisieren?',
             },
             unsupport_osx_version: 'Nicht unterstützte Mac OS X-Version erkannt',
             need_password: 'Benötigen Passwort für die Verbindung mit der Maschine',
-            unavailableWorkarea: 'Der aktuelle Arbeitsbereich übersteigt den Arbeitsbereich dieser Maschine. Bitte überprüfe den Arbeitsbereich des ausgewählten Geräts oder stelle den Arbeitsbereich über Bearbeiten > Dokumenteinstellung ein.',
+            unavailableWorkarea: '#804 Der aktuelle Arbeitsbereich übersteigt den Arbeitsbereich dieser Maschine. Bitte überprüfe den Arbeitsbereich des ausgewählten Geräts oder stelle den Arbeitsbereich über Bearbeiten > Dokumenteinstellung ein.',
             new_app_downloading: 'FLUX Studio wird heruntergeladen',
             new_app_download_canceled: 'Der Download von FLUX Studio wurde abgebrochen',
             new_app_downloaded: 'Neuestes FLUX Studio wurde heruntergeladen',
             ask_for_upgrade: 'Möchtest du jetzt upgraden?',
             please_enter_dpi: 'Bitte geben Sie die Einheit Ihrer Datei ein',
-            reset_sd_card: 'Bitte setzen Sie die SD-Karte des Geräts zurück.',
+            reset_sd_card: '#820 Bitte setzen Sie die SD-Karte des Geräts zurück.',
             gcode_area_too_big: 'Der importierte GCode überschreitet den druckbaren Bereich.',
             empty_file: 'Datei ist leer',
             usb_unplugged: 'Die USB-Verbindung ist verloren gegangen. Bitte überprüfe Ihre USB-Verbindung',
             launghing_from_installer_warning: 'Wenn Sie FLUX Studio aus dem Installationsprogramm heraus starten, kann dies zu Problemen führen. Bitte verschieben Sie FLUX Studio in den Anwendungsordner.',
             uploading_fcode: 'FCode hochladen',
-            cant_connect_to_device: 'Das Gerät konnte nicht angeschlossen werden, bitte überprüfe Ihre Verbindung',
+            cant_connect_to_device: '#827 Das Gerät konnte nicht angeschlossen werden, bitte überprüfe Ihre Verbindung',
             unable_to_find_machine: 'Maschine konnte nicht gefunden werden',
-            unable_to_start: 'Die Aufgabe konnte nicht gestartet werden. Bitte versuchen Sie es erneut. Wenn dies erneut geschieht, kontaktieren Sie uns bitte mit einem Fehlerbericht:\n',
+            unable_to_start: '#830 Die Aufgabe konnte nicht gestartet werden. Bitte versuchen Sie es erneut. Wenn dies erneut geschieht, kontaktieren Sie uns bitte mit einem Fehlerbericht:\n',
             camera_fail_to_transmit_image: 'Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starte Ihre Beambox neu oder kontaktieren Sie uns.'
         },
         machine_status: {

@@ -50,8 +50,8 @@ define(function() {
                 dxf: 'インポートされた dxf',
             },
             alerts: {
-                start_preview_timeout: 'プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
-                fail_to_start_preview: 'プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+                start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+                fail_to_start_preview: '#803 プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
             }
         },
         support: {
@@ -68,7 +68,7 @@ define(function() {
         },
         device_selection: {
             no_printers: 'Wi-Fi経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">さらなる情報</a>',
-            no_beambox: 'Wi-Fi経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.com/beambox-tutorial/">さらなる情報</a>',
+            no_beambox: '#801 Wi-Fi経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.com/beambox-tutorial/">さらなる情報</a>',
             module: 'モジュール',
             status: 'ステータス'
         },
@@ -86,7 +86,7 @@ define(function() {
                 confirm: 'アップロード',
                 upload_file: 'ファームウェアのアップロード（*.bin / *.fxfw）',
                 update_success: 'ファームウェアアップデートが正常にアップロードされました',
-                update_fail: 'アップデート失敗'
+                update_fail: '#822 アップデート失敗'
             },
             software: {
                 checking: 'アップデートの確認中',
@@ -127,7 +127,7 @@ define(function() {
             preparing: '準備中…',
             later: '後で',
             download: 'オンラインアップデート',
-            cannot_reach_internet: 'サーバーにアクセスできません。<br/>インターネット接続を確認してください',
+            cannot_reach_internet: '#823 サーバーにアクセスできません。<br/>インターネット接続を確認してください',
             install: 'インストール',
             upload: 'アップロード'
         },
@@ -318,7 +318,7 @@ define(function() {
                 set_station_mode: 'ネットワークを作成',
                 password_placeholder: 'パスワードでマシンを保護',
                 incorrect_old_password: '現在のパスワードが正しくありません',
-                incorrect_password: 'パスワードが正しくありません',
+                incorrect_password: '#828 パスワードが正しくありません',
                 ap_mode_name: 'ネットワーク名',
                 ap_mode_pass: 'パスワード',
                 ap_mode_name_format: 'アルファベットまたは数字のみを受け入れます',
@@ -1170,16 +1170,16 @@ define(function() {
                 both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
                 too_fast_for_path: 'パスオブジェクトを含む層で速すぎる速度を使用すると、切断時に精度が低下する場合があります。\n切断時に 20mm/s より速い速度を使用することはお勧めしません。',
                 too_fast_for_path_and_constrain: '次のレイヤー：％s \ nベクターパスオブジェクトが含まれていて、速度が 20mm/sを超えています。\ nベクターパスオブジェクトの切断速度は 20mm/s に制限されます。\ nこの制限は[好み]で削除できます。',
-                should_update_firmware_to_continue: 'ご使用のファームウェアは、FLUX Studioの一部の改善をサポートしていません。パフォーマンスとユーザー体験を向上させるには、ファームウェアをアップデートして続行してください。（メニュー>マシン>[お使いのマシン]>ファームウェアのアップデート',
+                should_update_firmware_to_continue: '#814 ご使用のファームウェアは、Beam Studioの一部の改善をサポートしていません。パフォーマンスとユーザー体験を向上させるには、ファームウェアをアップデートして続行してください。（メニュー>マシン>[お使いのマシン]>ファームウェアのアップデート',
                 more_than_two_object: 'オブジェクトが多すぎます。2つのオブジェクトのみをサポートします',
                 not_support_object_type: 'オブジェクトタイプをサポートしていません',
                 select_first: '最初にオブジェクトを選択します。',
                 select_at_least_two: '2つのオブジェクトを選択して続行します',
-                import_file_contain_invalid_path: 'インポートされたSVGファイルに無効は画像パスが含まれています。すべての画像ファイルが存在することを確認するか、ファイルに画像を埋め込んでください',
+                import_file_contain_invalid_path: '#808 インポートされたSVGファイルに無効は画像パスが含まれています。すべての画像ファイルが存在することを確認するか、ファイルに画像を埋め込んでください',
                 import_file_error_ask_for_upload: 'インポートされたSVGファイルに失敗しました。バグレポート用のチームを開発するためのファイルを提供してもよろしいですか？',
-                upload_file_too_large: 'ファイルが大きすぎてアップロードできません。',
+                upload_file_too_large: '#819 ファイルが大きすぎてアップロードできません。',
                 successfully_uploaded: 'ファイルのアップロードに成功しました。',
-                upload_failed: 'ファイルのアップロードに失敗しました。',
+                upload_failed: '#819 ファイルのアップロードに失敗しました。',
                 or_turn_off_borderless_mode: ' または、ボーダーレスモードをオフにします。',
                 svg_1_1_waring: 'このSVGファイルのバージョンはv 1.1です。非互換性の問題が発生する可能性があります。',
                 svg_image_path_waring: 'このSVGファイルには、ファイルパスからロードされた<image>が含まれています。ロード時に失敗する可能性があります。\nこの可能性を回避するには、SVGをエクスポートするときに埋め込み画像（embed）を使用してください。',
@@ -1191,10 +1191,10 @@ define(function() {
                 progress: {
                     uploading: 'Uploading'
                 },
-                backend_connect_failed_ask_to_upload: 'バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
+                backend_connect_failed_ask_to_upload: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
                 pdf2svg: {
-                    error_when_converting_pdf: 'エラー，PDFをSVGに変換するときのエラー：',
-                    error_pdf2svg_not_found: 'エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
+                    error_when_converting_pdf: '#824 エラー：PDFをSVGに変換するときのエラー：',
+                    error_pdf2svg_not_found: '#825 エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
                 ungroup_use: 'これにより、インポートされた dxf または svg がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
             },
@@ -1542,11 +1542,11 @@ define(function() {
                 network_testing: 'ネットワーク試験',
                 local_ip: 'ローカルIPアドレス：',
                 insert_ip: 'ターゲットデバイスのIPアドレス：',
-                empty_ip: '最初にターゲットデバイスのIPを入力してください。',
+                empty_ip: '#818 最初にターゲットデバイスのIPを入力してください。',
                 start: '開始',
                 end: '終了',
                 testing: 'ネットワークの試験中…',
-                invalid_ip: '無効なIPアドレス',
+                invalid_ip: '#818 無効なIPアドレス',
                 network_healthiness: 'ネットワークの健全性',
                 average_response: '平均応答時間',
                 test_completed: 'テストが完了しました',
@@ -1554,7 +1554,7 @@ define(function() {
                 cannot_connect_1: 'ターゲットIPに接続することができません。',
                 cannot_connect_2: 'ターゲットIPに接続することができません。ターゲットが同じネットワークにあることを確認してください。',
                 cannot_get_local: 'ローカルIPアドレスへのアクセスに失敗しました。',
-                fail_to_start_network_test: 'ネットワーク試験を開始できません。'
+                fail_to_start_network_test: '#817 ネットワーク試験を開始できません。'
             },
             layer_color_config_panel: {
                 layer_color_config: 'レイヤーの色設定',
@@ -1587,9 +1587,9 @@ define(function() {
             notification: '「%s」は、パスワードが必要です',
             submit: '提出する',
             please_enter_password: 'パスワード',
-            auth_failure: '認証失敗',
+            auth_failure: '#811 認証失敗',
             retry: '再試行',
-            unable_to_connect: '#008 マシンとの安定した接続を構築できません'
+            unable_to_connect: '#810 マシンとの安定した接続を構築できません'
         },
         device: {
             pause: '一時停止',
@@ -1804,10 +1804,10 @@ define(function() {
             machineNotConnected: 'マシンが接続されていません',
             notPrinting: '印刷中ではありません',
             nothingToPrint: '印刷するものがありません（ソースBLOBがありません）',
-            connectionTimeout: 'ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
+            connectionTimeout: '#805 ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
             device_not_found: {
                 caption: '出るフォトのマシンが見つかりません',
-                message: 'マシンのWi-Fiインジケーターを確認してください'
+                message: '#812 マシンのWi-Fiインジケーターを確認してください'
             },
             device_busy: {
                 caption: 'マシンビジー状態',
@@ -1825,7 +1825,7 @@ define(function() {
             image_is_too_small: 'ファイルにサポートされていない情報が含まれています',
             monitor_too_old: {
                 caption: '古いファームウェア',
-                content: '<a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">このガイド</a>を使って、最新のファームウェアをインストールしてください。'
+                content: '#814 <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">このガイド</a>を使って、最新のファームウェアをインストールしてください。'
             },
             cant_establish_connection: 'FLUX Studio APIに接続できません。<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/requests/new" target="_blank">FLUXサポートにご連絡ください。</a>',
             application_occurs_error: 'アプリケーションで未処理のエラーが発生しました。',
@@ -1836,29 +1836,29 @@ define(function() {
             confirmSceneImport: '.fscをインポートすると、シーン上のすべてのオブジェクトが削除されます。よろしいですか？',
             brokenFcode: '%sを開けません',
             slicingFatalError: 'スライス中にエラーが発生しました。STLファイルをカスタマーサポートに報告してください。',
-            unknown_error: 'アプリケーションで不明なエラーが発生しました。[ヘルプ]>[メニュー]>[バグレポート]を使用してください。',
-            unknown_device: 'マシンに接続できません。USBがマシンに接続されていることを確認してください',
+            unknown_error: '#821 アプリケーションで不明なエラーが発生しました。[ヘルプ]>[メニュー]>[バグレポート]を使用してください。',
+            unknown_device: '#826 マシンに接続できません。USBがマシンに接続されていることを確認してください',
             important_update: {
                 caption: '重要なアップデート',
                 message: '重要なマシンファームウェアのアップデートが利用可能です。今すぐアップデートしますか？',
             },
             unsupport_osx_version: 'サポートされていないMac OS Xバージョンが検出されました',
             need_password: 'マシンに接続するには、パスワードが必要です',
-            unavailableWorkarea: 'セットした作業領域がマシンの作業領域を超えます。マシンの作業領域を確認や[編集]>[ドキュメント設定]で作業領域をセットくださいい。',
+            unavailableWorkarea: '#804 セットした作業領域がマシンの作業領域を超えます。マシンの作業領域を確認や[編集]>[ドキュメント設定]で作業領域をセットくださいい。',
             new_app_downloading: 'FLUX Studioがダウンロードしています',
             new_app_download_canceled: 'FLUX Studioのダウンロードがキャンセルされました',
             new_app_downloaded: '最新のFLUX Studioがダウンロードされました',
             ask_for_upgrade: '今すぐアップグレードしますか？',
             please_enter_dpi: 'ファイルの単位を入力してください',
-            reset_sd_card: 'Please reset machine\'s SD card',
+            reset_sd_card: '#820 マシンのSDカードをリセットしてください',
             gcode_area_too_big: 'インポートされたGCodeは、印刷可能領域を超えています。',
             empty_file: 'ファイルが空です',
             usb_unplugged: 'USB接続が失われました。USB接続を確認してください。',
             launghing_from_installer_warning: 'あなたはインストーラーからFLUX Studioを起動していますが、これにより問題が発生する可能性があります。FLUX Studioをアプリケーションフォルダーに移動してください。',
             uploading_fcode: 'FCodeのアップロード中',
-            cant_connect_to_device: 'マシンを接続できません。接続を確認してください',
+            cant_connect_to_device: '#827 マシンを接続できません。接続を確認してください',
             unable_to_find_machine: 'マシンを見つけることができません',
-            unable_to_start: 'タスクを開始することができません。これが再び起きた場合は、バグレポートでご連絡ください：\n',
+            unable_to_start: '#830 タスクを開始することができません。これが再び起きた場合は、バグレポートでご連絡ください：\n',
             camera_fail_to_transmit_image: '画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。'
         },
         machine_status: {

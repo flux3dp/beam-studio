@@ -50,8 +50,8 @@ define(function() {
                 dxf: '匯入 dxf 檔',
             },
             alerts: {
-                start_preview_timeout: '啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
-                fail_to_start_preview: '啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+                start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+                fail_to_start_preview: '#803 啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
 
             }
         },
@@ -69,7 +69,7 @@ define(function() {
         },
         device_selection: {
             no_printers: '無法透過 Wi-Fi 偵測到機器，請檢查您與機器的網路連線是否在同個網路下 <a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215394548">暸解更多</a>',
-            no_beambox: '無法透過 Wi-Fi 偵測到機器，請檢查您與機器的網路連線是否在同個網路下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
+            no_beambox: '#801 無法透過 Wi-Fi 偵測到機器，請檢查您與機器的網路連線是否在同個網路下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
             module: 'MODULE',
             status: 'STATUS'
         },
@@ -87,7 +87,7 @@ define(function() {
                 confirm: '上傳',
                 upload_file: '韌體上傳',
                 update_success: '韌體更新上傳成功',
-                update_fail: '更新失敗'
+                update_fail: '#822 更新失敗'
             },
             software: {
                 checking: '檢查更新中',
@@ -128,7 +128,7 @@ define(function() {
             preparing: '準備中...',
             later: '稍候',
             download: '線上更新',
-            cannot_reach_internet: '伺服器無法連接<br/>請確認網路連線',
+            cannot_reach_internet: '#823 伺服器無法連接<br/>請確認網路連線',
             install: '下載',
             upload: '上傳'
         },
@@ -318,7 +318,7 @@ define(function() {
                 set_station_mode: '設定成無線基地台',
                 password_placeholder: '使用密碼保護你的機器',
                 incorrect_old_password: '舊密碼錯誤',
-                incorrect_password: '密碼錯誤',
+                incorrect_password: '#828 密碼錯誤',
                 ap_mode_name: '網路名稱',
                 ap_mode_pass: '密碼',
                 ap_mode_name_format: '只接受英文及數字',
@@ -1167,16 +1167,16 @@ define(function() {
                 too_fast_for_path: '含有路徑物件的圖層速度過快，可能導致切割時位置誤差。\n不建議超過在切割路徑時超過 20mm/s 。',
                 too_fast_for_path_and_constrain: '以下圖層： %s\n含有向量路徑物件且速度超過 20mm/s，為維持雕刻的精度，向量路徑速度將被限制在 20mm/s ，您可以在偏好設定解除此限制。',
                 both_power_and_speed_too_high: '雷射管在高功率下耗損較快，使用低功率可以延長雷試管使用壽命。\n並且在此雕刻解析度使用過快的速度可能導致漸層雕刻的品質較差。',
-                should_update_firmware_to_continue: '您的韌體版本不支援最新的軟體改善。為了更良好的使用經驗與雕刻品質，請先更新 Beambox 的韌體以繼續。 (主選單 > 機器 > [ Your Beambox ] > 韌體更新)',
+                should_update_firmware_to_continue: '#814 您的韌體版本不支援最新的軟體改善。為了更良好的使用經驗與雕刻品質，請先更新 Beambox 的韌體以繼續。 (主選單 > 機器 > [ Your Beambox ] > 韌體更新)',
                 more_than_two_object: '太多物件，只支援兩物件操作',
                 not_support_object_type: '不支援的物件類型',
                 select_first: '請先選取物件以繼續',
                 select_at_least_two: '請選取兩個物件以繼續',
-                import_file_contain_invalid_path: '匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
+                import_file_contain_invalid_path: '#808 匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
                 import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
-                upload_file_too_large: '檔案大小過大，請聯絡客服。',
+                upload_file_too_large: '#819 檔案大小過大，請聯絡客服。',
                 successfully_uploaded: '檔案已成功上傳。',
-                upload_failed: '檔案上傳失敗。',
+                upload_failed: '#819 檔案上傳失敗。',
                 or_turn_off_borderless_mode: '或是關閉開蓋模式',
                 svg_1_1_waring: '此檔案標示之 svg 版本為 1.1 版，可能有潛在的不相容風險。',
                 svg_image_path_waring: '此檔案內含有以路徑讀取的圖片，可能會有讀取失敗的風險。請在做圖匯出 SVG 時，當點陣圖相關選項改成嵌入。',
@@ -1188,10 +1188,10 @@ define(function() {
                 progress: {
                     uploading: '上傳中'
                 },
-                backend_connect_failed_ask_to_upload: '連接後端程式時持續發生錯誤，請問您是否要將錯誤報告上傳到雲端?',
+                backend_connect_failed_ask_to_upload: '#802 連接後端程式時持續發生錯誤，請問您是否要將錯誤報告上傳到雲端?',
                 pdf2svg: {
-                    error_when_converting_pdf: '將 pdf 轉換成 svg 時發生錯誤：',
-                    error_pdf2svg_not_found: '無法找到 pdf2svg 指令，請使用您的套件管理裝置安裝 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
+                    error_when_converting_pdf: '#824 將 pdf 轉換成 svg 時發生錯誤：',
+                    error_pdf2svg_not_found: '#825 無法找到 pdf2svg 指令，請使用您的套件管理裝置安裝 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
                 ungroup_use: '正要解散外部匯入的 dxf 或是 svg ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
             },
@@ -1541,11 +1541,11 @@ define(function() {
                 network_testing: '網路檢測',
                 local_ip: '本機 IP 位置：',
                 insert_ip: '目標 IP 位置：',
-                empty_ip: '請先輸入目標 IP 位置',
+                empty_ip: '#818 請先輸入目標 IP 位置',
                 start: '檢測',
                 end: '結束',
                 testing: '網路檢測中...',
-                invalid_ip: '錯誤的 IP 位置',
+                invalid_ip: '#818 錯誤的 IP 位置',
                 network_healthiness: '連線健康度',
                 average_response: '平均回覆時間',
                 test_completed: '檢測完成',
@@ -1553,7 +1553,7 @@ define(function() {
                 cannot_connect_1: '無法與目標 IP 建立連線',
                 cannot_connect_2: '無法與目標 IP 建立連線，請確認是否與目標 IP 在同一網路',
                 cannot_get_local: '無法取得本地 IP 位置',
-                fail_to_start_network_test: '無法開始網路檢測。'
+                fail_to_start_network_test: '#817 無法開始網路檢測。'
             },
             layer_color_config_panel: {
                 layer_color_config: '圖層顏色參數設定',
@@ -1586,9 +1586,9 @@ define(function() {
             notification: '"%s" 需要密碼',
             submit: '送出',
             please_enter_password: '"密碼',
-            auth_failure: '認證失敗',
+            auth_failure: '#811 認證失敗',
             retry: '重新選擇',
-            unable_to_connect: '#008 無法與機器建立穩定連線'
+            unable_to_connect: '#810 無法與機器建立穩定連線'
         },
         device: {
             pause: '暫停',
@@ -1803,10 +1803,10 @@ define(function() {
             machineNotConnected: 'Machine is not connected',
             notPrinting: 'Printing is not in progress',
             nothingToPrint: 'Nothing to print (source blob missing)',
-            connectionTimeout: '請確認你的網路狀態和機器的 Wi-Fi 指示燈是否為恆亮',
+            connectionTimeout: '#805 請確認你的網路狀態和機器的 Wi-Fi 指示燈是否為恆亮',
             device_not_found: {
                 caption: '找不到預設機器',
-                message: '請確認預設機器的 Wi-Fi 指示燈，或取消設定預設機器'
+                message: '#812 請確認預設機器的 Wi-Fi 指示燈，或取消設定預設機器'
             },
             device_busy: {
                 caption: '機器忙碌中',
@@ -1824,7 +1824,7 @@ define(function() {
             image_is_too_small: '圖檔內容有誤',
             monitor_too_old: {
                 caption: '韌體需要更新',
-                content: '請按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此說明</a>安裝最新韌體版本'
+                content: '#814 請按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此說明</a>安裝最新韌體版本'
             },
             cant_establish_connection: '無法正常啟動 Beam Studio API，建議手動安裝 Visual C++ Redistributable 2015，如持續發生，請<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/requests/new" target="_blank">聯繫 FLUX 客服</a>',
             application_occurs_error: '應用程式發生異常，請使用「功能表 > 說明 > 錯誤回報」',
@@ -1835,29 +1835,29 @@ define(function() {
             confirmSceneImport: '載入.fsc檔案將清除目前所有場景，是否繼續？',
             brokenFcode: '無法開啟 %s',
             slicingFatalError: '切片時發生錯誤，請上傳模型檔案給 FLUX 客服',
-            unknown_error: '無法與機器建立連線，請使用「功能表 > 說明 > 錯誤回報」',
-            unknown_device: '無法與機器建立連線，請確認 USB 有連接於機器',
+            unknown_error: '#821 無法與機器建立連線，請使用「功能表 > 說明 > 錯誤回報」',
+            unknown_device: '#826 無法與機器建立連線，請確認 USB 有連接於機器',
             important_update: {
                 caption: '重要更新',
                 message: 'Delta 有重要韌體更新，是否要現在更新？',
             },
             unsupport_osx_version: '不支援此 Mac OS X 版本',
             need_password: '需要密碼與機器建立連線',
-            unavailableWorkarea: '目前設定的工作範圍超過目標機器的工作範圍。請確認選擇的機器型號，或從 編輯 > 文件設定 更改工作範圍。',
+            unavailableWorkarea: '#804 目前設定的工作範圍超過目標機器的工作範圍。請確認選擇的機器型號，或從 編輯 > 文件設定 更改工作範圍。',
             new_app_downloading: 'Beam Studio 下載中',
             new_app_download_canceled: 'Beam Studio 下載已被取消',
             new_app_downloaded: '新版Beam Studio 下載完畢',
             ask_for_upgrade: '馬上升級嗎?',
             please_enter_dpi: '請輸入該檔案的單位長度',
-            reset_sd_card: '請重置 SD 卡',
+            reset_sd_card: '#820 請重置 SD 卡',
             gcode_area_too_big: '匯入的 gcode 檔案超過列印範圍',
             empty_file: '檔案內容不存在',
             usb_unplugged: 'USB 連線逾時，請確認與機器的連接',
             launghing_from_installer_warning: 'Beam Studio 不是從應用程式資料夾開啟，可能會產生問題。請將 Beam Studio 移到應用程式資料夾再使用。',
             uploading_fcode: '正在上傳 fcode',
-            cant_connect_to_device: '無法連結機器，請確認機器是否開啟，以及與機器的連結方式',
+            cant_connect_to_device: '#827 無法連結機器，請確認機器是否開啟，以及與機器的連結方式',
             unable_to_find_machine: '無法連接到機器 ',
-            unable_to_start: '無法開始工作，如果持續發生，請附上錯誤回報，與我們聯絡:\n',
+            unable_to_start: '#830 無法開始工作，如果持續發生，請附上錯誤回報，與我們聯絡:\n',
             camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。'
         },
         machine_status: {
