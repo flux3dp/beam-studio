@@ -627,7 +627,7 @@ define([
                         />
                     </Controls>
 
-                    { i18n.getActiveLang() === 'zh-tw' ?
+                    { i18n.getActiveLang() === 'zh-cn' ?
                         <div>
                             <Controls label={lang.settings.blade_radius}>
                                 <UnitInput
