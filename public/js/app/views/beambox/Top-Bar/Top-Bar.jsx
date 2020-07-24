@@ -22,6 +22,7 @@ define([
     'helpers/device-list',
     'helpers/device-master',
     'helpers/sprintf',
+    'helpers/symbol-maker',
     'helpers/version-checker',
     'helpers/i18n'
 ], function(
@@ -48,6 +49,7 @@ define([
     DeviceList,
     DeviceMaster,
     sprintf,
+    SymbolMaker,
     VersionChecker,
     i18n
 ) {
@@ -238,13 +240,27 @@ define([
                 const diode = Number(layer.getAttribute('data-diode'));
                 return strength > 80 && diode !== 1;
             });
-
+            SymbolMaker.switchImageSymbolForAll(false);
             let isTooFastForPath = false;
             const tooFastLayers = [];
             for (let i = 0; i < layers.length; ++i) {
                 const layer = layers[i];
                 if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
-                    const paths = $(layer).find('path, rect, ellipse, polygon, line');
+                    const paths = Array.from($(layer).find('path, rect, ellipse, polygon, line'));
+                    const uses = $(layer).find('use');
+                    let hasWireframe = false
+                    Array.from(uses).forEach((use) => {
+                        const href = use.getAttribute('xlink:href');
+                        paths.push(...Array.from($(`${href}`).find('path, rect, ellipse, polygon, line')));
+                        if (use.getAttribute('data-wireframe') === 'true') {
+                            isTooFastForPath = true;
+                            hasWireframe = true;
+                            tooFastLayers.push(svgCanvas.getCurrentDrawing().getLayerName(i));
+                        }
+                    });
+                    if (hasWireframe) {
+                        break;
+                    }
                     for (let j = 0; j < paths.length; j++) {
                         const path = paths[j],
                                 fill = $(path).attr('fill'),
@@ -257,6 +273,7 @@ define([
                     }
                 }
             }
+            SymbolMaker.switchImageSymbolForAll(true);
 
             if (isPowerTooHigh && !AlertConfig.read('skip_power_warning')) {
                 Alert.popUp({
