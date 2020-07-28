@@ -388,6 +388,7 @@ define([
             if (!svgCanvas.getHasUnsaveChanged()) {
                 callback();
             } else {
+                Alert.popAlertStackById('unsaved_change_dialog');
                 Alert.popUp({
                     id: 'unsaved_change_dialog',
                     message: LANG.popup.save_unsave_changed,
