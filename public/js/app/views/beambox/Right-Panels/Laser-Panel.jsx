@@ -151,7 +151,7 @@ define([
             } else {
                 let customized = LocalStorage.get('customizedLaserConfigs') || [];
                 for (let i = 0; i < customized.length; i++) {
-                    if (customized[i].isDefault) {
+                    if (customized[i].isDefault && RightPanelConstants.BEAMO[customized[i].key]) {
                         const {speed, power, repeat} = this._getDefaultParameters(customized[i].key);
                         customized[i].name = LANG.dropdown[unit][customized[i].key];
                         customized[i].speed = speed;
@@ -194,6 +194,7 @@ define([
 
         updateData = () => {
             this.initDefaultConfig();
+            this.updatePresetLayerConfig();
             const layerData = FnWrapper.getCurrentLayerData();
 
             this.setState({
@@ -205,6 +206,30 @@ define([
                 isDiode:    layerData.isDiode > 0,
             });
         }
+
+        updatePresetLayerConfig = () => {
+            const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+            const drawing = svgCanvas.getCurrentDrawing();
+            const layerCount = drawing.getNumLayers();
+            for (let i=0; i < layerCount; i++) {
+                const layerName = drawing.getLayerName(i);
+                const layer = drawing.getLayerByName(layerName);
+                if (!layer) {
+                    continue;
+                }
+                const configName = layer.getAttribute('data-configName');
+                const configIndex = customizedLaserConfigs.findIndex((config) => config.name === configName);
+                if (configIndex >= 0) {
+                    const config = customizedLaserConfigs[configIndex];
+                    if (config.isDefault && RightPanelConstants.BEAMO[config.key]) {
+                        const {speed, power, repeat} = this._getDefaultParameters(config.key);
+                        layer.setAttribute('data-speed', speed);
+                        layer.setAttribute('data-strength', power);
+                        layer.setAttribute('data-repeat', repeat);
+                    }
+                }
+            }
+        };
 
         _handleSpeedChange = (val, unit) => {
             if (unit === 'inches') {

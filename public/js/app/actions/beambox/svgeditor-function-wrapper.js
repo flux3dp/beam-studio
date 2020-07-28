@@ -198,6 +198,7 @@ define([
                 height: currentLayer.getAttribute('data-height'),
                 zstep: currentLayer.getAttribute('data-zstep'),
                 diode: currentLayer.getAttribute('data-diode'),
+                configName: currentLayer.getAttribute('data-configName'),
             };
 
             return layerData;
