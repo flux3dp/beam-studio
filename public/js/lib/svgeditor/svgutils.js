@@ -328,10 +328,6 @@ svgedit.utilities.moveDefsOutfromSvgContent = () => {
 	}
 };
 
-// Function: findDefs
-//
-// Returns:
-// The document's <defs> element, create it first if necessary
 svgedit.utilities.findTempUse = function() {
 	//var svgElement = editorContext_.getSVGContent();
 	let svgElement = document.getElementById('svg_defs');
@@ -358,7 +354,6 @@ svgedit.utilities.findTempUse = function() {
 // Returns:
 // The document's <defs> element, create it first if necessary
 svgedit.utilities.findDefs = function() {
-	//var svgElement = editorContext_.getSVGContent();
 	let svgElement = document.getElementById('svg_defs');
 	if (!svgElement) {
 		const svgCanvas = document.getElementById('svgcanvas');
@@ -376,6 +371,13 @@ svgedit.utilities.findDefs = function() {
 		svgElement.insertBefore(defs, svgElement.firstChild);
 	}
 	return defs;
+};
+
+svgedit.utilities.clearDefs = function() {
+	let svgElement = document.getElementById('svg_defs');
+	if (svgElement) {
+		svgElement.remove();
+	}
 };
 
 // TODO(codedread): Consider moving the next to functions to bbox.js

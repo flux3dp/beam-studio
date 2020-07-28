@@ -6726,6 +6726,8 @@ define([
 
             clearSelection();
 
+            svgedit.utilities.clearDefs();
+
             // clear the svgcontent node
             canvas.clearSvgContentElement();
 
