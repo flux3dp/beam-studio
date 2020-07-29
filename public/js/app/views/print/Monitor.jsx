@@ -164,7 +164,7 @@ define([
             }
 
             if(Monitor.mode === GlobalConstants.CAMERA_RELOCATE) {
-                DeviceMaster.endMaintainMode();
+                DeviceMaster.endRawMode();
                 this._stopCamera();
             }
             _history = [];
@@ -419,7 +419,7 @@ define([
             if(Monitor.mode === mode.CAMERA) {
                 this._stopCamera();
             } else if (Monitor.mode === mode.CAMERA_RELOCATE) {
-                DeviceMaster.endMaintainMode();
+                DeviceMaster.endRawMode();
                 this._stopCamera();
             } else if (Monitor.mode === mode.PREVIEW || Monitor.mode === mode.FILE_PREVIEW) {
                 store.dispatch(MonitorActionCreator.setRelocateOrigin({x: 0, y: 0}));
@@ -572,10 +572,8 @@ define([
                 const device = DeviceMaster.getSelectedDevice();
                 ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
                 await this._getCameraOffset();
-                await DeviceMaster.enterMaintainMode();
-                if (VersionChecker(device.version).meetRequirement('CLOSE_FAN')) {
-                    DeviceMaster.maintainCloseFan();
-                }
+                await DeviceMaster.enterRawMode();
+                await DeviceMaster.rawHome();
                 ProgressActions.close();
                 store.dispatch(MonitorActionCreator.setCurrentPosition({x: 0, y: 0}));
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.CAMERA_RELOCATE));

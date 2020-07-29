@@ -7,7 +7,6 @@ define([
     'app/constants/progress-constants',
     'app/actions/global-actions',
     'helpers/sprintf',
-    'helpers/firmware-version-checker',
     'helpers/i18n',
     'app/actions/beambox/constant',
     'app/actions/beambox/beambox-preference',
@@ -21,7 +20,6 @@ define([
     ProgressConstants,
     GlobalActions,
     sprintf,
-    FirmwareVersionChecker,
     i18n,
     Constant,
     BeamboxPreference,
@@ -57,10 +55,9 @@ define([
                     this.originalSpeed = Number(laserSpeed.value);
                     await DeviceMaster.setLaserSpeed(1);
                 }
-                await DeviceMaster.enterMaintainMode();
-                if (await FirmwareVersionChecker.check(selectedPrinter, 'CLOSE_FAN')) {
-                    DeviceMaster.maintainCloseFan(); // this is async function, but we don't have to wait it
-                }
+                let res = await DeviceMaster.enterRawMode();
+                res = await DeviceMaster.rawMove({x: 0 ,y: 0}); // for faster homing
+                res = await DeviceMaster.rawHome();
                 await DeviceMaster.connectCamera(selectedPrinter);
                 PreviewModeBackgroundDrawer.start(this.cameraOffset);
                 PreviewModeBackgroundDrawer.drawBoundary();
@@ -86,7 +83,7 @@ define([
             const storedPrinter = this.storedPrinter;
             await this._reset();
             await DeviceMaster.select(storedPrinter);
-            await DeviceMaster.endMaintainMode();
+            await DeviceMaster.endRawMode();
             if (this.originalSpeed !== 1) {
                 await DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
@@ -201,7 +198,7 @@ define([
         async _retrieveCameraOffset() {
             // cannot getDeviceSetting during maintainMode. So we force to end it.
             try {
-                await DeviceMaster.endMaintainMode();
+                await DeviceMaster.endRawMode();
             } catch (error) {
                 if ( (error.status === 'error') && (error.error && error.error[0] === 'OPERATION_ERROR') ) {
                     // do nothing.
@@ -288,7 +285,7 @@ define([
             }
 
             await DeviceMaster.select(this.storedPrinter);
-            await DeviceMaster.maintainMove(movement);
+            await DeviceMaster.rawMove(movement);
             await this._waitUntilEstimatedMovementTime(movementX, movementY);
 
             const imgUrl = await this._getPhotoFromMachine();

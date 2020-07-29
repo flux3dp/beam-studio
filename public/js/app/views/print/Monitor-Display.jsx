@@ -6,7 +6,7 @@ define([
     'helpers/device-master',
     'helpers/duration-formatter',
     'plugins/classnames/index',
-    'jsx!app/widgets/Maintain-Move-Panel',
+    'jsx!app/widgets/Raw-Move-Panel',
     'helpers/version-checker'
 ], (
     PropTypes,
@@ -16,7 +16,7 @@ define([
     DeviceMaster,
     FormatDuration,
     ClassNames,
-    MaintainMovePanel,
+    RawMovePanel,
     VersionChecker
 ) => {
     const React = require('react');
@@ -253,12 +253,12 @@ define([
             );
         }
 
-        _handleMaintainMoveStart = () => {
+        _handleMoveStart = () => {
             const { store } = this.props.context;
             store.dispatch(MonitorActionCreator.setMaintainMoving());
         }
 
-        _handleMaintainMoveEnd = (x, y) => {
+        _handleMoveEnd = (x, y) => {
             x = Math.round(x * 10) / 10;
             y = Math.round(y * 10) / 10;
             const { store } = this.props.context;
@@ -289,9 +289,9 @@ define([
                     </div>
                     {this._renderOriginMark()}
                     {this._renderRelocateOrigin()}
-                    <MaintainMovePanel
-                        onMoveStart={this._handleMaintainMoveStart}
-                        onMoveEnd={this._handleMaintainMoveEnd}
+                    <RawMovePanel
+                        onMoveStart={this._handleMoveStart}
+                        onMoveEnd={this._handleMoveEnd}
                     />
                 </div>
             );

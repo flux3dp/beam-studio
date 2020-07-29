@@ -895,6 +895,22 @@ define([
         return d.promise();
     }
 
+    function rawHome() {
+        return SocketMaster.addTask('rawHome');
+    }
+
+    function rawMove(args) {
+        return SocketMaster.addTask('rawMove', args);
+    }
+
+    function enterRawMode() {
+        return SocketMaster.addTask('enterRawMode');
+    }
+
+    function endRawMode() {
+        return SocketMaster.addTask('endRawMode');
+    }
+
     function maintainMove(args) {
         let d = $.Deferred();
 
@@ -1735,8 +1751,10 @@ define([
             this.enableCloud = enableCloud;
             this.endLoadingDuringPause = endLoadingDuringPause;
             this.endMaintainMode = endMaintainMode;
+            this.endRawMode = endRawMode;
             this.endToolheadOperation = endToolheadOperation;
             this.enterMaintainMode = enterMaintainMode;
+            this.enterRawMode = enterRawMode;
             this.existDevice = existDevice;
             this.fileInfo = fileInfo;
             this.getAvailableDevices = getAvailableDevices;
@@ -1771,6 +1789,8 @@ define([
             this.pause = pause;
             this.quit = quit;
             this.quitTask = quitTask;
+            this.rawHome = rawHome;
+            this.rawMove = rawMove;
             this.readyCamera = readyCamera;
             this.reconnect = reconnect;
             this.registerUsbEvent = registerUsbEvent;

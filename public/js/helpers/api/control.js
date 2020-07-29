@@ -895,6 +895,70 @@ define([
                 return useDefaultResponse('task quit');
             },
 
+            rawHome: () => {
+                let d = $.Deferred();
+                let isCmdResent = false;
+                events.onMessage = (response) => {
+                    if (response.status === 'raw' && response.text.startsWith('ok')) {
+                        d.resolve(response);
+                    } else if (response.text.indexOf('ER:RESET') >= 0) {
+                        d.reject(response);
+                    } else if (response.text.indexOf('error:') >= 0) {
+                        // Resend command for error code
+                        const errorCode = parseInt(response.text.substring(6));
+                        switch (errorCode) {
+                            case 2:
+                                //Most of times caused by PLAYERREPORT, so skip it.
+                                break;
+                            default:
+                                if (!isCmdResent) {
+                                    isCmdResent = true;
+                                    setTimeout(() => {
+                                        isCmdResent = false;
+                                        ws.send('raw home');
+                                    }, 200);
+                                }
+                        }
+                    }
+                };
+                events.onError = (response) => { d.reject(response); };
+                events.onFatal = (response) => { d.reject(response); };
+                ws.send('raw home');
+                return d.promise();
+            },
+
+            rawMove: (args) => {
+                let command = 'G1';
+                args.f = args.f || '6000';
+                command += 'F' + args.f;
+                if (typeof args.x !== 'undefined') {
+                    command += 'X' +  Math.round(args.x * 1000) / 1000;
+                };
+                if (typeof args.y !== 'undefined') {
+                    command += 'Y' + Math.round(args.y * 1000) / 1000;
+                };
+                return useDefaultResponse(command);
+            },
+
+            enterRawMode: () => {
+                let d = $.Deferred();
+
+                events.onMessage = (response) => { setTimeout(() => {
+                    ctrl.mode = 'raw';
+                    d.resolve(response);
+                }, 3000); };
+                events.onError = (response) => { d.reject(response); };
+                events.onFatal = (response) => { d.reject(response); };
+
+                ws.send('task raw');
+                return d.promise();
+            },
+
+            endRawMode: () => {
+                ctrl.mode = '';
+                return useDefaultResponse('task quit');
+            },
+
             startToolheadOperation: () => {
                 return useDefaultResponse('play toolhead operation');
             },

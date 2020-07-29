@@ -38,6 +38,7 @@ define([
             switch (id) {
                 case 'kick':
                     await DeviceMaster.kick();
+                    await new Promise((resolve) => setTimeout(resolve, 500));
                     deferred.resolve('ok');
                     break;
                 case 'abort':

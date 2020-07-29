@@ -10,7 +10,7 @@ define([
     'use strict';
     const React = require('react');
 
-    class MaintainMovePanel extends React.Component {
+    class RawMovePanel extends React.Component {
         constructor(props) {
             super(props);
             const device = DeviceMaster.getSelectedDevice();
@@ -57,12 +57,12 @@ define([
             })
         }
 
-        maintainHome = async () => {
+        rawHome = async () => {
             const {onMoveStart} = this.props;
             if (onMoveStart) {
                 onMoveStart();
             }
-            await DeviceMaster.maintainHome();
+            await DeviceMaster.rawHome();
             this.setState({
                 currentX: 0,
                 currentY: 0
@@ -70,7 +70,7 @@ define([
         }
 
 
-        maintainMove = async (x, y) => {
+        rawMove = async (x, y) => {
             const {feedrate, workarea, safeDistance, isMoving} = this.state;
             if (isMoving) {
                 return;
@@ -82,7 +82,7 @@ define([
             }
             x = Math.max(0, Math.min(workarea.maxX - safeDistance.x, x));
             y = Math.max(0, Math.min(workarea.maxY - safeDistance.y, y));
-            await DeviceMaster.maintainMove({
+            await DeviceMaster.rawMove({
                 x,
                 y,
                 f: feedrate, // mm / min
@@ -95,9 +95,9 @@ define([
             }, () => this.handleMoveEnd());
         }
 
-        maintainMoveRelative = async (x=0, y=0) => {
+        rawMoveRelative = async (x=0, y=0) => {
             const {currentX, currentY} = this.state;
-            this.maintainMove(currentX + x, currentY + y);
+            this.rawMove(currentX + x, currentY + y);
         }
 
         moveToPoint = (point) => {
@@ -121,10 +121,8 @@ define([
                 }
             }
             const target = pointsMap[point];
-            this.maintainMove(target.x, target.y);
+            this.rawMove(target.x, target.y);
         }
-
-
 
         render() {
             const {currentX, currentY, workarea, safeDistance} = this.state;
@@ -178,31 +176,31 @@ define([
                     l0,0c0,0,0,0,0,0l0,0c0,0,0,0,0,0l0,0c0,0,0,0,0,0l-0.5-0.5c0.2-0.2,0.3-0.3,0.5-0.5l0,0c0,0,0,0,0,0l0,0c0,0,0,0,0,0l-0.5-0.5
                     c0.2-0.2,0.3-0.3,0.5-0.5l0,0c0,0,0,0,0,0l-0.5-0.5c0.2-0.2,0.3-0.3,0.5-0.5L407.1,417.5z" />
                     </g>
-                    <path className="st1 move-btn" onMouseUp={() => this.maintainMoveRelative(0, -0.1)} d="M297.2,222.8l37-37c-39.1-34.1-97.6-34.1-136.7,0l37,37C253,208.8,278.7,208.8,297.2,222.8z"
+                    <path className="st1 move-btn" onMouseUp={() => this.rawMoveRelative(0, -0.1)} d="M297.2,222.8l37-37c-39.1-34.1-97.6-34.1-136.7,0l37,37C253,208.8,278.7,208.8,297.2,222.8z"
                     />
-                    <path className="st2 move-btn" onMouseUp={() => this.maintainMoveRelative(-1, 0)} d="M187.3,196l-36.9-36.9c-54.4,59.5-54.4,150.8,0,210.4l36.9-36.9C153.2,293.5,153.2,235.1,187.3,196z"
+                    <path className="st2 move-btn" onMouseUp={() => this.rawMoveRelative(-1, 0)} d="M187.3,196l-36.9-36.9c-54.4,59.5-54.4,150.8,0,210.4l36.9-36.9C153.2,293.5,153.2,235.1,187.3,196z"
                     />
-                    <path className="st2 move-btn" onMouseUp={() => this.maintainMoveRelative(0, 1)} d="M334.2,342.8c-39.1,34.1-97.6,34.1-136.7,0l-36.9,36.9c59.5,54.4,150.8,54.4,210.4,0L334.2,342.8z"
+                    <path className="st2 move-btn" onMouseUp={() => this.rawMoveRelative(0, 1)} d="M334.2,342.8c-39.1,34.1-97.6,34.1-136.7,0l-36.9,36.9c59.5,54.4,150.8,54.4,210.4,0L334.2,342.8z"
                     />
-                    <path className="st2 move-btn" onMouseUp={() => this.maintainMoveRelative(0, -1)} d="M197.5,185.8c39.1-34.1,97.6-34.1,136.7,0L371,149c-59.5-54.4-150.8-54.4-210.4,0L197.5,185.8z"
+                    <path className="st2 move-btn" onMouseUp={() => this.rawMoveRelative(0, -1)} d="M197.5,185.8c39.1-34.1,97.6-34.1,136.7,0L371,149c-59.5-54.4-150.8-54.4-210.4,0L197.5,185.8z"
                     />
-                    <path className="st3 move-btn" onMouseUp={() => this.maintainMoveRelative(0, -10)} d="M160.6,149c59.5-54.4,150.8-54.4,210.4,0l36.8-36.8c-79.9-74.7-204.1-74.7-284,0L160.6,149z"
+                    <path className="st3 move-btn" onMouseUp={() => this.rawMoveRelative(0, -10)} d="M160.6,149c59.5-54.4,150.8-54.4,210.4,0l36.8-36.8c-79.9-74.7-204.1-74.7-284,0L160.6,149z"
                     />
-                    <path className="st3 move-btn" onMouseUp={() => this.maintainMoveRelative(0, 10)} d="M371,379.7c-59.5,54.4-150.8,54.4-210.4,0l-36.8,36.8c79.9,74.7,204.1,74.7,284,0L371,379.7z"
+                    <path className="st3 move-btn" onMouseUp={() => this.rawMoveRelative(0, 10)} d="M371,379.7c-59.5,54.4-150.8,54.4-210.4,0l-36.8,36.8c79.9,74.7,204.1,74.7,284,0L371,379.7z"
                     />
-                    <path className="st3 move-btn" onMouseUp={() => this.maintainMoveRelative(-10, 0)} d="M150.5,369.5c-54.4-59.5-54.4-150.8,0-210.4l-36.8-36.8c-74.7,79.9-74.7,204.1,0,284L150.5,369.5z"
+                    <path className="st3 move-btn" onMouseUp={() => this.rawMoveRelative(-10, 0)} d="M150.5,369.5c-54.4-59.5-54.4-150.8,0-210.4l-36.8-36.8c-74.7,79.9-74.7,204.1,0,284L150.5,369.5z"
                     />
-                    <path className="st2 move-btn" onMouseUp={() => this.maintainMoveRelative(1, 0)} d="M344.3,332.7l36.9,36.9c54.4-59.5,54.4-150.8,0-210.4L344.3,196C378.5,235.1,378.5,293.5,344.3,332.7z"
+                    <path className="st2 move-btn" onMouseUp={() => this.rawMoveRelative(1, 0)} d="M344.3,332.7l36.9,36.9c54.4-59.5,54.4-150.8,0-210.4L344.3,196C378.5,235.1,378.5,293.5,344.3,332.7z"
                     />
-                    <path className="st3 move-btn" onMouseUp={() => this.maintainMoveRelative(10, 0)} d="M418,122.3l-36.8,36.8c54.4,59.5,54.4,150.8,0,210.4l36.8,36.8C492.7,326.4,492.7,202.2,418,122.3z"
+                    <path className="st3 move-btn" onMouseUp={() => this.rawMoveRelative(10, 0)} d="M418,122.3l-36.8,36.8c54.4,59.5,54.4,150.8,0,210.4l36.8,36.8C492.7,326.4,492.7,202.2,418,122.3z"
                     />
-                    <path className="st4 xmax-btn " onMouseUp={() => this.maintainMove(workarea.maxX - safeDistance.x, currentY)} d="M454.8,85.5L418,122.3c74.7,79.9,74.7,204.1,0,284l36.8,36.8C549.9,342.9,549.9,185.8,454.8,85.5z"
+                    <path className="st4 xmax-btn " onMouseUp={() => this.rawMove(workarea.maxX - safeDistance.x, currentY)} d="M454.8,85.5L418,122.3c74.7,79.9,74.7,204.1,0,284l36.8,36.8C549.9,342.9,549.9,185.8,454.8,85.5z"
                     />
-                    <path className="st4 ymin-btn" onMouseUp={() => this.maintainMove(currentX, 0)} d="M123.8,112.1c79.9-74.7,204.1-74.7,284,0l36.8-36.8c-100.3-95-257.4-95-357.7,0L123.8,112.1z"
+                    <path className="st4 ymin-btn" onMouseUp={() => this.rawMove(currentX, 0)} d="M123.8,112.1c79.9-74.7,204.1-74.7,284,0l36.8-36.8c-100.3-95-257.4-95-357.7,0L123.8,112.1z"
                     />
-                    <path className="st4 xmin-btn" onMouseUp={() => this.maintainMove(0, currentY)} d="M113.6,406.3c-74.7-79.9-74.7-204.1,0-284L76.8,85.5c-95,100.3-95,257.4,0,357.7L113.6,406.3z"
+                    <path className="st4 xmin-btn" onMouseUp={() => this.rawMove(0, currentY)} d="M113.6,406.3c-74.7-79.9-74.7-204.1,0-284L76.8,85.5c-95,100.3-95,257.4,0,357.7L113.6,406.3z"
                     />
-                    <path className="st4 ymax-btn" onMouseUp={() => this.maintainMove(currentX, workarea.maxY - safeDistance.y)} d="M407.8,416.5c-79.9,74.7-204.1,74.7-284,0L87,453.3c100.3,95,257.4,95,357.7,0L407.8,416.5z"
+                    <path className="st4 ymax-btn" onMouseUp={() => this.rawMove(currentX, workarea.maxY - safeDistance.y)} d="M407.8,416.5c-79.9,74.7-204.1,74.7-284,0L87,453.3c100.3,95,257.4,95,357.7,0L407.8,416.5z"
                     />
                     <g>
                         <path className="st5" d="M36.3,269.6L36.3,269.6l-12.1-3.1v-4.1h16.3v3.1H30.3l0,0.1l10.3,2.9v2.1l-10.2,2.9l0,0.1h10.2v3.1H24.3v-4.1
@@ -232,7 +230,7 @@ define([
                         <path className="st5" d="M264.9,41h-3.1V24.7h3.1V41z" />
                         <path className="st5" d="M279.2,41H276l-5.2-10.4l-0.1,0V41h-3.2V24.7h3.2l5.2,10.4l0.1,0V24.7h3.2V41z" />
                     </g>
-                    <g id="svg-home-btn" onMouseUp={() => this.maintainHome()}>
+                    <g id="svg-home-btn" onMouseUp={() => this.rawHome()}>
                         <g>
                             <g>
                                 <path className="st0" d="M302.6,232.5c-20.3-20.3-53.3-20.3-73.6,0c-20.3,20.3-20.3,53.3,0,73.6c20.3,20.3,53.3,20.3,73.6,0
@@ -307,12 +305,12 @@ define([
                             <polygon className="st5" points="265.8,73.2 253.7,80.2 278,80.2 		" />
                         </g>
                     </g>
-                    <path className="st1 move-btn" onMouseUp={() => this.maintainMoveRelative(0, 0.1)} d="M234.5,305.9l-37,37c39.1,34.1,97.6,34.1,136.7,0l-37-37C278.7,319.9,253,319.9,234.5,305.9z"
+                    <path className="st1 move-btn" onMouseUp={() => this.rawMoveRelative(0, 0.1)} d="M234.5,305.9l-37,37c39.1,34.1,97.6,34.1,136.7,0l-37-37C278.7,319.9,253,319.9,234.5,305.9z"
                     />
                     <polygon className="st5" points="265.8,352.1 278,331 253.7,331 " />
-                    <path className="st1 move-btn" onMouseUp={() => this.maintainMoveRelative(-0.1, 0)} d="M224.3,233l-37-37c-34.1,39.1-34.1,97.6,0,136.7l37-37C210.3,277.2,210.3,251.5,224.3,233z"
+                    <path className="st1 move-btn" onMouseUp={() => this.rawMoveRelative(-0.1, 0)} d="M224.3,233l-37-37c-34.1,39.1-34.1,97.6,0,136.7l37-37C210.3,277.2,210.3,251.5,224.3,233z"
                     />
-                    <path className="st1 move-btn" onMouseUp={() => this.maintainMoveRelative(0.1, 0)} d="M344.3,196l-37,37c14,18.5,14,44.2,0,62.7l37,37C378.5,293.5,378.5,235.1,344.3,196z"
+                    <path className="st1 move-btn" onMouseUp={() => this.rawMoveRelative(0.1, 0)} d="M344.3,196l-37,37c14,18.5,14,44.2,0,62.7l37,37C378.5,293.5,378.5,235.1,344.3,196z"
                     />
                     <polygon className="st5" points="353.5,264.3 332.5,252.2 332.5,276.5 " />
                     <polygon className="st5" points="178.1,264.3 199.2,276.5 199.2,252.2 " />
@@ -443,5 +441,5 @@ define([
             );
         }
     }
-    return MaintainMovePanel;
+    return RawMovePanel;
 });
