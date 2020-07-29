@@ -907,9 +907,6 @@ define([
                         // Resend command for error code
                         const errorCode = parseInt(response.text.substring(6));
                         switch (errorCode) {
-                            case 2:
-                                //Most of times caused by PLAYERREPORT, so skip it.
-                                break;
                             default:
                                 if (!isCmdResent) {
                                     isCmdResent = true;
