@@ -5970,20 +5970,24 @@ define([
                         } else {
                             BeamboxPreference.write('engrave_dpi', 'medium');
                         }
-                        match = str.match(/data-en_diode="([a-zA-Z]+)"/);
-                        if (match && match[1]) {
-                            if (match[1] === 'true') {
-                                BeamboxPreference.write('enable-diode', true);
-                            } else {
-                                BeamboxPreference.write('enable-diode', false);
+                        if (Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
+                            match = str.match(/data-en_diode="([a-zA-Z]+)"/);
+                            if (match && match[1]) {
+                                if (match[1] === 'true') {
+                                    BeamboxPreference.write('enable-diode', true);
+                                } else {
+                                    BeamboxPreference.write('enable-diode', false);
+                                }
                             }
                         }
-                        match = str.match(/data-en_af="([a-zA-Z]+)"/);
-                        if (match && match[1]) {
-                            if (match[1] === 'true') {
-                                BeamboxPreference.write('enable-autofocus', true);
-                            } else {
-                                BeamboxPreference.write('enable-autofocus', false);
+                        if (Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {
+                            match = str.match(/data-en_af="([a-zA-Z]+)"/);
+                            if (match && match[1]) {
+                                if (match[1] === 'true') {
+                                    BeamboxPreference.write('enable-autofocus', true);
+                                } else {
+                                    BeamboxPreference.write('enable-autofocus', false);
+                                }
                             }
                         }
                         LayerPanelController.updateLayerPanel();
@@ -6047,20 +6051,24 @@ define([
                         } else {
                             BeamboxPreference.write('engrave_dpi', 'medium');
                         }
-                        match = str.match(/data-en_diode="([a-zA-Z]+)"/);
-                        if (match && match[1]) {
-                            if (match[1] === 'true') {
-                                BeamboxPreference.write('enable-diode', true);
-                            } else {
-                                BeamboxPreference.write('enable-diode', false);
+                        if (Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
+                            match = str.match(/data-en_diode="([a-zA-Z]+)"/);
+                            if (match && match[1]) {
+                                if (match[1] === 'true') {
+                                    BeamboxPreference.write('enable-diode', true);
+                                } else {
+                                    BeamboxPreference.write('enable-diode', false);
+                                }
                             }
                         }
-                        match = str.match(/data-en_af="([a-zA-Z]+)"/);
-                        if (match && match[1]) {
-                            if (match[1] === 'true') {
-                                BeamboxPreference.write('enable-autofocus', true);
-                            } else {
-                                BeamboxPreference.write('enable-autofocus', false);
+                        if (Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {
+                            match = str.match(/data-en_af="([a-zA-Z]+)"/);
+                            if (match && match[1]) {
+                                if (match[1] === 'true') {
+                                    BeamboxPreference.write('enable-autofocus', true);
+                                } else {
+                                    BeamboxPreference.write('enable-autofocus', false);
+                                }
                             }
                         }
                         LayerPanelController.updateLayerPanel();

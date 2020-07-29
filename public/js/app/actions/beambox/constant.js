@@ -67,6 +67,10 @@ define([
             'fbb1b': ['fbb1b', 'fbm1'],
             'fbm1': ['fbm1']
         },
+        addonsSupportList: {
+            autoFocus: ['fbm1'],
+            hybridLaser: ['fbm1'],
+        },
         leftPanelWidth: 50, //px
         rightPanelWidth: process.platform !== 'darwin' ? 258 : 242, //px
         rightPanelScrollBarWidth: process.platform !== 'darwin' ? 16 : 0, //px

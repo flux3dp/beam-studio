@@ -64,10 +64,19 @@ define([
         LaserPanelController.init('layer-laser-panel-placeholder');
         ImageTracePanelController.init('image-trace-panel-placeholder');
 
-        const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
-        BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
-        const defaultDiode = BeamboxPreference.read('default-diode');
-        BeamboxPreference.write('enable-diode', defaultDiode);
+        if (Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {
+            const defaultAutoFocus = BeamboxPreference.read('default-autofocus');
+            BeamboxPreference.write('enable-autofocus', defaultAutoFocus);
+        } else {
+            BeamboxPreference.write('enable-autofocus', false);
+        }
+        if (Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
+            const defaultDiode = BeamboxPreference.read('default-diode');
+            BeamboxPreference.write('enable-diode', defaultDiode);
+        } else {
+            BeamboxPreference.write('enable-diode', false);
+        }
+
         const defaultBorderless = BeamboxPreference.read('default-borderless');
         if (defaultBorderless === undefined) {
             BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));

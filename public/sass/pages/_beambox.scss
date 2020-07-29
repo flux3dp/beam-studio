@@ -195,7 +195,11 @@
                 font-size: 13px;
                 font-weight: 600;
             }
+            .controls.disabled {
+                opacity: 0.5;
+            }
             .control {
+                height: 40px;
                 display: flex;
                 align-items: center;
                 .label {
@@ -211,6 +215,7 @@
                 .switch-container {
                     margin-left: 0;
                     width: 145px;
+                    font-size: 13px;
                     .onoffswitch {
                         position: relative;
                         float: right;

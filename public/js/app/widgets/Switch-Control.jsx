@@ -1,9 +1,9 @@
 define([
     'reactPropTypes',
-    'plugins/classnames/index'
-], function(PropTypes, ClassNames) {
+], function(PropTypes) {
     'use strict';
     const React = require('react');
+    const classNames = require('classnames');
 
     class SwitchControl extends React.Component{
         constructor(props) {
@@ -14,7 +14,7 @@ define([
         }
 
         shouldComponentUpdate(nextProps, nextState) {
-            var newPropIsDifferent = nextProps.default !== this.state.checked,
+            var newPropIsDifferent = (nextProps.default !== this.state.checked) || (nextProps.isDisabled !== this.props.isDisabled),
                 newStateIsDifferent = this.state.checked !== nextState.checked;
 
             return newPropIsDifferent || newStateIsDifferent;
@@ -25,6 +25,10 @@ define([
         }
 
         _handleToggle = (e) => {
+            const { isDisabled } = this.props;
+            if (isDisabled) {
+                return;
+            }
             var isChecked = e.target.checked;
             this.setState({ checked: isChecked }, function() {
                 this._fireChange(isChecked);
@@ -32,8 +36,10 @@ define([
         }
 
         render() {
+            const { isDisabled } = this.props;
+            const containerClass = classNames('controls', {disabled: isDisabled});
             return (
-                <div className="controls" name={this.props.id}>
+                <div className={containerClass} name={this.props.id}>
                     <div className="label pull-left">{this.props.label}</div>
                     <div className="control">
                         <div className="switch-container">
@@ -44,7 +50,7 @@ define([
 
                                 <input type="checkbox" name="onoffswitch" className="onoffswitch-checkbox" id={this.props.id}
                                     onChange={this._handleToggle}
-                                    checked={this.state.checked} />
+                                    checked={isDisabled ? this.props.default : this.state.checked} />
 
                                 <label className="onoffswitch-label" htmlFor={this.props.id}>
                                     <span className="onoffswitch-inner"></span>

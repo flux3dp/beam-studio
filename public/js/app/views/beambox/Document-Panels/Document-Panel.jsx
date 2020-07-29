@@ -143,6 +143,8 @@ define([
         }
 
         render() {
+            const doesSupportHybrid = Constant.addonsSupportList.hybridLaser.includes(this.state.workarea);
+            const doesSupportAutofocus = Constant.addonsSupportList.autoFocus.includes(this.state.workarea);
             return (
                 <Modal onClose={() => this.props.unmount()}>
                     <div className='document-panel'>
@@ -181,16 +183,20 @@ define([
                                 onText={LANG.enable}
                                 offText={LANG.disable}
                                 label={LANG.enable_autofocus}
-                                default={this.state.enableAutofocus}
-                                onChange={(id, val) => this._handleAutofocusModuleChange(val)} />
+                                default={doesSupportAutofocus && this.state.enableAutofocus}
+                                isDisabled={!doesSupportAutofocus}
+                                onChange={(id, val) => this._handleAutofocusModuleChange(val)}
+                            />
                             <SwitchControl
                                 id="diode_module"
                                 name="diode_module"
                                 onText={LANG.enable}
                                 offText={LANG.disable}
                                 label={LANG.enable_diode}
-                                default={this.state.enableDiode}
-                                onChange={(id, val) => this._handleDiodeModuleChange(val)} />
+                                default={doesSupportHybrid && this.state.enableDiode}
+                                isDisabled={!doesSupportHybrid}
+                                onChange={(id, val) => this._handleDiodeModuleChange(val)}
+                            />
                         </section>
                         <section className='footer'>
                             <button

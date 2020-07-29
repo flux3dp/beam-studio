@@ -4816,7 +4816,7 @@ define([
             });
             engraveDpi = BeamboxPreference.read('engrave_dpi');
             rotaryMode = BeamboxPreference.read('rotary_mode');
-            const isUsingDiode = BeamboxPreference.read('enable-diode');
+            const isUsingDiode = BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'));
             const isUsingAF = BeamboxPreference.read('enable-autofocus');
             svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
             svgcontent.setAttribute('data-rotary_mode', rotaryMode);
@@ -8793,6 +8793,9 @@ define([
                     type: AlertConstants.SHOW_POP_ERROR,
                     message: i18n.lang.topmenu.file.path_not_exit,
                 });
+                const recent_files = Config().read('recent_files').filter((path) => path !== filePath);
+                Config().write('recent_files', recent_files);
+                this.updateRecentMenu();
             }
         }
 

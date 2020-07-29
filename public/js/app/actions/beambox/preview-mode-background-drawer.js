@@ -278,7 +278,7 @@ define([
             borderPattern.appendChild(patternLine);
 
             boundaryGroup.appendChild(borderTop);
-            if (BeamboxPreference.read('enable-diode')) {
+            if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
                 const {hybridBorder, hybridDescText} = this._getHybridModulePreviewBoundary(uncapturabledHeight);
                 boundaryGroup.appendChild(hybridBorder);
                 boundaryGroup.appendChild(hybridDescText);

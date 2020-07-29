@@ -17,6 +17,7 @@ define([
     'app/constants/alert-constants',
     'jsx!views/tutorials/Tutorial-Controller',
     'app/constants/tutorial-constants',
+    'app/actions/beambox/constant',
     'app/actions/beambox/diode-boundary-drawer'
 ], function(
     $,
@@ -37,6 +38,7 @@ define([
     AlertConstants,
     TutorialController,
     TutorialConstants,
+    Constant,
     DiodeBoundaryDrawer
 ) {
     'use strict';
@@ -508,19 +510,23 @@ define([
         }
 
         _renderEnableHeight = () => {
-            if (!BeamboxPreference.read('enable-autofocus')) {
+            if (BeamboxPreference.read('enable-autofocus') && Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {
+                return (
+                    <div className='panel checkbox' onClick={() => {this._toggleEnableHeight()}}>
+                        <span className='title'>{LANG.focus_adjustment}</span>
+                        <input type="checkbox" checked={this.state.height > 0} onChange={()=>{}}/>
+                    </div>
+                );
+            } else {
                 return null;
             }
-            return (
-                <div className='panel checkbox' onClick={() => {this._toggleEnableHeight()}}>
-                    <span className='title'>{LANG.focus_adjustment}</span>
-                    <input type="checkbox" checked={this.state.height > 0} onChange={()=>{}}/>
-                </div>
-            );
         }
 
         _renderHeight = () => {
-            if (!BeamboxPreference.read('enable-autofocus') || this.state.height < 0) {
+            if (!BeamboxPreference.read('enable-autofocus')
+                || !Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))
+                || this.state.height < 0
+            ) {
                 return null;
             }
             return (
@@ -539,7 +545,9 @@ define([
         }
 
         _renderZStep = () => {
-            if (!BeamboxPreference.read('enable-autofocus') || this.state.repeat <= 1 || this.state.height < 0) {
+            if (!BeamboxPreference.read('enable-autofocus') || this.state.repeat <= 1 || this.state.height < 0
+                || !Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))
+            ) {
                 return null;
             }
             return (
@@ -558,15 +566,16 @@ define([
         }
 
         _renderDiode = () => {
-            if (!BeamboxPreference.read('enable-diode')) {
-                return null;
+            if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
+                return (
+                    <div className='panel checkbox' onClick={() => {this._toggleDiode()}}>
+                        <span className='title'>{LANG.diode}</span>
+                        <input type="checkbox" checked={this.state.isDiode} onChange={()=>{}}/>
+                    </div>
+                );
+            } else {
+                return null
             }
-            return (
-                <div className='panel checkbox' onClick={() => {this._toggleDiode()}}>
-                    <span className='title'>{LANG.diode}</span>
-                    <input type="checkbox" checked={this.state.isDiode} onChange={()=>{}}/>
-                </div>
-            );
         }
 
         _getDefaultParameters = (para_name) => {
@@ -650,7 +659,7 @@ define([
             const diodePanel = this._renderDiode();
             const modalDialog = this._renderModal();
 
-            if (this.state.isDiode) {
+            if (this.state.isDiode && BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
                 DiodeBoundaryDrawer.show();
             } else {
                 DiodeBoundaryDrawer.hide();

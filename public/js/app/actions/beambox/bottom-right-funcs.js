@@ -13,6 +13,7 @@ define([
     'app/constants/alert-constants',
     'helpers/api/svg-laser-parser',
     'app/actions/beambox',
+    'app/actions/beambox/constant',
     'app/actions/global-actions',
 ], function (
     AwsHelper,
@@ -29,6 +30,7 @@ define([
     AlertConstants,
     svgLaserParser,
     BeamboxActions,
+    Constant,
     GlobalActions
 ) {
     const lang = i18n.lang;
@@ -254,8 +256,8 @@ define([
                     fileMode: '-f',
                     codeType,
                     model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
-                    enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus'),
-                    enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode'),
+                    enableAutoFocus: doesSupportDiodeAndAF && BeamboxPreference.read('enable-autofocus') && Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea')),
+                    enableDiode: doesSupportDiodeAndAF && BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea')),
                     shouldUseFastGradient,
                     vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false
                 }

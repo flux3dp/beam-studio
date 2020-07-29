@@ -244,7 +244,7 @@ define([
         }
 
         _constrainPreviewXY(x, y) {
-            const isDiodeEnabled = BeamboxPreference.read('enable-diode');
+            const isDiodeEnabled = BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'));
             const isBorderlessEnabled = BeamboxPreference.read('borderless');
             let maxWidth = Constant.dimension.getWidth();
             let maxHeight = Constant.dimension.getHeight();
@@ -280,7 +280,7 @@ define([
                 x: movementX, // mm
                 y: movementY  // mm
             };
-            if (BeamboxPreference.read('enable-diode')) {
+            if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
                 movement.f = movement.f * 0.6;
             }
 
@@ -301,7 +301,7 @@ define([
             };
             let timeToWait = Math.hypot((this.lastPosition[0] - movementX)/speed.x, (this.lastPosition[1] - movementY)/speed.y);
 
-            if (BeamboxPreference.read('enable-diode')) {
+            if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
                 timeToWait = timeToWait / 0.6;
             }
 
