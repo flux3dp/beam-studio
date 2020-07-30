@@ -1420,6 +1420,8 @@ define(function() {
                         array: '阵列',
                         decompose_path: '解散非连续路径',
                         disassemble_use: '解散图档',
+                        disassembling: '解散中...',
+                        ungrouping: '解散群组中...',
                     }
                 },
             },

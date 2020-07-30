@@ -6620,11 +6620,11 @@ define([
         }
 
         this.setElementsColor = function(elems, color) {
-            let ascendents = [...elems];
+            let descendants = [...elems];
             let svg_by_color = 0;
             let svg_by_layer = false;
-            while (ascendents.length > 0) {
-                const elem = ascendents.pop();
+            while (descendants.length > 0) {
+                const elem = descendants.pop();
                 if (elem === 'end datacolor') {
                     svg_by_color -= 1;
                     continue;
@@ -6650,19 +6650,19 @@ define([
                     }
                 } else if (['g', 'svg', 'symbol'].includes(elem.tagName)) {
                     if ($(elem).data('color')) {
-                        ascendents.push('end datacolor');
+                        descendants.push('end datacolor');
                         svg_by_color += 1;
                     }
-                    ascendents.push(...elem.childNodes);
+                    descendants.push(...elem.childNodes);
                 } else if (elem.tagName === 'use') {
                     if ($(elem).data('wireframe')) {
-                    ascendents.push('end by_layer');
+                    descendants.push('end by_layer');
                     svg_by_layer = true;
                     }
-                    ascendents.push(...elem.childNodes);
+                    descendants.push(...elem.childNodes);
                     const href = $(elem).attr('href') || $(elem).attr('xlink:href');
                     const shadow_root = $(href).toArray();
-                    ascendents.push(...shadow_root);
+                    descendants.push(...shadow_root);
                 } else {
                     //console.log(`setElementsColor: unsupported element type ${elem.tagName}`);
                 }
@@ -9151,98 +9151,122 @@ define([
             });
         }
 
-        this.disassembleUse2Group = function(elems = null) {
+        this.disassembleUse2Group = async function(elems = null) {
             if (!elems) {
                 elems = selectedElements;
             }
-            Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_WARNING,
-                message: LANG.popup.ungroup_use,
-                buttonType: AlertConstants.YES_NO,
-                onYes: () => {
-                    let batchCmd = new svgedit.history.BatchCommand('Disassemble Use');
-                    for (let i = 0; i < elems.length; ++i) {
-                        elem = elems[i];
-                        if (!elem || elem.tagName !== 'use') {
-                            continue;
-                        }
-                        const cmd = SymbolMaker.switchImageSymbol(elem, false);
-                        if (cmd && !cmd.isEmpty()) {
-                            batchCmd.addSubCommand(cmd);
-                        }
-
-                        const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
-                        svgCanvas.setCurrentLayer(layerTitle);
-                        LayerPanelController.updateLayerPanel();
-                        const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
-                        const drawing = getCurrentDrawing();
-
-                        const wireframe = $(elem).data('wireframe');
-                        let transform = $(elem).attr('transform') || '';
-                        const translate = `translate(${$(elem).attr('x') || 0},${$(elem).attr('y') || 0})`
-                        transform = `${transform} ${translate}`;
-                        const href = this.getHref(elem);
-                        const svg = $(href).toArray()[0];
-                        let children = [...Array.from($(svg)[0].childNodes).reverse()];
-                        let g = addSvgElementFromJson({
-                            'element': 'g',
-                            'attr': {
-                                'id': getNextId(),
-                                'transform': transform,
-                            }
-                        });
-                        while (children.length > 0) {
-                            topChild = children.pop();
-                            let copy = drawing.copyElem(topChild);
-                            if (topChild.tagName !== 'defs') {
-                                g.appendChild(copy);
-                            }
-                        }
-                        // apply style
-                        let ascendents = [...g.childNodes];
-                        while (ascendents.length > 0) {
-                            const topChild = ascendents.pop();
-                            if (topChild.tagName === 'g') {
-                                ascendents.push(...topChild.childNodes);
-                            } else {
-                                if (wireframe) {
-                                    $(topChild).attr('stroke', color);
-                                    $(topChild).attr('fill-opacity', 0);
-                                    $(topChild).attr('fill', '#FFF');
-                                }
-                            }
-                            $(topChild).removeAttr('stroke-width');
-                            $(topChild).attr('vector-effect', 'non-scaling-stroke');
-                            $(topChild).attr('id', getNextId());
-                            $(topChild).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
-                            svgedit.recalculate.recalculateDimensions(topChild);
-                        }
-                        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
-                        batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
-                        elem.parentNode.removeChild(elem);
-                        let angle = svgedit.utilities.getRotationAngle(g);
-                        if (angle) canvas.setRotationAngle(0, true, g);
-                        svgedit.recalculate.recalculateDimensions(g);
-                        if (angle) canvas.setRotationAngle(angle, true, g);
-                        selectOnly([g], true);
-                        // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
-                        for (let j = 0; j < 4; j ++) {
-                            const res = this.ungroupSelectedElement(true);
-                            const cmd = res ? res.batchCmd : null;
-                            if (cmd && !cmd.isEmpty()) {
-                                batchCmd.addSubCommand(cmd);
-                            }
-                        }
-                        if (!tempGroup) {
-                            this.tempGroupSelectedElements();
-                        }
-                        svgCanvas.setHasUnsavedChange(true);
+            const confirm = await new Promise((resolve) => {
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    message: LANG.popup.ungroup_use,
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
+                        resolve(true);
+                    },
+                    onNo: () => {
+                        resolve(false);
                     }
-                    if (batchCmd && !batchCmd.isEmpty()) {
-                        addCommandToHistory(batchCmd);
+                });
+            });
+            if (!confirm) {
+                return;
+            }
+            //Wait for alert close
+            await new Promise((resolve) => {setTimeout(resolve, 20)});
+            let batchCmd = new svgedit.history.BatchCommand('Disassemble Use');
+            for (let i = 0; i < elems.length; ++i) {
+                elem = elems[i];
+                if (!elem || elem.tagName !== 'use') {
+                    continue;
+                }
+                const cmd = SymbolMaker.switchImageSymbol(elem, false);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
+                }
+
+                const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
+                svgCanvas.setCurrentLayer(layerTitle);
+                LayerPanelController.updateLayerPanel();
+                const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+                const drawing = getCurrentDrawing();
+
+                const wireframe = $(elem).data('wireframe');
+                let transform = $(elem).attr('transform') || '';
+                const translate = `translate(${$(elem).attr('x') || 0},${$(elem).attr('y') || 0})`
+                transform = `${transform} ${translate}`;
+                const href = this.getHref(elem);
+                const svg = $(href).toArray()[0];
+                let children = [...Array.from($(svg)[0].childNodes).reverse()];
+                let g = addSvgElementFromJson({
+                    'element': 'g',
+                    'attr': {
+                        'id': getNextId(),
+                        'transform': transform,
+                    }
+                });
+                while (children.length > 0) {
+                    let topChild = children.pop();
+                    let copy = drawing.copyElem(topChild);
+                    if (topChild.tagName !== 'defs') {
+                        g.appendChild(copy);
                     }
                 }
-            });
+                // apply style
+                const descendants = Array.from(g.querySelectorAll('*'));
+                const nodeNumbers = descendants.length;
+                ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.right_panel.object_panel.actions_panel.disassembling} - 0%`, false);
+                //Wait for progress open
+                await new Promise((resolve) => {setTimeout(resolve, 50)});
+                let currentProgress = 0;
+                for (let j = 0; j < descendants.length; j++) {
+                    const child = descendants[j];
+                    if (child.tagName !== 'g' && wireframe) {
+                        $(child).attr('stroke', color);
+                        $(child).attr('fill-opacity', 0);
+                        $(child).attr('fill', '#FFF');
+                    }
+                    $(child).removeAttr('stroke-width');
+                    $(child).attr('vector-effect', 'non-scaling-stroke');
+                    $(child).attr('id', getNextId());
+                    $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                    svgedit.recalculate.recalculateDimensions(child);
+                    const progress = Math.round(200 * j / nodeNumbers) / 2;
+                    if (progress > currentProgress) {
+                        ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.disassembling} - ${Math.round(9000 * j / nodeNumbers) / 100}%`, progress * 0.9);
+                        //Wait for progress update
+                        await new Promise((resolve) => {setTimeout(resolve, 50)});
+                        currentProgress = progress;
+                    }
+                }
+                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 90%`, 90);
+                await new Promise((resolve) => {setTimeout(resolve, 50)});
+                let start = Date.now();
+                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+                batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
+                elem.parentNode.removeChild(elem);
+                let angle = svgedit.utilities.getRotationAngle(g);
+                if (angle) canvas.setRotationAngle(0, true, g);
+                svgedit.recalculate.recalculateDimensions(g);
+                if (angle) canvas.setRotationAngle(angle, true, g);
+                selectOnly([g], true);
+                // This is a hack, because when import, we pack svg in 2~3 <g>, so we have to ungroup it when disassemble
+                for (let j = 0; j < 3; j ++) {
+                    const res = this.ungroupSelectedElement(true);
+                    const cmd = res ? res.batchCmd : null;
+                    if (cmd && !cmd.isEmpty()) {
+                        batchCmd.addSubCommand(cmd);
+                    }
+                }
+                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 100%`, 100);
+                ProgressActions.close();
+                if (!tempGroup) {
+                    this.tempGroupSelectedElements();
+                }
+                svgCanvas.setHasUnsavedChange(true);
+            }
+            if (batchCmd && !batchCmd.isEmpty()) {
+                addCommandToHistory(batchCmd);
+            }
         }
 
         this.toggleBezierPathAlignToEdge = () => {
@@ -11094,7 +11118,7 @@ define([
             const xform = $(elem).attr('data-xform');
             const elemX = parseFloat($(elem).attr('x') || '0');
             const elemY = parseFloat($(elem).attr('y') || '0');
-            const obj = {};
+            let obj = {};
             if (xform) {
                 xform.split(' ').forEach((pair) => {
                     [key, value] = pair.split('=');

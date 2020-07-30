@@ -1423,6 +1423,8 @@ define(function() {
                         array: '配列',
                         decompose_path: '離散パスを分解する',
                         disassemble_use: '逆アセンブル',
+                        disassembling: '逆アセンブル中...',
+                        ungrouping: 'グループ解除中...',
                     }
                 },
             },

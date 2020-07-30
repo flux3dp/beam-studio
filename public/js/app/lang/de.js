@@ -1421,6 +1421,8 @@ define(function() {
                         array: 'Anordnung',
                         decompose_path: 'Zerlegen',
                         disassemble_use: 'Zerlegen',
+                        disassembling: 'Zerlegen ...',
+                        ungrouping: 'Gruppierung aufheben...',
                     }
                 },
             },

@@ -1421,6 +1421,8 @@ define(function() {
                         array: '陣列',
                         decompose_path: '解散非連續路徑',
                         disassemble_use: '解散圖檔',
+                        disassembling: '解散中...',
+                        ungrouping: '解散群組中...',
                     }
                 },
             },

@@ -1421,6 +1421,8 @@ define(function() {
                         array: 'Array',
                         decompose_path: 'Decompose',
                         disassemble_use: 'Disassemble',
+                        disassembling: 'Disassembling...',
+                        ungrouping: 'Ungrouping...',
                     }
                 },
             },
