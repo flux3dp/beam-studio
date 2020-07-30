@@ -278,10 +278,10 @@ define([
                 },
                 {
                     dialogBoxStyles: {
-                        position: {right: Constant.rightPanelScrollBarWidth + 95, top: 230},
+                        position: {right: Constant.rightPanelScrollBarWidth + 75, top: 230},
                         arrowDirection:'right'
                     },
-                    hintCircle: {right: Constant.rightPanelScrollBarWidth + 25, top: 213, width: 66, height: 34},
+                    hintCircle: {right: Constant.rightPanelScrollBarWidth + 10, top: 213, width: 57, height: 34},
                     text: LANG.newInterface.flip,
                 },
                 {

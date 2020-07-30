@@ -577,6 +577,9 @@ define([
                     DialogCaller.showTutorial(tutorial, () => {
                         localStorage.removeItem('new-user');
                         AlertConfig.write('skip-interface-tutorial', true);
+                        Alert.popUp({
+                            message: LANG.tutorial_complete,
+                        });
                     });
                 },
                 onNo: () => {

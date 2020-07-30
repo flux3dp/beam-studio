@@ -2054,6 +2054,7 @@ define(function() {
                 object_actions: 'オブジェクトアクション',
                 end_alert: '新しいインターフェースの紹介を終了してもよろしいですか？',
             },
+            tutorial_complete: '紹介が終わりました、作っていきましょう！',
         },
         slicer: {
             computing: 'コンピューティング',

@@ -2052,6 +2052,7 @@ define(function() {
                 object_actions: '物件操作',
                 end_alert: '請問您是否確定要結束新介面介紹？',
             },
+            tutorial_complete: '介紹完畢，開始創作吧！',
         },
         slicer: {
             computing: '計算中',

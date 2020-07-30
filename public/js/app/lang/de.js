@@ -2052,6 +2052,7 @@ define(function() {
                 object_actions: 'Objektaktionen',
                 end_alert: 'Sind Sie sicher, die neue Einführung in die Benutzeroberfläche zu beenden?',
             },
+            tutorial_complete: 'Das ist alles für das Tutorial. Jetzt ist es Zeit zu erstellen!',
         },
         slicer: {
             computing: 'Rechnen',

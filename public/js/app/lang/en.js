@@ -2052,6 +2052,7 @@ define(function() {
                 object_actions: 'Object Actions',
                 end_alert: 'Are you sure to end new UI introduction?',
             },
+            tutorial_complete: 'That’s all for the tutorial. Now it’s time to create!',
         },
         slicer: {
             computing: 'Computing',
