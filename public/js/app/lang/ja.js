@@ -67,8 +67,8 @@ define(function() {
             RESOURCE_BUSY: '[RB] マシンを再起動するか、再試行してください'
         },
         device_selection: {
-            no_printers: 'Wi-Fi経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">さらなる情報</a>',
-            no_beambox: '#801 Wi-Fi経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.com/beambox-tutorial/">さらなる情報</a>',
+            no_printers: 'ネットワーク経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">さらなる情報</a>',
+            no_beambox: '#801 ネットワーク経由でどのマシンも検出できません。お使いのPCとマシンが同じネットワーク下にあるかどうかを確認してください。<a target="_blank" href="https://flux3dp.com/beambox-tutorial/">さらなる情報</a>',
             module: 'モジュール',
             status: 'ステータス'
         },

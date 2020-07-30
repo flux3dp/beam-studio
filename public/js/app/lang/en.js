@@ -67,8 +67,8 @@ define(function() {
             RESOURCE_BUSY: '[RB] Please restart  the machine, or try again'
         },
         device_selection: {
-            no_printers: 'Cannot detect any machine through the Wi-Fi. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">More Info</a>',
-            no_beambox: '#801 Cannot detect any machine through the Wi-Fi. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">More Info</a>',
+            no_printers: 'Cannot detect any machine through the network. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">More Info</a>',
+            no_beambox: '#801 Cannot detect any machine through the network. Please check if your PC and machine are under the same network. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">More Info</a>',
             module: 'MODULE',
             status: 'STATUS'
         },

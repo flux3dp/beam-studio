@@ -67,8 +67,8 @@ define(function() {
             RESOURCE_BUSY: '[RB] Bitte starte die Maschine neu oder versuchen Sie es erneut'
         },
         device_selection: {
-            no_printers: 'Kein Computer kann über das WLAN erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">Mehr Info</a>',
-            no_beambox: '#801 Kein Computer kann über das WLAN erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">Mehr Info</a>',
+            no_printers: 'Kein Computer kann über das Netzwerk erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">Mehr Info</a>',
+            no_beambox: '#801 Kein Computer kann über das Netzwerk erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.com/beambox-tutorial/">Mehr Info</a>',
             module: 'MODUL',
             status: 'STATUS'
         },

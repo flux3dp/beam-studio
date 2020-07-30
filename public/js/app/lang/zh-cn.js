@@ -63,8 +63,8 @@ define(function() {
             RESOURCE_BUSY: '[RB] 请重新启动 Delta, 或再试一次'
         },
         device_selection: {
-            no_printers: '无法透过 Wi-Fi 侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215394548">暸解更多</a>',
-            no_beambox: '#801 无法透过 Wi-Fi 侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
+            no_printers: '无法透过网络侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/215394548">暸解更多</a>',
+            no_beambox: '#801 无法透过网络侦测到机器，请检查您与机器的网络连接是否在同个网络下 <a target="_blank" href="https://tw.flux3dp.com/beambox-tutorial/">暸解更多</a>',
             module: 'MODULE',
             status: 'STATUS'
         },
