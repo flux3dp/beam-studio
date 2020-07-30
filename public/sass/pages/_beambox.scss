@@ -507,6 +507,9 @@
                     float: left;
                     width: 16px;
                     margin: 0 8px;
+                    &.object {
+                        width: 17px;
+                    }
                 }
                 .tab-title {
                     display: none;
