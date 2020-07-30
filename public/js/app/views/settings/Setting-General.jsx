@@ -685,7 +685,7 @@ define([
 
                     <div className='subtitle'>{lang.settings.groups.text_to_path}</div>
 
-                    <Controls label={lang.settings.optimization}>
+                    <Controls label={lang.settings.text_path_calc_optimization}>
                         <SelectView
                             id='select-lang'
                             className='font3'
