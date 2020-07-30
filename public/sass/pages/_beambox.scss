@@ -407,28 +407,38 @@
                 }
             }
         }
-    }
-    .tool-block {
-        font-size: 20px;
-        transition: all .1s ease;
-        z-index: 1;
-        color: #999;
-        background: #FFFFFF;
-        display: block;
-        margin: 0;
-        padding: 0 20px;
-        width: 240px;
-        border: 1px #ddd solid;
-        .btn-h-group {
-            width: 100%;
-            .btn {
-                font-size: 1.3rem;
-                height: 2.8rem;
-                line-height: calc(2.8rem - 4px);    // borders are 2px
-                margin: 0 .6rem 0 0;
-                max-width: 13rem;
-                &:last-child {
-                    margin: 0;
+        .tool-block {
+            font-size: 20px;
+            transition: all .1s ease;
+            z-index: 1;
+            color: #999;
+            background: #FFFFFF;
+            display: block;
+            margin: 0;
+            padding: 0 20px;
+            width: 240px;
+            border: 1px #ddd solid;
+            .btn-h-group {
+                width: 100%;
+                .btn {
+                    font-size: 1.3rem;
+                    height: 2.8rem;
+                    line-height: calc(2.8rem - 4px);    // borders are 2px
+                    margin: 0 .6rem 0 0;
+                    max-width: 13rem;
+                    &:last-child {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+        &.de {
+            .tool-block {
+                width: 300px;
+            }
+            .tool-panel {
+                .controls {
+                    width: 300px;
                 }
             }
         }

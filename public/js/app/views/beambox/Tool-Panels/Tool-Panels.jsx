@@ -239,8 +239,9 @@ define([
         }
 
         render() {
+            const lang = localStorage.getItem('active-lang') || 'en';
             const positionStyle = this._findPositionStyle();
-            const classes = ClassNames('tool-panels');
+            const classes = ClassNames('tool-panels', lang);
             return (
                 <div id="beamboxToolPanel" className={classes} style={positionStyle}>
                     {this._renderTitle()}
