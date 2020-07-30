@@ -114,7 +114,7 @@ module.exports = {
         link: {
             help_center: 'https://helpcenter.flux3dp.com/',
             contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
-            forum: 'https://forum.flux3dp.com/',
+            forum: 'https://www.facebook.com/groups/flux.laser/',
             downloads: 'https://flux3dp.com/downloads/'
         },
         view: 'View',
@@ -242,7 +242,7 @@ module.exports = {
         link: {
             help_center: 'http://helpcenter.flux3dp.com/',
             contact_us: 'https://flux3dp.zendesk.com/hc/zh-tw/requests/new',
-            forum: 'https://forum.flux3dp.com/',
+            forum: 'https://www.facebook.com/groups/beambox.tw/',
             downloads: 'https://tw.flux3dp.com/downloads/'
         },
         view: '檢視',
@@ -370,7 +370,7 @@ module.exports = {
         link: {
             help_center: 'http://helpcenter.flux3dp.com/',
             contact_us: 'https://flux3dp.zendesk.com/hc/zh-tw/requests/new',
-            forum: 'https://forum.flux3dp.com/',
+            forum: 'https://www.facebook.com/groups/beambox.tw/',
             downloads: 'https://tw.flux3dp.com/downloads/'
         },
         view: '检视',
@@ -498,7 +498,7 @@ module.exports = {
         link: {
             help_center: 'https://helpcenter.flux3dp.com/',
             contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
-            forum: 'https://forum.flux3dp.com/',
+            forum: 'https://www.facebook.com/groups/flux.laser/',
             downloads: 'https://flux3dp.com/downloads/'
         },
         view: '見る',
@@ -626,7 +626,7 @@ module.exports = {
         link: {
             help_center: 'https://helpcenter.flux3dp.com/',
             contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
-            forum: 'https://forum.flux3dp.com/',
+            forum: 'https://www.facebook.com/groups/flux.laser/',
             downloads: 'https://flux3dp.com/downloads/'
         },
         view: 'Ansicht',

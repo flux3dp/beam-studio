@@ -28,8 +28,6 @@ function _buildOSXAppMenu(callback) {
 
 
 function _buildFileMenu(fnKey, callback) {
-    const currentChannel = app.getVersion().split('-')[1] || 'latest';
-    const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
     let menuItems = [
         { 'id': 'OPEN', label: r.open || 'Open', click: callback, 'accelerator': `${fnKey}+O` },
         { 'id': 'RECENT', label: r.recent || 'Open Recent', submenu: []},
@@ -58,8 +56,6 @@ function _buildFileMenu(fnKey, callback) {
     ];
 
     if(process.platform !== 'darwin') {
-        menuItems.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
-        menuItems.push({ id: 'SWITCH_VERSION',  label: switchChannelLabel, click: callback });
         menuItems.push({ id: 'PREFERENCE',  label: r.preferences, accelerator: `${fnKey}+,`, click: callback });
         menuItems.push({ id: 'RELOAD_APP' ,label: r.reload_app, accelerator: `${fnKey}+R`, click: callback});
     }
@@ -70,7 +66,6 @@ function _buildFileMenu(fnKey, callback) {
         submenu: menuItems,
     }
 }
-
 
 function buildMenu(callback) {
     let menu = [];
@@ -163,21 +158,33 @@ function buildMenu(callback) {
         });
     }
 
+    const helpSubmenu = [];
+    if (process.platform !== 'darwin') {
+        helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
+    }
+    helpSubmenu.push(...[
+        { id: 'HELP_CENTER', label: r.help_center || 'Help Center', click() { shell.openExternal(r.link.help_center); } },
+        { id: 'CONTACT_US', label: r.contact || 'Contact Us', click() { shell.openExternal(r.link.contact_us); } },
+        { type: 'separator' },
+        { id: 'FORUM', label: r.forum || 'Forum', click() { shell.openExternal(r.link.forum); } },
+        { type: 'separator' },
+        { id: 'UPDATE_BS',  label: r.update, click: callback }
+    ]);
+    if (process.platform !== 'darwin') {
+        const currentChannel = app.getVersion().split('-')[1] || 'latest';
+        const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
+        helpSubmenu.push({ id: 'SWITCH_VERSION',  label: switchChannelLabel, click: callback });
+    }
+    helpSubmenu.push(...[
+        { type: 'separator' },
+        { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
+        { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()} }
+    ]);
     menu.push({
         id: '_help',
         label: r.help || 'Help',
         role: 'help',
-        submenu: [
-            { id: 'HELP_CENTER', label: r.help_center || 'Help Center', click() { shell.openExternal(r.link.help_center); } },
-            { id: 'CONTACT_US', label: r.contact || 'Contact Us', click() { shell.openExternal(r.link.contact_us); } },
-            { type: 'separator' },
-            { id: 'FORUM', label: r.forum || 'Forum', click() { shell.openExternal(r.link.forum); } },
-            { type: 'separator' },
-            //{ id: 'SOFTWARE_UPDATE', label: r.software_update || 'Software Update', click() { shell.openExternal(r.link.downloads); } },
-            { id: 'UPDATE_BS',  label: r.update, click: callback },
-            { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
-            { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()} }
-        ]
+        submenu: helpSubmenu,
     });
 
     return menu;
