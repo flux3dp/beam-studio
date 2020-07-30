@@ -74,9 +74,9 @@ define([
         },
 
         //main panel
-        importImage: function() {
+        importImage: () => {
             $('#tool_import input').click();
-            this.useSelectTool();
+            funcs.useSelectTool();
         },
 
         insertSvg: function(svgString, type, cropData = { x: 0, y: 0 }, preCrop = { offsetX: 0, offsetY: 0 }) {
