@@ -44,10 +44,10 @@ define(function() {
                 text: 'テキスト',
                 line: 'ライン',
                 g: 'グループ',
-                multi_select: '複数選択',
-                use: 'インポートされたファイル',
-                svg: 'インポートされた svg',
-                dxf: 'インポートされた dxf',
+                multi_select: '複数オブジェクト',
+                use: 'インポートされたオブジェクト',
+                svg: 'SVGオブジェクト',
+                dxf: 'DXFオブジェクト',
             },
             alerts: {
                 start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
@@ -1196,7 +1196,7 @@ define(function() {
                     error_when_converting_pdf: '#824 エラー：PDFをSVGに変換するときのエラー：',
                     error_pdf2svg_not_found: '#825 エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
-                ungroup_use: 'これにより、インポートされた dxf または svg がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
+                ungroup_use: 'これにより、インポートされた DXF または SVG がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
             },
             zoom_block: {
                 fit_to_window: 'ウィンドウに合わせる',

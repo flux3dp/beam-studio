@@ -44,10 +44,10 @@ define(function() {
                 text: '文本',
                 line: '線段',
                 g: '群组',
-                multi_select: '多选',
-                use: '汇入图档',
-                svg: '汇入 svg 档',
-                dxf: '汇入 dxf 档',
+                multi_select: '多个物件',
+                use: '汇入物件',
+                svg: 'SVG 物件',
+                dxf: 'DXF 物件',
             }
         },
         support: {
@@ -1172,9 +1172,9 @@ define(function() {
                 successfully_uploaded: '档案已成功上传。',
                 upload_failed: '#819 档案上传失败。',
                 or_turn_off_borderless_mode: '或是关闭开盖模式',
-                svg_1_1_waring: '此档案标示之 svg 版本为 1.1 版，可能有潜在的不相容风险。',
+                svg_1_1_waring: '此档案标示之 SVG 版本为 1.1 版，可能有潜在的不相容风险。',
                 svg_image_path_waring: '此档案内含有以路径读取的图片，可能会有读取失败的风险。请在做图汇出 SVG 时，当点阵图相关选项改成嵌入。',
-                dxf_version_waring: '此 Dxf 档版本非 2013 版，可能有潜在的不相容风险。',
+                dxf_version_waring: '此 DXF 档版本非 2013 版，可能有潜在的不相容风险。',
                 dont_show_again: '别再显示此提醒',
                 convert_to_path_fail: '转换成路径失败。',
                 save_unsave_changed: '请问是否要储存未储存的变更，否则变更将会遗失？',
@@ -1184,10 +1184,10 @@ define(function() {
                 },
                 backend_connect_failed_ask_to_upload: '#802 连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
                 pdf2svg: {
-                    error_when_converting_pdf: '#824 将 pdf 转换成 svg 时发生错误：',
+                    error_when_converting_pdf: '#824 将 PDF 转换成 SVG 时发生错误：',
                     error_pdf2svg_not_found: '#825 无法找到 pdf2svg 指令，请使用您的套件管理装置安装 pdf2svg（e.g., "yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
-                ungroup_use: '正要解散外部汇入的 dxf 或是 svg ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
+                ungroup_use: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
             },
             zoom_block: {
                 fit_to_window: '配合视窗尺寸'

@@ -44,10 +44,10 @@ define(function() {
                 text: 'Text',
                 line: 'Line',
                 g: 'Group',
-                multi_select: 'Multi Select',
-                use: 'Imported File',
-                svg: 'Imported svg',
-                dxf: 'Imported dxf',
+                multi_select: 'Multiple Objects',
+                use: 'Imported Object',
+                svg: 'SVG Object',
+                dxf: 'DXF Object',
             },
             alerts: {
                 start_preview_timeout: '#803 Timeout has occured when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
@@ -1140,7 +1140,7 @@ define(function() {
         beambox: {
             tag:{
                 g: 'Group',
-                use: 'Import Svg',
+                use: 'Import SVG',
                 image: 'Image',
                 text: 'Text'
             },
@@ -1183,7 +1183,7 @@ define(function() {
                 or_turn_off_borderless_mode: ' Or turn off Open Bottom mode.',
                 svg_1_1_waring: 'The version of this SVG file is v 1.1, there might be potential incompatibility problems.',
                 svg_image_path_waring: 'This SVG file contains <image> loading from file path. This might cause fails when loading.\nTo avoid this risk, Please kindly use embed image when exporting SVG.',
-                dxf_version_waring: 'The version of this Dxf file is not 2013, there might be potential incompatibility problems.',
+                dxf_version_waring: 'The version of this DXF file is not 2013, there might be potential incompatibility problems.',
                 dont_show_again: 'Don\'t Show this next time.',
                 convert_to_path_fail: 'Failed to convert to path.',
                 save_unsave_changed: 'Do you want to save unsaved changes?',
@@ -1193,10 +1193,10 @@ define(function() {
                 },
                 backend_connect_failed_ask_to_upload: '#802 Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
                 pdf2svg: {
-                    error_when_converting_pdf: '#824 Error when converting pdf to svg:',
+                    error_when_converting_pdf: '#824 Error when converting PDF to SVG:',
                     error_pdf2svg_not_found: '#825 Error: Command pdf2svg not found. Please install pdf2svg with your package manager (e.g., "yum install pdf2svg" or "apt-get install pdf2svg").',
                 },
-                ungroup_use: 'This will ungroup imported dxf or svg. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
+                ungroup_use: 'This will ungroup imported DXF or SVG. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
             },
             zoom_block: {
                 fit_to_window: 'Fit to Window',

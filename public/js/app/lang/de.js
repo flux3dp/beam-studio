@@ -45,9 +45,9 @@ define(function() {
                 line: 'Linie',
                 g: 'Gruppe',
                 multi_select: 'Mehrfachauswahl',
-                use: 'Importierte Datei',
-                svg: 'Importierte svg',
-                dxf: 'Importierte dxf',
+                use: 'Importierte Objekt',
+                svg: 'SVG-Objekt',
+                dxf: 'DXF-Objekt',
             },
             alerts: {
                 start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
@@ -1140,7 +1140,7 @@ define(function() {
         beambox: {
             tag:{
                 g: 'Gruppe',
-                use: 'Svg importieren',
+                use: 'SVG importieren',
                 image: 'Bild',
                 text: 'Text'
             },
@@ -1183,7 +1183,7 @@ define(function() {
                 or_turn_off_borderless_mode: ' Oder deaktivieren Sie den Open Bottom Modus.',
                 svg_1_1_waring: 'Die Version dieser SVG-Datei ist Version 1.1. Möglicherweise treten Inkompatibilitätsprobleme auf.',
                 svg_image_path_waring: 'Diese SVG-Datei enthält das Laden von <image> aus dem Dateipfad. Dies kann beim Laden zu Fehlern führen.\nUm dieses Risiko zu vermeiden, verwenden Sie beim Exportieren von SVG bitte das eingebettete Bild.',
-                dxf_version_waring: 'Die Version dieser Dxf-Datei ist nicht 2013, möglicherweise treten Inkompatibilitätsprobleme auf.',
+                dxf_version_waring: 'Die Version dieser DXF-Datei ist nicht 2013, möglicherweise treten Inkompatibilitätsprobleme auf.',
                 dont_show_again: 'Nicht mehr anzeigen',
                 convert_to_path_fail: 'Konvertierung in Pfad fehlgeschlagen.',
                 save_unsave_changed: 'Nicht gespeicherte Änderungen speichern?',
@@ -1196,7 +1196,7 @@ define(function() {
                     error_when_converting_pdf: '#824 Fehler beim Konvertieren von PDF in SVG:',
                     error_pdf2svg_not_found: '#825 Fehler: Befehl pdf2svg nicht gefunden. Bitte installieren Sie pdf2svg mit Ihrem Paketmanager (z. B. "yum install pdf2svg" oder "apt-get install pdf2svg").',
                 },
-                ungroup_use: 'Dadurch wird die Gruppierung von importiertem dxf oder svg aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
+                ungroup_use: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
             },
             zoom_block: {
                 fit_to_window: 'An Fenster anpassen',
