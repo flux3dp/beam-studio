@@ -163,6 +163,7 @@ function buildMenu(callback) {
         helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
     }
     helpSubmenu.push(...[
+        { id: 'START_TUTORIAL', label: r.show_start_tutorial, click: callback },
         { id: 'HELP_CENTER', label: r.help_center || 'Help Center', click() { shell.openExternal(r.link.help_center); } },
         { id: 'CONTACT_US', label: r.contact || 'Contact Us', click() { shell.openExternal(r.link.contact_us); } },
         { type: 'separator' },

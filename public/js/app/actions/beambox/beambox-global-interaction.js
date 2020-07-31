@@ -3,16 +3,22 @@ define([
     'helpers/electron-updater',
     'app/actions/global-interaction',
     'app/actions/beambox',
+    'app/actions/beambox/beambox-preference',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/svgeditor-function-wrapper',
+    'app/contexts/AlertCaller',
+    'app/constants/tutorial-constants',
     'jsx!contexts/DialogCaller'
 ],function(
     i18n,
     ElectronUpdater,
     GlobalInteraction,
     BeamboxActions,
+    BeamboxPreference,
     BottomRightFuncs,
     FnWrapper,
+    Alert,
+    TutorialConstants,
     DialogCaller
 ){
     class BeamboxGlobalInteraction extends GlobalInteraction {
@@ -80,7 +86,17 @@ define([
                 'LAYER_COLOR_CONFIG': () => DialogCaller.showLayerColorConfig(),
                 'DOCUMENT_SETTING': () => DialogCaller.showDocumentSettings(),
                 'CLEAR_SCENE': () => {window.svgEditorClearScene()},
-                'TUTORIAL': () => {},
+                'START_TUTORIAL': () => {
+                    const LANG = i18n.lang.tutorial;
+                    const continuousDrawing = BeamboxPreference.read('continuous_drawing');
+                    BeamboxPreference.write('continuous_drawing', false);
+                    DialogCaller.showTutorial(TutorialConstants.NEW_USER_TUTORIAL, () => {
+                        BeamboxPreference.write('continuous_drawing', continuousDrawing);
+                        Alert.popUp({
+                            message: LANG.tutorial_complete,
+                        });
+                    });
+                },
                 'ZOOM_IN': () => svgEditor.zoomIn(),
                 'ZOOM_OUT': () => svgEditor.zoomOut(),
                 'FITS_TO_WINDOW': () => svgEditor.resetView(),
