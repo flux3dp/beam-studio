@@ -50,20 +50,16 @@ define([
         'parameters',
         'wood_3mm_cutting',
         'wood_5mm_cutting',
-        'wood_bw_engraving',
-        'wood_shading_engraving',
+        'wood_engraving',
         'acrylic_3mm_cutting',
         'acrylic_5mm_cutting',
-        'acrylic_bw_engraving',
-        'acrylic_shading_engraving',
+        'acrylic_engraving',
         'leather_3mm_cutting',
         'leather_5mm_cutting',
-        'leather_bw_engraving',
-        'leather_shading_engraving',
+        'leather_engraving',
         'fabric_3mm_cutting',
         'fabric_5mm_cutting',
-        'fabric_bw_engraving',
-        'fabric_shading_engraving',
+        'fabric_engraving',
         'rubber_bw_engraving',
         'glass_bw_engraving',
         'metal_bw_engraving',
@@ -152,16 +148,22 @@ define([
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             } else {
                 let customized = LocalStorage.get('customizedLaserConfigs') || [];
+                const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse') || {};
                 for (let i = 0; i < customized.length; i++) {
-                    if (customized[i].isDefault && RightPanelConstants.BEAMO[customized[i].key]) {
-                        const {speed, power, repeat} = this._getDefaultParameters(customized[i].key);
-                        customized[i].name = LANG.dropdown[unit][customized[i].key];
-                        customized[i].speed = speed;
-                        customized[i].power = power;
-                        customized[i].repeat = repeat || 1;
+                    if (customized[i].isDefault) {
+                        if (defaultLaserOptions.includes(customized[i].key)) {
+                            const {speed, power, repeat} = this._getDefaultParameters(customized[i].key);
+                            customized[i].name = LANG.dropdown[unit][customized[i].key];
+                            customized[i].speed = speed;
+                            customized[i].power = power;
+                            customized[i].repeat = repeat || 1;
+                        } else {
+                            delete defaultLaserConfigsInUse[customized[i].key];
+                            customized.splice(i, 1);
+                            i--;
+                        }
                     }
                 }
-                const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse') || {};
                 const newPreset = defaultLaserOptions.filter((option) => defaultLaserConfigsInUse[option] === undefined);
                 newPreset.forEach((preset) => {
                     const {speed, power, repeat} = this._getDefaultParameters(preset);
@@ -223,11 +225,15 @@ define([
                 const configIndex = customizedLaserConfigs.findIndex((config) => config.name === configName);
                 if (configIndex >= 0) {
                     const config = customizedLaserConfigs[configIndex];
-                    if (config.isDefault && RightPanelConstants.BEAMO[config.key]) {
-                        const {speed, power, repeat} = this._getDefaultParameters(config.key);
-                        layer.setAttribute('data-speed', speed);
-                        layer.setAttribute('data-strength', power);
-                        layer.setAttribute('data-repeat', repeat);
+                    if (config.isDefault) {
+                        if (defaultLaserOptions.includes(customized[i].key)) {
+                            const {speed, power, repeat} = this._getDefaultParameters(config.key);
+                            layer.setAttribute('data-speed', speed);
+                            layer.setAttribute('data-strength', power);
+                            layer.setAttribute('data-repeat', repeat);
+                        } else {
+                            layer.removeAttribute('data-configName');
+                        }
                     }
                 }
             }

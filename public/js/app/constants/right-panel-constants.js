@@ -13,13 +13,9 @@ define(function() {
                 speed: 4,
                 repeat: 2
             },
-            wood_bw_engraving: {
-                power: 30,
-                speed: 180
-            },
-            wood_shading_engraving: {
-                power: 15,
-                speed: 80
+            wood_engraving: {
+                power: 25,
+                speed: 150
             },
             acrylic_3mm_cutting: {
                 power: 55,
@@ -30,13 +26,9 @@ define(function() {
                 speed: 5,
                 repeat: 2
             },
-            acrylic_bw_engraving: {
-                power: 30,
-                speed: 180
-            },
-            acrylic_shading_engraving: {
-                power: 15,
-                speed: 80
+            acrylic_engraving: {
+                power: 25,
+                speed: 150
             },
             leather_3mm_cutting: {
                 power: 60,
@@ -47,13 +39,9 @@ define(function() {
                 speed: 3,
                 repeat: 2
             },
-            leather_bw_engraving: {
+            leather_engraving: {
                 power: 30,
                 speed: 150
-            },
-            leather_shading_engraving: {
-                power: 15,
-                speed: 80
             },
             fabric_3mm_cutting: {
                 power: 50,
@@ -63,13 +51,9 @@ define(function() {
                 power: 50,
                 speed: 20
             },
-            fabric_bw_engraving: {
+            fabric_engraving: {
                 power: 20,
                 speed: 150
-            },
-            fabric_shading_engraving: {
-                power: 15,
-                speed: 80
             },
             rubber_bw_engraving: {
                 power: 50,
@@ -98,13 +82,9 @@ define(function() {
                 power: 60,
                 speed: 3
             },
-            wood_bw_engraving: {
-                power: 30,
-                speed: 180
-            },
-            wood_shading_engraving: {
-                power: 15,
-                speed: 80
+            wood_engraving: {
+                power: 25,
+                speed: 150
             },
             acrylic_3mm_cutting: {
                 power: 60,
@@ -114,13 +94,9 @@ define(function() {
                 power: 60,
                 speed: 4
             },
-            acrylic_bw_engraving: {
-                power: 30,
-                speed: 180
-            },
-            acrylic_shading_engraving: {
-                power: 15,
-                speed: 80
+            acrylic_engraving: {
+                power: 25,
+                speed: 150
             },
             leather_3mm_cutting: {
                 power: 65,
@@ -130,13 +106,9 @@ define(function() {
                 power: 65,
                 speed: 1
             },
-            leather_bw_engraving: {
+            leather_engraving: {
                 power: 30,
                 speed: 150
-            },
-            leather_shading_engraving: {
-                power: 15,
-                speed: 80
             },
             fabric_3mm_cutting: {
                 power: 60,
@@ -146,13 +118,9 @@ define(function() {
                 power: 60,
                 speed: 20
             },
-            fabric_bw_engraving: {
+            fabric_engraving: {
                 power: 20,
                 speed: 150
-            },
-            fabric_shading_engraving: {
-                power: 15,
-                speed: 80
             },
             rubber_bw_engraving: {
                 power: 45,
@@ -174,68 +142,52 @@ define(function() {
 
         BEAMBOX_PRO: {
             wood_3mm_cutting: {
-                power: 60,
-                speed: 6
+                power: 55,
+                speed: 7
             },
             wood_5mm_cutting: {
-                power: 60,
-                speed: 3
+                power: 55,
+                speed: 4
             },
-            wood_bw_engraving: {
+            wood_engraving: {
                 power: 20,
                 speed: 150
-            },
-            wood_shading_engraving: {
-                power: 12,
-                speed: 80
             },
             acrylic_3mm_cutting: {
-                power: 60,
-                speed: 8
+                power: 55,
+                speed: 7
             },
             acrylic_5mm_cutting: {
-                power: 60,
-                speed: 3
+                power: 55,
+                speed: 4
             },
-            acrylic_bw_engraving: {
-                power: 20,
-                speed: 180
-            },
-            acrylic_shading_engraving: {
-                power: 12,
-                speed: 80
-            },
-            leather_3mm_cutting: {
-                power: 60,
-                speed: 3
-            },
-            leather_5mm_cutting: {
-                power: 60,
-                speed: 1
-            },
-            leather_bw_engraving: {
-                power: 20,
-                speed: 150
-            },
-            leather_shading_engraving: {
-                power: 12,
-                speed: 80
-            },
-            fabric_3mm_cutting: {
-                power: 40,
-                speed: 20
-            },
-            fabric_5mm_cutting: {
-                power: 40,
-                speed: 20
-            },
-            fabric_bw_engraving: {
+            acrylic_engraving: {
                 power: 15,
                 speed: 150
             },
-            fabric_shading_engraving: {
-                power: 12,
-                speed: 80
+            leather_3mm_cutting: {
+                power: 55,
+                speed: 4
+            },
+            leather_5mm_cutting: {
+                power: 55,
+                speed: 2
+            },
+            leather_engraving: {
+                power: 20,
+                speed: 150
+            },
+            fabric_3mm_cutting: {
+                power: 35,
+                speed: 20
+            },
+            fabric_5mm_cutting: {
+                power: 35,
+                speed: 20
+            },
+            fabric_engraving: {
+                power: 15,
+                speed: 150
             },
             rubber_bw_engraving: {
                 power: 40,
