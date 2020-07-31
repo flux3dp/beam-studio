@@ -234,10 +234,10 @@ define(function() {
         initialize: {
             // generic strings
             next: 'Nächster',
-            start: 'START',
+            start: 'Starten',
             skip: 'Überspringen',
-            cancel: 'STORNIEREN',
-            confirm: 'BESTÄTIGEN',
+            cancel: 'Stornieren',
+            confirm: 'Bestätigen',
             connect: 'Verbinden',
             back: 'Zurück',
             retry: 'Wiederholen',
@@ -259,7 +259,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: 'Kabelgebundenes Netzwerk',
-                ether_to_ether: 'Ethernet zu Ethernet',
+                ether_to_ether: 'Direkt mit einem Netzwerkkabel verbinden',
             },
             connect_wifi: {
                 title: 'Verbindung zu Wi-Fi',
@@ -280,14 +280,14 @@ define(function() {
                 what_if_2_content: '1. Wenn die IP-Adresse mit 169.154 beginnt, sollte es sich um ein Problem mit der DHCP-Einstellung handeln. Wenden Sie sich an Ihren ISP (Internetdienstanbieter), um weitere Unterstützung zu erhalten.\n2. Wenn Ihr Computer über PPPoE eine direkte Verbindung zum Internet herstellt, wechseln Sie zur Verwendung des Routers, um eine Verbindung über PPPoE herzustellen, und aktivieren Sie die DHCP-Funktion im Router.'
             },
             connect_ethernet: {
-                title: 'Ethernet zu Ethernet',
+                title: 'Direkt mit einem Netzwerkkabel verbinden',
                 tutorial1: '1. Verbinden Sie das Gerät mit einem Ethernet-Kabel mit Ihrem Computer.',
                 tutorial2_1: '2. Befolgen ',
                 tutorial2_a_text: 'Sie dieser Anleitung',
                 tutorial2_a_href_mac: 'https://support.flux3dp.com/hc/en-us/articles/360001517076',
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/en-us/articles/360001507715',
                 tutorial2_2: ', um Ihren Computer als Router zu verwenden',
-                tutorial3: '3. Weiter klicken.',
+                tutorial3: '3. Klicken Sie auf "Nächster"',
             },
             connect_machine_ip: {
                 enter_ip: 'Geben Sie die Maschinen-IP ein',
@@ -1324,7 +1324,7 @@ define(function() {
                             glass_bw_engraving:  'Glas - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur (Diodenlaser)',
-                            save: 'Speichern',
+                            save: 'Aktuelle Parameter hinzufügen',
                             export: 'Export',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'
@@ -1350,7 +1350,7 @@ define(function() {
                             glass_bw_engraving:  'Glas - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur',
                             metal_bw_engraving: 'Metall - Monochrome Gravur (Diodenlaser)',
-                            save: 'Speichern',
+                            save: 'Aktuelle Parameter hinzufügen',
                             export: 'Export',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'

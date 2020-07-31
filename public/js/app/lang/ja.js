@@ -259,7 +259,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: '有線ネットワーク',
-                ether_to_ether: 'イーサネット接続',
+                ether_to_ether: 'ネットワークケーブルで直接接続',
             },
             connect_wifi: {
                 title: 'Wi-Fiで接続する',
@@ -280,14 +280,14 @@ define(function() {
                 what_if_2_content: '1. IP アドレスが 169.154 で始まる場合は、 DHCP 設定の問題であるはずです。詳細については、ISP（インターネットサービスプロバイダー）にお問い合わせください。\n2. コンピューターが PPPoE を使用して直接インターネットに接続している場合は、ルーターを使用して PPPoE を使用して接続し、ルーターで DHCP 機能を有効にしてください。'
             },
             connect_ethernet: {
-                title: 'イーサネット接続',
+                title: 'ネットワークケーブルで直接接続',
                 tutorial1: '1. イーサネットケーブルでマシンをコンピュータに接続してください。',
                 tutorial2_1: '2. この',
                 tutorial2_a_text: 'ガイド',
                 tutorial2_a_href_mac: 'https://support.flux3dp.com/hc/en-us/articles/360001517076',
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/en-us/articles/360001507715',
                 tutorial2_2: 'に従ってコンピュータをルーターにしてください。',
-                tutorial3: '3. Nextをクリックしてください。',
+                tutorial3: '3. 「次へ」をクリックしてください。',
             },
             connect_machine_ip: {
                 enter_ip: 'マシン IP を入力してください',
@@ -1324,7 +1324,7 @@ define(function() {
                             glass_bw_engraving:  'ガラス - モノクロ彫刻',
                             metal_bw_engraving: '金属 - モノクロ彫刻',
                             stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
-                            save: '保存する',
+                            save: '現在のパラメーターを追加',
                             export: '書き出す',
                             more: '管理する',
                             parameters: 'パラメーター…'
@@ -1350,7 +1350,7 @@ define(function() {
                             glass_bw_engraving:  'ガラス - モノクロ彫刻',
                             metal_bw_engraving: '金属 - モノクロ彫刻',
                             stainless_steel_bw_engraving_diode: '金属 - モノクロ彫刻 (ダイオードレーザー)',
-                            save: '保存する',
+                            save: '現在のパラメーターを追加',
                             export: '書き出す',
                             more: '管理する',
                             parameters: 'パラメーター…'

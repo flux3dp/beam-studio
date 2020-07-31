@@ -283,7 +283,7 @@ define(function() {
                 tutorial2_a_href_mac: 'https://support.flux3dp.com/hc/zh-tw/articles/360001517076',
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/zh-tw/articles/360001507715',
                 tutorial2_2: '使您的电脑同时扮演路由器的角色。',
-                tutorial3: '3. 點選 Next 。',
+                tutorial3: '3. 點選 下一步。',
             },
             connect_machine_ip: {
                 enter_ip: '请输入机器 IP',
@@ -1316,7 +1316,7 @@ define(function() {
                             glass_bw_engraving:  '玻璃 - 双色刻印',
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
                             stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
-                            save: '储存参数',
+                            save: '新增目前参数',
                             export: '汇出参数',
                             more: '管理',
                             parameters: '选择参数'
@@ -1342,7 +1342,7 @@ define(function() {
                             glass_bw_engraving:  '玻璃 - 双色刻印',
                             metal_bw_engraving: '不锈钢喷剂 - 双色刻印',
                             stainless_steel_bw_engraving_diode: '不锈钢 - 双色刻印（二极体雷射）',
-                            save: '储存参数',
+                            save: '新增目前参数',
                             export: '汇出参数',
                             more: '管理',
                             parameters: '选择参数'

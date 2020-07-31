@@ -234,10 +234,10 @@ define(function() {
         initialize: {
             // generic strings
             next: 'Next',
-            start: 'START',
+            start: 'Start',
             skip: 'Skip',
-            cancel: 'CANCEL',
-            confirm: 'CONFIRM',
+            cancel: 'Cancel',
+            confirm: 'Confirm',
             connect: 'Connect',
             back: 'Back',
             retry: 'Retry',
@@ -259,7 +259,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: 'Wired Network',
-                ether_to_ether: 'Ethernet to Ethernet',
+                ether_to_ether: 'Directly Connect with a Network Cable',
             },
             connect_wifi: {
                 title: 'Connecting to Wi-Fi',
@@ -280,7 +280,7 @@ define(function() {
                 what_if_2_content: '1. If the IP address starts with 169.154, it should be a DHCP setting issue, please contact your ISP (internet service provider) for further assistance.\n2. If your computer connects to the internet directly using PPPoE, please change to using the router to connect using PPPoE, and enable DHCP feature in the router.'
             },
             connect_ethernet: {
-                title: 'Ethernet To Ethernet',
+                title: 'Directly Connect with a Network Cable',
                 tutorial1: '1. Connect the machine with your computer with ethernet cable.',
                 tutorial2_1: '2. Follow ',
                 tutorial2_a_text: 'this guide',
@@ -1324,7 +1324,7 @@ define(function() {
                             glass_bw_engraving:  'Glass - Monochromic Engraving',
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
-                            save: 'Save',
+                            save: 'Add current parameters',
                             export: 'Export',
                             more: 'Manage',
                             parameters: 'Presets'
@@ -1350,7 +1350,7 @@ define(function() {
                             glass_bw_engraving:  'Glass - Monochromic Engraving',
                             metal_bw_engraving: 'Metal - Monochromic Engraving',
                             stainless_steel_bw_engraving_diode: 'Metal - Monochromic Engraving (Diode Laser)',
-                            save: 'Save',
+                            save: 'Add current parameters',
                             export: 'Export',
                             more: 'Manage',
                             parameters: 'Presets'

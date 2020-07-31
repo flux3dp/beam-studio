@@ -288,7 +288,7 @@ define(function() {
                 tutorial2_a_href_mac: 'https://support.flux3dp.com/hc/zh-tw/articles/360001517076',
                 tutorial2_a_href_win: 'https://support.flux3dp.com/hc/zh-tw/articles/360001507715',
                 tutorial2_2: '使您的電腦同時扮演路由器的角色。',
-                tutorial3: '3. 點選 Next 。',
+                tutorial3: '3. 點選 下一步。',
             },
             connect_machine_ip: {
                 enter_ip: '請輸入機器 IP',
@@ -1322,7 +1322,7 @@ define(function() {
                             glass_bw_engraving:  '玻璃 - 雙色刻印',
                             metal_bw_engraving: '不鏽鋼噴劑 - 雙色刻印',
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 雙色刻印（二極體雷射）',
-                            save: '儲存參數',
+                            save: '新增目前參數',
                             export: '匯出參數',
                             more: '管理',
                             parameters: '選擇參數'
@@ -1348,7 +1348,7 @@ define(function() {
                             glass_bw_engraving:  '玻璃 - 雙色刻印',
                             metal_bw_engraving: '不鏽鋼噴劑 - 雙色刻印',
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 雙色刻印（二極體雷射）',
-                            save: '儲存參數',
+                            save: '新增目前參數',
                             export: '匯出參數',
                             more: '管理',
                             parameters: '選擇參數'
