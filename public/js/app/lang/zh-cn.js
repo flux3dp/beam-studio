@@ -255,7 +255,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: '有线网路',
-                ether_to_ether: '乙太网路对接',
+                ether_to_ether: '网路线直连',
             },
             connect_wifi: {
                 title: '连接 Wi-Fi',
@@ -276,7 +276,7 @@ define(function() {
                 what_if_2_content: '1. IP 地址为 169.154 开头通常为 DHCP 设定问题，需要联系网路服务提供商或是网路设定者来协助。 \n2. 如果工作环境的网路是由电脑直接 PPPoE 连网，请改由路由器直接 PPPoE 联网，并在路由器中开启DHCP 功能。'
             },
             connect_ethernet: {
-                title: '乙太网路对接',
+                title: '网路线直连',
                 tutorial1: '1. 将您的机器与您的电脑以乙太网路线连接。',
                 tutorial2_1: '2. 依照',
                 tutorial2_a_text: '这篇文章',

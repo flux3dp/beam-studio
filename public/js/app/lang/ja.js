@@ -259,7 +259,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: '有線ネットワーク',
-                ether_to_ether: 'ネットワークケーブルで直接接続',
+                ether_to_ether: '直接接続',
             },
             connect_wifi: {
                 title: 'Wi-Fiで接続する',
@@ -280,7 +280,7 @@ define(function() {
                 what_if_2_content: '1. IP アドレスが 169.154 で始まる場合は、 DHCP 設定の問題であるはずです。詳細については、ISP（インターネットサービスプロバイダー）にお問い合わせください。\n2. コンピューターが PPPoE を使用して直接インターネットに接続している場合は、ルーターを使用して PPPoE を使用して接続し、ルーターで DHCP 機能を有効にしてください。'
             },
             connect_ethernet: {
-                title: 'ネットワークケーブルで直接接続',
+                title: '直接接続',
                 tutorial1: '1. イーサネットケーブルでマシンをコンピュータに接続してください。',
                 tutorial2_1: '2. この',
                 tutorial2_a_text: 'ガイド',

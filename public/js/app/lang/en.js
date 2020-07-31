@@ -259,7 +259,7 @@ define(function() {
             connection_types: {
                 wifi: 'Wi-Fi',
                 wired: 'Wired Network',
-                ether_to_ether: 'Directly Connect with a Network Cable',
+                ether_to_ether: 'Direct Connection',
             },
             connect_wifi: {
                 title: 'Connecting to Wi-Fi',
@@ -280,7 +280,7 @@ define(function() {
                 what_if_2_content: '1. If the IP address starts with 169.154, it should be a DHCP setting issue, please contact your ISP (internet service provider) for further assistance.\n2. If your computer connects to the internet directly using PPPoE, please change to using the router to connect using PPPoE, and enable DHCP feature in the router.'
             },
             connect_ethernet: {
-                title: 'Directly Connect with a Network Cable',
+                title: 'Direct Connection',
                 tutorial1: '1. Connect the machine with your computer with ethernet cable.',
                 tutorial2_1: '2. Follow ',
                 tutorial2_a_text: 'this guide',

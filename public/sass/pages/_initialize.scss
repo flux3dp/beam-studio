@@ -50,7 +50,8 @@
     .connect-machine {
         .main-title {
             margin-bottom: 50px;
-            color: #333333
+            font-size: 30px;
+            color: #333333;
         }
         .btn-h-group {
             margin: 0 auto 0 auto;
@@ -63,10 +64,10 @@
             transition: all .3s ease;
             background: transparent;
             opacity: 1;
+            font-size: 30px;
             color: #333333;
             font-weight: 700;
             text-align: start;
-            font-size: 27px;
         }
         .btn-action:hover {
             background-color: #333333;
@@ -111,6 +112,7 @@
         .select-connection-type {
             padding: 0 0 60px 0;
             .btn-container {
+                width: 100%;
                 display: flex;
                 margin: 0 0 10px 0;
                 .connect-btn-icon {
@@ -119,10 +121,10 @@
                 }
             }
             .btn-action {
-                width: 400px;
+                width: 100%;
                 height: 54px;
                 line-height: 54px;
-                padding-left: 30px;
+                padding: 0 30px;
             }
         }
         .connection-wired,
@@ -153,6 +155,7 @@
                             margin: 118px 0 0 0;
                         }
                     }
+                    animation: pulse 4s cubic-bezier(0.5, 0, 0.5, 1) alternate infinite;
                 }
                 &.ether {
                     margin-top: -60px;
@@ -271,50 +274,58 @@
                 }
             }
         }
+        .btn-page-container {
+            position: absolute;
+            right: 60px;
+            bottom: 55px;
+            display: flex;
 
-        .btn-page {
-            cursor: pointer;
-            height: 49px;
-            line-height: 39px;
-            padding: 5px 10px;
-            font-size: 27px;
-            font-weight: bold;
-            color: #333333;
-            &.disabled {
-                cursor: unset;
-                opacity: 0.3;
-            }
-            &.back {
-                position: absolute;
-                left: 45px;
-                top: 65px;
-            }
-            &.next {
-                float: right;
-            }
-            .left-arrow {
-                float: left;
-                border-style: solid;
-                border-color: transparent #333333 transparent transparent;
-                border-width: 13px 21px 13px 0;
-                margin: 6.5px 20px 6.5px 0;
-            }
-            .right-arrow {
-                float: right;
-                border-style: solid;
-                border-color: transparent transparent transparent #333333;
-                border-width: 13px 0 13px 21px;
-                margin: 6.5px 0 6.5px 20px;
-            }
-            &:hover:not(.disabled) {
-                border-radius: 2px;
-                background-color: #333333;
-                color: #f8f8f8;
+            .btn-page {
+                cursor: pointer;
+                height: 72px;
+                padding: 0px 20px;
+                margin-left: 35px;
+                font-size: 27px;
+                line-height: 72px;
+                font-weight: bold;
+                color: #333333;
+                &.primary {
+                    border-radius: 8px;
+                    background-color: #333333;
+                    color: #f8f8f8;
+                }
+                &.disabled {
+                    cursor: unset;
+                    opacity: 0.3;
+                }
                 .left-arrow {
-                    border-color: transparent #f8f8f8 transparent transparent;
+                    float: left;
+                    border-style: solid;
+                    border-color: transparent #333333 transparent transparent;
+                    border-width: 13px 21px 13px 0;
+                    margin: 6.5px 20px 6.5px 0;
                 }
                 .right-arrow {
-                    border-color: transparent transparent transparent #f8f8f8;
+                    float: right;
+                    border-style: solid;
+                    border-color: transparent transparent transparent #333333;
+                    border-width: 13px 0 13px 21px;
+                    margin: 6.5px 0 6.5px 20px;
+                }
+                &:hover:not(.disabled) {
+                    border-radius: 8px;
+                    background-color: #333333;
+                    color: #f8f8f8;
+                    .left-arrow {
+                        border-color: transparent #f8f8f8 transparent transparent;
+                    }
+                    .right-arrow {
+                        border-color: transparent transparent transparent #f8f8f8;
+                    }
+                    &.primary {
+                        background-color: #000000;
+                        color: #f8f8f8;
+                    }
                 }
             }
         }

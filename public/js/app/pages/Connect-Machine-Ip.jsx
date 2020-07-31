@@ -141,13 +141,13 @@ define([
                                 <input
                                     ref='ipInput'
                                     className="ip-input"
+                                    placeholder="192.168.0.1"
                                     type='text'
                                     onKeyDown={(e) => this.handleKeyDown(e)}
                                     defaultValue={this.state.rpiIp}
                                 />
                                 {this.renderTestInfos()}
                             </div>
-                            {this.renderNextButton()}
                         </div>
                     </div>
                 );
@@ -225,7 +225,15 @@ define([
             }
 
             onFinish = () => {
-                const { machineIp } = this.state;
+                const { device, machineIp } = this.state;
+                const modelMap = {
+                    fbm1: 'fbm1',
+                    fbb1b: 'fbb1b',
+                    fbb1p: 'fbb1p',
+                };
+                const model = modelMap[device.model] || 'fbb1b';
+                BeamboxPreference.write('model', model);
+                BeamboxPreference.write('workarea', model);
                 let pokeIPs = localStorage.getItem('poke-ip-addr');
                 pokeIPs = (pokeIPs ? pokeIPs.split(/[,;] ?/) : []);
                 if (!pokeIPs.includes(machineIp)) {
@@ -243,26 +251,17 @@ define([
                 location.reload();
             }
 
-            renderBackButton = () => {
-                return (
-                    <div className="btn-page back" onClick={() => {history.back()}} >
-                        <div className="left-arrow"/>
-                        {lang.back}
-                    </div>
-                );
-            }
-
             renderNextButton = () => {
-                const {isTesting, hadTested, ipAvailability, cameraAvailability} = this.state;
+                const {isTesting, hadTested, ipAvailability, cameraAvailability, device} = this.state;
                 let onClick, label;
-                let className = classNames('btn-page', 'next');
+                let className = classNames('btn-page', 'next', 'primary');
                 if (!isTesting && !hadTested) {
                     label = lang.next;
                     onClick = this.startTesting;
                 } else if (isTesting) {
                     label = lang.next;
                     onClick = () => {};
-                    className = classNames('btn-page', 'next', 'disabled');
+                    className = classNames('btn-page', 'next', 'primary', 'disabled');
                 } else if (hadTested) {
                     if (ipAvailability) {
                         label = lang.connect_machine_ip.finish_setting;
@@ -274,8 +273,18 @@ define([
                 }
                 return (
                     <div className={className} onClick={() => {onClick()}} >
-                        <div className="right-arrow"/>
                         {label}
+                    </div>
+                );
+            }
+
+            renderButtons = () => {
+                return (
+                    <div className="btn-page-container">
+                        <div className="btn-page" onClick={() => {history.back()}} >
+                            {lang.back}
+                        </div>
+                        {this.renderNextButton()}
                     </div>
                 );
             }
@@ -288,7 +297,7 @@ define([
                 const content = (
                     <div className="connect-machine">
                         <div className="top-bar"/>
-                        {this.renderBackButton()}
+                        {this.renderButtons()}
                         {innerContent}
                     </div>
                 );

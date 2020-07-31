@@ -65,11 +65,19 @@ define([
                 );
             }
 
-            renderBackButton = () => {
+            renderButtons = () => {
+                const isNewUser = localStorage.getItem('printer-is-ready') !== 'true';
                 return (
-                    <div className="btn-page back" onClick={() => {location.hash='#initialize/connect/select-machine-type'}} >
-                        <div className="left-arrow"/>
-                        {lang.back}
+                    <div className="btn-page-container">
+                        <div className="btn-page primary" onClick={() => {
+                            if (isNewUser) {
+                                localStorage.setItem('new-user', true);
+                            }
+                            localStorage.setItem('printer-is-ready', true);
+                            location.hash = '#studio/beambox';
+                        }} >
+                            {isNewUser ? lang.skip : lang.cancel}
+                        </div>
                     </div>
                 );
             }
@@ -82,7 +90,7 @@ define([
                 const content = (
                     <div className="connect-machine">
                         <div className="top-bar"/>
-                        {this.renderBackButton()}
+                        {this.renderButtons()}
                         {innerContent}
                     </div>
                 );

@@ -40,26 +40,20 @@ define([
                                 </div>
                                 <div>{lang.connect_ethernet.tutorial3}</div>
                             </div>
-                            {this.renderNextButton()}
                         </div>
                     </div>
                 );
             }
 
-            renderBackButton = () => {
+            renderButtons = () => {
                 return (
-                    <div className="btn-page back" onClick={() => {location.hash='#initialize/connect/select-connection-type'}} >
-                        <div className="left-arrow"/>
-                        {lang.back}
-                    </div>
-                );
-            }
-
-            renderNextButton = () => {
-                return (
-                    <div className="btn-page next" onClick={() => {location.hash='#initialize/connect/connect-machine-ip?wired=1'}} >
-                        <div className="right-arrow"/>
-                        {lang.next}
+                    <div className="btn-page-container">
+                        <div className="btn-page" onClick={() => {location.hash='#initialize/connect/select-connection-type'}} >
+                            {lang.back}
+                        </div>
+                        <div className="btn-page primary" onClick={() => {location.hash='#initialize/connect/connect-machine-ip?wired=1'}} >
+                            {lang.next}
+                        </div>
                     </div>
                 );
             }
@@ -72,7 +66,7 @@ define([
                 const content = (
                     <div className="connect-machine">
                         <div className="top-bar"/>
-                        {this.renderBackButton()}
+                        {this.renderButtons()}
                         {innerContent}
                     </div>
                 );
