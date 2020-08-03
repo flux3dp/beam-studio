@@ -82,8 +82,11 @@ define([
             const canvasBackground = svgedit.utilities.getElem('canvasBackground');
             const canvasGrid = svgedit.utilities.getElem('canvasGrid');
             const previewBoundary = this._getPreviewBoundary();
-
-            canvasBackground.insertBefore(previewBoundary, canvasGrid.nextSibling);
+            if (canvasGrid.nextSibling) {
+                canvasBackground.insertBefore(previewBoundary, canvasGrid.nextSibling);
+            } else {
+                canvasBackground.appendChild(previewBoundary);
+            }
         }
 
         clearBoundary() {

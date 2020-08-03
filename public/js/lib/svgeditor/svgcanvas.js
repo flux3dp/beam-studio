@@ -11010,7 +11010,12 @@ define([
                         'preserveAspectRatio': 'xMinYMin',
                         'style': 'pointer-events:none; opacity: 1;',
                     });
-                    bg.appendChild(bg_img);
+                    const rotaryAxis = svgedit.utilities.getElem('rotaryAxis');
+                    if (rotaryAxis) {
+                        bg.insertBefore(bg_img, rotaryAxis);
+                    } else {
+                        bg.appendChild(bg_img);
+                    }
                 }
                 setHref(bg_img, url);
             } else if (bg_img) {

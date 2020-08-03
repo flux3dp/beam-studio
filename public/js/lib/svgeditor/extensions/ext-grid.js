@@ -21,7 +21,7 @@ svgEditor.addExtension('view_grid', function() { 'use strict';
 		showGrid = svgEditor.curConfig.showGrid || false,
 		assignAttributes = svgCanvas.assignAttributes,
 		hcanvas = document.createElement('canvas'),
-		canvBG = $('#canvasBackground'),
+		canvBG = document.getElementById('canvasBackground'),
 		units = svgedit.units.getTypeMap(),
 		intervals = [0.01, 0.1, 1, 10, 100, 1000];
 
@@ -37,7 +37,12 @@ svgEditor.addExtension('view_grid', function() { 'use strict';
 		'overflow': 'visible',
 		'display': 'none'
 	});
-	canvBG.append(canvasGrid);
+	const rotaryAxis = svgedit.utilities.getElem('rotaryAxis');
+	if (rotaryAxis) {
+		canvBG.insertBefore(canvasGrid, rotaryAxis);
+	} else {
+		canvBG.appendChild(canvasGrid);
+	}
 
 	// grid-pattern
 	var gridPattern = svgdoc.createElementNS(NS.SVG, 'pattern');
