@@ -459,7 +459,7 @@ define(function() {
             default_beambox_model: '预设文件设定',
             guides_origin: '参考线座标',
             guides: '参考线',
-            image_downsampling: '点阵图画质',
+            image_downsampling: '点阵图预览品质',
             continuous_drawing: '连续绘制',
             mask: '工作范围剪裁',
             text_path_calc_optimization: '路径计算优化',
@@ -2014,6 +2014,7 @@ define(function() {
             needNewUserTutorial: '请问您是否需要 Beam Studio 的教学？',
             needNewInterfaceTutorial: '请问是否需要为您介绍 Beam Studio 的新介面？',
             next: '下一步',
+            look_for_machine: '寻找机器中',
             newUser: {
                 draw_a_circle: '画一个圆',
                 drag_to_draw: '拖曳以生成图形',
