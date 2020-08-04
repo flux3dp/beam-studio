@@ -13,7 +13,9 @@ define([
         }
 
         setSelectedElement = (elems) => {
-            document.activeElement.blur();
+            if (elems !== this.state.selectedElement) {
+                document.activeElement.blur();
+            }
             this.setState({selectedElement: elems});
         }
 
