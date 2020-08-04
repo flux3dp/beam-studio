@@ -68,7 +68,7 @@ define(function() {
         },
         device_selection: {
             no_printers: 'Kein Computer kann über das Netzwerk erkannt werden. Bitte überprüfe, ob sich Ihr PC und Ihr Gerät im selben Netzwerk befinden. <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/215394548">Mehr Info</a>',
-            no_beambox: '#801 Wir können Ihren Computer nicht im Netzwerk finden. Befolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
+            no_beambox: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
             module: 'MODUL',
             status: 'STATUS'
         },
