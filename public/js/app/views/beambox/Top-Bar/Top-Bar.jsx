@@ -15,7 +15,7 @@ define([
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
     'jsx!views/tutorials/Tutorial-Controller',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'helpers/api/alert-config',
     'helpers/api/discover',
     'helpers/check-device-status',
@@ -64,10 +64,11 @@ define([
     class TopBar extends React.Component {
         constructor() {
             super();
+            this.deviceList = [];
             this.state = {
                 isPreviewing: false,
+                hasDiscoverdMachine: false,
                 shouldShowDeviceList: false,
-                deviceList: [],
                 deviceListDir: 'right',
                 selectDeviceCallback: () => {},
             };
@@ -75,6 +76,24 @@ define([
 
         componentDidMount() {
             ret.contextCaller = this.context;
+            this.discover = Discover(
+                'top-bar',
+                (machines) => {
+                    const { hasDiscoverdMachine, shouldShowDeviceList } = this.state;
+                    const deviceList = DeviceList(machines);
+                    this.deviceList = deviceList;
+                    if ((deviceList.length > 0) !== hasDiscoverdMachine) {
+                        this.setState({hasDiscoverdMachine: deviceList.length > 0});
+                    }
+                    if (shouldShowDeviceList) {
+                        this.setState(this.state);
+                    }
+                }
+            );
+        }
+
+        componentWillUnmount() {
+            this.discover.removeListener('top-bar');
         }
 
         componentDidUpdate() {
@@ -214,8 +233,9 @@ define([
         }
 
         renderGoButton = () => {
+            const { hasDiscoverdMachine } = this.state;
             return (
-                <div className={classNames('go-button-container')} onClick={() => this.handleExportClick()}>
+                <div className={classNames('go-button-container', {'no-machine': !hasDiscoverdMachine})} onClick={() => this.handleExportClick()}>
                     { isNotMac ? <div className="go-text">{LANG.export}</div> : null}
                     <div className={(classNames('go-btn'))}/>
                 </div>
@@ -360,33 +380,33 @@ define([
         }
 
         showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
-            this.discover = Discover(
-                'top-bar',
-                (machines) => {
-                    machines = DeviceList(machines);
-                    if (useDefaultMachine) {
+            const { deviceList } = this;
+            if (deviceList.length > 0) {
+                if (useDefaultMachine) {
+                    if (DefaultMachine.exist()) {
                         const defaultMachine = DefaultMachine.get();
-                        if (DefaultMachine.exist()) {
-                            for (let i=0; i < machines.length; i++) {
-                                if (defaultMachine.uuid === machines[i].uuid) {
-                                    this.handleSelectDevice(machines[i], (device) => {selectDeviceCallback(device)});
-                                }
+                        for (let i=0; i < deviceList.length; i++) {
+                            if (defaultMachine.uuid === deviceList[i].uuid) {
+                                this.handleSelectDevice(deviceList[i], (device) => {selectDeviceCallback(device)});
+                                return;
                             }
                         }
                     }
-                    this.setState({deviceList: machines});
                 }
-            );
-            this.waitForMachine();
-            this.setState({
-                shouldShowDeviceList: true,
-                deviceListType: type,
-                selectDeviceCallback
-            });
+                this.setState({
+                    shouldShowDeviceList: true,
+                    deviceListType: type,
+                    selectDeviceCallback,
+                });
+            } else {
+                Alert.popUp({
+                    caption: lang.alert.oops,
+                    message: lang.device_selection.no_beambox,
+                })
+            }
         }
 
         hideDeviceList = () => {
-            this.discover.removeListener('top-bar');
             this.setState({
                 shouldShowDeviceList: false,
                 selectDeviceCallback: () => {}
@@ -394,7 +414,8 @@ define([
         }
 
         renderDeviceList() {
-            const { shouldShowDeviceList, deviceList, selectDeviceCallback, deviceListType } = this.state;
+            const { deviceList } = this;
+            const { shouldShowDeviceList, selectDeviceCallback, deviceListType } = this.state;
             if (!shouldShowDeviceList) {
                 return null;
             }
@@ -477,26 +498,6 @@ define([
                     id: 'fatal-occurred',
                     message: '#813' + e.toString(),
                     type: AlertConstants.SHOW_POPUP_ERROR,
-                });
-            }
-        }
-
-        waitForMachine = () => {
-            if (this.waitForMachineTimeout) {
-                clearTimeout(this.waitForMachineTimeout);
-            }
-            this.waitForMachineTimeout = setTimeout(() => this.openNoMachineAlert(), 5000);
-        }
-
-        openNoMachineAlert = () => {
-            this.waitForMachineTimeout = null;
-            const { deviceList, shouldShowDeviceList } = this.state;
-            if (0 === deviceList.length && shouldShowDeviceList) {
-                Alert.popUp({
-                    id: 'no-machine',
-                    message: lang.device_selection.no_beambox,
-                    buttonType: AlertConstants.RETRY_CANCEL,
-                    onRetry: () => {this.waitForMachine()}
                 });
             }
         }

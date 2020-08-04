@@ -482,7 +482,10 @@
             letter-spacing: 0.95px;
             color: #353535;
         }
-        &:hover {
+        &.no-machine {
+            opacity: 0.2;
+        }
+        &:hover:not(.no-machine) {
             opacity: 1;
         }
     }
