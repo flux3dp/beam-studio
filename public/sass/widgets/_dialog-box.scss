@@ -12,6 +12,29 @@
             font-weight: bold;
             letter-spacing: 1px;
             white-space: pre-wrap;
+            .sub-content {
+                font-size: 12px;
+                font-weight: 500;
+                padding: 5px 0 0 5px;
+                .sub-line {
+                    line-height: 12px;
+                    padding-top: 8px;
+                    height: 20px;
+                }
+                .hint-mark {
+                    float: right;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 7px;
+                    color: #0091ff;
+                    background-color: #ffffff;
+                    line-height: 14px;
+                    margin-left: 10px;
+                    margin-top: -1px;
+                    text-align: center;
+                    cursor: pointer;
+                }
+            }
         }
         .next-button {
             cursor: pointer;

@@ -6,7 +6,7 @@ define([
     'jsx!views/beambox/Right-Panels/Layer-Panel',
     'jsx!views/beambox/Right-Panels/Laser-Panel',
     'jsx!views/tutorials/Tutorial-Controller',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'helpers/i18n'
 ], function(
     { RightPanelContext },

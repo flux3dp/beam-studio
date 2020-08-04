@@ -4,7 +4,7 @@ define([
     'jsx!widgets/Modal-With-Hole',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'helpers/i18n'
 ], function (
     DialogBox,
@@ -131,14 +131,16 @@ define([
 
         renderTutorialDialog() {
             const { currentStep, dialogStylesAndContents, hasNextButton, handleNextStep } = this.context;
-            const { dialogBoxStyles, text } = dialogStylesAndContents[currentStep];
+            const { dialogBoxStyles, text, subElement } = dialogStylesAndContents[currentStep];
             return (
                 <DialogBox
                     {...dialogBoxStyles}
                     onClose={() => this.props.endTutorial()}
                 >
                     <div className="tutorial-dialog">
-                        {`${currentStep + 1}/${dialogStylesAndContents.length}\n${text}`}
+                        {`${currentStep + 1}/${dialogStylesAndContents.length}\n`}
+                        {text}
+                        {subElement}
                         { hasNextButton ? 
                         <div className="next-button" onClick={() => handleNextStep()}>
                             {LANG.next}

@@ -3,6 +3,7 @@ define([
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
     'app/actions/beambox/font-funcs',
+    'app/actions/beambox/tutorials',
     'app/actions/initialize-machine',
     'app/actions/global-actions',
     'app/constants/global-constants',
@@ -14,7 +15,6 @@ define([
     'app/constants/progress-constants',
     'app/constants/device-constants',
     'app/constants/font-constants',
-    'app/constants/tutorial-constants',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
     'jsx!app/actions/beambox/Laser-Panel-Controller',
     'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
@@ -33,6 +33,7 @@ define([
     BeamboxPreference,
     Constant,
     FontFuncs,
+    Tutorials,
     InitializeMachine,
     GlobalActions,
     GlobalConstants,
@@ -44,7 +45,6 @@ define([
     ProgressConstants,
     DeviceConstants,
     FontConstants,
-    TutorialConstants,
     ToolPanelsController,
     LaserPanelController,
     ImageTracePanelController,
@@ -568,23 +568,27 @@ define([
                 message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
-                    let tutorial;
-                    if (isNewUser) {
-                        tutorial = TutorialConstants.NEW_USER_TUTORIAL;
-                    } else {
-                        tutorial = TutorialConstants.INTERFACE_TUTORIAL;
-                    }
-                    DialogCaller.showTutorial(tutorial, () => {
+                    const tutorialCallback = () => {
                         localStorage.removeItem('new-user');
                         AlertConfig.write('skip-interface-tutorial', true);
                         Alert.popUp({
                             message: LANG.tutorial_complete,
                         });
-                    });
+                    }
+                    if (isNewUser) {
+                        Tutorials.startNewUserTutorial(tutorialCallback);
+                    } else {
+                        Tutorials.startInterfaceTutorial(tutorialCallback);
+                    }
                 },
                 onNo: () => {
                     localStorage.removeItem('new-user');
                     AlertConfig.write('skip-interface-tutorial', true);
+                    if (isNewUser) {
+                        Alert.popUp({
+                            message: LANG.skip_tutorial,
+                        });
+                    }
                 }
             });
         }

@@ -16,7 +16,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'jsx!views/tutorials/Tutorial-Controller',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'app/actions/beambox/constant',
     'app/actions/beambox/diode-boundary-drawer'
 ], function(
@@ -387,9 +387,6 @@ define([
                     default:
                         console.error('wrong machine', model);
                 }
-                if (TutorialController.getNextStepRequirement() === TutorialConstants.SET_PRESET) {
-                    TutorialController.handleNextStep();
-                }
             } else if (value === 'save') {
                 DialogCaller.promptDialog({
                     caption: LANG.dropdown.mm.save,
@@ -415,7 +412,8 @@ define([
                     power,
                     repeat,
                     zStep,
-                    isDefault
+                    isDefault,
+                    key
                 } = customizedConfigs;
 
                 if (customizedConfigs) {
@@ -434,8 +432,23 @@ define([
                     this.props.funcs.writeZStep(this.props.layerName, zStep);
                     this.props.funcs.writeConfigName(this.props.layerName, value);
 
-                    if (TutorialController.getNextStepRequirement() === TutorialConstants.SET_PRESET) {
-                        TutorialController.handleNextStep();
+                    if (TutorialConstants.SET_PRESET_WOOD_ENGRAVING === TutorialController.getNextStepRequirement()) {
+                        if (isDefault && ['wood_engraving'].includes(key)) {
+                            TutorialController.handleNextStep();
+                        } else {
+                            Alert.popUp({
+                                message: i18n.lang.tutorial.newUser.please_select_wood_engraving,
+                            });
+                        }
+                    }
+                    if (TutorialConstants.SET_PRESET_WOOD_CUTTING === TutorialController.getNextStepRequirement()) {
+                        if (isDefault && ['wood_3mm_cutting', 'wood_5mm_cutting'].includes(key)) {
+                            TutorialController.handleNextStep();
+                        } else {
+                            Alert.popUp({
+                                message: i18n.lang.tutorial.newUser.please_select_wood_cutting,
+                            });
+                        }
                     }
                 } else {
                     console.error('No such value', value);

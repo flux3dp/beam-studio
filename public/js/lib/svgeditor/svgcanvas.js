@@ -38,7 +38,7 @@ define([
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
     'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'jsx!views/tutorials/Tutorial-Controller',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',

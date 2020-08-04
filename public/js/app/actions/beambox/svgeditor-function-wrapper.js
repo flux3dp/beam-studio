@@ -7,7 +7,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'jsx!views/tutorials/Tutorial-Controller',
-    'app/constants/tutorial-constants',
+    'jsx!constants/tutorial-constants',
     'helpers/symbol-maker',
     'helpers/i18n'
 ], function(

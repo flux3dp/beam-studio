@@ -1,11 +1,15 @@
 define([
+    'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
     'helpers/i18n'
 ], function(
+    BeamboxPreference,
     Constant,
     i18n,
 ) {
     'use strict';
+    const React = require('react');
+    const electron = require('electron')
     const LANG = i18n.lang.tutorial;
 
     const nextStepRequirements = {
@@ -14,7 +18,8 @@ define([
         DRAW_A_CIRCLE: 'DRAW_A_CIRCLE',
         DRAW_A_RECT: 'DRAW_A_RECT',
         INFILL: 'INFILL',
-        SET_PRESET: 'SET_PRESET',
+        SET_PRESET_WOOD_ENGRAVING: 'SET_PRESET_WOOD_ENGRAVING',
+        SET_PRESET_WOOD_CUTTING: 'SET_PRESET_WOOD_CUTTING',
         ADD_NEW_LAYER: 'ADD_NEW_LAYER',
         TO_LAYER_PANEL: 'TO_LAYER_PANEL',
         TO_PREVIEW_MODE: 'TO_PREVIEW_MODE',
@@ -26,6 +31,15 @@ define([
     }
 
     const isMac = process.platform === 'darwin';
+
+    const adjustFocusLinkClick = () => {
+        const model = BeamboxPreference.read('model', 'fbb1b');
+        if (['fbm1'].includes(model)) {
+            electron.remote.shell.openExternal(LANG.links.adjust_focus_bm);
+        } else {
+            electron.remote.shell.openExternal(LANG.links.adjust_focus_bb);
+        }
+    };
 
     return {
         callbackConstants,
@@ -84,8 +98,8 @@ define([
                     holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
                     holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
                     hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
-                    text: LANG.newUser.set_preset_engraving,
-                    nextStepRequirement: nextStepRequirements.SET_PRESET
+                    text: LANG.newUser.set_preset_wood_engraving,
+                    nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_ENGRAVING
                 },
                 {
                     dialogBoxStyles: {
@@ -137,8 +151,8 @@ define([
                     holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
                     holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
                     hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
-                    text: LANG.newUser.set_preset_cut,
-                    nextStepRequirement: nextStepRequirements.SET_PRESET
+                    text: LANG.newUser.set_preset_wood_cut,
+                    nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_CUTTING
                 },
                 {
                     dialogBoxStyles: {
@@ -160,6 +174,16 @@ define([
                     holeSize: {},
                     hintCircle: {left: 55, top: 45, width: window.innerWidth - Constant.sidePanelsWidth - 10, height: window.innerHeight - Constant.topBarHeight - 10},
                     text: LANG.newUser.preview_the_platform,
+                    subElement: (
+                        <div className='sub-content'>
+                            <div className='sub-line'>{LANG.newUser.put_wood}</div>
+                            <div className='sub-line'>
+                                {LANG.newUser.adjust_focus}
+                                <div className='hint-mark' onClick={()=> adjustFocusLinkClick()}>{'?'}</div>
+                            </div>
+                            <div className='sub-line'>{LANG.newUser.close_cover}</div>
+                        </div>
+                    ),
                     nextStepRequirement: nextStepRequirements.PREVIEW_PLATFORM,
                 },
                 {
