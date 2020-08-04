@@ -8,6 +8,7 @@ define([
     {AlertContext}
 ) {
     const React = require('react');
+    const classNames = require('classnames');
     let ret = {};
 
     class Alert extends React.Component {
@@ -90,7 +91,7 @@ define([
             let checkBox = alert.checkBoxText ? this._renderCheckbox(alert.checkBoxText) : null;
 
             return (
-                <div className="modal-alert">
+                <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
                     {this._renderCaption(alert.caption)}
                     {this._renderMessage(alert)}
                     {checkBox}

@@ -109,6 +109,7 @@
         width: 38.2rem;
         border-radius: 2px;
         box-shadow: 0 7px 15px rgba(0, 0, 0, .1), 0 10px 20px rgba(0, 0, 0, 0.05);
+        animation-duration: 0.3s;
 
         .caption {
             margin: 0 0 1.6rem 0;
@@ -122,6 +123,7 @@
             line-height: 1.4em;
             word-break: break-word;
             white-space: pre-wrap;
+            text-align: center;
 
             a {
                 font-size: 1em;
