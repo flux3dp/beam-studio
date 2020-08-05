@@ -217,6 +217,7 @@ svgEditor.addExtension('polygon', function (S) {
                 points.push(x + ',' + y);
             }
             newPoly.setAttributeNS(null, 'points', points.join(' '));
+            newPoly.setAttributeNS(null, 'sides', polygonSides);
             const selectedElems = svgCanvas.getSelectedElems();
             if (selectedElems.includes(newPoly)) {
                 svgedit.select.getSelectorManager().requestSelector(newPoly).resize();
