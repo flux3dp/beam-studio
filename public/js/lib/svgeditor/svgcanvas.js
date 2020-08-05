@@ -36,7 +36,9 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
-    'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'app/views/beambox/Top-Bar/contexts/Top-Bar-Hints-Controller',
+    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
     'jsx!views/tutorials/Tutorial-Controller',
     'jsx!constants/tutorial-constants',
     'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
@@ -61,6 +63,8 @@ define([
     LayerPanelController,
     ObjectPanelController,
     TopBarController,
+    TopBarHintsController,
+    TopBarHints,
     TutorialController,
     TutorialConstants,
     ZoomBlockController,
@@ -1777,6 +1781,10 @@ define([
                             canvas.updateElementColor(newText);
                         }
                         break;
+                    case 'polygon':
+                        // Polygon is created in ext-polygon.js
+                        TopBarHintsController.setHint(TopBarHints.Constants.POLYGON);
+                        break;
                     case 'path':
                         // Fall through
                     case 'pathedit':
@@ -2677,6 +2685,10 @@ define([
                         keep = true;
                         selectOnly([element]);
                         textActions.start(element);
+                        break;
+                    case 'polygon':
+                        //Polygon creation is in ext-polygon.js
+                        TopBarHintsController.removeHint();
                         break;
                     case 'path':
                         // set element to null here so that it is not removed nor finalized

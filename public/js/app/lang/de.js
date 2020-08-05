@@ -52,7 +52,10 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
                 fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
-            }
+            },
+            hint: {
+                polygon: 'Press + / - key to increse / decrease sides.'
+            },
         },
         support: {
             no_webgl: 'WebGL wird nicht unterstützt. Bitte verwenden Sie andere Geräte.',

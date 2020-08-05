@@ -17,16 +17,32 @@ svgEditor.addExtension('polygon', function (S) {
         polygonSides = 5;
 
     window.polygonAddSides = () => {
-        polygonSides++;
-        polygonExt.renderPolygon();
+        if (started) {
+            polygonSides++;
+            polygonExt.renderPolygon();
+        } else {
+            const elems = svgCanvas.getSelectedElems();
+            if (elems.length === 1 && elems[0].tagName === 'polygon') {
+                const poly = elems[0];
+                polygonExt.updatePolygonSide(poly, 1);
+            }
+        }
     };
 
     window.polygonDecreaseSides = () => {
-        polygonSides--;
-        if (polygonSides < 3) {
-            polygonSides = 3;
+        if (started) {
+            polygonSides--;
+            if (polygonSides < 3) {
+                polygonSides = 3;
+            }
+            polygonExt.renderPolygon();
+        } else {
+            const elems = svgCanvas.getSelectedElems();
+            if (elems.length === 1 && elems[0].tagName === 'polygon') {
+                const poly = elems[0];
+                polygonExt.updatePolygonSide(poly, -1);
+            }
         }
-        polygonExt.renderPolygon();
     };
 
     function showPanel(on) {
@@ -151,7 +167,39 @@ svgEditor.addExtension('polygon', function (S) {
                 };
             }
         },
+        updatePolygonSide: (polygon, sideChange) => {
+            const c = $(polygon).attr(['cx', 'cy', 'edge', 'angle_offset', 'sides']);
+            console.log(c);
+            const newSidesNumber = Math.max(c.sides + sideChange, 3);
+            if (newSidesNumber === c.sides) {
+                return;
+            }
+            const edg = Number(c.edge);
+            const cx = c.cx;
+            const cy = c.cy;
+            const angle_offset = Number(c.angle_offset);
+            const inradius = (edg / 2) * cot(Math.PI / newSidesNumber);
+            const circumradius = inradius * sec(Math.PI / newSidesNumber);
+            const points = [];
+            for (let s = 0; newSidesNumber >= s; s++) {
+                const angle = 2.0 * Math.PI * s / newSidesNumber + angle_offset;
+                const x = (circumradius * Math.cos(angle)) + cx;
+                const y = (circumradius * Math.sin(angle)) + cy;
+
+                points.push(x + ',' + y);
+            }
+            polygon.setAttributeNS(null, 'sides', newSidesNumber);
+            polygon.setAttributeNS(null, 'points', points.join(' '));
+            const selectedElems = svgCanvas.getSelectedElems();
+            if (selectedElems.includes(polygon)) {
+                svgedit.select.getSelectorManager().requestSelector(polygon).resize();
+            }
+            window.updateContextPanel();
+        },
         renderPolygon: function() {
+            if (!newPoly) {
+                return;
+            }
             let c = $(newPoly).attr(['cx', 'cy', 'edge', 'angle_offset']);
             let edg = Number(c.edge),
                 cx = c.cx,
@@ -169,6 +217,10 @@ svgEditor.addExtension('polygon', function (S) {
                 points.push(x + ',' + y);
             }
             newPoly.setAttributeNS(null, 'points', points.join(' '));
+            const selectedElems = svgCanvas.getSelectedElems();
+            if (selectedElems.includes(newPoly)) {
+                svgedit.select.getSelectorManager().requestSelector(newPoly).resize();
+            }
         },
         mouseMove: function (opts) {
             if (!started) {
@@ -183,8 +235,14 @@ svgEditor.addExtension('polygon', function (S) {
                 let cx = c.cx,
                     cy = c.cy,
                     edg = (2 * Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))* Math.cos(angle * Math.PI / 180)),
-                    sides = polygonSides,
-                    angle_offset = Math.atan2(y - cy, x - cx);
+                    sides = polygonSides;
+                let angle_offset;
+                if (!opts.event.shiftKey) {
+                    angle_offset = Math.atan2(y - cy, x - cx)
+                } else {
+                    angle_offset = Math.PI / 2 - (Math.PI / sides);
+                }
+                
                 newPoly.setAttributeNS(null, 'edge', edg);
                 newPoly.setAttributeNS(null, 'angle_offset', angle_offset);
                 polygonExt.renderPolygon();
@@ -205,6 +263,7 @@ svgEditor.addExtension('polygon', function (S) {
 
         mouseUp: function (opts) {
             if (svgCanvas.getMode() == 'polygon') {
+                started = false;
                 var edge = $(newPoly).attr('edge');
                 var keep = (edge !== 0);
 

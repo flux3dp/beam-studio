@@ -48,7 +48,14 @@ define(function() {
                 use: '汇入物件',
                 svg: 'SVG 物件',
                 dxf: 'DXF 物件',
-            }
+            },
+            alerts: {
+                start_preview_timeout: '#803 启动相机预览时超时，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+                fail_to_start_preview: '#803 启动相机预览失败，请重新开启您的机器或是 Beam Studio，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+            },
+            hint: {
+                polygon: '按下 + / - 键以增加 / 减少边数。'
+            },
         },
         support: {
             no_webgl: '您的系统不支持 WebGL，建议您使用其他电脑开启 Mozu Studio',

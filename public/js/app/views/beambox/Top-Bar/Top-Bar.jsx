@@ -14,6 +14,7 @@ define([
     'jsx!widgets/Modal',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
+    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
     'jsx!views/tutorials/Tutorial-Controller',
     'jsx!constants/tutorial-constants',
     'helpers/api/alert-config',
@@ -41,6 +42,7 @@ define([
     Modal,
     LeftPanel,
     { TopBarContext },
+    { TopBarHints },
     TutorialController,
     TutorialConstants,
     AlertConfig,
@@ -516,6 +518,12 @@ define([
             }
         }
 
+        renderHint() {
+            return (
+                <TopBarHints />
+            );
+        }
+
         renderElementLayerAndName() {
             const { selectedElem } = this.context;
             let content = '';
@@ -568,6 +576,7 @@ define([
                         {this.renderGoButton()}
                         {this.renderDeviceList()}
                         {this.renderElementLayerAndName()}
+                        {this.renderHint()}
                     </div>
                 </div>
             );

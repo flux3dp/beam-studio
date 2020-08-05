@@ -52,8 +52,10 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
                 fail_to_start_preview: '#803 啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
-
-            }
+            },
+            hint: {
+                polygon: '按下 + / - 鍵以增加 / 減少邊數。'
+            },
         },
         support: {
             no_webgl: '您的系統不支援 WebGL，建議您使用其他電腦開啟 Beam Studio',

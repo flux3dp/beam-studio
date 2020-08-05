@@ -373,6 +373,12 @@
             margin-left: 0;
             padding: 0 5px;
             z-index: 1;
+            text-shadow: none;
+        }
+        .hint-container {
+            position: relative;
+            z-index: 1;
+            top: 40px;
         }
         .go-button-container {
             position: relative;
@@ -511,6 +517,20 @@
         font-weight: bold;
         font-size: 13px;
         letter-spacing: 0.95px;
+        text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+    }
+    .hint-container {
+        position: absolute;
+        z-index: 1;
+        top: 80px;
+        margin-left: 67px;
+        height: 40px;
+        line-height: 40px;
+        color: #333333;
+        font-weight: bold;
+        font-size: 13px;
+        letter-spacing: 0.95px;
+        text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
     }
     .menu {
         background: #fff;

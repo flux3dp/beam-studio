@@ -30,7 +30,7 @@ define([
     'jsx!app/views/beambox/Right-Panels/contexts/RightPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
     'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
-    'jsx!app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
     'app/actions/beambox/preview-mode-controller',
@@ -5120,14 +5120,12 @@ define([
                         Shortcuts.on(['right'], () => {
                             moveSelected(1, 0);
                         });
-                        // -
+                        // +
                         Shortcuts.on(['plus'], () => {
-                            console.log('on plus');
                             window.polygonAddSides();
                         });
-                        // +
+                        // -
                         Shortcuts.on(['minus'], () => {
-                            console.log('on minus');
                             window.polygonDecreaseSides();
                         });
                         Shortcuts.on(['esc'], clickSelect);

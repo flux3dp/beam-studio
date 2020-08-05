@@ -21,7 +21,7 @@
         height: 100%;
         background: #F8F8F8;
         border: 1px solid #E0E0E0;
-        border-width: 0 1px 1px 1px;
+        border-width: 0 1px 1px 0;
         .tool-btn {
             text-align: center;
             line-height: 24px;
@@ -29,7 +29,7 @@
             img {
                 height: 24px;
             }
-            margin: 13px 6px;
+            margin: 13px 6px 13px 7px;
             height: 36px;
             width: 36px;
             opacity: 0.5;
