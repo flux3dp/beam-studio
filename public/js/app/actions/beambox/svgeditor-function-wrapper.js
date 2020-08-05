@@ -411,8 +411,10 @@ define([
 
         exportAsSVG: function() {
             svgCanvas.clearSelection();
+            $('g.layer').removeAttr('clip-path');
             SymbolMaker.switchImageSymbolForAll(false);
             const output = svgCanvas.getSvgString();
+            $('g.layer').attr('clip-path', 'url(#scene_mask)');
             SymbolMaker.switchImageSymbolForAll(true);
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
