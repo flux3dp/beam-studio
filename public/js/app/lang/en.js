@@ -54,7 +54,7 @@ define(function() {
                 fail_to_start_preview: '#803 Fail to start preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
             },
             hint: {
-                polygon: 'Press + / - key to increse / decrease sides.'
+                polygon: 'Press + / - key to increase / decrease sides.'
             },
         },
         support: {
