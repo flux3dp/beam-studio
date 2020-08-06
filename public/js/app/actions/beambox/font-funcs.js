@@ -296,7 +296,7 @@ define([
             'd': pathD.join(''),
             //Note: Assuming transform matrix for all d are the same
             'transform': transform ? transform[0] : '',
-            'fill': isFill ? color : '#fff',
+            'fill': isFill ? color : 'none',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,
             'stroke-opacity': 1,
@@ -304,6 +304,7 @@ define([
             'vector-effect': 'non-scaling-stroke',
         });
         $(path).insertAfter($textElement);
+        $(path).mouseover(svgCanvas.handleGenerateSensorArea).mouseleave(svgCanvas.handleGenerateSensorArea);
         const isVerti = $textElement.data('verti');
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
         if (isVerti) {
@@ -332,6 +333,7 @@ define([
             });
             tempPaths.push(path);
         }
+        svgedit.recalculate.recalculateDimensions(path);
         return isUnsupported;
     }
 
@@ -384,7 +386,7 @@ define([
             'id': svgCanvas.getNextId(),
             'd': pathD,
             'transform': transform,
-            'fill': isFill ? color : '#fff',
+            'fill': isFill ? color : 'none',
             'fill-opacity': isFill ? 1 : 0,
             'stroke': color,
             'stroke-opacity': 1,
@@ -393,6 +395,7 @@ define([
         });
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
         $(path).insertAfter($textElement);
+        $(path).mouseover(svgCanvas.handleGenerateSensorArea).mouseleave(svgCanvas.handleGenerateSensorArea);
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
         if (!isTempConvert) {
             let textElem = $textElement[0];
@@ -406,6 +409,7 @@ define([
             $textElement.attr('display', 'none');
             tempPaths.push(path);
         }
+        svgedit.recalculate.recalculateDimensions(path);
 
         return;
     };

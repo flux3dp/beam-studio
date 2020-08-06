@@ -715,11 +715,11 @@ define([
                     rubberBBox.width *= current_zoom;
                     rubberBBox.height *= current_zoom;
 
-                    resultList = svgcontent.getIntersectionList(rubberBBox, null);
+                    resultList = Array.from(svgcontent.getIntersectionList(rubberBBox, null));
                 }
             }
 
-            if (resultList == null || typeof (resultList.item) !== 'function') {
+            if (resultList == null) {
                 resultList = [];
 
                 if (!curBBoxes.length) {
@@ -1243,9 +1243,46 @@ define([
             }
 
             const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
-            let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
-                mouse_x = pt.x * current_zoom,
-                mouse_y = pt.y * current_zoom;
+            let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm);
+            const selectionRegion = {
+                x: pt.x - 50,
+                y: pt.y - 50,
+                width: 100,
+                height: 100,
+            }
+            const intersectList = getIntersectionList(selectionRegion).reverse();
+            const clickPoint = svgcontent.createSVGPoint();
+            for (let i=0; i < intersectList.length; i++) {
+                let pointInStroke = false;
+                const elem = intersectList[i];
+                if (!elem.isPointInStroke || typeof elem.isPointInStroke !== 'function') {
+                    continue;
+                }
+                const tlist = svgedit.transformlist.getTransformList(elem);
+                const tm = svgedit.math.transformListToTransform(tlist).matrix.inverse();
+                const x = tm.a * pt.x + tm.c * pt.y + tm.e;
+                const y = tm.b * pt.x + tm.d * pt.y + tm.f;
+                clickPoint.x = x;
+                clickPoint.y = y;
+
+                const originalStrokeWidth = elem.getAttribute('stroke-width');
+                elem.setAttribute('stroke-width', 20);
+                if (elem.isPointInStroke(clickPoint)) {
+                    mouse_target = elem;
+                    pointInStroke = true;
+                }
+                if (originalStrokeWidth) {
+                    elem.setAttribute('stroke-width', originalStrokeWidth);
+                } else {
+                    elem.removeAttribute('stroke-width');
+                }
+                if (pointInStroke) {
+                    break;
+                }
+            }
+
+            const mouse_x = pt.x * current_zoom;
+            const mouse_y = pt.y * current_zoom;
             if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
                 let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
                 if (dist < SENSOR_AREA_RADIUS) {
@@ -1432,9 +1469,10 @@ define([
                 //		if (['select', 'resize'].indexOf(current_mode) == -1) {
                 //			setGradient();
                 //		}
-                var x = mouse_x / current_zoom,
-                    y = mouse_y / current_zoom,
-                    mouse_target = getMouseTarget(evt);
+                var x = mouse_x / current_zoom;
+                    y = mouse_y / current_zoom;
+
+                let mouse_target = getMouseTarget(evt);
 
                 if (mouse_target.tagName === 'a' && mouse_target.childNodes.length === 1) {
                     mouse_target = mouse_target.firstChild;
@@ -1684,6 +1722,7 @@ define([
                                 height: 0,
                                 stroke: '#000',
                                 id: getNextId(),
+                                fill: 'none',
                                 'fill-opacity': 0,
                                 opacity: cur_shape.opacity / 2
                             }
@@ -1748,6 +1787,7 @@ define([
                                 id: getNextId(),
                                 stroke: '#000',
                                 'fill-opacity': 0,
+                                fill: 'none',
                                 opacity: cur_shape.opacity / 2
                             }
                         });
@@ -1765,7 +1805,7 @@ define([
                                 x: x,
                                 y: y,
                                 id: getNextId(),
-                                fill: cur_text.fill,
+                                fill: 'none',
                                 'fill-opacity': cur_text.fill_opacity,
                                 'stroke-width': 2,
                                 'font-size': cur_text.font_size,
@@ -3859,6 +3899,7 @@ define([
                                     d: d_attr,
                                     id: getNextId(),
                                     'stroke-width' : 1,
+                                    fill: 'none',
                                     opacity: cur_shape.opacity / 2
                                 }
                             });
@@ -8250,7 +8291,7 @@ define([
                 const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
 
                 if (availableType.includes(elem.tagName)) {
-                    if (!this.calcElemFilledInfo(elem).isAllFilled) {
+                    if (!this.calcElemFilledInfo(elem).isAnyFilled) {
                         continue;
                     }
                     const color = $(elem).attr('fill') || '#333';
@@ -8274,6 +8315,10 @@ define([
             if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
             elem.setAttribute('fill-opacity', 0);
+            cmd = canvas.undoMgr.finishUndoableChange();
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            canvas.undoMgr.beginUndoableChange('fill', [elem]);
+            elem.setAttribute('fill', 'none');
             cmd = canvas.undoMgr.finishUndoableChange();
             if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             return batchCmd;

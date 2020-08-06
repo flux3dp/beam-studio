@@ -152,7 +152,7 @@ svgEditor.addExtension('polygon', function (S) {
                         'sides': polygonSides,
                         'orient': 'x',
                         'edge': 0,
-                        'fill': '#FFF',
+                        'fill': 'none',
                         'fill-opacity': 0,
                         'stroke': 'black',
                         'strokeWidth': 1
