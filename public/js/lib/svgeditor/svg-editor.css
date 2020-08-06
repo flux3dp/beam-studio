@@ -324,11 +324,6 @@ select {
 	padding: 0;
 }
 
-#layerlist tr.layersel {
-	border: 1px solid #808080;
-	background-color: #CCCCCC;
-}
-
 #layerlist td.layervis {
 	width: 22px;
 	cursor: pointer;

@@ -276,36 +276,85 @@ define([
             ColorPickerPanel.renderPickr();
         }
 
-        layerDragStart = (layerName) => {
-            this.draggingLayer = layerName;
+        layerDragStart = (layerName, index) => {
+            this.setState({
+                draggingLayer: layerName,
+                draggingDestIndex: index,
+            });
         }
 
-        layerDragEnter = (layerName) => {
-            this.draggingDest = layerName;
+        layerDragEnter = (index) => {
+            const { draggingDestIndex } = this.state;
+            if (draggingDestIndex !== index) {
+                this.setState({
+                    draggingDestIndex: index,
+                });
+            }
         }
 
         layerDragEnd = () => {
-            if (this.draggingLayer !== this.draggingDest) {
-                const drawing = svgCanvas.getCurrentDrawing();
-                drawing.setCurrentLayer(this.draggingLayer);
-                const layerCount = drawing.getNumLayers();
-                let destId = 0;
-                for(destId; destId < layerCount; destId++) {
-                    if (drawing.getLayerName(destId) === this.draggingDest) {
-                        break;
-                    }
+            let { draggingLayer, draggingDestIndex } = this.state;
+            const drawing = svgCanvas.getCurrentDrawing();
+            drawing.setCurrentLayer(draggingLayer);
+            const layerCount = drawing.getNumLayers();
+            draggingDestIndex = layerCount - draggingDestIndex - 1;
+            let currentIndex = 0;
+            for(currentIndex; currentIndex < layerCount; currentIndex++) {
+                if (drawing.getLayerName(currentIndex) === draggingLayer) {
+                    break;
                 }
-                svgCanvas.setCurrentLayerPosition(destId);
-                this.setState(this.state);
             }
-            this.draggingLayer = null;
+            if (currentIndex !== draggingDestIndex) {
+                svgCanvas.setCurrentLayerPosition(draggingDestIndex);
+            }
+            this.setState({
+                draggingLayer: null,
+                draggingDestIndex: null,
+            });
         }
 
         layerDoubleClick = (layerName) => {
             this.renameLayer();
         }
 
+        appendDraggingLayerToLayerList = (layers) => {
+            const { draggingLayer } = this.state;
+            const drawing = svgCanvas.getCurrentDrawing();
+            const layer = drawing.getLayerByName(draggingLayer);
+            const currentLayerName = drawing.getCurrentLayerName();
+            const isLocked = layer.getAttribute('data-lock') === 'true';
+            const position = layers.length;
+            layers.push(
+                <tr 
+                    key={draggingLayer}
+                    className={classNames('layer', 'dragging', {'layersel': draggingLayer === currentLayerName, 'lock': isLocked})}
+                    onMouseUp={() => this.selectLayer(draggingLayer)}
+                    onMouseOver={() => this.highlightLayer(draggingLayer)}
+                    onMouseOut={() => this.highlightLayer()}
+                    draggable={true}
+                    onDragStart={(e) => {this.layerDragStart(draggingLayer, position)}}
+                    onDragEnter={(e) => {this.layerDragEnter(position)}}
+                    onDragEnd={(e) => {this.layerDragEnd()}}
+                >
+                    <td className='layercolor' onClick={(e) => {this.openLayerColorPanel(e, draggingLayer)}}>
+                        <div style={{backgroundColor: drawing.getLayerColor(draggingLayer)}}/>
+                    </td>
+                    <td className='layername' onDoubleClick={() => this.layerDoubleClick(draggingLayer)}>{draggingLayer}</td>
+                    <td 
+                        className={classNames('layervis', {'layerinvis': !drawing.getLayerVisibility(draggingLayer)})}
+                        onClick={() => {this.setLayerVisibility(draggingLayer)}}
+                    >
+                        <i className="fa fa-eye"></i>
+                    </td>
+                    <td className='layerlock' onClick={isLocked ? (e) => this.unLockLayer(e, draggingLayer) : () => {this.selectLayer(draggingLayer)}}>
+                        <img src='img/icon-lock.svg'/>
+                    </td>
+                </tr>
+            );
+        }
+
         renderLayerList = () => {
+            const { draggingLayer, draggingDestIndex } = this.state; 
             const layers = [];
             const drawing = svgCanvas.getCurrentDrawing();
             const layerCount = drawing.getNumLayers();
@@ -317,33 +366,42 @@ define([
                     continue;
                 }
                 const isLocked = layer.getAttribute('data-lock') === 'true';
-                layers.push(
-                    <tr 
-                        key={i}
-                        className={classNames('layer', {'layersel': layerName === currentLayerName, 'lock': isLocked})}
-                        onMouseUp={() => this.selectLayer(layerName)}
-                        onMouseOver={() => this.highlightLayer(layerName)}
-                        onMouseOut={() => this.highlightLayer()}
-                        draggable={true}
-                        onDragStart={(e) => {this.layerDragStart(layerName)}}
-                        onDragEnter={(e) => {this.layerDragEnter(layerName)}}
-                        onDragEnd={(e) => {this.layerDragEnd()}}
-                    >
-                        <td className='layercolor' onClick={(e) => {this.openLayerColorPanel(e, layerName)}}>
-                            <div style={{backgroundColor: drawing.getLayerColor(layerName)}}/>
-                        </td>
-                        <td className='layername' onDoubleClick={() => this.layerDoubleClick(layerName)}>{layerName}</td>
-                        <td 
-                            className={classNames('layervis', {'layerinvis': !drawing.getLayerVisibility(layerName)})}
-                            onClick={() => {this.setLayerVisibility(layerName)}}
+                if (layers.length === draggingDestIndex) {
+                    this.appendDraggingLayerToLayerList(layers);
+                }
+                if (layerName !== draggingLayer) {
+                    const position = layers.length;
+                    layers.push(
+                        <tr 
+                            key={layerName}
+                            className={classNames('layer', {'layersel': layerName === currentLayerName, 'lock': isLocked})}
+                            onMouseUp={() => this.selectLayer(layerName)}
+                            onMouseOver={() => this.highlightLayer(layerName)}
+                            onMouseOut={() => this.highlightLayer()}
+                            draggable={true}
+                            onDragStart={(e) => {this.layerDragStart(layerName, position)}}
+                            onDragEnter={(e) => {this.layerDragEnter(position)}}
+                            onDragEnd={(e) => {this.layerDragEnd()}}
                         >
-                            <i className="fa fa-eye"></i>
-                        </td>
-                        <td className='layerlock' onClick={isLocked ? (e) => this.unLockLayer(e, layerName) : () => {this.selectLayer(layerName)}}>
-                            <img src='img/icon-lock.svg'/>
-                        </td>
-                    </tr>
-                );
+                            <td className='layercolor' onClick={(e) => {this.openLayerColorPanel(e, layerName)}}>
+                                <div style={{backgroundColor: drawing.getLayerColor(layerName)}}/>
+                            </td>
+                            <td className='layername' onDoubleClick={() => this.layerDoubleClick(layerName)}>{layerName}</td>
+                            <td 
+                                className={classNames('layervis', {'layerinvis': !drawing.getLayerVisibility(layerName)})}
+                                onClick={() => {this.setLayerVisibility(layerName)}}
+                            >
+                                <i className="fa fa-eye"></i>
+                            </td>
+                            <td className='layerlock' onClick={isLocked ? (e) => this.unLockLayer(e, layerName) : () => {this.selectLayer(layerName)}}>
+                                <img src='img/icon-lock.svg'/>
+                            </td>
+                        </tr>
+                    );
+                }
+            }
+            if (layers.length === draggingDestIndex) {
+                this.appendDraggingLayerToLayerList(layers);
             }
 
             return (

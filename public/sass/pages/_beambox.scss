@@ -487,6 +487,7 @@
             left: 0px;
             right: 0px;
             bottom: 0px;
+            background-color: #f0f0f0;
             #svgcanvas {
                 background: $backgroundColor;
                 #rotaryAxis {
@@ -612,15 +613,25 @@
                     }
                     tr.layer {
                         height: 40px;
+                        border: 1px solid #ffffff;
+                        border-width: 0 0 0 5px;
                         .layername {
                             padding: 3px 0px;
                         }
                         &.layersel, &.layersel:hover {
                             color: white;
                             background-color: #444;
+                            border-color: #444;
                             font-weight: normal;
                         }
-
+                        &:hover {
+                            color: black;
+                            background-color: #ddd;
+                            border-color: #dddddd;
+                        }
+                        &.dragging {
+                            border-color: #0091ff;
+                        }
                         .layerlock {
                             width: 19px;
                             height: 14px;
@@ -648,18 +659,6 @@
                             border: 1px solid #666 !important;
                             background-color: #666 !important;
                             font-weight: normal;
-                        }
-
-                        &:hover {
-                            color: black;
-                            background-color: #ddd;
-
-                        }
-                        &:not(.layersel):first-child {
-                            &:hover {
-                                border-top: 1px #999 solid;
-                            }
-                            border-top: 1px white solid;
                         }
                     }
                 }
