@@ -331,7 +331,7 @@ define([
                     args.push(svgCanvas.runExtensions('getRotaryAxisAbsoluteCoord'));
                 }
 
-                if (i18n.getActiveLang() === 'zh-tw' && BeamboxPreference.read('blade_radius') && BeamboxPreference.read('blade_radius') > 0) {
+                if (i18n.getActiveLang() === 'zh-cn' && BeamboxPreference.read('blade_radius') && BeamboxPreference.read('blade_radius') > 0) {
                     args.push('-blade');
                     args.push(BeamboxPreference.read('blade_radius'));
                     if (BeamboxPreference.read('blade_precut')) {
