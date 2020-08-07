@@ -559,7 +559,7 @@ svgedit.history.UndoManager.prototype.addCommandToHistory = function(cmd) {
 	if (window.svgCanvas && (this.undoStack.length > 1  || (this.undoStack.length === 1 && this.undoStack[0].text !== 'Create Layer'))) {
 		svgCanvas.setHasUnsavedChange(true);
 	}
-	console.log(this.undoStack);
+	// console.log(this.undoStack);
 };
 
 
