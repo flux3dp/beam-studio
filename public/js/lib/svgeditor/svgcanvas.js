@@ -3685,6 +3685,10 @@ define([
                 clear: function () {
                     if (current_mode === 'textedit') {
                         textActions.toSelectMode();
+                    } else {
+                        if (cursor) {
+                            $(cursor).attr('visibility', 'hidden');
+                        }
                     }
                 },
                 init: function (textElem) {
