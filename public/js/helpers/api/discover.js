@@ -193,9 +193,9 @@ define([
 
         return {
             connection: ws,
-            poke: () => {
-                poke();
-                pokeTcp();
+            poke: (targetIP) => {
+                poke(targetIP);
+                pokeTcp(targetIP);
             },
             testTcp: testTcp,
             countDevices: function(){
