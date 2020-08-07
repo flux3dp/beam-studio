@@ -5918,6 +5918,25 @@ define([
             return true;
         };
 
+        this.removeDefaultLayerIfEmpty = removeDefaultLayerIfEmpty = () => {
+            const defaultLayerName = LANG.right_panel.layer_panel.layer1;
+            const drawing = getCurrentDrawing();
+            const layer = drawing.getLayerByName(defaultLayerName);
+            if (layer) {
+                const childNodes = Array.from(layer.childNodes);
+                const isEmpty = childNodes.every((node) => {
+                    return ['title', 'filter'].includes(node.tagName)
+                });
+                if (isEmpty) {
+                    console.log('default layer is empty. delete it!');
+                    svgCanvas.setCurrentLayer(defaultLayerName);
+                    svgCanvas.deleteCurrentLayer();
+                    window.updateContextPanel();
+                    LayerPanelController.updateLayerPanel();
+                }
+            }
+        }
+
         // Function: importSvgString
         // This function imports the input SVG XML as a <symbol> in the <defs>, then adds a
         // <use> to the current layer.
@@ -6249,19 +6268,6 @@ define([
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(use_el));
 
                 return use_el;
-            }
-            function removeDefaultLayerIfEmpty() {
-                const defaultLayerName = LANG.right_panel.layer_panel.layer1;
-                const firstLayerTitle = $('#svgcontent g.layer:first-of-type title');
-                if (firstLayerTitle.text() === defaultLayerName) {
-                    if (firstLayerTitle.siblings().size() === 0) {
-                        console.log('default layer is empty. delete it!');
-                        svgCanvas.setCurrentLayer(defaultLayerName);
-                        svgCanvas.deleteCurrentLayer();
-                        window.updateContextPanel();
-                        LayerPanelController.updateLayerPanel();
-                    }
-                }
             }
             function rgbToHex(rgbStr) {
                 const rgb = rgbStr.substring(4).split(',');

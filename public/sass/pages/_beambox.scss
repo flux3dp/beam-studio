@@ -616,7 +616,8 @@
                         border: 1px solid #ffffff;
                         border-width: 0 0 0 5px;
                         .layername {
-                            padding: 3px 0px;
+                            min-width: 100px;
+                            padding: 3px 0px 3px 20px;
                         }
                         &.layersel, &.layersel:hover {
                             color: white;

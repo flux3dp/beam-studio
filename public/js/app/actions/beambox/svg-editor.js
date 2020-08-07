@@ -5943,6 +5943,7 @@ define([
                         use_el.setAttribute('data-xform', xform);
                         svgCanvas.updateElementColor(use_el);
                     }
+                    svgCanvas.removeDefaultLayerIfEmpty();
                     Alert.popAlertStackById('loading_image');
                 };
 
