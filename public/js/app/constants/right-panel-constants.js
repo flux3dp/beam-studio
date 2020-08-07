@@ -5,7 +5,7 @@ define(function() {
         // progress dialog types
         BEAMO: {
             wood_3mm_cutting: {
-                power: 55,
+                power: 45,
                 speed: 5
             },
             wood_5mm_cutting: {
