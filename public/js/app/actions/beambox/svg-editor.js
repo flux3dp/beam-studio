@@ -5108,17 +5108,41 @@ define([
                             e.stopPropagation();
                             svgCanvas.selectAllInCurrentLayer();
                         });
-                        Shortcuts.on(['up'], () => {
-                            moveSelected(0, -1);
+                        Shortcuts.on(['up'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected(0, -1);
+                            } else {
+                                const scrollTop = $('#workarea').scrollTop() - 5;
+                                $('#workarea').scrollTop(scrollTop);
+                            }
                         });
-                        Shortcuts.on(['down'], () => {
-                            moveSelected(0, 1);
+                        Shortcuts.on(['down'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected(0, 1);
+                            } else {
+                                const scrollTop = $('#workarea').scrollTop() + 5;
+                                $('#workarea').scrollTop(scrollTop);
+                            }
                         });
-                        Shortcuts.on(['left'], () => {
-                            moveSelected(-1, 0);
+                        Shortcuts.on(['left'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected(-1, 0);
+                            } else {
+                                const scrollLeft = $('#workarea').scrollLeft() - 5;
+                                $('#workarea').scrollLeft(scrollLeft);
+                            }
                         });
-                        Shortcuts.on(['right'], () => {
-                            moveSelected(1, 0);
+                        Shortcuts.on(['right'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected(1, 0);
+                            } else {
+                                const scrollLeft = $('#workarea').scrollLeft() + 5;
+                                $('#workarea').scrollLeft(scrollLeft);
+                            }
                         });
                         // +
                         Shortcuts.on(['plus'], () => {
