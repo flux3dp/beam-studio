@@ -11,8 +11,7 @@ define([
     'app/constants/alert-constants',
     'app/stores/alert-store',
     'jsx!contexts/DialogCaller',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/constants/device-constants',
     'app/constants/font-constants',
     'jsx!app/actions/beambox/Tool-Panels-Controller',
@@ -41,8 +40,7 @@ define([
     AlertConstants,
     AlertStore,
     DialogCaller,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     DeviceConstants,
     FontConstants,
     ToolPanelsController,
@@ -180,21 +178,16 @@ define([
 
         const getLog = async function (printer, log) {
             await DeviceMaster.select(printer);
-            ProgressActions.open(ProgressConstants.WAITING, '');
+            Progress.openSteppingProgress({id: 'get_log'});
             let downloader = DeviceMaster.downloadLog(log);
             downloader.then((file) => {
-                ProgressActions.close();
+                Progress.popById('get_log');
                 saveAs(file[1], log);
 
             }).progress((progress) => {
-                ProgressActions.open(ProgressConstants.STEPPING);
-                ProgressActions.updating(
-                    'downloading',
-                    progress.completed / progress.size * 100,
-                    function () { downloader.reject('canceled'); }
-                );
-
+                Progress.update('get_log', {message: 'downloading', percentage: progress.completed / progress.size * 100});
             }).fail((data) => {
+                Progress.popById('get_log');
                 let msg = data === 'canceled' ?
                     LANG.device.download_log_canceled : LANG.device.download_log_error;
                 Alert.popUp({
@@ -209,7 +202,7 @@ define([
                 checkToolheadFirmware = function () {
                     var $deferred = $.Deferred();
 
-                    ProgressActions.open(ProgressConstants.NONSTOP, LANG.update.checkingHeadinfo);
+                    Progress.openNonstopProgress({id: 'check_head_firmware', caption: LANG.update.checkingHeadinfo});
 
                     if ('toolhead' === type) {
                         DeviceMaster.headInfo().done(function (response) {
@@ -276,7 +269,7 @@ define([
                 checkStatus = function () {
                     const processUpdate = () => {
                         checkToolheadFirmware().always(function () {
-                            ProgressActions.close();
+                            Progress.popById('check_head_firmware');
                             updateFirmware();
                         }).fail(function () {
                             Alert.popUp({
@@ -304,16 +297,17 @@ define([
                     AlertStore.onRetry(handleYes);
                     AlertStore.onCancel(handleCancel);
 
-                    ProgressActions.open(ProgressConstants.NONSTOP, LANG.update.preparing);
+                    Progress.openNonstopProgress({id: 'check-status', caption: LANG.update.preparing});
                     if (type === 'toolhead') {
                         DeviceMaster.enterMaintainMode().then(() => {
                             setTimeout(() => {
-                                ProgressActions.close();
+                                Progress.popById('check-status');
                                 processUpdate();
                             }, 3000);
                         });
                     }
                     else {
+                        Progress.popById('check-status');
                         processUpdate();
                     }
                 };
@@ -377,16 +371,16 @@ define([
                         });
                         return;
                     }
-                    ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                     await checkDeviceStatus(device);
                     DeviceMaster.select(device)
                         .done(() => {
-                            ProgressActions.close();
+                            Progress.popById('connect');
                             const isBorderless = false;
                             DialogCaller.showCameraCalibration(device, isBorderless);
                         })
                         .fail(() => {
-                            ProgressActions.close();
+                            Progress.popById('connect');
                             Alert.popUp({
                                 type: AlertConstants.SHOW_POPUP_ERROR,
                                 message: lang.message.connectionTimeout,
@@ -405,16 +399,16 @@ define([
                     const vc = VersionChecker(device.version);
                     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                     if (isAvailableVersion) {
-                        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         await checkDeviceStatus(device);
                         DeviceMaster.select(device)
                             .done(() => {
-                                ProgressActions.close();
+                                Progress.popById('connect');
                                 const isBorderless = true;
                                 DialogCaller.showCameraCalibration(device, isBorderless);
                             })
                             .fail(() => {
-                                ProgressActions.close();
+                                Progress.popById('connect');
                                 Alert.popUp({
                                     type: AlertConstants.SHOW_POPUP_ERROR,
                                     message: lang.message.connectionTimeout,
@@ -441,14 +435,14 @@ define([
                     const vc = VersionChecker(device.version);
                     const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
                     if (diodeAvailable) {
-                        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.connecting);
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         DeviceMaster.select(device)
                             .done(() => {
-                                ProgressActions.close();
+                                Progress.popById('connect');
                                 DialogCaller.showDiodeCalibration(device);
                             })
                             .fail(() => {
-                                ProgressActions.close();
+                                Progress.popById('connect');
                                 Alert.popUp({
                                     type: AlertConstants.SHOW_POPUP_ERROR,
                                     message: lang.message.connectionTimeout,

@@ -5,14 +5,12 @@ define([
     'helpers/i18n',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
 ], function(
     i18n,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress
 ) {
     'use strict';
     let clipCount = 1;
@@ -430,7 +428,7 @@ define([
     };
 
     const switchImageSymbolForAll = (shouldUseImage) => {
-        ProgressActions.open(ProgressConstants.NONSTOP);
+        Progress.openNonstopProgress({id: 'switch-all-symbol'});
         const layers = $('#svgcontent > g.layer').toArray();
         layers.forEach((layer) => {
             const uses = Array.from(layer.querySelectorAll('use'));
@@ -438,7 +436,7 @@ define([
                 switchImageSymbol(use, shouldUseImage);
             });
         });
-        ProgressActions.close();
+        Progress.popLastProgress();
     }
 
     return {

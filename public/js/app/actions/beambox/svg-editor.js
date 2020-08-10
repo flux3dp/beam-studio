@@ -36,6 +36,8 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
+    'app/contexts/ProgressCaller',
+    'app/constants/progress-constants',
     'app/constants/keycode-constants',
     'app/actions/topbar',
     'helpers/aws-helper',
@@ -64,6 +66,8 @@ define([
     PreviewModeController,
     Alert,
     AlertConstants,
+    Progress,
+    ProgressConstants,
     KeycodeConstants,
     TopbarActions,
     AwsHelper,
@@ -5487,7 +5491,7 @@ define([
                                 }
                                 resolve();
                                 updateContextPanel();
-                                Alert.popAlertStackById('loading_image');
+                                Progress.popById('loading_image');
                             };
                             var img = new Image();
                             var blob = new Blob([reader.result]);
@@ -5503,7 +5507,7 @@ define([
                     });
                 }
                 replaceBitmap = async (file, imageElem) => {
-                    Alert.popUp({id: 'loading_image', message: uiStrings.notification.loadingImage,});
+                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
                     return new Promise((resolve, reject) => {
                         reader = new FileReader();
                         reader.onloadend = async function (e) {
@@ -5546,7 +5550,7 @@ define([
                                             }
                                             svgCanvas.undoMgr.addCommandToHistory(batchCmd);
                                             updateContextPanel();
-                                            Alert.popAlertStackById('loading_image');
+                                            Progress.popById('loading_image');
                                             resolve();
                                         }
                                     }
@@ -5715,7 +5719,7 @@ define([
                                 resolve(false);
                             }
                             // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
-                            Alert.popAlertStackById('loading_image');
+                            Progress.popById('loading_image');
                             resolve(newElement);
                         };
                         reader.readAsText(blob);
@@ -5752,7 +5756,7 @@ define([
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file, skipVersionWarning);
                         if (result !== 'ok') {
-                            Alert.popAlertStackById('loading_image');
+                            Progress.popById('loading_image');
                             switch (result) {
                                 case 'invalid_path':
                                     Alert.popUp({
@@ -5874,7 +5878,7 @@ define([
                                     },
                                     onCancel: () => {
                                         Announcement.unpost('DXF_DPI_SELECTOR');
-                                        Alert.popAlertStackById('loading_image');
+                                        Progress.popById('loading_image');
                                         reject();
                                     }
                                 }
@@ -5884,7 +5888,7 @@ define([
                     });
                     if (!parsed) {
                         alert("DXF Parsing Error");
-                        Alert.popAlertStackById('loading_image');
+                        Progress.popById('loading_image');
                         return;
                     }
                     const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
@@ -5944,7 +5948,7 @@ define([
                         svgCanvas.updateElementColor(use_el);
                     }
                     svgCanvas.removeDefaultLayerIfEmpty();
-                    Alert.popAlertStackById('loading_image');
+                    Progress.popById('loading_image');
                 };
 
                 const importBvgString = (str) => {
@@ -6120,7 +6124,7 @@ define([
                 editor.importBvgStringAsync = importBvgStringAsync;
 
                 const importBvg = async (file) => {
-                    Alert.popAlertStackById('loading_image');
+                    Progress.popById('loading_image');
                     const parsedSvg = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {
@@ -6135,7 +6139,7 @@ define([
                 editor.importBvg = importBvg;
 
                 const importJsScript = async (file) => {
-                    Alert.popAlertStackById('loading_image');
+                    Progress.popById('loading_image');
                     if (require.cache[file.path]) {
                         delete require.cache[file.path];
                     }
@@ -6143,7 +6147,7 @@ define([
                 };
 
                 const importLaserConfig = async (file) => {
-                    Alert.popAlertStackById('loading_image');
+                    Progress.popById('loading_image');
                     Alert.popUp({
                         buttonType: AlertConstants.CONFIRM_CANCEL,
                         message: LANG.right_panel.laser_panel.sure_to_load_config,
@@ -6174,14 +6178,14 @@ define([
                 };
 
                 var importImage = function (e) {
-                    Alert.popUp({id: 'loading_image', message: uiStrings.notification.loadingImage,});
+                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
                     e.stopPropagation();
                     e.preventDefault();
                     $('#workarea').removeAttr('style');
                     $('#main_menu').hide();
                     const file = (e.type === 'drop') ? e.dataTransfer.files[0] : this.files[0];
                     if (!file) {
-                        Alert.popAlertStackById('loading_image');
+                        Progress.popById('loading_image');
                         return;
                     }
                     handleFile(file);
@@ -6551,7 +6555,7 @@ define([
                         }
                     },
                     complete: function () {
-                        Alert.popAlertStackById('loading_image');
+                        Progress.popById('loading_image');
                     }
                 });
             });

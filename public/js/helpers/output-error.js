@@ -8,8 +8,7 @@ define([
     'helpers/logger',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'plugins/file-saver/file-saver.min'
 ], function(
     $,
@@ -18,8 +17,7 @@ define([
     Logger,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants
+    Progress
 ) {
     'use strict';
 
@@ -116,7 +114,7 @@ define([
             return $deferred.promise();
         },
         uploadBackendErrorLog: async () => {
-            ProgressActions.open(ProgressConstants.NONSTOP, LANG.popup.progress.uploading);
+            Progress.openNonstopProgress({id: 'output-error-log', message: LANG.popup.progress.uploading});
             let output = getOutput();
             let report_file = new Blob(output, {type: 'application/octet-stream'});
             report_file.lastModifiedDate = new Date();
@@ -158,7 +156,7 @@ define([
                     message: `${LANG.popup.upload_failed}\n${e}`
                 });
             } finally {
-                ProgressActions.close();
+                Progress.popById('output-error-log');
             }
         }
     };

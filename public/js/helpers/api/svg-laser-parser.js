@@ -6,6 +6,7 @@ define([
     'jquery',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/beambox-preference',
     'helpers/websocket',
     'helpers/convertToTypedArray',
@@ -17,6 +18,7 @@ define([
     $,
     Alert,
     AlertConstants,
+    Progress,
     BeamboxPreference,
     Websocket,
     convertToTypedArray,
@@ -424,7 +426,7 @@ define([
                     } else if (data.status === 'ok') {
                         $deferred.resolve({res: true, data: finalBlobs});
                     } else if (data.status === 'Error') {
-                        Alert.popAlertStackById('loading_image');
+                        Progress.popById('loading_image');
                         $deferred.resolve({res: false, data: data.message});
                     }
 

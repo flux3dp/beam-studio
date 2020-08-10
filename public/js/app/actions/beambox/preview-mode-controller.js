@@ -3,8 +3,7 @@ define([
     'app/actions/beambox/preview-mode-background-drawer',
     'helpers/device-master',
     'app/constants/device-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/global-actions',
     'helpers/sprintf',
     'helpers/i18n',
@@ -16,8 +15,7 @@ define([
     PreviewModeBackgroundDrawer,
     DeviceMaster,
     DeviceConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     GlobalActions,
     sprintf,
     i18n,
@@ -45,7 +43,7 @@ define([
 
             await DeviceMaster.select(selectedPrinter);
 
-            ProgressActions.open(ProgressConstants.NONSTOP, sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name));
+            Progress.openNonstopProgress({id: 'start-preview-mode', message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name)});
 
             try {
                 await this._retrieveCameraOffset();
@@ -72,7 +70,7 @@ define([
                 }
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('start-preview-mode');
             }
         }
 

@@ -4,8 +4,7 @@ define([
     'helpers/sprintf',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/svgeditor-function-wrapper',
 ],function(
     i18n,
@@ -13,8 +12,7 @@ define([
     sprintf,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     FnWrapper
 ){
     'use strict';
@@ -45,14 +43,14 @@ define([
     const checkForUpdate = (isAutoCheck) => {
         let currentChannel = FLUX.version.split('-')[1] || 'latest';
         if (!isAutoCheck) {
-            ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+            Progress.openNonstopProgress({id: 'electron-check-update', message: LANG.checking});
         }
         let hasGetResponse = false;
         ipc.send(events.CHECK_FOR_UPDATE, currentChannel);
         setTimeout(() => {
             if (!hasGetResponse) {
                 if (!isAutoCheck) {
-                    ProgressActions.close();
+                    Progress.popById('electron-check-update');
                     Alert.popUp({
                         message: LANG.no_response,
                         caption: LANG.check_update
@@ -63,7 +61,7 @@ define([
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
             hasGetResponse = true;
             if (!isAutoCheck) {
-                ProgressActions.close();
+                Progress.popById('electron-check-update');
             }
             if (res.error) {
                 console.log(res.error);
@@ -122,11 +120,11 @@ define([
 
     const switchVersion = () => {
         const currentChannel = FLUX.version.split('-')[1];
-        ProgressActions.open(ProgressConstants.NONSTOP, LANG.checking);
+        Progress.openNonstopProgress({id: 'electron-check-switch', message: LANG.checking});
         const targetChannel = currentChannel ? 'latest' : 'beta';
         ipc.send(events.CHECK_FOR_UPDATE, targetChannel);
         ipc.once(events.UPDATE_AVAILABLE, (event, res) => {
-            ProgressActions.close();
+            Progress.popById('electron-check-switch');
             if (res.error) {
                 console.log(res.error);
                 Alert.popUp({

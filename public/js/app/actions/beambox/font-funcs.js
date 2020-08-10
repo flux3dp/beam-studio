@@ -1,8 +1,7 @@
 define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/svgeditor-function-wrapper',
     'helpers/api/alert-config',
     'helpers/api/svg-laser-parser',
@@ -12,8 +11,7 @@ define([
 ], function(
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     FnWrapper,
     AlertConfig,
     SvgLaserParser,
@@ -188,18 +186,15 @@ define([
 
     const showsubstitutedFamilyPopup = ($textElement, newFont, origFont, unSupportedChar) => {
         return new Promise((resolve, reject) => {
-            ProgressActions.close();
             const message = sprintf(LANG.text_to_path.font_substitute_pop, $textElement.text(), fontNameMap.get(origFont), unSupportedChar.join(', '), fontNameMap.get(newFont));
             Alert.popUp({
                 type: AlertConstants.SHOW_POPUP_WARNING,
                 message,
                 buttonType: AlertConstants.CONFIRM_CANCEL,
                 onConfirm: () => {
-                    ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
                     resolve(true);
                 },
                 onCancel: () => {
-                    ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
                     resolve(false);
                 }
             });
@@ -237,6 +232,8 @@ define([
             $textElement.remove();
             return;
         }
+        Progress.openNonstopProgress({id: 'parsing-font', message: LANG.wait_for_parsing_font});
+
         setTextPostscriptnameIfNeeded($textElement);
         let isUnsupported = false;
         let batchCmd = new svgedit.history.BatchCommand('Text to Path');
@@ -334,6 +331,7 @@ define([
             tempPaths.push(path);
         }
         svgedit.recalculate.recalculateDimensions(path);
+        Progress.popById('parsing-font');
         return isUnsupported;
     }
 
@@ -428,7 +426,6 @@ define([
             }
             
             if (isSomeUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
-                ProgressActions.close();
                 await new Promise((resolve) => {
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_WARNING,

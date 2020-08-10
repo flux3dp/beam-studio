@@ -2,8 +2,7 @@ define([
     'jsx!widgets/Modal',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/constants/keycode-constants',
     'helpers/api/discover',
     'helpers/i18n'
@@ -11,8 +10,7 @@ define([
     Modal,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     KeycodeConstants,
     Discover,
     i18n
@@ -82,9 +80,10 @@ define([
                 this.stopFlag = true;
                 }, this.TEST_TIME
             );
-            
-            ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.testing} - 0%`, false);
-            //ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.testing);
+            Progress.openSteppingProgress({
+                id: 'network-testing',
+                message: `${LANG.testing} - 0%`,
+            })
             this._pingTarget();
         }
 
@@ -114,13 +113,16 @@ define([
             this.session.pingHost(this.state.ip, (error, target, sent, rcvd) => {
                 const elapsedTime = new Date() - this.startTime;
                 const percentage =  parseInt(100 * elapsedTime / this.TEST_TIME);
-                ProgressActions.updating(`${LANG.testing} - ${percentage}%`, percentage);
+                Progress.update('network-testing', {
+                    percentage,
+                    message: `${LANG.testing} - ${percentage}%`,
+                });
                 if (error) {
                     console.log (target + ": " + error.toString ());
                     let invalidIp = error.toString().match('Invalid IP address');
                     if (invalidIp) {
                         this.stopFlag = true;
-                        ProgressActions.close();
+                        Progress.popById('network-testing');
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
                             message: `${LANG.invalid_ip}: ${this.state.ip}`
@@ -144,8 +146,8 @@ define([
             console.log(`success rate: ${this.success}/${this.pingTimes}`);
             const avg =  parseInt(100 * (this.totalRRT/this.success)) / 100;
             console.log(`average rrt of success: ${avg} ms`);
-            this.session.close ();
-            ProgressActions.close();
+            this.session.close();
+            Progress.popById('network-testing');
             const healthiness = parseInt(100 * this.success / this.pingTimes);
             if (healthiness !== 0) {
                 this.discover.poke(this.state.ip);

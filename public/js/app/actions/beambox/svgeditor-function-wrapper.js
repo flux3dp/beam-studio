@@ -1,7 +1,6 @@
 define([
     'app/actions/beambox/constant',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'helpers/image-data',
     'helpers/beam-file-helper',
     'app/contexts/AlertCaller',
@@ -12,8 +11,7 @@ define([
     'helpers/i18n'
 ], function(
     Constant,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     ImageData,
     BeamFileHelper,
     Alert,
@@ -388,7 +386,7 @@ define([
             if (!svgCanvas.getHasUnsaveChanged()) {
                 callback();
             } else {
-                Alert.popAlertStackById('unsaved_change_dialog');
+                Alert.popById('unsaved_change_dialog');
                 Alert.popUp({
                     id: 'unsaved_change_dialog',
                     message: LANG.popup.save_unsave_changed,
@@ -425,12 +423,12 @@ define([
             svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
             const langFile = i18n.lang.topmenu.file;
-            ProgressActions.open(ProgressConstants.NONSTOP, langFile.converting);
+            Progress.openNonstopProgress({id: 'export_image', message: langFile.converting});
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             let image = await svgCanvas.svgStringToImage(type, output);
             image = image.replace(/^data:image\/\w+;base64,/, "");
             const buf = new Buffer.from(image, 'base64');
-            ProgressActions.close();
+            Progress.popById('export_image');
             switch (type) {
                 case 'png':
                     window.electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));

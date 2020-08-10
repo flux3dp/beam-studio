@@ -1,8 +1,7 @@
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/contexts/AlertCaller',
     'jsx!constants/tutorial-constants',
     'jsx!contexts/DialogCaller',
@@ -11,8 +10,7 @@ define([
 ],function(
     i18n,
     BeamboxPreference,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     Alert,
     TutorialConstants,
     DialogCaller,
@@ -41,9 +39,12 @@ define([
     };
 
     const startNewUserTutorial = async (callback) => {
-        ProgressActions.open(ProgressConstants.NONSTOP, LANG.look_for_machine);
+        Progress.openNonstopProgress({
+            id: 'tutorial-find-machine',
+            message: LANG.look_for_machine,
+        });
         const isAnyMachineAvailable = await getMachineForTutorial();
-        ProgressActions.close();
+        Progress.popById('tutorial-find-machine');
         if (isAnyMachineAvailable) {
             DialogCaller.showTutorial(TutorialConstants.NEW_USER_TUTORIAL, callback);
         } else {

@@ -3,15 +3,13 @@ define([
     'helpers/api/config',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
 ],function(
     i18n,
     Config,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress
 ){
 /*  Beam Format
    =================================================================================
@@ -272,7 +270,7 @@ define([
             offset = await readBlocks(buf, offset);
         }
 
-        Alert.popAlertStackById('loading_image');
+        Progress.popById('loading_image');
     };
 
     return {

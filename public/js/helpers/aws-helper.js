@@ -3,15 +3,13 @@ define([
     'helpers/api/config',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants'
+    'app/contexts/ProgressCaller'
 ],function(
     i18n,
     Config,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants
+    Progress
 ){
     'use strict';
 
@@ -27,8 +25,7 @@ define([
                 }, 100);
                 return;   
             }
-
-            ProgressActions.open(ProgressConstants.NONSTOP, LANG.popup.progress.uploading);
+            Progress.openNonstopProgress({id: 'upload-to-aws', message: LANG.popup.progress.uploading});
 
             try {
                 let report_file = new Blob([body], {type: 'application/octet-stream'});
@@ -71,7 +68,7 @@ define([
                     message: `${LANG.popup.upload_failed}\n${e}`
                 });
             } finally {
-                ProgressActions.close();
+                Progress.popById('upload-to-aws');
             }
         }
     }

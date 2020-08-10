@@ -160,7 +160,39 @@
                 background-color: #F8F8F8;
             }
         }
-
+        &.progress {
+            width: unset;
+            min-width: 120px;
+            max-width: 600px;
+            .caption {
+                font-weight: bold;
+            }
+            .message {
+                display: flex;
+                justify-content: center;
+            }
+            .stepping-container {
+                min-width: 350px;
+                width: 100%;
+            }
+            .progress-message {
+                margin: 16px 0;
+            }
+            .progress-bar {
+                background: #ccc;
+                height: 2rem;
+                overflow: hidden;
+        
+                .current-progress {
+                    background: #777;
+                    content: "";
+                    display: block;
+                    height: 100%;
+                    width: 0;
+                    transition: width 0.3s;
+                }
+            }
+        }
     }
 
     .message {

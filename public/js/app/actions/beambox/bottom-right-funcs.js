@@ -6,8 +6,7 @@ define([
     'helpers/symbol-maker',
     'helpers/version-checker',
     'app/actions/beambox/beambox-preference',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/font-funcs',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
@@ -23,8 +22,7 @@ define([
     SymbolMaker,
     VersionChecker,
     BeamboxPreference,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     FontFuncs,
     Alert,
     AlertConstants,
@@ -68,7 +66,6 @@ define([
             const ctx = canvas.getContext('2d');
 
             //cropping
-            console.log($('#svgcontent').width(), $('#svgroot').width());
             const ratio = img.width / $('#svgroot').width();
             const W = ratio * $('#svgroot').width();
             const H = ratio * $('#svgroot').height();
@@ -143,9 +140,9 @@ define([
         svgedit.utilities.moveDefsIntoSvgContent();
         const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
         svgedit.utilities.moveDefsOutfromSvgContent();
-        ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.retreive_image_data);
+        Progress.openNonstopProgress({'id': 'retreive-image-data', message: lang.beambox.bottom_right_panel.retreive_image_data});
         await updateImageResolution();
-        ProgressActions.close();
+        Progress.popById('retreive-image-data');
         const svgString = svgCanvas.getSvgString();
         const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
         const reader = new FileReader();
@@ -178,25 +175,25 @@ define([
     const fetchTaskCode = async (args={}) => {
         const {isOutputGcode, device} = args;
         let isErrorOccur = false;
-        ProgressActions.open(ProgressConstants.WAITING, lang.beambox.bottom_right_panel.convert_text_to_path_before_export);
+        Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
         await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
-        ProgressActions.close();
+        Progress.popById('convert-text');
         SymbolMaker.switchImageSymbolForAll(false);
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
+        Progress.openSteppingProgress({id: 'upload-scene', message: ''});
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
             model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
             engraveDpi: BeamboxPreference.read('engrave_dpi'),
             enableMask: BeamboxPreference.read('enable_mask') || BeamboxPreference.read('borderless'),
             onProgressing: (data) => {
-                ProgressActions.open(ProgressConstants.STEPPING, '', data.message, false);
-                ProgressActions.updating(data.message, data.percentage * 100);
+                Progress.update('upload-scene', {message: data.message, percentage: data.percentage * 100});
             },
             onFinished: () => {
-                ProgressActions.updating(lang.message.uploading_fcode, 100);
+                Progress.update('upload-scene', {message: lang.message.uploading_fcode, percentage: 100});
             },
             onError: (message) => {
                 isErrorOccur = true;
-                ProgressActions.close();
+                Progress.popById('upload-scene');
                 Alert.popUp({
                     id: 'get-taskcode-error',
                     message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
@@ -222,7 +219,9 @@ define([
             doesSupportDiodeAndAF = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
             shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
         }
+        Progress.popById('upload-scene');
 
+        Progress.openSteppingProgress({id: 'fetch-task', message: ''});
         const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
             const names = []; //don't know what this is for
             const codeType = isOutputGcode ? 'gcode' : 'fcode';
@@ -230,16 +229,15 @@ define([
                 names,
                 {
                     onProgressing: (data) => {
-                        ProgressActions.open(ProgressConstants.STEPPING, '', data.message, false);
-                        ProgressActions.updating(data.message, data.percentage * 100);
+                        Progress.update('fetch-task', {message: data.message, percentage: data.percentage * 100});
                     },
                     onFinished: function (taskCodeBlob, fileName, fileTimeCost) {
                         GlobalActions.sliceComplete({ time: fileTimeCost });
-                        ProgressActions.updating(lang.message.uploading_fcode, 100);
+                        Progress.update('fetch-task', {message: lang.message.uploading_fcode, percentage: 100});
                         resolve({taskCodeBlob, fileTimeCost});
                     },
                     onError: (message) => {
-                        ProgressActions.close();
+                        Progress.popById('fetch-task');
                         Alert.popUp({
                             id: 'get-taskcode-error',
                             message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
@@ -263,6 +261,7 @@ define([
                 }
             );
         });
+        Progress.popById('fetch-task');
 
         if (!isOutputGcode) {
             return {
@@ -298,8 +297,6 @@ define([
                         type: AlertConstants.SHOW_POPUP_ERROR,
                     });
                 });
-
-            ProgressActions.close();
         },
 
         exportFcode: async function () {
@@ -310,7 +307,6 @@ define([
             const defaultFCodeName = svgCanvas.getLatestImportFileName() || 'untitled';
             const langFile = i18n.lang.topmenu.file;
             const fileReader = new FileReader();
-            ProgressActions.close();
 
             fileReader.onload = function () {
                 window.electron.ipc.send('save-dialog', langFile.save_fcode, langFile.all_files, langFile.fcode_files, ['fc'], defaultFCodeName, new Uint8Array(this.result));
@@ -324,7 +320,6 @@ define([
             if (!gcodeBlob) {
                 return;
             }
-            ProgressActions.close();
 
             return gcodeBlob;
         },

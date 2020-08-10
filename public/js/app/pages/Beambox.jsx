@@ -9,9 +9,9 @@ define([
     'jsx!views/beambox/Zoom-Block/Zoom-Block',
     'jsx!views/beambox/Zoom-Block/contexts/Zoom-Block-Context',
     'jsx!pages/svg-editor',
-    'jsx!views/dialogs/Alert',
+    'jsx!views/dialogs/AlertsAndProgress',
     'jsx!views/dialogs/Dialog',
-    'jsx!/contexts/AlertContext',
+    'jsx!/contexts/AlertProgressContext',
     'jsx!/contexts/DialogContext',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
@@ -27,9 +27,9 @@ define([
     { ZoomBlock },
     { ZoomBlockContextProvider },
     SvgEditor,
-    { Alert },
+    { AlertsAndProgress },
     { Dialog },
-    { AlertContextProvider },
+    { AlertProgressContextProvider },
     { DialogContextProvider },
     AlertCaller,
     AlertConstants,
@@ -62,7 +62,7 @@ define([
 
         render() {
             return (
-                <AlertContextProvider>
+                <AlertProgressContextProvider>
                     <DialogContextProvider>
                         <div className="studio-container beambox-studio">
                             <TopBarContextProvider>
@@ -75,10 +75,10 @@ define([
                             <div id='tool-panels-placeholder' />
                             <div id='image-trace-panel-placeholder' />
                             <Dialog index={0}/>
-                            <Alert index={0}/>
+                            <AlertsAndProgress index={0}/>
                         </div>
                     </DialogContextProvider>
-                </AlertContextProvider>
+                </AlertProgressContextProvider>
             );
         }
     }

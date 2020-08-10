@@ -7,10 +7,12 @@ define([
     'helpers/i18n',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
+    'app/contexts/ProgressCaller',
 ], function(
     i18n,
     Alert,
-    AlertConstants
+    AlertConstants,
+    Progress
 ) {
     'use strict';
     const path = require('path');
@@ -46,7 +48,7 @@ define([
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e);
                 const message = lang.error_when_converting_pdf + '\n' + e.message;
-                Alert.popAlertStackById('loading_image');
+                Progress.popById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message
@@ -60,7 +62,7 @@ define([
             } catch(e) {
                 console.log(e);
                 const message = lang.error_pdf2svg_not_found;
-                Alert.popAlertStackById('loading_image');
+                Progress.popById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message
@@ -82,7 +84,7 @@ define([
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e.message);
                 const message = lang.error_when_converting_pdf + '\n' + e.message;
-                Alert.popAlertStackById('loading_image');
+                Progress.popById('loading_image');
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: message

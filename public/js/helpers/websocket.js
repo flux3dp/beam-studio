@@ -88,7 +88,7 @@ define([
                     wsCreateFailedCount += 1;
                     if (wsCreateFailedCount === 100) {
                         const LANG = i18n.lang.beambox.popup;
-                        Alert.popAlertStackById('backend-error');
+                        Alert.popById('backend-error');
                         Alert.popUp({
                             id: 'backend-error',
                             type: AlertConstants.SHOW_POPUP_ERROR,
@@ -109,7 +109,7 @@ define([
                     // If ws error count exceed certian number Alert user there may be problems with backend
                     if (wsErrorCount === 50) {
                         const LANG = i18n.lang.beambox.popup;
-                        Alert.popAlertStackById('backend-error');
+                        Alert.popById('backend-error');
                         Alert.popUp({
                             id: 'backend-error',
                             type: AlertConstants.SHOW_POPUP_ERROR,

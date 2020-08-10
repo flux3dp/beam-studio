@@ -1,8 +1,7 @@
 define([
     'app/actions/beambox/svgeditor-function-wrapper',
     'app/actions/beambox/font-funcs',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'jsx!contexts/DialogCaller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
@@ -12,8 +11,7 @@ define([
 ], function(
     FnWrapper,
     FontFuncs,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     DialogCaller,
     Alert,
     AlertConstants,
@@ -59,14 +57,13 @@ define([
 
         convertToPath = async () => {
             const { elem, dimensionValues } = this.props;
-            ProgressActions.open(ProgressConstants.WAITING, LANG.wait_for_parsing_font);
+            Progress.openNonstopProgress({id: 'convert-font', message: LANG.wait_for_parsing_font});
             const bbox = svgCanvas.calculateTransformedBBox(elem);
             const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
 
             if (convertByFluxsvg) {
                 await FontFuncs.convertTextToPathFluxsvg($(elem), bbox);
             } else {
-                //delay FontFuncs.requestToConvertTextToPath() to ensure ProgressActions has already popup
                 await new Promise(resolve => {
                     setTimeout(async () => {
                         await FontFuncs.requestToConvertTextToPath($(elem), {
@@ -79,7 +76,7 @@ define([
                 });
             }
             FnWrapper.reset_select_mode();
-            ProgressActions.close();
+            Progress.popById('convert-font');
         }
 
         renderButtons = (label, onClick, isFullLine) => {

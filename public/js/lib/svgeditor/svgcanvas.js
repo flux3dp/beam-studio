@@ -8852,7 +8852,7 @@ define([
                     }
                     this.setHasUnsavedChange(false);
                 } finally {
-                    Alert.popAlertStackById('load-recent');
+                    Alert.popById('load-recent');
                 }
             } else {
                 Alert.popUp({

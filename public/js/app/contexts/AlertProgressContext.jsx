@@ -7,31 +7,72 @@ define([
 ) {
     const React = require('react');
     const { createContext } = React;
-    const AlertContext = createContext();
+    const AlertProgressContext = createContext();
     const LANG = i18n.lang.alert;
 
-    class AlertContextProvider extends React.Component {
+    class AlertProgressContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
-                alertStack: []
+                alertProgressStack: []
             }
         }
 
-        popAlertStack = () => {
-            this.state.alertStack.pop();
+        popFromStack = () => {
+            this.state.alertProgressStack.pop();
             this.setState(this.state);
         };
 
-        popAlertStackById = (id) => {
-            this.state.alertStack = this.state.alertStack.filter((alert) => {return alert.id !== id});
+        popById = (id) => {
+            this.state.alertProgressStack = this.state.alertProgressStack.filter((alert) => {return alert.id !== id});
             this.setState(this.state);
         };
 
-        pushAlertToStack = (alert) => {
-            if (alert.id) console.log(`alert id: ${alert.id} popped up`);
-            this.state.alertStack.push(alert);
+        pushToStack = (elem) => {
+            if (elem.id) console.log(`alert/progress id: ${elem.id} popped up`);
+            this.state.alertProgressStack.push(elem);
             this.setState(this.state);
+        }
+
+        openProgress = (args) => {
+            let {id, type, message, caption} = args;
+            message = message || '';
+            caption = caption || '';
+
+            this.pushToStack({
+                id,
+                type,
+                caption,
+                message,
+                isProgrss: true,
+            });
+        }
+
+        popLastProgress = () => {
+            const { alertProgressStack } = this.state;
+            let i;
+            for (i = alertProgressStack.length -1; i >= 0; i--) {
+                if (alertProgressStack[i].isProgrss) {
+                    break;
+                }
+            }
+            if (i >= 0) {
+                alertProgressStack.splice(i, 1);
+                this.setState({alertProgressStack});
+            }
+        }
+
+        updateProgress = (id, args={}) => {
+            const { alertProgressStack } = this.state;
+            const targetObjects = alertProgressStack.filter((alertOrProgress) => {
+                return alertOrProgress.isProgrss && alertOrProgress.id === id
+            });
+            if (targetObjects.length === 0) {
+                return;
+            }
+            const targetObject = targetObjects[targetObjects.length - 1];
+            Object.assign(targetObject, args);
+            this.setState({alertProgressStack});
         }
 
         popUp = (args) => {
@@ -52,7 +93,7 @@ define([
             let checkBoxText = checkBox ? checkBox.text : null;
             let checkBoxCallbacks = checkBox ? checkBox.callbacks : null;
 
-            this.pushAlertToStack({
+            this.pushToStack({
                 id,
                 caption,
                 message,
@@ -60,7 +101,6 @@ define([
                 checkBoxText,
                 checkBoxCallbacks
             });
-
         }
 
         buttonsGenerator = (args) => {
@@ -203,28 +243,34 @@ define([
         }
 
         render() {
-            const { alertStack } = this.state;
+            const { alertProgressStack } = this.state;
             const { 
-                popAlertStack,
-                popAlertStackById,
+                popFromStack,
+                popById,
                 popUp,
-                pushAlertToStack, 
+                openProgress,
+                updateProgress,
+                popLastProgress,
+                pushToStack, 
                 popUpDeviceBusy,
             } = this;
             return (
-                <AlertContext.Provider value={{
-                    alertStack,
-                    popAlertStack,
-                    popAlertStackById,
+                <AlertProgressContext.Provider value={{
+                    alertProgressStack,
+                    popFromStack,
+                    popById,
                     popUp,
-                    pushAlertToStack,
+                    openProgress,
+                    updateProgress,
+                    popLastProgress,
+                    pushToStack,
                     popUpDeviceBusy,
                 }}>
                     {this.props.children}
-                </AlertContext.Provider>
+                </AlertProgressContext.Provider>
             );
         }
     };
 
-    return {AlertContextProvider, AlertContext};
+    return {AlertProgressContextProvider, AlertProgressContext};
 });
