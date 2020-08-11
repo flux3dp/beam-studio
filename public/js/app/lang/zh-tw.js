@@ -439,6 +439,7 @@ define(function() {
             },
             ip: '機器 IP 位址',
             guess_poke: '自動搜尋機器 IP',
+            auto_connect: '單一機台時自動連線',
             wrong_ip_format: 'IP格式錯誤',
             lock_selection: '鎖定選取目標',
             reset: '重置所有設定',
@@ -1296,11 +1297,13 @@ define(function() {
                     apply: '套用',
                     cancel: '取消',
                     save: '儲存參數',
+                    save_and_exit: '儲存並離開',
                     name: '名稱',
                     default: '預設',
                     customized: '自訂參數清單',
                     inuse: '使用中',
                     export_config: '匯出參數',
+                    new_config_name: '新參數名稱',
                     sure_to_load_config: '將要讀取預設參數的排序與使用狀況，並覆蓋所有同名的自訂參數，確定要繼續進行嗎？',
                     dropdown: {
                         mm: {

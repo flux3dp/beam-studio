@@ -440,6 +440,7 @@ define(function() {
             },
             ip: 'Machine IP Address',
             guess_poke: 'Search for machine IP address',
+            auto_connect: 'Connect automatically when single machine found',
             wrong_ip_format: 'Wrong IP Formats',
             lock_selection: 'Lock Selection',
             default_machine: 'Default Machine',
@@ -1299,11 +1300,13 @@ define(function() {
                     apply: 'Apply',
                     cancel: 'Cancel',
                     save: 'Save',
+                    save_and_exit: 'Save and Exit',
                     name: 'Name',
                     default: 'Default',
-                    customized: 'Customized list',
+                    customized: 'Customized List',
                     inuse: 'Using',
-                    export_config: 'Export Parameters',
+                    export_config: 'Export Presets',
+                    new_config_name: 'New Preset Name',
                     sure_to_load_config: 'This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?',
                     dropdown: {
                         mm: {
@@ -1369,8 +1372,8 @@ define(function() {
                         step: 0.1
                     },
                     para_in_use: 'This parameter is being used.',
-                    do_not_adjust_default_para: 'Default parameter can not be adjusted.',
-                    existing_name: 'This parameter name has been used.'
+                    do_not_adjust_default_para: 'Presets can not be adjusted.',
+                    existing_name: 'This name has been used.'
                 },
                 object_panel: {
                     zoom: 'Zoom',

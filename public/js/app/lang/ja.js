@@ -440,6 +440,7 @@ define(function() {
             },
             ip: 'マシンIPアドレス',
             guess_poke: 'マシンIPを自動的に検索',
+            auto_connect: '単一のマシンが見つかったときに自動的に接続する',
             wrong_ip_format: '間違ったIP形式',
             lock_selection: 'ロック選択',
             default_machine: 'デフォルトマシン',
@@ -1299,11 +1300,13 @@ define(function() {
                     apply: '適用する',
                     cancel: 'キャンセル',
                     save: '保存する',
+                    save_and_exit: '保存して終了',
                     name: '名前',
                     default: 'デフォルト',
                     customized: 'カスタマイズされたリスト',
                     inuse: '使用中',
                     export_config: 'パラメータのエクスポート',
+                    new_config_name: '新しいパラメータ名',
                     sure_to_load_config: 'これにより、プリセットの配置が読み込まれ、ファイルに設定されているカスタマイズされたパラメーターが置き換えられます。続行しますか？',
                     dropdown: {
                         mm: {

@@ -440,6 +440,7 @@ define(function() {
             },
             ip: 'IP-Adresse des Geräts',
             guess_poke: 'Suchen Sie nach der IP-Adresse des Geräts',
+            auto_connect: 'Stellen Sie automatisch eine Verbindung her, wenn eine einzelne Maschine gefunden wurde',
             wrong_ip_format: 'Falsche IP-Formate',
             lock_selection: 'Auswahl sperren',
             default_machine: 'Standardmaschine',
@@ -1299,11 +1300,13 @@ define(function() {
                     apply: 'Anwenden',
                     cancel: 'Stornieren',
                     save: 'Speichern',
+                    save_and_exit: 'Speichern und schließen',
                     name: 'Name',
                     default: 'Standard',
                     customized: 'Kundenspezifische Liste',
                     inuse: 'in Benutzung',
                     export_config: 'Parameter exportieren',
+                    new_config_name: 'Neuer Parametername',
                     sure_to_load_config: 'Dadurch wird die Anordnung der Voreinstellungen geladen und die in der Datei festgelegten benutzerdefinierten Parameter ersetzt. Sind Sie sicher, dass Sie fortfahren?',
                     dropdown: {
                         mm: {

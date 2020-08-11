@@ -1164,7 +1164,7 @@
                 border-radius: 4px;
                 background: #FFF;
                 padding: 20px 20px 0;
-                width: 640px;
+                width: 680px;
 
                 .title {
                     color: #626262;
@@ -1195,8 +1195,42 @@
                 .config-list-column {
                     width: 45%;
                     .title {
+                        display: inline-flex;
                         color: #888888;
                         font-weight: 500;
+                    }
+                    .add-btn {
+                        cursor: pointer;
+                        margin: 2px 0 3px 10px;
+                        .bar {
+                            position: absolute;
+                            border: 1px solid #ffffff;
+                            width: 4px;
+                            height: 13px;
+                            border-radius: 2px;
+                            background-color: #888888;
+                        }
+                        .bar1 {
+                            transform: translateX(4.5px);
+                        }
+                        .bar2 {
+                            transform: translateX(13px) rotate(90deg) translateX(4.5px);
+                        }
+                        .bar3 {
+                            width: 2px;
+                            height: 11px;
+                            border: 1px solid #888888;
+                            border-radius: 1px;
+                            transform: translateX(5.5px) translateY(1px);
+                        }
+                        &:hover {
+                            .bar {
+                                background-color: #444444;
+                            }
+                            .bar3 {
+                                border: 1px solid #444444;
+                            }
+                        }
                     }
                 }
                 .config-list {

@@ -48,22 +48,7 @@ define([
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
     const defaultLaserOptions = [
         'parameters',
-        'wood_3mm_cutting',
-        'wood_5mm_cutting',
-        'wood_engraving',
-        'acrylic_3mm_cutting',
-        'acrylic_5mm_cutting',
-        'acrylic_engraving',
-        'leather_3mm_cutting',
-        'leather_5mm_cutting',
-        'leather_engraving',
-        'fabric_3mm_cutting',
-        'fabric_5mm_cutting',
-        'fabric_engraving',
-        'rubber_bw_engraving',
-        'glass_bw_engraving',
-        'metal_bw_engraving',
-        'stainless_steel_bw_engraving_diode',
+        ...RightPanelConstants.laserPresetKeys,
     ];
 
     const functionalLaserOptions = [
@@ -624,9 +609,8 @@ define([
             return (
                 <LaserManageModal
                     selectedItem={this.state.selectedItem}
-                    _handleCancelModal = {this._handleCancelModal}
                     initDefaultConfig = {this.initDefaultConfig}
-                    onClose = {() => this.setState({modal: ''})}
+                    onClose = {() => this._handleCancelModal()}
                     onApply = {(speed, power, repeat, zStep, selectedItem) => {
                         this.props.funcs.writeSpeed(this.props.layerName, speed);
                         this.props.funcs.writeStrength(this.props.layerName, power);

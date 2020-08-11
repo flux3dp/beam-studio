@@ -205,6 +205,24 @@ define(function() {
                 power: 100,
                 speed: 4
             },
-        }
+        },
+        laserPresetKeys: [
+            'wood_3mm_cutting',
+            'wood_5mm_cutting',
+            'wood_engraving',
+            'acrylic_3mm_cutting',
+            'acrylic_5mm_cutting',
+            'acrylic_engraving',
+            'leather_3mm_cutting',
+            'leather_5mm_cutting',
+            'leather_engraving',
+            'fabric_3mm_cutting',
+            'fabric_5mm_cutting',
+            'fabric_engraving',
+            'rubber_bw_engraving',
+            'glass_bw_engraving',
+            'metal_bw_engraving',
+            'stainless_steel_bw_engraving_diode',
+        ]
     };
 });

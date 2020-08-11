@@ -438,6 +438,7 @@ define(function() {
             },
             ip: '机器 IP 位址',
             guess_poke: '自动搜寻机器 IP',
+            auto_connect: '单一机台时自动连线',
             wrong_ip_format: 'IP格式错误',
             lock_selection: '锁定选取目标',
             reset: '重置所有设置',
@@ -1295,11 +1296,13 @@ define(function() {
                     apply: '套用',
                     cancel: '取消',
                     save: '储存参数',
+                    save_and_exit: '保存并退出',
                     name: '名称',
                     default: '预设',
                     customized: '自订参数清单',
                     inuse: '使用中',
                     export_config: '汇出参数',
+                    new_config_name: '新参数名称',
                     sure_to_load_config: '将要读取预设参数的排序与使用状况，并覆盖所有同名的自订参数，确定要继续进行吗？',
                     dropdown: {
                         mm: {

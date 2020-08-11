@@ -1,51 +1,39 @@
 define([
     'jsx!widgets/Modal',
     'jsx!widgets/Unit-Input-v2',
+    'jsx!contexts/DialogCaller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/beambox/beambox-preference',
     'app/constants/right-panel-constants',
+    'helpers/is-object-empty',
     'helpers/local-storage',
     'helpers/i18n'
 ], function(
     Modal,
     UnitInput,
+    DialogCaller,
     Alert,
     AlertConstants,
     BeamboxPreference,
     RightPanelConstants,
+    isObjectEmpty,
     LocalStorage,
     i18n
 ) {
     const React = require('react');
     const classNames = require('classnames');
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
-    const defaultLaserOptions = [
-        'wood_3mm_cutting',
-        'wood_5mm_cutting',
-        'wood_engraving',
-        'acrylic_3mm_cutting',
-        'acrylic_5mm_cutting',
-        'acrylic_engraving',
-        'leather_3mm_cutting',
-        'leather_5mm_cutting',
-        'leather_engraving',
-        'fabric_3mm_cutting',
-        'fabric_5mm_cutting',
-        'fabric_engraving',
-        'rubber_bw_engraving',
-        'glass_bw_engraving',
-        'metal_bw_engraving',
-        'stainless_steel_bw_engraving_diode',
-    ];
+    const defaultLaserOptions = RightPanelConstants.laserPresetKeys;
 
     class LaserManageModal extends React.Component {
         constructor(props) {
             super(props);
-            this.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-            this.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
+            this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+            this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
             this.unit = localStorage.getItem('default-units') || 'mm';
-            const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === props.selectedItem);
+            const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === props.selectedItem);
+            this.unsavedChanges = {};
             this.state = {
                 isSelectingCustomized: true,
                 selectedItem: props.selectedItem,
@@ -83,14 +71,15 @@ define([
         }
 
         handleCustomizedEntryClick = (name) => {
-            const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === name);
+            const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === name);
+            const editingValue = {...selectedConfig, ...this.unsavedChanges[name]};
             this.setState({
                 isSelectingCustomized: true,
                 selectedItem: name,
-                displaySpeed: selectedConfig.speed,
-                displayPower: selectedConfig.power,
-                displayRepeat: selectedConfig.repeat || 1,
-                displayZStep: selectedConfig.zStep || 0,
+                displaySpeed: editingValue.speed,
+                displayPower: editingValue.power,
+                displayRepeat: editingValue.repeat || 1,
+                displayZStep: editingValue.zStep || 0,
             });
         }
 
@@ -109,15 +98,15 @@ define([
         addSelectDefaultsToCustom = () => {
             const { isSelectingCustomized, selectedItem } = this.state;
             if (!isSelectingCustomized && selectedItem != '') {
-                if (this.defaultLaserConfigsInUse[selectedItem]) {
+                if (this.editingDefaultLaserConfigsInUse[selectedItem]) {
                     this.setState({
                         selectedItem: LANG.dropdown[this.unit][selectedItem],
                         isSelectingCustomized: true});
                     return;
                 }
                 const {speed, power, repeat, zStep} = this._getDefaultParameters(selectedItem);
-                this.defaultLaserConfigsInUse[selectedItem] = true;
-                this.customizedLaserConfigs.push({
+                this.editingDefaultLaserConfigsInUse[selectedItem] = true;
+                this.editingCustomizedLaserConfigs.push({
                     name: LANG.dropdown[this.unit][selectedItem],
                     speed: speed,
                     power: power,
@@ -126,12 +115,10 @@ define([
                     isDefault: true,
                     key: selectedItem
                 });
-                LocalStorage.set('customizedLaserConfigs', this.customizedLaserConfigs);
-                LocalStorage.set('defaultLaserConfigsInUse', this.defaultLaserConfigsInUse);
                 this.setState({
                     selectedItem: LANG.dropdown[this.unit][selectedItem],
                     isSelectingCustomized: true,
-                }, () => {$('#custom-config-list').scrollTop(this.customizedLaserConfigs.length * 20)});
+                }, () => {$('#custom-config-list').scrollTop(this.editingCustomizedLaserConfigs.length * 20)});
             }
         };
 
@@ -139,18 +126,16 @@ define([
             if (this.state.selectedItem != '') {
                 let index;
                 if (this.state.isSelectingCustomized) {
-                    index = this.customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
+                    index = this.editingCustomizedLaserConfigs.findIndex((config) => config.name === this.state.selectedItem);
                 } else {
-                    index = this.customizedLaserConfigs.findIndex((e) => e.name === LANG.dropdown[this.unit][this.state.selectedItem]);
+                    index = this.editingCustomizedLaserConfigs.findIndex((config) => config.name === LANG.dropdown[this.unit][this.state.selectedItem]);
                 }
-                if (index > -1 && this.customizedLaserConfigs[index].isDefault) {
-                    const key = this.customizedLaserConfigs[index].key;
-                    this.defaultLaserConfigsInUse[key] = false;
-                    LocalStorage.set('defaultLaserConfigsInUse', this.defaultLaserConfigsInUse);
-                    this.customizedLaserConfigs.splice(index, 1);
-                    LocalStorage.set('customizedLaserConfigs', this.customizedLaserConfigs);
-                    if (this.customizedLaserConfigs.length > 0) {
-                        const nextCustomizedConfig = this.customizedLaserConfigs[Math.min(index, this.customizedLaserConfigs.length - 1)];
+                if (index > -1 && this.editingCustomizedLaserConfigs[index].isDefault) {
+                    const key = this.editingCustomizedLaserConfigs[index].key;
+                    this.editingDefaultLaserConfigsInUse[key] = false;
+                    this.editingCustomizedLaserConfigs.splice(index, 1);
+                    if (this.editingCustomizedLaserConfigs.length > 0) {
+                        const nextCustomizedConfig = this.editingCustomizedLaserConfigs[Math.min(index, this.editingCustomizedLaserConfigs.length - 1)];
                         this.setState({
                             selectedItem: nextCustomizedConfig ? nextCustomizedConfig.name : '',
                             displayPower:  nextCustomizedConfig ? nextCustomizedConfig.power : 0,
@@ -167,12 +152,11 @@ define([
             }
         };
 
-        onEntryDragStart = (e) => {
-            this.draggingEntry = $(e.target).closest('.config-entry')[0];
-            const name = $(this.draggingEntry).children('.entry-name').text();
-            const index = this.customizedLaserConfigs.findIndex((e) => e.name === name);
+        onEntryDragStart = (entry, index) => {
+            this.draggingEntry = entry;
             this.draggingIndex = index;
-            const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === name);
+            const selectedConfig = this.editingCustomizedLaserConfigs[index];
+            const name = entry.name;
             this.setState({
                 isSelectingCustomized: true,
                 selectedItem: name,
@@ -183,31 +167,29 @@ define([
             });
         };
 
-        onEntryDragOver = (e) => {
+        onEntryDragOver = (entry, index) => {
             if (this.draggingEntry) {
-                if ($(e.target).closest('.config-entry')[0] != this.draggingEntry) {
-                    const name = $(e.target).closest('.config-entry').children('.entry-name').text();
-                    const index = this.customizedLaserConfigs.findIndex((e) => e.name === name);
-                    const temp = this.customizedLaserConfigs[index];
-                    this.customizedLaserConfigs[index] = this.customizedLaserConfigs[this.draggingIndex];
-                    this.customizedLaserConfigs[this.draggingIndex] = temp;
+                if (entry.name != this.draggingEntry.name) {
+                    const temp = this.editingCustomizedLaserConfigs[index];
+                    this.editingCustomizedLaserConfigs[index] = this.editingCustomizedLaserConfigs[this.draggingIndex];
+                    this.editingCustomizedLaserConfigs[this.draggingIndex] = temp;
                     this.draggingIndex = index;
-                    LocalStorage.set('customizedLaserConfigs', this.customizedLaserConfigs);
                     this.setState(this.state);
                 }
             }
         };
 
-        onEntryDragEnd = (e) => {
+        onEntryDragEnd = () => {
             this.draggingEntry = false;
         }
 
         renderCustomizedEntries = () => {
-            const customizedEntries = this.customizedLaserConfigs.map((entry, index) => {
+            const customizedEntries = this.editingCustomizedLaserConfigs.map((entry, index) => {
+                const hasUnsavedChanges = this.unsavedChanges.hasOwnProperty(entry.name);
                 const entryClass = classNames({
                     'config-entry': true,
                     'selected': (this.state.isSelectingCustomized && this.state.selectedItem === entry.name),
-                    'no-border': this.customizedLaserConfigs.length >= 8 && index === this.customizedLaserConfigs.length - 1
+                    'no-border': this.editingCustomizedLaserConfigs.length >= 8 && index === this.editingCustomizedLaserConfigs.length - 1
                 });
                 return (
                     <div
@@ -215,11 +197,11 @@ define([
                         key={entry.name}
                         onClick={()=>{this.handleCustomizedEntryClick(entry.name)}}
                         draggable={true}
-                        onDragStart={this.onEntryDragStart.bind(this)}
-                        onDragOver={this.onEntryDragOver.bind(this)}
-                        onDragEnd={this.onEntryDragEnd.bind(this)}
+                        onDragStart={() => this.onEntryDragStart(entry, index)}
+                        onDragOver={() => this.onEntryDragOver(entry, index)}
+                        onDragEnd={() => this.onEntryDragEnd()}
                     >
-                        <div className='entry-name'>{entry.name}</div>
+                        <div className='entry-name'>{`${entry.name + (hasUnsavedChanges ? ' *' : '')}`}</div>
                         <span className='sub-text'>{entry.isDefault ? LANG.default : ''}</span>
                     </div>
                 );
@@ -229,7 +211,7 @@ define([
 
         renderDefaultEntries = () => {
             const defaultEntries = defaultLaserOptions.map((entry, index) => {
-                const inUse = this.defaultLaserConfigsInUse[entry];
+                const inUse = this.editingDefaultLaserConfigsInUse[entry];
                 const entryClass = classNames({
                     'config-entry': true,
                     'selected': (!this.state.isSelectingCustomized && this.state.selectedItem === entry),
@@ -245,6 +227,90 @@ define([
             return defaultEntries;
         }
 
+        renderAddButton() {
+            return (
+                <div className="add-btn" onClick={() => this.addConfig()}>
+                    <div className= "bar bar1"/>
+                    <div className= "bar bar2"/>
+                    <div className= "bar bar3"/>
+                </div>
+            );
+        }
+
+        addConfig = () => {
+            DialogCaller.promptDialog({
+                caption: LANG.new_config_name,
+                defaultValue: '',
+                onYes: (newName) => {
+                    if (!newName) {
+                        return;
+                    }
+                    const isPresetNameUsed = this.editingCustomizedLaserConfigs.some((preset) => preset.name === newName);
+                    if (isPresetNameUsed) {
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: LANG.existing_name,
+                        });
+                    } else {
+                        this.editingCustomizedLaserConfigs.push({
+                            name: newName,
+                            speed: 20,
+                            power: 15,
+                            repeat: 1,
+                            zStep: 0,
+                        });
+                        this.setState({
+                            isSelectingCustomized: true,
+                            selectedItem: newName,
+                            displaySpeed: 20,
+                            displayPower: 15,
+                            displayRepeat: 1,
+                            displayZStep: 0,
+                        }, () => {$('#custom-config-list').scrollTop(this.editingCustomizedLaserConfigs.length * 20)});
+                    }
+                },
+            });
+        }
+
+        handleSpeedInputChange = (selectedItem, val) => {
+            if (this.unit === 'inches') {
+                val *= 25.4;
+            }
+            this.handleUnsavedChange(selectedItem, 'speed', val);
+        }
+
+        handleUnsavedChange = (configName, configKey, newValue) => {
+            const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === configName);
+            if (selectedConfig[configKey] !== newValue) {
+                if (!this.unsavedChanges[configName]) {
+                    const unsavedChange = {};
+                    unsavedChange[configKey] = newValue;
+                    this.unsavedChanges[configName] = unsavedChange;
+                } else {
+                    this.unsavedChanges[configName][configKey] = newValue;
+                }
+            } else {
+                if (!this.unsavedChanges[configName]) {
+                    console.log('doesnt make sense');
+                } else {
+                    delete this.unsavedChanges[configName][configKey];
+                    if (isObjectEmpty(this.unsavedChanges[configName])) {
+                        delete this.unsavedChanges[configName];
+                    }
+                }
+            }
+
+            if (configKey === 'power') {
+                this.setState({displayPower: newValue});
+            } else if (configKey === 'repeat') {
+                this.setState({displayRepeat: newValue});
+            } else if (configKey === 'speed') {
+                this.setState({displaySpeed: newValue});
+            } else if (configKey === 'zStep') {
+                this.setState({displayZStep: newValue});
+            }
+        }
+
         _handleReset = () => {
             Alert.popUp({
                 buttonType: AlertConstants.YES_NO,
@@ -252,27 +318,26 @@ define([
                 onYes: () => {
                     LocalStorage.removeAt('defaultLaserConfigsInUse');
                     this.props.initDefaultConfig();
-                    this.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-                    this.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
+                    this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+                    this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
                     this.setState(this.state);
                 }
             });
         }
 
         _handleDelete = () => {
-            const index = this.customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
+            const index = this.editingCustomizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
             if (index > -1) {
-                if (this.customizedLaserConfigs[index].isDefault) {
+                if (this.editingCustomizedLaserConfigs[index].isDefault) {
                     this.removeDefaultfromCustom();
                     return;
                 }
-                this.customizedLaserConfigs.splice(index, 1);
-                LocalStorage.set('customizedLaserConfigs', this.customizedLaserConfigs);
-                if (this.customizedLaserConfigs.length > 0) {
-                    const nextCustomizedConfig = this.customizedLaserConfigs[Math.min(index, this.customizedLaserConfigs.length - 1)];
+                this.editingCustomizedLaserConfigs.splice(index, 1);
+                if (this.editingCustomizedLaserConfigs.length > 0) {
+                    const nextCustomizedConfig = this.editingCustomizedLaserConfigs[Math.min(index, this.editingCustomizedLaserConfigs.length - 1)];
                     this.setState({
                         selectedItem: nextCustomizedConfig ? nextCustomizedConfig.name : '',
-                        displayPower:  nextCustomizedConfig ? nextCustomizedConfig.power : 0,
+                        displayPower: nextCustomizedConfig ? nextCustomizedConfig.power : 0,
                         displaySpeed: nextCustomizedConfig ? nextCustomizedConfig.speed : 0,
                         displayRepeat: nextCustomizedConfig ? nextCustomizedConfig.repeat : 1,
                         displayZStep: nextCustomizedConfig ? nextCustomizedConfig.zStep : 0,
@@ -284,54 +349,38 @@ define([
             }
         }
 
-        _handleSave = () => {
-            if (this.state.selectedItem != '') {
-                const {displaySpeed, displayPower, displayRepeat, displayZStep} = this.state;
-                const index = this.customizedLaserConfigs.findIndex((e) => e.name === this.state.selectedItem);
-                if (!this.customizedLaserConfigs[index].isDefault) {
-                    this.customizedLaserConfigs[index].speed = displaySpeed;
-                    this.customizedLaserConfigs[index].power = displayPower;
-                    this.customizedLaserConfigs[index].repeat = displayRepeat;
-                    this.customizedLaserConfigs[index].zStep = displayZStep;
-                    LocalStorage.set('customizedLaserConfigs', this.customizedLaserConfigs);
+        _handleSaveAndExit = () => {
+            for (let i = 0; i < this.editingCustomizedLaserConfigs.length; i++) {
+                let config = this.editingCustomizedLaserConfigs[i];
+                if (this.unsavedChanges.hasOwnProperty(config.name)) {
+                    config = {...config, ...this.unsavedChanges[config.name]};
+                    this.editingCustomizedLaserConfigs[i] = config;
                 }
             }
+            this.unsavedChanges = {};
+            LocalStorage.set('customizedLaserConfigs', this.editingCustomizedLaserConfigs);
+            LocalStorage.set('defaultLaserConfigsInUse', this.editingDefaultLaserConfigsInUse);
+            this.props.onClose();
+            // if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
+            //     document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
+            //     const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
+            //     const speed = selectedConfig.speed;
+            //     const power = selectedConfig.power;
+            //     const repeat = selectedConfig.repeat || 1;
+            //     const zStep = selectedConfig.zStep || 0;
+            //     this.props.onApply(speed, power, repeat, zStep, this.state.selectedItem);
+            // } else {
+            //     this.props.onClose();
+            // }
         }
 
-        _handleApply = () => {
-            if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
-                this._handleSave();
-                document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
-                const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
-
-                const speed = selectedConfig.speed;
-                const power = selectedConfig.power;
-                const repeat = selectedConfig.repeat || 1;
-                const zStep = selectedConfig.zStep || 0;
-                this.props.onApply(speed, power, repeat, zStep, this.state.selectedItem);
-
-            } else {
-                this.props.onClose();
-            }
-        }
-
-        handleSpeedInputChange = (val) => {
-            if (this.unit === 'inches') {
-                val *= 25.4;
-            }
-            this.setState({displaySpeed: val});
-        }
-
-        handleZStepInputChange = (val) => {
-            if (this.unit === 'inches') {
-                val *= 25.4;
-            }
-            this.setState({displayZStep: val});
+        _handleCancel = () => {
+            this.props.onClose();
         }
 
         render() {
             const { isSelectingCustomized, selectedItem, displaySpeed, displayPower, displayRepeat, displayZStep} = this.state;
-            const selectedConfig = this.customizedLaserConfigs.find((e) => e.name === selectedItem);
+            const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === selectedItem);
             const disableControl = Boolean(!isSelectingCustomized) || Boolean(!selectedConfig) || Boolean(selectedConfig.isDefault);
             const defaultEntries = this.renderDefaultEntries();
             const customizedEntries = this.renderCustomizedEntries();
@@ -361,7 +410,10 @@ define([
                                 <div className='operation-button' onClick={() => {this.removeDefaultfromCustom()}}>{'<<'}</div>
                             </div>
                             <div className='config-list-column'>
-                                <div className='title'>{LANG.customized}</div>
+                                <div className='title'>
+                                    {LANG.customized}
+                                    {this.renderAddButton()}
+                                </div>
                                 <div id='custom-config-list' className="config-list" >
                                     {customizedEntries}
                                 </div>
@@ -379,7 +431,7 @@ define([
                                         max={100}
                                         disabled={disableControl}
                                         unit={'%'}
-                                        getValue={(val) => {this.setState({displayPower: val})}}
+                                        getValue={(val) => {this.handleUnsavedChange(selectedItem, 'power', val)}}
                                         defaultValue={displayPower}
                                         decimal={1}
                                         step={1}
@@ -392,7 +444,7 @@ define([
                                         max={unitMaxSpeed}
                                         disabled={disableControl}
                                         unit={speedUnit}
-                                        getValue={(val) => {this.handleSpeedInputChange(val)}}
+                                        getValue={(val) => {this.handleSpeedInputChange(selectedItem, val)}}
                                         defaultValue={unitDisplaySpeed}
                                         decimal={unitSpeedDecimal}
                                         step={1}
@@ -407,7 +459,7 @@ define([
                                         max={100}
                                         disabled={disableControl}
                                         unit={LANG.times}
-                                        getValue={(val) => {this.setState({displayRepeat: val})}}
+                                        getValue={(val) => {this.handleUnsavedChange(selectedItem, 'repeat', val)}}
                                         defaultValue={displayRepeat}
                                         decimal={0}
                                         step={1}
@@ -420,7 +472,7 @@ define([
                                         max={20}
                                         disabled={disableControl}
                                         unit={zStepUnit}
-                                        getValue={(val) => {this.setState({displayZStep: val})}}
+                                        getValue={(val) => {this.handleUnsavedChange(selectedItem, 'zStep', val)}}
                                         defaultValue={displayZStep}
                                         decimal={unitZStepDcimal}
                                         step={unitZStepStep}
@@ -446,19 +498,13 @@ define([
                             <div className='right'>
                                 <button
                                     className='btn btn-default primary'
-                                    onClick={() => this._handleApply()}
+                                    onClick={() => this._handleSaveAndExit()}
                                 >
-                                    {LANG.apply}
-                                </button>
-                                <button
-                                    className='btn btn-default'
-                                    onClick={() => this._handleSave()}
-                                >
-                                    {LANG.save}
+                                    {LANG.save_and_exit}
                                 </button>
                                 <button
                                     className='btn btn-default pull-right'
-                                    onClick={() => this.props._handleCancelModal()}
+                                    onClick={() => this._handleCancel()}
                                 >
                                     {LANG.cancel}
                                 </button>
