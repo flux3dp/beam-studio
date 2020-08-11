@@ -1853,7 +1853,7 @@ define(function() {
             new_app_downloaded: '新版Mozu Studio 下载完毕',
             ask_for_upgrade: '马上升级吗?',
             please_enter_dpi: '请输入该文件的 dpi',
-            reset_sd_card: '#820 请重置 SD 卡',
+            auth_error: '#820 认证失败：请将 Beam Studio 以及机器韧体更新至最新版。',
             gcode_area_too_big: '导入的 gcode 文件超过打印范围',
             empty_file: '文件内容不存在',
             usb_unplugged: 'USB 连接逾时，请确认与机器的连接',

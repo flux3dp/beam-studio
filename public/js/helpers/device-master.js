@@ -176,7 +176,7 @@ define([
                                         ProgressActions.close();
                                         Alert.popUp({
                                             id: 'auth-error-with-diff-computer',
-                                            message: lang.message.reset_sd_card,
+                                            message: lang.message.auth_error,
                                             type: AlertConstants.SHOW_POPUP_ERROR
                                         });
                                     });
@@ -403,7 +403,7 @@ define([
                                 ProgressActions.close();
                                 Alert.popUp({
                                     id: 'auth-error-with-diff-computer',
-                                    message: lang.message.reset_sd_card,
+                                    message: lang.message.auth_error,
                                     type: AlertConstants.SHOW_POPUP_ERROR
                                 });
                             });

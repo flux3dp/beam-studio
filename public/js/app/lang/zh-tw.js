@@ -1849,7 +1849,7 @@ define(function() {
             new_app_downloaded: '新版Beam Studio 下載完畢',
             ask_for_upgrade: '馬上升級嗎?',
             please_enter_dpi: '請輸入該檔案的單位長度',
-            reset_sd_card: '#820 請重置 SD 卡',
+            auth_error: '#820 認證失敗：請將 Beam Studio 以及機器韌體更新至最新版。',
             gcode_area_too_big: '匯入的 gcode 檔案超過列印範圍',
             empty_file: '檔案內容不存在',
             usb_unplugged: 'USB 連線逾時，請確認與機器的連接',

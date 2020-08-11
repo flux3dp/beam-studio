@@ -1851,7 +1851,7 @@ define(function() {
             new_app_downloaded: '最新のFLUX Studioがダウンロードされました',
             ask_for_upgrade: '今すぐアップグレードしますか？',
             please_enter_dpi: 'ファイルの単位を入力してください',
-            reset_sd_card: '#820 マシンのSDカードをリセットしてください',
+            auth_error: '#820 認証エラー：Beam Studioとマシンのファームウェアを最新バージョンに更新してください。',
             gcode_area_too_big: 'インポートされたGCodeは、印刷可能領域を超えています。',
             empty_file: 'ファイルが空です',
             usb_unplugged: 'USB接続が失われました。USB接続を確認してください。',

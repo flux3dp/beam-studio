@@ -1849,7 +1849,7 @@ define(function() {
             new_app_downloaded: 'Neuestes FLUX Studio wurde heruntergeladen',
             ask_for_upgrade: 'Möchtest du jetzt upgraden?',
             please_enter_dpi: 'Bitte geben Sie die Einheit Ihrer Datei ein',
-            reset_sd_card: '#820 Bitte setzen Sie die SD-Karte des Geräts zurück.',
+            auth_error: '#820 Auth-Fehler: Bitte aktualisieren Sie Beam Studio und die Firmware des Computers auf die neueste Version.',
             gcode_area_too_big: 'Der importierte GCode überschreitet den druckbaren Bereich.',
             empty_file: 'Datei ist leer',
             usb_unplugged: 'Die USB-Verbindung ist verloren gegangen. Bitte überprüfe Ihre USB-Verbindung',
