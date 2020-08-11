@@ -440,7 +440,7 @@ define(function() {
             },
             ip: 'マシンIPアドレス',
             guess_poke: 'マシンIPを自動的に検索',
-            auto_connect: '単一のマシンが見つかったときに自動的に接続する',
+            auto_connect: '自動的に唯一のマシンを選択する',
             wrong_ip_format: '間違ったIP形式',
             lock_selection: 'ロック選択',
             default_machine: 'デフォルトマシン',

@@ -240,7 +240,6 @@ function buildDeviceMenu(callback, uuid, data) {
                 { id: 'LOG_PLAYER', label: r.log.player, uuid, serial, source, click: callback },
                 { id: 'LOG_ROBOT', label: r.log.robot, uuid, serial, source, click: callback }
             ]},
-            { id: 'SET_AS_DEFAULT', label: r.set_as_default, uuid, serial, source, click: callback, type:'checkbox'}
         ]);
     } else {
         submenu = [

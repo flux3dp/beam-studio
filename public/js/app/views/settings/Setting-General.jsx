@@ -127,6 +127,7 @@ define([
             if(confirm(this.state.lang.settings.confirm_reset)) {
                 LocalStorage.clearAllExceptIP();
                 location.hash = '#';
+                location.reload();
             }
         }
 
@@ -203,6 +204,19 @@ define([
                     value: 1,
                     label: lang.settings.on,
                     selected: (this.configChanges['guessing_poke'] || Config().read('guessing_poke')) !== '0'
+                }
+            ];
+
+            const autoConnectOptions = [
+                {
+                    value: 0,
+                    label: lang.settings.off,
+                    selected: (this.configChanges['auto_connect'] || Config().read('auto_connect')) === '0'
+                },
+                {
+                    value: 1,
+                    label: lang.settings.on,
+                    selected: (this.configChanges['auto_connect'] || Config().read('auto_connect')) !== '0'
                 }
             ];
 
@@ -506,15 +520,12 @@ define([
                         />
                     </Controls>
 
-                    <Controls label={lang.settings.default_machine}>
-                        <table style={tableStyle}>
-                            <tr>
-                                <td>{printer.name}</td>
-                                <td>
-                                    {default_machine_button}
-                                </td>
-                            </tr>
-                        </table>
+                    <Controls label={lang.settings.auto_connect}>
+                        <SelectView
+                            className='font3'
+                            options={autoConnectOptions}
+                            onChange={(e) => this._updateConfigChange('auto_connect', e.target.value)}
+                        />
                     </Controls>
 
                     <div className='subtitle'>{lang.settings.groups.editor}</div>

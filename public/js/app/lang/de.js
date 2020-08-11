@@ -440,7 +440,7 @@ define(function() {
             },
             ip: 'IP-Adresse des Geräts',
             guess_poke: 'Suchen Sie nach der IP-Adresse des Geräts',
-            auto_connect: 'Stellen Sie automatisch eine Verbindung her, wenn eine einzelne Maschine gefunden wurde',
+            auto_connect: 'Wählen Sie automatisch die einzige Maschine aus',
             wrong_ip_format: 'Falsche IP-Formate',
             lock_selection: 'Auswahl sperren',
             default_machine: 'Standardmaschine',

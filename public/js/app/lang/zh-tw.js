@@ -439,7 +439,7 @@ define(function() {
             },
             ip: '機器 IP 位址',
             guess_poke: '自動搜尋機器 IP',
-            auto_connect: '單一機台時自動連線',
+            auto_connect: '自動選擇唯一機器',
             wrong_ip_format: 'IP格式錯誤',
             lock_selection: '鎖定選取目標',
             reset: '重置所有設定',

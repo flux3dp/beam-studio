@@ -233,6 +233,15 @@ function createWindow () {
                     closeBeamStudio();
                 }
             });
+        } else {
+            monitorManager.killProc();
+            backendManager.stop();
+            shouldCloseShadowWindow = true;
+            try {
+                shadowWindow.close();
+            } catch (e) {
+                console.log(e);
+            }
         }
     });
 

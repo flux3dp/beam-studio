@@ -438,7 +438,7 @@ define(function() {
             },
             ip: '机器 IP 位址',
             guess_poke: '自动搜寻机器 IP',
-            auto_connect: '单一机台时自动连线',
+            auto_connect: '自动选择唯一机器',
             wrong_ip_format: 'IP格式错误',
             lock_selection: '锁定选取目标',
             reset: '重置所有设置',

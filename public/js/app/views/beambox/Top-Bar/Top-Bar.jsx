@@ -153,7 +153,7 @@ define([
         }
 
         showCameraPreviewDeviceList = () => {    
-            this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)}, true);
+            this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)});
         }
 
         startPreviewModeController = async (device) => {
@@ -251,7 +251,7 @@ define([
             if (TutorialController.getNextStepRequirement() === TutorialConstants.SEND_FILE) {
                 TutorialController.handleNextStep();
             }
-            this.showDeviceList('export', (device) => {this.exportTask(device)}, true);
+            this.showDeviceList('export', (device) => {this.exportTask(device)});
         }
 
         handleExportAlerts = () => {
@@ -384,16 +384,9 @@ define([
         showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
             const { deviceList } = this;
             if (deviceList.length > 0) {
-                if (useDefaultMachine) {
-                    if (DefaultMachine.exist()) {
-                        const defaultMachine = DefaultMachine.get();
-                        for (let i=0; i < deviceList.length; i++) {
-                            if (defaultMachine.uuid === deviceList[i].uuid) {
-                                this.handleSelectDevice(deviceList[i], (device) => {selectDeviceCallback(device)});
-                                return;
-                            }
-                        }
-                    }
+                if (localStorage.getItem('auto_connect') !== '0' && deviceList.length === 1) {
+                    this.handleSelectDevice(deviceList[0], (device) => {selectDeviceCallback(device)});
+                    return;
                 }
                 this.setState({
                     shouldShowDeviceList: true,

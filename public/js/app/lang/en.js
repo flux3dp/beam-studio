@@ -440,7 +440,7 @@ define(function() {
             },
             ip: 'Machine IP Address',
             guess_poke: 'Search for machine IP address',
-            auto_connect: 'Connect automatically when single machine found',
+            auto_connect: 'Automatically select the only machine',
             wrong_ip_format: 'Wrong IP Formats',
             lock_selection: 'Lock Selection',
             default_machine: 'Default Machine',
