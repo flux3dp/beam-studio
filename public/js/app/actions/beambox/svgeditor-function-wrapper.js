@@ -383,7 +383,7 @@ define([
 
         toggleUnsavedChangedDialog: function (callback) {
             window.electron.ipc.send('SAVE_DIALOG_POPPED');
-            if (!svgCanvas.getHasUnsaveChanged()) {
+            if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
                 callback();
             } else {
                 Alert.popById('unsaved_change_dialog');
