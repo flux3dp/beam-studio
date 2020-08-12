@@ -175,10 +175,10 @@ define([
     const fetchTaskCode = async (args={}) => {
         const {isOutputGcode, device} = args;
         let isErrorOccur = false;
+        SymbolMaker.switchImageSymbolForAll(false);
         Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
         await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
         Progress.popById('convert-text');
-        SymbolMaker.switchImageSymbolForAll(false);
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
         Progress.openSteppingProgress({id: 'upload-scene', message: ''});
         await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {

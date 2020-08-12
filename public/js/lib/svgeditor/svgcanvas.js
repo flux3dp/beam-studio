@@ -6702,7 +6702,7 @@ define([
                     if (((svg_by_layer && svg_by_color === 0) || attrStroke) && attrStroke !== 'none') {
                         $(elem).attr('stroke', color);
                     }
-                    if (attrFill && attrFill !== 'none') {
+                    if (attrFill !== 'none') {
                         $(elem).attr('fill', color); 
                     }
                 } else if (elem.tagName === 'image') {

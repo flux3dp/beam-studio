@@ -417,7 +417,7 @@ define([
         const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
         let isSomeUnsupported = false;
         if (convertByFluxsvg) {
-            const texts = $('#svgcontent').find('text').toArray();
+            const texts = [...$('#svgcontent').find('text').toArray(), ...$('#svg_defs').find('text').toArray()];
             for (let i = 0; i < texts.length; ++i) {
                 let el = texts[i];
                 let bbox = svgCanvas.calculateTransformedBBox($(el)[0]);
@@ -454,7 +454,7 @@ define([
     };
 
     const revertTempConvert = async () => {
-        const texts = $('#svgcontent').find('text').toArray();
+        const texts = [...$('#svgcontent').find('text').toArray(), ...$('#svg_defs').find('text').toArray()];
         texts.forEach((t) => {
             $(t).removeAttr('display');
         });
