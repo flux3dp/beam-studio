@@ -6,6 +6,7 @@ define([
     'helpers/api/alert-config',
     'helpers/api/svg-laser-parser',
     'app/actions/beambox/beambox-preference',
+    'helpers/api/config',
     'helpers/i18n',
     'helpers/sprintf',
 ], function(
@@ -16,6 +17,7 @@ define([
     AlertConfig,
     SvgLaserParser,
     BeamboxPreference,
+    Config,
     i18n,
     sprintf
 ) {
@@ -63,20 +65,31 @@ define([
         }
         return Math.abs(h);
     };
+
+    let fontNameMapObj = Config().read('font-name-map') || {};
+    if (fontNameMapObj.navigatorLang !== navigator.language) {
+        fontNameMapObj = {};
+    } else {
+        navigator.language = undefined;
+    }
     const fontNameMap = new Map();
     const availableFontFamilies = (function requestAvailableFontFamilies() {
         // get all available fonts in user PC
         const fonts = ipc.sendSync(events.GET_AVAILABLE_FONTS);
         fonts.forEach((font) => {
             if (!fontNameMap.get(font.family)) {
-                let fontInfo = fontkit.openSync(font.path);
                 let fontName = font.family;
-                if (fontInfo.fonts && fontInfo.fonts[0]) {
-                    fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
-                }
-                if (fontInfo) {
-                    const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
-                    fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                if (fontNameMapObj[font.family]) {
+                    fontName = fontNameMapObj[font.family];
+                } else {
+                    let fontInfo = fontkit.openSync(font.path);
+                    if (fontInfo.fonts && fontInfo.fonts[0]) {
+                        fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
+                    }
+                    if (fontInfo) {
+                        const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
+                        fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                    }
                 }
                 fontNameMap.set(font.family, fontName);
             }
@@ -97,6 +110,13 @@ define([
             return 0;
         });
     })();
+
+    for (let [key, value] of fontNameMap) {
+        fontNameMapObj[key] = value;
+    }
+    fontNameMapObj.navigatorLang = navigator.language;
+    Config().write('font-name-map', fontNameMapObj);
+
     const getFontOfPostscriptName = memoize((postscriptName) => {
         if (process.platform === 'darwin') {
             const font = FontManager.findFontSync({ postscriptName });
