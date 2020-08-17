@@ -55,6 +55,7 @@ define([
             let events = electron.events;
             ipc.send(events.FRONTEND_READY);
             BeamboxInit.showTutorial();
+            BeamboxInit.checkOSVersion();
         }
         componentWillUnmount() {
             BeamboxGlobalInteraction.detach();

@@ -158,7 +158,6 @@ define([
                     discoverMethods,
                     firstDevice,
                     defaultPrinter,
-                    isUnsupportedMacOSX = /Mac OS X 10_[56789]/.test(navigator.userAgent),
                     type = 'firmware',
                     _checkFirmwareOfDefaultPrinter = function() {
                       let printers = DeviceMaster.getAvailableDevices();
@@ -185,10 +184,6 @@ define([
                 AlertStore.onUpdate(this._showUpdate);
                 AlertStore.onChangeFilament(this._showChangeFilament);
                 AlertStore.onShowHeadTemperature(this._showHeadTemperature);
-
-                if (true === isUnsupportedMacOSX) {
-                    AlertActions.showPopupError('unsupported_mac_osx', lang.message.unsupport_osx_version);
-                }
 
                 ProgressStore.onOpened(this._handleProgress)
                     .onUpdating(this._handleProgress)
