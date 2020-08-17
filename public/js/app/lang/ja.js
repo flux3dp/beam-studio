@@ -1975,9 +1975,9 @@ define(function() {
             back: '戻る',
             start_engrave: '彫刻開始',
             finish: '完了済み',
-            please_refocus: {
+            please_do_camera_calibration_and_focus: {
                 beambox: 'プラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
-                beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ'
+                beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ）'
             },
             please_place_paper: {
                 beambox: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
