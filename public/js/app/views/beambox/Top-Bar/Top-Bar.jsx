@@ -397,7 +397,7 @@ define([
                 Alert.popUp({
                     caption: lang.alert.oops,
                     message: lang.device_selection.no_beambox,
-                })
+                });
             }
         }
 

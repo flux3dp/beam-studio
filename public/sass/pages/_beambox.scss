@@ -897,6 +897,50 @@
                                     background-image: none;
                                 }
                             }
+                            .font-react-select-container {
+                                .react-select__control {
+                                    min-height: unset;
+                                    padding: 0 0 0 5px;
+                                    background-image: url("../img/icon-3d-arrow-down.png");
+                                    background-repeat: no-repeat;
+                                    background-color: transparent;
+                                    background-position: calc(100% - 4px) center;
+                                    background-size: 8px 8px;
+                                    border-width: 0 0 1px 0;
+                                    border-radius: 0;
+                                    border-color: #e0e0e0;
+                                    font-size: 12px;
+                                    line-height: 19px;
+                                    &.react-select__control--is-focused {
+                                        border-radius: 1px;
+                                    }
+                                }
+                                .react-select__value-container {
+                                    padding: 0;
+                                    height: 19px;
+                                    .react-select__single-value {
+                                        max-width: calc(100% - 12px);
+                                        margin: 0;
+                                        letter-spacing: 0.3px;
+                                    }
+                                    .react-select__input {
+                                        input {
+                                            height: 19px;
+                                        }
+                                    }
+                                }
+                                .react-select__indicators {
+                                    display: none;
+                                }
+                                .react-select__option {
+                                    font-size: 12px;
+                                }
+                                &.no-triangle {
+                                    .react-select__control {
+                                        background-image: none;
+                                    }
+                                }
+                            }
                         }
                         .onoffswitch {
                             width: 26px;

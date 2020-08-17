@@ -19,6 +19,8 @@ define([
 ) {
     const React = require('react');
     const classNames = require('classnames');
+    const ReactSelect = require('react-select');
+    const Select = ReactSelect.default;
     const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 
     class TextOptions extends React.Component {
@@ -83,6 +85,9 @@ define([
         }
 
         handleFontFamilyChange = (newFamily) => {
+            if (typeof newFamily === 'object') {
+                newFamily = newFamily.value;
+            }
             const { updateDimensionValues, updateObjectPanel } = this.props;
             const newFont = FontFuncs.requestFontsOfTheFontFamily(newFamily)[0];
             const batchCmd = new svgedit.history.BatchCommand('Change Font family');
@@ -106,29 +111,64 @@ define([
 
         renderFontFamilyBlock = () => {
             const { fontFamily } = this.state;
-            const options = FontFuncs.availableFontFamilies.map(
-                option => (
-                    <option value={option} key={option}>
-                        {FontFuncs.fontNameMap.get(option)}
-                    </option>
-                )
-            );
-            const isOnlyOneOption = options.length === 1;
-            return (
-                <div className="option-block">
-                        <div className="label">{LANG.font_family}</div>
-                        <div className="select-container">
-                            <select
-                                value={fontFamily}
-                                onChange={e => this.handleFontFamilyChange(e.target.value)}
-                                className={classNames({'no-triangle': isOnlyOneOption})}
-                                disabled={isOnlyOneOption}
-                            >
-                                {options}
-                            </select>
-                        </div>
-                </div>
-            );
+            if (process.platform === 'darwin') {
+                const options = FontFuncs.availableFontFamilies.map((option) => {
+                    return {value: option, label: FontFuncs.fontNameMap.get(option)}
+                });
+                const styles = {
+                    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                        return {...styles, fontFamily: data.value};
+                    },
+                    input: (styles) => {
+                        return {...styles, margin: 0, padding: 0, height: '19px'};
+                    },
+
+                }
+                const isOnlyOneOption = options.length === 1;
+                return (
+                    <div className="option-block">
+                            <div className="label">{LANG.font_family}</div>
+                            <div className="select-container">
+                                <Select
+                                    className={classNames('font-react-select-container', {'no-triangle': isOnlyOneOption})}
+                                    classNamePrefix={'react-select'}
+                                    defaultValue={{value: fontFamily, label: FontFuncs.fontNameMap.get(fontFamily)}}
+                                    onChange={value => this.handleFontFamilyChange(value)}
+                                    onKeyDown={(e) => {
+                                        e.stopPropagation();
+                                    }}
+                                    disabled={isOnlyOneOption}
+                                    options={options}
+                                    styles={styles}
+                                />
+                            </div>
+                    </div>
+                );
+            } else {
+                const options = FontFuncs.availableFontFamilies.map(
+                    option => (
+                        <option value={option} key={option} style={{fontFamily: option}}>
+                            {FontFuncs.fontNameMap.get(option)}
+                        </option>
+                    )
+                );
+                const isOnlyOneOption = options.length === 1;
+                return (
+                    <div className="option-block">
+                            <div className="label">{LANG.font_family}</div>
+                            <div className="select-container">
+                                <select
+                                    value={fontFamily}
+                                    onChange={e => this.handleFontFamilyChange(e.target.value)}
+                                    className={classNames({'no-triangle': isOnlyOneOption})}
+                                    disabled={isOnlyOneOption}
+                                >
+                                    {options}
+                                </select>
+                            </div>
+                    </div>
+                );
+            }
         }
 
         handleFontStyleChange = (val) => {
