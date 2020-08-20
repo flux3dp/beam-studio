@@ -138,14 +138,18 @@ class BackendManager extends EventEmitter {
                     this._setRecover();
                 }
             });
-            this._ws.on('error', (error) => {
-                console.error('Discover WebSocket error: %s', error);
-            });
         });
         this._ws.on('connectFailed', (error) => {
             this._ws = undefined;
             if(this._running) {
                 console.error('Discover connect failed: %s', error);
+                this._setRecover();
+            }
+        });
+        this._ws.on('error', (error) => {
+            console.error('Discover WebSocket error: %s', error);
+            this._ws = undefined;
+            if(this._running) {
                 this._setRecover();
             }
         });
