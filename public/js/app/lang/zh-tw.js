@@ -1247,6 +1247,7 @@ define(function() {
                 tabs: {
                     layers: '圖層',
                     objects: '物件',
+                    path_edit: '路徑編輯',
                 },
                 layer_panel: {
                     layer1: '預設圖層',
@@ -1420,7 +1421,10 @@ define(function() {
                         disassemble_use: '解散圖檔',
                         disassembling: '解散中...',
                         ungrouping: '解散群組中...',
-                    }
+                    },
+                    path_edit_panel: {
+                        node_type: '節點類型',
+                    },
                 },
             },
             bottom_right_panel: {

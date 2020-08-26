@@ -1035,6 +1035,25 @@
                     }
                 }
             }
+            #pathedit-panel {
+                width: 100%;
+                min-height: calc(100% - 40px);
+                background-color: #f8f8f8;
+                border: 1px solid #e0e0e0;
+                border-width: 0 0 1px 1px;
+
+                .node-type-panel {
+                    padding:0 16px 5px 16px;
+                    transition: height .1s ease-in 0s;
+                    .title {
+                        width: 100%;
+                        padding: 10px 0;
+                        color: #aaaaaa;
+                        font-size: 9px;
+                        letter-spacing: 2px;
+                    }
+                }
+            }
             .btn-go {
                 background: #4D4D4D;
                 font-size: 23px;

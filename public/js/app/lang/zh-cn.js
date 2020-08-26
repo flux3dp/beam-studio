@@ -1246,6 +1246,7 @@ define(function() {
                 tabs: {
                     layers: '图层',
                     objects: '物件',
+                    path_edit: '路径编辑',
                 },
                 layer_panel: {
                     layer1: '默认图层',
@@ -1424,7 +1425,10 @@ define(function() {
                         disassemble_use: '解散图档',
                         disassembling: '解散中...',
                         ungrouping: '解散群组中...',
-                    }
+                    },
+                    path_edit_panel: {
+                        node_type: '节点类型',
+                    },
                 },
             },
             bottom_right_panel: {

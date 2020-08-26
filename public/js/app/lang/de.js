@@ -1250,6 +1250,7 @@ define(function() {
                 tabs: {
                     layers: 'Layers',
                     objects: 'Objects',
+                    path_edit: 'Pfadbearbeitung',
                 },
                 layer_panel: {
                     layer1: 'Schicht 1',
@@ -1421,7 +1422,10 @@ define(function() {
                         disassemble_use: 'Zerlegen',
                         disassembling: 'Zerlegen ...',
                         ungrouping: 'Gruppierung aufheben...',
-                    }
+                    },
+                    path_edit_panel: {
+                        node_type: 'Knotentyp',
+                    },
                 },
             },
             bottom_right_panel: {

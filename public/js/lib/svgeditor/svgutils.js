@@ -1298,11 +1298,11 @@ svgedit.utilities.convertPath = function(path, toRel) {
 		var seg = segList.getItem(i);
 		// if these properties are not in the segment, set them to zero
 		var x = seg.x || 0,
-				y = seg.y || 0,
-				x1 = seg.x1 || 0,
-				y1 = seg.y1 || 0,
-				x2 = seg.x2 || 0,
-				y2 = seg.y2 || 0;
+			y = seg.y || 0,
+			x1 = seg.x1 || 0,
+			y1 = seg.y1 || 0,
+			x2 = seg.x2 || 0,
+			y2 = seg.y2 || 0;
 
 		var type = seg.pathSegType;
 		var letter = pathMap[type]['to'+(toRel?'Lower':'Upper')+'Case']();

@@ -515,7 +515,7 @@ define([
 
         var restoreRefElems = function (elem) {
             // Look for missing reference elements, restore any found
-            if (elem.tagName === 'STYLE') {
+            if (!elem || elem.tagName === 'STYLE' || elem.classList.contains('layer')) {
                 return;
             }
             var o, i, l,
@@ -3735,48 +3735,18 @@ define([
             }
 
             // TODO: Move into path.js
-            svgedit.path.Path.prototype.endChanges = function (text) {
+            svgedit.path.Path.prototype.endChanges = function (text, isSub=false) {
                 if (svgedit.browser.isWebkit()) {
                     resetD(this.elem);
                 }
                 var cmd = new svgedit.history.ChangeElementCommand(this.elem, {
                     d: this.last_d
                 }, text);
-                addCommandToHistory(cmd);
+                if (!isSub) {
+                    addCommandToHistory(cmd);
+                }
                 call('changed', [this.elem]);
-            };
-
-            svgedit.path.Path.prototype.addPtsToSelection = function (indexes) {
-                var i, seg;
-                if (!$.isArray(indexes)) {
-                    indexes = [indexes];
-                }
-                for (i = 0; i < indexes.length; i++) {
-                    var index = indexes[i];
-                    seg = this.segs[index];
-                    if (seg.ptgrip) {
-                        if (this.selected_pts.indexOf(index) === -1 && index >= 0) {
-                            this.selected_pts.push(index);
-                        }
-                    }
-                }
-                this.selected_pts.sort();
-                i = this.selected_pts.length;
-                var grips = [];
-                grips.length = i;
-                // Loop through points to be selected and highlight each
-                while (i--) {
-                    var pt = this.selected_pts[i];
-                    seg = this.segs[pt];
-                    seg.select(true);
-                    grips[i] = seg.ptgrip;
-                }
-                // TODO: Correct this:
-                pathActions.canDeleteNodes = true;
-
-                pathActions.closed_subpath = this.subpathIsClosed(this.selected_pts[0]);
-
-                call('selected', grips);
+                return isSub ? cmd : null;
             };
 
             current_path = null;
@@ -3913,7 +3883,7 @@ define([
                             // set stretchy line to first point
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
-                            svgedit.path.addPointGrip(index, mouse_x, mouse_y);
+                            svgedit.path.addDrawingPoint(index, mouse_x, mouse_y);
                             const endPathMode = () => {
                                 $('#x_align_line').remove();
                                 $('#y_align_line').remove();
@@ -4078,7 +4048,7 @@ define([
                                 if (subpath) {
                                     index += svgedit.path.path.segs.length;
                                 }
-                                svgedit.path.addPointGrip(index, x, y);
+                                svgedit.path.addDrawingPoint(index, x, y);
                             }
                             //					keep = true;
                         }
@@ -4094,32 +4064,31 @@ define([
                     svgedit.path.path.storeD();
 
                     id = evt.target.id;
-                    var cur_pt;
+                    var pointIndex;
                     if (id.substr(0, 14) === 'pathpointgrip_') {
                         // Select this point
-                        cur_pt = svgedit.path.path.cur_pt = parseInt(id.substr(14));
+                        pointIndex = svgedit.path.path.selectedPointIndex = parseInt(id.substr(14));
                         svgedit.path.path.dragging = [start_x, start_y];
-                        var seg = svgedit.path.path.segs[cur_pt];
+                        let point = svgedit.path.path.nodePoints[pointIndex];
 
                         // only clear selection if shift is not pressed (otherwise, add
                         // node to selection)
                         if (!evt.shiftKey) {
-                            if (svgedit.path.path.selected_pts.length <= 1 || !seg.selected) {
-                                svgedit.path.path.clearSelection();
-                            }
-                            svgedit.path.path.addPtsToSelection(cur_pt);
-                        } else if (seg.selected) {
-                            svgedit.path.path.removePtFromSelection(cur_pt);
+                            svgedit.path.path.clearSelection();
+                            svgedit.path.path.addPtsToSelection(pointIndex);
+                        } else if (point.isSelected) {
+                            // this should be move 
+                            svgedit.path.path.removePtFromSelection(pointIndex);
                         } else {
-                            svgedit.path.path.addPtsToSelection(cur_pt);
+                            svgedit.path.path.addPtsToSelection(pointIndex);
                         }
+                        window.updateContextPanel();
                     } else if (id.indexOf('ctrlpointgrip_') === 0) {
                         svgedit.path.path.dragging = [start_x, start_y];
 
                         var parts = id.split('_')[1].split('c');
-                        cur_pt = Number(parts[0]);
-                        var ctrl_num = Number(parts[1]);
-                        svgedit.path.path.selectPt(cur_pt, ctrl_num);
+                        svgedit.path.path.selectCtrlPoint(parts[0], parts[1]);
+                        window.updateContextPanel();
                     }
 
                     // Start selection box
@@ -4150,8 +4119,8 @@ define([
                             //					if (!index) {return;}
 
                             // Set control points
-                            var pointGrip1 = svgedit.path.addCtrlGrip('1c1');
-                            var pointGrip2 = svgedit.path.addCtrlGrip('0c2');
+                            var pointGrip1 = svgedit.path.addDrawingCtrlGrip('1c1');
+                            var pointGrip2 = svgedit.path.addDrawingCtrlGrip('0c2');
 
                             // dragging pointGrip1
                             pointGrip1.setAttribute('cx', mouse_x);
@@ -4227,8 +4196,7 @@ define([
                         var diff_x = mpt.x - pt.x;
                         var diff_y = mpt.y - pt.y;
                         svgedit.path.path.dragging = [mouse_x, mouse_y];
-
-                        if (svgedit.path.path.dragctrl) {
+                        if (svgedit.path.path.selectedControlPoint) {
                             svgedit.path.path.moveCtrl(diff_x, diff_y);
                         } else {
                             svgedit.path.path.movePts(diff_x, diff_y);
@@ -4282,7 +4250,7 @@ define([
                     // Edit mode
 
                     if (svgedit.path.path.dragging) {
-                        var last_pt = svgedit.path.path.cur_pt;
+                        var last_pt = svgedit.path.path.selectedPointIndex;
 
                         svgedit.path.path.dragging = false;
                         svgedit.path.path.dragctrl = false;
@@ -4290,10 +4258,6 @@ define([
 
                         if (hasMoved) {
                             svgedit.path.path.endChanges('Move path point(s)');
-                        }
-
-                        if (!evt.shiftKey && !hasMoved) {
-                            svgedit.path.path.selectPt(last_pt);
                         }
                     } else if (rubberBox && rubberBox.getAttribute('display') !== 'none') {
                         // Done with multi-node-select
@@ -4323,6 +4287,8 @@ define([
                     var selPath = (elem === svgedit.path.path.elem);
                     current_mode = previousMode;
                     svgedit.path.path.show(false);
+                    svgedit.path.path.saveSegmentControlPointInfo();
+                    svgedit.path.path.saveNodeTypeInfo();
                     current_path = false;
                     clearSelection();
 
@@ -4335,6 +4301,7 @@ define([
                         call('selected', [elem]);
                         addToSelection([elem], true);
                     }
+                    svgedit.path.path = null;
                 },
                 addSubPath: function (on) {
                     if (on) {
@@ -4683,9 +4650,6 @@ define([
                     svgedit.path.path.endChanges('Delete path node(s)');
                 },
                 smoothPolylineIntoPath: smoothPolylineIntoPath,
-                setSegType: function (v) {
-                    svgedit.path.path.setSegType(v);
-                },
                 moveNode: function (attr, newValue) {
                     var sel_pts = svgedit.path.path.selected_pts;
                     if (!sel_pts.length) {
@@ -8347,18 +8311,6 @@ define([
         // Function: removeHyperlink
         this.removeHyperlink = function () {
             canvas.ungroupSelectedElement();
-        };
-
-        // Group: Element manipulation
-
-        // Function: setSegType
-        // Sets the new segment type to the selected segment(s).
-        //
-        // Parameters:
-        // new_type - Integer with the new segment type
-        // See http://www.w3.org/TR/SVG/paths.html#InterfaceSVGPathSeg for list
-        this.setSegType = function (new_type) {
-            pathActions.setSegType(new_type);
         };
 
         // TODO(codedread): Remove the getBBox argument and split this function into two.

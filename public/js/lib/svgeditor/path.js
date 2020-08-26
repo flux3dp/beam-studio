@@ -39,6 +39,10 @@ var segData = {
 	18: ['x', 'y']
 };
 
+const LINKTYPE_CORNER = 0;
+const LINKTYPE_SMOOTH = 1; // same direction, different dist
+const LINKTYPE_SYMMETRIC = 2; // same direction, same dist
+
 var pathFuncs = [];
 
 var link_control_pts = true;
@@ -118,6 +122,21 @@ svgedit.path.getGripPt = function(seg, alt_pt) {
 	return out;
 };
 
+svgedit.path.getGripPosition = function(x, y) {
+	let out = { x, y };
+	let path = svgedit.path.path || {};
+
+	if (path.matrix) {
+		var pt = svgedit.math.transformPoint(out.x, out.y, path.matrix);
+		out = pt;
+	}
+
+	out.x *= editorContext_.getCurrentZoom();
+	out.y *= editorContext_.getCurrentZoom();
+
+	return out;
+};
+
 svgedit.path.getPointFromGrip = function(pt, path) {
 	var out = {
 		x: pt.x,
@@ -136,33 +155,36 @@ svgedit.path.getPointFromGrip = function(pt, path) {
 	return out;
 };
 
-svgedit.path.addPointGrip = function(index, x, y) {
+svgedit.path.getGripContainer = function() {
+	var c = svgedit.utilities.getElem('pathpointgrip_container');
+	if (!c) {
+		var parent = svgedit.utilities.getElem('selectorParentGroup');
+		c = parent.appendChild(document.createElementNS(NS.SVG, 'g'));
+		c.id = 'pathpointgrip_container';
+	}
+	return c;
+};
+
+svgedit.path.addDrawingPoint = function(index, x, y) {
 	// create the container of all the point grips
 	var pointGripContainer = svgedit.path.getGripContainer();
 
-	var pointGrip = svgedit.utilities.getElem('pathpointgrip_'+index);
+	var pointGrip = svgedit.utilities.getElem('drawingPoint_'+index);
 	// create it
 	if (!pointGrip) {
 		pointGrip = document.createElementNS(NS.SVG, 'circle');
 		svgedit.utilities.assignAttributes(pointGrip, {
-			'id': 'pathpointgrip_' + index,
+			'id': 'drawingPoint_' + index,
 			'display': 'none',
-			'r': 4,
-			'fill': '#0FF',
-			'stroke': '#00F',
-			'stroke-width': 2,
+			'r': 5,
+			'fill': '#ffffff',
+			'stroke': '#0091ff',
+			'stroke-width': 1,
 			'cursor': 'move',
 			'style': 'pointer-events:all',
 			'xlink:title': uiStrings.pathNodeTooltip
 		});
 		pointGrip = pointGripContainer.appendChild(pointGrip);
-
-		var grip = $('#pathpointgrip_'+index);
-		grip.dblclick(function() {
-			if (svgedit.path.path) {
-				svgedit.path.path.setSegType();
-			}
-		});
 	}
 	if (x && y) {
 		// set up the point grip element and display it
@@ -175,27 +197,17 @@ svgedit.path.addPointGrip = function(index, x, y) {
 	return pointGrip;
 };
 
-svgedit.path.getGripContainer = function() {
-	var c = svgedit.utilities.getElem('pathpointgrip_container');
-	if (!c) {
-		var parent = svgedit.utilities.getElem('selectorParentGroup');
-		c = parent.appendChild(document.createElementNS(NS.SVG, 'g'));
-		c.id = 'pathpointgrip_container';
-	}
-	return c;
-};
-
-svgedit.path.addCtrlGrip = function(id) {
-	var pointGrip = svgedit.utilities.getElem('ctrlpointgrip_'+id);
+svgedit.path.addDrawingCtrlGrip = function(id) {
+	var pointGrip = svgedit.utilities.getElem('drawingCtrlPoint_'+id);
 	if (pointGrip) {return pointGrip;}
 
 	pointGrip = document.createElementNS(NS.SVG, 'circle');
 	svgedit.utilities.assignAttributes(pointGrip, {
-		'id': 'ctrlpointgrip_' + id,
+		'id': 'drawingCtrlPoint_' + id,
 		'display': 'none',
 		'r': 4,
-		'fill': '#0FF',
-		'stroke': '#55F',
+		'fill': '#ffffff',
+		'stroke': '#0091ff',
 		'stroke-width': 1,
 		'cursor': 'move',
 		'style': 'pointer-events:all',
@@ -212,72 +224,12 @@ svgedit.path.getCtrlLine = function(id) {
 	ctrlLine = document.createElementNS(NS.SVG, 'line');
 	svgedit.utilities.assignAttributes(ctrlLine, {
 		'id': 'ctrlLine_'+id,
-		'stroke': '#555',
+		'stroke': '#0091ff',
 		'stroke-width': 1,
 		'style': 'pointer-events:none'
 	});
-	svgedit.path.getGripContainer().appendChild(ctrlLine);
+	svgedit.path.getGripContainer().prepend(ctrlLine);
 	return ctrlLine;
-};
-
-svgedit.path.getPointGrip = function(seg, update) {
-	var index = seg.index;
-	var pointGrip = svgedit.path.addPointGrip(index);
-
-	if (update) {
-		var pt = svgedit.path.getGripPt(seg);
-		svgedit.utilities.assignAttributes(pointGrip, {
-			'cx': pt.x,
-			'cy': pt.y,
-			'display': 'inline'
-		});
-	}
-
-	return pointGrip;
-};
-
-svgedit.path.getControlPoints = function(seg) {
-	var item = seg.item;
-	var index = seg.index;
-	if (!('x1' in item) || !('x2' in item)) {return null;}
-	var cpt = {};
-	var pointGripContainer = svgedit.path.getGripContainer();
-
-	// Note that this is intentionally not seg.prev.item
-	var prev = svgedit.path.path.segs[index-1].item;
-
-	var seg_items = [prev, item];
-
-	var i;
-	for (i = 1; i < 3; i++) {
-		var id = index + 'c' + i;
-
-		var ctrlLine = cpt['c' + i + '_line'] = svgedit.path.getCtrlLine(id);
-
-		var pt = svgedit.path.getGripPt(seg, {x:item['x' + i], y:item['y' + i]});
-		var gpt = svgedit.path.getGripPt(seg, {x:seg_items[i-1].x, y:seg_items[i-1].y});
-
-		svgedit.utilities.assignAttributes(ctrlLine, {
-			'x1': pt.x,
-			'y1': pt.y,
-			'x2': gpt.x,
-			'y2': gpt.y,
-			'display': 'inline'
-		});
-
-		cpt['c' + i + '_line'] = ctrlLine;
-
-		// create it
-		var pointGrip = cpt['c' + i] = svgedit.path.addCtrlGrip(id);
-
-		svgedit.utilities.assignAttributes(pointGrip, {
-			'cx': pt.x,
-			'cy': pt.y,
-			'display': 'inline'
-		});
-		cpt['c' + i] = pointGrip;
-	}
-	return cpt;
 };
 
 // This replaces the segment at the given index. Type is given as number.
@@ -307,6 +259,7 @@ svgedit.path.replacePathSeg = function(type, index, pts, elem) {
 			}
 		}
 	}
+	return seg;
 };
 
 svgedit.path.getSegSelector = function(seg, update) {
@@ -320,12 +273,12 @@ svgedit.path.getSegSelector = function(seg, update) {
 			'id': 'segline_' + index,
 			'display': 'none',
 			'fill': 'none',
-			'stroke': '#0FF',
+			'stroke': '#0091ff',
 			'stroke-width': 2,
 			'style':'pointer-events:none',
 			'd': 'M0,0 0,0'
 		});
-		pointGripContainer.appendChild(segLine);
+		pointGripContainer.prepend(segLine);
 	}
 
 	if (update) {
@@ -404,55 +357,15 @@ svgedit.path.smoothControlPoints = function(ct1, ct2, pt) {
 };
 
 svgedit.path.Segment = function(index, item) {
-	this.selected = false;
 	this.index = index;
 	this.item = item;
 	this.type = item.pathSegType;
-
-	this.ctrlpts = [];
-	this.ptgrip = null;
-	this.segsel = null;
-};
-
-svgedit.path.Segment.prototype.showCtrlPts = function(y) {
-	var i;
-	for (i in this.ctrlpts) {
-		if (this.ctrlpts.hasOwnProperty(i)) {
-			this.ctrlpts[i].setAttribute('display', y ? 'inline' : 'none');
-		}
-	}
-};
-
-svgedit.path.Segment.prototype.selectCtrls = function(y) {
-	$('#ctrlpointgrip_' + this.index + 'c1, #ctrlpointgrip_' + this.index + 'c2').
-		attr('fill', y ? '#0FF' : '#EEE');
-};
-
-svgedit.path.Segment.prototype.show = function(y) {
-	if (this.ptgrip) {
-		this.ptgrip.setAttribute('display', y ? 'inline' : 'none');
-		this.segsel.setAttribute('display', y ? 'inline' : 'none');
-		// Show/hide all control points if available
-		this.showCtrlPts(y);
-	}
+	this.controlPoints = [];
 };
 
 svgedit.path.Segment.prototype.select = function(y) {
-	if (this.ptgrip) {
-		this.ptgrip.setAttribute('stroke', y ? '#0FF' : '#00F');
-		this.segsel.setAttribute('display', y ? 'inline' : 'none');
-		if (this.ctrlpts) {
-			this.selectCtrls(y);
-		}
-		this.selected = y;
-	}
 };
 
-svgedit.path.Segment.prototype.addGrip = function() {
-	this.ptgrip = svgedit.path.getPointGrip(this, true);
-	this.ctrlpts = svgedit.path.getControlPoints(this, true);
-	this.segsel = svgedit.path.getSegSelector(this, true);
-};
 
 svgedit.path.Segment.prototype.update = function(full) {
 	if (this.ptgrip) {
@@ -463,96 +376,487 @@ svgedit.path.Segment.prototype.update = function(full) {
 		});
 
 		svgedit.path.getSegSelector(this, true);
+	}
+};
 
-		if (this.ctrlpts) {
-			if (full) {
-				this.item = svgedit.path.path.elem.pathSegList.getItem(this.index);
-				this.type = this.item.pathSegType;
-			}
-			svgedit.path.getControlPoints(this);
+svgedit.path.Segment.prototype.getNodePointAndControlPoints = function() {
+	const pathSeg = this.item;
+	if (pathSeg.pathSegType === 1) {
+		return {};
+	}
+	const nodePoint = new PathNodePoint(pathSeg.x, pathSeg.y, this, this.path);
+	const controlPoints = [];
+	if (pathSeg.pathSegType === 6) {
+		controlPoints.push(new SegmentControlPoint(pathSeg.x1, pathSeg.y1, this, 1));
+		controlPoints.push(new SegmentControlPoint(pathSeg.x2, pathSeg.y2, this, 2));
+	} else if (pathSeg.pathSegType === 8) {
+		controlPoints.push(new SegmentControlPoint(pathSeg.x1, pathSeg.y1, this, 1));
+	}
+	this.controlPoints = controlPoints;
+	return {nodePoint, controlPoints};
+};
+
+class PathNodePoint {
+	constructor(x, y, seg, path) {
+		this.x = x;
+		this.y = y;
+		this.mSeg = null; // M segment
+		this.prevSeg = null; 
+		if (seg.type === 2) {
+			this.setMSeg(seg);
+		} else {
+			this.setPrevSeg(seg);
 		}
-		// this.segsel.setAttribute('display', y?'inline':'none');
-	}
-};
-
-svgedit.path.Segment.prototype.move = function(dx, dy) {
-	var cur_pts, item = this.item;
-
-	if (this.ctrlpts) {
-		cur_pts = [item.x += dx, item.y += dy,
-			item.x1, item.y1, item.x2 += dx, item.y2 += dy];
-	} else {
-		cur_pts = [item.x += dx, item.y += dy];
+		this.nextSeg = null; 
+		this.next = null; // next connecting grip
+		this.prev = null; // previous connecting grip
+		this.path = path;
+		this.controlPoints = [];
+		this.linkType = LINKTYPE_CORNER;
 	}
 
-	svgedit.path.replacePathSeg(this.type, this.index, cur_pts);
-
-	if (this.next && this.next.ctrlpts) {
-		var next = this.next.item;
-		var next_pts = [next.x, next.y, 
-			next.x1 += dx, next.y1 += dy, next.x2, next.y2];
-		svgedit.path.replacePathSeg(this.next.type, this.next.index, next_pts);
+	setMSeg(seg) {
+		this.mSeg = seg;
 	}
 
-	if (this.mate) {
-		// The last point of a closed subpath has a 'mate',
-		// which is the 'M' segment of the subpath
-		item = this.mate.item;
-		var pts = [item.x += dx, item.y += dy];
-		svgedit.path.replacePathSeg(this.mate.type, this.mate.index, pts);
-		// Has no grip, so does not need 'updating'?
+	setPrevSeg(seg) {
+		this.prevSeg = seg;
 	}
 
-	this.update(true);
-	if (this.next) {this.next.update(true);}
-};
-
-svgedit.path.Segment.prototype.setLinked = function(num) {
-	var seg, anum, pt;
-	if (num == 2) {
-		anum = 1;
-		seg = this.next;
-		if (!seg) {return;}
-		pt = this.item;
-	} else {
-		anum = 2;
-		seg = this.prev;
-		if (!seg) {return;}
-		pt = seg.item;
+	addControlPoint(controlPoint) {
+		controlPoint.nodePoint = this;
+		this.controlPoints.push(controlPoint);
 	}
 
-	var item = seg.item;
-	item['x' + anum ] = pt.x + (pt.x - this.item['x' + num]);
-	item['y' + anum ] = pt.y + (pt.y - this.item['y' + num]);
+	getDisplayPosition(x=this.x, y=this.y) {
+		let out = {x, y};
+		if (this.path.matrix) {
+			out = svgedit.math.transformPoint(this.x, this.y, this.path.matrix);
+		}
+		out.x *= editorContext_.getCurrentZoom();
+		out.y *= editorContext_.getCurrentZoom();
+		return out;
+	}
 
-	var pts = [item.x, item.y,
-		item.x1, item.y1,
-		item.x2, item.y2];
+	show() {
+		const pointGripContainer = svgedit.path.getGripContainer();
+		const id = `pathpointgrip_${this.index}`;
+		let point = svgedit.utilities.getElem(id);
+		const {x, y} = this.getDisplayPosition()
+		// create it
+		if (!point) {
+			point = document.createElementNS(NS.SVG, 'circle');
+			svgedit.utilities.assignAttributes(point, {
+				'id': id,
+				'display': 'block',
+				'r': 5,
+				'fill': '#ffffff',
+				'stroke': '#0091ff',
+				'stroke-width': 1,
+				'cursor': 'move',
+				'style': 'pointer-events:all',
+				'xlink:title': uiStrings.pathNodeTooltip
+			});
+			point = pointGripContainer.appendChild(point);
 
-	svgedit.path.replacePathSeg(seg.type, seg.index, pts);
-	seg.update(true);
-};
+			const i = this.index;
+			let elem = $(`#${id}`);
+			elem.dblclick(() => {
+				if (svgedit.path.path) {
+					svgedit.path.path.createControlPointsAtGrip(i);
+				}
+			});
+		}
+		svgedit.utilities.assignAttributes(point, {
+			'display': 'block',
+			'cx': x,
+			'cy': y,
+		});
+		this.elem = point;
+	}
 
-svgedit.path.Segment.prototype.moveCtrl = function(num, dx, dy) {
-	var item = this.item;
-	item['x' + num] += dx;
-	item['y' + num] += dy;
+	hide() {
+		const id = `pathpointgrip_${this.index}`;
+		let point = svgedit.utilities.getElem(id);
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'display': 'none',
+			});
+		}
+		this.controlPoints.forEach((cp) => {
+			cp.hide();
+		});
+		
+	}
 
-	var pts = [item.x,item.y,
-		item.x1,item.y1, item.x2,item.y2];
+	update() {
+		const id = `pathpointgrip_${this.index}`;
+		let point = svgedit.utilities.getElem(id);
+		const {x, y} = this.getDisplayPosition();
+		// create it
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'cx': x,
+				'cy': y,
+			});
+			this.elem = point;
+		}
+		this.controlPoints.forEach((cp) => {
+			cp.update();
+		});
+	}
 
-	svgedit.path.replacePathSeg(this.type, this.index, pts);
-	this.update(true);
-};
+	setHighlight(isHighlighted) {
+		const id = `pathpointgrip_${this.index}`;
+		let point = svgedit.utilities.getElem(id);
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'fill': isHighlighted ? '#0091ff' : '#ffffff',
+			});
+		}
+	}
 
-svgedit.path.Segment.prototype.setType = function(new_type, pts) {
-	svgedit.path.replacePathSeg(new_type, this.index, pts);
-	this.type = new_type;
-	this.item = svgedit.path.path.elem.pathSegList.getItem(this.index);
-	this.showCtrlPts(new_type === 6);
-	this.ctrlpts = svgedit.path.getControlPoints(this);
-	this.update(true);
-};
+	setSelected(isSelected) {
+		this.isSelected = isSelected;
+		this.setHighlight(isSelected);
+		this.controlPoints.forEach((cp) => {
+			if (isSelected) {
+				cp.show();
+			} else {
+				cp.hide();
+			}
+		});
+	}
+
+	move(dx, dy) {
+		const segChanges = {};
+		this.x += dx;
+		this.y += dy;
+		if (this.mSeg) {
+			segChanges[this.mSeg.index] = {x: this.x, y: this.y};
+		}
+		if (this.prevSeg) {
+			segChanges[this.prevSeg.index] = {x: this.x, y: this.y};
+		}
+		for (let i = 0; i < this.controlPoints.length; i++) {
+			const controlPoint = this.controlPoints[i];
+			controlPoint.x += dx;
+			controlPoint.y += dy;
+			if (!segChanges[controlPoint.seg.index]) {
+				segChanges[controlPoint.seg.index] = {};
+			}
+			segChanges[controlPoint.seg.index][`x${controlPoint.index}`] = controlPoint.x;
+			segChanges[controlPoint.seg.index][`y${controlPoint.index}`] = controlPoint.y;
+		}
+		this.update();
+		return segChanges;
+	}
+
+	createControlPoints() {
+		const segChanges = {};
+		let newControlPoints = [];
+		//Segments that end here
+		if (this.prevSeg && [4, 8].includes(this.prevSeg.item.pathSegType)) {
+			const seg = this.prevSeg;
+			const segItem = seg.item;
+			const x = this.x + (seg.startPoint.x - this.x) / 3;
+			const y = this.y + (seg.startPoint.y - this.y) / 3;
+			if (segItem.pathSegType === 4) { // L 
+				segChanges[seg.index] = {pathSegType: 8, x1: x, y1: y};
+				const newControlPoint = new SegmentControlPoint(x, y, seg, 1);
+				newControlPoints.push(newControlPoint);
+				seg.controlPoints.push(newControlPoint);
+			} else if (segItem.pathSegType === 8 && seg.controlPoints[0].nodePoint !== this) { // Q
+				segChanges[seg.index] = {pathSegType: 6, x2: x, y2: y};
+				const newControlPoint = new SegmentControlPoint(x, y, seg, 2);
+				newControlPoints.push(newControlPoint);
+				seg.controlPoints.push(newControlPoint);
+			}
+		}
+		if (this.nextSeg && [4, 8].includes(this.nextSeg.item.pathSegType)) {
+			const seg = this.nextSeg;
+			const segItem = seg.item;
+			const x = this.x + (seg.endPoint.x - this.x) / 3;
+			const y = this.y + (seg.endPoint.y - this.y) / 3;
+			if (segItem.pathSegType === 4) {
+				segChanges[seg.index] = {pathSegType: 8, x1: x, y1: y};
+				const newControlPoint = new SegmentControlPoint(x, y, seg, 1);
+				newControlPoints.push(newControlPoint);
+				seg.controlPoints.push(newControlPoint);
+			} else if (segItem.pathSegType === 8 && seg.controlPoints[0].nodePoint !== this) {
+				const currentControlPoint = seg.controlPoints[0];
+				currentControlPoint.index = 2;
+				segChanges[seg.index] = {
+					pathSegType: 6,
+					x1: x,
+					y1: y,
+					x2: currentControlPoint.x,
+					y2: currentControlPoint.y
+				};
+				const newControlPoint = new SegmentControlPoint(x, y, seg, 1);
+				newControlPoints.push(newControlPoint);
+				seg.controlPoints.push(newControlPoint);
+			}
+		}
+		newControlPoints.forEach((cp) => {
+			this.addControlPoint(cp);
+			cp.show();
+		})
+		this.update();
+		return segChanges;
+	}
+
+	setNodeType(newType) {
+		const segChanges = {};
+		this.linkType = newType;
+		if (this.controlPoints.length === 2 && newType !== LINKTYPE_CORNER) {
+			const distancePoint = newType === LINKTYPE_SMOOTH ? this.controlPoints[1] : this.controlPoints[0];
+			const th = Math.atan2(this.controlPoints[0].y - this.y, this.controlPoints[0].x - this.x) - Math.PI;
+			const l = Math.hypot(distancePoint.x - this.x, distancePoint.y - this.y);
+			const newPos = {x: l * Math.cos(th) + this.x, y: l * Math.sin(th) + this.y};
+			const changes = this.controlPoints[1].moveAbs(newPos.x, newPos.y);
+			Object.assign(segChanges, changes);
+		}
+		return segChanges;
+	}
+
+	delete() {
+		const segChanges = {};
+		let segIndexToRemove;
+		if (this.mSeg) {
+			if (this.next) {
+				this.mSeg.endPoint = this.next;
+				this.next.setMSeg(this.mSeg);
+				segChanges[this.mSeg.index] = { x: this.next.x, y: this.next.y };
+			}
+		}
+		if (this.prevSeg && this.nextSeg) {
+			// 2 seg connecting: delete next seg, change prev seg
+			const newSegControlPoints = [];
+			segChanges[this.prevSeg.index] = {x: this.nextSeg.item.x, y: this.nextSeg.item.y};
+			const prevControlPoint = this.prevSeg.controlPoints.find((cp) => cp.nodePoint !== this);
+			if (prevControlPoint) {
+				newSegControlPoints.push(prevControlPoint);
+			}
+			const nextControlPoint = this.nextSeg.controlPoints.find((cp) => cp.nodePoint !== this);
+			if (nextControlPoint) {
+				newSegControlPoints.push(nextControlPoint);
+			}
+			for (let i = 0; i < newSegControlPoints.length; i++) {
+				const controlPoint = newSegControlPoints[i];
+				controlPoint.index = i+1;
+				segChanges[this.prevSeg.index][`x${i+1}`] = controlPoint.x;
+				segChanges[this.prevSeg.index][`y${i+1}`] = controlPoint.y;
+				controlPoint.seg = this.prevSeg;
+			}
+			const newSegType = {0: 4, 1: 8, 2: 6}[newSegControlPoints.length];
+			segChanges[this.prevSeg.index].pathSegType = newSegType;
+			this.prevSeg.controlPoints = newSegControlPoints;
+			this.prevSeg.endPoint = this.nextSeg.endPoint;
+			this.nextSeg.startPoint = this.prevSeg.startPoint;
+			if (this.prev) {
+				this.prev.next = this.next;
+			}
+			if (this.next) {
+				this.next.prev = this.prev;
+			}
+			segIndexToRemove = this.nextSeg.index;
+		} else if (this.prevSeg) { // has prevSeg, no nextSeg: last point
+			this.prev.next = null;
+			segIndexToRemove = this.prevSeg.index;
+		} else if (this.nextSeg) { // First point
+			this.next.prev = null;
+			segIndexToRemove = this.nextSeg.index;
+		} else {
+			segIndexToRemove = this.mSeg.index;
+		}
+		return {segChanges, segIndexToRemove}
+	}
+}
+
+class SegmentControlPoint {
+	constructor(x, y, seg, index) {
+		this.x = x;
+		this.y = y;
+		this.seg = seg;
+		this.index = index;
+		this.nodePoint = null;
+		this.controlPointsLinkType = 0 //
+	}
+
+	setSelected(isSelected) {
+		const id = `${this.seg.index}c${this.index}`;
+		let point = svgedit.utilities.getElem(`ctrlpointgrip_${id}`);
+		this.isSelected = isSelected;
+		// create it
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'fill': isSelected ? '#0091ff' : '#ffffff',
+			});
+		}
+	}
+
+	move(dx, dy) {
+		const segChanges = {};
+		this.x += dx;
+		this.y += dy;
+		segChanges[this.seg.index] = {};
+		segChanges[this.seg.index][`x${this.index}`] = this.x;
+		segChanges[this.seg.index][`y${this.index}`] = this.y;
+		this.update();
+		return segChanges;
+	}
+
+	moveAbs(x, y) {
+		const segChanges = {};
+		this.x = x;
+		this.y = y;
+		segChanges[this.seg.index] = {};
+		segChanges[this.seg.index][`x${this.index}`] = this.x;
+		segChanges[this.seg.index][`y${this.index}`] = this.y;
+		this.update();
+		return segChanges;
+	}
+
+	moveLinkedControlPoint() {
+		const segChanges = {};
+		const nodePoint = this.nodePoint;
+		if (nodePoint) {
+			if (nodePoint.controlPoints.length === 2 && nodePoint.linkType !== LINKTYPE_CORNER) {
+				const theOtherControlPoint = this.nodePoint.controlPoints.find((cp) => cp !== this);
+				const { x: nodeX, y: nodeY, linkType } = nodePoint;
+				if (!theOtherControlPoint) {
+					return;
+				}
+				const distancePoint = linkType === LINKTYPE_SMOOTH ? theOtherControlPoint : this;
+				const th = Math.atan2(this.y - nodeY, this.x - nodeX) - Math.PI;
+				const l = Math.hypot(distancePoint.x - nodeX, distancePoint.y - nodeY);
+				const newPos = {x: l * Math.cos(th) + nodeX, y: l * Math.sin(th) + nodeY};
+				const changes = theOtherControlPoint.moveAbs(newPos.x, newPos.y);
+				Object.assign(segChanges, changes);
+			}
+		} else {
+			console.error('Control Point without Node Point', this);
+		}
+		return segChanges;
+	}
+
+	show() {
+		const id = `${this.seg.index}c${this.index}`;
+		let point = svgedit.utilities.getElem('ctrlpointgrip_'+id);
+		const {x, y} = svgedit.path.getGripPosition(this.x, this.y);
+		if (!point) {
+			point = document.createElementNS(NS.SVG, 'circle');
+			svgedit.utilities.assignAttributes(point, {
+				'id': 'ctrlpointgrip_' + id,
+				'r': 4,
+				'fill': '#ffffff',
+				'stroke': '#0091ff',
+				'stroke-width': 1,
+				'cursor': 'move',
+				'style': 'pointer-events:all',
+				'xlink:title': uiStrings.pathCtrlPtTooltip
+			});
+			svgedit.path.getGripContainer().appendChild(point);
+		}
+		svgedit.utilities.assignAttributes(point, {
+			'display': 'block',
+			'cx': x,
+			'cy': y,
+		});
+		this.elem = point;
+		const nodePointPosition = this.nodePoint ? this.nodePoint.getDisplayPosition() : {x, y};
+		let ctrlLine = svgedit.utilities.getElem('ctrlLine_'+id);
+		if (!ctrlLine) {
+			ctrlLine = document.createElementNS(NS.SVG, 'line');
+			svgedit.utilities.assignAttributes(ctrlLine, {
+				'id': 'ctrlLine_'+id,
+				'stroke': '#0091ff',
+				'stroke-width': 1,
+				'style': 'pointer-events:none'
+			});
+			svgedit.path.getGripContainer().prepend(ctrlLine);
+		}
+		svgedit.utilities.assignAttributes(ctrlLine, {
+			'display': 'block',
+			'x1': nodePointPosition.x,
+			'y1': nodePointPosition.y,
+			'x2': x,
+			'y2': y,
+		});
+		return point;
+	}
+
+	update() {
+		const id = `${this.seg.index}c${this.index}`;
+		const {x, y} = svgedit.path.getGripPosition(this.x, this.y);
+		const nodePointPosition = this.nodePoint ? this.nodePoint.getDisplayPosition() : {x, y};
+		let point = svgedit.utilities.getElem(`ctrlpointgrip_${id}`);
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'cx': x,
+				'cy': y,
+			});
+			this.elem = point;
+		}
+		let ctrlLine = svgedit.utilities.getElem(`ctrlLine_${id}`);
+		if (ctrlLine) {
+			svgedit.utilities.assignAttributes(ctrlLine, {
+				'x1': nodePointPosition.x,
+				'y1': nodePointPosition.y,
+				'x2': x,
+				'y2': y,
+			});
+		}
+	}
+
+	hide() {
+		const id = `${this.seg.index}c${this.index}`;
+		let point = svgedit.utilities.getElem(`ctrlpointgrip_${id}`);
+		this.setSelected(false);
+		if (point) {
+			svgedit.utilities.assignAttributes(point, {
+				'display': 'none',
+			});
+		}
+		let ctrlLine = svgedit.utilities.getElem(`ctrlLine_${id}`);
+		if (ctrlLine) {
+			svgedit.utilities.assignAttributes(ctrlLine, {
+				'display': 'none',
+			});
+		}
+	}
+
+	removeFromNodePoint() {
+		const nodePoint = this.nodePoint;
+		nodePoint.controlPoints = nodePoint.controlPoints.filter((cp) => cp !== this);
+	}
+
+	delete() {
+		const seg = this.seg;
+		const segItem = seg.item;
+		const changes = {};
+		const segChanges = {};
+		this.hide();
+		if (segItem.pathSegType === 6) {
+			changes.pathSegType = 8;
+			if (this.index === 1) {
+				const theOtherControlPoint = seg.controlPoints.find((cp) => cp !== this);
+				if (theOtherControlPoint) {
+					theOtherControlPoint.index = 1;
+					changes.x1 = theOtherControlPoint.x;
+					changes.y1 = theOtherControlPoint.y;
+				}
+			} 
+		} else if (segItem.pathSegType === 8) {
+			changes.pathSegType = 4;
+		}
+		segChanges[this.seg.index] = changes;
+		seg.controlPoints = seg.controlPoints.filter((cp) => cp !== this);
+		this.removeFromNodePoint();
+		return segChanges;
+	}
+}
 
 svgedit.path.Path = function(elem) {
 	if (!elem || elem.tagName !== 'path') {
@@ -563,7 +867,6 @@ svgedit.path.Path = function(elem) {
 	this.segs = [];
 	this.selected_pts = [];
 	svgedit.path.path = this;
-
 	this.init();
 };
 
@@ -573,10 +876,13 @@ svgedit.path.Path.prototype.init = function() {
 
 	//fixed, needed to work on all found elements, not just first
 	$(svgedit.path.getGripContainer()).find('*').each( function() { $(this).attr('display', 'none') });
-
 	var segList = this.elem.pathSegList;
+	const segInfo = JSON.parse(this.elem.getAttribute('data-segInfo') || '{}');
+	const nodeTypes = JSON.parse(this.elem.getAttribute('data-nodeTypes') || '{}');
+
 	var len = segList.numberOfItems;
 	this.segs = [];
+	this.nodePoints = [];
 	this.selected_pts = [];
 	this.first_seg = null;
 
@@ -591,6 +897,7 @@ svgedit.path.Path.prototype.init = function() {
 
 	var segs = this.segs;
 	var start_i = null;
+	let lastGrip = null;
 
 	for (i = 0; i < len; i++) {
 		var seg = segs[i];
@@ -604,9 +911,13 @@ svgedit.path.Path.prototype.init = function() {
 				start_seg = segs[start_i];
 				start_seg.next = segs[start_i+1];
 				start_seg.next.prev = start_seg;
-				start_seg.addGrip();
 			}
 			// Remember that this is a starter seg
+			const nodePoint = new PathNodePoint(seg.item.x, seg.item.y, seg, this);
+			nodePoint.index = this.nodePoints.length;
+			this.nodePoints.push(nodePoint);
+			seg.endPoint = nodePoint;
+			lastGrip = nodePoint;
 			start_i = i;
 		} else if (next_seg && next_seg.type === 1) {
 			// This is the last real segment of a closed sub-path
@@ -616,7 +927,26 @@ svgedit.path.Path.prototype.init = function() {
 			// First seg after "M"'s prev is this
 			seg.next.prev = seg;
 			seg.mate = segs[start_i];
-			seg.addGrip();
+			const { controlPoints } = seg.getNodePointAndControlPoints();
+			//First grip point
+			const nodePoint = segs[start_i].endPoint;
+			nodePoint.setPrevSeg(seg);
+			seg.startPoint = lastGrip;
+			seg.endPoint = nodePoint;
+			if (controlPoints.length === 2) {
+				lastGrip.addControlPoint(controlPoints[0]);
+				nodePoint.addControlPoint(controlPoints[1]);
+			} else if (controlPoints.length === 1) {
+				if (segInfo[i]) {
+					nodePoint.addControlPoint(controlPoints[0]);
+				} else {
+					lastGrip.addControlPoint(controlPoints[0]);
+				}
+			}
+			nodePoint.prev = lastGrip;
+			lastGrip.next = nodePoint;
+			lastGrip.nextSeg = seg;
+
 			if (this.first_seg == null) {
 				this.first_seg = seg;
 			}
@@ -627,8 +957,26 @@ svgedit.path.Path.prototype.init = function() {
 				start_seg = segs[start_i];
 				start_seg.next = segs[start_i+1];
 				start_seg.next.prev = start_seg;
-				start_seg.addGrip();
-				seg.addGrip();
+
+				const { nodePoint, controlPoints } = seg.getNodePointAndControlPoints();
+				nodePoint.index = this.nodePoints.length;
+				this.nodePoints.push(nodePoint);
+				seg.startPoint = lastGrip;
+				seg.endPoint = nodePoint;
+				if (controlPoints.length === 2) {
+					lastGrip.addControlPoint(controlPoints[0]);
+					nodePoint.addControlPoint(controlPoints[1]);
+				} else if (controlPoints.length === 1) {
+					if (segInfo[i]) {
+						nodePoint.addControlPoint(controlPoints[0]);
+					} else {
+						lastGrip.addControlPoint(controlPoints[0]);
+					}
+				}
+				nodePoint.prev = lastGrip;
+				lastGrip.next = nodePoint;
+				lastGrip.nextSeg = seg;
+				lastGrip = nodePoint;
 
 				if (!this.first_seg) {
 					// Open path, so set first as real first and add grip
@@ -637,7 +985,25 @@ svgedit.path.Path.prototype.init = function() {
 			}
 		} else if (seg.type !== 1){
 			// Regular segment, so add grip and its "next"
-			seg.addGrip();
+			const { nodePoint, controlPoints } = seg.getNodePointAndControlPoints();
+			nodePoint.index = this.nodePoints.length;
+			this.nodePoints.push(nodePoint);
+			seg.startPoint = lastGrip;
+			seg.endPoint = nodePoint;
+			if (controlPoints.length === 2) {
+				lastGrip.addControlPoint(controlPoints[0]);
+				nodePoint.addControlPoint(controlPoints[1]);
+			} else if (controlPoints.length === 1) {
+				if (segInfo[i]) {
+					nodePoint.addControlPoint(controlPoints[0]);
+				} else {
+					lastGrip.addControlPoint(controlPoints[0]);
+				}
+			}
+			nodePoint.prev = lastGrip;
+			lastGrip.next = nodePoint;
+			lastGrip.nextSeg = seg;
+			lastGrip = nodePoint;
 
 			// Don't set its "next" if it's an "M"
 			if (next_seg && next_seg.type !== 2) {
@@ -646,6 +1012,12 @@ svgedit.path.Path.prototype.init = function() {
 			}
 		}
 	}
+	for (let i = 0; i < this.nodePoints.length; i++) {
+		if (nodeTypes[i]) {
+			this.nodePoints[i].linkType = nodeTypes[i];
+		}
+	}
+	this.clearSelection();
 	return this;
 };
 
@@ -694,31 +1066,112 @@ svgedit.path.Path.prototype.addSeg = function(index) {
 	svgedit.path.insertItemBefore(this.elem, newseg, index);
 };
 
-svgedit.path.Path.prototype.deleteSeg = function(index) {
-	var seg = this.segs[index];
-	var list = this.elem.pathSegList;
-
-	seg.show(false);
-	var next = seg.next;
-	var pt;
-	if (seg.mate) {
-		// Make the next point be the "M" point
-		pt = [next.item.x, next.item.y];
-		svgedit.path.replacePathSeg(2, next.index, pt);
-
-		// Reposition last node
-		svgedit.path.replacePathSeg(4, seg.index, pt);
-
-		list.removeItem(seg.mate.index);
-	} else if (!seg.prev) {
-		// First node of open path, make next point the M
-		var item = seg.item;
-		pt = [next.item.x, next.item.y];
-		svgedit.path.replacePathSeg(2, seg.next.index, pt);
-		list.removeItem(index);
-	} else {
-		list.removeItem(index);
+svgedit.path.Path.prototype.onDelete = function(fn) {
+	if (this.selectedControlPoint) {
+		this.deleteCtrlPoint();
+		this.endChanges('Delete Path Control Point');
+	} else if (this.selected_pts.length > 0) {
+		for (let i = this.selected_pts.length - 1; i >= 0; i--) {
+			const index = this.selected_pts[i];
+			this.deleteNodePoint(index);
+		}
+		this.clearSelection();
+		if (this.segs.length > 0) {
+			this.endChanges('Delete Path Node Point(s)');
+		} else {
+			const batchCmd = new svgedit.history.BatchCommand('Delete Path Node and Delete Path');
+			const changeDCmd = this.endChanges('Delete Path Node Point(s)', true);
+			if (changeDCmd) {
+				batchCmd.addSubCommand(changeDCmd);
+			}
+			const nextSibling = this.elem.nextSibling;
+			const parent = this.elem.parentNode;
+			if (parent) {
+				const elem = parent.removeChild(this.elem);
+				batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, nextSibling, parent));
+			}
+			if (!batchCmd.isEmpty()) {
+				svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+			}
+		}
 	}
+};
+
+svgedit.path.Path.prototype.deleteCtrlPoint = function() {
+	if (this.selectedControlPoint) {
+		const segChanges = this.selectedControlPoint.delete();
+		this.applySegChanges(segChanges);
+		this.addPtsToSelection([this.selectedControlPoint.nodePoint.index]);
+		this.selectedControlPoint = null;
+	}
+};
+
+svgedit.path.Path.prototype.deleteNodePoint = function(index) {
+	this.hideAllNodes();
+	const nodePoint = this.nodePoints[index];
+	const { segChanges, segIndexToRemove } = nodePoint.delete();
+	this.applySegChanges(segChanges);
+	this.nodePoints.splice(index, 1);
+	this.nodePoints.forEach((node, index) => {
+		node.index = index;
+		node.show();
+	});
+	this.deleteSeg(segIndexToRemove);
+};
+
+svgedit.path.Path.prototype.deleteSeg = function(index) {
+	const seg = this.segs[index];
+	if (!seg) {
+		return;
+	}
+	if (seg.endPoint && seg.endPoint.prevSeg === seg) {
+		if (seg.prev.type !== 2) {
+			seg.endPoint.setPrevSeg(seg.prev);
+		} else {
+			seg.endPoint.setPrevSeg(null);
+		}
+	}
+	if (seg.startPoint && seg.startPoint.nextSeg === seg) {
+		seg.startPoint.nextSeg = seg.next;
+	}
+	seg.controlPoints.forEach((cp) => {
+		if (cp.seg === seg) {
+			cp.removeFromNodePoint();
+			cp.hide();
+		}
+	});
+	if (seg.prev) {
+		seg.prev.next = seg.next;
+	}
+	if (seg.next) {
+		seg.next.prev = seg.prev;
+	}
+
+	// Clean Up M or Mz seg
+	if (index > 0 && this.segs[index - 1].type === 2) {
+		const mSegIndex = index - 1;
+		if (index === this.segs.length - 1 || this.segs[index + 1].type === 2 || this.segs[index + 1].type === 1) {
+			// Delete z seg
+			if (this.segs.length - 1 > index && this.segs[index + 1].type === 1) {
+				const zSegIndex = index + 1;
+				this.deleteSeg(zSegIndex);
+			}
+			// Delete M seg
+			this.deleteSeg(mSegIndex);
+			index -= 1;
+			if (seg.startPoint && !seg.startPoint.isSelected) {
+				seg.startPoint.hide();
+			}
+		}
+	}
+
+	const segList = this.elem.pathSegList;
+	segList.removeItem(index);
+	this.segs.splice(index, 1);
+	this.segs.forEach((seg, i) => {
+		seg.index = i;
+	});
+	console.log(this);
 };
 
 svgedit.path.Path.prototype.subpathIsClosed = function(index) {
@@ -740,21 +1193,12 @@ svgedit.path.Path.prototype.subpathIsClosed = function(index) {
 	return closed;
 };
 
-svgedit.path.Path.prototype.removePtFromSelection = function(index) {
-	var pos = this.selected_pts.indexOf(index);
-	if (pos == -1) {
-		return;
-	}
-	this.segs[index].select(false);
-	this.selected_pts.splice(pos, 1);
-};
-
 svgedit.path.Path.prototype.clearSelection = function() {
-	this.eachSeg(function() {
-		// 'this' is the segment here
-		this.select(false);
+	this.nodePoints.forEach((nodePoint) => {
+		nodePoint.setSelected(false);
 	});
 	this.selected_pts = [];
+	this.selectedControlPoint = null;
 };
 
 svgedit.path.Path.prototype.storeD = function() {
@@ -762,99 +1206,92 @@ svgedit.path.Path.prototype.storeD = function() {
 };
 
 svgedit.path.Path.prototype.show = function(y) {
-	// Shows this path's segment grips
-	this.eachSeg(function() {
-		// 'this' is the segment here
-		this.show(y);
-	});
 	if (y) {
-		this.selectPt(this.first_seg.index);
+		this.showAllNodes();
+	} else {
+		this.hideAllNodes();
 	}
 	return this;
 };
 
+svgedit.path.Path.prototype.showAllNodes = function() {
+	this.nodePoints.forEach((nodePoint) => {
+		nodePoint.show();
+	})
+	return this;
+};
+
+svgedit.path.Path.prototype.hideAllNodes = function() {
+	this.nodePoints.forEach((nodePoint) => {
+		nodePoint.hide();
+	})
+	return this;
+};
+
+svgedit.path.Path.prototype.updateAllNodes = function() {
+	this.nodePoints.forEach((nodePoint) => {
+		nodePoint.update();
+	})
+	return this;
+};
+
+svgedit.path.Path.prototype.createControlPointsAtGrip = function(index) {
+	const nodePoint = this.nodePoints[index];
+	let segChanges = nodePoint.createControlPoints();
+	svgedit.path.path.applySegChanges(segChanges);
+	segChanges = nodePoint.setNodeType(nodePoint.linkType);
+	svgedit.path.path.applySegChanges(segChanges);
+	svgedit.path.path.endChanges('Add control points');
+};
+
+svgedit.path.Path.prototype.applySegChanges = function(segChanges) {
+	for (let index in segChanges) {
+		const changes = segChanges[index];
+		const segItem = this.segs[index].item;
+		const pathSegType = changes.pathSegType || segItem.pathSegType;
+		this.segs[index].type = pathSegType;
+		let newPoints;
+		if (pathSegType === 6) { // C
+			newPoints = [
+				changes.x || segItem.x, changes.y || segItem.y,
+				changes.x1 || segItem.x1, changes.y1 || segItem.y1,
+				changes.x2 || segItem.x2, changes.y2 || segItem.y2
+			];
+		} else if (pathSegType === 8) { // Q
+			newPoints = [
+				changes.x || segItem.x, changes.y || segItem.y,
+				changes.x1 || segItem.x1, changes.y1 || segItem.y1
+			];
+		} else if (pathSegType === 2 || pathSegType === 4) { // M or L
+			newPoints = [
+				changes.x || segItem.x, changes.y || segItem.y
+			];
+		}
+		const newItem = svgedit.path.replacePathSeg(pathSegType, index, newPoints);
+		this.segs[index].item = newItem;
+	}
+}
+
 // Move selected points
 svgedit.path.Path.prototype.movePts = function(d_x, d_y) {
-	var i = this.selected_pts.length;
+	let i = this.selected_pts.length;
 	while(i--) {
-		var seg = this.segs[this.selected_pts[i]];
-		seg.move(d_x, d_y);
+		var nodePoint = this.nodePoints[this.selected_pts[i]];
+		const segChanges = nodePoint.move(d_x, d_y);
+		this.applySegChanges(segChanges);
 	}
 };
 
 svgedit.path.Path.prototype.moveCtrl = function(d_x, d_y) {
-	var seg = this.segs[this.selected_pts[0]];
-	seg.moveCtrl(this.dragctrl, d_x, d_y);
-	if (link_control_pts) {
-		seg.setLinked(this.dragctrl);
+	if (this.selectedControlPoint) {
+		let segChanges = this.selectedControlPoint.move(d_x, d_y);
+		this.applySegChanges(segChanges);
+		segChanges = this.selectedControlPoint.moveLinkedControlPoint();
+		this.applySegChanges(segChanges);
 	}
 };
 
-svgedit.path.Path.prototype.setSegType = function(new_type) {
-	this.storeD();
-	var i = this.selected_pts.length;
-	var text;
-	while(i--) {
-		var sel_pt = this.selected_pts[i];
-
-		// Selected seg
-		var cur = this.segs[sel_pt];
-		var prev = cur.prev;
-		if (!prev) {continue;}
-
-		if (!new_type) { // double-click, so just toggle
-			text = 'Toggle Path Segment Type';
-
-			// Toggle segment to curve/straight line
-			var old_type = cur.type;
-
-			new_type = (old_type == 6) ? 4 : 6;
-		}
-
-		new_type = Number(new_type);
-
-		var cur_x = cur.item.x;
-		var cur_y = cur.item.y;
-		var prev_x = prev.item.x;
-		var prev_y = prev.item.y;
-		var points;
-		switch ( new_type ) {
-		case 6:
-			if (cur.olditem) {
-				var old = cur.olditem;
-				points = [cur_x, cur_y, old.x1, old.y1, old.x2, old.y2];
-			} else {
-				var diff_x = cur_x - prev_x;
-				var diff_y = cur_y - prev_y;
-				// get control points from straight line segment
-				/*
-				var ct1_x = (prev_x + (diff_y/2));
-				var ct1_y = (prev_y - (diff_x/2));
-				var ct2_x = (cur_x + (diff_y/2));
-				var ct2_y = (cur_y - (diff_x/2));
-				*/
-				//create control points on the line to preserve the shape (WRS)
-				var ct1_x = (prev_x + (diff_x/3));
-				var ct1_y = (prev_y + (diff_y/3));
-				var ct2_x = (cur_x - (diff_x/3));
-				var ct2_y = (cur_y - (diff_y/3));
-				points = [cur_x, cur_y, ct1_x, ct1_y, ct2_x, ct2_y];
-			}
-			break;
-		case 4:
-			points = [cur_x, cur_y];
-
-			// Store original prevve segment nums
-			cur.olditem = cur.item;
-			break;
-		}
-
-		cur.setType(new_type, points);
-	}
-	svgedit.path.path.endChanges(text);
-};
-
-svgedit.path.Path.prototype.selectPt = function(pt, ctrl_num) {
+svgedit.path.Path.prototype.selectPt = function(pt) {
 	this.clearSelection();
 	if (pt == null) {
 		this.eachSeg(function(i) {
@@ -865,12 +1302,66 @@ svgedit.path.Path.prototype.selectPt = function(pt, ctrl_num) {
 		});
 	}
 	this.addPtsToSelection(pt);
-	if (ctrl_num) {
-		this.dragctrl = ctrl_num;
+};
 
-		if (link_control_pts) {
-			this.segs[pt].setLinked(ctrl_num);
+svgedit.path.Path.prototype.selectCtrlPoint = function(segIndex, controlPointIndex) {
+	const seg = this.segs[segIndex];
+	const controlPoint = seg.controlPoints.find((cp) => cp.index === parseInt(controlPointIndex));
+	const nodePoint = controlPoint.nodePoint;
+	if (this.selected_pts.length > 1 || this.selected_pts.length[0] !== nodePoint.index) {
+		this.clearSelection();
+		this.addPtsToSelection([nodePoint.index]);
+	}
+	nodePoint.setHighlight(false);
+	controlPoint.nodePoint.controlPoints.forEach((cp) => {
+		cp.setSelected(cp === controlPoint);
+	});
+	this.selectedControlPoint = controlPoint;
+}
+
+svgedit.path.Path.prototype.addPtsToSelection = function (indexes) {
+	if (!$.isArray(indexes)) {
+		indexes = [indexes];
+	}
+	for (let i = 0; i < indexes.length; i++) {
+		let index = indexes[i];
+		if (index < this.nodePoints.length) {
+			if (this.selected_pts.indexOf(index) === -1 && index >= 0) {
+				this.selected_pts.push(index);
+			}
 		}
+	}
+	this.selectedControlPoint = null;
+	this.selected_pts.sort();
+	const isSelectingOnePoint = this.selected_pts.length <= 1;
+	for (let i = 0; i < this.selected_pts.length; i++) {
+		const index = this.selected_pts[i];
+		const nodePoint = this.nodePoints[index];
+		if (isSelectingOnePoint) {
+			nodePoint.setSelected(true);
+		} else {
+			nodePoint.setSelected(true);
+			nodePoint.controlPoints.forEach((cp) => cp.hide());
+		}
+	}
+	svgCanvas.pathActions.canDeleteNodes = true;
+
+	svgCanvas.pathActions.closed_subpath = this.subpathIsClosed(this.selected_pts[0]);
+};
+
+svgedit.path.Path.prototype.removePtFromSelection = function(index) {
+	var pos = this.selected_pts.indexOf(index);
+	if (pos == -1) {
+		return;
+	}
+	let nodePoint = this.nodePoints[index];
+	nodePoint.setSelected(false);
+	this.selected_pts.splice(pos, 1);
+	const isSelectingOnePoint = this.selected_pts.length <= 1;
+	if (isSelectingOnePoint) {
+		const index = this.selected_pts[0];
+		const nodePoint = this.nodePoints[index];
+		nodePoint.setSelected(true);
 	}
 };
 
@@ -890,14 +1381,53 @@ svgedit.path.Path.prototype.update = function() {
 		this.update();
 	});
 
+	this.updateAllNodes();
 	return this;
 };
 
-svgedit.path.getPath_ = function(elem) {
-	var p = pathData[elem.id];
-	if (!p) {
-		p = pathData[elem.id] = new svgedit.path.Path(elem);
+svgedit.path.Path.prototype.setSelectedNodeType = function(newNodeType) {
+	for (let i = 0; i < this.selected_pts.length; i++) {
+		const index = this.selected_pts[i];
+		const nodePoint = this.nodePoints[index];
+		const segChanges = nodePoint.setNodeType(newNodeType);
+		this.applySegChanges(segChanges);
 	}
+	this.endChanges('Set Node Type');
+	return this;
+};
+
+// Q segments have only one control point, noting which side it belongs to
+svgedit.path.Path.prototype.saveSegmentControlPointInfo = function() {
+	const segCPInfo = {};
+	this.segs.forEach((seg) => {
+		if (seg.type === 8) {
+			const controlPoint = seg.controlPoints[0];
+			if (!controlPoint) {
+				return;
+			}
+			if (controlPoint.nodePoint.index === seg.startPoint.index) {
+				segCPInfo[seg.index] = 0;
+			} else {
+				segCPInfo[seg.index] = 1;
+			}
+		}
+	});
+	this.elem.setAttribute('data-segInfo', JSON.stringify(segCPInfo));
+	return this;
+};
+
+svgedit.path.Path.prototype.saveNodeTypeInfo = function() {
+	const nodeTypeInfo = {};
+	this.nodePoints.forEach((nodePoint) => {
+		nodeTypeInfo[nodePoint.index] = nodePoint.linkType || 0;
+	});
+	this.elem.setAttribute('data-nodeTypes', JSON.stringify(nodeTypeInfo));
+	return this;
+
+};
+
+svgedit.path.getPath_ = function(elem) {
+	let p = pathData[elem.id] = new svgedit.path.Path(elem);
 	return p;
 };
 

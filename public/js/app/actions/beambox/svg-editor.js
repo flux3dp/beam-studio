@@ -1653,8 +1653,15 @@ define([
                 var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
 
                 var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
-                RightPanelController.setSelectedElement(is_node ? null : elem);
-                TopBarController.setElement(is_node ? null : elem);
+                if (is_node) {
+                    RightPanelController.toPathEditMode();
+                    // RightPanelController.setSelectedElement(null);
+                    TopBarController.setElement(null);
+                } else {
+                    RightPanelController.toElementMode();
+                    RightPanelController.setSelectedElement(elem);
+                    TopBarController.setElement(elem);
+                }
                 LayerPanelController.updateLayerPanel();
                 var menu_items = $('#cmenu_canvas li');
                 $('#selected_panel, #multiselected_panel, #g_panel, #rect_panel, #circle_panel,' +
@@ -3183,10 +3190,6 @@ define([
                 svgCanvas.setFontFamily(this.value);
             });
 
-            $('#seg_type').change(function () {
-                svgCanvas.setSegType($(this).val());
-            });
-
             $('#text').bind('keyup input', function (evt) {
                 if (!textBeingEntered && evt.type === 'input') {
                     evt.preventDefault();
@@ -3743,6 +3746,9 @@ define([
             var deleteSelected = function () {
                 if (selectedElement != null || multiselected) {
                     svgCanvas.deleteSelectedElements();
+                }
+                if (svgedit.path.path) {
+                    svgedit.path.path.onDelete();
                 }
             };
 

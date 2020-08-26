@@ -1250,6 +1250,7 @@ define(function() {
                 tabs: {
                     layers: 'Layers',
                     objects: 'Objects',
+                    path_edit: 'Path Edit',
                 },
                 layer_panel: {
                     layer1: 'Layer 1',
@@ -1421,7 +1422,10 @@ define(function() {
                         disassemble_use: 'Disassemble',
                         disassembling: 'Disassembling...',
                         ungrouping: 'Ungrouping...',
-                    }
+                    },
+                    path_edit_panel: {
+                        node_type: 'NODE TYPE',
+                    },
                 },
             },
             bottom_right_panel: {

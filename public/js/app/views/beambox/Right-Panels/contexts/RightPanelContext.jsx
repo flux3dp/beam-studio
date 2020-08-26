@@ -9,6 +9,15 @@ define([
         constructor(props) {
             super(props);
             this.state = {
+                mode: 'element',
+                selectedElement: null,
+            }
+        }
+
+        setMode = (mode) => {
+            const {mode: currentMode} = this.state;
+            if (['path-edit'].includes(mode) || currentMode !== mode) {
+                this.setState({ mode });
             }
         }
 
@@ -21,13 +30,17 @@ define([
 
         render() {
             const {
-                setSelectedElement
+                setMode,
+                setSelectedElement,
             } = this;
             const {
-                selectedElement
+                mode,
+                selectedElement,
             } = this.state;
             return (
                 <RightPanelContext.Provider value={{
+                    setMode,
+                    mode,
                     setSelectedElement,
                     selectedElement,
                 }}>

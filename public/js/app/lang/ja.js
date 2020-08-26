@@ -1250,6 +1250,7 @@ define(function() {
                 tabs: {
                     layers: 'レイヤ',
                     objects: 'オブジェクト',
+                    path_edit: 'パス編集',
                 },
                 layer_panel: {
                     layer1: 'レイヤ 1',
@@ -1423,7 +1424,10 @@ define(function() {
                         disassemble_use: '逆アセンブル',
                         disassembling: '逆アセンブル中...',
                         ungrouping: 'グループ解除中...',
-                    }
+                    },
+                    path_edit_panel: {
+                        node_type: 'ノードタイプ'
+                    },
                 },
             },
             bottom_right_panel: {

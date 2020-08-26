@@ -10,6 +10,7 @@ define([
         if (!elem) {
             BeamboxGlobalInteraction.onObjectBlur();
         } else {
+            BeamboxGlobalInteraction.onObjectBlur();
             BeamboxGlobalInteraction.onObjectFocus([elem]);
         }
         if (!RightPanel.contextCaller) {
@@ -19,7 +20,25 @@ define([
         }
     };
 
+    toPathEditMode = () => {
+        if (!RightPanel.contextCaller) {
+            console.log('RightPanel is not mounted now.');
+        } else {
+            RightPanel.contextCaller.setMode('path-edit');
+        }
+    }
+
+    toElementMode = () => {
+        if (!RightPanel.contextCaller) {
+            console.log('RightPanel is not mounted now.');
+        } else {
+            RightPanel.contextCaller.setMode('element');
+        }
+    }
+
     return {
-        setSelectedElement: setSelectedElement
+        setSelectedElement,
+        toPathEditMode,
+        toElementMode,
     }
 });

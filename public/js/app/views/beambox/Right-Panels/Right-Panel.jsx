@@ -3,6 +3,7 @@ define([
     'jsx!views/beambox/Right-Panels/contexts/ObjectPanelContext',
     'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
     'jsx!views/beambox/Right-Panels/Object-Panel',
+    'jsx!views/beambox/Right-Panels/Path-Edit-Panel',
     'jsx!views/beambox/Right-Panels/Layer-Panel',
     'jsx!views/beambox/Right-Panels/Laser-Panel',
     'jsx!views/tutorials/Tutorial-Controller',
@@ -13,6 +14,7 @@ define([
     { ObjectPanelContextProvider },
     { LayerPanelContextProvider },
     { ObjectPanel },
+    PathEditPanel,
     { LayerPanel },
     LaserPanel,
     TutorialController,
@@ -38,24 +40,35 @@ define([
         }
 
         componentDidUpdate() {
-            const { selectedElement } = this.context;
+            const { mode, selectedElement } = this.context;
             const { selectedTab } = this.state;
-            if (!selectedElement && selectedTab !== 'layers') {
-                this.setState({selectedTab: 'layers'});
-            } else if (selectedElement && !this.lastElement) {
-                //console.log(this.lastElement);
-                this.setState({selectedTab: 'objects'});
+            if (mode === 'element') {
+                if (!selectedElement && selectedTab !== 'layers') {
+                    this.setState({selectedTab: 'layers'});
+                } else if (selectedElement && !this.lastElement) {
+                    this.setState({selectedTab: 'objects'});
+                } 
+            } else {
+                if (this.lastMode !== mode) {
+                    this.setState({selectedTab: 'objects'});
+                }
             }
+            this.lastMode = mode;
             this.lastElement = selectedElement;
         }
 
         renderTabs() {
-            const { selectedElement } = this.context;
+            const {
+                mode,
+                selectedElement
+            } = this.context;
             const { selectedTab } = this.state;
-            const isObjectDisabled = (!selectedElement || selectedElement.length < 1);
+            const isObjectDisabled = (mode === 'element' && (!selectedElement || selectedElement.length < 1));
             let objectTitle = LANG.tabs.objects;
             const LangTopBar = i18n.lang.topbar;
-            if (selectedElement) {
+            if (mode === 'path-edit') {
+                objectTitle = LANG.tabs.path_edit;
+            } else if (mode === 'element' &&  selectedElement) {
                 if (selectedElement.getAttribute('data-tempgroup') === 'true') {
                     objectTitle = LangTopBar.tag_names.multi_select;
                 } else {
@@ -115,22 +128,36 @@ define([
         renderObjectPanel() {
             const { selectedElement } = this.context;
             return (
-                    <ObjectPanel
-                        elem={selectedElement}
-                    />
+                <ObjectPanel
+                    elem={selectedElement}
+                />
+            );
+        }
+
+        renderPathEditPanel() {
+            return (
+                <PathEditPanel />
             );
         }
 
         render() {
-            const { selectedElement } = this.context;
+            const { mode, selectedElement } = this.context;
             const { selectedTab } = this.state;
             const isWin = process.platform === 'win32';
             const isLinux = process.platform === 'linux';
             let content;
-            if (!selectedElement || selectedElement.length < 1 || selectedTab === 'layers') {
+            if (selectedTab === 'layers') {
                 content = this.renderLayerAndLaserPanel();
             } else {
-                content = this.renderObjectPanel();
+                if ( mode === 'path-edit') {
+                    content = this.renderPathEditPanel();
+                } else { // element mode
+                    if (!selectedElement || selectedElement.length < 1) {
+                        content = this.renderLayerAndLaserPanel();
+                    } else {
+                        content = this.renderObjectPanel();
+                    }
+                }
             }
             return (
                 <div id="right-panel">

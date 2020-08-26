@@ -2973,10 +2973,6 @@ TODOS
 				svgCanvas.setFontFamily(this.value);
 			});
 
-			$('#seg_type').change(function() {
-				svgCanvas.setSegType($(this).val());
-			});
-
 			$('#text').bind("keyup input", function() {
 				svgCanvas.setTextContent(this.value);
 			});
