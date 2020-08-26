@@ -22,13 +22,17 @@ class _UglyNotify {
         });
     }
     send(title, body) {
-        if(this._win) {
-            this._win.webContents.send(events.NOTIFY_MACHINE_STATUS, JSON.stringify({
-              'title': title,
-              'body': body
-            }));
-        } else {
-            console.log("Ugly notify window missing");
+        try {
+            if(this._win) {
+                this._win.webContents.send(events.NOTIFY_MACHINE_STATUS, JSON.stringify({
+                  'title': title,
+                  'body': body
+                }));
+            } else {
+                console.log("Ugly notify window missing");
+            }
+        } catch (e) {
+            console.log("error when ugly notifying", e);
         }
     }
 }
