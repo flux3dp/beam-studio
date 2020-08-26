@@ -61,6 +61,7 @@ jobs:
         env:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
+          WIN_ARCH: x64
 
       - name: Build Beam Studio
         run: |
