@@ -1201,6 +1201,7 @@ define(function() {
                     error_pdf2svg_not_found: '#825 Error: Command pdf2svg not found. Please install pdf2svg with your package manager (e.g., "yum install pdf2svg" or "apt-get install pdf2svg").',
                 },
                 ungroup_use: 'This will ungroup imported DXF or SVG. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
+                vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
             },
             zoom_block: {
                 fit_to_window: 'Fit to Window',

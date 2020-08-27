@@ -79,8 +79,8 @@ define([
             Progress.popById('convert-font');
         }
 
-        renderButtons = (label, onClick, isFullLine) => {
-            const className = classNames('btn', 'btn-default', {'btn-full': isFullLine, 'btn-half': !isFullLine});
+        renderButtons = (label, onClick, isFullLine, isDisabled) => {
+            const className = classNames('btn', 'btn-default', {'btn-full': isFullLine, 'btn-half': !isFullLine, 'disabled': isDisabled});
             return (
                 <div className="btn-container" onClick={() => {onClick()}} key={label}>
                     <button className={className}>{label}</button>
@@ -89,9 +89,11 @@ define([
         }
 
         renderImageActions = () => {
+            const { elem } = this.props;
+            const isShading = elem.getAttribute('data-shading') === 'true';
             let content = [];
             content.push(this.renderButtons(LANG.replace_with, () => this.replaceImage(), true));
-            content.push(this.renderButtons(LANG.trace, () => svgCanvas.imageToSVG(), false));
+            content.push(this.renderButtons(LANG.trace, () => svgCanvas.imageToSVG(), false, isShading));
             content.push(this.renderButtons(LANG.grading, () => DialogCaller.showPhotoEditPanel('curve'), false));
             content.push(this.renderButtons(LANG.sharpen, () => DialogCaller.showPhotoEditPanel('sharpen'), false));
             content.push(this.renderButtons(LANG.crop, () => DialogCaller.showPhotoEditPanel('crop'), false));

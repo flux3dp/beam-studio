@@ -55,13 +55,14 @@ define([
         }
 
         handleGradientClick = () => {
-            const { elem } = this.props;
+            const { elem, updateObjectPanel } = this.props;
             const isGradient = elem.getAttribute('data-shading') === 'true';
             const isTurningOnGradient = !isGradient;
             elem.setAttribute('data-shading', isTurningOnGradient);
             elem.setAttribute('data-threshold', isTurningOnGradient ? 254 : 128);
             this.setState(this.state);
             this.updateImage();
+            updateObjectPanel();
         }
 
         renderGradientBlock() {

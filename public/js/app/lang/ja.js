@@ -1201,6 +1201,7 @@ define(function() {
                     error_pdf2svg_not_found: '#825 エラー：コマンド pdf2svg が見つかりません。パッケージマネージャーで pdf2svg をインストールしてください（例："yum install pdf2svg" or "apt-get install pdf2svg"）。',
                 },
                 ungroup_use: 'これにより、インポートされた DXF または SVG がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
+                vectorize_shading_image: 'シェーディング画像はベクトル化に時間がかかり、ノイズが発生しやすくなります。実行する前に画像のシェーディングをオフにしてください。',
             },
             zoom_block: {
                 fit_to_window: 'ウィンドウに合わせる',

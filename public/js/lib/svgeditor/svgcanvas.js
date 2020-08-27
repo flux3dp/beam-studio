@@ -49,6 +49,7 @@ define([
     'app/actions/topbar',
     'helpers/api/config',
     'helpers/beam-file-helper',
+    'helpers/image-data',
     'helpers/local-storage',
     'helpers/shortcuts',
     'helpers/symbol-maker',
@@ -75,6 +76,7 @@ define([
     TopbarActions,
     Config,
     BeamFileHelper,
+    ImageData,
     LocalStorage,
     shortcuts,
     SymbolMaker,
@@ -9113,13 +9115,41 @@ define([
         // Function: imageToSVG
         // tracing an image file, convert it to svg object
         // using ImageTracer https://github.com/jankovicsandras/imagetracerjs
-        this.imageToSVG = function (img) {
+        this.imageToSVG = async function (img) {
             if (img == null) {
                 img = selectedElements[0];
             }
+            if (!img.tagName || img.tagName !== 'image') {
+                return;
+            }
+            const isShading = img.getAttribute('data-shading') === 'true';
+            const threshold = parseInt(img.getAttribute('data-threshold'));
+            if (isShading) {
+                Alert.popUp({
+                    message: LANG.popup.vectorize_shading_image,
+                });
+                return;
+            }
             let batchCmd = new svgedit.history.BatchCommand('Vectorize Image');
-            const imgUrl = $(img).attr('xlink:href');
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.photo_edit_panel.processing);
+            const imgUrl = await new Promise((resolve) => {
+                ImageData(
+                    $(img).attr("origImage"),
+                    {
+                        height: $(img).height(),
+                        width: $(img).width(),
+                        grayscale: {
+                            is_rgba: true,
+                            is_shading: false,
+                            threshold: isShading ? 128 : threshold,
+                            is_svg: false
+                        },
+                        onComplete: function(result) {
+                            resolve(result.canvas.toDataURL('image/png'));
+                        }
+                    }
+                );
+            });
             ImageTracer.imageToSVG(imgUrl, svgstr => {
                 const id = getNextId();
                 let g = addSvgElementFromJson({

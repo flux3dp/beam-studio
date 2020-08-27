@@ -1201,6 +1201,7 @@ define(function() {
                     error_pdf2svg_not_found: '#825 Fehler: Befehl pdf2svg nicht gefunden. Bitte installieren Sie pdf2svg mit Ihrem Paketmanager (z. B. "yum install pdf2svg" oder "apt-get install pdf2svg").',
                 },
                 ungroup_use: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
+                vectorize_shading_image: 'Das Vektorisieren von Schattierungsbildern dauert länger und ist anfällig für Rauschen. Bitte schalten Sie die Bildschattierung aus, bevor Sie sie ausführen.',
             },
             zoom_block: {
                 fit_to_window: 'An Fenster anpassen',

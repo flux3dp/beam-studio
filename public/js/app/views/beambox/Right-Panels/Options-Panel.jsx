@@ -37,7 +37,7 @@ define([
         }
 
         render() {
-            const { elem } = this.props;
+            const { elem, updateObjectPanel } = this.props;
             let contents = [];
             if (elem) {
                 if (elem.tagName === 'rect') {
@@ -45,7 +45,7 @@ define([
                 } else if (elem.tagName === 'text') {
                     contents = <TextOptions {...this.props}/>;
                 } else if (elem.tagName === 'image') {
-                    contents = <ImageOptions elem={elem}/>;
+                    contents = <ImageOptions elem={elem} updateObjectPanel={updateObjectPanel}/>;
                 } else {
                     contents = <InFillBlock elem={elem}/>;
                 }
