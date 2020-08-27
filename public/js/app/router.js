@@ -109,22 +109,6 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
             });
         },
 
-        appendSideBar: function(show, page) {
-            if (show) {
-                $('.top-menu').show();
-            } else {
-                $('.top-menu').hide();
-            }
-            requirejs(['jsx!views/Top-Menu'], function(view) {
-                _display(view, {
-                    props: {
-                        show: show ? true : false,
-                        page: page
-                    }
-                }, $('.top-menu')[0]);
-            });
-        },
-
         studio: function(page, args) {
             args = args || '';
 
