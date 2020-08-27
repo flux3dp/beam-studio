@@ -52,6 +52,9 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
                 fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+                power_too_high: 'Leistung zu hoch',
+                power_too_high_msg: 'Die Verwendung einer niedrigeren Laserleistung (unter 70%) verlängert die Lebensdauer der Laserröhre!\nGeben Sie "OK" ein, um fortzufahren.' ,
+                power_too_high_confirm: 'OK',
             },
             hint: {
                 polygon: 'Press + / - key to increse / decrease sides.'
@@ -1169,7 +1172,6 @@ define(function() {
                 nolayer: 'Einzelne Schicht',
                 loading_image: 'Bild laden, bitte warten...',
                 no_support_text: 'Beam Studio unterstützt derzeit keine Text-Tags. Bitte übertrage Text vor dem Importieren in den Pfad.',
-                power_too_high_damage_laser_tube: 'Die Verwendung einer niedrigeren Laserleistung verlängert die Lebensdauer der Laserröhre!' ,
                 speed_too_high_lower_the_quality: 'Die Verwendung einer zu hohen Geschwindigkeit bei dieser Auflösung kann zu einer geringeren Qualität der Gravur führen.',
                 both_power_and_speed_too_high: 'Die Verwendung einer niedrigeren Laserleistung verlängert die Lebensdauer der Laserröhre!\nAußerdem kann eine zu hohe Geschwindigkeit bei dieser Auflösung zu einer schlechteren Qualität der Gravur führen.',
                 too_fast_for_path: 'Die Verwendung einer zu hohen Geschwindigkeit in Ebenen mit Pfadobjekten, kann zu einer geringeren Präzision beim Schneiden führen.\nWir empfehlen, beim Schneiden keine Geschwindigkeit von mehr als 20 mm/s zu verwenden.',

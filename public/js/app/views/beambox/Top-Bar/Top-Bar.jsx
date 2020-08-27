@@ -11,6 +11,7 @@ define([
     'app/actions/beambox/constant',
     'app/actions/beambox/preview-mode-background-drawer',
     'app/actions/beambox/preview-mode-controller',
+    'jsx!contexts/DialogCaller',
     'jsx!widgets/Modal',
     'jsx!views/beambox/Left-Panels/Left-Panel',
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
@@ -39,6 +40,7 @@ define([
     Constant,
     PreviewModeBackgroundDrawer,
     PreviewModeController,
+    DialogCaller,
     Modal,
     LeftPanel,
     { TopBarContext },
@@ -245,22 +247,30 @@ define([
         }
 
         handleExportClick = async () => {
+            const { deviceList } = this;
             this.endPreviewMode();
 
-            this.handleExportAlerts();
             if (TutorialController.getNextStepRequirement() === TutorialConstants.SEND_FILE) {
                 TutorialController.handleNextStep();
             }
+
+            if (deviceList.length > 0) { // Only when there is usable machine
+                const confirmed = await this.handleExportAlerts();
+                if (!confirmed) {
+                    return;
+                }
+            }
+
             this.showDeviceList('export', (device) => {this.exportTask(device)});
         }
 
-        handleExportAlerts = () => {
+        handleExportAlerts = async () => {
             const layers = $('#svgcontent > g.layer').toArray();
 
             const isPowerTooHigh = layers.some((layer) => {
                 const strength = Number(layer.getAttribute('data-strength'));
                 const diode = Number(layer.getAttribute('data-diode'));
-                return strength > 80 && diode !== 1;
+                return strength > 70 && diode !== 1;
             });
             SymbolMaker.switchImageSymbolForAll(false);
             let isTooFastForPath = false;
@@ -297,17 +307,15 @@ define([
             }
             SymbolMaker.switchImageSymbolForAll(true);
 
-            if (isPowerTooHigh && !AlertConfig.read('skip_power_warning')) {
-                Alert.popUp({
-                    message: lang.beambox.popup.power_too_high_damage_laser_tube,
-                    type: AlertConstants.SHOW_POPUP_WARNING,
-                    checkBox: {
-                        text: lang.beambox.popup.dont_show_again,
-                        callbacks: () => {
-                            AlertConfig.write('skip_power_warning', true);
-                        }
-                    }
+            if (isPowerTooHigh) {
+                const confirmed = await DialogCaller.showConfirmPromptDialog({
+                    caption: LANG.alerts.power_too_high,
+                    message: LANG.alerts.power_too_high_msg,
+                    confirmValue: LANG.alerts.power_too_high_confirm,
                 });
+                if (!confirmed) {
+                    return false;
+                }
             } else if (isTooFastForPath) {
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
                     if (!AlertConfig.read('skip_path_speed_warning')) {
@@ -346,7 +354,7 @@ define([
                     }
                 }
             }
-            return;
+            return true;
         }
 
         exportTask = (device) => {

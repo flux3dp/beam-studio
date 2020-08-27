@@ -52,6 +52,9 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 啟動相機預覽時超時，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
                 fail_to_start_preview: '#803 啟動相機預覽失敗，請重新開啟您的機器或是 Beam Studio ，如果此錯誤持續發生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
+                power_too_high: '功率過高',
+                power_too_high_msg: '雷射管在高功率（70％ 以上）下耗損較快，使用低功率可以延長雷試管使用壽命。\n輸入「知道了」以繼續。' ,
+                power_too_high_confirm: '知道了',
             },
             hint: {
                 polygon: '按下 + / - 鍵以增加 / 減少邊數。'
@@ -1165,7 +1168,6 @@ define(function() {
                 nolayer: '不分層',
                 loading_image: '載入圖片中，請稍候...',
                 no_support_text: 'Beam Studio 目前不支援由外部匯入文字標籤，請由向量繪圖軟體將文字轉成路徑後再匯入。',
-                power_too_high_damage_laser_tube: '雷射管在高功率下耗損較快，使用低功率可以延長雷試管使用壽命。',
                 speed_too_high_lower_the_quality: '在此雕刻解析度使用過快的速度，可能導致漸層雕刻的品質較差。',
                 too_fast_for_path: '含有路徑物件的圖層速度過快，可能導致切割時位置誤差。\n不建議超過在切割路徑時超過 20mm/s 。',
                 too_fast_for_path_and_constrain: '以下圖層： %s\n含有向量路徑物件且速度超過 20mm/s，為維持雕刻的精度，向量路徑速度將被限制在 20mm/s ，您可以在偏好設定解除此限制。',

@@ -52,6 +52,9 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
                 fail_to_start_preview: '#803 プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+                power_too_high: 'パワーが高すぎる',
+                power_too_high_msg: 'より低いレーザー出力（70％未満）を使用すると、レーザー管の寿命が延びます。\n「了解」と入力して続行します。' ,
+                power_too_high_confirm: '了解',
             },
             hint: {
                 polygon: '+ / - キーを押して、辺を増減します。'
@@ -1169,7 +1172,6 @@ define(function() {
                 nolayer: '単一層',
                 loading_image: '画像を読み込んでいます。お待ちください…',
                 no_support_text: 'Beam Studioは現在、テキストタグをサポートしていません。インポートする前にテキストをパスに変換してください。',
-                power_too_high_damage_laser_tube: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。' ,
                 speed_too_high_lower_the_quality: 'この解像度で速すぎる速度を使用すると、シェーディング彫刻の品質が低下する場合があります。',
                 both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
                 too_fast_for_path: 'パスオブジェクトを含む層で速すぎる速度を使用すると、切断時に精度が低下する場合があります。\n切断時に 20mm/s より速い速度を使用することはお勧めしません。',

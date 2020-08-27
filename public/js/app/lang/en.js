@@ -52,6 +52,9 @@ define(function() {
             alerts: {
                 start_preview_timeout: '#803 Timeout has occured when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
                 fail_to_start_preview: '#803 Fail to start preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
+                power_too_high: 'POWER TOO HIGH',
+                power_too_high_msg: 'Using lower laser power (under 70%) will extends laser tube\'s lifetime.\nEnter "NOTED" to proceed.',
+                power_too_high_confirm: 'NOTED',
             },
             hint: {
                 polygon: 'Press + / - key to increase / decrease sides.'
@@ -1169,7 +1172,6 @@ define(function() {
                 nolayer: 'Single Layer',
                 loading_image: 'Loading image, please wait...',
                 no_support_text: 'Beam Studio does not support text tag currently. Please transfer text to path before importing.',
-                power_too_high_damage_laser_tube: 'Using lower laser power will extends laser tube\'s lifetime.' ,
                 speed_too_high_lower_the_quality: 'Using too high speed at this resolution may result in the lower quality of shading engraving.',
                 both_power_and_speed_too_high: 'Using lower laser power will extends laser tube\'s lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.',
                 too_fast_for_path: 'Using too high speed in layers containing path objects may result in lower precision when cutting.\nWe don\'t recommend using speed faster than 20 mm/s when cutting.',

@@ -1,7 +1,10 @@
+const { resolve } = require('q');
+
 define([
     'jsx!widgets/Modal',
     'jsx!views/dialogs/Dialog',
     'jsx!views/dialogs/Prompt',
+    'jsx!views/dialogs/Confirm-Prompt',
     'jsx!views/tutorials/Tutorial',
     'jsx!views/beambox/About-Beam-Studio',
     'jsx!views/beambox/Camera-Calibration',
@@ -16,6 +19,7 @@ define([
     Modal,
     Dialog,
     Prompt,
+    ConfirmPrompt,
     { Tutorial },
     AboutBeamStudio,
     CameraCalibration,
@@ -188,10 +192,32 @@ define([
                 <Prompt
                     {...args}
                     onClose={() => {
-                        popDialogById(id)
+                        popDialogById(id);
                     }}
                 />
             );
+        },
+        showConfirmPromptDialog: async (args) => {
+            return await new Promise((resolve) => {
+                const id = `prompt-${promptIndex}`;
+                promptIndex = (promptIndex + 1) % 10000;
+                addDialogComponent(id,
+                    <ConfirmPrompt
+                        caption={args.caption}
+                        message={args.message}
+                        confirmValue={args.confirmValue}
+                        onConfirmed={() => {
+                            resolve(true);
+                        }}
+                        onCanceled={() => {
+                            resolve(false);
+                        }}
+                        onClose={() => {
+                            popDialogById(id);
+                        }}
+                    />
+                );
+            })
         },
         saveFileDialog: (title, filename, filters, isAllfileAvailable) => {
             const isMac = (process.platform === 'darwin');
