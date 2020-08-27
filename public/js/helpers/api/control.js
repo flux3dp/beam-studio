@@ -937,6 +937,11 @@ define([
                 return useDefaultResponse(command);
             },
 
+            rawSetRotary: (on) => {
+                const command = on ? 'R1\n' : 'R0\n';
+                return useDefaultResponse(command);
+            },
+
             enterRawMode: () => {
                 let d = $.Deferred();
 

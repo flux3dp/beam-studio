@@ -573,6 +573,7 @@ define([
                 ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
                 await this._getCameraOffset();
                 await DeviceMaster.enterRawMode();
+                await DeviceMaster.rawSetRotary(false); // Disable Rotary
                 await DeviceMaster.rawHome();
                 ProgressActions.close();
                 store.dispatch(MonitorActionCreator.setCurrentPosition({x: 0, y: 0}));

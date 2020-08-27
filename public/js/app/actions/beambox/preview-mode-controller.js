@@ -54,6 +54,7 @@ define([
                     await DeviceMaster.setLaserSpeed(1);
                 }
                 let res = await DeviceMaster.enterRawMode();
+                res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
                 res = await DeviceMaster.rawMove({x: 0 ,y: 0}); // for faster homing
                 res = await DeviceMaster.rawHome();
                 await DeviceMaster.connectCamera(selectedPrinter);

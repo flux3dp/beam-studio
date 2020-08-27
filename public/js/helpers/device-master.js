@@ -903,6 +903,10 @@ define([
         return SocketMaster.addTask('rawMove', args);
     }
 
+    function rawSetRotary(on) {
+        return SocketMaster.addTask('rawSetRotary', on);
+    }
+
     function enterRawMode() {
         return SocketMaster.addTask('enterRawMode');
     }
@@ -1791,6 +1795,7 @@ define([
             this.quitTask = quitTask;
             this.rawHome = rawHome;
             this.rawMove = rawMove;
+            this.rawSetRotary = rawSetRotary;
             this.readyCamera = readyCamera;
             this.reconnect = reconnect;
             this.registerUsbEvent = registerUsbEvent;
