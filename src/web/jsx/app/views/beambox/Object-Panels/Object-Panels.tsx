@@ -1,0 +1,210 @@
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+define(['reactPropTypes', 'plugins/classnames/index', 'jsx!views/beambox/Object-Panels/Position', 'jsx!views/beambox/Object-Panels/Rotation', 'jsx!views/beambox/Object-Panels/Size', 'jsx!views/beambox/Object-Panels/EllipsePosition', 'jsx!views/beambox/Object-Panels/EllipseRadius', 'jsx!views/beambox/Object-Panels/RectRoundedCorner', 'jsx!views/beambox/Object-Panels/Line', 'jsx!views/beambox/Object-Panels/LineLength', 'jsx!views/beambox/Object-Panels/Fill', 'jsx!views/beambox/Object-Panels/Text', 'jsx!views/beambox/Object-Panels/ShadingThreshold'], function (PropTypes, ClassNames, PositionPanel, RotationPanel, SizePanel, EllipsePositionPanel, EllipseRadiusPanel, RectRoundedCorner, LinePanel, LineLengthPanel, FillPanel, TextPanel, ShadingThresholdPanel) {
+  // OLD Object Panels, deprecated now. Use object panel in right panels folder.
+  const React = require('react');
+
+  const validPanelsMap = {
+    'unknown': [],
+    'g': ['position', 'size', 'fill', 'rotation'],
+    'path': ['position', 'size', 'fill', 'rotation'],
+    'polygon': ['position', 'size', 'fill', 'rotation'],
+    'rect': ['position', 'size', 'fill', 'rotation', 'rectRoundedCorner'],
+    'ellipse': ['ellipsePosition', 'ellipseRadius', 'fill', 'rotation'],
+    'line': ['line', 'lineLength', 'rotation'],
+    'image': ['position', 'size', 'rotation', 'shadingThreshold'],
+    'text': ['rotation', 'text'],
+    'use': ['position', 'size', 'rotation']
+  };
+  const defaultHeight = {
+    'unknown': 0,
+    'g': 340,
+    'path': 340,
+    'polygon': 340,
+    'rect': 372,
+    'ellipse': 340,
+    'line': 340,
+    'image': 340,
+    'text': 403,
+    'use': 308
+  };
+
+  class ObjectPanel extends React.Component {
+    _renderPanels() {
+      const data = this.props.data;
+      const type = this.props.type;
+      const $me = this.props.$me;
+      const validPanels = validPanelsMap[this.props.type] || validPanelsMap['unknown'];
+      let panelsToBeRender = [];
+      validPanels.forEach(function (panelName) {
+        let panel;
+
+        switch (panelName) {
+          case 'position':
+            panel = /*#__PURE__*/React.createElement(PositionPanel, _extends({
+              key: panelName
+            }, data.position, {
+              type: type
+            }));
+            break;
+
+          case 'rotation':
+            panel = /*#__PURE__*/React.createElement(RotationPanel, _extends({
+              key: panelName
+            }, data.rotation));
+            break;
+
+          case 'size':
+            panel = /*#__PURE__*/React.createElement(SizePanel, _extends({
+              key: panelName
+            }, data.size, {
+              type: type
+            }));
+            break;
+
+          case 'ellipsePosition':
+            panel = /*#__PURE__*/React.createElement(EllipsePositionPanel, _extends({
+              key: panelName
+            }, data.ellipsePosition));
+            break;
+
+          case 'ellipseRadius':
+            panel = /*#__PURE__*/React.createElement(EllipseRadiusPanel, _extends({
+              key: panelName
+            }, data.ellipseRadius));
+            break;
+
+          case 'rectRoundedCorner':
+            panel = /*#__PURE__*/React.createElement(RectRoundedCorner, _extends({
+              key: panelName
+            }, data.rectRoundedCorner));
+            break;
+
+          case 'line':
+            panel = /*#__PURE__*/React.createElement(LinePanel, _extends({
+              key: panelName
+            }, data.line));
+            break;
+
+          case 'lineLength':
+            panel = /*#__PURE__*/React.createElement(LineLengthPanel, _extends({
+              key: panelName
+            }, data.line));
+            break;
+
+          case 'fill':
+            panel = /*#__PURE__*/React.createElement(FillPanel, {
+              key: panelName,
+              $me: $me,
+              type: type
+            });
+            break;
+
+          case 'shadingThreshold':
+            panel = /*#__PURE__*/React.createElement(ShadingThresholdPanel, _extends({
+              key: panelName
+            }, data.image, {
+              $me: $me
+            }));
+            break;
+
+          case 'text':
+            panel = /*#__PURE__*/React.createElement(TextPanel, _extends({
+              key: panelName
+            }, data.font, {
+              $me: $me
+            }));
+            break;
+        }
+
+        panelsToBeRender.push(panel);
+      });
+      return panelsToBeRender;
+    }
+
+    _findPositionStyle() {
+      const self = this;
+
+      const angle = function () {
+        const A = $('#selectorGrip_resize_w').offset();
+        const B = $('#selectorGrip_resize_e').offset();
+        const dX = B.left - A.left;
+        const dY = B.top - A.top;
+        const radius = Math.atan2(-dY, dX);
+        let degree = radius * (180 / Math.PI);
+        if (degree < 0) degree += 360;
+        return degree;
+      }();
+
+      const thePoint = function () {
+        const E = $('#selectorGrip_resize_e').offset();
+        const S = $('#selectorGrip_resize_s').offset();
+        const W = $('#selectorGrip_resize_w').offset();
+        const N = $('#selectorGrip_resize_n').offset();
+
+        function isAngleIn(a, b) {
+          return a <= angle && angle < b;
+        }
+
+        if (isAngleIn(45 + 3, 135 + 3)) return S;
+        if (isAngleIn(135 + 3, 225 + 3)) return W;
+        if (isAngleIn(225 + 3, 315 + 3)) return N;
+        return E;
+      }();
+
+      thePoint.top -= 40;
+      thePoint.left += 35; // constrain position not exceed window
+
+      const constrainedPosition = function () {
+        function _between(input, min, max) {
+          input = Math.min(input, max);
+          input = Math.max(input, min);
+          return input;
+        }
+
+        const type = self.props.type || 'unknown';
+        const height = $('#beamboxObjPanel').height() || defaultHeight[type] || 0;
+
+        const left = _between(thePoint.left, 0, $(window).width() - 240);
+
+        const top = _between(thePoint.top, 100, $('#svg_editor').height() - height);
+
+        return {
+          left: left,
+          top: top
+        };
+      }();
+
+      const positionStyle = {
+        position: 'absolute',
+        zIndex: 10,
+        top: constrainedPosition.top,
+        left: constrainedPosition.left
+      };
+      return positionStyle;
+    }
+
+    render() {
+      const positionStyle = this._findPositionStyle();
+
+      const classes = ClassNames('object-panels', {
+        'unselectable': !this.props.isEditable
+      });
+      return /*#__PURE__*/React.createElement("div", {
+        id: "beamboxObjPanel",
+        className: classes,
+        style: positionStyle
+      }, this._renderPanels());
+    }
+
+  }
+
+  ;
+  ObjectPanel.propTypes = {
+    type: PropTypes.oneOf(Object.keys(validPanelsMap)).isRequired,
+    data: PropTypes.object.isRequired,
+    $me: PropTypes.object.isRequired,
+    isEditable: PropTypes.bool.isRequired
+  };
+  return ObjectPanel;
+});
