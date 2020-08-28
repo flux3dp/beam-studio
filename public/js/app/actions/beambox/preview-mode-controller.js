@@ -284,7 +284,8 @@ define([
             }
 
             await DeviceMaster.select(this.storedPrinter);
-            await DeviceMaster.rawMove(movement);
+            const res = await DeviceMaster.rawMove(movement);
+            console.log('Preview raw move respond: ', res);
             await this._waitUntilEstimatedMovementTime(movementX, movementY);
 
             const imgUrl = await this._getPhotoFromMachine();

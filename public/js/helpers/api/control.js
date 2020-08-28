@@ -934,6 +934,7 @@ define([
                 if (typeof args.y !== 'undefined') {
                     command += 'Y' + Math.round(args.y * 1000) / 1000;
                 };
+                console.log('raw move command:', command);
                 return useDefaultResponse(command);
             },
 
