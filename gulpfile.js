@@ -1,14 +1,21 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
+    ts = require('gulp-typescript'),
+    browserify = require('browserify'),
     webserver = require('gulp-webserver'),
     exec = require('gulp-exec'),
-    react = require('gulp-react'),
     uglify = require('gulp-uglify'),
     pump = require('pump'),
     babel = require('gulp-babel'),
     sourcemaps = require('gulp-sourcemaps'),
     cleanCSS = require('gulp-clean-css'),
-    mocha = require('gulp-mocha');
+    mocha = require('gulp-mocha'),
+    notify = require('gulp-notify');
+
+const frontendTSProject = ts.createProject('src/web/tsconfig.json', { 
+    declaration: false,
+    jsx: 'react' 
+});
 
 // Polyfill gulp@3.0 API if gulp version >=4
 if (gulp.parallel) {
@@ -34,6 +41,31 @@ gulp.task('cleancss', function () {
         .pipe(gulp.dest('public/css/'));
 });
 
+gulp.task('frontendSrc', function () {
+    return gulp.src([
+        'src/web/**/*.ts', 
+        'src/web/**/*.tsx'
+    ]) //gulp.src(['src/web/**/*.ts', 'src/web/**/*.tsx'])
+        .pipe(frontendTSProject())
+        .pipe(gulp.dest('./public/js/dist'));
+});
+
+// TODO: Fix browserify
+gulp.task('runBrowserify', function() {
+    // Single entry point to browserify 
+    var entry = browserify({
+        entries: ['public/main.js'],
+        global: true,
+        debug: true
+    });
+  
+    return entry.bundle()
+        .pipe(gulp.dest('./build/public/bundle'))
+        .pipe(notify('Frontend finished.'));
+});
+  
+gulp.task('frontend', ['frontendSrc'], function() {});
+
 gulp.task('babel', function () {
     return gulp.src(['public/js/**/*.js*', '!public/js/require.js', '!public/js/main.js', '!public/js/plugins/**/*.js', '!public/js/lib/**/*.js', '!public/js/helpers/CircularGridHelper.js', '!**/*.json'])
         .pipe(babel({
@@ -48,15 +80,6 @@ gulp.task('sass', function () {
             indentWidth: 4
         }).on('error', sass.logError))
         .pipe(gulp.dest('./public/css/'));
-});
-
-gulp.task('jsx', function () {
-    return gulp.src('./public/js/**/*.jsx')
-        .pipe(babel({
-            presets: ['@babel/preset-react'],
-            "plugins": ["@babel/plugin-proposal-class-properties"]
-        }))
-        .pipe(gulp.dest('./public/js/jsx/'));
 });
 
 gulp.task('deployment', ['babel', 'cleancss'], function (cb) {
@@ -75,12 +98,8 @@ gulp.task('sass:watch', function () {
     return gulp.watch('./public/sass/**/*.scss', ['sass']);
 });
 
-gulp.task('jsx:watch', function () {
-    return gulp.watch('./public/js/**/*.jsx', ['jsx']);
-});
-
 gulp.task('electron', function () {
-    return gulp.watch('./src/*', ['jsx']);
+    return gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], ['frontend']);
 });
 
 gulp.task('webserver', ['sass:watch'], function () {
@@ -93,7 +112,7 @@ gulp.task('webserver', ['sass:watch'], function () {
         }));
 });
 
-gulp.task('dev', ['sass:watch', 'jsx:watch', 'jsx', 'sass', 'electron', 'webserver'], () => {
+gulp.task('dev', ['sass:watch', 'frontend', 'sass', 'electron', 'webserver'], () => {
     return new Promise(() => {});
 });
 

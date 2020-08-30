@@ -1,23 +1,21 @@
-define([
-    'jsx!views/beambox/Zoom-Block/contexts/Zoom-Block-Context',
-    'app/actions/beambox/constant',
-    'app/constants/macOS-Window-Size',
-    'helpers/i18n'
-], function(
-    { ZoomBlockContext },
-    Constant,
-    macOSWindowSize,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
-    const LANG = i18n.lang.beambox.zoom_block;
-    const util = require('util');
-    const child_process = require('child_process');
-    const exec = util.promisify(child_process.exec);
-    const ret = {};
+import { ZoomBlockContext } from './contexts/Zoom-Block-Context'
+import Constant from '../../../actions/beambox/constant'
+import macOSWindowSize from '../../../constants/macOS-Window-Size'
+import * as i18n from '../../../../helpers/i18n'
 
-    class ZoomBlock extends React.Component {
+const svgCanvas = window['svgCanvas'];
+const svgEditor = window['svgEditor'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
+    const LANG = i18n.lang.beambox.zoom_block;
+    const util = requireNode('util');
+    const child_process = requireNode('child_process');
+    const exec = util.promisify(child_process.exec);
+    
+    let _contextCaller;
+
+
+    export class ZoomBlock extends React.Component {
         constructor() {
             super();
             this.state = {
@@ -26,7 +24,7 @@ define([
         }
 
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
             this.getDpmm();
         }
 
@@ -107,7 +105,7 @@ define([
 
         calculatCurrentRatio() {
             const { dpmm } = this.state;
-            if (!window.svgCanvas || !dpmm) {
+            if (!svgCanvas || !dpmm) {
                 return 1;
             }
             const ratio = svgCanvas.getZoom() * Constant.dpmm / dpmm;
@@ -177,6 +175,10 @@ define([
         }
     } 
     ZoomBlock.contextType = ZoomBlockContext;
-    ret.ZoomBlock = ZoomBlock;
-    return ret;
-});
+class ContextHelper {
+    static get _contextCaller() {
+        return _contextCaller;
+    }
+}
+
+export const ZoomBlockContextCaller = ContextHelper._contextCaller;

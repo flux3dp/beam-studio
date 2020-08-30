@@ -1,8 +1,6 @@
-define([], function(){
-    'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
 
-    return class RadioGroup extends React.Component{
+    export default class RadioGroup extends React.Component{
 
         render() {
             var options = this.props.options.map(function(opt, i) {
@@ -30,4 +28,3 @@ define([], function(){
             );
         }
     };
-});

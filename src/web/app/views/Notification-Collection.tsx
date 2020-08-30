@@ -1,76 +1,34 @@
-define([
-    'jquery',
-    'lib/jquery.growl',
-    'helpers/api/config',
-    'helpers/check-software-update',
-    'helpers/software-updater',
-    // alert dialog
-    'app/actions/alert-actions',
-    'app/stores/alert-store',
-    'app/constants/alert-constants',
-    // progress dialog
-    'app/actions/progress-actions',
-    'app/stores/progress-store',
-    'app/constants/progress-constants',
-    // input lightbox dialog
-    'app/actions/input-lightbox-actions',
-    'app/stores/input-lightbox-store',
-    'app/constants/input-lightbox-constants',
-    'jsx!widgets/Progress',
-    'jsx!widgets/Input-Lightbox',
-    'jsx!widgets/Notification-Modal',
-    'jsx!views/Update-Dialog',
-    'jsx!views/Change-Filament',
-    'jsx!views/Head-Temperature',
-    'jsx!views/beambox/Camera-Calibration',
-    'app/actions/global-actions',
-    'app/stores/global-store',
-    'jsx!views/print/Monitor',
-    'jsx!widgets/Modal',
-    'helpers/api/discover',
-    'helpers/check-firmware',
-    'helpers/firmware-updater',
-    'helpers/device-list',
-    'helpers/device-master',
-], function(
-    $,
-    Notifier,
-    config,
-    checkSoftwareUpdate,
-    softwareUpdater,
-    // alert
-    AlertActions,
-    AlertStore,
-    AlertConstants,
-    // progress
-    ProgressActions,
-    ProgressStore,
-    ProgressConstants,
-    // input lightbox
-    InputLightboxActions,
-    InputLightboxStore,
-    InputLightboxConstants,
-    Progress,
-    InputLightbox,
-    NotificationModal,
-    UpdateDialog,
-    ChangeFilament,
-    HeadTemperature,
-    CameraCalibration,
-    GlobalActions,
-    GlobalStore,
-    Monitor,
-    Modal,
-    discover,
-    checkFirmware,
-    firmwareUpdater,
-    DeviceList,
-    DeviceMaster
-) {
-    'use strict';
-    const React = require('react');
+import $ from 'jquery'
+import config from '../../helpers/api/config'
+import AlertActions from '../actions/alert-actions'
+import AlertStore from '../stores/alert-store'
+import AlertConstants from '../constants/alert-constants'
+import ProgressStore from '../stores/progress-store'
+import ProgressConstants from '../constants/progress-constants'
+import InputLightboxStore from '../stores/input-lightbox-store'
+import Progress from '../widgets/Progress'
+import InputLightbox from '../widgets/Input-Lightbox'
+import NotificationModal from '../widgets/Notification-Modal'
+import UpdateDialog from '../views/Update-Dialog'
+import CameraCalibration from '../views/beambox/Camera-Calibration'
+import GlobalActions from '../actions/global-actions'
+import GlobalStore from '../stores/global-store'
+import Monitor from '../views/print/Monitor'
+import Modal from '../widgets/Modal'
+import checkFirmware from '../../helpers/check-firmware'
+import firmwareUpdater from '../../helpers/firmware-updater'
+import DeviceMaster from '../../helpers/device-master'
+// @ts-expect-error
+import Notifier = require('jqueryGrowl')
+declare global {
+    interface JQueryStatic {
+        growl: any
+    }
+}
 
-    return function(args) {
+    const React = requireNode('react');;
+
+    export default function(args) {
         args = args || {};
 
         var lang = args.state.lang,
@@ -213,12 +171,7 @@ define([
                   setTimeout(_checkFirmwareOfDefaultPrinter, 15000);
                 }
 
-                // add information for Raven, to be removed when root.js is implemented
-                if(!window.FLUX.dev) {
-                    // Raven.setUserContext({ extra: { version: window.FLUX.version } });
-                }
-
-                DeviceMaster.registerUsbEvent('DASHBOARD', this._monitorUsb);
+                // DeviceMaster.registerUsbEvent('DASHBOARD', this._monitorUsb);
             }
 
             componentWillUnmount() {
@@ -569,10 +522,6 @@ define([
                 this.setState({ slicingStatus: data.report });
             }
 
-            _handleSetHeadTemperature = (e) => {
-                DeviceMaster.setHeadTemperature(this.state.headTemperature.target);
-            }
-
             _renderMonitorPanel = () => {
                 var content = (
                     <Monitor
@@ -589,26 +538,6 @@ define([
                         {...this.props}
                         lang    = {lang}
                         content ={content} />
-                );
-            }
-
-            _renderChangeFilament = () => {
-                return (
-                    <ChangeFilament
-                        open={this.state.changeFilament.open}
-                        device={this.state.changeFilament.device}
-                        src={this.state.changeFilament.src}
-                        onClose={this._hideChangeFilament}
-                    />
-                );
-            }
-
-            _renderHeadTemperature = () => {
-                return (
-                    <HeadTemperature
-                        device={this.state.headTemperature.device}
-                        onClose={this._closeHeadTemperature}
-                    />
                 );
             }
 
@@ -711,4 +640,3 @@ define([
             }
         };
     };
-});

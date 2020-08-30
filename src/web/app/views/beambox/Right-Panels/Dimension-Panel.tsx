@@ -1,24 +1,14 @@
-define([
-    'jsx!widgets/Unit-Input-v2',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/constant',
-    'app/constants/keycode-constants',
-    'helpers/symbol-maker',
-    'helpers/i18n'
-], function(
-    UnitInput,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    Constant,
-    KeycodeConstants,
-    SymbolMaker,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import UnitInput from '../../../widgets/Unit-Input-v2'
+import Constant from '../../../actions/beambox/constant'
+import KeycodeConstants from '../../../constants/keycode-constants'
+import SymbolMaker from '../../../../helpers/symbol-maker'
+import * as i18n from '../../../../helpers/i18n'
+
+const svgCanvas = window['svgCanvas'];
+const svgedit = window['svgedit'];
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel;
 
     const panelMap = {
@@ -417,5 +407,4 @@ define([
             );
         }
     }
-    return DimensionPanel;
-});
+    export default DimensionPanel;

@@ -1,17 +1,10 @@
-define([
-    'jsx!widgets/Modal',
-    'helpers/i18n',
-], function (
-    Modal,
-    i18n
-) {
-    'use strict';
-    const React = require('react');
+import Modal from '../widgets/Modal'
+import * as i18n from '../../helpers/i18n'
+    const React = requireNode('react');;
 
     const lang = i18n.lang.initialize;
 
-    return function () {
-        return class SelectConnectionType extends React.Component{
+    class SelectConnectionType extends React.Component{
 
             onClick = (method) => {
                 switch (method) {
@@ -71,9 +64,9 @@ define([
                     <div className="btn-page-container">
                         <div className="btn-page primary" onClick={() => {
                             if (isNewUser) {
-                                localStorage.setItem('new-user', true);
+                                localStorage.setItem('new-user', 'true');
                             }
-                            localStorage.setItem('printer-is-ready', true);
+                            localStorage.setItem('printer-is-ready', 'true');
                             location.hash = '#studio/beambox';
                         }} >
                             {isNewUser ? lang.skip : lang.cancel}
@@ -101,5 +94,4 @@ define([
             }
 
         };
-    };
-});
+    export default () => SelectConnectionType

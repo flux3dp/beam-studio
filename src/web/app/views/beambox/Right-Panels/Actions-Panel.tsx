@@ -1,26 +1,17 @@
-define([
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/actions/beambox/font-funcs',
-    'app/contexts/ProgressCaller',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/beambox-preference',
-    'helpers/i18n'
-], function(
-    FnWrapper,
-    FontFuncs,
-    Progress,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    Constant,
-    BeamboxPreference,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import FontFuncs from '../../../actions/beambox/font-funcs'
+import Progress from '../../../contexts/ProgressCaller'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import Constant from '../../../actions/beambox/constant'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import * as i18n from '../../../../helpers/i18n'
+const svgEditor = window['svgEditor'];
+const svgCanvas = window['svgCanvas'];
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel.actions_panel;
 
     class ActionsPanel extends React.Component {
@@ -38,20 +29,23 @@ define([
 
         replaceImage = async () => {
             const { elem } = this.props;
-            const { remote } = require('electron');
+            const { remote } = requireNode('electron');;
             const { dialog } = remote;
             const option = {
-                properties: ['openFile'],
+                properties: ['openFile'] as Array<'openFile'>,
                 filters: [
-                    { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm']},
+                    { 
+                        name: 'Images', 
+                        extensions: ['png', 'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm']
+                    },
                 ]
             }
-            let res = await dialog.showOpenDialog(option);
-            if (res && res.length > 0) {
-                const filePath = res[0];
-                res = await fetch(filePath);
-                res = await res.blob();
-                svgEditor.replaceBitmap(res, elem);
+            let selectedPath = await dialog.showOpenDialog(option);
+            if (selectedPath && selectedPath.length > 0) {
+                const filePath = selectedPath[0];
+                const resp = await fetch(filePath);
+                const respBlob = await resp.blob();
+                svgEditor.replaceBitmap(respBlob, elem);
             }
         }
 
@@ -79,7 +73,7 @@ define([
             Progress.popById('convert-font');
         }
 
-        renderButtons = (label, onClick, isFullLine, isDisabled) => {
+        renderButtons = (label, onClick, isFullLine, isDisabled?: boolean) => {
             const className = classNames('btn', 'btn-default', {'btn-full': isFullLine, 'btn-half': !isFullLine, 'disabled': isDisabled});
             return (
                 <div className="btn-container" onClick={() => {onClick()}} key={label}>
@@ -207,5 +201,4 @@ define([
         }
     }
 
-    return ActionsPanel;
-});
+    export default ActionsPanel;

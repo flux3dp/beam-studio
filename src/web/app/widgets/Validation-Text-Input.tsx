@@ -1,13 +1,8 @@
-define([
-    'reactPropTypes',
-    'app/constants/keycode-constants',
-], function(
-    PropTypes,
-    keyCodeConstants
-) {
+import keyCodeConstants from '../constants/keycode-constants'
+
     'use strict';
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     class ValidationTextInput extends React.Component {
         constructor(props) {
@@ -84,5 +79,4 @@ define([
         getValue: () => {}
     };
 
-    return ValidationTextInput;
-});
+    export default ValidationTextInput;

@@ -1,13 +1,11 @@
-define([
-], function (
-) {
-    const React = require('react');
+
+    const React = requireNode('react');;
     const { createContext } = React;
-    const ObjectPanelContext = createContext();
+    export const ObjectPanelContext = createContext();
 
     const minRenderInterval = 200;
 
-    class ObjectPanelContextProvider extends React.Component {
+    export class ObjectPanelContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.dimensionValues = {}
@@ -67,6 +65,3 @@ define([
             );
         }
     };
-
-    return {ObjectPanelContextProvider, ObjectPanelContext};
-});

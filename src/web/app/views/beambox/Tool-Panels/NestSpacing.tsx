@@ -1,13 +1,6 @@
-define([
-    'jquery',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/i18n',
-], function(
-    $,
-    UnitInput,
-    i18n
-)   {
-    const React = require('react');
+import UnitInput from'../../../widgets/Unit-Input-v2'
+import * as i18n from '../../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.tool_panels;
 
     class NestSpacingPanel extends React.Component{
@@ -27,7 +20,7 @@ define([
 
         _getValueCaption() {
             const spacing = this.state.spacing, 
-                units = localStorage.getItem('default-units') | 'mm';
+                units = localStorage.getItem('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(spacing/25.4).toFixed(3)}\"`;
             } else {
@@ -63,5 +56,4 @@ define([
         }
     };
 
-    return NestSpacingPanel;
-});
+    export default NestSpacingPanel;

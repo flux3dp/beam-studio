@@ -1,31 +1,27 @@
-define([
-    'jsx!views/beambox/Right-Panels/Dimension-Panel',
-    'jsx!views/beambox/Right-Panels/Options-Panel',
-    'jsx!views/beambox/Right-Panels/Actions-Panel',
-    'jsx!views/beambox/Right-Panels/contexts/ObjectPanelContext',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'helpers/i18n'
-], function(
-    DimensionPanel,
-    OptionsPanel,
-    ActionsPanel,
-    { ObjectPanelContext },
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    FnWrapper,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import DimensionPanel from './Dimension-Panel'
+import OptionsPanel from './Options-Panel'
+import ActionsPanel from './Actions-Panel'
+import { ObjectPanelContext } from './contexts/ObjectPanelContext'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import * as i18n from '../../../../helpers/i18n';
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel;
+    let _contextCaller;
 
-    let ret = {};
+    class ContextHelper {
+        static get _contextCaller() {
+            return _contextCaller;
+        }
+    }
+    
+    export const ObjectPanelContextCaller = ContextHelper._contextCaller;
 
-    class ObjectPanel extends React.Component {
+    export class ObjectPanel extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -33,12 +29,12 @@ define([
         }
 
         componentDidMount() {
-            ret.contextCaller = this.context;
-            window.updateContextPanel();
+            _contextCaller = this.context;
+            window['updateContextPanel']();
         }
 
         componentWillUnmount() {
-            ret.contextCaller = null;
+            _contextCaller = null;
         }
 
         getAvailableFunctions = () => {
@@ -157,7 +153,3 @@ define([
         }
     }
     ObjectPanel.contextType = ObjectPanelContext;
-    ret.ObjectPanel = ObjectPanel;
-
-    return ret;
-});

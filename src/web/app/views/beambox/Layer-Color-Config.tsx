@@ -1,23 +1,12 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Unit-Input-v2',
-    'jsx!widgets/Validation-Text-Input',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/stores/beambox-store',
-    'helpers/local-storage',
-    'helpers/i18n'
-], function(
-    Modal,
-    UnitInput,
-    ValidationTextInput,
-    Alert,
-    AlertConstants,
-    BeamboxStore,
-    LocalStorage,
-    i18n
-) {
-    const React = require('react');
+import Modal from '../../widgets/Modal'
+import UnitInput from '../../widgets/Unit-Input-v2'
+import ValidationTextInput from '../../widgets/Validation-Text-Input'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import * as LocalStorage from '../../../helpers/local-storage'
+import * as i18n from '../../../helpers/i18n'
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.layer_color_config_panel;
     let defaultSettings = [
         {color: '#FF0000', power: 15, speed: 50, repeat: 1},
@@ -40,7 +29,11 @@ define([
     class LayerColorConfigPanel extends React.Component {
         constructor(props) {
             super(props);
-            let layerColorConfig = LocalStorage.get('layer-color-config');
+            // TODO: make config interface
+            let layerColorConfig = LocalStorage.get('layer-color-config') as unknown as {
+                array: any,
+                dict: any
+            };
             if (layerColorConfig) {
                 this.layerColorConfig = layerColorConfig.array;
                 this.layerColorConfigDict = layerColorConfig.dict;
@@ -259,7 +252,7 @@ define([
             this._close();
         }
 
-        _renderButton(className, onClick, label, disabled) {
+        _renderButton(className: string, onClick: Function, label: string, disabled?: boolean) {
             className = `btn btn-default ${className}`;
             if (disabled) {
                 className += ' disabled';
@@ -386,5 +379,5 @@ define([
         }
     };
 
-    return LayerColorConfigPanel;
-});
+    export default LayerColorConfigPanel;
+

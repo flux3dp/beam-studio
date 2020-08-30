@@ -1,14 +1,7 @@
-define([
-    'jsx!widgets/Button-Group',
-    'app/constants/keycode-constants',
-    'helpers/i18n'
-],
-function(
-    ButtonGroup,
-    KeyCodeConstants,
-    i18n
-) {
-    const React = require('react');
+import ButtonGroup from '../../widgets/Button-Group';
+import KeyCodeConstants from '../../constants/keycode-constants';
+import * as i18n from '../../../helpers/i18n';
+    const React = requireNode('react');;
     const lang = i18n.lang;
 
     const DxfDpiSelector = ({defaultDpiValue, onSubmit, onCancel}) => {
@@ -66,5 +59,4 @@ function(
             </div>
         );
     };
-    return DxfDpiSelector;
-});
+    export default DxfDpiSelector;

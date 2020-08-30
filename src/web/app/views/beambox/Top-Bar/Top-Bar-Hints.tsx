@@ -1,22 +1,24 @@
-define([
-    'helpers/i18n'
-], function (
-    i18n
-) {
-    const React = require('react');
+import * as i18n from '../../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.topbar;
-    const classNames = require('classnames');
+    const classNames = requireNode('classnames');
     const { createContext } = React;
     const HintContext = createContext();
+    let _contextCaller;
 
-    const ret = {};
+    class ContextHelper {
+        static get _contextCaller() {
+            return _contextCaller;
+        }
+    }
+    
+    export const TopBarHintsContextCaller = ContextHelper._contextCaller;
 
-    const Constants = {
+    export const Constants = {
         POLYGON: 'POLYGON',
     }
-    ret.Constants = Constants;
 
-    class HintContextProvider extends React.Component {
+    export class HintContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -55,11 +57,11 @@ define([
 
     class HintContextConsumer extends React.Component {
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
         }
 
         componentWillUnmount() {
-            ret.contextCaller = null;
+            _contextCaller = null;
         }
 
         renderTextHint(textContent) {
@@ -92,7 +94,7 @@ define([
     };
     HintContextConsumer.contextType = HintContext;
 
-    class TopBarHints extends React.Component {
+    export class TopBarHints extends React.Component {
         render() {
             return (
                 <HintContextProvider>
@@ -101,7 +103,3 @@ define([
             );
         }
     }
-    ret.TopBarHints = TopBarHints;
-
-    return ret;
-});

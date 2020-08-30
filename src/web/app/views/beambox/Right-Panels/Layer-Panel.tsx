@@ -1,42 +1,40 @@
-define([
-    'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
-    'jsx!app/actions/beambox/Laser-Panel-Controller',
-    'jsx!app/views/beambox/Color-Picker-Panel',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'helpers/i18n'
-], function(
-    { LayerPanelContext },
-    LaserPanelController,
-    ColorPickerPanel,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    TutorialController,
-    TutorialConstants,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import { LayerPanelContext } from './contexts/LayerPanelContext'
+import LaserPanelController from '../../../actions/beambox/Laser-Panel-Controller'
+import ColorPickerPanel from '../Color-Picker-Panel'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import * as TutorialController from '../../../views/tutorials/Tutorial-Controller'
+import TutorialConstants from '../../../constants/tutorial-constants'
+import * as i18n from '../../../../helpers/i18n'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.layer_panel;
+    const svgCanvas = window['svgCanvas'];
+    const updateContextPanel = window['updateContextPanel'];
+    let _contextCaller;
 
-    let ret = {};
+    class ContextHelper {
+        static get _contextCaller() {
+            return _contextCaller;
+        }
+    }
+    
+    export const LayerPanelContextCaller = ContextHelper._contextCaller;
 
-    class LayerPanel extends React.Component {
+    export class LayerPanel extends React.Component {
         constructor() {
             super();
             this.state = {
             };
-            window.populateLayers = () => {
+            window['populateLayers'] = () => {
                 this.setState(this.state);
             }
         }
 
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
             this.renderLayerLaserConfigs();
         }
 
@@ -45,8 +43,8 @@ define([
         }
 
         componentWillUnmount() {
-            window.populateLayers = () => {};
-            ret.contextCaller = null;
+            window['populateLayers'] = () => {};
+            _contextCaller = null;
         }
 
         addLayerLaserConfig = (layername) => {
@@ -58,7 +56,7 @@ define([
         };
 
         renderLayerLaserConfigs = () => {
-            if (window.svgCanvas) {
+            if (svgCanvas) {
                 const drawing = svgCanvas.getCurrentDrawing();
                 const currentLayerName = drawing.getCurrentLayerName();
                 LaserPanelController.render(currentLayerName);
@@ -89,7 +87,7 @@ define([
                     if (TutorialController.getNextStepRequirement() === TutorialConstants.ADD_NEW_LAYER) {
                         TutorialController.handleNextStep();
                     }
-                    window.updateContextPanel();
+                    updateContextPanel();
                     this.addLayerLaserConfig(newName);
                     this.setState(this.state);
                 },
@@ -110,12 +108,13 @@ define([
                     if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
                         Alert.popUp({
                             id: 'dupli layer name',
-                            message: uiStrings.notification.dupeLayerName,
+                            // @ts-expect-error
+                            message: uiStrings.notification.dupeLayerName, // todo: ui string is undefined??
                         });
                         return;
                     }
                     svgCanvas.cloneLayer(newName);
-                    window.updateContextPanel();
+                    updateContextPanel();
                     this.cloneLayerLaserConfig(newName, oldName);
                     this.setState(this.state);
                 },
@@ -124,7 +123,7 @@ define([
 
         deleteLayer = () => {
             if (svgCanvas.deleteCurrentLayer()) {
-                window.updateContextPanel();
+                updateContextPanel();
                 this.setState(this.state);
             }
         }
@@ -142,13 +141,13 @@ define([
                 return;
             }
             svgCanvas.mergeLayer();
-            window.updateContextPanel();
+            updateContextPanel();
             this.setState(this.state);
         }
 
         mergeAllLayer = () => {
             svgCanvas.mergeAllLayers();
-            window.updateContextPanel();
+            updateContextPanel();
             this.setState(this.state);
         }
 
@@ -228,7 +227,7 @@ define([
             }
         }
 
-        highlightLayer = function (layerName) {
+        highlightLayer = function (layerName?: string) {
             let i, curNames = [];
             const numLayers = svgCanvas.getCurrentDrawing().getNumLayers();
             for (i = 0; i < numLayers; i++) {
@@ -457,7 +456,7 @@ define([
 
         render() {
             const { ContextMenu, MenuItem, ContextMenuTrigger } = require('react-contextmenu');
-            if (!window.svgCanvas) {
+            if (!svgCanvas) {
                 setTimeout(() => {
                     this.setState(this.state);
                 }, 50);
@@ -490,7 +489,3 @@ define([
         }
     }
     LayerPanel.contextType = LayerPanelContext;
-    ret.LayerPanel = LayerPanel;
-
-    return ret;
-});

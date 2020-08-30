@@ -1,5 +1,4 @@
-define([], function(){
-    return {
+export default {
         SHOW_MONITOR                    : 'SHOW_MONITOR',
         CLOSE_MONITOR                   : 'CLOSE_MONITOR',
         CLOSE_ALL_VIEW                  : 'CLOSE_ALL_VIEW',
@@ -27,4 +26,3 @@ define([], function(){
 
         DEFAULT_PRINT_SETTING_VERSION   : '0.75'
     };
-});

@@ -1,45 +1,23 @@
-define([
-    'app/actions/beambox/beambox-init',
-    'app/actions/beambox/beambox-global-interaction',
-    'app/actions/beambox/beambox-preference',
-    'helpers/i18n',
-    'helpers/local-storage',
-    'jsx!views/beambox/Top-Bar/Top-Bar',
-    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
-    'jsx!views/beambox/Zoom-Block/Zoom-Block',
-    'jsx!views/beambox/Zoom-Block/contexts/Zoom-Block-Context',
-    'jsx!pages/svg-editor',
-    'jsx!views/dialogs/AlertsAndProgress',
-    'jsx!views/dialogs/Dialog',
-    'jsx!/contexts/AlertProgressContext',
-    'jsx!/contexts/DialogContext',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'helpers/output-error',
-], function (
-    BeamboxInit,
-    BeamboxGlobalInteraction,
-    BeamboxPreference,
-    i18n,
-    localStorage,
-    { TopBar },
-    { TopBarContextProvider },
-    { ZoomBlock },
-    { ZoomBlockContextProvider },
-    SvgEditor,
-    { AlertsAndProgress },
-    { Dialog },
-    { AlertProgressContextProvider },
-    { DialogContextProvider },
-    AlertCaller,
-    AlertConstants,
-    outputError,
-) {
-    const React = require('react');
+import BeamboxInit from '../actions/beambox/beambox-init'
+import BeamboxGlobalInteraction from '../actions/beambox/beambox-global-interaction'
+import BeamboxPreference from '../actions/beambox/beambox-preference'
+import * as i18n from '../../helpers/i18n'
+import { TopBar } from '../views/beambox/Top-Bar/Top-Bar'
+import { TopBarContextProvider } from '../views/beambox/Top-Bar/contexts/Top-Bar-Context'
+import { ZoomBlock } from '../views/beambox/Zoom-Block/Zoom-Block'
+import { ZoomBlockContextProvider } from '../views/beambox/Zoom-Block/contexts/Zoom-Block-Context'
+import SvgEditor from './svg-editor'
+import { AlertsAndProgress } from '../views/dialogs/AlertsAndProgress'
+import { Dialog } from '../views/dialogs/Dialog'
+import { AlertProgressContextProvider } from '../contexts/AlertProgressContext'
+import { DialogContextProvider } from '../contexts/DialogContext'
+
+const electron = window['electron'];
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox;
     BeamboxInit.init();
 
-    class view extends React.Component {
+    class Beambox extends React.Component {
         constructor(props) {
             super(props);
         }
@@ -83,5 +61,4 @@ define([
             );
         }
     }
-    return () => view;
-});
+    export default () => Beambox;

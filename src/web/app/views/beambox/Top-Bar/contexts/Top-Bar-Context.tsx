@@ -1,13 +1,10 @@
 const { nodeName } = require('jquery');
 
-define([
-], function (
-) {
-    const React = require('react');
+    const React = requireNode('react');;
     const { createContext } = React;
-    const TopBarContext = createContext();
+    export const TopBarContext = createContext();
 
-    class TopBarContextProvider extends React.Component {
+    export class TopBarContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -93,5 +90,4 @@ define([
         }
     };
 
-    return {TopBarContextProvider, TopBarContext};
-});
+    export default {TopBarContextProvider, TopBarContext};

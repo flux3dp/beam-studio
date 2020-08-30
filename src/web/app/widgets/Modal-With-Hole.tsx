@@ -1,10 +1,7 @@
-define([
-    'jsx!widgets/Modal',
-], function(
-    Modal
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import Modal from './Modal'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     class ModalWithHole extends React.Component{
         constructor(props) {
@@ -57,5 +54,4 @@ define([
             );
         }
     };
-    return ModalWithHole;
-});
+    export default ModalWithHole;

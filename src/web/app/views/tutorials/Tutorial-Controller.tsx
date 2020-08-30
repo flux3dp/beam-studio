@@ -1,28 +1,19 @@
-define([
-    'jsx!views/tutorials/Tutorial',
-], function (
-    Tutorial
-) {
-    const React = require('react');
-    handleNextStep = () => {
-        if (!Tutorial.contextCaller) {
+import { Tutorial, TutorialContextCaller } from './Tutorial';
+
+    const React = requireNode('react');;
+    export const handleNextStep = () => {
+        if (!TutorialContextCaller) {
             //console.log('Tutorial is not mounted now.');
         } else {
-            Tutorial.contextCaller.handleNextStep();
+            TutorialContextCaller.handleNextStep();
         }
     };
 
-    getNextStepRequirement = () => {
-        if (!Tutorial.contextCaller) {
+    export const getNextStepRequirement = () => {
+        if (!TutorialContextCaller) {
             //console.log('Tutorial is not mounted now.');
             return null;
         } else {
-            return Tutorial.contextCaller.getNextStepRequirement();
+            return TutorialContextCaller.getNextStepRequirement();
         }
     }
-
-    return {
-        getNextStepRequirement,
-        handleNextStep,
-    }
-});

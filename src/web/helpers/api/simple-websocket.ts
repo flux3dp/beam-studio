@@ -1,23 +1,17 @@
-define([
+export default function(url, onMessage, onError) {
+    return new Promise((resolve) => {
+        let ws = new WebSocket(url);
 
-], function(
+        ws.onopen = function() {
+            resolve(ws);
+        };
 
-) {
-    return function(url, onMessage, onError) {
-        return new Promise((resolve) => {
-            let ws = new WebSocket(url);
+        ws.onmessage = function(response) {
+            onMessage(response);
+        };
 
-            ws.onopen = function() {
-                resolve(ws);
-            };
-
-            ws.onmessage = function(response) {
-                onMessage(response);
-            };
-
-            ws.onerror = function(response) {
-                onError(response);
-            };
-        });
-    };
-});
+        ws.onerror = function(response) {
+            onError(response);
+        };
+    });
+};

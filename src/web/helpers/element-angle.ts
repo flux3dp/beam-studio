@@ -1,10 +1,7 @@
 /**
  * get element's angle
  */
-define(function() {
-    'use strict';
-
-    return function(el, values) {
+export default function(el, values) {
         // refs: https://css-tricks.com/get-value-of-css-rotation-through-javascript/
         var st = window.getComputedStyle(el, null),
             matrix = st.getPropertyValue("-webkit-transform"),
@@ -21,5 +18,3 @@ define(function() {
 
         return Math.round(Math.atan2(b, a) * (180 / Math.PI));
     };
-
-});

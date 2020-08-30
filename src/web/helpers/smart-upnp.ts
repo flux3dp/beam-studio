@@ -1,10 +1,7 @@
-define([
-	'helpers/i18n',
-    'helpers/api/config',
-], function (i18n, Config) {
-	'use strict';
+import * as i18n from './i18n'
+import Config from './api/config'
 
-	const lang = i18n.get();
+	const lang = i18n.lang;
 
 	const AUTO_POKE_INTERVAL = 3000;
 	const AUTO_DISCOVER = 1000;
@@ -80,11 +77,11 @@ define([
 			if(solidIPs.indexOf(ip) !== -1) return;
 			solidIPs.push(ip);
 			for(var i in autoPokes) if(autoPokes[i].ip == ip) return;
-			startPoke(ip);
+			self.startPoke(ip);
         },
 
 		getLocalAddresses: function(){
-			if(!window['requireNode']) return ["192.168.1.1"];
+			// TODO: fix requireNode
 			var os = requireNode('os');
 			var ifaces = os.networkInterfaces();
 			var addresses = [];
@@ -109,7 +106,7 @@ define([
 		*/
 		startPoke: (targetIP) => {
 			var pokeIP = targetIP;
-			if(!self.isInitiated()) throw Exception("smart upnp hasn't been initiated");
+			if(!self.isInitiated()) throw new Error("smart upnp hasn't been initiated");
 			if ('string' !== typeof pokeIP || pokeIP == '') return;
 			var autopoke = {
 				ip: pokeIP,
@@ -130,5 +127,4 @@ define([
 		}
     };
 
-	return self;
-});
+export default self;

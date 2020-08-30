@@ -1,17 +1,12 @@
-define([
-    'helpers/api/config',
-    'app/actions/beambox/beambox-preference',
-], function(
-    Config,
-    BeamboxPreference
-){
-    const workareaMap = new Map();
-    workareaMap.set('fbm1', [3000, 2100]);
-    workareaMap.set('fbb1b', [4000, 3750]);
-    workareaMap.set('fbb1p', [6000, 3750]);
-    const workarea = workareaMap.get(BeamboxPreference.read('model'));
+import BeamboxPreference from './beambox-preference'
 
-    return {
+const workareaMap = new Map();
+workareaMap.set('fbm1', [3000, 2100]);
+workareaMap.set('fbb1b', [4000, 3750]);
+workareaMap.set('fbb1p', [6000, 3750]);
+const workarea = workareaMap.get(BeamboxPreference.read('model'));
+
+export default {
         dpmm: 10, //seem not to be used by all people QQ
         dimension: {
             getWidth: () => {
@@ -79,4 +74,3 @@ define([
         topBarHeightWithoutTitleBar: 40, //px
         layerListHeight: 240, //px
     };
-});

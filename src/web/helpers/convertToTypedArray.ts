@@ -1,10 +1,8 @@
 /**
  * typed array convertor
  */
-define(function() {
-    'use strict';
 
-    return function(arr, TypedArray) {
+    export default function(arr, TypedArray) {
         var typedArray;
 
         if ('object' === typeof typedArray) {
@@ -19,4 +17,3 @@ define(function() {
 
         return typedArray;
     };
-});

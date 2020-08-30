@@ -1,27 +1,17 @@
-define([
-    'jsx!widgets/Dialog-Box',
-    'jsx!widgets/Modal',
-    'jsx!widgets/Modal-With-Hole',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'jsx!constants/tutorial-constants',
-    'helpers/i18n'
-], function (
-    DialogBox,
-    Modal,
-    ModalWithHole,
-    Alert,
-    AlertConstants,
-    TutorialConstants,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import DialogBox from '../../widgets/Dialog-Box'
+import Modal from '../../widgets/Modal'
+import ModalWithHole from '../../widgets/Modal-With-Hole'
+import Alert from '../..//contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import TutorialConstants from '../../constants/tutorial-constants'
+import * as i18n from '../../../helpers/i18n'
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const { createContext } = React;
     const TutorialContext = createContext();
     const LANG = i18n.lang.tutorial;
-
-    const ret = {};
+let _contextCaller;    
 
     class TutorialContextProvider extends React.Component {
         constructor(props) {
@@ -122,11 +112,11 @@ define([
 
     class TutorialComponent extends React.Component {
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
         }
 
         componentWillUnmount() {
-            ret.contextCaller = null;
+            _contextCaller = null;
         }
 
         renderTutorialDialog() {
@@ -194,7 +184,7 @@ define([
     };
     TutorialComponent.contextType = TutorialContext;
 
-    class Tutorial extends React.Component {
+    export class Tutorial extends React.Component {
         constructor(props) {
             super(props);
         }
@@ -219,7 +209,10 @@ define([
             )
         }
     }
-    ret.Tutorial = Tutorial;
+class ContextHelper {
+    static get _contextCaller() {
+        return _contextCaller;
+    }
+}
 
-    return ret;
-});
+export const TutorialContextCaller = ContextHelper._contextCaller;

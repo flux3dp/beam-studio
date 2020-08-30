@@ -1,28 +1,19 @@
-define([
-    'jquery',
-    'helpers/i18n',
-    'helpers/local-storage',
-    'helpers/shortcuts',
-    'helpers/api/config',
-    'helpers/logger',
-    'helpers/device-master',
-    'app/actions/alert-actions',
-], function(
-    $,
-    i18n,
-    localStorage,
-    shortcuts,
-    config,
-    Logger,
-    DeviceMaster,
-    AlertActions,
-) {
-    'use strict';
+import $ from 'jquery'
+import * as i18n from '../../helpers/i18n'
+import shortcuts from '../../helpers/shortcuts'
+import config from '../../helpers/api/config'
+import Logger from '../../helpers/logger'
+import DeviceMaster from '../../helpers/device-master'
+import AlertActions from './alert-actions'
 
-    var lang = i18n.get();
+    const lang = i18n.lang;
+    const FLUX = window['FLUX'];
+    const analytics = window['analytics'];
+    const svgEditor = window['svgEditor'];
+    const electron = window['electron'];
     // prevent delete (back) behavior
 
-    var genericLogger = new Logger('generic'),
+    var genericLogger = Logger('generic'),
         defaultKeyBehavior = function() {
             shortcuts.on(['BACK'], function(e) {
                 // always prevent default, and implement delete function our own.
@@ -83,9 +74,9 @@ define([
             shortcuts.on([FN_KEY, 'a'], function() { window.document.execCommand('selectAll'); });
             shortcuts.on([FN_KEY, 'x'], function() { window.document.execCommand('cut'); });
             shortcuts.on([FN_KEY, 'v'], function() { window.document.execCommand('paste'); });
-            shortcuts.on([FN_KEY, '0'], function() { console.log("Reset View!"); window.svgEditor.resetView(); });
-            shortcuts.on([FN_KEY, 'plus'], function() { console.log("Zoom In"); window.svgEditor.zoomIn(); });
-            shortcuts.on([FN_KEY, 'minus'], function() { console.log("Zoom Out"); window.svgEditor.zoomOut(); });
+            shortcuts.on([FN_KEY, '0'], function() { console.log("Reset View!"); svgEditor.resetView(); });
+            shortcuts.on([FN_KEY, 'plus'], function() { console.log("Zoom In"); svgEditor.zoomIn(); });
+            shortcuts.on([FN_KEY, 'minus'], function() { console.log("Zoom Out"); svgEditor.zoomOut(); });
 
             shortcuts.on(['ctrl', 'alt', 'd'], function(e) {
                 if(electron) {
@@ -103,8 +94,8 @@ define([
 
     // detached keyup and keydown event
     window.addEventListener('popstate', function(e) {
-        if(window.FLUX.allowTracking && window.analytics) {
-            window.analytics.event('send', 'pageview', location.hash);
+        if(FLUX.allowTracking && analytics) {
+            analytics.event('send', 'pageview', location.hash);
         }
         shortcuts.disableAll();
         // TODO
@@ -114,8 +105,8 @@ define([
     // GA Import Begin
     $('body').on('click', '[data-ga-event]', function(e) {
         var $self = $(e.currentTarget);
-        if(window.FLUX.allowTracking && window.analytics) {
-            window.analytics.event('send', 'event', 'button', 'click', $self.data('ga-event'));
+        if(FLUX.allowTracking && analytics) {
+            analytics.event('send', 'event', 'button', 'click', $self.data('ga-event'));
         }
     });
 
@@ -126,7 +117,7 @@ define([
     };
 
     //Process Visual C++ Redistributable Check
-    window.FLUX.processPythonException = function(exception_str){
+    FLUX.processPythonException = function(exception_str){
         if(exception_str.indexOf("ImportError: DLL load failed") !== -1){
             AlertActions.showPopupError(
                 'error-vcredist',
@@ -139,13 +130,11 @@ define([
     if(window.navigator.userAgent.indexOf("Intel Mac OS X 10_9") !== -1){
         AlertActions.showPopupError(
             'error-osx_10_9',
-            lang.support.osx_10_9
+            lang.support.osx_10_9,
         );
     };
 
-    DeviceMaster.startMonitoringUsb();
-
-    return function(callback) {
+    export default function(callback) {
         var $body = $('body'),
             hash = location.hash,
             onFinished = function(data) {
@@ -166,8 +155,8 @@ define([
                 onError: onFinished
             };
 
-        config(opt).read('printer-is-ready', {
+        // todo: does not support on error?
+        config().read('printer-is-ready', {
             onFinished: onFinished
         });
     };
-});

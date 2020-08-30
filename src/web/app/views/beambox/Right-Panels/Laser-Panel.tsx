@@ -1,49 +1,28 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/constants/right-panel-constants',
-    'app/stores/beambox-store',
-    'jsx!contexts/DialogCaller',
-    'jsx!widgets/Unit-Input-v2',
-    'jsx!widgets/Button-Group',
-    'jsx!widgets/Dropdown-Control',
-    'jsx!widgets/Modal',
-    'jsx!views/beambox/Right-Panels/Laser-Manage-Modal',
-    'helpers/local-storage',
-    'helpers/i18n',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/diode-boundary-drawer'
-], function(
-    $,
-    PropTypes,
-    BeamboxPreference,
-    FnWrapper,
-    RightPanelConstants,
-    BeamboxStore,
-    DialogCaller,
-    UnitInput,
-    ButtonGroup,
-    DropdwonControl,
-    Modal,
-    LaserManageModal,
-    LocalStorage,
-    i18n,
-    Alert,
-    AlertConstants,
-    TutorialController,
-    TutorialConstants,
-    Constant,
-    DiodeBoundaryDrawer
-) {
-    'use strict';
-    const React = require('react');
-    const classNames = require('classnames');
+import $ from 'jquery'
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import RightPanelConstants from '../../../constants/right-panel-constants'
+import BeamboxStore from '../../../stores/beambox-store'
+import DialogCaller from '../../../contexts/DialogCaller'
+import UnitInput from '../../../widgets/Unit-Input-v2'
+import ButtonGroup from '../../../widgets/Button-Group'
+import DropdwonControl from '../../../widgets/Dropdown-Control'
+import Modal from '../../../widgets/Modal'
+import LaserManageModal from './Laser-Manage-Modal'
+import * as LocalStorage from '../../../../helpers/local-storage'
+import * as i18n from '../../../../helpers/i18n'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import * as TutorialController from '../../../views/tutorials/Tutorial-Controller'
+import TutorialConstants from '../../../constants/tutorial-constants'
+import Constant from '../../../actions/beambox/constant'
+import DiodeBoundaryDrawer from '../../../actions/beambox/diode-boundary-drawer'
+
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
     const defaultLaserOptions = [
@@ -86,13 +65,14 @@ define([
 
         UNSAFE_componentWillReceiveProps(nextProps) {
             if (nextProps.configName != '') {
-                if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || LocalStorage.get('customizedLaserConfigs').findIndex((e) => e.name === String(nextProps.configName)) > -1) {
-                    document.getElementById('laser-config-dropdown').value = nextProps.configName;
+                if (defaultLaserOptions.indexOf(nextProps.configName) > 0 || 
+                    (LocalStorage.get('customizedLaserConfigs') as any[]).findIndex((e) => e.name === String(nextProps.configName)) > -1) {
+                    (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = nextProps.configName;
                 } else {
-                    document.getElementById('laser-config-dropdown').value = defaultLaserOptions[0];
+                    (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = defaultLaserOptions[0];
                 }
             } else {
-                document.getElementById('laser-config-dropdown').value = defaultLaserOptions[0];
+                (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = defaultLaserOptions[0];
             }
 
             this.setState({
@@ -123,7 +103,9 @@ define([
                     }
                 });
                 let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+                // @ts-expect-error
                 customizedLaserConfigs = customizedLaserConfigs.filter((config) => !config.isDefault);
+                // @ts-expect-error
                 customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
                 const defaultLaserConfigsInUse = {};
                 defaultLaserOptions.forEach(e => {
@@ -132,7 +114,7 @@ define([
                 LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                 LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
             } else {
-                let customized = LocalStorage.get('customizedLaserConfigs') || [];
+                let customized: any[] = LocalStorage.get('customizedLaserConfigs') as any[] || [];
                 const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse') || {};
                 for (let i = 0; i < customized.length; i++) {
                     if (customized[i].isDefault) {
@@ -172,10 +154,13 @@ define([
                 {extensionName: 'JSON', extensions: ['json']}
             ], true);
             if (targetFilePath) {
-                const fs = require('fs');
+                const fs = requireNode('fs');;
                 const laserConfig = {};
 
+                // @ts-expect-error
                 laserConfig.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
+                
+                // @ts-expect-error
                 laserConfig.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
                 fs.writeFileSync(targetFilePath, JSON.stringify(laserConfig));
             }
@@ -191,13 +176,13 @@ define([
                 strength:   layerData.power,
                 repeat:     layerData.repeat,
                 height:     layerData.height,
-                zStep:      layerData.zStep,
-                isDiode:    layerData.isDiode > 0,
+                zStep:      layerData.zstep,
+                isDiode:    parseInt(layerData.diode) > 0,
             });
         }
 
         updatePresetLayerConfig = () => {
-            const customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+            const customizedLaserConfigs: any[] = LocalStorage.get('customizedLaserConfigs') as any[] || [];
             const drawing = svgCanvas.getCurrentDrawing();
             const layerCount = drawing.getNumLayers();
             for (let i=0; i < layerCount; i++) {
@@ -211,7 +196,7 @@ define([
                 if (configIndex >= 0) {
                     const config = customizedLaserConfigs[configIndex];
                     if (config.isDefault) {
-                        if (defaultLaserOptions.includes(customized[i].key)) {
+                        if (defaultLaserOptions.includes(config.key)) {
                             const {speed, power, repeat} = this._getDefaultParameters(config.key);
                             layer.setAttribute('data-speed', speed);
                             layer.setAttribute('data-strength', power);
@@ -224,7 +209,7 @@ define([
             }
         };
 
-        _handleSpeedChange = (val, unit) => {
+        _handleSpeedChange = (val, unit?: string) => {
             if (unit === 'inches') {
                 val *= 25.4;
             }
@@ -265,7 +250,7 @@ define([
         }
 
         _handleSaveConfig = (name) => {
-            const customizedConfigs = LocalStorage.get('customizedLaserConfigs');
+            const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
             if (!customizedConfigs || customizedConfigs.length < 1) {
                 LocalStorage.set('customizedLaserConfigs', [{
                     name,
@@ -279,7 +264,7 @@ define([
                     selectedItem: name,
                     original: name
                 }, () => {
-                    document.getElementById('laser-config-dropdown').value = name;
+                    (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = name;
                 });
                 this.props.funcs.writeConfigName(this.props.layerName, name);
             } else {
@@ -296,7 +281,7 @@ define([
                         selectedItem: name,
                         original: name
                     }, () => {
-                        document.getElementById('laser-config-dropdown').value = name;
+                        (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = name;
                     });
                     this.props.funcs.writeConfigName(this.props.layerName, name);
                 } else {
@@ -309,7 +294,7 @@ define([
         }
 
         _handleCancelModal = () => {
-            document.getElementById('laser-config-dropdown').value = this.state.original;
+            (document.getElementById('laser-config-dropdown') as HTMLSelectElement).value = this.state.original;
             this.setState({ modal: '' });
         }
 
@@ -391,7 +376,7 @@ define([
                 this.exportLaserConfigs();
                 this._handleCancelModal();
             } else {
-                const customizedConfigs = LocalStorage.get('customizedLaserConfigs').find((e) => e.name === value);
+                const customizedConfigs = (LocalStorage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
                 const {
                     speed,
                     power,
@@ -641,13 +626,14 @@ define([
 
         render() {
             const layer = svgCanvas.getCurrentDrawing().getLayerByName(this.props.layerName);
+            // @ts-expect-error unsure..
             const paths = $(layer).find('path, rect, ellipse, polygon, line', 'text');
             let hasVector = false;
             for (let j = 0; j < paths.length; j++) {
                 const path = paths[j],
                     fill = $(path).attr('fill'),
                     fill_op = $(path).attr('fill-opacity');
-                if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
+                if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === '0') {
                     hasVector = true;
                     break;
                 }
@@ -682,7 +668,7 @@ define([
                     label: LANG.dropdown[unit][item]
                 };
             });
-            const customizedConfigs = LocalStorage.get('customizedLaserConfigs');
+            const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
             const customizedOptions = (customizedConfigs || customizedConfigs.length > 0) ? customizedConfigs.map((e) => {
                 return {
                     value: e.name,
@@ -735,6 +721,4 @@ define([
         funcs:      PropTypes.object.isRequired
     };
 
-    return LaserPanel;
-
-});
+    export default LaserPanel;

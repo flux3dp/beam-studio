@@ -1,10 +1,7 @@
 /**
  * key code map
  */
-define(function() {
-    'use strict';
-
-    return {
+export default {
         KEY_L_CMD    : 91,  // or left window key
         KEY_R_CMD    : 93,  // or select key
         KEY_RETURN   : 13,  // enter
@@ -29,4 +26,3 @@ define(function() {
         KEY_V        : 86,
         KEY_X        : 88,
     };
-});

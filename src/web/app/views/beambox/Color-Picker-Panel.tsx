@@ -1,19 +1,16 @@
 
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'helpers/i18n'
-], function(
-    $,
-    i18n
-) {
+import $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+const svgCanvas = window['svgCanvas'];
+
     const LANG = i18n.lang.beambox.photo_edit_panel;
-    const React = require('react');
-    const ReactDOM = require('react-dom');
-    const classNames = require('classnames');
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
+    const classNames = requireNode('classnames');
     
     class ColorPickerPanel extends React.Component{
-        constructor(props) {
+        constructor(props?) {
             super(props);
             this.reactRoot = '';
             this.me = null;
@@ -119,5 +116,4 @@ define([
 
     const instance = new ColorPickerPanel();
 
-    return instance;
-});
+    export default instance;

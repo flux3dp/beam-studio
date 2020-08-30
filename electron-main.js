@@ -1,21 +1,21 @@
-const {app, ipcMain, BrowserWindow, dialog} = require('electron');
-const electronLocalshortcut = require('electron-localshortcut')
+const {app, ipcMain, BrowserWindow, dialog} = require('electron');;
+const electronLocalshortcut = require('electron-localshortcut');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
-const BackendManager = require('./src/backend-manager.js');
-const MonitorManager = require('./src/monitor-manager.js');
-const MenuManager = require('./src/menu-manager.js');
-const UpdateManager = require('./src/update-manager.js');
-const UglyNotify = require('./src/ugly-notify.js');
-const events = require('./src/ipc-events');
+const BackendManager = require('./src/node/backend-manager.js');
+const MonitorManager = require('./src/node/monitor-manager.js');
+const MenuManager = require('./src/node/menu-manager.js');
+const UpdateManager = require('./src/node/update-manager.js');
+const UglyNotify = require('./src/node/ugly-notify.js');
+const events = require('./src/node/ipc-events');
 
-const TTC2TTF = require('./src/ttc2ttf.js');
+const TTC2TTF = require('./src/node/ttc2ttf.js');
 
 const FontManager = require('font-manager');
 const TextToSVG = require('text-to-svg');
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
+const fs = require('fs');;
 const os = require('os');
 const exec = require('child_process').exec;
 
@@ -117,7 +117,7 @@ function onDeviceUpdated(deviceInfo) {
     global.devices[deviceID] = deviceInfo;
 }
 
-require('./src/bootstrap.js');
+require('./src/node/bootstrap.js');
 
 const updateManager = new UpdateManager();
 const backendManager = new BackendManager({
@@ -182,7 +182,7 @@ function createWindow () {
         frame: process.platform === 'win32' ? false : null,
         title: `Beam Studio - ${app.getVersion()}`,
         webPreferences: {
-            preload: path.join(__dirname, 'src', 'main-window-entry.js'),
+            preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
             nodeIntegration: true
         },
         vibrancy: 'light'});

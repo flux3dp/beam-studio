@@ -1,8 +1,6 @@
-define([], function(){
-    'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
 
-    class List extends React.Component{
+    export default class List extends React.Component{
         render() {
             var list_items = this.props.items.map(function(opt, i){
                 var metadata = JSON.stringify(opt.data),
@@ -34,6 +32,3 @@ define([], function(){
         onClick: function() {},
         ondblclick: function() {}
     };
-
-    return List;
-});

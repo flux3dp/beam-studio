@@ -1,13 +1,7 @@
-define([
-    'app/constants/input-lightbox-constants',
-    'app/dispatcher/input-lightbox-dispatcher'
-], function(
-    InputLightboxConstants,
-    InputLightboxDispatcher
-) {
-    'use strict';
+import InputLightboxConstants from '../constants/input-lightbox-constants'
+import InputLightboxDispatcher from '../dispatcher/input-lightbox-dispatcher'
 
-    return {
+export default {
         open: function(id, args) {
             args = args || {};
             InputLightboxDispatcher.dispatch({
@@ -21,7 +15,6 @@ define([
                 confirmText  : args.confirmText,
                 onClose      : args.onClose,
                 onSubmit     : args.onSubmit
-            }, id);
+            });
         }
     };
-});

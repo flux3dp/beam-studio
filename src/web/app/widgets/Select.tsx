@@ -1,8 +1,9 @@
 // refer to: https://gist.github.com/jbottigliero/7982340,
 //           https://github.com/JedWatson/react-select
-define(['reactPropTypes'], function(PropTypes){
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+    
+    const React = requireNode('react');;
 
     class Select extends React.Component{
         render() {
@@ -58,5 +59,4 @@ define(['reactPropTypes'], function(PropTypes){
         onChange: PropTypes.func
     };
 
-    return Select;
-});
+    export default Select;

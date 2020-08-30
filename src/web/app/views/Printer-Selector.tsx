@@ -1,94 +1,73 @@
-define([
-    'reactPropTypes',
-    'reactClassset',
-    'jquery',
-    'jsx!widgets/List',
-    'helpers/api/discover',
-    'helpers/device-master',
-    'helpers/i18n',
-    'helpers/api/touch',
-    'app/constants/device-constants',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/initialize-machine',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/actions/input-lightbox-actions',
-    'app/constants/input-lightbox-constants',
-    'helpers/sprintf',
-    'helpers/check-device-status',
-    'helpers/device-list'
-], function(
-    PropTypes,
-    ReactCx,
-    $,
-    ListView,
-    Discover,
-    DeviceMaster,
-    i18n,
-    Touch,
-    DeviceConstants,
-    Alert,
-    AlertConstants,
-    InitializeMachine,
-    ProgressActions,
-    ProgressConstants,
-    InputLightboxActions,
-    InputLightboxConstants,
-    sprintf,
-    CheckDeviceStatus,
-    DeviceList
-) {
-    'use strict';
-    const React = require('react');
 
+import $ from 'jquery'
+import ListView from '../widgets/List'
+import Discover from '../../helpers/api/discover'
+import DeviceMaster from '../../helpers/device-master'
+import * as i18n from '../../helpers/i18n'
+import DeviceConstants from '../constants/device-constants'
+import Alert from '../contexts/AlertCaller'
+import AlertConstants from '../constants/alert-constants'
+import InitializeMachine from '../actions/initialize-machine'
+import ProgressActions from '../actions/progress-actions'
+import ProgressConstants from '../constants/progress-constants'
+import CheckDeviceStatus from '../../helpers/check-device-status'
+import { IDeviceInfo } from '../../interfaces/IDevice'
+// @ts-expect-error
+import PropTypes = require('reactPropTypes');
+// @ts-expect-error
+import ReactCx = require('reactClassset');
+const React = requireNode('react');;
     const lang = i18n.lang;
-    class PrinterSelector extends React.Component{
+    class PrinterSelector extends React.Component<PrinterSelectorProps, PrinterSelectorState>{
+        static defaultProps = {
+            uniqleId: '',
+            className: '',
+            modelFilter: '',
+            forceAuth: false,
+            onGettingPrinter: function(printer: IDeviceInfo) {},
+            onUnmount: function() {},
+            onClose: function() {},
+            arrowDirection: 'right' //'left'
+        };
+        defaultPrinter: IDeviceInfo | null;
+        displayName: string
+        refreshOption: (devices: IDeviceInfo[]) => void
+        discoverAPI: { connection: any; poke: (targetIP: any) => void; testTcp: (targetIP: any) => void; countDevices: () => number; removeListener: (_id: any) => void; sendAggressive: () => void; getLatestPrinter: (printer: any) => any }
+        isMounted: boolean;
         constructor(props) {
             super(props);
             this.displayName = 'PrinterSelection';
-            this.selected_printer = null;
-            let modelFilter = this.props.modelFilter.split(','),
-                hasDefaultPrinter = InitializeMachine.defaultPrinter.exist() && !this.props.bypassDefaultPrinter;
+            this.refreshOption = () => {};
+            const modelFilter = this.props.modelFilter.split(',');
 
-
-            const defaultPrinter = InitializeMachine.defaultPrinter.get();
-            
-            if (modelFilter.length > 0 && defaultPrinter.model) {
-                // If the model of defaultPrinter is not in the whitelist
-                if (modelFilter.indexOf(defaultPrinter.model) <= 0) {
-                    hasDefaultPrinter = false;
+            if (!this.props.bypassDefaultPrinter) {
+                const dp = InitializeMachine.defaultPrinter.get();
+                if (dp.uuid && !modelFilter.includes(dp.model)) {
+                    this.defaultPrinter = dp;
                 }
             }
+
             this.state = {
-                discoverId          : 'printer-selector-' + (this.props.uniqleId || ''),
+                discoverId          : `printer-selector-${this.props.uniqleId}`,
                 devices             : [],
                 loadFinished        : false,
-                modelFilter         : modelFilter,
-                hasDefaultPrinter   : hasDefaultPrinter,
-                discoverMethods     : {},
-                componentReady      : false
+                modelFilter         : modelFilter
             };
         }
 
         componentDidMount() {
-            var selectedPrinter = InitializeMachine.defaultPrinter.get(),
-                self = this,
-                currentPrinter,
-                _options = [],
-                refreshOption = function(options) {
-                    _options = [];
-
-                    options.forEach(function(el) {
-                        _options.push({
-                            label: self._renderPrinterItem(el)
-                        });
-
-                        if (
-                            true === self.hasDefaultPrinter &&
-                            el.uuid === selectedPrinter.uuid &&
-                            this.props.bypassDefaultPrinter !== true
-                        ) {
+            // TODO: Clean up selected printer logic to recognize as object | null
+            const self = this;
+            this.discoverAPI = Discover(
+                this.state.discoverId,
+                function(printers) {
+                    this.refreshOption(printers);
+                }
+            )
+            this.refreshOption = function(devices: IDeviceInfo[]) {
+                    const options: any[] = devices.map((el) => { label: this._renderPrinterItem(el)});
+                    devices.forEach((el) => {
+                        if (el.uuid === this.defaultPrinter?.uuid) {
                             // update device stat
                             InitializeMachine.defaultPrinter.set({
                                 name: el.name,
@@ -99,125 +78,37 @@ define([
                     });
 
                     if (self.props.showExport) {
-                        _options.push({
-                            label: self._renderExportItem()
-                        });
+                        options.push({ label: self._renderExportItem() });
                     }
 
                     self.setState({
-                        devices: _options,
+                        devices: options,
                         loadFinished: true
-                    }, function() {
-                        self._openAlertWithnoPrinters();
                     });
                 };
-
-            const existWifiAndUsbConnection = (serial) => {
-                let devices = DeviceMaster.getAvailableDevices(),
-                    num = 0;
-
-                devices.map(device => {
-                    if(device.serial === serial) {
-                        num++;
-                    }
-                });
-
-                return num >= 2;
-            };
-
-            const next = (status, preferredDevice) => {
-                console.trace("Calling Printer-Selector Next");
-                if(preferredDevice) {
-                    selectedPrinter = preferredDevice;
-                }
-                self.setState({
-                    discoverMethods: Discover(
-                        self.state.discoverId,
-                        function(printers) {
-                            printers = DeviceList(printers);
-                            refreshOption(printers);
-                        }
-                    )
-                }, function() {
-                    var timer,
-                        tryTimes = 20,
-                        selectDefaultDevice = function() {
-                            if (self.state.hasDefaultPrinter) {
-                                if (currentPrinter) {
-                                    self._selectPrinter(currentPrinter);
-                                    clearInterval(timer);
-                                }
-                                else {
-                                    tryTimes--;
-                                }
-                            }
-
-                            if (0 > tryTimes) {
-                                clearInterval(timer);
-                                if(self.state.devices.length === 0) {
-                                    Alert.popUp({
-                                        id: 'device-not-found',
-                                        message: lang.message.device_not_found.message,
-                                        caption: lang.message.device_not_found.caption,
-                                        callbacks: () => {this._onCancel('device-not-found')}
-                                    });
-                                }
-                                else {
-                                    self.setState({
-                                        loadFinished: false,
-                                        hasDefaultPrinter: false
-                                    });
-                                }
-                            }
-                        };
-
-                    currentPrinter = self.state.discoverMethods.getLatestPrinter(selectedPrinter);
-
-                    timer = setInterval(selectDefaultDevice, 100);
-                });
-
-                self._waitForPrinters();
-            };
-
             //check for default printer availablity
-            let defaultDeviceExists = DeviceMaster.existDevice(selectedPrinter.serial);
-
-            const noDefaultPrinter = () => {
+            let foundPrinter = false;
+            if (this.defaultPrinter) {
+                DeviceMaster.selectDevice(this.defaultPrinter).then((result) => {
+                    if (result.success) {
+                        foundPrinter = true;
+                        self.props.onGettingPrinter(this.defaultPrinter);
+                    }
+                }).catch(() => {});
+            }
+            if (!foundPrinter) {
                 self.setState({
-                    loadFinished: false,
-                    hasDefaultPrinter: false
-                }, next);
-            };
-
-            if (defaultDeviceExists && 
-                (this.state.modelFilter.length === 0 || 
-                 this.state.modelFilter.indexOf(selectedPrinter.model) >= 0)) {
-                let existBothConnection = existWifiAndUsbConnection(selectedPrinter.serial);
-                if (existBothConnection) {
-                    noDefaultPrinter();
-                } else {
-                    DeviceMaster.selectDevice(selectedPrinter)
-                    .then(next)
-                    .fail(noDefaultPrinter);
-                }
-            } else {
-                noDefaultPrinter();
+                    loadFinished: false
+                });
             }
         }
 
         componentWillUnmount() {
-            if ('function' === typeof this.state.discoverMethods.removeListener) {
-                this.state.discoverMethods.removeListener(this.state.discoverId);
-            }
-            if(this.props.onUnmount) {
-                this.props.onUnmount();
-            }
-
-            clearTimeout(this._noPrinterAlertTimeout);
+            this.discoverAPI.removeListener(this.state.discoverId);
+            this.props.onUnmount();
         }
 
-        _onCancel = (id) => {
-            this.setState({ processing: false });
+        _onCancel (id) {
             switch (id) {
             case 'no-printer':
             case 'printer-connection-timeout':
@@ -228,183 +119,48 @@ define([
             }
         }
 
-        _selectPrinter = (printer, e) => {
-            this.setState({ processing: true });
-            var self = this,
-                onError;
-
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
-            onError = function() {
-                ProgressActions.close();
-                if(self.selected_printer.plaintext_password) {
-                    //Skip if user entered password for the first time.
-                    self._returnSelectedPrinter();
-                }
-                else {
-                    InputLightboxActions.open('auth-device', {
-                        type         : InputLightboxConstants.TYPE_PASSWORD,
-                        caption      : sprintf(lang.select_printer.notification, printer.name),
-                        inputHeader  : lang.select_printer.please_enter_password,
-                        confirmText  : lang.select_printer.submit,
-                        onSubmit     : function(password) {
-                            printer.plaintext_password = password;
-                            ProgressActions.open(ProgressConstants.NONSTOP);
-
-                            self._auth(printer.uuid, password, {
-                                onError: function(response) {
-                                    var message = (
-                                        false === response.reachable ?
-                                        lang.select_printer.unable_to_connect :
-                                        lang.select_printer.auth_failure
-                                    );
-
-                                    ProgressActions.close();
-
-                                    Alert.popUp({
-                                        id: 'device-auth-fail',
-                                        message,
-                                        type: AlertConstants.SHOW_POPUP_ERROR,
-                                        callbacks: () => {this._onCancel('device-auth-fail')}
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            };
-
-            printer = DeviceMaster.usbDefaultDeviceCheck(printer);
-            self.selected_printer = printer;
-
-            if ('00000000000000000000000000000000' === self.selected_printer.uuid) {
-                self._returnSelectedPrinter();
-            }
-            else {
-                DeviceMaster.selectDevice(self.selected_printer).done((status) => {
-                    if (status === DeviceConstants.CONNECTED) {
-                        printer = self.selected_printer;
+        async _selectPrinter (printer: IDeviceInfo) {
+                DeviceMaster.selectDevice(printer).then((status) => {
+                    if (status.success) {
                         ProgressActions.open(ProgressConstants.NONSTOP);
-
-                        const next = () => {
-                            ProgressActions.close();
-                            if (true === self.props.forceAuth && true === printer.password) {
-                                onError();
-                                return;
-                            }
-
-                            self._returnSelectedPrinter();
-                        };
-
-                        if(this.props.bypassCheck === true) {
-                            next();
-                        }
-                        else {
-                            CheckDeviceStatus(printer).done(next);
-                        }
+                        CheckDeviceStatus(printer).done(() => {
+                            this.props.onGettingPrinter(printer)
+                        });
                     }
-                    else if (status === DeviceConstants.TIMEOUT) {
-                        // TODO: Check default printer
-                        if (self.state.hasDefaultPrinter) {
-                            Alert.popUp({
-                                id: 'printer-connection-timeout',
-                                message: sprintf(lang.message.device_not_found.message, self.selected_printer.name),
-                                caption: lang.message.device_not_found.caption,
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                callbacks: () => {this._onCancel('printer-connection-timeout')}
-                            });
-                        }
-                        else {
-                            Alert.popUp({
-                                id: 'printer-connection-timeout',
-                                message: lang.message.connectionTimeout,
-                                caption: lang.caption.connectionTimeout,
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                callbacks: () => {this._onCancel('printer-connection-timeout')}
-                            });
-                        }
-                    }
-                }).always(() => {
-                    ProgressActions.close();
-                }).fail((status) => {
+                }).catch((error) => { // TODO: error handling from select device
                     Alert.popUp({
                         id: 'fatal-occurred',
-                        message: `#813 ${status}`,
+                        message: `#813 ${error}`,
                         type: AlertConstants.SHOW_POPUP_ERROR,
                         callbacks: () => {this._onCancel('fatal-occurred')}
                     });
+                }).finally(() => {
+                    ProgressActions.close();
                 });
-            }
         }
 
-        _auth = (uuid, password, opts) => {
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
-            opts = opts || {};
-            opts.onError = opts.onError || function() {};
-
-            var self = this,
-                _opts;
-
-            _opts = {
-                onSuccess: function(data) {
-                    ProgressActions.close();
-                    self._returnSelectedPrinter();
-                },
-                onFail: function(data) {
-                    ProgressActions.close();
-                    opts.onError(data);
-                },
-                checkPassword: self.props.forceAuth
-            };
-
-            Touch(_opts).send(uuid, password);
-        }
-
-        _handleClose =(e) => {
+        _handleClose () {
             this.props.onClose();
         }
 
         // renders
-        _renderPrinterSelection = () => {
-            let devices = this.state.devices;
-            if (this.state.modelFilter.length > 0) {
-                
-                devices = devices.filter((v) => {
-                    return this.state.modelFilter.indexOf(v.label.props['data-model'])>=0 || v.label.props.id === "export-item";
-                });
-            }
-            let options = (0 < devices.length ? devices : [{
-                    label: (
-                        <div className="spinner-roller spinner-roller-reverse"/>
-                    )
-                }]),
-                content = (
+        _renderPrinterSelection() {
+            let devices = this.state.devices.filter((v) => {
+                return this.state.modelFilter.includes(v.label.props['data-model']) || v.label.props.id === "export-item";
+            });
+            const options = (0 < devices.length ? devices : [{
+                    label: (<div className="spinner-roller spinner-roller-reverse"/>)
+                }]);
+            let content = (
                     <div className="device-wrapper">
                         <ListView className="printer-list" items={options}/>
                     </div>
                 );
-            if(this.state.processing) {
-                content = (
-                    <div className="spinner-roller invert"/>
-                );
-            }
 
             return content;
         }
 
-        _returnSelectedPrinter = () => {
-            var self = this;
-
-            self.props.onGettingPrinter(self.selected_printer);
-        }
-
-        _waitForPrinters =() => {
-            this._noPrinterAlertTimeout = setTimeout(this._openAlertWithnoPrinters, 5000);
-        }
-
-        _openAlertWithnoPrinters = () => {
-        }
-
-        _renderPrinterItem = (printer) => {
+        _renderPrinterItem (printer) {
             var meta,
                 status = lang.machine_status,
                 headModule = lang.head_module,
@@ -413,7 +169,7 @@ define([
                 headText = headModule[printer.head_module] || headModule.UNKNOWN;
 
             if (DeviceConstants.status.RUNNING === printer.st_id && 'number' === typeof printer.st_prog) {
-                statusText += ' - ' + (parseInt(printer.st_prog * 1000) * 0.1).toFixed(1) + '%';
+                statusText += ' - ' + (printer.st_prog * 100).toFixed(1) + '%';
             }
 
             try {
@@ -437,7 +193,7 @@ define([
             );
         }
 
-        _renderExportItem = (printer) => {
+        _renderExportItem = () => {
 
             return (
                 <div className="device printer-item" id={"export-item"} data-status={0} data-meta={0} onClick={() => {this.props.onGettingPrinter("export_fcode")} }>
@@ -452,11 +208,9 @@ define([
 
         render() {
             var self = this,
-                showPassword = self.state.showPassword,
                 wrapperClass = {'select-printer': true},
                 wrapperStyle = self.props.WindowStyle,
-                content = self._renderPrinterSelection(lang),
-                hasDefaultPrinter = self.state.hasDefaultPrinter;
+                content = self._renderPrinterSelection();
 
             if (self.props.className) {
                 wrapperClass[self.props.className] = true;
@@ -466,7 +220,7 @@ define([
             const arrowClass = `arrow arrow-${this.props.arrowDirection}`;
 
             return (
-                true === hasDefaultPrinter ?
+                this.defaultPrinter ?
                 <span/> :
                 <div className={wrapperClass} style={wrapperStyle}>
                     {content}
@@ -477,25 +231,32 @@ define([
 
     };
 
-    PrinterSelector.propTypes = {
+    interface PrinterSelectorState {
+        discoverId: string
+        devices: any[]
+        loadFinished: boolean,
+        modelFilter: string[]
+    }
+    interface PrinterSelectorProps {
+        uniqleId: string
+        bypassDefaultPrinter: boolean
+        showExport: boolean
+        modelFilter: string
+        onClose: Function
+        onGettingPrinter: Function
+        onUnmount: Function
+        className: any
+        WindowStyle: any
+    }
+
+    PrinterSelector['propTypes'] = {
         showExport: PropTypes.bool,
         modelFilter: PropTypes.string,
         onClose: PropTypes.func,
         onGettingPrinter: PropTypes.func
     };
 
-    PrinterSelector.defaultProps = {
-        uniqleId: '',
-        className: '',
-        modelFilter: '',
-        forceAuth: false,
-        onGettingPrinter: function() {},
-        onUnmount: function() {},
-        onClose: function() {},
-        arrowDirection: 'right' //'left'
-    };
 
     PrinterSelector.BEAMBOX_FILTER = "laser-b1,laser-b2,fbm1,fbb1b,fbb1p,mozu1,darwin-dev";
     PrinterSelector.DELTA_FILTER = "delta-1,delta-1p";
-    return PrinterSelector;
-});
+    export default PrinterSelector;

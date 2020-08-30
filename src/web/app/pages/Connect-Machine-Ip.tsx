@@ -1,32 +1,20 @@
-define([
-    'jsx!widgets/Modal',
-    'app/actions/beambox/beambox-preference',
-    'app/constants/keycode-constants',
-    'helpers/api/discover',
-    'helpers/device-list',
-    'helpers/device-master',
-    'helpers/i18n',
-    'helpers/websocket',
-], function (
-    Modal,
-    BeamboxPreference,
-    keyCodeConstants,
-    Discover,
-    DeviceList,
-    DeviceMaster,
-    i18n,
-    Websocket
-) {
-    'use strict';
-    const React = require('react');
-    const classNames = require('classnames');
+import Modal from '../widgets/Modal'
+import BeamboxPreference from '../actions/beambox/beambox-preference'
+import keyCodeConstants from '../constants/keycode-constants'
+import Discover from '../../helpers/api/discover'
+import DeviceList from '../../helpers/device-list'
+import DeviceMaster from '../../helpers/device-master'
+import * as i18n from '../../helpers/i18n'
+import Websocket from '../../helpers/websocket'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     const lang = i18n.lang.initialize;
     const TIMEOUT = 20;
     const ipRex = /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
 
-    return function () {
-        return class ConnectMachine extends React.Component{
+    class ConnectMachine extends React.Component{
             constructor(props) {
                 super(props);
                 this.state = {
@@ -46,8 +34,7 @@ define([
 
                 this.isWired = urlParams.get('wired') === '1';
 
-                this.discover = Discover('connect-machine-ip', (machines) => {
-                    const deviceList = DeviceList(machines);
+                this.discover = Discover('connect-machine-ip', (deviceList) => {
                     const {ipAvailability, machineIp} = this.state;
                     if (ipAvailability === null && machineIp !== null) {
                         for (let i=0; i < deviceList.length; i++) {
@@ -105,10 +92,10 @@ define([
             testCamera = async () => {
                 const {device} = this.state;
                 try {
-                    await DeviceMaster.select(device);
+                    await DeviceMaster.select(device); // TODO: Handle connection error
                     await DeviceMaster.connectCamera(device);
                     const imgBlob = await DeviceMaster.takeOnePicture();
-                    await DeviceMaster.disconnectCamera(device);
+                    await DeviceMaster.disconnectCamera();
                     if (imgBlob.size >= 30) {
                         this.setState({
                             cameraAvailability: true,
@@ -234,8 +221,8 @@ define([
                 const model = modelMap[device.model] || 'fbb1b';
                 BeamboxPreference.write('model', model);
                 BeamboxPreference.write('workarea', model);
-                let pokeIPs = localStorage.getItem('poke-ip-addr');
-                pokeIPs = (pokeIPs ? pokeIPs.split(/[,;] ?/) : []);
+                let addresses = localStorage.getItem('poke-ip-addr');
+                let pokeIPs = (addresses ? addresses.split(/[,;] ?/) : []);
                 if (!pokeIPs.includes(machineIp)) {
                     if (pokeIPs.length > 19) {
                         pokeIPs = pokeIPs.slice(pokeIPs.length - 19, pokeIPs.length);
@@ -244,9 +231,9 @@ define([
                     localStorage.setItem('poke-ip-addr', pokeIPs.join(','));
                 }
                 if (!localStorage.getItem('printer-is-ready')) {
-                    localStorage.setItem('new-user', true);
+                    localStorage.setItem('new-user', 'true');
                 }
-                localStorage.setItem('printer-is-ready', true);
+                localStorage.setItem('printer-is-ready', 'true');
                 location.hash = '#studio/beambox';
                 location.reload();
             }
@@ -308,5 +295,4 @@ define([
             }
 
         };
-    };
-});
+    export default () => ConnectMachine

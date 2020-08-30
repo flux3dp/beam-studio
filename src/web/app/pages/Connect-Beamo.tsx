@@ -1,30 +1,21 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Button-Group',
-    'app/actions/initialize-machine',
-    'app/actions/alert-actions',
-    'app/actions/beambox/beambox-preference',
-    'helpers/sprintf',
-    'helpers/i18n'
-], function (
-    Modal,
-    ButtonGroup,
-    initializeMachine,
-    AlertActions,
-    BeamboxPreference,
-    sprintf,
-    i18n
-) {
-    const React = require('react');
+import Modal from '../widgets/Modal'
+import ButtonGroup from '../widgets/Button-Group'
+import initializeMachine from '../actions/initialize-machine'
+import AlertActions from '../actions/alert-actions'
+import BeamboxPreference from '../actions/beambox/beambox-preference'
+import sprintf from '../../helpers/sprintf'
+import * as i18n from '../../helpers/i18n'
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.initialize;
 
-    return function () {
+    export default function () {
         class ConnectBeamo extends React.Component{
             onStart = () => {
                 BeamboxPreference.write('model', 'fbm1');
 
-                const pokeIPAddr = localStorage.getItem('poke-ip-addr');
-                const deviceIP = document.getElementById('machine_ip_init').value;
+                let pokeIPAddr = localStorage.getItem('poke-ip-addr');
+                const deviceIP = (document.getElementById('machine_ip_init') as HTMLInputElement).value;
 
                 if (deviceIP) {
                     if (!deviceIP.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)) {
@@ -34,7 +25,7 @@ define([
                         let pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
                         if (pokeIPAddrArr.indexOf(deviceIP) === -1) {
                             if (pokeIPAddrArr.length > 19) {
-                                pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
+                                pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length).join();
                             }
                             localStorage.setItem('poke-ip-addr', `${pokeIPAddr}, ${deviceIP}`);
                         }
@@ -96,4 +87,3 @@ define([
         };
         return ConnectBeamo;
     };
-});

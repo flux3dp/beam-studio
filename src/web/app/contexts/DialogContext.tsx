@@ -1,11 +1,8 @@
-define([
-], function (
-) {
-    const React = require('react');
+    const React = requireNode('react');;
     const { createContext } = React;
-    const DialogContext = createContext();
+    export const DialogContext = createContext();
 
-    class DialogContextProvider extends React.Component {
+    export class DialogContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -46,6 +43,3 @@ define([
             );
         }
     };
-
-    return {DialogContextProvider, DialogContext};
-});

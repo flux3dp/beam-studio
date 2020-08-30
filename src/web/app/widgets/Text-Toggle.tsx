@@ -1,9 +1,6 @@
-define([
-], function() {
-    'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
 
-    return class TextToggle extends React.Component{
+    export default class TextToggle extends React.Component{
         static defaultProps = {
             title: '',
             textOn: '',
@@ -70,4 +67,3 @@ define([
         }
 
     };
-});

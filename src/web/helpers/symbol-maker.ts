@@ -1,25 +1,18 @@
 /**
  * Make symbol elements for <use> element
  */
-define([
-    'helpers/i18n',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/contexts/ProgressCaller',
-], function(
-    i18n,
-    Alert,
-    AlertConstants,
-    Progress
-) {
-    'use strict';
-    let clipCount = 1;
+import Progress from '../app/contexts/ProgressCaller'
+
+let clipCount = 1;
+const svgedit = window['svgedit'];
+const svgCanvas = window['svgCanvas'];
+const electron = window['electron'];
 
     const makeSymbol = (elem, attrs, batchCmd, defs, type) => {
         const NS = svgedit.NS;
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
         const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');
-        const symbol_defs = svgdoc.createElementNS(NS.SVG, 'defs');
+        const symbol_defs = svgdoc.createElementNS(NS.SVG, 'defs') as unknown as SVGDefsElement;
         const oldLinkMap = new Map();
         defs.map(def => {
             const clonedDef = def.cloneNode(true);
@@ -59,7 +52,7 @@ define([
         traverseForRemappingId(symbol);
 
         (function remapIdOfStyle(){
-            Array.from(symbol_defs.childNodes).map(child => {
+            Array.from(symbol_defs.childNodes).map((child: SVGElement) => {
                 if (child.tagName !== 'style') {
                     return;
                 }
@@ -155,7 +148,7 @@ define([
             let texts = Array.from(textElem.childNodes).filter((child) => child.nodeType === 3);
             for (let j = texts.length - 1; j >= 0; j--) {
                 let t = texts[j];
-                const tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                const tspan = document.createElementNS(svgedit.NS.SVG, 'tspan');
                 textElem.prepend(tspan);
                 tspan.textContent = t.textContent;
                 $(t).remove();
@@ -249,7 +242,7 @@ define([
 
     const sendTaskToWorker = async (data) => {
         return new Promise((resolve, reject) => {
-            const path = require('path');
+            const path = requireNode('path');
             const workerPath = path.join(__dirname, 'js', 'helpers', 'symbol-helper', 'image-symbol-worker.js');
             const worker = new Worker(workerPath);
             worker.postMessage(data);
@@ -264,7 +257,7 @@ define([
     let requestId = 0;
 
     const svgToImgUrlByShadowWindow = async (data) => {
-        return new Promise((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
             data.id = requestId;
             electron.ipc.once(`SVG_URL_TO_IMG_URL_DONE_${requestId}`, (sender, url) => {
                 resolve(url);
@@ -282,18 +275,19 @@ define([
         return imageRatio;
     }
 
-    const makeImageSymbol = async (symbol, scale=1, imageSymbol=null) => {
+    const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imageSymbol?: SVGSymbolElement) => {
         const NS = svgedit.NS;
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
-        return new Promise(async (resolve, reject) => {
+        return new Promise<SVGSymbolElement>(async (resolve, reject) => {
             const tempSvg = svgdoc.createElementNS(NS.SVG, 'svg');
             const tempUse = svgdoc.createElementNS(NS.SVG, 'use');
-            const tempSymbol = symbol.cloneNode(true);
+            const tempSymbol = symbol.cloneNode(true) as SVGSymbolElement;
             tempSvg.appendChild(tempSymbol);
             tempSvg.appendChild(tempUse);
             svgedit.utilities.setHref(tempUse, '#' + symbol.id);
-            let bb = symbol.getAttribute('data-bbox');
-            if (!bb) {
+            let bbText = symbol.getAttribute('data-bbox');
+            let bb: {height: number, width: number, x: number, y: number};
+            if (!bbText) {
                 const useElemForBB = svgedit.utilities.findTempUse();
                 svgedit.utilities.setHref(useElemForBB, '#' + symbol.id);
                 bb = useElemForBB.getBBox();
@@ -308,11 +302,11 @@ define([
                 };
                 symbol.setAttribute('data-bbox', JSON.stringify(obj));
             } else {
-                bb = JSON.parse(bb);
+                bb = JSON.parse(bbText);
             }
             const bbObject = {x: bb.x, y: bb.y, width: bb.width, height: bb.height};
-            tempSymbol.setAttribute('x', -bbObject.x);
-            tempSymbol.setAttribute('y', -bbObject.y);
+            tempSymbol.setAttribute('x', '' + -bbObject.x);
+            tempSymbol.setAttribute('y', '' + -bbObject.y);
             const imageRatio = calculateImageRatio(bb);
             const strokeWidth = getStrokeWidth(imageRatio, scale);
             const descendants = Array.from(tempSymbol.querySelectorAll('*'));
@@ -337,24 +331,24 @@ define([
             URL.revokeObjectURL(svgUrl);
             if (!imageSymbol) {
                 const image = svgdoc.createElementNS(NS.SVG, 'image');
-                imageSymbol = svgdoc.createElementNS(NS.SVG, 'symbol');
+                imageSymbol = svgdoc.createElementNS(NS.SVG, 'symbol') as unknown as SVGSymbolElement;
                 svgedit.utilities.findDefs().appendChild(imageSymbol);
                 imageSymbol.appendChild(image);
-                image.setAttribute('x', bb.x);
-                image.setAttribute('y', bb.y);
-                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
-                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
+                image.setAttribute('x', String(bb.x));
+                image.setAttribute('y', String(bb.y));
+                image.setAttribute('width', String(bb.width + (strokeWidth / imageRatio)));
+                image.setAttribute('height', String(bb.height + (strokeWidth / imageRatio)));
                 image.setAttribute('href', imageUrl);
                 imageSymbol.setAttribute('overflow', 'visible');
                 imageSymbol.setAttribute('id', `${symbol.id}_image`);
                 imageSymbol.setAttribute('data-origin-symbol', `${symbol.id}`);
                 symbol.setAttribute('data-image-symbol', `${imageSymbol.id}`);
             } else {
-                const image = imageSymbol.firstChild;
+                const image = imageSymbol.firstChild as SVGElement;
                 const oldImageUrl = image.getAttribute('href');
                 URL.revokeObjectURL(oldImageUrl);
-                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
-                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
+                image.setAttribute('width', String(bb.width + (strokeWidth / imageRatio)));
+                image.setAttribute('height', String(bb.height + (strokeWidth / imageRatio)));
                 image.setAttribute('href', imageUrl);
             }
             resolve(imageSymbol);
@@ -371,7 +365,7 @@ define([
         if (currentSymbol && currentSymbol.tagName === 'symbol') {
             const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
             if (origSymbolId) {
-                const origSymbol = $(`#${origSymbolId}`)[0];
+                const origSymbol = $(`#${origSymbolId}`)[0] as unknown as SVGSymbolElement;
                 if (origSymbol && origSymbol.tagName === 'symbol') {
                     await makeImageSymbol(origSymbol, scale, currentSymbol);
                 }
@@ -403,9 +397,9 @@ define([
             console.log(`${elem.id} is already using svg symbol`);
             return;
         }
-        let currentSymbol = $(href);
-        if (currentSymbol.length > 0 && currentSymbol[0].tagName === 'symbol') {
-            currentSymbol = currentSymbol[0];
+        let symbolFound = $(href);
+        if (symbolFound.length > 0 && symbolFound[0].tagName === 'symbol') {
+            const currentSymbol = symbolFound[0] as HTMLElement;
             const targetId = shouldUseImage ? currentSymbol.getAttribute('data-image-symbol') : currentSymbol.getAttribute('data-origin-symbol');
             console.log(targetId);
             if (!targetId) {
@@ -439,7 +433,7 @@ define([
         Progress.popLastProgress();
     }
 
-    return {
+    export default {
         makeSymbol,
         makeImageSymbol,
         reRenderImageSymbol,
@@ -448,4 +442,3 @@ define([
         switchImageSymbol,
         switchImageSymbolForAll
     }
-});

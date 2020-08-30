@@ -1,19 +1,11 @@
-define([
-    'app/constants/alert-constants',
-    'app/dispatcher/alert-dispatcher',
-    'app/stores/alert-store',
-    'helpers/i18n'
-], function(
-    AlertConstants,
-    AlertDispatcher,
-    AlertStore,
-    i18n
-) {
-    'use strict';
+import AlertConstants from '../constants/alert-constants'
+import AlertDispatcher from '../dispatcher/alert-dispatcher'
+import AlertStore from '../stores/alert-store'
+import * as i18n from '../../helpers/i18n'
 
-    var lang = i18n.get();
+var lang = i18n.lang;
 
-    return {
+export default {
 
         showInfo: function(message, callback) {
             AlertDispatcher.dispatch({
@@ -39,13 +31,13 @@ define([
                 caption: lang.message.device_busy.caption,
                 message: lang.message.device_busy.message,
                 id: id
-            }, id);
+            });
         },
 
-        showPopupInfo: function(id, message, caption) {
+        showPopupInfo: function(id, message, caption?: string) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_INFO, caption, message, id
-            }, id);
+            });
         },
 
         showPopupWarning: function(id, message, caption) {
@@ -60,13 +52,13 @@ define([
             });
         },
 
-        showPopupError: function(id, message, caption) {
+        showPopupError: function(id, message: string, caption?: string) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_ERROR, caption, message, id
             });
         },
 
-        showPopupRetry: function(id, message, caption) {
+        showPopupRetry: function(id, message, caption?: string) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_RETRY, caption, message, id
             });
@@ -78,7 +70,7 @@ define([
             });
         },
 
-        showPopupYesNo: function(id, message, caption, args, callback) {
+        showPopupYesNo: function(id, message: string, caption?: string, args?: any, callback?: {yes: Function, no: Function}) {
             AlertDispatcher.dispatch({
                 actionType: AlertConstants.SHOW_POPUP_YES_NO, caption, message, id, args
             });
@@ -218,4 +210,3 @@ define([
         }
 
     };
-});

@@ -2,22 +2,15 @@
  * API touch
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-touch
  */
-define([
-    'helpers/websocket',
-    'helpers/rsa-key'
-], function(
-    Websocket,
-    rsaKey
-) {
-    'use strict';
-
-    return function(opts) {
+import Websocket from '../websocket'
+import rsaKey from '../rsa-key'
+export default function(opts) {
         var events = {
                 onSuccess: opts.onSuccess || function() {},
                 onFail: opts.onFail || function() {},
                 onError: opts.onError || function() {}
             },
-            ws = new Websocket({
+            ws = Websocket({
                 method: 'touch',
                 autoReconnect: false,
                 onMessage: function(data) {
@@ -50,4 +43,3 @@ define([
             }
         };
     };
-});

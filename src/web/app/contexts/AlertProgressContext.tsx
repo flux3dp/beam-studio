@@ -1,16 +1,13 @@
-define([
-    'helpers/i18n',
-    'app/constants/alert-constants'
-], function (
-    i18n,
-    AlertConstants
-) {
-    const React = require('react');
-    const { createContext } = React;
-    const AlertProgressContext = createContext();
-    const LANG = i18n.lang.alert;
+import * as i18n from '../../helpers/i18n'
+import AlertConstants from '../constants/alert-constants'
 
-    class AlertProgressContextProvider extends React.Component {
+const React = requireNode('react');;
+const { createContext } = React;
+const LANG = i18n.lang.alert;
+
+export const AlertProgressContext = createContext();
+
+    export class AlertProgressContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -215,7 +212,8 @@ define([
             buttons = buttonLabels.map((label, i) => {
                 let b = {
                     label,
-                    className: (buttonLabels.length === 1 || i === primaryButtonIndex || primaryButtonIndex === undefined) ? 'btn-default primary' : 'btn-default'
+                    className: (buttonLabels.length === 1 || i === primaryButtonIndex || primaryButtonIndex === undefined) ? 'btn-default primary' : 'btn-default',
+                    onClick: () => {}
                 };
                 if (callbacks && typeof callbacks === 'function') {
                     b.onClick = () => {
@@ -271,6 +269,3 @@ define([
             );
         }
     };
-
-    return {AlertProgressContextProvider, AlertProgressContext};
-});

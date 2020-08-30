@@ -1,9 +1,6 @@
 /**
  * unit converter
  */
-define(function() {
-    'use strict';
-
     var defaultUnitType = 'length',
         defaultUnit,
         currentUnitType,
@@ -85,7 +82,7 @@ define(function() {
 
     initialize(defaultUnitType);
 
-    return {
+    export default {
         defaultUnit: defaultUnit,
 
         setDefaultUnitType: function(unitType) {
@@ -133,4 +130,3 @@ define(function() {
             };
         }
     };
-});

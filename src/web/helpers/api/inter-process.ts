@@ -2,21 +2,14 @@
  * API image tracer
  * Ref: none
  */
-define([
-    'helpers/websocket',
-    'app/actions/beambox',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'jsx!app/actions/beambox/Laser-Panel-Controller'
-], function(
-    Websocket,
-    BeamboxActions,
-    FnWrapper,
-    LaserPanelController
-) {
-    'use strict';
 
-    return function() {
-        var ws = new Websocket({
+import Websocket from '../websocket'
+import BeamboxActions from '../../app/actions/beambox'
+import FnWrapper from '../../app/actions/beambox/svgeditor-function-wrapper'
+import LaserPanelController from '../../app/actions/beambox/Laser-Panel-Controller'
+
+    export default function() {
+        var ws = Websocket({
                 method: 'push-studio',
                 onMessage: (data) => {
                     events.onMessage(data);
@@ -53,13 +46,12 @@ define([
                         }
                     }, 50);
                 },
-                onError     : () => { console.log('IP_ERROR'); },
-                onFatal     : () => { console.log('FATAL'); },
-                onOpen      : () => { console.log('Open interprocess socket! '); }
+                onError     : (response: any) => { console.log('IP_ERROR'); },
+                onFatal     : (response: any) => { console.log('FATAL'); },
+                onOpen      : (response: any) => { console.log('Open interprocess socket! '); }
             };
 
         return {
             connection: ws,
         };
     };
-});

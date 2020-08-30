@@ -1,5 +1,5 @@
 const main = async () => {
-    const electron = require('electron');
+    const electron = requireNode('electron');;
     console.log(electron);
     const {ipcRenderer: ipc} = electron;
     ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {

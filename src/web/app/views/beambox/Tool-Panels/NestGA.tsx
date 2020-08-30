@@ -1,13 +1,6 @@
-define([
-    'jquery',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/i18n',
-], function(
-    $,
-    UnitInput,
-    i18n
-)   {
-    const React = require('react');
+import UnitInput from'../../../widgets/Unit-Input-v2'
+import * as i18n from '../../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.tool_panels;
 
     class NestGAPanel extends React.Component{
@@ -77,5 +70,4 @@ define([
         }
     };
 
-    return NestGAPanel;
-});
+    export default NestGAPanel;

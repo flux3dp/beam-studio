@@ -1,19 +1,10 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Button-Group',
-    'helpers/api/config',
-    'helpers/sprintf',
-    'helpers/i18n',
-    'helpers/device-master'
-], function(
-    Modal,
-    ButtonGroup,
-    config,
-    sprintf,
-    i18n,
-    DeviceMaster
-) {
-    const React = require('react');
+import Modal from '../widgets/Modal'
+import ButtonGroup from '../widgets/Button-Group'
+import config from '../../helpers/api/config'
+import sprintf from '../../helpers/sprintf'
+import * as i18n from '../../helpers/i18n'
+import DeviceMaster from '../../helpers/device-master'
+    const React = requireNode('react');;
 
     class UpdateDialog extends React.Component{
 
@@ -21,6 +12,7 @@ define([
             var key = this.props.type + '-update-ignore-list',
                 ignoreList = config().read(key) || [];
 
+            // @ts-expect-error
             ignoreList.push(this.props.latestVersion);
 
             // save skip version and close
@@ -33,8 +25,8 @@ define([
             this._onClose();
         }
 
-        _onClose = (quit) => {
-            if ('toolhead' === this.props.type && true === quit) {
+        _onClose = (quit?: boolean) => {
+            if ('toolhead' === this.props.type && quit) {
                 DeviceMaster.quitTask();
             }
 
@@ -91,7 +83,7 @@ define([
                 return <div/>;
             }
 
-            var lang = i18n.get(),
+            var lang = i18n.lang,
                 caption = lang.update[this.props.type].caption,
                 deviceModel = this.props.device.model,
                 message1 = sprintf(lang.update[this.props.type].message_pattern_1, this.props.device.name),
@@ -144,5 +136,4 @@ define([
         onInstall: function() {}
     }
 
-    return UpdateDialog;
-});
+    export default UpdateDialog;

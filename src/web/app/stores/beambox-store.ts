@@ -1,14 +1,6 @@
-define([
-    'app/dispatcher/beambox-dispatcher',
-    'app/constants/beambox-constants',
-    'events',
-    'helpers/object-assign'
-], function(
-    Dispatcher,
-    Constants,
-    EventEmitter
-) {
-    'use strict';
+import Dispatcher from '../dispatcher/beambox-dispatcher'
+import Constants from '../constants/beambox-constants'
+const EventEmitter = require('events');
 
     var beamboxStore;
 
@@ -70,7 +62,7 @@ define([
         },
 
         removeEndDrawingPreviewBlobListener: function(callback) {
-            this.removeListener(Constants.END_DRAWINGk_PREVIEW_BLOB, callback);
+            this.removeListener(Constants.END_DRAWING_PREVIEW_BLOB, callback);
             return beamboxStore;
         },
 
@@ -117,5 +109,4 @@ define([
 
     });
 
-    return beamboxStore;
-});
+    export default beamboxStore;

@@ -1,8 +1,5 @@
 
-define([
-], function(
-) {
-    const React = require('react');
+    const React = requireNode('react');;
     class ToolboxItem extends React.Component {
         constructor() {
             super();
@@ -16,5 +13,4 @@ define([
             );
         }
     }
-    return ToolboxItem;
-});
+    export default ToolboxItem;

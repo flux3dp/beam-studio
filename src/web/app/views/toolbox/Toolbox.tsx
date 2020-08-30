@@ -1,15 +1,8 @@
-define([
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/stores/topbar-store',
-    'jsx!views/toolbox/Toolbox-Item',
-    'helpers/i18n',
-], function(
-    FnWrapper,
-    TopbarStore,
-    ToolboxItem,
-    i18n
-) {
-    const React = require('react');
+import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper'
+import TopbarStore from '../../stores/topbar-store'
+import ToolboxItem from './Toolbox-Item'
+import * as i18n from '../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.toolbox;
 
     class Toolbox extends React.Component {
@@ -128,5 +121,4 @@ define([
             return renderElement;
         }
     }
-    return Toolbox;
-});
+    export default Toolbox;

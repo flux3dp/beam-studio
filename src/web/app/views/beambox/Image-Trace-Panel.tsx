@@ -1,35 +1,22 @@
 
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'reactPropTypes',
-    'app/actions/beambox',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/stores/beambox-store',
-    'helpers/i18n',
-    'helpers/image-data',
-    'helpers/api/image-tracer',
-    'jsx!widgets/Modal',
-    'jsx!widgets/Slider-Control',
-    'lib/cropper',
-    'lib/svgeditor/imagetracer'
-], function(
-    $,
-    PropTypes,
-    BeamboxActions,
-    PreviewModeBackgroundDrawer,
-    FnWrapper,
-    BeamboxStore,
-    i18n,
-    ImageData,
-    ImageTracerApi,
-    Modal,
-    SliderControl,
-    Cropper,
-    ImageTracer
-) {
-    const React = require('react');
+import $ from 'jquery'
+import BeamboxActions from '../../actions/beambox'
+import PreviewModeBackgroundDrawer from '../../actions/beambox/preview-mode-background-drawer'
+import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper'
+import BeamboxStore from '../../stores/beambox-store'
+import * as i18n from '../../../helpers/i18n'
+import ImageData from '../../../helpers/image-data'
+import ImageTracerApi from '../../../helpers/api/image-tracer'
+import Modal from '../../widgets/Modal'
+import SliderControl from '../../widgets/Slider-Control'
+// @ts-expect-error
+import Cropper = require('cropper')
+// @ts-expect-error
+import ImageTracer = require('imagetracer')
+const svgCanvas = window['svgCanvas']
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.image_trace_panel;
 
     const imageTracerWebSocket = ImageTracerApi();
@@ -116,9 +103,10 @@ define([
             }
 
             const imageTrace = document.getElementById('imageTrace');
-            const tunedImage = document.getElementById('tunedImage');
+            const tunedImage = document.getElementById('tunedImage') as HTMLImageElement;
             const style = `left: ${tunedImage.x}px; top: ${tunedImage.y}px; width: ${tunedImage.width}px; height: ${tunedImage.height}px;`;
 
+            // @ts-expect-error
             imageTrace.style = style;
         }
 
@@ -298,7 +286,7 @@ define([
                 threshold,
                 croppedBlobUrl
             } = this.state;
-            const tunedImage = document.getElementById('tunedImage');
+            const tunedImage = document.getElementById('tunedImage') as HTMLImageElement;
 
             const d = $.Deferred();
 
@@ -352,7 +340,7 @@ define([
                     svgCanvas.moveElements([dx], [dy], [g], false);
                     for (let i = 0; i < g.childNodes.length; i++) {
                         let child = g.childNodes[i];
-                        if ($(child).attr('opacity') === 0) {
+                        if (parseFloat($(child).attr('opacity')) == 0) {
                             $(child).remove();
                             i--;
                         } else {
@@ -442,7 +430,7 @@ define([
         }
 
         _getImageTraceDom() {
-            const tunedImage = document.getElementById('tunedImage');
+            const tunedImage = document.getElementById('tunedImage') as HTMLImageElement;
             const x = tunedImage.x;
             const y = tunedImage.y;
             const w = tunedImage.width;
@@ -470,7 +458,7 @@ define([
         }
 
         _cropCameraCanvas() {
-            const imageObj = document.getElementById('cameraCanvas');
+            const imageObj = document.getElementById('cameraCanvas') as HTMLCanvasElement;
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             const canvasBackground = document.getElementById('canvasBackground');
@@ -639,5 +627,4 @@ define([
             );
         }
     };
-    return ImageTracePanel;
-});
+    export default ImageTracePanel;

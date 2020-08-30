@@ -1,10 +1,5 @@
-define([
-    'app/constants/action-creator-monitor',
-    'app/constants/global-constants'
-], (
-    C,
-    GC
-) => {
+import C from '../constants/action-creator-monitor'
+import GC from '../constants/global-constants'
 
     const changeMode = (mode) => ({
         type: C.CHANGE_MODE,
@@ -78,7 +73,7 @@ define([
         relocateOrigin
     });
 
-    return {
+    export default {
         changeMode          : changeMode,
         changePath          : changePath,
         updateFoldercontent : updateFoldercontent,
@@ -93,5 +88,3 @@ define([
         setCurrentPosition  : setCurrentPosition,
         setRelocateOrigin   : setRelocateOrigin,
     };
-
-});

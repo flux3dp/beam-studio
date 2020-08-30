@@ -1,28 +1,16 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Unit-Input-v2',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/beambox-preference',
-    'app/constants/right-panel-constants',
-    'helpers/is-object-empty',
-    'helpers/local-storage',
-    'helpers/i18n'
-], function(
-    Modal,
-    UnitInput,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    BeamboxPreference,
-    RightPanelConstants,
-    isObjectEmpty,
-    LocalStorage,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import Modal from '../../../widgets/Modal'
+import UnitInput from '../../../widgets/Unit-Input-v2'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import RightPanelConstants from '../../../constants/right-panel-constants'
+import isObjectEmpty from '../../../../helpers/is-object-empty'
+import * as LocalStorage from '../../../../helpers/local-storage'
+import * as i18n from '../../../../helpers/i18n'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
     const defaultLaserOptions = RightPanelConstants.laserPresetKeys;
 
@@ -516,5 +504,4 @@ define([
         }
     }
 
-    return LaserManageModal;
-});
+    export default LaserManageModal;

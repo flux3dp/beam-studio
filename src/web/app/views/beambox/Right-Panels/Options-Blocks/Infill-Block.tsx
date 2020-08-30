@@ -1,10 +1,7 @@
-define([
-    'helpers/i18n'
-], function(
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import * as i18n from '../../../../../helpers/i18n'
+const svgCanvas = window['svgCanvas']
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 
     class InFillBlock extends React.Component {
@@ -71,5 +68,4 @@ define([
         }
     }
 
-    return InFillBlock;
-});
+    export default InFillBlock;

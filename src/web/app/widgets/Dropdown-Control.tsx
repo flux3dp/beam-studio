@@ -1,9 +1,8 @@
-define([
-    'reactPropTypes',
-    'plugins/classnames/index'
-], function(PropTypes, ClassNames) {
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+
     'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
 
     class DropDownControl extends React.Component{
         constructor(props) {
@@ -77,5 +76,4 @@ define([
         default: PropTypes.string,
         onChange: PropTypes.func.isRequired
     };
-    return DropDownControl;
-});
+    export default DropDownControl;

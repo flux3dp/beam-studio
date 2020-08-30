@@ -1,16 +1,10 @@
-define([
-    'Redux',
-    './monitor',
-    './device'
-], (
-    Redux,
-    Monitor,
-    Device
-) => {
+import Monitor from './monitor'
+import Device from './device'
+const Redux = require('Redux')
+
     const { combineReducers } = Redux;
 
-    return combineReducers({
+    export default combineReducers({
         Monitor,
         Device
     });
-});

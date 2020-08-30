@@ -1,6 +1,7 @@
-define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n) {
+import ButtonGroup from './Button-Group'
+import * as i18n from '../../helpers/i18n'
     'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
     var lang = i18n.lang.buttons;
 
     class AlertDialog extends React.Component{
@@ -113,5 +114,4 @@ define(['jsx!widgets/Button-Group', 'helpers/i18n'], function(ButtonGroup, i18n)
         onCustom: function() {},
         onClose: function() {}
     };
-    return AlertDialog;
-});
+    export default AlertDialog;

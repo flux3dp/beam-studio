@@ -1,13 +1,10 @@
-define([
-    'helpers/i18n',
-    'jsx!widgets/Select',
-    'jsx!widgets/Modal'
-], function(i18n, SelectView, Modal) {
-    'use strict';
+import * as i18n from '../../helpers/i18n'
+import SelectView from '../widgets/Select'
+import Modal from '../widgets/Modal'
 
-    const React = require('react');
+    const React = requireNode('react');;
 
-    return function(args) {
+    export default function(args) {
         args = args || {};
 
         class Home extends React.Component{
@@ -36,7 +33,7 @@ define([
             _changeActiveLang = (e) => {
                 i18n.setActiveLang(e.currentTarget.value);
                 this.setState({
-                    lang: i18n.get()
+                    lang: i18n.lang
                 });
             }
 
@@ -69,4 +66,3 @@ define([
         };
         return Home;
     };
-});

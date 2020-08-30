@@ -1,10 +1,6 @@
-define([
-    'helpers/i18n'
-], function (
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     // This Component is fully controled, i.e. every time it is changed, you have to rerender its parent to refresh it.
     class SegmentedControl extends React.Component {
@@ -108,5 +104,4 @@ define([
         }
     };
 
-    return SegmentedControl;
-});
+    export default SegmentedControl;

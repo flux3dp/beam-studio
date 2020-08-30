@@ -1,16 +1,10 @@
 /**
  * initialize machine helper
  */
-define([
-    'helpers/api/config',
-    'helpers/local-storage',
-    'app/app-settings'
-], function(
-    config,
-    _localStorage,
-    settings
-) {
-    'use strict';
+import config from '../../helpers/api/config'
+import * as _localStorage from '../../helpers/local-storage'
+import settings from '../app-settings'
+import { IDeviceInfo } from '../../interfaces/IDevice';
 
     var methods = {
         reset: function(callback) {
@@ -60,8 +54,8 @@ define([
             }
         },
         settedPrinter: {
-            get: function() {
-                return _localStorage.get('printers') || [];
+            get: function(): any[] {
+                return _localStorage.get('printers') as unknown as any[];
             },
             set: function(printers) {
                 _localStorage.set('printers', printers);
@@ -112,9 +106,10 @@ define([
             exist: function() {
                 var defaultPrinter = config().read('default-printer') || {};
 
-                return ('string' === typeof defaultPrinter.uuid);
+                return ('string' === typeof defaultPrinter['uuid']);
             },
-            get: function() {
+            get: function(): IDeviceInfo {
+                // @ts-expect-error
                 return config().read('default-printer') || {};
             },
             clear: function() {
@@ -123,5 +118,4 @@ define([
         }
     };
 
-    return methods;
-});
+    export default methods;

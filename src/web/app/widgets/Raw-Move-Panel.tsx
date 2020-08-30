@@ -1,19 +1,13 @@
-define([
-    'app/actions/beambox/beambox-preference',
-    'app/constants/device-constants',
-    'helpers/device-master',
-], function(
-    BeamboxPreference,
-    DeviceConstants,
-    DeviceMaster
-) {
-    'use strict';
-    const React = require('react');
+import BeamboxPreference from '../../app/actions/beambox/beambox-preference'
+import DeviceConstants from '../../app/constants/device-constants'
+import DeviceMaster from '../../helpers/device-master'
+
+    const React = requireNode('react');;
 
     class RawMovePanel extends React.Component {
         constructor(props) {
             super(props);
-            const device = DeviceMaster.getSelectedDevice();
+            const device = DeviceMaster.currentDevice.info;
             this.state = {
                 workarea: DeviceConstants.WORKAREA_IN_MM[device.model],
                 safeDistance: this.getSafeDistance(),
@@ -441,5 +435,4 @@ define([
             );
         }
     }
-    return RawMovePanel;
-});
+    export default RawMovePanel;

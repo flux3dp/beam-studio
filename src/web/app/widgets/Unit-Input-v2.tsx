@@ -1,16 +1,9 @@
-define([
-    'reactPropTypes',
-    'app/constants/keycode-constants',
-    'helpers/round',
-    'plugins/classnames/index'
-], function(
-    PropTypes,
-    keyCodeConstants,
-    round,
-    ClassNames
-) {
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+import keyCodeConstants from '../constants/keycode-constants'
+const ClassNames = requireNode('classnames')
+
+const React = requireNode('react');;
 
     class UnitInput extends React.Component{
         constructor(props) {
@@ -37,7 +30,7 @@ define([
 
         //always return valid value
         _validateValue(val) {
-            let value = parseFloat(val);
+            let value: string | number = parseFloat(val);
 
             if(isNaN(value)) {
                 if (this.state) {
@@ -100,7 +93,7 @@ define([
 
             switch (e.keyCode) {
                 case keyCodeConstants.KEY_RETURN:
-                    const activeElement = document.activeElement;
+                    const activeElement = document.activeElement as HTMLElement;
 
                     // this seems unnecessary
                     // this._updateValue(e.target.value);
@@ -207,5 +200,4 @@ define([
         onBlur: () => {},
         onFocus: () => {},
     };
-    return UnitInput;
-});
+    export default UnitInput;

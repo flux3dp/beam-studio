@@ -1,21 +1,12 @@
-define([
-    'jsx!widgets/Modal',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/constant',
-    'helpers/i18n',
-], function (
-    Modal,
-    BeamboxPreference,
-    Constant,
-    i18n
-) {
-    'use strict';
-    const React = require('react');
+import Modal from '../widgets/Modal'
+import BeamboxPreference from '../actions/beambox/beambox-preference'
+import Constant from '../actions/beambox/constant'
+import * as i18n from '../../helpers/i18n'
+    const React = requireNode('react');;
 
     const lang = i18n.lang;
 
-    return function () {
-        return class SelectMachineType extends React.Component{
+    class SelectMachineType extends React.Component{
 
             onSelectMachine = (model) => {
                 BeamboxPreference.write('model', model);
@@ -76,5 +67,5 @@ define([
             }
 
         };
-    };
-});
+
+    export default () => SelectMachineType

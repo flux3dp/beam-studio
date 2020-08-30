@@ -1,31 +1,19 @@
-define([
-    'reactPropTypes',
-    'plugins/classnames/index',
-    'app/actions/beambox/constant',
-    'helpers/i18n',
-    'jsx!views/beambox/Tool-Panels/RowColumn',
-    'jsx!views/beambox/Tool-Panels/Interval',
-    'jsx!views/beambox/Tool-Panels/OffsetDir',
-    'jsx!views/beambox/Tool-Panels/OffsetCorner',
-    'jsx!views/beambox/Tool-Panels/OffsetDist',
-    'jsx!views/beambox/Tool-Panels/NestSpacing',
-    'jsx!views/beambox/Tool-Panels/NestGA',
-    'jsx!views/beambox/Tool-Panels/NestRotation',
-], function(
-    PropTypes,
-    ClassNames,
-    Constant,
-    i18n,
-    RowColumnPanel,
-    IntervalPanel,
-    OffsetDirPanel,
-    OffsetCornerPanel,
-    OffsetDistPanel,
-    NestSpacingPanel,
-    NestGAPanel,
-    NestRotationPanel
-) {
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+import Constant from '../../../actions/beambox/constant'
+import * as i18n from '../../../../helpers/i18n'
+import RowColumnPanel from './RowColumn'
+import IntervalPanel from './Interval'
+import OffsetDirPanel from './OffsetDir'
+import OffsetCornerPanel from './OffsetCorner'
+import OffsetDistPanel from './OffsetDist'
+import NestSpacingPanel from './NestSpacing'
+import NestGAPanel from './NestGA'
+import NestRotationPanel from './NestRotation'
+
+const svgCanvas = window['svgCanvas'];
+const React = requireNode('react');
+const ClassNames = requireNode('classnames')
     const LANG = i18n.lang.beambox.tool_panels;
 
     let _mm2pixel = function(pixel_input) {
@@ -174,9 +162,10 @@ define([
                 case 'gridArray':
                     _onYes = () => {
                         let data = this.props.data;
-                        let distance = {};
-                        distance.dx = _mm2pixel(data.distance.dx);
-                        distance.dy = _mm2pixel(data.distance.dy);
+                        let distance = {
+                            dx: _mm2pixel(data.distance.dx),
+                            dy: _mm2pixel(data.distance.dy)
+                        };
                         svgCanvas.gridArraySelectedElement(distance, data.rowcolumn);
                         this.props.unmount();
                         svgCanvas.setMode('select');
@@ -258,6 +247,5 @@ define([
         data: PropTypes.object.isRequired,
     };
 
-    return ToolPanel;
-});
+    export default ToolPanel;
 

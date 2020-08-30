@@ -18,7 +18,7 @@
     </div>
 </body>
 <script>
-    
+    window.requireNode = window.require;
     function launch() {
         var script = document.createElement('script'),
             cssLink = document.createElement('link'),
@@ -26,8 +26,8 @@
             body = document.querySelector('body'),
             dev = localStorage['dev'] === 'true',
             getStarted = function (ghostPort) {
-                script.setAttribute('src', 'js/require.js');
-                script.dataset.main = 'js/main.js?v=' + (dev ? '' : window.FLUX.timestamp);
+                script.setAttribute('src', 'js/lib/requirejs.min.js');
+                script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
                 body.appendChild(script);
             },
             timer;

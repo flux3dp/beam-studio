@@ -1,50 +1,40 @@
-define([
-    'helpers/is-json',
-    'helpers/i18n',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'helpers/output-error',
-    'helpers/logger',
-    'helpers/blob-segments',
-], function(
-    isJson,
-    i18n,
-    Alert,
-    AlertConstants,
-    outputError,
-    Logger,
-    blobSegments
-) {
-    'use strict';
+import isJson from './is-json'
+import * as i18n from './i18n'
+import Alert from '../app/contexts/AlertCaller'
+import AlertStore from '../app/stores/alert-store'
+import AlertConstants from '../app/constants/alert-constants'
+import outputError from './output-error'
+import Logger from './logger'
+import blobSegments from './blob-segments'
 
-    window.FLUX.websockets = [];
-    window.FLUX.websockets.list = function() {
-        window.FLUX.websockets.forEach(function(conn, i) {
-            console.log(i, conn.url);
-        });
-    };
+'use strict';
 
-    var hadConnected = false,
-        showProgramErrorPopup = true,
-        WsLogger = new Logger('websocket'),
-        logLimit = 100,
-        wsErrorCount = 0,
-        wsCreateFailedCount = 0;
+window['FLUX'].websockets = [];
+window['FLUX'].websockets.list = function() {
+    window['FLUX'].websockets.forEach(function(conn, i) {
+        console.log(i, conn.url);
+    });
+};
 
-    // options:
-    //      hostname      - host name (Default: 127.0.0.1)
-    //      port          - what protocol uses (Default: 8000)
-    //      method        - method be called
-    //      autoReconnect - auto reconnect on close
-    //      onMessage     - fired on receive message
-    //      onError       - fired on a normal error happend
-    //      onFatal       - fired on a fatal error closed
-    //      onClose       - fired on connection closed
-    //      onOpen        - fired on connection connecting
-    return function(options) {
-        var lang = i18n.get(),
-            { dev } = window.FLUX,
-            dev = false,
+var hadConnected = false,
+    showProgramErrorPopup = true,
+    WsLogger = Logger('websocket'),
+    logLimit = 100,
+    wsErrorCount = 0,
+    wsCreateFailedCount = 0;
+
+// options:
+//      hostname      - host name (Default: 127.0.0.1)
+//      port          - what protocol uses (Default: 8000)
+//      method        - method be called
+//      autoReconnect - auto reconnect on close
+//      onMessage     - fired on receive message
+//      onError       - fired on a normal error happend
+//      onFatal       - fired on a fatal error closed
+//      onClose       - fired on connection closed
+//      onOpen        - fired on connection connecting
+export default function(options) {
+        var { dev } = window['FLUX'],
             customHost = localStorage.getItem('host'),
             customPort = localStorage.getItem('port'),
             defaultCallback = function(result) {},
@@ -52,7 +42,7 @@ define([
                 hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
                 method: '',
                 get port() {
-                    return customPort ? customPort : dev ? '8000' : window.FLUX.ghostPort;
+                    return customPort ? customPort : dev ? '8000' : window['FLUX'].ghostPort;
                 },
                 autoReconnect: true,
                 ignoreAbnormalDisconnect: false,
@@ -162,7 +152,7 @@ define([
 
                         if (errorStr === 'NOT_EXIST_BAD_NODE') { skipError = true; }
 
-                        if (window.FLUX.allowTracking && !skipError) {
+                        if (window['FLUX'].allowTracking && !skipError) {
                             // window.Raven.captureException(data);
                             console.error("WS_ERROR", errorStr);
                         }
@@ -186,7 +176,7 @@ define([
                             return;
                         }
 
-                        if (window.FLUX.allowTracking && !skipError) {
+                        if (window['FLUX'].allowTracking && !skipError) {
                             // window.Raven.captureException(data);
                             console.error("WS_FATAL", errorStr);
                         }
@@ -316,7 +306,7 @@ define([
                     return ws.readyState;
                 },
 
-                close: function(reconnect) {
+                close: function(reconnect?: boolean) {
                     if ('boolean' === typeof reconnect) {
                         socketOptions.autoReconnect = reconnect;
                     }
@@ -360,10 +350,9 @@ define([
                 }
             };
 
-        window.FLUX.websockets.push(wsobj);
+        window['FLUX'].websockets.push(wsobj);
 
         WsLogger.append(wsLog);
 
         return wsobj;
     };
-});

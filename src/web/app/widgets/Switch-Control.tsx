@@ -1,9 +1,7 @@
-define([
-    'reactPropTypes',
-], function(PropTypes) {
-    'use strict';
-    const React = require('react');
-    const classNames = require('classnames');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     class SwitchControl extends React.Component{
         constructor(props) {
@@ -81,5 +79,4 @@ define([
         offText: 'OFF',
     }
 
-    return SwitchControl;
-});
+    export default SwitchControl;

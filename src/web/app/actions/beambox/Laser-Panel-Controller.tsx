@@ -1,11 +1,7 @@
-define([
-    'jsx!views/beambox/Right-Panels/Laser-Panel',
-    'reactCreateReactClass'
-], function(
-    LaserPanel
-){
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import LaserPanel from '../../views/beambox/Right-Panels/Laser-Panel'
+    
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     const _defaultConfig = {
         configName: '',
@@ -58,8 +54,8 @@ define([
         return layer;
     }
     const _getData = function(name, attr) {
-        let val = _getLayer(name).attr('data-' + attr);
-        val = val || _writeData(name, attr, _getConfig(name)[attr]);
+        let layerData = _getLayer(name).attr('data-' + attr);
+        const val = layerData || _writeData(name, attr, _getConfig(name)[attr]);
         return val;
     }
     const _writeData = function(name, attr, val) {
@@ -98,10 +94,6 @@ define([
         return _getData(name, 'configName');
     }
 
-    const resetConfigName = function(name) {
-        return _writeData(nane, '', val);
-    }
-
     const writeSpeed = function(name, val) {
         return _writeData(name, 'speed', val);
     }
@@ -135,6 +127,16 @@ define([
     }
 
     class LaserPanelController {
+        reactRoot: string;
+        funcs: { 
+            writeSpeed: (name: any, val: any) => JQuery<HTMLElement>; 
+            writeStrength: (name: any, val: any) => JQuery<HTMLElement>; 
+            writeRepeat: (name: any, val: any) => any; 
+            writeHeight: (name: any, val: any) => any; 
+            writeDiode: (name: any, val: any) => any; 
+            writeZStep: (name: any, val: any) => any; 
+            writeConfigName: (name: any, val: any) => any; 
+        };
         constructor() {
             this.reactRoot = '';
             this.funcs = {
@@ -152,11 +154,17 @@ define([
         }
 
         initConfig(name) {
+            // @ts-expect-error
             _getSpeed(name, _getConfig(name).speed);
+            // @ts-expect-error
             _getStrength(name, _getConfig(name).strength);
+            // @ts-expect-error
             _getRepeat(name, _getConfig(name).repeat);
+            // @ts-expect-error
             _getHeight(name, _getConfig(name).height);
+            // @ts-expect-error
             _getDiode(name, _getConfig(name).diode);
+            // @ts-expect-error
             _getZStep(name, _getConfig(name).zstep);
         }
 
@@ -206,5 +214,4 @@ define([
 
     const instance = new LaserPanelController();
 
-    return instance;
-});
+    export default instance;

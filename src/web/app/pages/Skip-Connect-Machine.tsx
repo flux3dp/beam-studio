@@ -1,27 +1,19 @@
-define([
-    'jsx!widgets/Modal',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/constant',
-    'helpers/i18n',
-], function (
-    Modal,
-    BeamboxPreference,
-    Constant,
-    i18n
-) {
-    'use strict';
-    const React = require('react');
+import Modal from '../widgets/Modal'
+import BeamboxPreference from '../actions/beambox/beambox-preference'
+import Constant from '../actions/beambox/constant'
+import * as i18n from '../../helpers/i18n'
+    const React = requireNode('react');;
 
     const lang = i18n.lang;
 
-    return function () {
+    export default function () {
         return class SkipConnectMachine extends React.Component{
 
             onStart = () => {
                 if (!localStorage.getItem('printer-is-ready')) {
-                    localStorage.setItem('new-user', true);
+                    localStorage.setItem('new-user', 'true');
                 }
-                localStorage.setItem('printer-is-ready', true);
+                localStorage.setItem('printer-is-ready', 'true');
                 location.hash = '#studio/beambox';
                 location.reload();
             }
@@ -62,4 +54,3 @@ define([
 
         };
     };
-});

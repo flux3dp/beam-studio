@@ -1,18 +1,13 @@
-define([
-    'lib/flux.min'
-], function(
-    Flux
-) {
-    var flux = new Flux.Dispatcher();
-    return {
+// @ts-expect-error
+import Flux = require('reactFlux');
+var flux = new Flux.Dispatcher();
 
-        register: function(callback) {
-            return flux.register(callback);
-        },
+export default {
+    register: function(callback) {
+        return flux.register(callback);
+    },
 
-        dispatch(actionType) {
-            flux.dispatch(actionType);
-        }
-
-    };
-});
+    dispatch(actionType) {
+        flux.dispatch(actionType);
+    }
+};

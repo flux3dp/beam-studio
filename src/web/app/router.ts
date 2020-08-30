@@ -1,28 +1,28 @@
-define([
-    'helpers/i18n',
-    'jquery',
-    'backbone',
-    'helpers/api/config',
-    'app/app-settings',
-    'helpers/detect-webgl',
-],
-function(i18n, $, Backbone, config, appSettings, detectWebgl) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import * as i18n from '../helpers/i18n'
+import $ from 'jquery'
+import Backbone from 'backbone'
+import config from '../helpers/api/config'
+import appSettings from './app-settings'
+import Home from './pages/Home'
+import Settings from './pages/Settings'
+import Beambox from './pages/Beambox'
+import NotificationCollection from './views/Notification-Collection'
+    const React = requireNode('react');
+    const ReactDOM = requireNode('react-dom');
 
-    const _display = function(view, args, el) {
+    const _display = function(view: Function, args?, el?) {
         el = el || $('section.content')[0];
         args = args || {};
         args.props = args.props || {};
         args.state = args.state || {};
 
-        args.state.lang = i18n.get();
+        args.state.lang = i18n.lang;
         // Shpuldn;t pass props and state using args.
         const component = React.createElement(view(args), args.props);
         ReactDOM.render(component, el);
     };
 
-    return Backbone.Router.extend({
+    export default Backbone.Router.extend({
         routes: {},
 
         initialize: function() {
@@ -32,7 +32,7 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                     [/^.*$/, 'e404', this.e404],
                     // initialize Flux Printer
                     [
-                        /^initialize\/connect\/?(select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-beambox|connect-beamo|connect-machine|select|not-found|notice-from-device|set-printer|set-password|setup-complete)\/?(.*)?/,
+                        /^initialize\/connect\/?(select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-beambox|connect-beamo|connect-machine|select|set-printer|set-password|setup-complete)\/?(.*)?/,
                         'initial',
                         this.initial
                     ],
@@ -54,15 +54,10 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
         },
 
         home: function(name) {
-
-            requirejs(['jsx!pages/Home', 'app/app-settings'], function(view, settings) {
-                var args = {
-                    props: {
-                        supported_langs: settings.i18n.supported_langs
-                    }
-                };
-
-                _display(view, args);
+            _display(Home, {
+                props: {
+                    supported_langs: appSettings.i18n.supported_langs
+                }
             });
         },
 
@@ -78,8 +73,6 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                     'connect-beambox': 'Connect-Beambox',
                     'connect-beamo': 'Connect-Beamo',
                     'connect-machine': 'Connect-Machine',
-                    'not-found': 'Printer-Not-Found',
-                    'notice-from-device': 'Notice-From-Device',
                     'select': 'Wifi-Select',
                     'set-printer': 'Wifi-Set-Printer',
                     'set-password': 'Wifi-Set-Password',
@@ -91,7 +84,7 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                 view_name = map[step];
             }
 
-            requirejs(['jsx!pages/' + view_name], function(view) {
+            window['requirejs'](['jsx!pages/' + view_name], function(view) {
                 _display(
                     view,
                     {
@@ -104,9 +97,7 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
         },
 
         appendNotificationCollection: function() {
-            requirejs(['jsx!views/Notification-Collection'], function(view) {
-                _display(view, {}, $('.notification')[0]);
-            });
+            _display(NotificationCollection, {}, $('.notification')[0]);
         },
 
         studio: function(page, args) {
@@ -117,62 +108,26 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                 // if something needs webgl then add to the list below
                 needWebGL = appSettings.needWebGL,
                 map = {
-                    'print': this.print,
                     'beambox': this.beambox,
                     'settings': this.settings,
-                    'laser': this.holder.bind(null, page),
-                    'draw': this.holder.bind(null, page),
-                    'cut': this.holder.bind(null, page),
-                    'mill': this.holder.bind(null, page),
-                    'scan': this.scan,
                     'usb': this.usb,
-                    'device': this.device,
-                    'cloud': this.cloud
+                    'device': this.device
                 },
-                func = this.print;
+                func = this.beambox;
 
             if (true === map.hasOwnProperty(page)) {
                 func = map[page];
             }
 
-            if (false === detectWebgl() && -1 < needWebGL.indexOf(page)) {
-                location.hash = '#studio/laser';
-            }
-            else {
-                func(child_view, requests);
-            }
-        },
-
-        scan: function(step) {
-            requirejs(['jsx!pages/Scan'], function(view) {
-                var args = {
-                    step: step
-                };
-                _display(view, args);
-            });
-        },
-
-        print: function() {
-            requirejs(['jsx!pages/Print'], function(view) {
-                _display(view);
-            });
+            func(child_view, requests);
         },
 
         beambox: function() {
-            requirejs(['jsx!pages/Beambox'], function(view) {
-                _display(view);
-            });
-        },
-
-        usb: function() {
-            requirejs(['jsx!pages/usb'], function(view) {
-                _display(view);
-            });
+            _display(Beambox);
         },
 
         settings: function(child, requests) {
-            requirejs(['jsx!pages/Settings', 'app/app-settings'], function(view, settings) {
-                child = (child || 'general').toLowerCase();
+            child = (child || 'general').toLowerCase();
 
                 var childView,
                     args = {
@@ -180,34 +135,7 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
                         requests: requests
                     };
 
-                _display(view, args);
-            });
-        },
-
-        holder: function(page, step) {
-            let pageCamel = page.charAt(0).toUpperCase() + page.substring(1).toLowerCase();
-            requirejs(['jsx!pages/' + pageCamel ], function(view) {
-                var args = {
-                    step: step,
-                    props: {
-                        page: page
-                    }
-                };
-                _display(view, args);
-            });
-        },
-
-        cloud: function(child, requests) {
-            requirejs(['jsx!pages/Cloud', 'app/app-settings'], function(view) {
-                child = (child || 'general').toLowerCase();
-
-                var args = {
-                    child: child,
-                    requests: requests
-                };
-
-                _display(view, args);
-            });
+                _display(Settings, args);
         },
 
         e404: function() {
@@ -215,5 +143,3 @@ function(i18n, $, Backbone, config, appSettings, detectWebgl) {
             alert('404');
         }
     });
-
-});

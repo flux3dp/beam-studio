@@ -1,25 +1,16 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Dropdown-Control',
-    'jsx!widgets/Switch-Control',
-    'jsx!widgets/Radio-Control',
-    'app/actions/beambox',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'helpers/i18n',
-], function(
-    Modal,
-    DropDownControl,
-    SwitchControl,
-    RadioControl,
-    BeamboxActions,
-    BeamboxPreference,
-    Constant,
-    PreviewModeBackgroundDrawer,
-    i18n
-) {
-    const React = require('react');
+
+import Modal from '../../../widgets/Modal'
+import DropDownControl from '../../../widgets/Dropdown-Control'
+import SwitchControl from '../../../widgets/Switch-Control'
+import RadioControl from '../../../widgets/Radio-Control'
+import BeamboxActions from '../../../actions/beambox'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import Constant from '../../../actions/beambox/constant'
+import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
+import * as i18n from '../../../../helpers/i18n'
+const svgEditor = window['svgEditor'];
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.document_panel;
 
     // value is one of low, medium, high
@@ -76,7 +67,7 @@ define([
         {label: 'Beambox Pro', value: 'fbb1p'},
     ]
 
-    return class DocumentPanel extends React.PureComponent {
+    export default class DocumentPanel extends React.PureComponent {
         constructor() {
             super();
             this.state = {
@@ -152,6 +143,7 @@ define([
                             <div className='title'>{LANG.document_settings}</div>
                             <EngraveDpiSlider
                                 value={this.state.engraveDpi}
+                                onClick={() => {}}
                                 onChange={val => this._handleEngraveDpiChange(val)}
                             />
                             <DropDownControl
@@ -218,4 +210,3 @@ define([
             );
         }
     };
-});

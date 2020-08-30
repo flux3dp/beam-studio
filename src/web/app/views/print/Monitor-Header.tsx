@@ -1,13 +1,8 @@
-define([
-    'reactPropTypes',
-    'app/constants/global-constants',
-    'app/constants/device-constants',
-], (
-    PropTypes,
-    GlobalConstants,
-    DeviceConstants
-) => {
-    const React = require('react');
+const PropTypes = require('reactPropTypes')
+import GlobalConstants from '../../../app/constants/global-constants'
+import DeviceConstants from '../../../app/constants/device-constants'
+
+    const React = requireNode('react');;
 
     class MonitorHeader extends React.Component{
         constructor(props) {
@@ -103,5 +98,4 @@ define([
         onFolderClick:  PropTypes.func,
         onCloseClick:   PropTypes.func
     }
-    return MonitorHeader;
-});
+    export default MonitorHeader;

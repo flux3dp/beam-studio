@@ -1,31 +1,17 @@
 
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'reactPropTypes',
-    'helpers/i18n',
-    'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
-    'app/actions/beambox',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'app/actions/beambox/preview-mode-controller',
-    'app/stores/beambox-store',
-    'plugins/classnames/index',
-    'helpers/api/image-tracer',
-], function(
-    $,
-    PropTypes,
-    i18n,
-    ImageTracePanelController,
-    BeamboxActions,
-    BeamboxPreference,
-    PreviewModeBackgroundDrawer,
-    PreviewModeController,
-    BeamboxStore,
-    classNames,
-    ImageTracerApi
-) {
-    const React = require('react');
+import $ from 'jquery'
+import * as i18n from '../../../../helpers/i18n'
+import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Panel-Controller'
+import BeamboxActions from '../../../actions/beambox'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
+import PreviewModeController from '../../../actions/beambox/preview-mode-controller'
+import BeamboxStore from '../../../stores/beambox-store'
+import ImageTracerApi from '../../../../helpers/api/image-tracer'
+const classNames = requireNode('classnames')
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.left_panel;
 
     class ImageTraceButton extends React.Component {
@@ -65,5 +51,4 @@ define([
             );
         }
     };
-    return ImageTraceButton;
-});
+    export default ImageTraceButton;

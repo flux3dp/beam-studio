@@ -1,13 +1,7 @@
-define([
-    'plugins/classnames/index',
-    'app/constants/keycode-constants',
-], function(
-    ClassNames,
-    keyCodeConstants
-) {
-    'use strict';
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import keyCodeConstants from '../constants/keycode-constants';
+
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     class VerticalSlider extends React.Component {
         constructor(props) {
@@ -20,19 +14,19 @@ define([
         }
 
         componentDidMount() {
-            let sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
-            let sliderBarRadius = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
+            const sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
+            const sliderBarRadiusStr = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
             //This is a hack: Assuming unit is "px", may cause problem
-            sliderBarRadius = parseFloat(sliderBarRadius.match(/[0-9]*/)[0]);
-            let sliderTop = (this.props.max - this.state.value) / (this.props.max - this.props.min) * sliderHeight - sliderBarRadius;
+            const sliderBarRadius = parseFloat(sliderBarRadiusStr.match(/[0-9]*/)[0]);
+            const sliderTop = (this.props.max - this.state.value) / (this.props.max - this.props.min) * sliderHeight - sliderBarRadius;
             $(ReactDOM.findDOMNode(this.refs.sliderBar)).css({top: sliderTop});
         }
 
         componentDidUpdate() {
-            let sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
-            let sliderBarRadius = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
+            const sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
+            const sliderBarRadiusStr = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
             //This is a hack: Assuming unit is "px", may cause problem
-            sliderBarRadius = parseFloat(sliderBarRadius.match(/[0-9]*/)[0]);
+            const sliderBarRadius = parseFloat(sliderBarRadiusStr.match(/[0-9]*/)[0]);
             let sliderTop = (this.props.max - this.state.value) / (this.props.max - this.props.min) * sliderHeight - sliderBarRadius;
             $(ReactDOM.findDOMNode(this.refs.sliderBar)).css({top: sliderTop});
         }
@@ -90,7 +84,7 @@ define([
 
             switch (e.keyCode) {
                 case keyCodeConstants.KEY_RETURN:
-                    const activeElement = document.activeElement;
+                    const activeElement = document.activeElement as HTMLInputElement;
                     this._validateAndUpdateValue(e.target.value);
                     if (activeElement.tagName === 'INPUT') {
                         activeElement.blur();
@@ -165,5 +159,4 @@ define([
         onChange: ()=>{}
     }
     
-    return VerticalSlider;
-});
+    export default VerticalSlider;

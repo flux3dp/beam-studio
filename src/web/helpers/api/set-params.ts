@@ -1,7 +1,7 @@
 /**
  * set params
  */
-define(function() {
+
     'use strict';
 
     var convertObjectToArray = function(params) {
@@ -18,7 +18,7 @@ define(function() {
         return arr;
     };
 
-    return function(ws, events) {
+    export default function(ws, events) {
         events = events || {};
 
         return {
@@ -66,4 +66,3 @@ define(function() {
             }
         };
     };
-});

@@ -1,26 +1,18 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!widgets/Select',
-    'jsx!widgets/Vertical-Slider-Control',
-    'app/stores/beambox-store',
-    'app/actions/beambox/bottom-right-funcs',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'helpers/i18n'
-], function(
-    Modal,
-    SelectView,
-    VerticalSlider,
-    BeamboxStore,
-    BottomRightFuncs,
-    ProgressActions,
-    ProgressConstants,
-    i18n
-) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import Modal from '../../widgets/Modal'
+import SelectView from '../../widgets/Select'
+import VerticalSlider from '../../widgets/Vertical-Slider-Control'
+import BeamboxStore from '../../stores/beambox-store'
+import BottomRightFuncs from '../../actions/beambox/bottom-right-funcs'
+import ProgressActions from '../../actions/progress-actions'
+import ProgressConstants from '../../constants/progress-constants'
+import * as i18n from '../../../helpers/i18n'
+
+const svgCanvas = window['svgCanvas'];
+
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
     const LANG = i18n.lang.topmenu;
-    const SerialPort = require('serialport');
+    const SerialPort = requireNode('serialport');
     const LINES_PER_PAGE = 100;
     const TAB_GCODE = 0;
     const TAB_CONSOLE = 1;
@@ -189,11 +181,11 @@ define([
             let gcodeBlob = await BottomRightFuncs.getGcode();
             const fileReader = new FileReader();
             fileReader.onloadend = (e) => {
-                let gcodeList = e.target.result.split('\n');
+                let gcodeList = (e.target.result as string).split('\n');
                 let start = new Date();
                 this.gcodelist = gcodeList;
                 this._renderGcodeCanvas();
-                console.log('canvas:', new Date() - start);
+                console.log('canvas:', (+new Date()) - (+start));
                 this.setState({
                     file: 'Current Scene',
                     firstIndex: 0,
@@ -208,9 +200,8 @@ define([
             if (this.file) {
                 let reader = new FileReader();
                 reader.onloadend = (e) => {
-                    let str = e.target.result;
-                    str = str.split('\n');
-                    this.gcodelist = str;
+                    let str = e.target.result as string;
+                    this.gcodelist = str.split('\n');
                     this.setState({
                         file: this.file,
                         firstIndex: 0,
@@ -694,7 +685,7 @@ define([
             this.moveDistance = val;
         }
 
-        _handleMoveButtonClick(dir) {
+        _handleMoveButtonClick(dir?: string) {
             switch(dir) {
                 case 'up':
                     console.log(`TODO: Send G1 F${this.moveFeedrate} V${-this.moveDistance}`);
@@ -711,10 +702,12 @@ define([
                 case 'home':
                     console.log(`TODO: Send G28 (does it work?) maybe $H`);
                     break;
+                default:
+                    console.warn("Unsupported direction");
             }
         }
 
-        _renderButton(className, onClick, label, disabled) {
+        _renderButton(className, onClick, label, disabled?: boolean) {
             className = `btn btn-default ${className}`;
             if (disabled) {
                 className += ' disabled';
@@ -774,5 +767,4 @@ define([
         }
     };
 
-    return TaskInterpreterPanel;
-});
+    export default TaskInterpreterPanel;

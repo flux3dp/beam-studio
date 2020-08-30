@@ -1,13 +1,9 @@
-define([
-    'app/actions/beambox',
-    'app/actions/beambox/preview-mode-background-drawer'
-], function (
-    BeamboxActions,
-    PreviewModeBackgroundDrawer
-) {
+import BeamboxActions from '../../../actions/beambox'
+import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
     const rootId = 'clear-preview-graffiti-button-placeholder';
 
     class ClearPreviewGraffitiButton {
+        onClick: () => void;
         constructor() {
             this.onClick = () => {
                 console.error('should init by preview-mode-controller');
@@ -44,5 +40,4 @@ define([
         }
         
     };
-    return new ClearPreviewGraffitiButton();
-});
+    export default new ClearPreviewGraffitiButton();

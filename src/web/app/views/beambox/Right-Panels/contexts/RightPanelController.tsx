@@ -1,44 +1,39 @@
-define([
-    'app/actions/beambox/beambox-global-interaction',
-    'jsx!views/beambox/Right-Panels/Right-Panel',
-], function (
-    BeamboxGlobalInteraction,
-    RightPanel
-) {
-    const React = require('react');
-    setSelectedElement = (elem) => {
+import BeamboxGlobalInteraction from '../../../../actions/beambox/beambox-global-interaction'
+import { RightPanelContextCaller } from '../Right-Panel'
+
+const React = requireNode('react');;
+    const setSelectedElement = (elem) => {
         if (!elem) {
             BeamboxGlobalInteraction.onObjectBlur();
         } else {
             BeamboxGlobalInteraction.onObjectBlur();
             BeamboxGlobalInteraction.onObjectFocus([elem]);
         }
-        if (!RightPanel.contextCaller) {
+        if (!RightPanelContextCaller) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanel.contextCaller.setSelectedElement(elem);
+            RightPanelContextCaller.setSelectedElement(elem);
         }
     };
 
-    toPathEditMode = () => {
-        if (!RightPanel.contextCaller) {
+    const toPathEditMode = () => {
+        if (!RightPanelContextCaller) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanel.contextCaller.setMode('path-edit');
+            RightPanelContextCaller.setMode('path-edit');
         }
     }
 
-    toElementMode = () => {
-        if (!RightPanel.contextCaller) {
+    const toElementMode = () => {
+        if (!RightPanelContextCaller) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanel.contextCaller.setMode('element');
+            RightPanelContextCaller.setMode('element');
         }
     }
 
-    return {
+    export default {
         setSelectedElement,
         toPathEditMode,
         toElementMode,
     }
-});

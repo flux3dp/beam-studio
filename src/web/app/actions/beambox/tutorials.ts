@@ -1,28 +1,16 @@
-define([
-    'helpers/i18n',
-    'app/actions/beambox/beambox-preference',
-    'app/contexts/ProgressCaller',
-    'app/contexts/AlertCaller',
-    'jsx!constants/tutorial-constants',
-    'jsx!contexts/DialogCaller',
-    'helpers/api/discover',
-    'helpers/device-list',
-],function(
-    i18n,
-    BeamboxPreference,
-    Progress,
-    Alert,
-    TutorialConstants,
-    DialogCaller,
-    Discover,
-    DeviceList
-){
+import * as i18n from '../../../helpers/i18n'
+import Progress from '../../contexts/ProgressCaller'
+import Alert from '../../contexts/AlertCaller'
+import TutorialConstants from '../../constants/tutorial-constants'
+import DialogCaller from '../../contexts/DialogCaller'
+import Discover from '../../../helpers/api/discover'
+import DeviceList from '../../../helpers/device-list'
+
     const LANG = i18n.lang.tutorial;
     const getMachineForTutorial = async () => {
         return new Promise((resolve) => {
             let discover = Discover('tutorial', (machines) => {
-                const deviceList = DeviceList(machines);
-                if (deviceList.length > 0) {
+                if (machines.length > 0) {
                     resolve(true);
                     discover.removeListener('tutorial');
                     discover = null;
@@ -80,8 +68,7 @@ define([
         DialogCaller.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
     }
 
-    return {
-        startNewUserTutorial,
-        startInterfaceTutorial
-    }
-});
+export default {
+    startNewUserTutorial,
+    startInterfaceTutorial
+}

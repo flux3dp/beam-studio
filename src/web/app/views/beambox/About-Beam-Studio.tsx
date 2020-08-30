@@ -1,14 +1,8 @@
-define([
-    'jsx!widgets/Modal',
-    'app/stores/beambox-store',
-    'helpers/i18n'
-], function(
-    Modal,
-    BeamboxStore,
-    i18n
-) {
-    const React = require('react');
+import Modal from '../../widgets/Modal'
+import * as i18n from '../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.topmenu;
+    const FLUX = window['FLUX'];
 
     
     class AboutBeamStudio extends React.Component {
@@ -28,7 +22,7 @@ define([
                     <div className='about-beam-studio'>
                         <img src='icon.png'/>
                         <div className='app-name'>{'Beam Studio'}</div>
-                        <div className='version'>{`${LANG.version} ${window.FLUX.version}`}</div>
+                        <div className='version'>{`${LANG.version} ${FLUX.version}`}</div>
                         <div className='copyright'>{'Copyright ⓒ 2019 FLUX Inc.'}</div>
                         <button
                             className='btn btn-default'
@@ -41,5 +35,4 @@ define([
         }
     };
 
-    return AboutBeamStudio;
-});
+    export default AboutBeamStudio;

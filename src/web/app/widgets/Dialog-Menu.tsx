@@ -1,22 +1,14 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'reactClassset',
-    'app/stores/global-store',
-    'jsx!widgets/List',
-    // non-return
-    'helpers/object-assign'
-],
-function(
-    $,
-    PropTypes,
-    ReactCx,
-    GlobalStore,
-    List
-) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
-    return class DialogMenu extends React.Component{
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+// @ts-expect-error
+import ReactCx = require('reactClassset')
+import $ from 'jquery'
+import GlobalStore from '../stores/global-store'
+import List from './List'
+
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
+    export default class DialogMenu extends React.Component{
         static propTypes = {
             arrowDirection: PropTypes.oneOf(['LEFT', 'RIGHT', 'UP', 'BOTTOM']),
             className: PropTypes.object,
@@ -129,4 +121,3 @@ function(
             );
         }
     };
-});

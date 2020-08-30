@@ -1,11 +1,11 @@
-define([
-    'reactPropTypes',
-    'plugins/classnames/index'
-], function(PropTypes, ClassNames) {
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+const ClassNames = requireNode('classnames')
 
-    return class CheckboxControl extends React.Component{
+    'use strict';
+    const React = requireNode('react');;
+
+    export default class CheckboxControl extends React.Component{
         static propTypes = {
             id: PropTypes.string,
             label: PropTypes.string,
@@ -64,4 +64,3 @@ define([
         }
 
     };
-});

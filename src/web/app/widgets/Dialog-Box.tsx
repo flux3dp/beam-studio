@@ -1,10 +1,7 @@
-define([
-    'helpers/i18n'
-], function (
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import * as i18n from '../../helpers/i18n'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     class DialogBox extends React.Component {
         constructor(props) {
@@ -84,5 +81,4 @@ define([
         onClick: () => {}
     };
 
-    return DialogBox;
-});
+    export default DialogBox;

@@ -1,27 +1,19 @@
-define([
-    'app/actions/beambox/constant',
-    'app/contexts/ProgressCaller',
-    'helpers/image-data',
-    'helpers/beam-file-helper',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'helpers/symbol-maker',
-    'helpers/i18n'
-], function(
-    Constant,
-    Progress,
-    ImageData,
-    BeamFileHelper,
-    Alert,
-    AlertConstants,
-    TutorialController,
-    TutorialConstants,
-    SymbolMaker,
-    i18n
-){
-    const LANG = i18n.lang.beambox;
+import Constant from './constant'
+import Progress from '../../contexts/ProgressCaller'
+import ImageData from '../../../helpers/image-data'
+import BeamFileHelper from '../../../helpers/beam-file-helper'
+import Alert from '../../contexts/AlertCaller'
+import * as TutorialController from '../../views/tutorials/Tutorial-Controller'
+import TutorialConstants from '../../constants/tutorial-constants'
+import SymbolMaker from '../../../helpers/symbol-maker'
+import * as i18n from '../../../helpers/i18n'
+
+const LANG = i18n.lang.beambox;
+const svgCanvas = window['svgCanvas'];
+const svgEditor = window['svgEditor'];
+const svgedit = window['svgedit'];
+const electron = window['electron'];
+const svgroot = window['svgroot'];
 
     let _mm2pixel = function(mm_input) {
         const dpmm = Constant.dpmm;
@@ -44,7 +36,7 @@ define([
             const childeren = svgCanvas.ungroupTempGroup();
             svgCanvas.selectOnly(childeren, false);
         }
-        const selectedElements = window.svgCanvas.getSelectedElems();
+        const selectedElements = svgCanvas.getSelectedElems();
         const len = selectedElements.filter(e => e).length;
         const mode = len > 1 ? 'selected' : 'page';
         svgCanvas.alignSelectedElements(types, mode);
@@ -56,16 +48,16 @@ define([
             svgCanvas.clearSelection();
         },
         isAnyElementSelected: function() {
-            if (!window.svgCanvas) {
+            if (!svgCanvas) {
                 return false;
             }
 
-            const selectedElements = window.svgCanvas.getSelectedElems();
+            const selectedElements = svgCanvas.getSelectedElems();
 
             return ((selectedElements.length > 0) && (selectedElements[0] !== null));
         },
         cloneSelectedElement: function() {
-            window.svgCanvas.cloneSelectedElements(20, 20);
+            svgCanvas.cloneSelectedElements(20, 20);
         },
         undo: function() {
             svgEditor.clickUndo();
@@ -167,7 +159,7 @@ define([
 
                 svgCanvas.selectOnly([newImage]);
 
-                window.updateContextPanel();
+                window['updateContextPanel']();
                 $('#dialog_box').hide();
             };
 
@@ -176,7 +168,7 @@ define([
             const layerName = LANG.right_panel.layer_panel.layer_bitmap;
 
             img.src = insertedImageSrc;
-            img.style.opacity = 0;
+            img.style.opacity = '0';
             img.onload = function () {
                 if (!svgCanvas.setCurrentLayer(layerName)) {
                     svgCanvas.createLayer(layerName);
@@ -314,7 +306,7 @@ define([
             } else {
                 svgCanvas.clearSelection();
                 const output = svgCanvas.getSvgString();
-                const fs = require('fs');
+                const fs = requireNode('fs');;
                 console.log(svgCanvas.currentFilePath);
                 if (svgCanvas.currentFilePath.endsWith('.bvg')) {
                     fs.writeFile(svgCanvas.currentFilePath, output, function(err) {
@@ -357,7 +349,7 @@ define([
             const output = svgCanvas.getSvgString();
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
-            let currentFilePath = window.electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
+            let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
             if (currentFilePath) {
                 this.setCurrentFileName(currentFilePath);
                 return true;
@@ -382,7 +374,7 @@ define([
         },
 
         toggleUnsavedChangedDialog: function (callback) {
-            window.electron.ipc.send('SAVE_DIALOG_POPPED');
+            electron.ipc.send('SAVE_DIALOG_POPPED');
             if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
                 callback();
             } else {
@@ -416,7 +408,7 @@ define([
             SymbolMaker.switchImageSymbolForAll(true);
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
-            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
+            electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
         },
 
         exportAsImage: async (type) => {
@@ -427,14 +419,14 @@ define([
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             let image = await svgCanvas.svgStringToImage(type, output);
             image = image.replace(/^data:image\/\w+;base64,/, "");
-            const buf = new Buffer.from(image, 'base64');
+            const buf = Buffer.from(image, 'base64');
             Progress.popById('export_image');
             switch (type) {
                 case 'png':
-                    window.electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));
+                    electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));
                     break;
                 case 'jpg':
-                    window.electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
+                    electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
             }
         },
 
@@ -495,19 +487,19 @@ define([
         },
         update_font_italic: function(val) {
             svgCanvas.setItalic(val);
-            window.updateContextPanel();
+            window['updateContextPanel']();
         },
         update_font_weight: function(val) {
             svgCanvas.setFontWeight(val);
-            window.updateContextPanel();
+            window['updateContextPanel']();
         },
         update_letter_spacing: function(val) {
             svgCanvas.setLetterSpacing(val);
-            window.updateContextPanel();
+            window['updateContextPanel']();
         },
         update_font_is_fill: function(val) {
             svgCanvas.setFontIsFill(val);
-            window.updateContextPanel();
+            window['updateContextPanel']();
         },
         write_image_data_shading: function(elem, val) {
             elem.attr('data-shading', val);
@@ -525,12 +517,12 @@ define([
                 type: 'mousedown',
                 pageX: 0,
                 pageY: 0
-            });
+            } as JQuery.Event);
             $(svgroot).trigger({
                 type: 'mouseup',
                 pageX: 0,
                 pageY: 0
-            });
+            } as JQuery.Event);
         },
 
         getLatestImportFileName: function() {
@@ -541,12 +533,11 @@ define([
             const elem = svgCanvas.getSelectedElems()[0];
             $(elem).trigger({
                 type: 'mousedown'
-            });
+            } as JQuery.Event);
             $(elem).trigger({
                 type: 'mouseup'
-            });
+            } as JQuery.Event);
         }
     };
 
-    return funcs;
-});
+    export default funcs;

@@ -1,25 +1,13 @@
-define([
-    'reactPropTypes',
-    'app/action-creators/monitor',
-    'app/constants/global-constants',
-    'app/constants/device-constants',
-    'helpers/device-master',
-    'helpers/duration-formatter',
-    'plugins/classnames/index',
-    'jsx!app/widgets/Raw-Move-Panel',
-    'helpers/version-checker'
-], (
-    PropTypes,
-    MonitorActionCreator,
-    GlobalConstants,
-    DeviceConstants,
-    DeviceMaster,
-    FormatDuration,
-    ClassNames,
-    RawMovePanel,
-    VersionChecker
-) => {
-    const React = require('react');
+const PropTypes = require('reactPropTypes')
+const ClassNames = requireNode('classnames')
+import MonitorActionCreator from '../../action-creators/monitor'
+import GlobalConstants from '../../constants/global-constants'
+import DeviceConstants from '../../constants/device-constants'
+import DeviceMaster from '../../../helpers/device-master'
+import FormatDuration from '../../../helpers/duration-formatter'
+import RawMovePanel from '../../widgets/Raw-Move-Panel'
+import VersionChecker from '../../../helpers/version-checker'
+    const React = requireNode('react');;
 
     'use strict';
 
@@ -138,6 +126,8 @@ define([
 
             let _files = files.map((item, i) => {
                 if(!item[0]) {
+                    // this is ... no idea...
+                    // @ts-expect-error
                     item = [result.files[i]];
                 }
                 let imgSrc = item[2] instanceof Blob ? URL.createObjectURL(item[2]) : 'img/ph_s.png';
@@ -351,7 +341,7 @@ define([
             if(Monitor.mode === GlobalConstants.FILE_PREVIEW  || this._isAbortedOrCompleted()) {
                 return '';
             }
-            return Device.status.prog ? `${parseInt(Device.status.prog * 100)}%` : '';
+            return Device.status.prog ? `${(Device.status.prog * 100).toFixed(1)}%` : '';
         }
 
         _isAbortedOrCompleted = () => {
@@ -450,12 +440,12 @@ define([
 
         _handleSnapshot = () => {
             if(previewBlob == null) return;
-            let targetDevice = DeviceMaster.getSelectedDevice(),
+            let targetDevice = DeviceMaster.currentDevice.info,
                 fileName = (targetDevice ? targetDevice.name + ' ' : '') + new Date().
                     toLocaleString('en-GB', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).
                     replace(/(\d+)\/(\d+)\/(\d+)\, (\d+):(\d+):(\d+)/, '$3-$1-$2 $4-$5-$6')+ ".jpg";
 
-            saveAs(previewBlob, fileName);
+            window['saveAs'](previewBlob, fileName);
         }
 
         _renderSpinner = () => {
@@ -491,6 +481,4 @@ define([
         }
 
     };
-    return MonitorDisplay;
-
-});
+    export default MonitorDisplay;

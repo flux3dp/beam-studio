@@ -1,10 +1,10 @@
-define([], function() {
     // const ip = 'https://35.161.43.14:3000';
     const _ip = {
         dev: 'https://127.0.0.1:3000',
         prod: 'https://cloudserv1.flux3dp.com:3000'
     };
-    const ip = window.FLUX.dev ? _ip.dev : _ip.prod;
+    const FLUX = window['FLUX'];
+    const ip = FLUX.dev ? _ip.dev : _ip.prod;
     const userProtocol = '/users';
     const deviceProtocol = '/devices';
     const headers = new Headers({ 'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'});
@@ -59,11 +59,11 @@ define([], function() {
     };
 
     const getMe = () => {
-        return get(userUrl('me'), '');
+        return get(userUrl('me'));
     };
 
     const getDevices = () => {
-        return get(deviceUrl('list'), '');
+        return get(deviceUrl('list'));
     };
 
     // Device
@@ -81,16 +81,15 @@ define([], function() {
         return post(unbindDeviceUrl, body);
     };
 
-    return {
-        signIn,
-        signUp,
-        signOut,
-        getDevices,
-        resendVerification,
-        resetPassword,
-        changePassword,
-        getMe,
-        bindDevice,
-        unbindDevice
-    };
-});
+export default {
+    signIn,
+    signUp,
+    signOut,
+    getDevices,
+    resendVerification,
+    resetPassword,
+    changePassword,
+    getMe,
+    bindDevice,
+    unbindDevice
+};

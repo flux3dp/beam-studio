@@ -1,9 +1,4 @@
-define([
-    'app/constants/action-creator-device'
-], (
-    C
-) => {
-
+import C from '../constants/action-creator-device'
     const updateDeviceStatus = (status) => ({
         type: C.UPDATE_DEVICE_STATUS,
         status
@@ -18,11 +13,9 @@ define([
         type: C.UPDATE_USB_FOLDER_EXISTANCE,
         usbFolderExist
     });
-
-    return {
+    
+    export default {
         updateDeviceStatus,
         updateJobInfo,
         updateUsbFolderExistance
-    };
-
-});
+    }

@@ -2,17 +2,11 @@
  * API image tracer
  * Ref: none
  */
-define([
-    'helpers/websocket',
-    'app/actions/beambox'
-], function(
-    Websocket,
-    BeamboxActions
-) {
-    'use strict';
-
-    return function() {
-        var ws = new Websocket({
+import Websocket from '../websocket'
+import BeamboxActions from '../../app/actions/beambox'
+    
+export default function() {
+        var ws = Websocket({
                 method: 'image-tracer',
                 onMessage: (data) => {
                     events.onMessage(data);
@@ -25,9 +19,9 @@ define([
                 }
             }),
             events = {
-                onMessage   : () => {},
-                onError     : () => {},
-                onFatal     : () => {}
+                onMessage   : (response: any) => {},
+                onError     : (response: any) => {},
+                onFatal     : (response: any) => {}
             };
 
         return {
@@ -66,4 +60,3 @@ define([
 
         };
     };
-});

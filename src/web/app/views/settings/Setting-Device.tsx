@@ -1,23 +1,12 @@
-define([
-    'jquery',
-    'helpers/i18n',
-    'helpers/api/config',
-    'helpers/device-master',
-    'jsx!widgets/Dropdown-Control',
-    'jsx!widgets/Radio-Control',
-    'jsx!widgets/Checkbox-Control',
-    'helpers/firmware-version-checker'
-], function(
-    $,
-    i18n,
-    config,
-    DeviceMaster,
-    DropdownControl,
-    RadioControl,
-    CheckboxControl,
-    FirmwareVersionChecker
-) {
-    const React = require('react');
+import $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+import config from '../../../helpers/api/config'
+import DeviceMaster from '../../../helpers/device-master'
+import DropdownControl from '../../widgets/Dropdown-Control'
+import RadioControl from '../../widgets/Radio-Control'
+import CheckboxControl from '../../widgets/Checkbox-Control'
+
+    const React = requireNode('react');;
 
     'use strict';
 
@@ -87,7 +76,7 @@ define([
             let config = Object.assign({}, this.state.config);
 
             if(id === 'head_error_level') {
-                let v = 'delete';
+                let v: string | number = 'delete';
                 if(source === 'delete') {
                     value = ['delete'];
                 }
@@ -209,40 +198,6 @@ define([
 
             const device = this.state.device;
 
-            FirmwareVersionChecker.check(device, 'UPGRADE_KIT_PROFILE_SETTING').then(allowUpgradeKit => {
-                allowUpgradeKit = allowUpgradeKit && device.model === 'delta-1';
-                this.setState({ allowUpgradeKit });
-                this.allowUpgradeKit = allowUpgradeKit;
-                return FirmwareVersionChecker.check(device, 'BACKLASH');
-            }).then((allowBacklash) => {
-                this.setState({ showBacklash: allowBacklash });
-                this.allowBacklash = allowBacklash;
-                return FirmwareVersionChecker.check(device, 'M666R_MMTEST');
-            }).then((allowM666R_MMTest) => {
-                this.setState({ allowM666R_MMTest });
-                this.allowM666R_MMTest = allowM666R_MMTest;
-                DeviceMaster.getDeviceSettings(this.allowBacklash, this.allowUpgradeKit, this.allowM666R_MMTest)
-                .then((config) => {
-                    config.head_error_level = config.head_error_level ? mapNumberToTypeArray(parseInt(config.head_error_level)) : null;
-                    this.setState({ config });
-
-                    if(config['backlash']) {
-                        let _value = this.state.config['backlash'];
-                        _value = _value.split(' ')[0].split(':')[1];
-                        this.setState({ backlash: parseFloat(_value) / 80 });
-                    }
-
-                    if(config['leveling']) {
-                        let _value = this.state.config['leveling'].split(' '),
-                            leveling = {};
-                        _value.map((v) => { return v.split(':'); }).map((v) => {
-                            leveling[v[0]] = v[1];
-                        });
-                        this.setState({ machine_radius: parseFloat(leveling['R']) });
-                        console.log('leveling', leveling);
-                    }
-                });
-            });
         }
 
         _renderCorrectionSetting = () => {
@@ -546,8 +501,7 @@ define([
 
         render() {
             const isBeamoxSeries = this.state.device && ['fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this.state.device.model);
-            let deviceList      = this._getDeviceList(),
-                correction      = this._renderCorrectionSetting(),
+            let correction      = this._renderCorrectionSetting(),
                 detectFilament  = this._renderDetectFilamentSetting(),
                 filterHeadError = this._renderFilterHeadErrorSetting(),
                 autoResume      = this._renderAutoResumeSetting(),
@@ -585,7 +539,6 @@ define([
             );
             return (
                 <div className="form general">
-                    {deviceList}
                     {this.state.device?isBeamoxSeries?beamboxPanel:deltaPanel:''}
                 </div>
             );
@@ -599,6 +552,4 @@ define([
         onLangChange: function() {}
     };
 
-    return SettingDevice;
-
-});
+    export default SettingDevice;

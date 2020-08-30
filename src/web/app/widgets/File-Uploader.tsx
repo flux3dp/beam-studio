@@ -1,13 +1,13 @@
-define([
-    'jquery',
-    'reactClassset'
-], function($, ReactCx) {
+import $ from 'jquery'
+// @ts-expect-error
+import ReactCx = require('reactClassset')
+
     'use strict';
-    const React = require('react');
+    const React = requireNode('react');;
 
     var deferred = $.Deferred();
 
-    return class FileUploader extends React.Component{
+    export default class FileUploader extends React.Component{
         static defaultProps = {
             lang: {},
             sizeMaxLimit: 400000,
@@ -40,7 +40,7 @@ define([
                     fileReader = new FileReader();
 
                     fileReader.onloadend = function(e) {
-                        window.processDroppedFile = false;
+                        window['processDroppedFile'] = false;
                         blob = new Blob([fileReader.result], { type: thisFile.type });
                         uploadFiles.push({
                             data: fileReader.result,
@@ -72,7 +72,7 @@ define([
                     };
 
                     fileReader.onerror = function() {
-                        window.processDroppedFile = false;
+                        window['processDroppedFile'] = false;
                         self.props.onError();
                         currentTarget.value = '';
                     };
@@ -116,7 +116,7 @@ define([
 
         // UI events
         _onReadFile = (e) => {
-            if(window.processDroppedFile === true) { return; }
+            if(window['processDroppedFile'] === true) { return; }
             this.readFiles(e, e.currentTarget.files);
         }
 
@@ -142,4 +142,3 @@ define([
         }
 
     };
-});

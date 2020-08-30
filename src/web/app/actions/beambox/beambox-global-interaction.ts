@@ -1,28 +1,19 @@
-define([
-    'helpers/i18n',
-    'helpers/electron-updater',
-    'app/actions/global-interaction',
-    'app/actions/beambox',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/bottom-right-funcs',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/actions/beambox/tutorials',
-    'app/contexts/AlertCaller',
-    'jsx!contexts/DialogCaller'
-],function(
-    i18n,
-    ElectronUpdater,
-    GlobalInteraction,
-    BeamboxActions,
-    BeamboxPreference,
-    BottomRightFuncs,
-    FnWrapper,
-    Tutorials,
-    Alert,
-    DialogCaller
-){
-    class BeamboxGlobalInteraction extends GlobalInteraction {
-        constructor() {
+import * as i18n from '../../../helpers/i18n'
+import ElectronUpdater from '../../../helpers/electron-updater'
+import GlobalInteraction from '../global-interaction'
+import BeamboxActions from '../beambox'
+import BeamboxPreference from './beambox-preference'
+import BottomRightFuncs from './bottom-right-funcs'
+import FnWrapper from './svgeditor-function-wrapper'
+import Tutorials from './tutorials'
+import Alert from '../../contexts/AlertCaller'
+import DialogCaller from '../../contexts/DialogCaller'
+
+const svgEditor = window['svgEditor'];
+const svgCanvas = window['svgCanvas'];
+
+class BeamboxGlobalInteraction extends GlobalInteraction {
+    constructor() {
             super();
             const loadExampleFile = function(path) {
                 var oReq = new XMLHttpRequest();
@@ -31,7 +22,7 @@ define([
 
                 oReq.onload = async function(oEvent) {
                     let res = oReq.response;
-                    let buf = new Buffer.from(await new Response(res).arrayBuffer());
+                    let buf = Buffer.from(await new Response(res).arrayBuffer());
                     let string = buf.toString();
                     if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
                         const LANG = i18n.lang.beambox.right_panel.layer_panel;
@@ -46,8 +37,8 @@ define([
             this._actions = {
                 'SWITCH_VERSION': () => {ElectronUpdater.switchVersion()},
                 'OPEN': () => {
-                    if(electron) {
-                        electron.trigger_file_input_click('import_image');
+                    if (window['electron']) {
+                        window['electron'].trigger_file_input_click('import_image');
                     }
                 },
                 'IMPORT_EXAMPLE': () => {loadExampleFile(`examples/badge.bvg`);},
@@ -85,7 +76,7 @@ define([
                 'SVG_NEST': () => DialogCaller.showSvgNestButtons(),
                 'LAYER_COLOR_CONFIG': () => DialogCaller.showLayerColorConfig(),
                 'DOCUMENT_SETTING': () => DialogCaller.showDocumentSettings(),
-                'CLEAR_SCENE': () => {window.svgEditorClearScene()},
+                'CLEAR_SCENE': () => {window['svgEditorClearScene']()},
                 'START_TUTORIAL': () => {
                     const LANG = i18n.lang.tutorial;
                     const continuousDrawing = BeamboxPreference.read('continuous_drawing');
@@ -132,7 +123,7 @@ define([
             ]);
             ElectronUpdater.autoCheck();
         }
-        onObjectFocus(elems) {
+        onObjectFocus(elems?) {
             this.enableMenuItems(['DUPLICATE', 'PATH']);
             let selectedElements = elems || svgCanvas.getSelectedElems().filter((elem) => elem);
             if (selectedElements.length > 0 && selectedElements[0].getAttribute('data-tempgroup') === 'true') {
@@ -158,5 +149,4 @@ define([
     }
     const instance = new BeamboxGlobalInteraction();
 
-    return instance;
-});
+export default instance;

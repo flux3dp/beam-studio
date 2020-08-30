@@ -1,28 +1,24 @@
-define([
-    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
-], function (
-    TopBarHints
-) {
-    const React = require('react');
+import { TopBarHints, TopBarHintsContextCaller } from '../Top-Bar-Hints';
 
-    setHint = (hintType) => {
-        if (!TopBarHints.contextCaller) {
+    const React = requireNode('react');
+
+    const setHint = (hintType) => {
+        if (!TopBarHintsContextCaller) {
             console.log('TopBarHints is not mounted now.');
         } else {
-            TopBarHints.contextCaller.setHint(hintType);
+            TopBarHintsContextCaller.setHint(hintType);
         }
     }
 
-    removeHint = () => {
-        if (!TopBarHints.contextCaller) {
+    const removeHint = () => {
+        if (!TopBarHintsContextCaller) {
             console.log('TopBarHints is not mounted now.');
         } else {
-            TopBarHints.contextCaller.removeHint();
+            TopBarHintsContextCaller.removeHint();
         }
     }
 
-    return {
+    export default {
         setHint,
         removeHint,
     }
-});

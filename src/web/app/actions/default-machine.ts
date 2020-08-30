@@ -1,21 +1,16 @@
 /**
  * initialize machine helper
  */
-define([
-    'helpers/api/config',
-], function(
-    config,
-) {
-    'use strict';
+import config from '../../helpers/api/config'
+import { IDeviceInfo } from '../../interfaces/IDevice';
 
-    return {
+    export default {
         set: (device) => {
             config().write('default-printer', JSON.stringify(device));
         },
         exist: () => {
-            let defaultPrinter = config().read('default-printer') || {};
-
-            return ('string' === typeof defaultPrinter.uuid);
+            let defaultPrinter: IDeviceInfo = config().read('default-printer') as IDeviceInfo;
+            return (defaultPrinter && 'string' === typeof defaultPrinter.uuid);
         },
         get: () => {
             return config().read('default-printer') || {};
@@ -24,4 +19,3 @@ define([
             localStorage.removeItem('default-printer');
         }
     };
-});

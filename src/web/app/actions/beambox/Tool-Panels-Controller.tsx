@@ -1,16 +1,10 @@
-define([
-    'jsx!views/beambox/Tool-Panels/Tool-Panels',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/beambox-global-interaction',
-], function(
-    ToolPanels,
-    FnWrapper,
-    Constant,
-    BeamboxGlobalInteraction
-){
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import ToolPanels from '../../views/beambox/Tool-Panels/Tool-Panels'
+import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper'
+import Constant from '../../actions/beambox/constant'
+import BeamboxGlobalInteraction from '../../actions/beambox/beambox-global-interaction'
+
+const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     let _toFixed = function(val) {
         const decimal = 2;
@@ -18,6 +12,12 @@ define([
     };
 
     class ToolPanelsController {
+        isVisible: boolean;
+        reactRoot: string;
+        type: string;
+        $me: JQuery<HTMLElement>;
+        data: { rowcolumn: { row: number; column: number; }; distance: { dx: number; dy: number; }; };
+        isEditable: boolean;
         constructor() {
             this.reactRoot = '';
             this.isVisible = false;
@@ -71,11 +71,6 @@ define([
             this.data.rowcolumn.column = y;
         }
 
-        setGridArrayDistance(x, y) {
-            this.data.distance.dx = _toFixed(_pixel2mm(dx));
-            this.data.distance.dy = _toFixed(_pixel2mm(dy));
-        }
-
         render() {
             if(this.isVisible) {
                 this._render();
@@ -103,6 +98,5 @@ define([
 
     const instance = new ToolPanelsController();
 
-    return instance;
-});
+    export default instance;
 

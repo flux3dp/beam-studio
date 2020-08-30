@@ -1,29 +1,25 @@
-define([
-    'jsx!views/dialogs/AlertsAndProgress'
-], function (
-    AlertsAndProgress
-) {
-    return {
-        popUp: (args) => {
-            if (!AlertsAndProgress.contextCaller) {
-                console.log('Alert context not loaded Yet');
-            } else {
-                AlertsAndProgress.contextCaller.popUp(args);
-            }
-        },
-        popById: (id) => {
-            if (!AlertsAndProgress.contextCaller) {
-                console.log('Alert context not loaded Yet');
-            } else {
-                AlertsAndProgress.contextCaller.popById(id);
-            }
-        },
-        popUpDeviceBusy: (id) => {
-            if (!AlertsAndProgress.contextCaller) {
-                console.log('Alert context not loaded Yet');
-            } else {
-                AlertsAndProgress.contextCaller.popUpDeviceBusy(id);
-            }
+import { AlertsAndProgress, AlertsAndProgressContextCaller }  from '../views/dialogs/AlertsAndProgress'
+
+export default {
+    popUp: (args) => {
+        if (!AlertsAndProgressContextCaller) {
+            console.log('Alert context not loaded Yet');
+        } else {
+            AlertsAndProgressContextCaller.popUp(args);
+        }
+    },
+    popById: (id) => {
+        if (!AlertsAndProgressContextCaller) {
+            console.log('Alert context not loaded Yet');
+        } else {
+            AlertsAndProgressContextCaller.popById(id);
+        }
+    },
+    popUpDeviceBusy: (id) => {
+        if (!AlertsAndProgressContextCaller) {
+            console.log('Alert context not loaded Yet');
+        } else {
+            AlertsAndProgressContextCaller.popUpDeviceBusy(id);
         }
     }
-});
+};

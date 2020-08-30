@@ -1,63 +1,60 @@
-define([
-    'jsx!views/beambox/Top-Bar/Top-Bar',
-], function (
-    TopBar
-) {
-    const React = require('react');
+import { TopBar, TopBarContextCaller } from '../Top-Bar';
 
-    updateTopBar = () => {
-        if (!TopBar.contextCaller) {
+const React = requireNode('react');;
+
+    const updateTopBar = () => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.updateTopBar();
+            TopBarContextCaller.updateTopBar();
         }
     }
 
-    setElement = (elem) => {
-        if (!TopBar.contextCaller) {
+    const setElement = (elem) => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.setElement(elem);
+            TopBarContextCaller.setElement(elem);
         }
     }
-    setFileName = (fileName) => {
-        if (!TopBar.contextCaller) {
+    const setFileName = (fileName) => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.setFileName(fileName);
+            TopBarContextCaller.setFileName(fileName);
         }
     }
-    setHasUnsavedChange = (hasUnsavedChange) => {
-        if (!TopBar.contextCaller) {
+    const setHasUnsavedChange = (hasUnsavedChange) => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.setHasUnsavedChange(hasUnsavedChange);
+            TopBarContextCaller.setHasUnsavedChange(hasUnsavedChange);
         }
     }
-    setTopBarPreviewMode = (isPreviewMode) => {
-        if (!TopBar.contextCaller) {
+    const setTopBarPreviewMode = (isPreviewMode) => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.setTopBarPreviewMode(isPreviewMode);
+            TopBarContextCaller.setTopBarPreviewMode(isPreviewMode);
         }
     }
-    getTopBarPreviewMode = () => {
-        if (!TopBar.contextCaller) {
+    const getTopBarPreviewMode = () => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
             return false;
         } else {
-            return TopBar.contextCaller.getTopBarPreviewMode();
+            return TopBarContextCaller.getTopBarPreviewMode();
         }
     }
-    setShouldStartPreviewController = (shouldStartPreviewController) => {
-        if (!TopBar.contextCaller) {
+    const setShouldStartPreviewController = (shouldStartPreviewController) => {
+        if (!TopBarContextCaller) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBar.contextCaller.setShouldStartPreviewController(shouldStartPreviewController);
+            TopBarContextCaller.setShouldStartPreviewController(shouldStartPreviewController);
         }
     }
 
-    return {
+    export default {
         updateTopBar,
         setElement,
         setFileName,
@@ -66,4 +63,3 @@ define([
         getTopBarPreviewMode,
         setShouldStartPreviewController,
     }
-});

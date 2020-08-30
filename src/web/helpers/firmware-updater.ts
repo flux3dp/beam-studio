@@ -1,34 +1,19 @@
 /**
  * firmware updater
  */
-define([
-    'helpers/i18n',
-    'helpers/device-master',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/alert-actions',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/actions/input-lightbox-actions',
-    'app/constants/input-lightbox-constants',
-    'helpers/round'
-], function(
-    i18n,
-    DeviceMaster,
-    Alert,
-    AlertConstants,
-    AlertActions,
-    ProgressActions,
-    ProgressConstants,
-    InputLightboxActions,
-    InputLightboxConstants,
-    round
-) {
-    'use strict';
-    var lang = i18n.get();
+import * as i18n from './i18n'
+import DeviceMaster from './device-master'
+import Alert from '../app/contexts/AlertCaller'
+import AlertConstants from '../app/constants/alert-constants'
+import AlertActions from '../app/actions/alert-actions'
+import ProgressActions from '../app/actions/progress-actions'
+import ProgressConstants from '../app/constants/progress-constants'
+import InputLightboxActions from '../app/actions/input-lightbox-actions'
+import InputLightboxConstants from '../app/constants/input-lightbox-constants'
+    
 
-    return function(response, printer, type, forceUpdate) {
-        var lang = i18n.get(),
+    export default function(response, printer, type: string, forceUpdate?: boolean) {
+        var lang = i18n.lang,
             doUpdate,
             onDownload,
             onInstall,
@@ -39,10 +24,10 @@ define([
         doUpdate = ( 'firmware' === type ? DeviceMaster.updateFirmware : DeviceMaster.updateToolhead );
 
         _uploadToDevice = (file) => {
-          DeviceMaster.selectDevice(printer).done(function() {
+          DeviceMaster.selectDevice(printer).then(function() {
               ProgressActions.open(ProgressConstants.STEPPING, '', '', false);
               doUpdate(file).progress((r) => {
-                  r.percentage = round(r.percentage || 0, -2);
+                  r.percentage = Number(r.percentage || 0).toFixed(2);
                   ProgressActions.updating(
                       lang.update.updating + ' (' + r.percentage + '%)',
                       r.percentage
@@ -122,10 +107,10 @@ define([
             let file = files.item(0),
                 onFinishUpdate;
 
-            DeviceMaster.selectDevice(printer).done(function() {
+            DeviceMaster.selectDevice(printer).then(function() {
                 ProgressActions.open(ProgressConstants.STEPPING, '', '', false);
                 doUpdate(file).progress((r) => {
-                    r.percentage = round(r.percentage || 0, -2);
+                    r.percentage = Number(r.percentage || 0).toFixed(2);
                     ProgressActions.updating(
                         lang.update.updating + ' (' + r.percentage + '%)',
                         r.percentage
@@ -169,4 +154,3 @@ define([
           );
         }
     }
-});

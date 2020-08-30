@@ -1,13 +1,7 @@
-define([
-    'reactPropTypes',
-    'jsx!widgets/Select',
-    'helpers/i18n',
-], function(
-    PropTypes,
-    SelectView,
-    i18n
-) {
-    const React = require('react');
+import SelectView from '../../../widgets/Select'
+import * as i18n from '../../../../helpers/i18n'
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.tool_panels;
     class OffsetCornerPanel extends React.Component {
         constructor(props) {
@@ -67,5 +61,4 @@ define([
         }
     }
 
-    return OffsetCornerPanel;
-});
+    export default OffsetCornerPanel;

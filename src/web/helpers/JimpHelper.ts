@@ -1,7 +1,4 @@
 //Some Custom Function for Jimp Module
-define([
-], function() {
-    'use strict';
 
     //Do four directional blur and take max value
     const stampBlur = (image, r) => {
@@ -69,10 +66,10 @@ define([
                     windowB.fill(image.bitmap.data[p + 2]);
                     windowA.fill(image.bitmap.data[p + 3]);
                 } else {
-                    curR = (curR - windowR.shift(1)) / blurDecay + image.bitmap.data[p] * blurDecay ** r;
-                    curG = (curG - windowG.shift(1)) / blurDecay + image.bitmap.data[p + 1] * blurDecay ** r;
-                    curB = (curB - windowB.shift(1)) / blurDecay + image.bitmap.data[p + 2] * blurDecay ** r;
-                    curA = (curA - windowA.shift(1)) / blurDecay + image.bitmap.data[p + 3] * blurDecay ** r;
+                    curR = (curR - windowR.shift()) / blurDecay + image.bitmap.data[p] * blurDecay ** r;
+                    curG = (curG - windowG.shift()) / blurDecay + image.bitmap.data[p + 1] * blurDecay ** r;
+                    curB = (curB - windowB.shift()) / blurDecay + image.bitmap.data[p + 2] * blurDecay ** r;
+                    curA = (curA - windowA.shift()) / blurDecay + image.bitmap.data[p + 3] * blurDecay ** r;
                     windowR.push(image.bitmap.data[p]);
                     windowG.push(image.bitmap.data[p + 1]);
                     windowB.push(image.bitmap.data[p + 2]);
@@ -210,11 +207,10 @@ define([
         }
     }
 
-    return {
+    export default {
         oneDirectionalGaussianBlur,
         oneDirectionalLinearBlur,
         stampBlur,
         regulateBlurredImage,
         binarizeImage
     }
-});

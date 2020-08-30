@@ -1,17 +1,8 @@
-define([
-    'reactPropTypes',
-    'app/constants/global-constants',
-    'app/constants/device-constants',
-    'plugins/classnames/index',
-], (
-    PropTypes,
-    GlobalConstants,
-    DeviceConstants,
-    ClassNames
-) => {
-    const React = require('react');
+import GlobalConstants from '../../constants/global-constants'
+import DeviceConstants from '../../constants/device-constants'
+const ClassNames = requireNode('classnames')
 
-    'use strict';
+    const React = requireNode('react');;
 
     const findObjectContainsProperty = (infoArray = [], propertyName) => {
         return infoArray.filter((o) => Object.keys(o).some(n => n === propertyName));
@@ -146,7 +137,7 @@ define([
             );
         }
 
-        _isAbortedOrCompleted = (statusId) => {
+        _isAbortedOrCompleted = (statusId?) => {
             let { Device } = this.props.context.store.getState();
             statusId = statusId || Device.status.st_id;
             return (
@@ -301,6 +292,7 @@ define([
                 middleButton = Monitor.mode === GlobalConstants.FILE ? this._operation().download : action,
                 rightButton = this._operation().camera;
             if (Monitor.mode !== GlobalConstants.CAMERA_RELOCATE) {
+                // @ts-expect-error
                 if(leftButton !== '') {
                     leftButton = leftButton(leftButtonOn);
                 }
@@ -309,6 +301,7 @@ define([
                     middleButton = middleButton(middleButtonOn);
                 }
 
+                // @ts-expect-error
                 if(rightButton !== '') {
                     rightButton = rightButton(rightButtonOn);
                 }
@@ -337,5 +330,4 @@ define([
             );
         }
     };
-    return MonitorControl;
-});
+    export default MonitorControl;

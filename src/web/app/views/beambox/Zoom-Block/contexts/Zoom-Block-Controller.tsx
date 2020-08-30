@@ -1,18 +1,14 @@
-define([
-    'jsx!views/beambox/Zoom-Block/Zoom-Block',
-], function (
-    ZoomBlock
-) {
-    const React = require('react');
-    updateZoomBlock = () => {
-        if (!ZoomBlock.contextCaller) {
+import { ZoomBlock, ZoomBlockContextCaller } from '../Zoom-Block'
+
+    const React = requireNode('react');;
+    const updateZoomBlock = () => {
+        if (!ZoomBlockContextCaller) {
             console.log('ZoomBlock is not mounted now.');
         } else {
-            ZoomBlock.contextCaller.updateZoomBlock();
+            ZoomBlockContextCaller.updateZoomBlock();
         }
     };
 
-    return {
+    export default {
         updateZoomBlock: updateZoomBlock
     }
-});

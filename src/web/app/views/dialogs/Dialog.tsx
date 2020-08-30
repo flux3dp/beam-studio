@@ -1,21 +1,25 @@
-define([
-    'jsx!widgets/Modal',
-    'jsx!/contexts/DialogContext'
-], function (
-    Modal,
-    { DialogContext }
-) {
-    const React = require('react');
-    let ret = {};
+import Modal from '../../widgets/Modal'
+import { DialogContext } from '../../contexts/DialogContext'
+
+    const React = requireNode('react');;
+    let _contextCaller;
+
+    class ContextHelper {
+        static get _contextCaller() {
+            return _contextCaller;
+        }
+    }
+    
+    export const DialogContextCaller = ContextHelper._contextCaller;
 
 
-    class Dialog extends React.Component {
+    export class Dialog extends React.Component {
         constructor(props) {
             super(props);
         }
 
         componentDidMount() {
-            ret.DialogContextCaller = this.context;
+            _contextCaller = this.context;
         }
 
         render() {
@@ -34,6 +38,3 @@ define([
         }
     };
     Dialog.contextType = DialogContext;
-    ret.Dialog = Dialog;
-    return ret;
-});

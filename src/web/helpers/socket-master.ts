@@ -1,15 +1,11 @@
-define([
-    'jquery'
-], (
-    $
-) => {
+import $ from 'jquery'
+const MAX_TASK_QUEUE = 30;
 
     function SocketMaster() {
         let _tasks = [],
             _task,
             _ws,
-            processing = false,
-            _callback = function() {};
+            processing = false
 
         const setWebSocket = (ws) => {
             _ws = ws;
@@ -19,8 +15,8 @@ define([
 
         const addTask = (command, ...args) => {
             // if traffic is jammed, reset
-            if(_tasks.length > 7) {
-                console.log('==== more than 7 ws tasks!');
+            if(_tasks.length > MAX_TASK_QUEUE) {
+                console.log(`==== more than ${MAX_TASK_QUEUE} ws tasks!`);
                 _tasks = [];
                 _task = null;
                 processing = false;
@@ -42,8 +38,8 @@ define([
                 mode = _task.command.split('@')[1];
 
             if(mode === 'maintain' && _ws.mode !== 'maintain') {
-              // Ensure maintain mode, if not then reject with "edge case" error
-              _task.d.reject({status: 'error', error: ['EDGE_CASE', 'MODE_ERROR']});
+                // Ensure maintain mode, if not then reject with "edge case" error
+                _task.d.reject({status: 'error', error: ['EDGE_CASE', 'MODE_ERROR']});
             } else {
                 runTaskFunction(_task, fnName);
             }
@@ -88,19 +84,14 @@ define([
             _task = null;
         };
 
-        const onTimeout = (callback) => {
-            _callback = callback;
-        };
-
         return {
             setWebSocket,
             addTask,
             doTask,
             nextTask,
-            clearTasks,
-            onTimeout
+            clearTasks
         };
     }
 
-    return SocketMaster;
-});
+const sm = SocketMaster();
+export default sm;

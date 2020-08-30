@@ -1,38 +1,32 @@
-define([
-    'app/actions/beambox/constant',
-    'jsx!views/beambox/Right-Panels/Object-Panel',
-], function (
-    Constant,
-    ObjectPanel
-) {
-    const React = require('react');
-    updateDimensionValues = (newValue) => {
-        if (!ObjectPanel.contextCaller) {
+import Constant from '../../../../actions/beambox/constant'
+import { ObjectPanel, ObjectPanelContextCaller } from '../Object-Panel'
+    const React = requireNode('react');;
+    const updateDimensionValues = (newValue) => {
+        if (!ObjectPanelContextCaller) {
             //console.log('ObjectPanel is not mounted now.');
         } else {
-            ObjectPanel.contextCaller.updateDimensionValues(newValue);
+            ObjectPanelContextCaller.updateDimensionValues(newValue);
         }
     };
 
-    getDimensionValues = (key) => {
-        if (!ObjectPanel.contextCaller) {
+    const getDimensionValues = (key) => {
+        if (!ObjectPanelContextCaller) {
             //console.log('ObjectPanel is not mounted now.');
         } else {
-            return ObjectPanel.contextCaller.getDimensionValues(key);
+            return ObjectPanelContextCaller.getDimensionValues(key);
         }
     }
 
-    updateObjectPanel = () => {
-        if (!ObjectPanel.contextCaller) {
+    const updateObjectPanel = () => {
+        if (!ObjectPanelContextCaller) {
             //console.log('ObjectPanel is not mounted now.');
         } else {
-            ObjectPanel.contextCaller.updateObjectPanel();
+            ObjectPanelContextCaller.updateObjectPanel();
         }
     };
 
-    return {
+    export default {
         updateObjectPanel: updateObjectPanel,
         updateDimensionValues: updateDimensionValues,
         getDimensionValues: getDimensionValues
     }
-});

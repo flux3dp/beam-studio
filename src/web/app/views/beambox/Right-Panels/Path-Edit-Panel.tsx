@@ -1,20 +1,13 @@
-define([
-    'jsx!views/beambox/Right-Panels/Dimension-Panel',
-    'jsx!widgets/Segmented-Control',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'helpers/i18n'
-], function(
-    DimensionPanel,
-    SegmentedControl,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import DimensionPanel from '../../../views/beambox/Right-Panels/Dimension-Panel'
+import SegmentedControl from '../../../widgets/Segmented-Control'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import * as i18n from '../../../../helpers/i18n'
+const svgedit = window['svgedit'];
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel.path_edit_panel;
 
     const LINKTYPE_CORNER = 0;
@@ -98,5 +91,4 @@ define([
         }
     }
 
-    return PathEditPanel;
-});
+    export default PathEditPanel;

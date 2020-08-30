@@ -1,92 +1,88 @@
-define([
-    'app/constants/device-constants',
-], (
-    DeviceConstants
-) => {
-    let lang;
-    return {
-        setLang: (l) => {
-            lang = l;
-        },
+import DeviceConstants from './device-constants'
+let monitorLang;
 
-        IDLE: () => ({
-            displayStatus: lang.device.ready,
-            currentStatus: DeviceConstants.READY
-        }),
+export default {
+    setLang: (l) => {
+        monitorLang = l;
+    },
 
-        INIT: () => ({
-            displayStatus: lang.device.starting,
-            currentStatus: DeviceConstants.STARTING
-        }),
+    IDLE: () => ({
+        displayStatus: monitorLang.device.ready,
+        currentStatus: DeviceConstants.READY
+    }),
 
-        STARTING: () => ({
-            displayStatus: lang.device.starting,
-            currentStatus: ''
-        }),
+    INIT: () => ({
+        displayStatus: monitorLang.device.starting,
+        currentStatus: DeviceConstants.STARTING
+    }),
 
-        RUNNING: () => ({
-            displayStatus: lang.device.running,
-            currentStatus: DeviceConstants.RUNNING
-        }),
+    STARTING: () => ({
+        displayStatus: monitorLang.device.starting,
+        currentStatus: ''
+    }),
 
-        PAUSED: () => ({
-            displayStatus: lang.device.paused,
-            currentStatus: DeviceConstants.PAUSED
-        }),
+    RUNNING: () => ({
+        displayStatus: monitorLang.device.running,
+        currentStatus: DeviceConstants.RUNNING
+    }),
 
-        PAUSING: () => ({
-            displayStatus: lang.device.pausing,
-            currentStatus: DeviceConstants.PAUSED
-        }),
+    PAUSED: () => ({
+        displayStatus: monitorLang.device.paused,
+        currentStatus: DeviceConstants.PAUSED
+    }),
 
-        WAITING_HEAD: () => ({
-            displayStatus: lang.device.heating,
-            currentStatus: DeviceConstants.HEATING
-        }),
+    PAUSING: () => ({
+        displayStatus: monitorLang.device.pausing,
+        currentStatus: DeviceConstants.PAUSED
+    }),
 
-        CORRECTING: () => ({
-            displayStatus: lang.device.calibrating,
-            currentStatus: DeviceConstants.CALIBRATING
-        }),
+    WAITING_HEAD: () => ({
+        displayStatus: monitorLang.device.heating,
+        currentStatus: DeviceConstants.HEATING
+    }),
 
-        COMPLETING: () => ({
-            displayStatus: lang.device.completing,
-            currentStatus: ''
-        }),
+    CORRECTING: () => ({
+        displayStatus: monitorLang.device.calibrating,
+        currentStatus: DeviceConstants.CALIBRATING
+    }),
 
-        COMPLETED: () => ({
-            displayStatus: lang.device.completed,
-            currentStatus: ''
-        }),
+    COMPLETING: () => ({
+        displayStatus: monitorLang.device.completing,
+        currentStatus: ''
+    }),
 
-        ABORTING: () => ({
-            displayStatus: lang.device.aborting,
-            currentStatus: ''
-        }),
+    COMPLETED: () => ({
+        displayStatus: monitorLang.device.completed,
+        currentStatus: ''
+    }),
 
-        ABORTED: () => ({
-            displayStatus: lang.device.aborted,
-            currentStatus: ''
-        }),
+    ABORTING: () => ({
+        displayStatus: monitorLang.device.aborting,
+        currentStatus: ''
+    }),
 
-        RESUMING: () => ({
-            displayStatus: lang.device.starting,
-            currentStatus: DeviceConstants.RUNNING
-        }),
+    ABORTED: () => ({
+        displayStatus: monitorLang.device.aborted,
+        currentStatus: ''
+    }),
 
-        OCCUPIED: () => ({
-            displayStatus: lang.device.occupied,
-            currentStatus: DeviceConstants.PAUSED
-        }),
+    RESUMING: () => ({
+        displayStatus: monitorLang.device.starting,
+        currentStatus: DeviceConstants.RUNNING
+    }),
 
-        SCANNING: () => ({
-            displayStatus: lang.device.scanning,
-            currentStatus: ''
-        }),
+    OCCUPIED: () => ({
+        displayStatus: monitorLang.device.occupied,
+        currentStatus: DeviceConstants.PAUSED
+    }),
 
-        PREPARING: () => ({
-            displayStatus: lang.device.completed,
-            currentStatus: ''
-        })
-    };
-});
+    SCANNING: () => ({
+        displayStatus: monitorLang.device.scanning,
+        currentStatus: ''
+    }),
+
+    PREPARING: () => ({
+        displayStatus: monitorLang.device.completed,
+        currentStatus: ''
+    })
+};

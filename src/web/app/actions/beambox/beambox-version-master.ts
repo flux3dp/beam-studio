@@ -1,5 +1,3 @@
-define([
-], function() {
 
     class BeamboxVersionMaster {
         async isUnusableVersion(device) {
@@ -29,5 +27,4 @@ define([
         };
     }
 
-    return new BeamboxVersionMaster();
-});
+    export default new BeamboxVersionMaster();

@@ -1,31 +1,20 @@
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'helpers/i18n',
-    'helpers/api/config',
-    'jsx!widgets/Select',
-    'jsx!widgets/Unit-Input-v2',
-    'app/actions/alert-actions',
-    'helpers/local-storage',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/font-funcs',
-    'app/actions/initialize-machine',
-], function(
-    $,
-    i18n,
-    Config,
-    SelectView,
-    UnitInput,
-    AlertActions,
-    LocalStorage,
-    BeamboxConstant,
-    BeamboxPreference,
-    FontFuncs,
-    initializeMachine
-) {
-    const React = require('react');
-    const FontManager = require('font-manager');
+import  $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+import Config from '../../../helpers/api/config'
+import SelectView from '../../widgets/Select'
+import UnitInput from '../../widgets/Unit-Input-v2'
+import AlertActions from '../../actions/alert-actions'
+import * as LocalStorage from '../../../helpers/local-storage'
+import BeamboxConstant from '../../actions/beambox/constant'
+import BeamboxPreference from '../../actions/beambox/beambox-preference'
+import FontFuncs from '../../actions/beambox/font-funcs'
+import initializeMachine from '../../actions/initialize-machine'
+import { IFont } from '../../../interfaces/IFont'
+import { IDeviceInfo } from '../../../interfaces/IDevice'
+
+    const React = requireNode('react');;
+    const FontManager = requireNode('font-manager');
 
     const Controls = props => {
         const style = { width: 'calc(100% / 10 * 3 - 10px)' };
@@ -82,7 +71,7 @@ define([
         _changeActiveLang = (e) => {
             i18n.setActiveLang(e.currentTarget.value);
             this.setState({
-                lang: i18n.get()
+                lang: i18n.lang
             });
             this.props.onLangChange(e);
         }
@@ -152,8 +141,9 @@ define([
         }
 
         render() {
-            let { supported_langs } = this.props,
-                printer = this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get(),
+            let { supported_langs } = this.props;
+            // @ts-expect-error
+            let printer: IDeviceInfo = this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get(),
                 default_machine_button,
                 tableStyle = {width: '70%'},
                 pokeIP = Config().read('poke-ip-addr'),
@@ -233,7 +223,7 @@ define([
                 },
             ];
 
-            const defaultFont = Config().read('default-font') || {
+            const defaultFont: IFont = Config().read('default-font') || {
                 family: 'Arial',
                 style: 'Regular'
             };
@@ -675,8 +665,8 @@ define([
                                     unit='mm'
                                     min={0}
                                     max={BeamboxConstant.dimension.getHeight()/10}
-                                    defaultValue={this._getBeamboxPreferenceEditingValue('precut_y')}
-                                    getValue={val => this._updateBeamboxPreferenceChange('precut_y', val) || 0}
+                                    defaultValue={this._getBeamboxPreferenceEditingValue('precut_y') || 0}
+                                    getValue={val => this._updateBeamboxPreferenceChange('precut_y', val)}
                                     className={{half: true}}
                                 />
                             </Controls>
@@ -758,8 +748,8 @@ define([
                             unit='mm'
                             min={0}
                             max={BeamboxConstant.dimension.getHeight()/10}
-                            defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y')}
-                            getValue={val => this._updateBeamboxPreferenceChange('diode_offset_y', val) || 0}
+                            defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
+                            getValue={val => this._updateBeamboxPreferenceChange('diode_offset_y', val)}
                             className={{half: true}}
                         />
                     </Controls>
@@ -782,6 +772,4 @@ define([
         onLangChange: function() {}
     };
 
-    return SettingGeneral;
-
-});
+    export default SettingGeneral;

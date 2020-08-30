@@ -1,33 +1,29 @@
-define([
-    'jsx!views/beambox/Right-Panels/contexts/RightPanelContext',
-    'jsx!views/beambox/Right-Panels/contexts/ObjectPanelContext',
-    'jsx!views/beambox/Right-Panels/contexts/LayerPanelContext',
-    'jsx!views/beambox/Right-Panels/Object-Panel',
-    'jsx!views/beambox/Right-Panels/Path-Edit-Panel',
-    'jsx!views/beambox/Right-Panels/Layer-Panel',
-    'jsx!views/beambox/Right-Panels/Laser-Panel',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'helpers/i18n'
-], function(
-    { RightPanelContext },
-    { ObjectPanelContextProvider },
-    { LayerPanelContextProvider },
-    { ObjectPanel },
-    PathEditPanel,
-    { LayerPanel },
-    LaserPanel,
-    TutorialController,
-    TutorialConstants,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import { RightPanelContext } from './contexts/RightPanelContext'
+import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext'
+import { LayerPanelContextProvider } from './contexts/LayerPanelContext'
+import { ObjectPanel } from './Object-Panel'
+import PathEditPanel from './Path-Edit-Panel'
+import { LayerPanel } from './Layer-Panel'
+import LaserPanel from './Laser-Panel'
+import * as TutorialController from '../../tutorials/Tutorial-Controller'
+import TutorialConstants from '../../../constants/tutorial-constants'
+import * as i18n from '../../../../helpers/i18n'
+const svgCanvas = window['svgCanvas'];
+let _contextCaller;
+
+class ContextHelper {
+    static get _contextCaller() {
+        return _contextCaller;
+    }
+}
+
+export const RightPanelContextCaller = ContextHelper._contextCaller;
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel;
 
-    let ret = {};
-
-    class RightPanel extends React.Component {
+    export class RightPanel extends React.Component {
         constructor() {
             super();
             this.state = {
@@ -36,7 +32,7 @@ define([
         }
 
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
         }
 
         componentDidUpdate() {
@@ -172,7 +168,3 @@ define([
         }
     }
     RightPanel.contextType = RightPanelContext;
-    ret.RightPanel = RightPanel;
-
-    return ret;
-});

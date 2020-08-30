@@ -1,8 +1,4 @@
-define([
-    'app/constants/action-creator-device'
-], (
-    C
-) => {
+import C from '../constants/action-creator-device'
 
     let initialState = {
         status: {},
@@ -16,7 +12,7 @@ define([
     * usbFolderExist    : (bool), wether usb drive (folder) exist in machine or not
     */
 
-    return (state = initialState, action) => {
+    export default (state = initialState, action) => {
 
         var _action = {};
 
@@ -30,4 +26,3 @@ define([
 
         return _action[action.type]();
     };
-});

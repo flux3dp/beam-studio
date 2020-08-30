@@ -1,6 +1,3 @@
-define(function() {
-    'use strict';
-
     var defaults = {
             size: 5 * 1024 * 1024 /*50MB*/,
             onComplete: function() {},
@@ -27,10 +24,10 @@ define(function() {
          *     onError: firing when error occurred
          */
         requestFileSystem = function(options, callback) {
-            var requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+            var requestFileSystem = window['requestFileSystem'] || window['webkitRequestFileSystem'];
 
             requestFileSystem(
-                window.TEMPORARY,
+                window['TEMPORARY'],
                 options.size || defaults.size,
                 function(fileSystem) {
                     callback(fileSystem);
@@ -132,7 +129,7 @@ define(function() {
             });
         };
 
-    return {
+    export default {
         getFile: function(file, options) {
             options = defaultOptions(options);
             options.file = file;
@@ -158,4 +155,3 @@ define(function() {
             return this;
         }
     };
-});

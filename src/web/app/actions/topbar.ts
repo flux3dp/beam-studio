@@ -1,11 +1,7 @@
-define([
-    'app/constants/topbar-constants',
-    'app/dispatcher/topbar-dispatcher'
-], function(
-    TopbarConstants,
-    Dispatcher
-) {
-    return {
+import TopbarConstants from '../constants/topbar-constants'
+import Dispatcher from '../dispatcher/topbar-dispatcher'
+
+    export default {
         showAlignToolbox: function() {
             Dispatcher.dispatch({
                 actionType: TopbarConstants.SHOW_ALIGN_TOOLBOX
@@ -42,4 +38,3 @@ define([
             });
         },
     };
-});

@@ -1,13 +1,7 @@
-define([
-    'app/dispatcher/progress-dispatcher',
-    'app/constants/progress-constants',
-    'events',
-    'helpers/object-assign'
-], function(
-    Dispatcher,
-    ProgressConstants,
-    EventEmitter
-) {
+import Dispatcher from '../dispatcher/progress-dispatcher'
+import ProgressConstants from '../constants/progress-constants'
+const EventEmitter = require('events');
+
     'use strict';
 
     var Store;
@@ -65,5 +59,4 @@ define([
 
     });
 
-    return Store;
-});
+    export default Store;

@@ -1,26 +1,25 @@
-define([
-    'helpers/local-storage',
-    'app/app-settings',
-    'app/lang/de',
-    'app/lang/en',
-    'app/lang/zh-tw',
-    'app/lang/ja',
-    'app/lang/zh-cn',
-], function(localStorage, AppSettings, LangDe, LangEn, LangZHTW, LangJa, LangZHCN) {
-    'use strict';
+import * as localStorage from './local-storage'
+import AppSettings from '../app/app-settings'
+import LangDe from '../app/lang/de'
+import LangEn from '../app/lang/en'
+import LangJa from '../app/lang/ja'
+import LangZHTW from '../app/lang/zh-tw'
+import LangZHCN from '../app/lang/zh-cn'
 
-    var ACTIVE_LANG = 'active-lang',
-        langCache = {
-            'de': LangDe,
-            'en': LangEn,
-            'zh-tw': LangZHTW,
-            'ja': LangJa,
-            'zh-cn': LangZHCN,
-        },
-        activeLang = localStorage.get(ACTIVE_LANG) || AppSettings.i18n.default_lang,
-        currentLang;
+const ACTIVE_LANG = 'active-lang',
+    langCache = {
+        'de': LangDe,
+        'en': LangEn,
+        'zh-tw': LangZHTW,
+        'ja': LangJa,
+        'zh-cn': LangZHCN,
+    };
 
-    return {
+// TODO: Difference between activeLang and currentLang?
+let activeLang = localStorage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+let currentLang;
+
+
         /**
          * set active language
          *
@@ -28,9 +27,9 @@ define([
          *
          * @return string
          */
-        getActiveLang : function() {
-            return localStorage.get(ACTIVE_LANG) || AppSettings.i18n.default_lang;
-        },
+        export function getActiveLang(): string {
+            return localStorage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+        }
 
         /**
          * set active language
@@ -39,13 +38,13 @@ define([
          *
          * @return this
          */
-        setActiveLang : function(lang) {
+        export function setActiveLang(lang: string) {
             currentLang = undefined;
             activeLang = lang;
             localStorage.set(ACTIVE_LANG, lang);
 
             return this;
-        },
+        }
 
         /**
          * get from key
@@ -55,7 +54,7 @@ define([
          *
          * @return mixed
          */
-        get : function(key, args) {
+        export function get(key, args) {
             key = key || '';
 
             var keys = key.split('.'),
@@ -81,9 +80,12 @@ define([
             });
 
             return line;
-        },
-        get lang() {
-            return langCache[activeLang];
-        }
+        };
+
+class LangCacheHelper {
+    static get lang() {
+        return langCache[activeLang];
     };
-});
+} 
+
+export const lang = LangCacheHelper.lang;

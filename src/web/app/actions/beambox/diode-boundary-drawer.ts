@@ -1,14 +1,12 @@
-define([
-    'app/actions/beambox/constant',
-    'app/actions/beambox/beambox-preference',
-], function (
-    Constant,
-    BeamboxPreference
-) {
-    let diodeBoundaryPath, diodeBoundarySvg;
+import Constant from './constant'
+import BeamboxPreference from './beambox-preference'
+
+const svgedit = window['svgedit']
+
+let diodeBoundaryPath, diodeBoundarySvg;
     const createBoundary = () => {
-        diodeBoundarySvg = document.createElementNS(window.svgedit.NS.SVG, 'svg');
-        diodeBoundaryPath = document.createElementNS(window.svgedit.NS.SVG, 'path');
+        diodeBoundarySvg = document.createElementNS(svgedit.NS.SVG, 'svg');
+        diodeBoundaryPath = document.createElementNS(svgedit.NS.SVG, 'path');
         $('#canvasBackground').append(diodeBoundarySvg);
         diodeBoundarySvg.appendChild(diodeBoundaryPath);
         $(diodeBoundarySvg).attr({
@@ -47,8 +45,7 @@ define([
         $(diodeBoundaryPath).attr('d', '');
     }
 
-    return {
+    export default {
         show,
         hide
     };
-});

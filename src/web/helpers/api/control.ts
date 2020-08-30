@@ -2,149 +2,170 @@
  * API control
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-control
  */
-define([
-    'jquery',
-    'helpers/i18n',
-    'helpers/websocket',
-    'helpers/convertToTypedArray',
-    'app/constants/device-constants',
-    'helpers/rsa-key',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/progress-actions'
-], function($, i18n, Websocket, convertToTypedArray, DeviceConstants, rsaKey, Alert, AlertConstants, ProgressActions) {
-    'use strict';
+import $ from 'jquery'
+import * as i18n from '../i18n'
+import Websocket from '../websocket'
+import DeviceConstants from '../../app/constants/device-constants'
+import rsaKey from '../rsa-key'
+import Alert from '../../app/contexts/AlertCaller'
+import AlertConstants from '../../app/constants/alert-constants'
+import ProgressActions from '../../app/actions/progress-actions'
 
-    return function(uuid, opts) {
-        opts = opts || {};
-        opts.onError = opts.onError || function() {};
-        opts.onConnect = opts.onConnect || function() {};
+const CONNECTION_TIMEOUT = 12 * 1000;
+const CONNECITON_TIMEOUT_ERROR = {
+    'status': 'error',
+    'error': 'TIMEOUT',
+    'info': 'connection timeoout'
+};
+const lang = i18n.lang;
+class Control {
+    private opts: {
+        onError: (error) => {}
+        onConnect: (data) => {}
+    }
 
-        let timeout = 12 * 1000,
-            timer,
-            isConnected = false,
-            lang = i18n.get(),
-            ws,
-            dedicatedWs = [],
-            fileInfoWsId = 0,
-            events = {
-                onMessage: () => {},
-                onError: opts.onError
-            },
-            isTimeout = () => {
-                let error = {
-                    'status': 'error',
-                    'error': 'TIMEOUT',
-                    'info': 'connection timeoout'
-                };
-                opts.onError(error);
-            };
+    public isConnected = false;
+    private ws: any | null;
+    private dedicatedWs: any[];
+    private fileInfoWsId: number = 0;
+    private mode: string = ''; // null, maintain or raw
+    // todo: remove this??
+    private commandCallback = {
+        onMessage: (event: any) => {},
+        onDebug: (event: any) => {},
+        onFatal: (event: any) => {},
+        onError: (event: any) => {}
+    };
+    protected uuid: string;
 
-        const createWs = (wsOptions) => {
-            let url = opts.availableUsbChannel >= 0  && opts.availableUsbChannel !==null ? `usb/${opts.availableUsbChannel}` : (uuid.length < 3 ? `usb/${uuid}` : uuid);
-            let _ws = new Websocket({
+    constructor(uuid: string, opts) {
+        this.uuid = uuid;
+        this.opts = opts;
+        this.commandCallback.onError = opts.onError
+    }
+
+    get connection() {
+        return this.ws;
+    }
+
+    async connect() {
+        // possible error
+        /*if(response.error === 'REMOTE_IDENTIFY_ERROR') {
+            opts.onError(response);setTimeout(() => {
+                createWs();
+            }, 3 * 1000);
+        }
+        else if(response.error === 'UNKNOWN_DEVICE') {
+            ProgressActions.close();
+            Alert.popUp({
+                type: AlertConstants.SHOW_POPUP_ERROR,
+                message: lang.message.unknown_device
+            });
+        }
+        else if(response.error === 'NOT_FOUND' || response.error === 'DISCONNECTED') {
+            opts.onError(response);
+        }
+        else if(response.code === 1006) {
+                        ProgressActions.close();
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.message.cant_connect_to_device
+                        });
+                        opts.onFatal(response);*/
+        this.ws = await this.createWs(this.uuid, this.opts);
+    }
+
+    useDefaultResponse (command) {
+        let d = $.Deferred();
+
+        this.commandCallback.onMessage = (response) => { d.resolve(response); };
+        this.commandCallback.onError = (response) => { d.reject(response); };
+        this.commandCallback.onFatal = (response) => { d.reject(response); };
+
+        this.ws.send(command);
+        return d.promise();
+    };
+
+    async createWs (uuid, opts, dedicated: boolean = false) {
+        let timer;
+        let url = uuid;
+        const commandCallback = this.commandCallback;
+
+            let newSocket = Websocket({
                 method: `control/${url}`,
                 onMessage: (data) => {
                     switch (data.status) {
                     case 'connecting':
                         opts.onConnect(data);
                         clearTimeout(timer);
-                        timer = setTimeout(isTimeout, timeout);
+                        timer = setTimeout(() => {
+                            opts.onError(CONNECITON_TIMEOUT_ERROR)
+                        }, CONNECTION_TIMEOUT);
                         break;
                     case 'connected':
                         clearTimeout(timer);
-                        createDedicatedWs(fileInfoWsId);
-                        opts.onConnect(data, wsOptions);
+                        if (!dedicated) {
+                            this.createDedicatedWs(this.fileInfoWsId);
+                        }
+                        // TODO: add interface to connected data
+                        opts.onConnect(data, dedicated);
                         break;
                     default:
-                        isConnected = true;
-                        events.onMessage(data);
+                        this.isConnected = true;
+                        this.commandCallback.onMessage(data);
                         break;
                     }
                 },
                 onDebug: (response) => {
-                    if(events.onDebug) {
-                        events.onDebug(response);
+                    if(this.commandCallback.onDebug) {
+                        this.commandCallback.onDebug(response);
                     }
                 },
                 onError: (response) => {
                     clearTimeout(timer);
-                    events.onError(response);
+                    // TODO: add interface to response data
+                    this.commandCallback.onError(response);
                 },
                 onFatal: (response) => {
                     clearTimeout(timer);
-                    if(response.error === 'REMOTE_IDENTIFY_ERROR') {
-                        setTimeout(() => {
-                            createWs();
-                        }, 3 * 1000);
-                    }
-                    else if(response.error === 'UNKNOWN_DEVICE') {
-                        ProgressActions.close();
-                        Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: lang.message.unknown_device
-                        });
-                    }
-                    else if(response.error === 'NOT_FOUND' || response.error === 'DISCONNECTED') {
-                        opts.onError(response);
-                    }
-                    else if(response.code === 1006) {
-                        ProgressActions.close();
-                        Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: lang.message.cant_connect_to_device
-                        });
-                        opts.onFatal(response);
-                    }
-                    else {
-                        clearTimeout(timer);
-                        events.onError(response);
-                    }
+                    opts.onError(response);
+                    // TODO: add interface to response data
+                    this.commandCallback.onError(response);
                 },
                 onClose: (response) => {
                     clearTimeout(timer);
-                    isConnected = false;
+                    this.isConnected = false;
+                    // TODO: add interface to response data
                     opts.onFatal(response);
                 },
-                onOpen: () => {
-                    _ws.send(rsaKey());
+                onOpen() {
+                    newSocket.send(rsaKey());
                 },
                 autoReconnect: false
             });
 
-            return _ws;
+            return newSocket;
         };
 
         // id is int
-        const createDedicatedWs = (id) => {
-            if(!dedicatedWs[id]) {
-                dedicatedWs[id] = createWs({dedicated: true});
+        createDedicatedWs (id) {
+            if(!this.dedicatedWs[id]) {
+                this.dedicatedWs[id] = this.createWs(this.uuid, this.opts, true);
             }
-            return dedicatedWs[id];
-        };
+            return this.dedicatedWs[id];
+        }
 
-        const useDefaultResponse = (command) => {
-            let d = $.Deferred();
-
-            events.onMessage = (response) => { d.resolve(response); };
-            events.onError = (response) => { d.reject(response); };
-            events.onFatal = (response) => { d.reject(response); };
-
-            ws.send(command);
-            return d.promise();
-        };
-
-        const prepareUpload = (d, data) => {
+        prepareUpload (d, data) {
             const CHUNK_PKG_SIZE = 4096;
             let length = data.length || data.size,
                 step = 0;
 
-            events.onMessage = (response) => {
+            this.commandCallback.onMessage = (response) => {
                 if ('continue' === response.status) {
                     for (let i = 0; i < length; i += CHUNK_PKG_SIZE) {
                         let chunk = data.slice(i, i + CHUNK_PKG_SIZE);
                         step++;
-                        ws.send(chunk);
+                        this.ws.send(chunk);
                     }
                 }
                 else if (response.status === 'uploading') {
@@ -158,64 +179,60 @@ define([
                 }
             };
 
-            events.onError = (response) => { d.reject(response); };
-            events.onFatal = (response) => { d.reject(response); };
-        };
+            this.commandCallback.onError = (response) => { d.reject(response); };
+            this.commandCallback.onFatal = (response) => { d.reject(response); };
+        }
 
-        ws = createWs();
+    
+        ls (path) {
+            let d = $.Deferred();
+            this.commandCallback.onMessage = (response) => {
+                switch (response.status) {
+                    case 'ok':
+                        d.resolve(response);
+                        break;
+                    case 'connected':
+                    default:
+                        break;
+                }
+            };
 
-        let ctrl = {
-            connection: ws,
-            mode: '',
-            ls: (path) => {
-                let d = $.Deferred();
-                events.onMessage = (response) => {
-                    switch (response.status) {
-                        case 'ok':
-                            d.resolve(response);
-                            break;
-                        case 'connected':
-                        default:
-                            break;
-                    }
-                };
+            this.commandCallback.onError = (response) => { d.reject(response); };
+            this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+            this.ws.send(`file ls ${path}`);
+            return d.promise();
+        }
 
-                ws.send(`file ls ${path}`);
-                return d.promise();
-            },
+        lsusb () { return this.useDefaultResponse('file lsusb'); }
 
-            lsusb: () => { return useDefaultResponse('file lsusb'); },
-
-            fileInfo: (path, fileName) => {
+        fileInfo (path, fileName) {
                 let d = $.Deferred(),
                     data = [],
                     _ws;
 
                 data.push(fileName);
-                _ws = createDedicatedWs(fileInfoWsId);
+                _ws = this.createDedicatedWs(this.fileInfoWsId);
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     data.push(response);
                     if(response.status === 'ok') {
                         d.resolve(data);
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                _ws.send(`file fileinfo ${path}/${fileName}`);
+                this.ws.send(`file fileinfo ${path}/${fileName}`);
                 return d.promise();
-            },
+            }
 
-            report: () => {
+            report () {
                 let d = $.Deferred(),
                     counter = 0;
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(response.status === 'ok') {
                         counter = 0;
                         d.resolve(response);
@@ -228,46 +245,46 @@ define([
                         else {
                             counter++;
                             console.log('retry report');
-                            ws.send('play report');
+                            this.ws.send('play report');
                         }
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
                 setTimeout(function() { d.reject( {status: "Timeout"} )}, 3000);
-                ws.send('play report');
+                this.ws.send('play report');
                 return d.promise();
-            },
+            }
 
             // upload: function(filesize, print_data) {
-            upload: (data, path, fileName) => {
+            upload (data, path, fileName) {
                 let d = $.Deferred();
 
-                prepareUpload(d, data);
+                this.prepareUpload(d, data);
 
                 if(path && fileName) {
                     fileName = fileName.replace(/ /g, '_');
                     let ext = fileName.split('.');
                     if(ext[ext.length - 1] === 'fc') {
-                        ws.send(`upload application/fcode ${data.size} ${path}/${fileName}`);
+                        this.ws.send(`upload application/fcode ${data.size} ${path}/${fileName}`);
                     }
                     else if(ext[ext.length - 1] === 'gcode') {
                         fileName = fileName.split('.');
                         fileName.pop();
                         fileName.push('fc');
                         fileName = fileName.join('.');
-                        ws.send(`upload text/gcode ${data.size} ${path}/${fileName}`);
+                        this.ws.send(`upload text/gcode ${data.size} ${path}/${fileName}`);
                     }
                 }
                 else {
-                    ws.send(`file upload application/fcode ${data.size}`);
+                    this.ws.send(`file upload application/fcode ${data.size}`);
                 }
                 return d.promise();
-            },
+            }
 
-            abort: () => {
+            abort() {
                 let d = $.Deferred(),
                     counter = 0;
 
@@ -278,14 +295,14 @@ define([
                     return response.device_status.st_id === 128 || response.device_status === 0;
                 };
 
-                const retry = (needsQuit) => {
+                const retry = (needsQuit: boolean = false) => {
                     counter++;
                     setTimeout(() => {
-                        needsQuit ? ws.send('play abort') : ws.send('play report');
+                        needsQuit ? this.ws.send('play abort') : this.ws.send('play report');
                     }, retryLength);
                 };
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(counter >= 3) {
                         console.log('tried 3 times');
                         if(response.cmd === 'play report') {
@@ -294,7 +311,7 @@ define([
                                     d.resolve();
                                     break;
                                 case 64:
-                                    ws.send('play quit');
+                                    this.ws.send('play quit');
                                     break;
                             }
                         }
@@ -303,27 +320,27 @@ define([
                     }
                     isAborted(response) ? d.resolve() : retry(response.status !== 'ok');
                 };
-                events.onError = (response) => { counter >= 3 ? d.reject(response) : retry(); };
-                events.onFatal = (response) => { counter >= 3 ? d.reject(response) : retry(); };
+                this.commandCallback.onError = (response) => { counter >= 3 ? d.reject(response) : retry(); };
+                this.commandCallback.onFatal = (response) => { counter >= 3 ? d.reject(response) : retry(); };
 
-                ws.send('play abort');
+                this.ws.send('play abort');
                 return d.promise();
-            },
+            };
 
-            start: () => { return useDefaultResponse('play start'); },
+            start() { return this.useDefaultResponse('play start'); };
 
-            pause: () => { return useDefaultResponse('play pause'); },
+            pause() { return this.useDefaultResponse('play pause'); };
 
-            resume: () => { return useDefaultResponse('play resume'); },
+            resume() { return this.useDefaultResponse('play resume'); };
 
-            kick: () => { return useDefaultResponse('kick'); },
+            kick() { return this.useDefaultResponse('kick'); };
 
-            quitTask: () => {
-                ctrl.mode = '';
-                return useDefaultResponse('task quit');
-            },
+            quitTask() {
+                this.mode = '';
+                return this.useDefaultResponse('task quit');
+            }
 
-            quit: () => {
+            quit() {
                 let d = $.Deferred(),
                     counter = 0;
 
@@ -334,40 +351,36 @@ define([
                     return response.device_status.st_id === 0;
                 };
 
-                const retry = (needsQuit) => {
+                const retry = (needsQuit: boolean = false) => {
                     counter++;
                     setTimeout(() => {
-                        needsQuit ? ws.send('play quit') : ws.send('play report');
+                        needsQuit ? this.ws.send('play quit') : this.ws.send('play report');
                     }, retryLength);
                 };
 
-                events.onMessage = (response) => { isIdle(response) ? d.resolve() : retry(response.status !== 'ok'); };
-                events.onError = (response) => { counter >= 3 ? d.reject(response) : retry(); };
-                events.onFatal = (response) => { counter >= 3 ? d.reject(response) : retry(); };
+                this.commandCallback.onMessage = (response) => { isIdle(response) ? d.resolve() : retry(response.status !== 'ok'); };
+                this.commandCallback.onError = (response) => { counter >= 3 ? d.reject(response) : retry(); };
+                this.commandCallback.onFatal = (response) => { counter >= 3 ? d.reject(response) : retry(); };
 
-                ws.send('play quit');
+                this.ws.send('play quit');
                 return d.promise();
-            },
+            }
 
-            killSelf: () => {
-                let d = $.Deferred();
-                dedicatedWs[fileInfoWsId].send('kick');
-                dedicatedWs[fileInfoWsId].close();
-                ws.send('kick');
-                ws.close();
-                setInterval(() => {
-                    d.resolve();
-                }, 500);
-                return d.promise();
-            },
+            async killSelf() {
+                this.dedicatedWs[this.fileInfoWsId].send('kick');
+                this.dedicatedWs[this.fileInfoWsId].close();
+                this.ws.send('kick');
+                this.ws.close();
+                await new Promise(r => setTimeout(r, 500));
+            }
 
-            deviceInfo: () => { return useDefaultResponse('deviceinfo'); },
+            deviceInfo() { return this.useDefaultResponse('deviceinfo'); }
 
-            getPreview: () => {
+            getPreview() {
                 let d       = $.Deferred(),
                     data    = [];
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(response.status === 'ok') {
                         data.push(response);
                         d.resolve(data);
@@ -377,26 +390,26 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.resolve(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.resolve(response); };
 
-                ws.send('play info');
+                this.ws.send('play info');
                 return d.promise();
-            },
+            }
 
-            select: (path, fileName) => {
-                return useDefaultResponse(fileName === '' ? `play select ${path.join('/')}` : `play select ${path}/${fileName}`);
-            },
+            select (path, fileName) {
+                return this.useDefaultResponse(fileName === '' ? `play select ${path.join('/')}` : `play select ${path}/${fileName}`);
+            }
 
-            deleteFile: (fileNameWithPath) => {
-                return useDefaultResponse(`file rmfile ${fileNameWithPath}`);
-            },
+            deleteFile (fileNameWithPath) {
+                return this.useDefaultResponse(`file rmfile ${fileNameWithPath}`);
+            }
 
-            downloadFile: (fileNameWithPath) => {
+            downloadFile (fileNameWithPath) {
                 let d = $.Deferred(),
                     file = [];
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(response.status === 'continue') {
                         d.notify(response);
                     }
@@ -409,18 +422,18 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.resolve(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.resolve(response); };
 
-                ws.send(`file download ${fileNameWithPath}`);
+                this.ws.send(`file download ${fileNameWithPath}`);
                 return d.promise();
-            },
+            }
 
-            downloadLog: (log) => {
+            downloadLog (log) {
                 let d = $.Deferred(),
                     file = [];
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(response.status === 'transfer') {
                         d.notify(response);
                     }
@@ -433,18 +446,18 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.resolve(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.resolve(response); };
 
-                ws.send(`fetch_log ${log}`);
+                this.ws.send(`fetch_log ${log}`);
                 return d;
-            },
+            }
 
-            downloadErrorLog: () => {
+            downloadErrorLog() {
                 let d = $.Deferred(),
                     file = [];
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if(!~Object.keys(response).indexOf('completed')) {
                         file.push(response);
                     }
@@ -454,88 +467,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.resolve(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.resolve(response); };
 
-                ws.send('fetch_log fluxcloudd.log');
+                this.ws.send('fetch_log fluxcloudd.log');
                 return d.promise();
-            },
+            }
 
-            calibrate: (clean, doubleZProbe, withoutZProbe) => {
-                let d = $.Deferred(),
-                    errorCount = 0,
-                    temp = { debug: [] },
-                    doubleZProbeDone = false;
-
-                events.onMessage = (response) => {
-                    if(response.status === 'ok') {
-                        if (withoutZProbe) {
-                            response.debug = temp.debug;
-                            d.resolve(response);
-                        } else if(response.data.length > 1) {
-                            ws.send('maintain zprobe');
-                        } else {
-                            if (doubleZProbe&& !doubleZProbeDone) {
-                                doubleZProbeDone = true;
-                                ws.send('maintain zprobe');
-                                return;
-                            }
-
-                            response.debug = temp.debug;
-                            d.resolve(response);
-                        }
-                    }else if(response.status === 'operating'){
-                        temp.operation_info = response;
-                        d.notify(response);
-                    }
-                };
-
-                events.onDebug = (response) => {
-                    if(response.log){
-                        if(temp.operation_info){
-                            if(typeof temp.operation_info.pos !== 'undefined') {
-                                response.log += ' POS ' + temp.operation_info.pos;
-                            }
-                            else{
-                                response.log += ' Z';
-                            }
-                        }
-                        temp.debug.push(response.log);
-                    }
-                };
-
-                events.onError = (response) => {
-                    if(response.status === 'error') {
-                        if(errorCount === 0 && response.error[0] === 'HEAD_ERROR') {
-                            setTimeout(() => {
-                                errorCount++;
-                                if(clean === true) {
-                                    ws.send('maintain calibrating clean');
-                                }
-                                else {
-                                    ws.send('maintain calibrating');
-                                }
-                            }, 500);
-                        }
-                        else {
-                            d.reject(response);
-                        }
-                    }
-                    else {
-                        d.reject(response);
-                    }
-                };
-                events.onFatal = (response) => { d.resolve(response); };
-
-                let cmd = 'maintain calibrating' + (clean ? ' clean' : '');
-                ws.send(cmd);
-                return d.promise();
-            },
-
-            getLaserPower: () => {
+            getLaserPower() {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -546,17 +488,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send('play get_laser_power');
+                this.ws.send('play get_laser_power');
                 return d.promise();
-            },
+            }
 
-            getLaserSpeed: () => {
+            getLaserSpeed() {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -567,17 +509,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send('play get_laser_speed');
+                this.ws.send('play get_laser_speed');
                 return d.promise();
-            },
+            }
 
-            getFan: () => {
+            getFan() {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -588,17 +530,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send('play get_fan');
+                this.ws.send('play get_fan');
                 return d.promise();
-            },
+            }
 
-            setLaserPower: (power) => {
+            setLaserPower (power) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -609,17 +551,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_laser_power ${power}`);
+                this.ws.send(`play set_laser_power ${power}`);
                 return d.promise();
-            },
+            }
 
-            setLaserPowerTemp: (power) => {
+            setLaserPowerTemp (power) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -630,17 +572,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_laser_power_temp ${power}`);
+                this.ws.send(`play set_laser_power_temp ${power}`);
                 return d.promise();
-            },
+            }
 
-            setLaserSpeed: (speed) => {
+            setLaserSpeed (speed) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -651,17 +593,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_laser_speed ${speed}`);
+                this.ws.send(`play set_laser_speed ${speed}`);
                 return d.promise();
-            },
+            }
 
-            setLaserSpeedTemp: (speed) => {
+            setLaserSpeedTemp (speed) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -672,17 +614,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_laser_speed_temp ${speed}`);
+                this.ws.send(`play set_laser_speed_temp ${speed}`);
                 return d.promise();
-            },
+            }
 
-            setFan: (fan) => {
+            setFan (fan) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -693,17 +635,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_fan ${fan}`);
+                this.ws.send(`play set_fan ${fan}`);
                 return d.promise();
-            },
+            }
 
-            setFanTemp: (fan) => {
+            setFanTemp(fan) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -714,17 +656,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_fan_temp ${fan}`);
+                this.ws.send(`play set_fan_temp ${fan}`);
                 return d.promise();
-            },
+            }
 
-            setOriginX: (x) => {
+            setOriginX(x) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -735,17 +677,17 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_origin_x ${x}`);
+                this.ws.send(`play set_origin_x ${x}`);
                 return d.promise();
-            },
+            }
 
-            setOriginY: (y) => {
+            setOriginY(y) {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                         case 'ok':
                             d.resolve(response);
@@ -756,86 +698,28 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); console.log('on error', response); };
-                events.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
+                this.commandCallback.onError = (response) => { d.reject(response); console.log('on error', response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); console.log('on fatal', response); };
 
-                ws.send(`play set_origin_y ${y}`);
+                this.ws.send(`play set_origin_y ${y}`);
                 return d.promise();
-            },
+            }
 
-            zprobe: () => {
-                let d = $.Deferred(),
-                    errorCount = 0,
-                    temp = { debug: [] };
+            getHeadInfo() {
+                return this.useDefaultResponse('maintain headinfo');
+            }
 
-                events.onMessage = (response) => {
-                    if (response.status === 'ok') {
-                        response.debug = temp.debug;
-                        d.resolve(response);
-                    } else if (response.status === 'operating') {
-                        temp.operation_info = response;
-                        d.notify(response);
-                    }
-                };
+            getDeviceSetting (name) {
+                return this.useDefaultResponse(`config get ${name}`);
+            }
 
-                events.onDebug = (response) => {
-                    if(response.log){
-                        if(temp.operation_info){
-                            if(typeof temp.operation_info.pos !== 'undefined') {
-                                response.log += ' POS ' + temp.operation_info.pos;
-                            }
-                            else{
-                                response.log += ' Z';
-                            }
-                        }
-                        temp.debug.push(response.log);
-                    }
-                };
+            setDeviceSetting (name, value) {
+                return this.useDefaultResponse(`config set ${name} ${value}`);
+            }
 
-                events.onError = (response) => {
-                    if(response.status === 'error') {
-                        if(errorCount === 0 && response.error[0] === 'HEAD_ERROR') {
-                            setTimeout(() => {
-                                errorCount++;
-                                ws.send('maintain zprobe');
-                            }, 500);
-                        }
-                        else {
-                            d.reject(response);
-                        }
-                    }
-                    else {
-                        d.reject(response);
-                    }
-                };
-                events.onFatal = (response) => { d.reject(response); };
-                ws.send('maintain zprobe');
-                return d.promise();
-            },
-
-            getHeadInfo: () => {
-                return useDefaultResponse('maintain headinfo');
-            },
-
-            getDeviceSetting: (name) => {
-                return useDefaultResponse(`config get ${name}`);
-            },
-
-            setDeviceSetting: (name, value) => {
-                return useDefaultResponse(`config set ${name} ${value}`);
-            },
-
-            deleteDeviceSetting: (name) => {
-                return useDefaultResponse(`config del ${name}`);
-            },
-
-            getCloudValidationCode: () => {
-                return useDefaultResponse('cloud_validate_code');
-            },
-
-            enableCloud: () => {
-                return useDefaultResponse('config set enable_cloud A');
-            },
+            deleteDeviceSetting (name) {
+                return this.useDefaultResponse(`config del ${name}`);
+            }
 
             /**
              * enter maintain mode
@@ -843,34 +727,34 @@ define([
              *
              * @return {Promise}
              */
-            enterMaintainMode: () => {
+            enterMaintainMode() {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => { setTimeout(() => {
-                    ctrl.mode = 'maintain';
+                this.commandCallback.onMessage = (response) => { setTimeout(() => {
+                    this.mode = 'maintain';
                     d.resolve(response);
                 }, 3000); };
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                ws.send('task maintain');
+                this.ws.send('task maintain');
                 return d.promise();
-            },
+            }
 
-            showOutline: (object_height, positions) => {
-              let frames = '';
-              positions.forEach(function(position) {
+            showOutline (object_height, positions) {
+                let frames = '';
+                positions.forEach(function(position) {
                 let frame = [position.first,
-                             position.second,
-                             position.third,
-                             position.fourth];
+                                position.second,
+                                position.third,
+                                position.fourth];
                 frames += JSON.stringify(frame) + ' ';
-              });
+                });
 
-              return useDefaultResponse(`laser show_outline ${object_height} ${frames}`);
-            },
+                return this.useDefaultResponse(`laser show_outline ${object_height} ${frames}`);
+            }
 
-            maintainMove: (args) => {
+            maintainMove (args: any) {
                 var command = '';
                 args.f = args.f || '6000';
                 command += ' f:' + args.f;
@@ -883,22 +767,22 @@ define([
                 if (typeof args.z !== 'undefined') {
                     command += ' z:' + args.z;
                 };
-                return useDefaultResponse(`maintain move${command}`);
-            },
+                return this.useDefaultResponse(`maintain move${command}`);
+            }
 
-            maintainCloseFan: () => {
-                return useDefaultResponse('maintain close_fan');
-            },
+            maintainCloseFan() {
+                return this.useDefaultResponse('maintain close_fan');
+            }
 
-            endMaintainMode: () => {
-                ctrl.mode = '';
-                return useDefaultResponse('task quit');
-            },
+            endMaintainMode() {
+                this.mode = '';
+                return this.useDefaultResponse('task quit');
+            }
 
-            rawHome: () => {
+            rawHome() {
                 let d = $.Deferred();
                 let isCmdResent = false;
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     if (response.status === 'raw' && response.text.startsWith('ok')) {
                         d.resolve(response);
                     } else if (response.text.indexOf('ER:RESET') >= 0) {
@@ -912,19 +796,19 @@ define([
                                     isCmdResent = true;
                                     setTimeout(() => {
                                         isCmdResent = false;
-                                        ws.send('raw home');
+                                        this.ws.send('raw home');
                                     }, 200);
                                 }
                         }
                     }
                 };
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
-                ws.send('raw home');
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
+                this.ws.send('raw home');
                 return d.promise();
-            },
+            }
 
-            rawMove: (args) => {
+            rawMove (args) {
                 let command = 'G1';
                 args.f = args.f || '6000';
                 command += 'F' + args.f;
@@ -935,127 +819,74 @@ define([
                     command += 'Y' + Math.round(args.y * 1000) / 1000;
                 };
                 console.log('raw move command:', command);
-                return useDefaultResponse(command);
-            },
+                return this.useDefaultResponse(command);
+            }
 
-            rawSetRotary: (on) => {
+            rawSetRotary (on) {
                 const command = on ? 'R1\n' : 'R0\n';
-                return useDefaultResponse(command);
-            },
+                return this.useDefaultResponse(command);
+            }
 
-            enterRawMode: () => {
+            enterRawMode() {
                 let d = $.Deferred();
 
-                events.onMessage = (response) => { setTimeout(() => {
-                    ctrl.mode = 'raw';
+                this.commandCallback.onMessage = (response) => { setTimeout(() => {
+                    this.mode = 'raw';
                     d.resolve(response);
                 }, 3000); };
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                ws.send('task raw');
+                this.ws.send('task raw');
                 return d.promise();
-            },
+            }
 
-            endRawMode: () => {
-                ctrl.mode = '';
-                return useDefaultResponse('task quit');
-            },
+            endRawMode() {
+                this.mode = '';
+                return this.useDefaultResponse('task quit');
+            }
 
-            startToolheadOperation: () => {
-                return useDefaultResponse('play toolhead operation');
-            },
+            startToolheadOperation() {
+                return this.useDefaultResponse('play toolhead operation');
+            }
 
-            endToolheadOperation: () => {
-                return useDefaultResponse('play toolhead standby');
-            },
+            endToolheadOperation() {
+                return this.useDefaultResponse('play toolhead standby');
+            }
 
-            endLoadingDuringPause: () => {
-                return useDefaultResponse('play press_button');
-            },
+            endLoadingDuringPause() {
+                return this.useDefaultResponse('play press_button');
+            }
 
-            setHeadTemperatureDuringPause: (temperature) => {
-                return useDefaultResponse(`play toolhead heater 0 ${temperature}`);
-            },
+            setHeadTemperatureDuringPause(temperature) {
+                return this.useDefaultResponse(`play toolhead heater 0 ${temperature}`);
+            }
 
             /**
              * maintain home
              *
              * @return {Promise}
              */
-            maintainHome: () => {
-                return useDefaultResponse('maintain home');
-            },
-
-            /**
-             * change filament
-             * @param {String} type - [LOAD|UNLOAD]
-             *
-             * @return {Promise}
-             */
-            changeFilament: (type, flexible) => {
-                let d = $.Deferred(),
-                    timeout;
-
-                const getType = (t) => {
-                    if (flexible) return 'load_flexible_filament';
-                    return t === DeviceConstants.LOAD_FILAMENT ? 'load_filament' : 'unload_filament';
-                };
-
-                events.onMessage = (response) => {
-
-                    clearTimeout(timeout);
-                    timeout = setTimeout( () => {
-                        response = {
-                          stage  : ["DISCONNECTED", "DISCONNECTED"],
-                          status : "error",
-                          error  : ["DISCONNECTED", ""]
-                        }
-                        d.notify(response);
-                    }, 10 * 500);
-
-                    response.status !== 'ok' ? d.notify(response) : d.resolve(response);
-                };
-
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
-
-                setTimeout(() => {
-                    ws.send(`maintain ${getType(type)} 0 220`);
-                }, 3000);
-
-                return d.promise();
-            },
-
-            changeFilamentDuringPause: (type) => {
-                let cmd = type === 'LOAD' ? 'load_filament' : 'unload_filament';
-                return useDefaultResponse(`play ${cmd} 0`);
-            },
-
-            setHeadTemperature: (temperature) => {
-                return useDefaultResponse(`maintain set_heater 0 ${temperature}`);
-            },
-
-            getHeadStatus: () => {
-                return useDefaultResponse('maintain headstatus');
-            },
+            maintainHome() {
+                return this.useDefaultResponse('maintain home');
+            }
 
             /**
              * update firmware
              * @param {File} file - file
              */
-            fwUpdate: (file) => {
+            fwUpdate(file) {
                 let d = $.Deferred(),
                     blob = new Blob([file], { type: 'binary/flux-firmware' });
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                     case 'ok':
                         d.resolve(response);
                         break;
                     case 'continue':
                         d.notify(response);
-                        ws.send(blob);
+                        this.ws.send(blob);
                         break;
                     case 'uploading':
                         response.percentage = (response.sent || 0) / blob.size * 100;
@@ -1066,19 +897,19 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                ws.send(`update_fw binary/flux-firmware ${blob.size}`);
+                this.ws.send(`update_fw binary/flux-firmware ${blob.size}`);
 
                 return d.promise();
-            },
+            }
 
             /**
              * update toolhead firmware - device should in `Maintain mode`
              * @param {File} file - file
              */
-            toolheadUpdate: (file) => {
+            toolheadUpdate(file) {
                 let d = $.Deferred(),
                     mimeType = 'binary/flux-firmware',
                     blob = new Blob([file], { type: mimeType }),
@@ -1089,14 +920,14 @@ define([
                         blob.size
                     ];
 
-                events.onMessage = (response) => {
+                this.commandCallback.onMessage = (response) => {
                     switch (response.status) {
                     case 'ok':
                         d.resolve(response);
                         break;
                     case 'continue':
                         d.notify(response);
-                        ws.send(blob);
+                        this.ws.send(blob);
                         break;
                     case 'operating':
                     case 'uploading':
@@ -1109,26 +940,11 @@ define([
                     }
                 };
 
-                events.onError = (response) => { d.reject(response); };
-                events.onFatal = (response) => { d.reject(response); };
+                this.commandCallback.onError = (response) => { d.reject(response); };
+                this.commandCallback.onFatal = (response) => { d.reject(response); };
 
-                ws.send(args.join(' '));
+                this.ws.send(args.join(' '));
                 return d.promise();
             }
-        };
-
-        ctrl.maintainClean = function(){
-            return ctrl.calibrate(true);
-        };
-
-        ctrl.calibrateDoubleZProbe = function(){
-            return ctrl.calibrate(true, true);
-        };
-
-        ctrl.calibrateWithoutZProbe = function(){
-            return ctrl.calibrate(true, false, true);
-        };
-
-        return ctrl;
-    };
-});
+        }
+export default Control;

@@ -1,17 +1,11 @@
-define([
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'helpers/shortcuts',
-    'helpers/i18n',
-], function(
-    FnWrapper,
-    Shortcuts,
-    i18n
-){
-    const React = require('react');
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import Shortcuts from '../../../../helpers/shortcuts'
+import * as i18n from '../../../../helpers/i18n'
+    const React = requireNode('react');;
 
     const LANG = i18n.lang.beambox.left_panel.insert_object_submenu;
 
-    return class InsertObjectSubmenu extends React.Component {
+    export default class InsertObjectSubmenu extends React.Component {
         componentDidMount() {
             Shortcuts.on(['esc'], () => this.props.onClose());
         }
@@ -51,4 +45,3 @@ define([
             );
         }
     };
-});

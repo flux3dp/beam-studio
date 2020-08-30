@@ -1,15 +1,14 @@
-define([
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/constant',
-    'helpers/i18n'
-], function(
-    Alert,
-    AlertConstants,
-    Constant,
-    i18n
-) {
-    const React = require('react');
+import Alert from '../../contexts/AlertCaller'
+import Constant from '../../actions/beambox/constant'
+import * as i18n from '../../../helpers/i18n'
+const svgCanvas = window['svgCanvas'];
+const svgedit = window['svgedit'];
+const SvgNest = window['SvgNest'];
+const ClipperLib = window['ClipperLib'];
+// TODO confim this statement is true
+const selectedElements = window['selectedElements'];
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.tool_panels;
 
     
@@ -21,7 +20,7 @@ define([
             }
         }
 
-        nestElements = (elements, containerElem, config) => {
+        nestElements = (elements, containerElem?: HTMLElement, config?: any) => {
             let containerPoints;
             if (containerElem) {
                 const containerDpath = svgedit.utilities.getPathDFromElement(containerElem);
@@ -90,7 +89,10 @@ define([
                 let elementsToUndo = [elem];
                 while (elementsToUndo.length > 0) {
                     elem = elementsToUndo.pop();
-                    let undoRecord = {
+                    let undoRecord: {
+                        element: any,
+                        attrs: any
+                    } = {
                         element: elem,
                         attrs: {
                             transform: elem.getAttribute('transform')
@@ -210,5 +212,4 @@ define([
         }
     };
 
-    return SvgNestButtons;
-});
+    export default SvgNestButtons;

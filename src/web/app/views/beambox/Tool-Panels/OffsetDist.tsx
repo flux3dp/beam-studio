@@ -1,19 +1,6 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/i18n',
-    'app/actions/beambox/constant'
-], function(
-    $,
-    PropTypes,
-    FnWrapper,
-    UnitInput,
-    i18n,
-    Constant
-)   {
-    const React = require('react');
+import UnitInput from'../../../widgets/Unit-Input-v2'
+import * as i18n from '../../../../helpers/i18n'
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.tool_panels;
 
     class OffsetDistPanel extends React.Component{
@@ -69,5 +56,4 @@ define([
         }
     };
 
-    return OffsetDistPanel;
-});
+    export default OffsetDistPanel;

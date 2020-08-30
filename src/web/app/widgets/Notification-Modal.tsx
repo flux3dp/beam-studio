@@ -1,13 +1,10 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'helpers/shortcuts',
-    'app/constants/alert-constants',
-    'jsx!widgets/Modal',
-    'jsx!widgets/AlertDialog'
-], function($, PropTypes, shortcuts, AlertConstants, Modal, AlertDialog) {
-    'use strict';
-    const React = require('react');
+import $ from 'jquery'
+const PropTypes = require('reactPropTypes')
+import shortcuts from '../../helpers/shortcuts'
+import AlertConstants from '../constants/alert-constants'
+import Modal from './Modal'
+import AlertDialog from './AlertDialog'
+    const React = requireNode('react');;
 
     var lang,
         acceptableTypes = [
@@ -277,5 +274,4 @@ define([
         images: []
     };
 
-    return NotificationModal;
-});
+    export default NotificationModal;

@@ -1,38 +1,25 @@
-define([
-    'helpers/aws-helper',
-    'helpers/device-master',
-    'helpers/i18n',
-    'helpers/image-data',
-    'helpers/symbol-maker',
-    'helpers/version-checker',
-    'app/actions/beambox/beambox-preference',
-    'app/contexts/ProgressCaller',
-    'app/actions/beambox/font-funcs',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'helpers/api/svg-laser-parser',
-    'app/actions/beambox',
-    'app/actions/beambox/constant',
-    'app/actions/global-actions',
-], function (
-    AwsHelper,
-    DeviceMaster,
-    i18n,
-    ImageData,
-    SymbolMaker,
-    VersionChecker,
-    BeamboxPreference,
-    Progress,
-    FontFuncs,
-    Alert,
-    AlertConstants,
-    svgLaserParser,
-    BeamboxActions,
-    Constant,
-    GlobalActions
-) {
-    const lang = i18n.lang;
+import AwsHelper from '../../../helpers/aws-helper'
+import DeviceMaster from '../../../helpers/device-master'
+import * as i18n from '../../../helpers/i18n'
+import ImageData from '../../../helpers/image-data'
+import SymbolMaker from '../../../helpers/symbol-maker'
+import VersionChecker from '../../../helpers/version-checker'
+import BeamboxPreference from '../../actions/beambox/beambox-preference'
+import Progress from '../../contexts/ProgressCaller'
+import FontFuncs from '../../actions/beambox/font-funcs'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import svgLaserParser from '../../../helpers/api/svg-laser-parser'
+import Constant from '../../actions/beambox/constant'
+import GlobalActions from '../../actions/global-actions'
+
+const electron = window['electron'];
+
+const lang = i18n.lang;
     const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
+
+    const svgedit = window['svgedit'];
+    const svgCanvas = window['svgCanvas'];
 
     // capture the scene of the svgCanvas to bitmap
     const fetchThumbnail = async () => {
@@ -69,8 +56,8 @@ define([
             const ratio = img.width / $('#svgroot').width();
             const W = ratio * $('#svgroot').width();
             const H = ratio * $('#svgroot').height();
-            const w = ratio * $('#canvasBackground').attr('width');
-            const h = ratio * $('#canvasBackground').attr('height');
+            const w = ratio * parseInt($('#canvasBackground').attr('width'), 10);
+            const h = ratio * parseInt($('#canvasBackground').attr('height'), 10);
             const x = - (W - w) / 2;
             const y = - (H - h) / 2;
 
@@ -85,7 +72,7 @@ define([
         const img = await DOM2Image($svg);
         const canvas = cropAndDrawOnCanvas(img);
 
-        return await new Promise((resolve)=>{
+        return await new Promise<any[]>((resolve)=>{
             canvas.toBlob(function (blob) {
                 resolve([canvas.toDataURL(), URL.createObjectURL(blob)]);
             });
@@ -172,8 +159,7 @@ define([
     };
 
     // fetchTaskCode: send svg string calculate taskcode, default output Fcode if isOutputGcode === true output gcode
-    const fetchTaskCode = async (args={}) => {
-        const {isOutputGcode, device} = args;
+    const fetchTaskCode = async (device: any = null, isOutputGcode: boolean = false) => {
         let isErrorOccur = false;
         SymbolMaker.switchImageSymbolForAll(false);
         Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
@@ -249,7 +235,10 @@ define([
                             }
                         });
                         isErrorOccur = true;
-                        resolve({});
+                        resolve({
+                            taskCodeBlob: null,
+                            fileTimeCost: null
+                        });
                     },
                     fileMode: '-f',
                     codeType,
@@ -262,7 +251,7 @@ define([
             );
         });
         Progress.popById('fetch-task');
-
+        
         if (!isOutputGcode) {
             return {
                 fcodeBlob: taskCodeBlob,
@@ -280,17 +269,18 @@ define([
     };
 
 
-    return {
+    export default {
         uploadFcode: async function (device) {
-            const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode({device});
+            const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode(device);
             if (!fcodeBlob) {
                 return;
             }
             await DeviceMaster.select(device)
-                .done(() => {
+                .then(() => {
                     GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
                 })
-                .fail((errMsg) => {
+                .catch((errMsg) => {
+                    // TODO: handle err message
                     Alert.popUp({
                         id: 'menu-item',
                         message: `#807 ${errMsg}`,
@@ -300,7 +290,7 @@ define([
         },
 
         exportFcode: async function () {
-            const { fcodeBlob, _, fileTimeCost } = await fetchTaskCode();
+            const { fcodeBlob } = await fetchTaskCode();
             if (!fcodeBlob) {
                 return;
             }
@@ -309,14 +299,14 @@ define([
             const fileReader = new FileReader();
 
             fileReader.onload = function () {
-                window.electron.ipc.send('save-dialog', langFile.save_fcode, langFile.all_files, langFile.fcode_files, ['fc'], defaultFCodeName, new Uint8Array(this.result));
+                electron.ipc.send('save-dialog', langFile.save_fcode, langFile.all_files, langFile.fcode_files, ['fc'], defaultFCodeName, new Uint8Array(this.result as ArrayBuffer));
             };
 
             fileReader.readAsArrayBuffer(fcodeBlob);
         },
 
         getGcode: async function () {
-            const { gcodeBlob } = await fetchTaskCode({isOutputGcode: true});
+            const { gcodeBlob } = await fetchTaskCode(null, true);
             if (!gcodeBlob) {
                 return;
             }
@@ -331,4 +321,3 @@ define([
             return { uploadFile, thumbnailBlobURL };
         }
     };
-});

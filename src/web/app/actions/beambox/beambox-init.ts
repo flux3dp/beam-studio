@@ -1,64 +1,33 @@
-define([
-    'jquery',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/font-funcs',
-    'app/actions/beambox/tutorials',
-    'app/actions/initialize-machine',
-    'app/actions/global-actions',
-    'app/constants/global-constants',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/stores/alert-store',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/ProgressCaller',
-    'app/constants/device-constants',
-    'app/constants/font-constants',
-    'jsx!app/actions/beambox/Tool-Panels-Controller',
-    'jsx!app/actions/beambox/Laser-Panel-Controller',
-    'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
-    'helpers/api/alert-config',
-    'helpers/api/config',
-    'helpers/api/discover',
-    'helpers/check-device-status',
-    'helpers/check-firmware',
-    'helpers/device-master',
-    'helpers/firmware-updater',
-    'helpers/output-error',
-    'helpers/sprintf',
-    'helpers/version-checker',
-    'helpers/i18n'
-], function (
-    $,
-    BeamboxPreference,
-    Constant,
-    FontFuncs,
-    Tutorials,
-    InitializeMachine,
-    GlobalActions,
-    GlobalConstants,
-    Alert,
-    AlertConstants,
-    AlertStore,
-    DialogCaller,
-    Progress,
-    DeviceConstants,
-    FontConstants,
-    ToolPanelsController,
-    LaserPanelController,
-    ImageTracePanelController,
-    AlertConfig,
-    Config,
-    Discover,
-    checkDeviceStatus,
-    checkFirmware,
-    DeviceMaster,
-    firmwareUpdater,
-    OutputError,
-    sprintf,
-    VersionChecker,
-    i18n
-) {
+import $ from 'jquery'
+import BeamboxPreference from './beambox-preference'
+import Constant from './constant'
+import Tutorials from './tutorials'
+import InitializeMachine from '../initialize-machine'
+import GlobalActions from '../global-actions'
+import GlobalConstants from '../../constants/global-constants'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import AlertStore from '../../stores/alert-store'
+import DialogCaller from '../../contexts/DialogCaller'
+import Progress from '../../contexts/ProgressCaller'
+import DeviceConstants from '../../constants/device-constants'
+import FontConstants from '../../constants/font-constants'
+import ToolPanelsController from './Tool-Panels-Controller'
+import LaserPanelController from './Laser-Panel-Controller'
+import ImageTracePanelController from './Image-Trace-Panel-Controller'
+import AlertConfig from '../../../helpers/api/alert-config'
+import Config from '../../../helpers/api/config'
+import checkDeviceStatus from '../../../helpers/check-device-status'
+import checkFirmware from '../../../helpers/check-firmware'
+import DeviceMaster from '../../../helpers/device-master'
+import firmwareUpdater from '../../../helpers/firmware-updater'
+import OutputError from '../../../helpers/output-error'
+import sprintf from '../../../helpers/sprintf'
+import VersionChecker from '../../../helpers/version-checker'
+import * as i18n from '../../../helpers/i18n'
+import { IFont } from '../../../interfaces/IFont'
+const svgedit = window['svgedit'];
+
     const init = () => {
         ToolPanelsController.init('tool-panels-placeholder');
         LaserPanelController.init('layer-laser-panel-placeholder');
@@ -156,7 +125,7 @@ define([
     const initDefaultFont = () => {
         const lang = navigator.language;
         const os = process.platform;
-        const FontManager = require('font-manager');
+        const FontManager = requireNode('font-manager');
         const config = Config();
         let defaultFontFamily = 'Arial'
         if (FontConstants[lang] && FontConstants[lang][os]) {
@@ -164,7 +133,7 @@ define([
         }
         const fonts = FontManager.findFontsSync({ family: defaultFontFamily });
         if (fonts.length > 0) {
-            const defaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
+            const defaultFont: IFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
             config.write('default-font', {
                 family: defaultFont.family,
                 postscriptName: defaultFont.postscriptName,
@@ -175,7 +144,7 @@ define([
 
     const initMenuBarEvents = () => {
         const LANG = i18n.lang;
-        const electron = require('electron');
+        const electron = requireNode('electron');;
         const ipc = electron.ipcRenderer;
 
         const getLog = async function (printer, log) {
@@ -184,10 +153,11 @@ define([
             let downloader = DeviceMaster.downloadLog(log);
             downloader.then((file) => {
                 Progress.popById('get_log');
-                saveAs(file[1], log);
+                window['saveAs'](file[1], log);
 
-            }).progress((progress) => {
-                Progress.update('get_log', {message: 'downloading', percentage: progress.completed / progress.size * 100});
+            }).progress((progress: {completed: number, size: number}) => {
+                Progress.update('get_log', {
+                    message: 'downloading', percentage: progress.completed / progress.size * 100});
             }).fail((data) => {
                 Progress.popById('get_log');
                 let msg = data === 'canceled' ?
@@ -314,10 +284,10 @@ define([
                     }
                 };
 
-
+            // TODO: Handle the error better (output eresp)
             DeviceMaster.select(printer).then((status) => {
                 checkStatus();
-            }).fail((resp) => {
+            }).catch((resp) => {
                 Alert.popUp({
                     id: 'menu-item',
                     type: AlertConstants.SHOW_POPUP_ERROR,
@@ -328,24 +298,24 @@ define([
 
         const registerAllDeviceMenuClickEvents = () => {
 
-            window.menuEventRegistered = true;
+            window['menuEventRegistered'] = true;
 
             ipc.on('MENU_CLICK', (e, menuItem) => {
                 let _action = {},
-                    lang = i18n.get();
+                    lang = i18n.lang;
 
                 _action['DASHBOARD'] = (device) => {
                     DeviceMaster.selectDevice(device).then(status => {
-                        if (status === DeviceConstants.CONNECTED) {
-                            GlobalActions.showMonitor(device, '', '', GlobalConstants.DEVICE_LIST);
-                        }
-                        else if (status === DeviceConstants.TIMEOUT) {
-                            Alert.popUp({
-                                id: 'menu-item',
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                message: lang.message.connectionTimeout
-                            });
-                        }
+                        // todo: don't need to handle connection error in status select.
+                        // TODO: handle the error better
+                        GlobalActions.showMonitor(device, '', '', GlobalConstants.DEVICE_LIST);
+                    }).catch((resp) => {
+                        // TODO: output resp
+                        Alert.popUp({
+                            id: 'menu-item',
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: lang.message.connectionTimeout
+                        });
                     });
                 };
 
@@ -376,12 +346,13 @@ define([
                     Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                     await checkDeviceStatus(device);
                     DeviceMaster.select(device)
-                        .done(() => {
+                        .then(() => {
                             Progress.popById('connect');
                             const isBorderless = false;
                             DialogCaller.showCameraCalibration(device, isBorderless);
                         })
-                        .fail(() => {
+                        .catch((error) => {
+                            // handle error correctly
                             Progress.popById('connect');
                             Alert.popUp({
                                 type: AlertConstants.SHOW_POPUP_ERROR,
@@ -404,12 +375,13 @@ define([
                         Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         await checkDeviceStatus(device);
                         DeviceMaster.select(device)
-                            .done(() => {
+                            .then(() => {
                                 Progress.popById('connect');
                                 const isBorderless = true;
                                 DialogCaller.showCameraCalibration(device, isBorderless);
                             })
-                            .fail(() => {
+                            .catch((resp) => {
+                                // Output error correctly
                                 Progress.popById('connect');
                                 Alert.popUp({
                                     type: AlertConstants.SHOW_POPUP_ERROR,
@@ -439,11 +411,12 @@ define([
                     if (diodeAvailable) {
                         Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         DeviceMaster.select(device)
-                            .done(() => {
+                            .then(() => {
                                 Progress.popById('connect');
                                 DialogCaller.showDiodeCalibration(device);
                             })
-                            .fail(() => {
+                            .catch((resp) => {
+                                // handle error correctly
                                 Progress.popById('connect');
                                 Alert.popUp({
                                     type: AlertConstants.SHOW_POPUP_ERROR,
@@ -489,7 +462,6 @@ define([
 
                 _action['LOG_USBLIST'] = (device) => {
                     DeviceMaster.selectDevice(device).then(status => {
-                        if (status === DeviceConstants.CONNECTED) {}
                         DeviceMaster.lsusb().then( res => {
                             Alert.popUp({
                                 type: AlertConstants.SHOW_POPUP_INFO,
@@ -542,19 +514,19 @@ define([
                             onTimeout: () => { console.log('select device timeout'); }
                         };
 
-                        DeviceMaster.getDeviceBySerial(menuItem.serial, menuItem.source === 'h2h', callback);
+                        DeviceMaster.getDeviceBySerial(menuItem.serial, callback);
                     }
                 }
             });
 
         };
 
-        if (!window.menuEventRegistered) {
+        if (!window['menuEventRegistered']) {
             registerAllDeviceMenuClickEvents();
         }
     };
 
-    showTutorial = () => {
+    const showTutorial = () => {
         if (!AlertConfig.read('skip-interface-tutorial')) {
             const LANG = i18n.lang.tutorial;
             const isNewUser = localStorage.getItem('new-user') === 'true';
@@ -590,7 +562,7 @@ define([
         }
     };
 
-    checkOSVersion = () => {
+    const checkOSVersion = () => {
         const LANG = i18n.lang.beambox;
         if (!AlertConfig.read('skip_os_version_warning')) {
             if (process.platform === 'darwin') {
@@ -627,6 +599,7 @@ define([
                     {s:'Windows 3.11', r:/Win16/, shouldAlert: true},
                 ];
                 let shouldAlert = false;
+                let osVersion;
                 for (let i = 0; i < windowsVersionStrings.length; i++) {
                     let versionString = windowsVersionStrings[i];
                     if (versionString.r.test(navigator.userAgent)) {
@@ -650,11 +623,10 @@ define([
         }
     };
 
-    return {
+    export default {
         init: init,
         displayGuides: displayGuides,
         initMenuBarEvents: initMenuBarEvents,
         showTutorial,
         checkOSVersion,
     };
-});

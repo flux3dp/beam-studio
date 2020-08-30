@@ -1,39 +1,23 @@
-define([
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/contexts/ProgressCaller',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'helpers/api/alert-config',
-    'helpers/api/svg-laser-parser',
-    'app/actions/beambox/beambox-preference',
-    'helpers/api/config',
-    'helpers/i18n',
-    'helpers/sprintf',
-], function(
-    Alert,
-    AlertConstants,
-    Progress,
-    FnWrapper,
-    AlertConfig,
-    SvgLaserParser,
-    BeamboxPreference,
-    Config,
-    i18n,
-    sprintf
-) {
+    import Alert from '../../contexts/AlertCaller'
+    import AlertConstants from '../../constants/alert-constants'
+    import Progress from '../../contexts/ProgressCaller'
+    import AlertConfig from '../../../helpers/api/alert-config'
+    import SvgLaserParser from '../../../helpers/api/svg-laser-parser'
+    import BeamboxPreference from '../../actions/beambox/beambox-preference'
+    import Config from '../../../helpers/api/config'
+    import * as i18n from '../../../helpers/i18n'
+    import sprintf from '../../../helpers/sprintf'
+    import { IFontQuery } from '../../../interfaces/IFont'
+
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
-    const fontkit = require('fontkit');
-    if (!window.electron) {
-        console.log('font is not supported in web browser');
-        return {
-            tempConvertTextToPathAmoungSvgcontent: ()=>{}
-        };
-    }
+    const fontkit = requireNode('fontkit');
+    const electron = window['electron'];
     const ipc = electron.ipc;
     const events = electron.events;
     const LANG = i18n.lang.beambox.object_panels;
-    const activeLang = i18n.getActiveLang();
-    const FontManager = require('font-manager');
+    const FontManager = requireNode('font-manager');
+    const svgCanvas = window['svgCanvas'];
+    const svgedit = window['svgedit'];
 
     let tempPaths = [];
 
@@ -66,12 +50,11 @@ define([
         return Math.abs(h);
     };
 
-    let fontNameMapObj = Config().read('font-name-map') || {};
+    // TODO: Fix config
+    let fontNameMapObj: any = Config().read('font-name-map') || {};
     if (fontNameMapObj.navigatorLang !== navigator.language) {
         fontNameMapObj = {};
-    } else {
-        navigator.language = undefined;
-    }
+    } 
     const fontNameMap = new Map();
     const availableFontFamilies = (function requestAvailableFontFamilies() {
         // get all available fonts in user PC
@@ -142,12 +125,12 @@ define([
         const fonts = ipc.sendSync(events.FIND_FONTS, { family: family});
         return Array.from(fonts);
     });
-    const requestFontByFamilyAndStyle = ({family, style, weight, italic}) => {
+    const requestFontByFamilyAndStyle = (opts: IFontQuery) => {
         const font = ipc.sendSync(events.FIND_FONT, {
-            family: family,
-            style: style,
-            weight: weight,
-            italic: italic
+            family: opts.family,
+            style: opts.style,
+            weight: opts.weight,
+            italic: opts.italic
         });
         return font;
     };
@@ -172,7 +155,7 @@ define([
         //if only contain basic character (123abc!@#$...), don't substitute.
         //because my Mac cannot substituteFont properly handing font like 'Windings'
         //but we have to subsittue text if text contain both English and Chinese
-        const textOnlyContainBasicLatin = Array.from(text).every(char => {
+        const textOnlyContainBasicLatin = Array.from(text).every((char: string) => {
             return char.charCodeAt(0) <= 0x007F;
         });
         if (textOnlyContainBasicLatin) {
@@ -256,13 +239,14 @@ define([
             const font = requestFontByFamilyAndStyle({
                 family: $textElement.attr('font-family'),
                 weight: $textElement.attr('font-weight'),
-                italic: ($textElement.attr('font-style') === 'italic')
+                italic: ($textElement.attr('font-style') === 'italic'),
+                style: null
             });
             $textElement.attr('font-postscript', font.postscriptName);
         }
     }
 
-    const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert) => {
+    const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: boolean) => {
         if (!$textElement.text()) {
             svgCanvas.clearSelection();
             $textElement.remove();
@@ -306,7 +290,7 @@ define([
         let {pathD, transform} = await new Promise ((resolve, reject) => {
             let fileReader = new FileReader();
             fileReader.onloadend = function (e) {
-                let svgString = e.target.result;
+                const svgString = e.target.result as string;
                 //console.log(svgString);
                 const pathD = svgString.match(/(?<= d=")[^"]+/g);
                 const transform = svgString.match(/(?<= transform=")[^"]+/g);
@@ -323,7 +307,7 @@ define([
         }
 
         const newPathId = svgCanvas.getNextId();
-        const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
+        const path = document.createElementNS(svgedit.NS.SVG, 'path');
         $(path).attr({
             'id': newPathId,
             'd': pathD.join(''),
@@ -410,7 +394,7 @@ define([
         });
         const pathD = await d;
 
-        const path = document.createElementNS(window.svgedit.NS.SVG, 'path');
+        const path = document.createElementNS(svgedit.NS.SVG, 'path');
 
         const isFill = calculateFilled($textElement);
         let color = $textElement.attr('stroke');
@@ -449,6 +433,10 @@ define([
     };
 
     const tempConvertTextToPathAmoungSvgcontent = async () => {
+        if (!electron) {
+            console.warn('font is not supported in web browser');
+            return;
+        }
         //FnWrapper.reset_select_mode();
         const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
         let isSomeUnsupported = false;
@@ -604,7 +592,7 @@ define([
     //         })
     //     );
     // })();
-    return {
+    export default {
         availableFontFamilies: availableFontFamilies,
         fontNameMap: fontNameMap,
         requestFontsOfTheFontFamily: requestFontsOfTheFontFamily,
@@ -615,4 +603,3 @@ define([
         revertTempConvert: revertTempConvert,
         getFontOfPostscriptName: getFontOfPostscriptName
     };
-});

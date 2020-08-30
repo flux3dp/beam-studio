@@ -1,51 +1,26 @@
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'reactPropTypes',
-    'helpers/i18n',
-    'app/actions/beambox/beambox-preference',
-    'jsx!widgets/Modal',
-    'jsx!widgets/AlertDialog',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/device-master',
-    'helpers/version-checker',
-    'app/constants/device-constants',
-    'app/contexts/AlertCaller',
-    'app/actions/alert-actions',
-    'app/constants/alert-constants',
-    'helpers/check-device-status',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/actions/beambox/preview-mode-controller',
-    'helpers/api/camera-calibration',
-    'helpers/sprintf',
-    'app/actions/beambox/constant',
-    'helpers/device-error-handler'
-], function(
-    $,
-    PropTypes,
-    i18n,
-    BeamboxPreference,
-    Modal,
-    AlertDialog,
-    UnitInput,
-    DeviceMaster,
-    VersionChecker,
-    DeviceConstants,
-    Alert,
-    AlertActions,
-    AlertConstants,
-    CheckDeviceStatus,
-    ProgressActions,
-    ProgressConstants,
-    PreviewModeController,
-    CameraCalibration,
-    sprintf,
-    Constant,
-    DeviceErrorHandler
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+import BeamboxPreference from '../../actions/beambox/beambox-preference'
+import Modal from '../../widgets/Modal'
+import AlertDialog from '../../widgets/AlertDialog'
+import UnitInput from '../../widgets/Unit-Input-v2'
+import DeviceMaster from '../../../helpers/device-master'
+import VersionChecker from '../../../helpers/version-checker'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import CheckDeviceStatus from '../../../helpers/check-device-status'
+import ProgressActions from '../../actions/progress-actions'
+import ProgressConstants from '../../constants/progress-constants'
+import PreviewModeController from '../../actions/beambox/preview-mode-controller'
+import CameraCalibration from '../../../helpers/api/camera-calibration'
+import Constant from '../../actions/beambox/constant'
+import DeviceErrorHandler from '../../../helpers/device-error-handler'
+
+const svgCanvas = window['svgCanvas'];
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.camera_calibration;
 
     const cameraCalibrationWebSocket = CameraCalibration();
@@ -56,7 +31,10 @@ define([
     const STEP_BEFORE_ANALYZE_PICTURE = Symbol();
     const STEP_FINISH = Symbol();
 
-    let cameraPosition = {};
+    let cameraPosition = {
+        x: 0,
+        y: 0
+    };
 
     class CameraCalibrationStateMachine extends React.Component {
         constructor(props) {
@@ -177,7 +155,8 @@ define([
         const [isCutButtonDisabled, setCutButtonDisabled] = React.useState(false);
         const cutThenCapture = async function(updateOffsetDataCb, parent) {
             await _doCuttingTask(parent);
-            let blobUrl = await _doCaptureTask(true);
+            let blobUrl = await _doCaptureTask();
+            // TODO: Original is let blobUrl = await _doCaptureTask(true);
             await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
             updateImgBlobUrl(blobUrl);
             return;
@@ -282,9 +261,8 @@ define([
         }
     };
 
-    const _doSendPictureTask = async (url) => {
+    const _doSendPictureTask = async (imgBlobUrl: string) => {
         const d = $.Deferred();
-        if (url) { imgBlobUrl = url; }
         fetch(imgBlobUrl)
             .then(res => res.blob())
             .then((blob) => {
@@ -309,7 +287,7 @@ define([
         let result = null;;
         switch (resp.status) {
             case 'ok':
-                result = await _doAnalyzeResult(resp.x, resp.y, resp.angle, resp.width, resp.height);
+                result = await _doAnalyzeResult(imgBlobUrl, resp.x, resp.y, resp.angle, resp.width, resp.height);
                 break;
             case 'fail':
             case 'none':
@@ -319,14 +297,14 @@ define([
         return result;
     };
 
-    const _doAnalyzeResult = async (x, y, angle, squareWidth, squareHeight) => {
-        const blobImgSize = await new Promise(resolve => {
+    const _doAnalyzeResult = async (imgBlobUrl, x, y, angle, squareWidth, squareHeight) => {
+        const blobImgSize = await new Promise<{width: number, height: number}>(resolve => {
             const img = new Image();
             img.src = imgBlobUrl;
             img.onload = () => {
                 console.log("Blob size", img.width, img.height);
                 resolve({
-                    width:img.width,
+                    width: img.width,
                     height: img.height
                 });
             };
@@ -400,23 +378,27 @@ define([
         let imgBackground = {
             background: `url(${imgBlobUrl})`
         };
+        const squareWidth = 25 * mmToImage / currentOffset.SX; //px
+        const squareHeight = 25 * mmToImage / currentOffset.SY; //px
+
         let squareStyle = {
-            width: 25 * mmToImage / currentOffset.SX, //px
-            height: 25 * mmToImage / currentOffset.SY //px
+            width: squareWidth,
+            height: squareHeight,
+            left: 100 - squareWidth / 2 - (currentOffset.X - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / currentOffset.SX,
+            top: 100 - squareHeight / 2 - (currentOffset.Y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / currentOffset.SY,
+            transform: `rotate(${-currentOffset.R * 180 / Math.PI}deg)`
         };
 
-        squareStyle.left = 100 - squareStyle.width / 2 - (currentOffset.X - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / currentOffset.SX;
-        squareStyle.top = 100 - squareStyle.height / 2 - (currentOffset.Y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / currentOffset.SY;
-        squareStyle.transform = `rotate(${-currentOffset.R * 180 / Math.PI}deg)`;
         console.log('SquareStyle', squareStyle);
-
+        const lastSquareWidth = 25 * mmToImage / parent.lastConfig.scaleRatioX; //px
+        const lastSquareHeight = 25 * mmToImage / parent.lastConfig.scaleRatioY; //px
         let lastConfigSquareStyle = {
-            width: 25 * mmToImage / parent.lastConfig.scaleRatioX, //px
-            height: 25 * mmToImage / parent.lastConfig.scaleRatioY //px
+            width: lastSquareWidth,
+            height: lastSquareHeight,
+            left: 100 - lastSquareWidth / 2 - (parent.lastConfig.x - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / parent.lastConfig.scaleRatioX,
+            top: 100 - lastSquareHeight / 2 - (parent.lastConfig.y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / parent.lastConfig.scaleRatioY,
+            transform: `rotate(${-parent.lastConfig.angle * 180 / Math.PI}deg)`
         };
-        lastConfigSquareStyle.left = 100 - lastConfigSquareStyle.width / 2 - (parent.lastConfig.x - Constant.camera.calibrationPicture.centerX + cameraPosition.x) * mmToImage / parent.lastConfig.scaleRatioX;
-        lastConfigSquareStyle.top = 100 - lastConfigSquareStyle.height / 2 - (parent.lastConfig.y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / parent.lastConfig.scaleRatioY;
-        lastConfigSquareStyle.transform = `rotate(${-parent.lastConfig.angle * 180 / Math.PI}deg)`;
 
         let handleValueChange = function (key, val) {
             console.log('Key', key , '=', val);
@@ -638,5 +620,5 @@ define([
         />
     );
 
-    return CameraCalibrationStateMachine;
-});
+    export default CameraCalibrationStateMachine;
+

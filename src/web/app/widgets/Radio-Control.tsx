@@ -1,9 +1,7 @@
-define([
-    'reactPropTypes',
-    'plugins/classnames/index'
-], function(PropTypes, ClassNames) {
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes');
+const ClassNames = requireNode('classnames');
+const React = requireNode('react');
 
     class RadioControl extends React.Component{
         constructor(props) {
@@ -63,5 +61,4 @@ define([
         onChange: PropTypes.func.isRequired
     };
 
-    return RadioControl;
-});
+    export default RadioControl;

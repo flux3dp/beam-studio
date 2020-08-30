@@ -1,22 +1,13 @@
-define([
-    'jquery',
-    'helpers/i18n',
-    'jsx!views/settings/Setting-General',
-    'plugins/classnames/index',
-    'app/app-settings',
-    'helpers/api/config',
-], function(
-    $,
-    i18n,
-    GeneralSetting,
-    ClassNames,
-    settings,
-    config
-) {
-    'use strict';
-    const React = require('react');
+import $ from 'jquery'
+import * as i18n from '../../helpers/i18n'
+import config from '../../helpers/api/config'
+import settings from '../app-settings'
+import DeviceSetting from '../views/settings/Setting-Device'
+import GeneralSetting from '../views/settings/Setting-General'
+const ClassNames = requireNode('classnames')
+const React = requireNode('react');;
 
-    return function(args) {
+    export default function(args) {
         args = args || {};
 
         class HomeView extends React.Component{
@@ -34,27 +25,25 @@ define([
 
             _onLangChange = () => {
                 this.setState({
-                    lang: i18n.get()
+                    lang: i18n.lang
                 });
             }
 
             _renderContent = () => {
-                var content = {},
-                    view = args.child;
+                let view = args.child;
 
-                content.general = () => {
+                if (view == 'device') {
                     return (
-                        <GeneralSetting
-                            lang={this.state.lang}
-                            supported_langs={settings.i18n.supported_langs}
-                            onLangChange={this._onLangChange} />
+                        <DeviceSetting lang={this.state.lang} />
                     );
-                };
+                } 
 
-                content.device = () => (<DeviceSetting lang={this.state.lang} />);
-
-                if(typeof content[view] === 'undefined') { view = 'general'; }
-                return content[view]();
+                return (
+                    <GeneralSetting
+                        lang={this.state.lang}
+                        supported_langs={settings.i18n.supported_langs}
+                        onLangChange={this._onLangChange} />
+                )
             }
 
             render() {
@@ -87,4 +76,3 @@ define([
 
         return HomeView;
     };
-});

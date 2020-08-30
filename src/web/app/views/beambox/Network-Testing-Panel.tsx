@@ -1,22 +1,14 @@
-define([
-    'jsx!widgets/Modal',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/contexts/ProgressCaller',
-    'app/constants/keycode-constants',
-    'helpers/api/discover',
-    'helpers/i18n'
-], function(
-    Modal,
-    Alert,
-    AlertConstants,
-    Progress,
-    KeycodeConstants,
-    Discover,
-    i18n
-) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import Modal from '../../widgets/Modal'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import Progress from '../../contexts/ProgressCaller'
+import KeycodeConstants from '../../constants/keycode-constants'
+import Discover from '../../../helpers/api/discover'
+import * as i18n from '../../../helpers/i18n'
+
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
+    const ping = requireNode('net-ping');
     const LANG = i18n.lang.beambox.network_testing_panel;
 
     
@@ -88,15 +80,14 @@ define([
         }
 
         _createSession() {
-            const ping = require('net-ping');
-            const options = {
-                retries: 0,
-            }
             try {
-                this.session = ping.createSession(options);
+                this.session = ping.createSession({
+                    retries: 0,
+                });
+                // TODO: Infinite Loop?
                 this.session.on('error', error => {
                     console.log ("session error: " + error);
-                    this._createSession(options);
+                    this._createSession();
                 });
             }
             catch (e) {
@@ -111,8 +102,8 @@ define([
         _pingTarget() {
             this.pingTimes += 1;
             this.session.pingHost(this.state.ip, (error, target, sent, rcvd) => {
-                const elapsedTime = new Date() - this.startTime;
-                const percentage =  parseInt(100 * elapsedTime / this.TEST_TIME);
+                const elapsedTime = (+new Date()) - this.startTime;
+                const percentage =  parseInt('' + (100 * elapsedTime / this.TEST_TIME));
                 Progress.update('network-testing', {
                     percentage,
                     message: `${LANG.testing} - ${percentage}%`,
@@ -144,11 +135,11 @@ define([
 
         _calculateResult() {
             console.log(`success rate: ${this.success}/${this.pingTimes}`);
-            const avg =  parseInt(100 * (this.totalRRT/this.success)) / 100;
+            const avg =  parseInt(''+ (100 * (this.totalRRT/this.success))) / 100;
             console.log(`average rrt of success: ${avg} ms`);
             this.session.close();
             Progress.popById('network-testing');
-            const healthiness = parseInt(100 * this.success / this.pingTimes);
+            const healthiness = parseInt('' + (100 * this.success / this.pingTimes));
             if (healthiness !== 0) {
                 this.discover.poke(this.state.ip);
                 this.discover.testTcp(this.state.ip);
@@ -250,5 +241,4 @@ define([
         }
     };
 
-    return NetworkTestingPanel;
-});
+    export default NetworkTestingPanel;

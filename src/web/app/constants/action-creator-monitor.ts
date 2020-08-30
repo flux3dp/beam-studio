@@ -1,8 +1,4 @@
-define([], () => {
-
-    'use strict';
-
-    return {
+export default {
         CHANGE_MODE             : 'flux-stduio/monitor/CHANGE_MODE',
         CHANGE_PATH             : 'flux-studio/monitor/CHANGE_PATH',
         UPDATE_FOLDER_CONTENT   : 'flux-studio/monitor/UPDATE_FOLDER_CONTENT',
@@ -17,5 +13,3 @@ define([], () => {
         SET_CURRENT_POSITION    : 'beam-studio/monitor/SET_CURRENT_POSITION',
         SET_RELOCATE_ORIGIN     : 'beam-studio/monitor/SET_RELOCATE_ORIGIN',
     };
-
-});

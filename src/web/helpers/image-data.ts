@@ -1,20 +1,12 @@
 /**
  * To get image data
  */
-define([
-    'helpers/grayscale',
-    'helpers/convertToTypedArray',
-    'app/actions/beambox/beambox-preference',
-],
-function(
-    grayScale,
-    convertToTypedArray,
-    BeamboxPreference,
+import grayScale from './grayscale'
+import BeamboxPreference from '../app/actions/beambox/beambox-preference'
 
-) {
-    'use strict';
+const svgEditor = window['svgEditor'];
 
-    return function(source, opts) {
+export default function(source, opts) {
         opts.onComplete = opts.onComplete || function() {};
         opts.type = opts.type || 'image/png';
 
@@ -29,9 +21,9 @@ function(
                     },
                     imageBinary,
                     imageData;
-                let arrayBuffer = await fetch(img.src);
-                arrayBuffer = await arrayBuffer.blob();
-                arrayBuffer = await new Response(arrayBuffer).arrayBuffer(); 
+                const fetchedData = await fetch(img.src);
+                const response = await fetchedData.blob();
+                const arrayBuffer = await new Response(response).arrayBuffer(); 
                 const rotationFlag = svgEditor.getExifRotationFlag(arrayBuffer);
 
                 //DownSampling
@@ -136,4 +128,3 @@ function(
             img.src = source;
         }
     };
-});

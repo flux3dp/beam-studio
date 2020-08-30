@@ -1,18 +1,11 @@
-define([
-    'jsx!widgets/Modal',
-    'helpers/i18n',
-], function (
-    Modal,
-    i18n
-) {
-    'use strict';
-    const React = require('react');
-    const classNames = require('classnames');
+import Modal from '../widgets/Modal'
+import * as i18n from '../../helpers/i18n'
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     const lang = i18n.lang.initialize;
 
-    return function () {
-        return class ConnectWiFi extends React.Component{
+    class ConnectWiFi extends React.Component{
             constructor(props) {
                 super(props);
                 this.state = {
@@ -89,5 +82,4 @@ define([
             }
 
         };
-    };
-});
+    export default () => ConnectWiFi

@@ -1,11 +1,8 @@
-define([
-    'helpers/shortcuts'
-], function(
-    shortcuts
-) {
-    const React = require('react');
+import shortcuts from '../../helpers/shortcuts'
+const svgCanvas = window['svgCanvas']
+    const React = requireNode('react');;
 
-    return class CurveControl extends React.PureComponent {
+    export default class CurveControl extends React.PureComponent {
         constructor(props) {
             super(props);
             this.state = {
@@ -262,4 +259,3 @@ define([
             );
         }
     };
-});

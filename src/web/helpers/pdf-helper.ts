@@ -3,24 +3,18 @@
  * Using pdf2svg binary: https://github.com/dawbarton/pdf2svg
  * binary for mac is built from makefile with dependencies packed by macpack: https://github.com/chearon/macpack
  */
-define([
-    'helpers/i18n',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/contexts/ProgressCaller',
-], function(
-    i18n,
-    Alert,
-    AlertConstants,
-    Progress
-) {
-    'use strict';
-    const path = require('path');
-    const util = require('util');
-    const child_process = require('child_process');
+import * as i18n from './i18n'
+import Alert from '../app/contexts/AlertCaller'
+import AlertConstants from '../app/constants/alert-constants'
+import Progress from '../app/contexts/ProgressCaller'
+const svgEditor = window['svgEditor'];
+
+    const path = requireNode('path');
+    const util = requireNode('util');
+    const child_process = requireNode('child_process');
     const exec = util.promisify(child_process.exec);
     const execFile = util.promisify(child_process.execFile);
-    const resourcesRoot = process.defaultApp ? process.cwd() : process.resourcesPath;
+    const resourcesRoot = process['defaultApp'] ? process.cwd() : process['resourcesPath'];
     const lang = i18n.lang.beambox.popup.pdf2svg;
     let pdf2svgPath = null;
     if (process.platform === 'darwin') {
@@ -37,11 +31,11 @@ define([
                 const {stdout, stderr} = await execFile(pdf2svgPath, [file.path, outPath]);
                 if (!stderr) {
                     console.log(outPath);
-                    let data = await fetch(outPath);
-                    data = await data.blob();
-                    data.name = file.name + '.svg';
-                    data.lastModifiedDate = file.lastModifiedDate;
-                    svgEditor.importSvg(data, true);
+                    let resp = await fetch(outPath);
+                    const blob = await resp.blob();
+                    blob['name'] = file.name + '.svg';
+                    blob['lastModifiedDate'] = file.lastModifiedDate;
+                    svgEditor.importSvg(blob, true);
                 } else {
                     throw stderr
                 }
@@ -73,11 +67,11 @@ define([
                 const {stdout, stderr} = await exec(`pdf2svg ${file.path} ${outPath}`);
                 console.log('out', stdout, 'err', stderr);
                 if (!stderr) {
-                    let data = await fetch(outPath);
-                    data = await data.blob();
-                    data.name = file.name + '.svg';
-                    data.lastModifiedDate = file.lastModifiedDate;
-                    svgEditor.importSvg(data, true);
+                    const resp = await fetch(outPath);
+                    const blob = await resp.blob();
+                    blob['name'] = file.name + '.svg';
+                    blob['lastModifiedDate'] = file.lastModifiedDate;
+                    svgEditor.importSvg(blob, true);
                 } else {
                     throw stderr
                 }
@@ -93,7 +87,6 @@ define([
         }
     }
     
-    return {
+    export default {
         pdf2svg
     }
-});

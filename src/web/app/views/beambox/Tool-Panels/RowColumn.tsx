@@ -1,11 +1,9 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/i18n',
-], function($, PropTypes, UnitInput, i18n) {
-    'use strict';
-    const React = require('react');
+import $ from 'jquery'
+const PropTypes = require('reactPropTypes')
+import UnitInput from'../../../widgets/Unit-Input-v2'
+import * as i18n from '../../../../helpers/i18n'
+
+    const React = requireNode('react');;
 
     const LANG = i18n.lang.beambox.tool_panels;
     
@@ -91,5 +89,4 @@ define([
         onColumnChange: PropTypes.func,
     };
 
-    return RowColumn;
-});
+    export default RowColumn;

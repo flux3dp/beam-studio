@@ -1,12 +1,7 @@
-define([
-    'app/constants/global-constants',
-    'app/dispatcher/global-dispatcher'
-], function(
-    GlobalConstants,
-    Dispatcher
-) {
-    return {
-        showMonitor: function(printer, fcode, previewUrl, opener) {
+import GlobalConstants from '../constants/global-constants'
+import Dispatcher from '../dispatcher/global-dispatcher'
+    export default {
+        showMonitor: function(printer: any, fcode?: any, previewUrl?: string, opener?: string) {
             Dispatcher.dispatch({
                 actionType: GlobalConstants.SHOW_MONITOR, printer, fcode, previewUrl, opener
             });
@@ -48,4 +43,3 @@ define([
             });
         }
     };
-});

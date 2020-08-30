@@ -1,16 +1,8 @@
-define([
-    'app/dispatcher/topbar-dispatcher',
-    'app/constants/topbar-constants',
-    'events',
-    'helpers/object-assign'
-], function(
-    Dispatcher,
-    Constants,
-    EventEmitter
-) {
-    'use strict';
+import Dispatcher from '../dispatcher/topbar-dispatcher'
+import Constants from '../constants/topbar-constants'
+const EventEmitter = require('events');
 
-    var topbarStore;
+var topbarStore;
 
     topbarStore = Object.assign(EventEmitter.prototype, {
 
@@ -96,5 +88,5 @@ define([
 
     });
 
-    return topbarStore;
-});
+    export default topbarStore;
+

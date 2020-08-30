@@ -1,4 +1,10 @@
-requirejs.config({
+import * as i18n from '../../helpers/i18n'
+import TaskInterpreterPanel from '../views/beambox/Task-Interpreter-Panel'
+import { RightPanel } from '../views/beambox/Right-Panels/Right-Panel'
+import { RightPanelContext } from '../views/beambox/Right-Panels/contexts/RightPanelContext'
+
+
+window['requirejs'].config({
     waitSeconds: 30,
     paths: {
         svgEditor: 'app/actions/beambox/svg-editor',
@@ -156,12 +162,8 @@ requirejs.config({
 
     }
 });
-define([
-    'helpers/i18n',
-    'jsx!views/beambox/Task-Interpreter-Panel',
-    'jsx!views/beambox/Right-Panels/Right-Panel',
-    'jsx!views/beambox/Right-Panels/contexts/RightPanelContext',
 
+window['requirejs']([
     'jsHotkeys',
     'jquerybbq',
     'svgicons',
@@ -205,19 +207,13 @@ define([
     'lib/svgeditor/canvg/canvg',
     'lib/svgeditor/canvg/rgbcolor',
 
-], function (
-    i18n,
-    TaskInterpreterPanel,
-    RightPanel,
-    RightPanelContext
-) {
-    'use strict';
-    const React = require('react');
-    let LANG = i18n.lang.beambox;
-    RightPanel = RightPanel.RightPanel;
-    const RightPanelContextProvider = RightPanelContext.RightPanelContextProvider;
+]);
 
-    class view extends React.Component {
+    const React = requireNode('react');;
+    let LANG = i18n.lang.beambox;
+    const RightPanelContextProvider = RightPanelContext.RightPanelContextProvider;
+    const svgEditor = window['svgEditor']
+    class SVGEditor extends React.Component {
         componentDidMount(node) {
             $(svgEditor.init);
             svgEditor.resetView();
@@ -1427,5 +1423,4 @@ define([
         }
     }
 
-    return view;
-});
+    export default SVGEditor;

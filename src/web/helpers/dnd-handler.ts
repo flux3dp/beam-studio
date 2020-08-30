@@ -1,17 +1,16 @@
 /**
  * drag and drop handler
  */
-define(['jquery'], function($) {
-    'use strict';
+import $ from 'jquery';
 
-    return {
+    export default {
         plug: function(rootElement, handler) {
             return this.unplug(rootElement).on('dragover dragend', function(e) {
                     e.preventDefault();
                 }).
                 on('drop', function(e) {
                     e.preventDefault();
-                    window.processDroppedFile = true;
+                    window['processDroppedFile'] = true;
                     handler(e);
                 });
         },
@@ -19,4 +18,3 @@ define(['jquery'], function($) {
             return $(rootElement).off('drop dragover dragend');
         }
     };
-});

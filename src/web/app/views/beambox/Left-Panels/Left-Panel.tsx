@@ -1,28 +1,14 @@
-define([
-    'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
-    'app/actions/beambox',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'app/actions/beambox/preview-mode-controller',
-    'app/actions/global-actions',
-    'app/stores/beambox-store',
-    'helpers/api/inter-process',
-    'helpers/shortcuts',
-    'helpers/i18n'
-], function(
-    ImageTracePanelController,
-    BeamboxActions,
-    FnWrapper,
-    PreviewModeBackgroundDrawer,
-    PreviewModeController,
-    GlobalActions,
-    BeamboxStore,
-    InterProcessApi,
-    shortcuts,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Panel-Controller'
+import BeamboxActions from '../../../actions/beambox'
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
+import PreviewModeController from '../../../actions/beambox/preview-mode-controller'
+import InterProcessApi from '../../../../helpers/api/inter-process'
+import shortcuts from '../../../../helpers/shortcuts'
+import * as i18n from '../../../../helpers/i18n'
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
 
     const LANG = i18n.lang.beambox.left_panel;
     const interProcessWebSocket = InterProcessApi() ;
@@ -114,7 +100,7 @@ define([
             $('#left-Cursor').addClass('active');
         }
 
-        _renderToolButton(iconName, id, label, onClick, className, disabled) {
+        _renderToolButton(iconName: string, id?, label?: string, onClick?, className?, disabled?: boolean) {
             const cx = classNames('tool-btn', className, {disabled});
             const { isPreviewing } = this.props;
             const setActiveAndOnClick = () => {
@@ -168,5 +154,4 @@ define([
         }
     } 
 
-    return LeftPanel;
-});
+    export default LeftPanel;

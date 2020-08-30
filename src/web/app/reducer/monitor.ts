@@ -1,8 +1,4 @@
-define([
-    'app/constants/action-creator-monitor'
-], (
-    C
-) => {
+import C from '../constants/action-creator-monitor'
 
     let initialState = {
         mode: 'PREVIEW',
@@ -31,7 +27,7 @@ define([
 
     // TODO: update to object spread when available
 
-    return (state = initialState, action) => {
+    export default (state = initialState, action) => {
 
         var _action = {};
 
@@ -97,4 +93,3 @@ define([
 
         return _action[action.type]();
     };
-});

@@ -1,11 +1,9 @@
-define([
-], function (
-) {
-    const React = require('react');
-    const { createContext } = React;
-    const ZoomBlockContext = createContext();
 
-    class ZoomBlockContextProvider extends React.Component {
+    const React = requireNode('react');;
+    const { createContext } = React;
+    export const ZoomBlockContext = createContext();
+
+    export class ZoomBlockContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -29,6 +27,3 @@ define([
             );
         }
     };
-
-    return {ZoomBlockContextProvider, ZoomBlockContext};
-});

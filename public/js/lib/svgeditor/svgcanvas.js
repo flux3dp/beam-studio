@@ -26,7 +26,7 @@
 // 12) path.js
 // 13) coords.js
 // 14) recalculate.js
-
+alert("SVGCANVS.jS")
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
@@ -613,7 +613,7 @@ define([
             cur_text.font_postscriptName = defaultFont.postscriptName;
         }
 
-        const { Menu, MenuItem } = require('electron').remote;
+        const { Menu, MenuItem } = requireNode('electron');.remote;
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
         Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
         this.isBorderlessMode = BeamboxPreference.read('borderless');
@@ -8779,7 +8779,7 @@ define([
         }
 
         this.loadRecentFile = async (filePath) => {
-            const fs = require('fs');
+            const fs = requireNode('fs');;
             if (fs.existsSync(filePath)) {
                 let fileName;
                 if (process.platform === 'win32') {
@@ -10769,7 +10769,7 @@ define([
             let cmd;
             const origImage = $(image).attr('origImage');
             if (origImage) {
-                const jimp = require('jimp');
+                const jimp = requireNode('jimp');
                 let data = await fetch(origImage);
                 data = await data.blob();
                 data = await new Response(data).arrayBuffer(); 

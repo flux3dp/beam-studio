@@ -1,18 +1,13 @@
-define([
-    'jsx!views/beambox/Right-Panels/Layer-Panel',
-], function (
-    LayerPanel
-) {
-    const React = require('react');
-    updateLayerPanel = () => {
-        if (!LayerPanel.contextCaller) {
+import { LayerPanel, LayerPanelContextCaller } from '../Layer-Panel'
+    const React = requireNode('react');;
+    const updateLayerPanel = () => {
+        if (!LayerPanelContextCaller) {
             //console.log('LayerPanel is not mounted now.');
         } else {
-            LayerPanel.contextCaller.updateLayerPanel();
+            LayerPanelContextCaller.updateLayerPanel();
         }
     };
 
-    return {
-        updateLayerPanel: updateLayerPanel
+    export default {
+        updateLayerPanel
     }
-});

@@ -1,13 +1,7 @@
-define([
-    'app/dispatcher/input-lightbox-dispatcher',
-    'app/constants/input-lightbox-constants',
-    'events',
-    'helpers/object-assign'
-], function(
-    Dispatcher,
-    Constants,
-    EventEmitter
-) {
+import Dispatcher from '../dispatcher/input-lightbox-dispatcher'
+import Constants from '../constants/input-lightbox-constants'
+const EventEmitter = require('events');
+
     'use strict';
 
     var namespace = 'InputLightBox',
@@ -44,5 +38,4 @@ define([
 
     });
 
-    return Store;
-});
+    export default Store;

@@ -1,41 +1,22 @@
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'helpers/i18n',
-    'app/actions/beambox/beambox-preference',
-    'jsx!widgets/AlertDialog',
-    'jsx!widgets/Unit-Input-v2',
-    'helpers/device-master',
-    'helpers/version-checker',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'helpers/check-device-status',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/actions/beambox/preview-mode-controller',
-    'helpers/api/camera-calibration',
-    'app/actions/beambox/constant',
-    'helpers/device-error-handler'
-], function(
-    $,
-    i18n,
-    BeamboxPreference,
-    AlertDialog,
-    UnitInput,
-    DeviceMaster,
-    VersionChecker,
-    Alert,
-    AlertConstants,
-    CheckDeviceStatus,
-    ProgressActions,
-    ProgressConstants,
-    PreviewModeController,
-    CameraCalibration,
-    Constant,
-    DeviceErrorHandler
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+import BeamboxPreference from '../../actions/beambox/beambox-preference'
+import AlertDialog from '../../widgets/AlertDialog'
+import UnitInput from '../../widgets/Unit-Input-v2'
+import DeviceMaster from '../../../helpers/device-master'
+import VersionChecker from '../../../helpers/version-checker'
+import CheckDeviceStatus from '../../../helpers/check-device-status'
+import DeviceErrorHandler from '../../../helpers/device-error-handler'
+import Alert from '../../contexts/AlertCaller'
+import AlertConstants from '../../constants/alert-constants'
+import ProgressActions from '../../actions/progress-actions'
+import ProgressConstants from '../../constants/progress-constants'
+import PreviewModeController from '../../actions/beambox/preview-mode-controller'
+import Constant from '../../actions/beambox/constant'
+
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.diode_calibration;
 
     //View render the following steps
@@ -44,7 +25,10 @@ define([
     const STEP_ANALYZE = Symbol();
     const STEP_FINISH = Symbol();
 
-    let cameraOffset = {};
+    let cameraOffset = {
+        x: 0,
+        y: 0
+    };
 
     class DiodeCalibration extends React.Component {
         constructor(props) {
@@ -276,11 +260,10 @@ define([
 
             let squareStyle = {
                 width: squareSize, //px
-                height: squareSize //px
+                height: squareSize, //px
+                left: 100 - squareSize / 2 + (dx - cameraMovedX) * Constant.dpmm * this.imageScale,
+                top: 100 - squareSize / 2 + (dy - cameraMovedY) * Constant.dpmm * this.imageScale
             };
-    
-            squareStyle.left = 100 - squareSize / 2 + (dx - cameraMovedX) * Constant.dpmm * this.imageScale;
-            squareStyle.top = 100 - squareSize / 2 + (dy - cameraMovedY) * Constant.dpmm * this.imageScale;
             let manual_calibration = (
                 <div>
                     <div className="img-center" style={imgBackground}>
@@ -432,5 +415,4 @@ define([
         }
     };
 
-    return DiodeCalibration;
-});
+    export default DiodeCalibration;

@@ -2,37 +2,25 @@
  * API svg laser parser
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
-define([
-    'jquery',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/contexts/ProgressCaller',
-    'app/actions/beambox/beambox-preference',
-    'helpers/websocket',
-    'helpers/convertToTypedArray',
-    'helpers/data-history',
-    'helpers/api/alert-config',
-    'helpers/api/set-params',
-    'helpers/i18n'
-], function(
-    $,
-    Alert,
-    AlertConstants,
-    Progress,
-    BeamboxPreference,
-    Websocket,
-    convertToTypedArray,
-    history,
-    AlertConfig,
-    setParams,
-    i18n
-) {
+import $ from 'jquery'
+import Alert from '../../app/contexts/AlertCaller'
+import AlertConstants from '../../app/constants/alert-constants'
+import Progress from '../../app/contexts/ProgressCaller'
+import BeamboxPreference from '../../app/actions/beambox/beambox-preference'
+import Websocket from '../websocket'
+import convertToTypedArray from '../convertToTypedArray'
+import history from '../data-history'
+import AlertConfig from './alert-config'
+import setParams from './set-params'
+import * as i18n from '../i18n'
+
+const svgCanvas = window['svgCanvas'];
     'use strict';
 
     // Because the preview image size is 640x640
     var MAXWIDTH = 640;
 
-    return function(opts) {
+    export default function(opts) {
         opts = opts || {};
         opts.type = opts.type || 'laser';
 
@@ -43,7 +31,7 @@ define([
                 cut: 'svg-vinyl-parser',
                 mill: 'svg-vinyl-parser'
             }[opts.type],
-            ws = new Websocket({
+            ws = Websocket({
                 method: apiMethod,
                 onMessage: function(data) {
                     events.onMessage(data);
@@ -58,7 +46,8 @@ define([
             uploaded_svg = [],
             lastOrder = '',
             events = {
-                onMessage: function() {}
+                onMessage: (resp: any) => {},
+                onError: (resp: any) => {}
             },
             History = history(),
             goNextUpload = true,
@@ -102,7 +91,7 @@ define([
 
                         return file;
                     },
-                    sendFile = function(file, isEnd) {
+                    sendFile = function(file) {
                         var warningCollection = [];
 
                         events.onMessage = function(data) {
@@ -328,7 +317,7 @@ define([
                     args.push('-gc')
                 }
 
-                if (window.svgCanvas && svgCanvas.getRotaryMode()) {
+                if (svgCanvas && svgCanvas.getRotaryMode()) {
                     args.push('-spin');
                     args.push(svgCanvas.runExtensions('getRotaryAxisAbsoluteCoord'));
                 }
@@ -389,7 +378,7 @@ define([
                 }
                 ws.send(args.join(' '));
             },
-            divideSVG: function(opts) {
+            divideSVG: function(opts?) {
                 var $deferred = $.Deferred();
                 opts = opts || {};
                 opts.onProgressing = opts.onProgressing || function() {};
@@ -405,7 +394,7 @@ define([
                 //set scale when devide svg, default value is 254 / 72
                 if (opts.scale) {
                     args.push('-s');
-                    args.push(Math.floor(opts.scale * 100) / 100);
+                    args.push(String(Math.floor(opts.scale * 100) / 100));
                 }
 
                 events.onMessage = function(data) {
@@ -447,6 +436,7 @@ define([
                             $deferred.resolve('ok');
                             break;
                         case 'warning':
+                            // @ts-expect-error
                             warningCollection.push(data.message);
                             break;
                     }
@@ -462,25 +452,25 @@ define([
                 }
                 var reader = new FileReader();
                 reader.onloadend = function (e) {
-                    let svgString = e.target.result;
+                    let svgString = e.target.result as string;
                     const matchImages = svgString.match(/<image[^>]+>/g);
                     let allImageValid = true;
                     let hasPath = false;
                     if (matchImages) {
-                        const fs = require('fs');
-                        const path = require('path');
+                        const fs = requireNode('fs');;
+                        const path = requireNode('path');
                         const basename = getBasename(file.path);
                         for (let i = 0; i < matchImages.length; i++) {
-                            let origPath = matchImages[i].match(/xlink:href="[^"]+"/);
-                            if (!origPath) {
+                            let hrefMatch = matchImages[i].match(/xlink:href="[^"]+"/);
+                            if (!hrefMatch) {
                                 continue;
                             }
-                            origPath = origPath[0];
-                            origPath = origPath.substring(12, origPath.length - 1);
-                            if (origPath.startsWith('data:')) {
+                            const hrefRaw = hrefMatch[0];
+                            const hrefCleaned = hrefRaw.substring(12, hrefRaw.length - 1);
+                            if (hrefCleaned.startsWith('data:')) {
                                 continue;
                             }
-                            let newPath = origPath.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+                            let newPath = hrefCleaned.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
                             // Test Abosulte Path
                             hasPath = true;
                             if (fs.existsSync(newPath)) {
@@ -491,7 +481,7 @@ define([
                                 newPath = path.join(basename, newPath);
                                 if (fs.existsSync(newPath)) {
                                     newPath = newPath.replace(/&/g, '&amp;').replace(/'/g, '&apos;').replace(/"/g, '&quot;').replace(/>/g, '&gt;').replace(/</g, '&lt;');
-                                    svgString = svgString.replace(`xlink:href="${origPath}"`, `xlink:href="${newPath}"`);
+                                    svgString = svgString.replace(`xlink:href="${hrefCleaned}"`, `xlink:href="${newPath}"`);
                                     continue;
                                 }
                             }
@@ -559,6 +549,7 @@ define([
                         $deferred.resolve('ok');
                         break;
                     case 'warning':
+                        // @ts-expect-error
                         warningCollection.push(data.message);
                         break;
                     }
@@ -580,6 +571,7 @@ define([
                 });
                 ws.send([
                     'upload_plain_svg',
+                    // @ts-expect-error TODO: fix file.name
                     encodeURIComponent(file.name),
                     file.size
                 ].join(' '));
@@ -598,7 +590,7 @@ define([
                         return file;
                     },
 
-                    sendFile = function(file, isEnd) {
+                    sendFile = function(file) {
                         var warningCollection = [];
 
                         events.onMessage = function(data) {
@@ -698,4 +690,3 @@ define([
             computePreviewImageSize: computePreviewImageSize
         };
     };
-});

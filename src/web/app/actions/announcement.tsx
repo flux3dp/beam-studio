@@ -1,10 +1,11 @@
-define([
-    'jsx!widgets/Modal',
-], function(Modal) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import Modal from '../widgets/Modal'
+
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
     
     class Announcement {
+        reactRoot: any;
+        contents: Map<any, any>;
         init(reactRoot) {
             this.reactRoot = reactRoot;
             this.contents = new Map();
@@ -29,7 +30,7 @@ define([
         }
 
         stopPropagation(e) {
-            console.log('stopProㄇpagation of:', e);
+            console.log('stopPropagation off:', e);
             e.stopPropagation();
         }
 
@@ -61,5 +62,4 @@ define([
     let instance = new Announcement();
 
 
-    return instance;
-});
+    export default instance;

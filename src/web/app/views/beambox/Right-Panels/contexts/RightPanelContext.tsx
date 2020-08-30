@@ -1,11 +1,9 @@
-define([
-], function (
-) {
-    const React = require('react');
-    const { createContext } = React;
-    const RightPanelContext = createContext();
 
-    class RightPanelContextProvider extends React.Component {
+    const React = requireNode('react');;
+    const { createContext } = React;
+    export const RightPanelContext = createContext();
+
+    export class RightPanelContextProvider extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -23,7 +21,7 @@ define([
 
         setSelectedElement = (elems) => {
             if (elems !== this.state.selectedElement) {
-                document.activeElement.blur();
+                (document.activeElement as HTMLInputElement).blur();
             }
             this.setState({selectedElement: elems});
         }
@@ -49,6 +47,3 @@ define([
             );
         }
     };
-
-    return {RightPanelContextProvider, RightPanelContext};
-});

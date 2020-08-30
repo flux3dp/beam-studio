@@ -1,51 +1,45 @@
-define([
-    'app/constants/progress-constants',
-    'jsx!views/dialogs/AlertsAndProgress'
-], function (
-    ProgressConstants,
-    AlertsAndProgress
-) {
-    return {
+import ProgressConstants from '../constants/progress-constants'
+import { AlertsAndProgressContextCaller } from '../views/dialogs/AlertsAndProgress'
+export default {
         openNonstopProgress: (args) => {
-            if (!AlertsAndProgress.contextCaller) {
+            if (!AlertsAndProgressContextCaller) {
                 console.log('Alert context not loaded Yet');
             } else {
                 args.type = ProgressConstants.NONSTOP;
                 if (!args.caption && args.message) {
                     args.caption = args.message;
                 }
-                AlertsAndProgress.contextCaller.openProgress(args);
+                AlertsAndProgressContextCaller.openProgress(args);
             }
         },
         openSteppingProgress: (args) => {
-            if (!AlertsAndProgress.contextCaller) {
+            if (!AlertsAndProgressContextCaller) {
                 console.log('Alert context not loaded Yet');
             } else {
                 args.type = ProgressConstants.STEPPING;
                 args.percentage = args.percentage || 0;
-                AlertsAndProgress.contextCaller.openProgress(args);
+                AlertsAndProgressContextCaller.openProgress(args);
             }
         },
         popById: (id) => {
-            if (!AlertsAndProgress.contextCaller) {
+            if (!AlertsAndProgressContextCaller) {
                 console.log('Alert context not loaded Yet');
             } else {
-                AlertsAndProgress.contextCaller.popById(id);
+                AlertsAndProgressContextCaller.popById(id);
             }
         },
         popLastProgress: () => {
-            if (!AlertsAndProgress.contextCaller) {
+            if (!AlertsAndProgressContextCaller) {
                 console.log('Alert context not loaded Yet');
             } else {
-                AlertsAndProgress.contextCaller.popLastProgress();
+                AlertsAndProgressContextCaller.popLastProgress();
             }
         },
         update: (id, args) => {
-            if (!AlertsAndProgress.contextCaller) {
+            if (!AlertsAndProgressContextCaller) {
                 console.log('Alert context not loaded Yet');
             } else {
-                AlertsAndProgress.contextCaller.updateProgress(id, args);
+                AlertsAndProgressContextCaller.updateProgress(id, args);
             }
         }
-    }
-});
+    };

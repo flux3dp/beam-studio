@@ -1,10 +1,7 @@
 /**
  * Data history handler
  */
-define(['helpers/array-findindex'], function() {
-    'use strict';
-
-    var History = function(undefined) {
+    var History = function(defaultData?: any) {
         var history = [];
 
         return {
@@ -53,7 +50,7 @@ define(['helpers/array-findindex'], function() {
                 }
             },
             getLatest: function() {
-                return (0 < history.length ? history.slice(-1)[0] : undefined);
+                return (0 < history.length ? history.slice(-1)[0] : defaultData);
             },
             isEmpty: function() {
                 return 0 === history.length;
@@ -61,7 +58,6 @@ define(['helpers/array-findindex'], function() {
         };
     };
 
-    return function() {
-        return new History(undefined);
+    export default function() {
+        return History();
     };
-});

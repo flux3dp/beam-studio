@@ -1,17 +1,10 @@
-define([
-    'jsx!widgets/Modal',
-    'helpers/i18n',
-], function (
-    Modal,
-    i18n
-) {
-    'use strict';
-    const React = require('react');
-    const classNames = require('classnames');
+import Modal from '../widgets/Modal'
+import * as i18n from '../../helpers/i18n'
+    const React = requireNode('react');;
 
     const lang = i18n.lang.initialize;
 
-    return function () {
+    export default function () {
         return class ConnectEthernet extends React.Component{
             constructor(props) {
                 super(props);
@@ -78,4 +71,3 @@ define([
 
         };
     };
-});

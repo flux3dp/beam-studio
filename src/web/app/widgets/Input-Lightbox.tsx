@@ -1,14 +1,14 @@
-define([
-    'reactPropTypes',
-    'helpers/i18n',
-    'app/constants/input-lightbox-constants',
-    'jsx!widgets/Modal',
-    'jsx!widgets/AlertDialog',
-    'plugins/classnames/index'
-], function(PropTypes, i18n, Constants, Modal, AlertDialog, classNames) {
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+import * as i18n from '../../helpers/i18n'
+import Constants from '../constants/input-lightbox-constants'
+import Modal from './Modal'
+import AlertDialog from './AlertDialog'
+const classNames = requireNode('classnames')
+
     'use strict';
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     var acceptableTypes = [
             Constants.TYPE_TEXT,
@@ -169,7 +169,7 @@ define([
 
     InputLightBox.defaultProps = {
         isOpen       : true,
-        lang         : i18n.get(),
+        lang         : i18n.lang,
         type         : Constants.TYPE_TEXT,
         maxLength    : 255,
         inputHeader  : '',
@@ -180,5 +180,4 @@ define([
         onSubmit     : function() {}
     };
 
-    return InputLightBox;
-});
+    export default InputLightBox;

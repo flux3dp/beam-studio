@@ -1,12 +1,10 @@
-define([
-    'reactPropTypes',
-    'jsx!widgets/Modal',
-    'jsx!widgets/AlertDialog',
-    'app/constants/progress-constants'
-],
-function(PropTypes, Modal, AlertDialog, ProgressConstants) {
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes');
+import Modal from './Modal'
+import AlertDialog from './AlertDialog'
+import ProgressConstants from '../constants/progress-constants'
+
+    const React = requireNode('react');;
 
     var acceptableTypes = [
         ProgressConstants.WAITING,
@@ -160,5 +158,4 @@ function(PropTypes, Modal, AlertDialog, ProgressConstants) {
         onFinished : function() {}
     };
 
-    return Progress;
-});
+    export default Progress;

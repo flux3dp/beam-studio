@@ -1,9 +1,6 @@
-define([
-    'reactPropTypes',
-    'plugins/classnames/index'
-], function(PropTypes, ClassNames) {
-    'use strict';
-    const React = require('react');
+// @ts-expect-error
+import PropTypes = require('reactPropTypes')
+const React = requireNode('react');
 
     class SliderControl extends React.Component{
         constructor(props) {
@@ -101,5 +98,4 @@ define([
         unit: PropTypes.string
     }
 
-    return SliderControl;
-});
+    export default SliderControl;

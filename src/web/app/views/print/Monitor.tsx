@@ -1,59 +1,32 @@
-define([
-    'jquery',
-    'reactPropTypes',
-    'plugins/classnames/index',
-    'helpers/device-master',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/constant',
-    'app/actions/alert-actions',
-    'app/stores/alert-store',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/constants/device-constants',
-    'app/actions/global-actions',
-    'app/constants/global-constants',
-    'helpers/sprintf',
-    'helpers/shortcuts',
-    'Redux',
-    'app/reducer/index',
-    'jsx!app/views/print/Monitor-Header',
-    'jsx!app/views/print/Monitor-Display',
-    'jsx!app/views/print/Monitor-Control',
-    'jsx!app/views/print/Monitor-Info',
-    'app/action-creators/monitor',
-    'app/action-creators/device',
-    'helpers/device-error-handler',
-    'helpers/version-checker'
-], function(
-    $,
-    PropTypes,
-    ClassNames,
-    DeviceMaster,
-    BeamboxPreference,
-    Constant,
-    AlertActions,
-    AlertStore,
-    ProgressActions,
-    ProgressConstants,
-    DeviceConstants,
-    GlobalActions,
-    GlobalConstants,
-    sprintf,
-    shortcuts,
-    Redux,
-    MainReducer,
-    MonitorHeader,
-    MonitorDisplay,
-    MonitorControl,
-    MonitorInfo,
-    MonitorActionCreator,
-    DeviceActionCreator,
-    DeviceErrorHandler,
-    VersionChecker
-) {
-    'use strict';
+import $ from 'jquery'
+import DeviceMaster from '../../../helpers/device-master'
+import BeamboxPreference from '../../actions/beambox/beambox-preference'
+import Constant from '../../actions/beambox/constant'
+import AlertActions from '../../actions/alert-actions'
+import AlertStore from '../../stores/alert-store'
+import ProgressActions from '../../actions/progress-actions'
+import ProgressConstants from '../../constants/progress-constants'
+import DeviceConstants from '../../constants/device-constants'
+import GlobalActions from '../../actions/global-actions'
+import GlobalConstants from '../../constants/global-constants'
+import sprintf from '../../../helpers/sprintf'
+import shortcuts from '../../../helpers/shortcuts'
+import MainReducer from '../../reducer/index'
+import MonitorHeader from './Monitor-Header'
+import MonitorDisplay from './Monitor-Display'
+import MonitorControl from './Monitor-Control'
+import MonitorInfo from './Monitor-Info'
+import MonitorActionCreator from '../../action-creators/monitor'
+import DeviceActionCreator from '../../action-creators/device'
+import DeviceErrorHandler from '../../../helpers/device-error-handler'
+import VersionChecker from '../../../helpers/version-checker'
+import { IProgress } from '../../../interfaces/IProgress'
 
-    const React = require('react');
+const Redux = require('Redux')
+const PropTypes = require('reactPropTypes')
+
+const ClassNames = requireNode('classnames')
+const React = requireNode('react');;
 
     let _id = 'MONITOR',
         start,
@@ -66,14 +39,13 @@ define([
         previewUrl = '',
         lang,
         lastAction,
-        fileToBeUpload = {},
         openedFrom,
         currentDirectoryContent,
-        socketStatus = {},
 
         statusId = 0,
         refreshTime = 3000;
 
+    let fileToBeUpload: File;
     let mode = {
         PRINT       : 'PRINT',
         PREVIEW     : 'PREVIEW',
@@ -112,9 +84,6 @@ define([
             lang        = this.props.lang;
             previewUrl  = this.props.previewUrl;
             statusId    = DeviceConstants.status.IDLE;
-
-            socketStatus.ready = true;
-            socketStatus.cancel = false;
 
             let _mode = mode.PREVIEW;
             openedFrom = this.props.opener || GlobalConstants.DEVICE_LIST;
@@ -289,8 +258,8 @@ define([
                     DeviceMaster.uploadToDirectory(blob, Monitor.currentPath, file.name).then(() => {
                         store.dispatch(MonitorActionCreator.setUploadProgress(''));
                         this._refreshDirectory();
-                    }).progress((progress) => {
-                        let p = parseInt(progress.step / progress.total * 100);
+                    }).progress((progress: IProgress) => {
+                        let p = Math.floor(progress.step / progress.total * 100);
                         store.dispatch(MonitorActionCreator.setUploadProgress(p));
                     }).fail((error) => {
                         // TODO: show upload error
@@ -487,8 +456,9 @@ define([
         }
 
         _handleUpload = (e) => {
-            if(e.target.files.length > 0) {
-                fileToBeUpload = e.target.files[0];
+            const fileElem = e.target as HTMLInputElement;
+            if(fileElem.files.length > 0) {
+                fileToBeUpload = fileElem.files[0];
                 this._existFileInDirectory(store.getState().Monitor.currentPath, fileToBeUpload.name.replace(/ /g, '_')).then((exist) => {
                     if(exist) {
                         AlertActions.showPopupYesNo('UPLOAD_FILE', lang.monitor.fileExistContinue);
@@ -517,7 +487,7 @@ define([
 
             DeviceMaster.downloadFile(Monitor.currentPath, Monitor.selectedItem.name).then((file) => {
                 store.dispatch(MonitorActionCreator.setDownloadProgress({size:'', left:''}));
-                saveAs(file[1], Monitor.selectedItem.name);
+                window['saveAs'](file[1], Monitor.selectedItem.name);
             }).progress((p) => {
                 downloadProgressDisplay(p);
             }).fail((error) => {
@@ -569,7 +539,6 @@ define([
             }
             else {
                 this._addHistory();
-                const device = DeviceMaster.getSelectedDevice();
                 ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
                 await this._getCameraOffset();
                 await DeviceMaster.enterRawMode();
@@ -606,7 +575,7 @@ define([
                 let { fCode } = this.props;
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.PRINT));
 
-                const device = DeviceMaster.getSelectedDevice();
+                const device = DeviceMaster.currentDevice.info;
                 const vc = VersionChecker(device.version);
                 if (vc.meetRequirement('RELOCATE_ORIGIN')) {
                     await DeviceMaster.setOriginX(relocateOrigin.x);
@@ -620,16 +589,17 @@ define([
                         this._startReport();
                         store.dispatch(MonitorActionCreator.setUploadProgress(''));
                     })
-                    .progress((progress) => {
-                        let p = parseInt(progress.step / progress.total * 100);
+                    .progress((progress: IProgress) => {
+                        let p = Math.floor(progress.step / progress.total * 100);
                         store.dispatch(MonitorActionCreator.setUploadProgress(p));
                     })
                     .fail((error) => {
+                        // TODO: figuire out what error is
                         // reset status
                         store.dispatch(MonitorActionCreator.setUploadProgress(''));
                         store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
                         this._startReport();
-
+                        // @ts-expect-error
                         AlertActions.showPopupError('', lang.message.unable_to_start + error.error.join('_'));
                     });
                 }
@@ -654,7 +624,7 @@ define([
                 // TODO: this to be changed when alert action is restructured
                 if(confirm(lang.monitor.forceStop)) {
                     DeviceMaster.quit().then(async () => {
-                        const device = DeviceMaster.getSelectedDevice();
+                        const device = DeviceMaster.currentDevice.info;
                         const vc = VersionChecker(device.version);
                         if (vc.meetRequirement('RELOCATE_ORIGIN')) {
                             await DeviceMaster.setOriginX(relocateOrigin.x);
@@ -687,7 +657,7 @@ define([
                     DeviceMaster.stop();
                 }
                 else {
-                    let p = $.Deferred();
+                    let p: any = $.Deferred();
                     if(Device.status.st_id < 0) {
                         if(confirm(lang.monitor.forceStop)) {
                             p = DeviceMaster.kick();
@@ -857,7 +827,7 @@ define([
             DeviceMaster.ls(path).then((result) => {
                 if(result.error) {
                     if(result.error !== DeviceConstants.NOT_EXIST) {
-                        AlertActions.showPopupError(result.error);
+                        AlertActions.showPopupError('ls error', result.error);
                         result.directories = [];
                     }
                 }
@@ -910,8 +880,7 @@ define([
             this._retrieveFileInfo(start, end, handleCallback);
         }
 
-        _retrieveFileInfo = (index, end, callback, filesArray) => {
-            filesArray = filesArray || [];
+        _retrieveFileInfo = (index, end, callback, filesArray: any[] = []) => {
             if(index < end) {
                 if(currentDirectoryContent.files.length === 0) { return; }
                 DeviceMaster.fileInfo(
@@ -919,12 +888,7 @@ define([
                     currentDirectoryContent.files[index][0]
                 ).then((r) => {
                     r.error ? filesArray.push(currentDirectoryContent.files[index]) : filesArray.push(r);
-                    if(socketStatus.cancel) {
-                        callback(filesArray);
-                    }
-                    else {
-                        this._retrieveFileInfo(index + 1, end, callback, filesArray);
-                    }
+                    this._retrieveFileInfo(index + 1, end, callback, filesArray);
                 }).fail((error) => {
                     // TODO: display file info error
                 });
@@ -968,7 +932,7 @@ define([
                 <div className="flux-monitor" tabIndex="1" onBlur={this.onBlur} onFocus={this.onFocus}>
                     <div className="main">
                         <MonitorHeader
-                            name={DeviceMaster.getSelectedDevice().name}
+                            name={DeviceMaster.currentDevice.info.name}
                             source = {openedFrom}
                             history = {_history}
                             context = {this.childContext}
@@ -1016,5 +980,4 @@ define([
         opener: PropTypes.string,
         onClose: PropTypes.func
     }
-    return Monitor;
-});
+    export default Monitor;

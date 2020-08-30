@@ -11,7 +11,11 @@
   "main": "electron-main.js",
   "dependencies": {
     "@simonwep/pickr": "^1.2.6",
+    "@types/backbone": "^1.4.4",
+    "@types/electron": "^1.6.10",
+    "@types/html2canvas": "^0.0.35",
     "animate.css": "^4.1.0",
+    "browserify": "^16.5.2",
     "bufferpack": "^0.0.6",
     "classnames": "^2.2.6",
     "cropperjs": "^1.4.1",
@@ -21,6 +25,8 @@
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
     "fontkit": "^1.8.1",
+    "gulp-notify": "^3.2.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "jimp": "^0.10.3",
     "jquery": "^1.11.0",
     "jsdom-global": "^1.6.2",
@@ -36,6 +42,8 @@
     "squirejs": "^0.2.1",
     "sudo-prompt": "^9.0.0",
     "text-to-svg": "jeffontheground/text-to-svg#e4fb3dc1ac9c8e5a2440373e7e018f07653ad574",
+    "typescript": "^4.0.2",
+    "typings": "^2.1.1",
     "ws": "^7.1.0"
   },
   "devDependencies": {
@@ -53,7 +61,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-preset-stage-2": "^6.3.13",
     "chai": "3.5.0",
-    "electron": "5.0.6",
+    "electron": "5.0.7",
     "electron-builder": "22.3.6",
     "electron-publisher-s3": "^19.53.1",
     "electron-rebuild": "^1.8.5",

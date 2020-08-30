@@ -2,26 +2,35 @@
  * API camera
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
-define([
-    'Rx',
-    'helpers/websocket',
-    'helpers/rsa-key',
-    'helpers/version-checker',
-    'helpers/i18n'
-], function(
-    Rx,
-    Websocket,
-    rsaKey,
-    VersionChecker,
-    i18n) {
+const Rx = require('Rx');
+import Websocket from '../websocket';
+import rsaKey from '../rsa-key';
+import VersionChecker from '../version-checker';
+import * as i18n from '../i18n';
 
     const TIMEOUT = 15000;
     const LANG = i18n.lang;
     class Camera {
+        cameraNeedFlip: any;
+        shouldCrop: boolean;
+        private _device: {
+            uuid: string | null,
+            source: string | null,
+            model: string | null,
+            version: string | null
+        };
+        private _ws: any;
+        private _wsSubject: any;
+        private _source: any;
         constructor(shouldCrop=true) {
             this.cameraNeedFlip = undefined;
             this.shouldCrop = shouldCrop;
-            this._device = '';
+            this._device = {
+                uuid: null,
+                source: null,
+                model: null,
+                version: null
+            };
             this._ws = null;
             this._wsSubject = new Rx.Subject();
             this._source = this._wsSubject
@@ -46,7 +55,7 @@ define([
             console.assert(device.version, 'device miss version!', device);
             const method = (device.source === 'h2h') ? `camera/usb/${parseInt(device.uuid)}` : `camera/${device.uuid}`;
 
-            this._ws = new Websocket({
+            this._ws = Websocket({
                 method: method,
                 onOpen: () => this._ws.send(rsaKey()),
                 onMessage: (res) => this._wsSubject.onNext(res),
@@ -71,7 +80,7 @@ define([
 
         async _getCameraOffset() {
             const tempWsSubject = new Rx.Subject();
-            const tempWs = new Websocket({
+            const tempWs = Websocket({
                 method: (this._device.source === 'h2h') ? `control/usb/${parseInt(this._device.uuid)}` : `control/${this._device.uuid}`,
                 onOpen: () => tempWs.send(rsaKey()),
                 onMessage: (res) => tempWsSubject.onNext(res),
@@ -178,6 +187,4 @@ define([
         }
     }
 
-    return Camera;
-
-});
+    export default Camera;

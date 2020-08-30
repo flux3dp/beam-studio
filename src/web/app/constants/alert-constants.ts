@@ -1,7 +1,4 @@
-define(function(){
-    'use strict';
-
-    return {
+export default {
         INFO                        : 'INFO',
         WARNING                     : 'WARNING',
         WARNING_WITH_CHECKBOX       : 'WARNING_WITH_CHECKBOX',
@@ -36,9 +33,11 @@ define(function(){
         NOTIFY_YES                  : 'NOTIFY_YES',
         NOTIFY_CANCEL               : 'NOTIFY_CANCEL',
         NOTIFY_CUSTOM               : 'NOTIFY_CUSTOM',
+        NOTIFY_CUSTOM_GROUP         : 'NOTIFY_CUSTOM_GROUP',
+        NOTIFY_ANSWER               : 'NOTIFY_ANSWER',
         QUESTION                    : 'QUESTION',
         CLOSE_NOTIFICATION          : 'CLOSE_NOTIFICATION',
         CLOSE_POPUP                 : 'CLOSE_POPUP',
+        FINISH                      : 'FINISH',
         SHOW_POPUP_CHANGE_FILAMENT  : 'SHOW_POPUP_CHANGE_FILAMENT'
     };
-});

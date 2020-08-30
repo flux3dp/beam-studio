@@ -2,30 +2,23 @@
  * API discover
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-discover
  */
-define([
-    'helpers/websocket',
-    'app/actions/initialize-machine',
-    'helpers/api/config',
-    'helpers/device-list',
-    'helpers/logger',
-    'helpers/smart-upnp',
-    'helpers/api/cloud'
-], function(
-    Websocket,
-    initializeMachine,
-    Config,
-    DeviceList,
-    Logger,
-    SmartUpnp,
-    CloudApi) {
-    'use strict';
+import Websocket from '../websocket'
+import initializeMachine from '../../app/actions/initialize-machine'
+import Config from './config'
+import DeviceList from '../device-list'
+import Logger from '../logger'
+import SmartUpnp from '../smart-upnp'
+import CloudApi from './cloud'
+import { IDeviceInfo } from '../../interfaces/IDevice'
 
-    const dns = require('dns');
+// TODO: Rewrite broken modules...
+
+    const dns = requireNode('dns');
     const dnsPromise = dns.promises;
-    var ws = ws || new Websocket({
+    var ws = ws || Websocket({
             method: 'discover'
         }),
-        discoverLogger = new Logger('discover'),
+        discoverLogger = Logger('discover'),
         printers = [],
         dispatchers = [],
         idList = [],
@@ -36,7 +29,7 @@ define([
             discoverLogger.clear().append(_devices);
 
             dispatchers.forEach(function(dispatcher) {
-                dispatcher.sender(_devices);
+                dispatcher.sender(printers);
             });
         },
         findIndex = function(base, target) {
@@ -56,7 +49,7 @@ define([
 
                     if (pokeIPAddrArr.indexOf(device.ipaddr) === -1 && device.ipaddr !== 'raspberrypi.local') {
                         if (pokeIPAddrArr.length > 19) {
-                            pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
+                            pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length).join();
                         }
 
                         localStorage.setItem('poke-ip-addr', `${pokeIPAddr}, ${device.ipaddr}`);
@@ -132,7 +125,8 @@ define([
                 console.log(`Error when dns looking up raspberrypi:\n${e}`);
             }
         }
-
+        // TODO: Fix this init...  no id and getPrinters?
+        // @ts-expect-error
         SmartUpnp.init(self());
         for(var i in pokeIPs){
             SmartUpnp.startPoke(pokeIPs[i]);
@@ -164,9 +158,7 @@ define([
             });
         }
     });
-
-    var self = function(id, getPrinters) {
-        getPrinters = getPrinters || function() {};
+    var self = function(id: string | null, getPrinters: (printers: IDeviceInfo[]) => void) {
 
         var index = idList.indexOf(id);
 
@@ -217,5 +209,4 @@ define([
         };
     };
 
-    return self;
-});
+    export default self;

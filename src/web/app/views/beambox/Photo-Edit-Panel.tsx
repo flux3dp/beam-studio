@@ -1,33 +1,23 @@
 
 /* eslint-disable react/no-multi-comp */
-define([
-    'jquery',
-    'helpers/i18n',
-    'helpers/image-data',
-    'helpers/JimpHelper',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'jsx!widgets/Modal',
-    'jsx!widgets/Button-Group',
-    'jsx!widgets/Curve-Control',
-    'jsx!widgets/Slider-Control',
-    'lib/cropper'
-], function(
-    $,
-    i18n,
-    ImageData,
-    JimpHelper,
-    ProgressActions,
-    ProgressConstants,
-    Modal,
-    ButtonGroup,
-    CurveControl,
-    SliderControl,
-    Cropper
-) {
-    const React = require('react');
+import $ from 'jquery'
+import * as i18n from '../../../helpers/i18n'
+import ImageData from '../../../helpers/image-data'
+import JimpHelper from '../../../helpers/JimpHelper'
+import ProgressActions from '../../actions/progress-actions'
+import ProgressConstants from '../../constants/progress-constants'
+import Modal from '../../widgets/Modal'
+import ButtonGroup from '../../widgets/Button-Group'
+import CurveControl from '../../widgets/Curve-Control'
+import SliderControl from '../../widgets/Slider-Control'
+// @ts-expect-error
+import Cropper = require('cropper');
+const svgedit = window['svgedit'];
+const svgCanvas = window['svgCanvas'];
+
+    const React = requireNode('react');;
     const LANG = i18n.lang.beambox.photo_edit_panel;
-    const jimp = require('jimp');
+    const jimp = requireNode('jimp');
     
     let cropper = null;
     class PhotoEditPanel extends React.Component {
@@ -146,14 +136,14 @@ define([
             let elem = this.props.element;
             this._handleSetAttribute('origImage', this.state.src);
             if (this.props.mode === 'crop') {
-                const image = document.getElementById('original-image');
+                const image = document.getElementById('original-image') as HTMLImageElement;
                 if (this.state.origWidth !== image.naturalWidth) {
                     let ratio = image.naturalWidth / this.state.origWidth;
-                    this._handleSetAttribute('width', $(elem).attr('width') * ratio);
+                    this._handleSetAttribute('width', parseFloat($(elem).attr('width')) * ratio);
                 }
                 if (this.state.origHeight !== image.naturalHeight) {
                     let ratio = image.naturalHeight / this.state.origHeight;
-                    this._handleSetAttribute('height', $(elem).attr('height') * ratio);
+                    this._handleSetAttribute('height', parseFloat($(elem).attr('height')) * ratio);
                 }
             }
             if (this.props.mode === 'invert') {
@@ -314,23 +304,23 @@ define([
             );
         }
 
-        async _handleSharp(isPreview, val) {
+        async _handleSharp(isPreview?: boolean, val?: string) {
             const imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
             const sharpness = isPreview ? parseInt(val) : this.state.sharpness;
             const k_edge = -sharpness / 2;
             const k_corner = -sharpness / 4;
             const k_m = -4 * (k_edge + k_corner) + 1;
-            const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
+            const kernel = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
-                let imageData = await fetch(imgBlobUrl);
-                imageData = await imageData.blob();
-                imageData = await new Response(imageData).arrayBuffer(); 
-                imageData = await jimp.read(imageData);
-                imageData.convolute(kernal);
-                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                imageData = new Blob([imageData]);
-                const src = URL.createObjectURL(imageData);
+                const resp = await fetch(imgBlobUrl);
+                const respData = await resp.blob();
+                const imageData = await new Response(respData).arrayBuffer(); 
+                const jimpImage = await jimp.read(imageData);
+                jimpImage.convolute(kernel);
+                const convolutedData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
+                const convolutedBlob = new Blob([convolutedData]);
+                const src = URL.createObjectURL(convolutedBlob);
                 if (this.state.src !== this.state.previewSrc) {
                     URL.revokeObjectURL(this.state.src);
                 }
@@ -356,7 +346,7 @@ define([
             if (this.state.isCropping) {
                 return;
             }
-            const image = document.getElementById('original-image');
+            const image = document.getElementById('original-image') as HTMLImageElement;
             cropper = new Cropper(
                 image,
                 {
@@ -371,7 +361,7 @@ define([
         }
 
         async _handleCrop(complete=false) {
-            const image = document.getElementById('original-image');
+            const image = document.getElementById('original-image') as HTMLImageElement;
             const cropData = cropper.getData();;
             const x = Math.max(0, cropData.x);
             const y = Math.max(0, cropData.y);
@@ -381,14 +371,14 @@ define([
             let imgBlobUrl = this.state.src;
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
-                let imageData = await fetch(imgBlobUrl);
-                imageData = await imageData.blob();
-                imageData = await new Response(imageData).arrayBuffer(); 
-                imageData = await jimp.read(imageData);
-                imageData.crop(x, y, w, h);
-                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                imageData = new Blob([imageData]);
-                const src = URL.createObjectURL(imageData);
+                const resp = await fetch(imgBlobUrl);
+                const respData = await resp.blob();
+                const imageData = await new Response(respData).arrayBuffer(); 
+                const jimpImage = await jimp.read(imageData);
+                jimpImage.crop(x, y, w, h);
+                const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
+                const jimpBlob = new Blob([jimpData]);
+                const src = URL.createObjectURL(jimpBlob);
                 this.state.srcHistory.push(this.state.src);
                 this._destroyCropper();
                 this.setState({
@@ -426,14 +416,14 @@ define([
         async _handleInvertAndComplete() {
             let imgBlobUrl = this.state.src;
             try {
-                let imageData = await fetch(imgBlobUrl);
-                imageData = await imageData.blob();
-                imageData = await new Response(imageData).arrayBuffer(); 
-                imageData = await jimp.read(imageData);
-                imageData.invert();
-                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                imageData = new Blob([imageData]);
-                const src = URL.createObjectURL(imageData);
+                const resp = await fetch(imgBlobUrl);
+                const respData = await resp.blob();
+                const imageData = await new Response(respData).arrayBuffer(); 
+                const jimpImage = await jimp.read(imageData);
+                jimpImage.invert();
+                const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
+                const jimpBlob = new Blob([jimpData]);
+                const src = URL.createObjectURL(jimpBlob);
                 if (!this.state.shading) {
                     this.state.threshold = 256 - this.state.threshold;
                 }
@@ -451,24 +441,23 @@ define([
         _handleStamp = async () => {
             let imgBlobUrl = this.state.src;
             try {
-                let image = await fetch(imgBlobUrl);
-                image = await image.blob();
-                image = await new Response(image).arrayBuffer(); 
-                image = await jimp.read(image);
-                const w = image.bitmap.width;
-                const h = image.bitmap.height;
-                await JimpHelper.binarizeImage(image, this.state.shading ? 128 : this.state.threshold);
-                const origImage = image.clone();
+                const resp = await fetch(imgBlobUrl);
+                const respData = await resp.blob();
+                const imageData = await new Response(respData).arrayBuffer(); 
+                const jimpImage = await jimp.read(imageData);
+                const w = jimpImage.bitmap.width;
+                const h = jimpImage.bitmap.height;
+                await JimpHelper.binarizeImage(jimpImage, this.state.shading ? 128 : this.state.threshold);
+                const origImage = jimpImage.clone();
                 await JimpHelper.stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
                 // await origImage.blur(Math.ceil(Math.min(w, h) / 40));
                 JimpHelper.regulateBlurredImage(origImage);
-                await image.composite(origImage, 0, 0, {
+                await jimpImage.composite(origImage, 0, 0, {
                     mode: jimp.BLEND_OVERLAY
                 });
-                image = await image.getBufferAsync(jimp.MIME_PNG);
-
-                image = new Blob([image]);
-                const src = URL.createObjectURL(image);
+                const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
+                const jimpBlob = new Blob([jimpData]);
+                const src = URL.createObjectURL(jimpBlob);
                 this.state.srcHistory.push(this.state.src);
                 this.state.shading = true;
                 this.state.threshold = 255;
@@ -505,18 +494,18 @@ define([
             let imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
-                let imageData = await fetch(imgBlobUrl);
-                imageData = await imageData.blob();
-                imageData = await new Response(imageData).arrayBuffer(); 
-                imageData = await jimp.read(imageData);
-                for (let i = 0; i < imageData.bitmap.data.length; i++) {
+                const resp = await fetch(imgBlobUrl);
+                const respBlob = await resp.blob();
+                const respData = await new Response(respBlob).arrayBuffer(); 
+                const jimgImage = await jimp.read(respData);
+                for (let i = 0; i < jimgImage.bitmap.data.length; i++) {
                     if (i % 4 != 3) {
-                        imageData.bitmap.data[i] =  curveFunc[imageData.bitmap.data[i]];
+                        jimgImage.bitmap.data[i] =  curveFunc[jimgImage.bitmap.data[i]];
                     }
                 }
-                imageData = await imageData.getBufferAsync(jimp.MIME_PNG);
-                imageData = new Blob([imageData]);
-                const src = URL.createObjectURL(imageData);
+                const jimpData = await jimgImage.getBufferAsync(jimp.MIME_PNG);
+                const jimpBlob = new Blob([jimpData]);
+                const src = URL.createObjectURL(jimpBlob);
                 if (this.state.src !== this.state.previewSrc) {
                     URL.revokeObjectURL(this.state.src);
                 }
@@ -630,5 +619,4 @@ define([
             return renderContent;
         }
     };
-    return PhotoEditPanel;
-});
+    export default PhotoEditPanel;

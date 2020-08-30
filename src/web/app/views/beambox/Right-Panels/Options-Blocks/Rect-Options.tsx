@@ -1,22 +1,13 @@
-define([
-    'jsx!views/beambox/Right-Panels/Options-Blocks/Infill-Block',
-    'jsx!widgets/Unit-Input-v2',
-    'jsx!contexts/DialogCaller',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/constant',
-    'helpers/i18n'
-], function(
-    InFillBlock,
-    UnitInput,
-    DialogCaller,
-    Alert,
-    AlertConstants,
-    Constant,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import InFillBlock from '../../../../views/beambox/Right-Panels/Options-Blocks/Infill-Block'
+import UnitInput from '../../../../widgets/Unit-Input-v2'
+import DialogCaller from '../../../../contexts/DialogCaller'
+import Alert from '../../../../contexts/AlertCaller'
+import AlertConstants from '../../../../constants/alert-constants'
+import Constant from '../../../../actions/beambox/constant'
+import * as i18n from '../../../../../helpers/i18n'
+const svgCanvas = window['svgCanvas']
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 
     class RectOptions extends React.Component {
@@ -62,5 +53,4 @@ define([
         }
     }
 
-    return RectOptions;
-});
+    export default RectOptions;

@@ -1,54 +1,32 @@
-define([
-    'jquery',
-    'jsx!widgets/Modal',
-    'jsx!views/beambox/Left-Panels/Image-Trace-Button',
-    'jsx!views/Printer-Selector',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'app/actions/beambox/preview-mode-controller',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox',
-    'app/actions/global-actions',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/stores/beambox-store',
-    'jsx!app/actions/beambox/Image-Trace-Panel-Controller',
-    'plugins/classnames/index',
-    'helpers/shortcuts',
-    'helpers/version-checker',
-    'helpers/api/config',
-    'helpers/i18n',
-], function(
-    $,
-    Modal,
-    ImageTraceButton,
-    PrinterSelector,
-    Alert,
-    AlertConstants,
-    FnWrapper,
-    PreviewModeBackgroundDrawer,
-    PreviewModeController,
-    BeamboxPreference,
-    BeamboxActions,
-    GlobalActions,
-    ProgressActions,
-    ProgressConstants,
-    BeamboxStore,
-    ImageTracePanelController,
-    classNames,
-    shortcuts,
-    VersionChecker,
-    Config,
-    i18n
-) {
-    const React = require('react');
-    const ReactDOM = require('react-dom');
+import $ from 'jquery'
+import Modal from '../../../widgets/Modal'
+import ImageTraceButton from './Image-Trace-Button'
+import PrinterSelector from '../../Printer-Selector'
+import Alert from '../../..//contexts/AlertCaller'
+import AlertConstants from '../../..//constants/alert-constants'
+import FnWrapper from '../../..//actions/beambox/svgeditor-function-wrapper'
+import PreviewModeBackgroundDrawer from '../../..//actions/beambox/preview-mode-background-drawer'
+import PreviewModeController from '../../..//actions/beambox/preview-mode-controller'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import BeamboxActions from '../../../actions/beambox'
+import GlobalActions from '../../../actions/global-actions'
+import ProgressActions from '../../..//actions/progress-actions'
+import ProgressConstants from '../../../constants/progress-constants'
+import BeamboxStore from '../../..//stores/beambox-store'
+import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Panel-Controller'
+import shortcuts from '../../../../helpers/shortcuts'
+import VersionChecker from '../../../../helpers/version-checker'
+import * as i18n from '../../../../helpers/i18n'
+const classNames = requireNode('classnames')
+
+const workarea = window['workarea'];
+const svgEditor = window['svgEditor'];
+    const React = requireNode('react');;
+    const ReactDOM = requireNode('react-dom');
 
     const LANG = i18n.lang.beambox.left_panel;
 
-    return class PreviewButton extends React.Component {
+    export default class PreviewButton extends React.Component {
         constructor(props) {
             super(props);
             this.state = {
@@ -150,9 +128,9 @@ define([
                 };
 
                 const isFirmwareBorderlessAvailable = (device) => {
-                    const isAvailableVersion = function(version, targetVersion) {
+                    const isAvailableVersion = function(version, targetVersionStr) {
                         version = version.split('.').map(i => parseInt(i));
-                        targetVersion = targetVersion.split('.').map(i => parseInt(i));
+                        let targetVersion = targetVersionStr.split('.').map(i => parseInt(i));
                         for (let i = 0; i < Math.min(version.length, targetVersion.length); ++i) {
                             if(version[i] > targetVersion[i]) {
                                 return true;
@@ -408,4 +386,3 @@ define([
             );
         }
     };
-});

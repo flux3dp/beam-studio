@@ -1,14 +1,26 @@
 { 
     "compilerOptions": {
       "target": "es5",
-      "module": "commonjs",
+      "esModuleInterop": true,
+      "module": "AMD",
       "moduleResolution": "node",
       "sourceMap": true,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "removeComments": false,
       "noImplicitAny": false,
-      "suppressImplicitAnyIndexErrors": true 
+      "downlevelIteration": true,
+      "jsx": "react",
+      "suppressImplicitAnyIndexErrors": true,
+      "baseUrl": ".",
+      "paths": {
+        "react-proptypes": ["./public/js/lib/react/react-proptypes"] 
+      }
     },
-    "exclude": [ "node_modules" ] 
+    "exclude": [
+      "node_modules"
+    ],
+    "types": [
+      "requirejs"
+    ]
   }

@@ -2,13 +2,10 @@
  * API camera calibration
  * Ref: none
  */
-define([
-    'helpers/websocket',
-], function(Websocket) {
-    'use strict';
+import Websocket from '../websocket'
 
-    return function() {
-        var ws = new Websocket({
+    export default function() {
+        var ws = Websocket({
                 method: 'camera-calibration',
                 onMessage: (data) => {
                     events.onMessage(data);
@@ -21,9 +18,9 @@ define([
                 }
             }),
             events = {
-                onMessage   : () => {},
-                onError     : () => {},
-                onFatal     : () => {}
+                onMessage   : (response: any) => {},
+                onError     : (response: any) => {},
+                onFatal     : (response: any) => {}
             };
 
         return {
@@ -32,8 +29,7 @@ define([
             /**
              * @param {ArrayBuffer} data    - binary data with array buffer type
              */
-            upload: (data, opts) => {
-                opts = opts || {};
+            upload: (data) => {
                 let d = $.Deferred();
                 events.onMessage = (response) => {
                     switch (response.status) {
@@ -63,4 +59,3 @@ define([
             },
         };
     };
-});

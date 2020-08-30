@@ -1,19 +1,10 @@
-define([
-    'reactPropTypes',
-    'app/constants/global-constants',
-    'app/constants/device-constants',
-    'app/constants/monitor-status',
-    'helpers/duration-formatter'
-], (
-    PropTypes,
-    GlobalConstants,
-    DeviceConstants,
-    MonitorStatus,
-    FormatDuration
-) => {
-    'use strict';
+const PropTypes = require('reactPropTypes')
+import GlobalConstants from '../../../app/constants/global-constants'
+import DeviceConstants from '../../../app/constants/device-constants'
+import MonitorStatus from '../../../app/constants/monitor-status'
+import FormatDuration from '../../../helpers/duration-formatter'
 
-    const React = require('react');
+    const React = requireNode('react');;
 
     const findObjectContainsProperty = (infoArray = [], propertyName) => {
         return infoArray.filter((o) => Object.keys(o).some(n => n === propertyName));
@@ -75,14 +66,16 @@ define([
             }
 
             // rt = real temperature, tt = target temperature
-            let { st_label, rt, tt } = Device.status,
+            let st_label = Device.status.st_label,
+                rt: number = Device.status.rt,
+                tt: number = Device.status.st,
                 lang = this.lang.monitor;
 
             if(st_label === DeviceConstants.RUNNING) {
-                return rt ? `${lang.temperature} ${parseInt(rt * 10) / 10} °C` : '';
+                return rt ? `${lang.temperature} ${rt.toFixed(1)} °C` : '';
             }
             else {
-                return rt ? `${lang.temperature} ${parseInt(rt * 10) / 10} °C / ${tt} °C` : '';
+                return rt ? `${lang.temperature} ${rt.toFixed(1)} °C / ${tt} °C` : '';
             }
         }
 
@@ -101,7 +94,7 @@ define([
             }
 
             if(Monitor.downloadProgress.size !== '') {
-                return `${lang.processing} ${parseInt((Monitor.downloadProgress.size - Monitor.downloadProgress.left) / Monitor.downloadProgress.size * 100)}%`;
+                return `${lang.processing} ${Math.floor((Monitor.downloadProgress.size - Monitor.downloadProgress.left) / Monitor.downloadProgress.size * 100)}%`;
             }
 
             let o = findObjectContainsProperty(Device.jobInfo, 'TIME_COST');
@@ -121,7 +114,7 @@ define([
                 return '';
             }
 
-            let percentageDone = parseInt(Device.status.prog * 100),
+            let percentageDone = Math.floor(Device.status.prog * 100),
             // timeLeft = FormatDuration(o[0].TIME_COST * (1 - Device.status.prog));
             timeLeft = FormatDuration(time * (1 - Device.status.prog));
 
@@ -148,5 +141,4 @@ define([
         }
     };
 
-    return MonitorInfo;
-});
+    export default MonitorInfo;

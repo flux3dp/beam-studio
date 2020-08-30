@@ -1,10 +1,7 @@
 /**
  * grayscale
  */
-define(function() {
-    'use strict';
-
-    return function(data, opts) {
+export default function(data, opts) {
         opts = opts || {};
         opts.is_rgba = ('boolean' === typeof opts.is_rgba ? opts.is_rgba : false);
         opts.threshold = ('number' === typeof opts.threshold ? opts.threshold : 128);
@@ -67,4 +64,3 @@ define(function() {
 
         return binary;
     };
-});

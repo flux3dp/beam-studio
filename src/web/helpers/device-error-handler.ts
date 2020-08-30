@@ -1,7 +1,6 @@
-define(['helpers/i18n'], function (i18n) {
-    'use strict';
+import * as i18n from './i18n'
 
-    const lang = i18n.lang;
+const lang = i18n.lang;
 
     const self = {
         /**
@@ -31,9 +30,6 @@ define(['helpers/i18n'], function (i18n) {
                     errorOutput = lang.settings.flux_cloud[error.join('_')];
                 }
                 else if (error.length === 4) {
-                    if(error[3] === 'N/A') {
-                        errorOutput = this.translate(['HEAD_ERROR','HEAD_OFFLINE']);
-                    }
                     // for wrong toolhead type;
                     if (error[1] === 'TYPE_ERROR') {
                         errorOutput = lang.monitor[error.slice(0, 2).join('_')];
@@ -123,5 +119,4 @@ define(['helpers/i18n'], function (i18n) {
         }
     };
 
-    return self;
-});
+    export default self;

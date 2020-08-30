@@ -1,12 +1,9 @@
 /**
  * full position (left, top, right, right)
  */
-define([
-    'jquery'
-], function($) {
-    'use strict';
+import $ from 'jquery'
 
-    $.fn.box = function(is_offset) {
+    $.fn['box'] = function(is_offset) {
         is_offset = ('boolean' === typeof is_offset ? is_offset : false);
 
         var $self = $(this),
@@ -28,4 +25,3 @@ define([
             }
         };
     };
-});

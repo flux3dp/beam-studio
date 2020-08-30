@@ -1,71 +1,50 @@
-define([
-    'app/actions/default-machine',
-    'app/actions/beambox/svgeditor-function-wrapper',
-    'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/constants/device-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
-    'app/actions/beambox/beambox-preference',
-    'app/actions/beambox/bottom-right-funcs',
-    'app/actions/beambox/constant',
-    'app/actions/beambox/preview-mode-background-drawer',
-    'app/actions/beambox/preview-mode-controller',
-    'jsx!contexts/DialogCaller',
-    'jsx!widgets/Modal',
-    'jsx!views/beambox/Left-Panels/Left-Panel',
-    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Context',
-    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'helpers/api/alert-config',
-    'helpers/api/discover',
-    'helpers/check-device-status',
-    'helpers/device-list',
-    'helpers/device-master',
-    'helpers/sprintf',
-    'helpers/symbol-maker',
-    'helpers/version-checker',
-    'helpers/i18n'
-], function(
-    DefaultMachine,
-    FnWrapper,
-    Alert,
-    AlertConstants,
-    DeviceConstants,
-    ProgressActions,
-    ProgressConstants,
-    BeamboxPreference,
-    BottomRightFuncs,
-    Constant,
-    PreviewModeBackgroundDrawer,
-    PreviewModeController,
-    DialogCaller,
-    Modal,
-    LeftPanel,
-    { TopBarContext },
-    { TopBarHints },
-    TutorialController,
-    TutorialConstants,
-    AlertConfig,
-    Discover,
-    checkDeviceStatus,
-    DeviceList,
-    DeviceMaster,
-    sprintf,
-    SymbolMaker,
-    VersionChecker,
-    i18n
-) {
-    const React = require('react');
-    const classNames = require('classnames');
+import DefaultMachine from '../../../actions/default-machine'
+import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
+import Alert from '../../../contexts/AlertCaller'
+import AlertConstants from '../../../constants/alert-constants'
+import DeviceConstants from '../../../constants/device-constants'
+import ProgressActions from '../../../actions/progress-actions'
+import ProgressConstants from '../../../constants/progress-constants'
+import BeamboxPreference from '../../../actions/beambox/beambox-preference'
+import BottomRightFuncs from '../../../actions/beambox/bottom-right-funcs'
+import Constant from '../../../actions/beambox/constant'
+import PreviewModeController from '../../../actions/beambox/preview-mode-controller'
+import DialogCaller from '../../../contexts/DialogCaller'
+import Modal from '../../../widgets/Modal'
+import LeftPanel from '../Left-Panels/Left-Panel'
+import { TopBarContext } from './contexts/Top-Bar-Context'
+import { TopBarHints } from './Top-Bar-Hints'
+import * as TutorialController from '../../../views/tutorials/Tutorial-Controller'
+import TutorialConstants from '../../../constants/tutorial-constants'
+import AlertConfig from '../../../../helpers/api/alert-config'
+import Discover from '../../../../helpers/api/discover'
+import checkDeviceStatus from '../../../../helpers/check-device-status'
+import DeviceList from '../../../../helpers/device-list'
+import DeviceMaster from '../../../../helpers/device-master'
+import sprintf from '../../../../helpers/sprintf'
+import SymbolMaker from '../../../../helpers/symbol-maker'
+import VersionChecker from '../../../../helpers/version-checker'
+import * as i18n from '../../../../helpers/i18n'
+
+const svgCanvas = window['svgCanvas'];
+const svgEditor = window['svgEditor'];
+const workarea = window['workarea'];
+    const React = requireNode('react');;
+    const classNames = requireNode('classnames');
     const lang = i18n.lang;
     const LANG = i18n.lang.topbar;
     const isNotMac = process.platform !== 'darwin';
+    let _contextCaller;
 
-    let ret = {};
+    class ContextHelper {
+        static get _contextCaller() {
+            return _contextCaller;
+        }
+    }
+    
+    export const TopBarContextCaller = ContextHelper._contextCaller;
 
-    class TopBar extends React.Component {
+    export class TopBar extends React.Component {
         constructor() {
             super();
             this.deviceList = [];
@@ -79,12 +58,11 @@ define([
         }
 
         componentDidMount() {
-            ret.contextCaller = this.context;
+            _contextCaller = this.context;
             this.discover = Discover(
                 'top-bar',
-                (machines) => {
+                (deviceList) => {
                     const { hasDiscoverdMachine, shouldShowDeviceList } = this.state;
-                    const deviceList = DeviceList(machines);
                     this.deviceList = deviceList;
                     if ((deviceList.length > 0) !== hasDiscoverdMachine) {
                         this.setState({hasDiscoverdMachine: deviceList.length > 0});
@@ -277,7 +255,7 @@ define([
             const tooFastLayers = [];
             for (let i = 0; i < layers.length; ++i) {
                 const layer = layers[i];
-                if (layer.getAttribute('data-speed') > 20 && layer.getAttribute('display') !== 'none') {
+                if (parseFloat(layer.getAttribute('data-speed')) > 20 && layer.getAttribute('display') !== 'none') {
                     const paths = Array.from($(layer).find('path, rect, ellipse, polygon, line'));
                     const uses = $(layer).find('use');
                     let hasWireframe = false
@@ -296,7 +274,7 @@ define([
                     for (let j = 0; j < paths.length; j++) {
                         const path = paths[j],
                                 fill = $(path).attr('fill'),
-                                fill_op = $(path).attr('fill-opacity');
+                                fill_op = parseFloat($(path).attr('fill-opacity'));
                         if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fill_op === 0) {
                             isTooFastForPath = true;
                             tooFastLayers.push(svgCanvas.getCurrentDrawing().getLayerName(i));
@@ -433,7 +411,7 @@ define([
                     progress = '';
                 }
                 else if (16 === device.st_id && 'number' === typeof device.st_prog) {
-                    progress = (parseInt(device.st_prog * 1000) * 0.1).toFixed(1) + '%';
+                    progress = (device.st_prog * 100).toFixed(1) + '%';
                 }
                 else {
                     progress = '';
@@ -477,31 +455,24 @@ define([
         handleSelectDevice = async (device, callback) => {
             this.hideDeviceList();
             ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
-            device = DeviceMaster.usbDefaultDeviceCheck(device);
             try {
                 const status = await DeviceMaster.selectDevice(device);
-                if (status === DeviceConstants.CONNECTED) {
+                if (status.success) {
                     ProgressActions.open(ProgressConstants.NONSTOP);
                     await checkDeviceStatus(device);
                     ProgressActions.close();
                     callback(device);
                 }
-                else if (status === DeviceConstants.TIMEOUT) {
-                    ProgressActions.close();
-                    Alert.popUp({
-                        id: _id,
-                        message: lang.message.connectionTimeout,
-                        type: AlertConstants.SHOW_POPUP_ERROR,
-                    });
-                }
             } catch (e) {
+                // TOD: handle connection error
                 console.error(e.toString());
-                ProgressActions.close();
                 Alert.popUp({
                     id: 'fatal-occurred',
                     message: '#813' + e.toString(),
                     type: AlertConstants.SHOW_POPUP_ERROR,
                 });
+            } finally {
+                ProgressActions.close();
             }
         }
 
@@ -584,7 +555,3 @@ define([
         }
     }
     TopBar.contextType = TopBarContext;
-    ret.TopBar = TopBar;
-    return ret;
-
-});

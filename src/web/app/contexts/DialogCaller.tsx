@@ -1,67 +1,52 @@
-const { resolve } = require('q');
+const { resolve } = requireNode('q');
 
-define([
-    'jsx!widgets/Modal',
-    'jsx!views/dialogs/Dialog',
-    'jsx!views/dialogs/Prompt',
-    'jsx!views/dialogs/Confirm-Prompt',
-    'jsx!views/tutorials/Tutorial',
-    'jsx!views/beambox/About-Beam-Studio',
-    'jsx!views/beambox/Camera-Calibration',
-    'jsx!views/beambox/Diode-Calibration',
-    'jsx!views/beambox/Document-Panels/Document-Panel',
-    'jsx!views/beambox/Network-Testing-Panel',
-    'jsx!views/beambox/Photo-Edit-Panel',
-    'jsx!views/beambox/Layer-Color-Config',
-    'jsx!views/beambox/Svg-Nest-Buttons',
-    'helpers/i18n'
-], function (
-    Modal,
-    Dialog,
-    Prompt,
-    ConfirmPrompt,
-    { Tutorial },
-    AboutBeamStudio,
-    CameraCalibration,
-    DiodeCalibration,
-    DocumentPanel,
-    NetworkTestingPanel,
-    PhotoEditPanel,
-    LayerColorConfigPanel,
-    SvgNestButtons,
-    i18n
-) {
-    const React = require('react');
-    const electronRemote = require('electron').remote;
+import Modal from '../widgets/Modal'
+import { Dialog, DialogContextCaller } from '../views/dialogs/Dialog'
+import Prompt from '../views/dialogs/Prompt'
+import ConfirmPrompt from '../views/dialogs/Confirm-Prompt'
+import { Tutorial } from '../views/tutorials/Tutorial'
+import AboutBeamStudio from '../views/beambox/About-Beam-Studio'
+import CameraCalibration from '../views/beambox/Camera-Calibration'
+import DiodeCalibration from '../views/beambox/Diode-Calibration'
+import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel'
+import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel'
+import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel'
+import LayerColorConfigPanel from '../views/beambox/Layer-Color-Config'
+import SvgNestButtons from '../views/beambox/Svg-Nest-Buttons'
+import * as i18n from '../../helpers/i18n'
+
+const svgCanvas = window['svgCanvas'];
+    const React = requireNode('react');;
+    const electronRemote = requireNode('electron').remote;
     const { dialog } = electronRemote;
     const addDialogComponent = (id, component) => {
-        if (!Dialog.DialogContextCaller) {
+        if (!DialogContextCaller) {
             console.log('Dialog context not loaded Yet');
         } else {
-            Dialog.DialogContextCaller.addDialogComponent(id, component);
+            DialogContextCaller.addDialogComponent(id, component);
         }
     };
 
     const isIdExist = (id) => {
-        if (!Dialog.DialogContextCaller) {
+        if (!DialogContextCaller) {
             console.log('Dialog context not loaded Yet');
         } else {
-            const isExist = Dialog.DialogContextCaller.isIdExist(id);
+            const isExist = DialogContextCaller.isIdExist(id);
             return isExist;
         }
     }
 
     const popDialogById = (id) => {
-        if (!Dialog.DialogContextCaller) {
+        if (!DialogContextCaller) {
             console.log('Dialog context not loaded Yet');
         } else {
-            Dialog.DialogContextCaller.popDialogById(id);
+            DialogContextCaller.popDialogById(id);
         }
     };
 
     let promptIndex = 0;
 
-    return {
+    export default {
         addDialogComponent,
         popDialogById,
         showAboutBeamStudio: () => {
@@ -115,7 +100,7 @@ define([
                 </Modal>
             );
         },
-        showNetworkTestingPanel: (ip) => {
+        showNetworkTestingPanel: (ip?: string) => {
             if (isIdExist('network-test')) return;
             addDialogComponent('network-test',
                 <NetworkTestingPanel
@@ -139,7 +124,7 @@ define([
             if (len > 1) {
                 return;
             }
-            element = selectedElements[0];
+            const element = selectedElements[0];
             const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
             addDialogComponent('photo-edit',
                 <PhotoEditPanel
@@ -241,4 +226,3 @@ define([
             });
         }
     }
-});

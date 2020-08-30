@@ -1,13 +1,6 @@
-define([
-    'app/dispatcher/global-dispatcher',
-    'app/constants/global-constants',
-    'events',
-    'helpers/object-assign'
-], function(
-    Dispatcher,
-    GlobalConstants,
-    EventEmitter
-){
+import Dispatcher from '../dispatcher/global-dispatcher'
+import GlobalConstants from '../constants/global-constants'
+const EventEmitter = require('events')
 
     var GlobalStore;
 
@@ -82,6 +75,4 @@ define([
 
     });
 
-    return GlobalStore;
-
-});
+    export default GlobalStore;

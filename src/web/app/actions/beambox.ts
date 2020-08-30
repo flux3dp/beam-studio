@@ -1,13 +1,9 @@
 // It's Flux actions of beambox by Net
 
-define([
-    'app/constants/beambox-constants',
-    'app/dispatcher/beambox-dispatcher'
-], function(
-    BeamboxConstants,
-    Dispatcher
-) {
-    return {
+import BeamboxConstants from '../constants/beambox-constants'
+import Dispatcher from '../dispatcher/beambox-dispatcher'
+
+export default {
         updateLaserPanel: function() {
             Dispatcher.dispatch({
                 actionType: BeamboxConstants.UPDATE_LASER_PANEL,
@@ -59,4 +55,3 @@ define([
             });
         }
     };
-});

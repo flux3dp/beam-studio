@@ -1,7 +1,4 @@
-define(function() {
-    'use strict';
-
-    return {
+export default {
         UPDATE_LASER_PANEL          : 'UPDATE_LASER_PANEL',
         BACK_TO_PREVIEW             : 'BACK_TO_PREVIEW',
         SHOW_CROPPER                : 'SHOW_CROPPER',
@@ -15,4 +12,3 @@ define(function() {
         SHOW_TASK_INTERPRETER       : 'SHOW_TASK_INTERPRETER',
         SHOW_LAYER_COLOR_CONFIG     : 'SHOW_LAYER_COLOR_CONFIG'
     };
-});
