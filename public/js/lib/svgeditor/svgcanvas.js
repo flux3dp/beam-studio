@@ -88,7 +88,7 @@ define([
     ObjectPanelController = ObjectPanelController.default;
     TopBarController = TopBarController.default;
     TopBarHintsController = TopBarHintsController.default;
-    TopBarHints = TopBarHints.default;
+    TopBarHints = __importStar(TopBarHints);
     TutorialController = __importStar(TutorialController);
     TutorialConstants = TutorialConstants.default;
     ZoomBlockController = ZoomBlockController.default;
