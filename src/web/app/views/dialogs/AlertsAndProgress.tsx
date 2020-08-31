@@ -1,20 +1,11 @@
 import ProgressConstants from '../../constants/progress-constants'
 import Modal from '../../widgets/Modal'
 import ButtonGroup from '../../widgets/Button-Group'
-import { AlertProgressContext } from '../../contexts/AlertProgressContext'
+import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/AlertProgressContext'
 
 const React = requireNode('react');;
 const classNames = requireNode('classnames');
 let _contextCaller;
-
-    class ContextHelper {
-        static get _contextCaller() {
-            return _contextCaller;
-        }
-    }
-    
-    export const AlertsAndProgressContextCaller = ContextHelper._contextCaller;
-
 class Progress extends React.Component {
     constructor(props) {
         super(props);
@@ -190,3 +181,9 @@ export class AlertsAndProgress extends React.Component {
 };
 
 AlertsAndProgress.contextType = AlertProgressContext;
+
+export class AlertsAndProgressContextHelper {
+    static get context(): AlertProgressContextProvider {
+        return _contextCaller;
+    }
+}
