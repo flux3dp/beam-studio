@@ -2,9 +2,9 @@ import InFillBlock from './Infill-Block'
 import UnitInput from '../../../../widgets/Unit-Input-v2'
 import FontFuncs from '../../../../actions/beambox/font-funcs'
 import * as i18n from '../../../../../helpers/i18n'
-
-const svgedit = window['svgedit'];
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');

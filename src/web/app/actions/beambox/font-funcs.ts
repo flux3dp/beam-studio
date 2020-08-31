@@ -8,6 +8,14 @@
     import * as i18n from '../../../helpers/i18n'
     import sprintf from '../../../helpers/sprintf'
     import { IFontQuery } from '../../../interfaces/IFont'
+    import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+    let svgCanvas;
+    let svgedit;
+
+    getSVGAsync((globalSVG) => {
+        svgCanvas = globalSVG.Canvas;
+        svgedit = globalSVG.Edit;
+    });
 
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
     const fontkit = requireNode('fontkit');
@@ -16,8 +24,7 @@
     const events = electron.events;
     const LANG = i18n.lang.beambox.object_panels;
     const FontManager = requireNode('font-manager');
-    const svgCanvas = window['svgCanvas'];
-    const svgedit = window['svgedit'];
+
 
     let tempPaths = [];
 

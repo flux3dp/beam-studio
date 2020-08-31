@@ -18,9 +18,11 @@ const svgCanvas = window['svgCanvas'];
         constructor() {
             super();
             this.state = {};
+            console.log("Left Panel Init");
         }
 
         componentDidMount() {
+            console.log("Left Panel Onmount");
             // Selection Management
 
             $('#layerpanel').mouseup(() => {
@@ -123,6 +125,7 @@ const svgCanvas = window['svgCanvas'];
         render() {
             const { isPreviewing } = this.props;
             const leftPanelClass = classNames('left-toolbar', {win: isWin});
+            console.log("Left Panel Render");
             if (!isPreviewing) {
                 return (
                     <div className={leftPanelClass}>

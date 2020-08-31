@@ -1,15 +1,8 @@
 import ToolPanels from '../../views/beambox/Tool-Panels/Tool-Panels'
-import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper'
-import Constant from '../../actions/beambox/constant'
 import BeamboxGlobalInteraction from '../../actions/beambox/beambox-global-interaction'
 
 const React = requireNode('react');;
     const ReactDOM = requireNode('react-dom');
-
-    let _toFixed = function(val) {
-        const decimal = 2;
-        return Number(Number(val).toFixed(decimal));
-    };
 
     class ToolPanelsController {
         isVisible: boolean;
@@ -42,6 +35,7 @@ const React = requireNode('react');;
         }
 
         init(reactRoot) {
+            console.log("Init Toolpanel", reactRoot);
             this.reactRoot = reactRoot;
         }
 

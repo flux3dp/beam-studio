@@ -7,13 +7,17 @@ import * as TutorialController from '../../views/tutorials/Tutorial-Controller'
 import TutorialConstants from '../../constants/tutorial-constants'
 import SymbolMaker from '../../../helpers/symbol-maker'
 import * as i18n from '../../../helpers/i18n'
-
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgedit;
+let svgEditor;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgedit = globalSVG.Edit;
+    svgEditor = globalSVG.Editor;
+});
 const LANG = i18n.lang.beambox;
-const svgCanvas = window['svgCanvas'];
-const svgEditor = window['svgEditor'];
-const svgedit = window['svgedit'];
 const electron = window['electron'];
-const svgroot = window['svgroot'];
 
     let _mm2pixel = function(mm_input) {
         const dpmm = Constant.dpmm;
@@ -513,12 +517,12 @@ const svgroot = window['svgroot'];
             // simulate user click on empty area of canvas.
             svgCanvas.textActions.clear();
             svgCanvas.setMode('select');
-            $(svgroot).trigger({
+            $(window['svgroot']).trigger({
                 type: 'mousedown',
                 pageX: 0,
                 pageY: 0
             } as JQuery.Event);
-            $(svgroot).trigger({
+            $(window['svgroot']).trigger({
                 type: 'mouseup',
                 pageX: 0,
                 pageY: 0

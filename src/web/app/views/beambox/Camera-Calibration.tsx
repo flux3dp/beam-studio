@@ -16,8 +16,11 @@ import PreviewModeController from '../../actions/beambox/preview-mode-controller
 import CameraCalibration from '../../../helpers/api/camera-calibration'
 import Constant from '../../actions/beambox/constant'
 import DeviceErrorHandler from '../../../helpers/device-error-handler'
-
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+});
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');

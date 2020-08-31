@@ -26,7 +26,9 @@ import sprintf from '../../../helpers/sprintf'
 import VersionChecker from '../../../helpers/version-checker'
 import * as i18n from '../../../helpers/i18n'
 import { IFont } from '../../../interfaces/IFont'
-const svgedit = window['svgedit'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgedit;
+getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
 
     const init = () => {
         ToolPanelsController.init('tool-panels-placeholder');

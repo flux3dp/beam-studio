@@ -2,7 +2,9 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery'
 import * as i18n from '../../../helpers/i18n'
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
 
     const LANG = i18n.lang.beambox.photo_edit_panel;
     const React = requireNode('react');;

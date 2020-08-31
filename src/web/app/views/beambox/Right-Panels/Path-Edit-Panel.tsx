@@ -4,7 +4,9 @@ import DialogCaller from '../../../contexts/DialogCaller'
 import Alert from '../../../contexts/AlertCaller'
 import AlertConstants from '../../../constants/alert-constants'
 import * as i18n from '../../../../helpers/i18n'
-const svgedit = window['svgedit'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');

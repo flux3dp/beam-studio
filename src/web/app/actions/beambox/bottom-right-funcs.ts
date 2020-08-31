@@ -12,14 +12,18 @@ import AlertConstants from '../../constants/alert-constants'
 import svgLaserParser from '../../../helpers/api/svg-laser-parser'
 import Constant from '../../actions/beambox/constant'
 import GlobalActions from '../../actions/global-actions'
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgedit;
+
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgedit = globalSVG.Edit;
+});
 
 const electron = window['electron'];
-
 const lang = i18n.lang;
-    const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
-
-    const svgedit = window['svgedit'];
-    const svgCanvas = window['svgCanvas'];
+const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 
     // capture the scene of the svgCanvas to bitmap
     const fetchThumbnail = async () => {

@@ -3,11 +3,16 @@ import Rx = require('Rx');
 import BeamboxPreference from './beambox-preference'
 import Constant from './constant'
 import * as i18n from '../../../helpers/i18n'
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgedit;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgedit = globalSVG.Edit;
+});
 
 const LANG = i18n.lang.beambox.left_panel;
 
-const svgedit = window['svgedit'];
-const svgCanvas = window['svgCanvas'];
 
 class PreviewModeBackgroundDrawer {
     canvas: HTMLCanvasElement;

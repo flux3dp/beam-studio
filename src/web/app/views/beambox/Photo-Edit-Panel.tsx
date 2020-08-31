@@ -12,8 +12,9 @@ import CurveControl from '../../widgets/Curve-Control'
 import SliderControl from '../../widgets/Slider-Control'
 // @ts-expect-error
 import Cropper = require('cropper');
-const svgedit = window['svgedit'];
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
     const React = requireNode('react');;
     const LANG = i18n.lang.beambox.photo_edit_panel;

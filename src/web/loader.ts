@@ -1,2 +1,6 @@
 import svgEditor from 'app/actions/beambox/svg-editor'
-console.log("load svg editor", svgEditor);
+import ToolPanelsController from 'app/actions/beambox/Tool-Panels-Controller'
+console.log("TSLoader", {
+    svgEditor, 
+    ToolPanelsController
+});

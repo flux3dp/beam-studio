@@ -14,7 +14,9 @@ import SliderControl from '../../widgets/Slider-Control'
 import Cropper = require('cropper')
 // @ts-expect-error
 import ImageTracer = require('imagetracer')
-const svgCanvas = window['svgCanvas']
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
 
     const React = requireNode('react');;
     const LANG = i18n.lang.beambox.image_trace_panel;

@@ -1,8 +1,10 @@
 import Alert from '../../contexts/AlertCaller'
 import Constant from '../../actions/beambox/constant'
 import * as i18n from '../../../helpers/i18n'
-const svgCanvas = window['svgCanvas'];
-const svgedit = window['svgedit'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
+
 const SvgNest = window['SvgNest'];
 const ClipperLib = window['ClipperLib'];
 // TODO confim this statement is true

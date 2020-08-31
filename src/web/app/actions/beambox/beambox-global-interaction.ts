@@ -8,9 +8,14 @@ import FnWrapper from './svgeditor-function-wrapper'
 import Tutorials from './tutorials'
 import Alert from '../../contexts/AlertCaller'
 import DialogCaller from '../../contexts/DialogCaller'
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+    let svgCanvas;
+    let svgEditor;
 
-const svgEditor = window['svgEditor'];
-const svgCanvas = window['svgCanvas'];
+    getSVGAsync((globalSVG) => {
+        svgCanvas = globalSVG.Canvas;
+        svgEditor = globalSVG.Edit;
+    });
 
 class BeamboxGlobalInteraction extends GlobalInteraction {
     constructor() {

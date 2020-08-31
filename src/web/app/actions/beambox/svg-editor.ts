@@ -60,6 +60,8 @@ const React = requireNode('react');
 const ReactDOM = requireNode('react-dom');
 const LANG = i18n.lang.beambox;
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
+// TODO: change to require('svgedit')
+const svgedit = window['svgedit'];
 
 //todo preven running multiple times
 /*if (window['svgEditor']) {
@@ -93,13 +95,6 @@ declare global {
         jGraduate: any
     }
 }
-
-class GlobalRefHelper {
-    static get svgedit() {
-        return window['svgedit'];
-    }
-}
-const svgedit = GlobalRefHelper.svgedit;
 
 interface ISVGEditor {
     addDropDown(elem: string, callback: JQuery.EventHandler<HTMLLIElement, JQuery.MouseUpEvent<HTMLLIElement>>, dropUp?: boolean)
@@ -1051,7 +1046,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
             });
 
-            editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
+            window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
             var supportsNonSS, resize_timer, Actions, curScrollPos,
                 palette = [ // Todo: Make into configuration item?
                     '#000000', '#3f3f3f', '#7f7f7f', '#bfbfbf', '#ffffff',

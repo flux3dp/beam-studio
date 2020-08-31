@@ -3,9 +3,9 @@ import Constant from '../../../actions/beambox/constant'
 import KeycodeConstants from '../../../constants/keycode-constants'
 import SymbolMaker from '../../../../helpers/symbol-maker'
 import * as i18n from '../../../../helpers/i18n'
-
-const svgCanvas = window['svgCanvas'];
-const svgedit = window['svgedit'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');

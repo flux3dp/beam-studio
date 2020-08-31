@@ -25,9 +25,14 @@ import sprintf from '../../../../helpers/sprintf'
 import SymbolMaker from '../../../../helpers/symbol-maker'
 import VersionChecker from '../../../../helpers/version-checker'
 import * as i18n from '../../../../helpers/i18n'
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgEditor = globalSVG.Editor;
+});
 
-const svgCanvas = window['svgCanvas'];
-const svgEditor = window['svgEditor'];
 const workarea = window['workarea'];
     const React = requireNode('react');;
     const classNames = requireNode('classnames');

@@ -2,10 +2,11 @@
  * Make symbol elements for <use> element
  */
 import Progress from '../app/contexts/ProgressCaller'
+import { getSVGAsync } from './svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
 let clipCount = 1;
-const svgedit = window['svgedit'];
-const svgCanvas = window['svgCanvas'];
 const electron = window['electron'];
 
     const makeSymbol = (elem, attrs, batchCmd, defs, type) => {

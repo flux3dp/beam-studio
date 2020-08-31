@@ -14,8 +14,11 @@ import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel'
 import LayerColorConfigPanel from '../views/beambox/Layer-Color-Config'
 import SvgNestButtons from '../views/beambox/Svg-Nest-Buttons'
 import * as i18n from '../../helpers/i18n'
-
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../helpers/svg-editor-helper'
+let svgCanvas;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+});
     const React = requireNode('react');;
     const electronRemote = requireNode('electron').remote;
     const { dialog } = electronRemote;
