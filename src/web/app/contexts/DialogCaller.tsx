@@ -1,7 +1,7 @@
 const { resolve } = requireNode('q');
 
 import Modal from '../widgets/Modal'
-import { Dialog, DialogContextCaller } from '../views/dialogs/Dialog'
+import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog'
 import Prompt from '../views/dialogs/Prompt'
 import ConfirmPrompt from '../views/dialogs/Confirm-Prompt'
 import { Tutorial } from '../views/tutorials/Tutorial'
@@ -23,27 +23,27 @@ getSVGAsync((globalSVG) => {
     const electronRemote = requireNode('electron').remote;
     const { dialog } = electronRemote;
     const addDialogComponent = (id, component) => {
-        if (!DialogContextCaller) {
+        if (!DialogContextHelper.context) {
             console.log('Dialog context not loaded Yet');
         } else {
-            DialogContextCaller.addDialogComponent(id, component);
+            DialogContextHelper.context.addDialogComponent(id, component);
         }
     };
 
     const isIdExist = (id) => {
-        if (!DialogContextCaller) {
+        if (!DialogContextHelper.context) {
             console.log('Dialog context not loaded Yet');
         } else {
-            const isExist = DialogContextCaller.isIdExist(id);
+            const isExist = DialogContextHelper.context.isIdExist(id);
             return isExist;
         }
     }
 
     const popDialogById = (id) => {
-        if (!DialogContextCaller) {
+        if (!DialogContextHelper.context) {
             console.log('Dialog context not loaded Yet');
         } else {
-            DialogContextCaller.popDialogById(id);
+            DialogContextHelper.context.popDialogById(id);
         }
     };
 

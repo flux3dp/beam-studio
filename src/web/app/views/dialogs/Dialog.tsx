@@ -1,16 +1,8 @@
 import Modal from '../../widgets/Modal'
-import { DialogContext } from '../../contexts/DialogContext'
+import { DialogContext, DialogContextProvider } from '../../contexts/DialogContext'
 
     const React = requireNode('react');;
     let _contextCaller;
-
-    class ContextHelper {
-        static get _contextCaller() {
-            return _contextCaller;
-        }
-    }
-    
-    export const DialogContextCaller = ContextHelper._contextCaller;
 
 
     export class Dialog extends React.Component {
@@ -38,3 +30,9 @@ import { DialogContext } from '../../contexts/DialogContext'
         }
     };
     Dialog.contextType = DialogContext;
+
+export class DialogContextHelper {
+    static get context(): DialogContextProvider {
+        return _contextCaller;
+    }
+}
