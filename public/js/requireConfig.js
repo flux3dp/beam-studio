@@ -117,10 +117,10 @@ requirejs.config({
                 'clipper_unminified',
                 'jqueryUi',
                 'jpicker',
-                /*'css!svgeditor/svg-editor',
+                'css!svgeditor/svg-editor',
                 'css!svgeditor/jgraduate/css/jPicker',
                 'css!svgeditor/jgraduate/css/jgraduate',
-                'css!svgeditor/spinbtn/JQuerySpinBtn',*/
+                'css!svgeditor/spinbtn/JQuerySpinBtn',
                 'canvg',
                 'rgbcolor'
             ]
