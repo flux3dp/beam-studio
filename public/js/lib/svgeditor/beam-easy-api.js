@@ -12,7 +12,7 @@ define([
     svgLaserParser,
     BottomRightFuncs,
 ) {
-    const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
+    const svgeditorParser = svgLaserParser.default({ type: 'svgeditor' });
     const MACHINE_STATUS = {
         '-10': 'Maintain mode',
         '-2': 'Scanning',

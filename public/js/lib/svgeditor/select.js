@@ -16,7 +16,7 @@
 // 4) math.js
 // 5) svgutils.js
 define([
-	'jsx!app/actions/beambox/Tool-Panels-Controller'
+	'app/actions/beambox/Tool-Panels-Controller'
 ], function(
 	ToolPanelsController
 ){

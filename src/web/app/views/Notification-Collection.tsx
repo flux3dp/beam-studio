@@ -140,8 +140,6 @@ declare global {
                 AlertStore.onPopup(this._handlePopup);
                 AlertStore.onClosePopup(this._handleClosePopup);
                 AlertStore.onUpdate(this._showUpdate);
-                AlertStore.onChangeFilament(this._showChangeFilament);
-                AlertStore.onShowHeadTemperature(this._showHeadTemperature);
 
                 ProgressStore.onOpened(this._handleProgress)
                     .onUpdating(this._handleProgress)
@@ -150,7 +148,6 @@ declare global {
 
                 GlobalStore.onShowMonitor(this._handleOpenMonitor);
                 GlobalStore.onCloseAllView(this._handleCloseAllView);
-                GlobalStore.onSliceComplete(this._handleSliceReport);
                 GlobalStore.onCloseMonitor(this._handlecloseMonitor);
 
                 // checking FLUX studio laster version in website that is going to

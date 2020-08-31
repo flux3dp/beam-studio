@@ -1,56 +1,56 @@
-import { TopBar, TopBarContextCaller } from '../Top-Bar';
+import { TopBar, TopBarContextHelper } from '../Top-Bar';
 
 const React = requireNode('react');;
 
     const updateTopBar = () => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.updateTopBar();
+            TopBarContextHelper.context.updateTopBar();
         }
     }
 
     const setElement = (elem) => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.setElement(elem);
+            TopBarContextHelper.context.setElement(elem);
         }
     }
     const setFileName = (fileName) => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.setFileName(fileName);
+            TopBarContextHelper.context.setFileName(fileName);
         }
     }
     const setHasUnsavedChange = (hasUnsavedChange) => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.setHasUnsavedChange(hasUnsavedChange);
+            TopBarContextHelper.context.setHasUnsavedChange(hasUnsavedChange);
         }
     }
     const setTopBarPreviewMode = (isPreviewMode) => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.setTopBarPreviewMode(isPreviewMode);
+            TopBarContextHelper.context.setTopBarPreviewMode(isPreviewMode);
         }
     }
     const getTopBarPreviewMode = () => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
             return false;
         } else {
-            return TopBarContextCaller.getTopBarPreviewMode();
+            return TopBarContextHelper.context.getTopBarPreviewMode();
         }
     }
     const setShouldStartPreviewController = (shouldStartPreviewController) => {
-        if (!TopBarContextCaller) {
+        if (!TopBarContextHelper.context) {
             console.log('TopBar is not mounted now.');
         } else {
-            TopBarContextCaller.setShouldStartPreviewController(shouldStartPreviewController);
+            TopBarContextHelper.context.setShouldStartPreviewController(shouldStartPreviewController);
         }
     }
 

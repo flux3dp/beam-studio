@@ -1,4 +1,4 @@
-import { RightPanelContext } from './contexts/RightPanelContext'
+import { RightPanelContext, RightPanelContextProvider } from './contexts/RightPanelContext'
 import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext'
 import { LayerPanelContextProvider } from './contexts/LayerPanelContext'
 import { ObjectPanel } from './Object-Panel'
@@ -10,14 +10,6 @@ import TutorialConstants from '../../../constants/tutorial-constants'
 import * as i18n from '../../../../helpers/i18n'
 const svgCanvas = window['svgCanvas'];
 let _contextCaller;
-
-class ContextHelper {
-    static get _contextCaller() {
-        return _contextCaller;
-    }
-}
-
-export const RightPanelContextCaller = ContextHelper._contextCaller;
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
@@ -168,3 +160,9 @@ export const RightPanelContextCaller = ContextHelper._contextCaller;
         }
     }
     RightPanel.contextType = RightPanelContext;
+
+export class RightPanelContextHelper {
+    static get context(): RightPanelContextProvider {
+        return _contextCaller;
+    }
+}

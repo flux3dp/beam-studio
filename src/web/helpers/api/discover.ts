@@ -126,8 +126,10 @@ import { IDeviceInfo } from '../../interfaces/IDevice'
             }
         }
         // TODO: Fix this init...  no id and getPrinters?
-        // @ts-expect-error
-        SmartUpnp.init(self());
+        SmartUpnp.init(Discover(
+            'smart-upnp',
+            () => {}
+        ));
         for(var i in pokeIPs){
             SmartUpnp.startPoke(pokeIPs[i]);
         }
@@ -158,8 +160,8 @@ import { IDeviceInfo } from '../../interfaces/IDevice'
             });
         }
     });
-    var self = function(id: string | null, getPrinters: (printers: IDeviceInfo[]) => void) {
-
+    const Discover = function(id: string, getPrinters: (printers: IDeviceInfo[]) => void) {
+        console.log('Register Discover', id, printers);
         var index = idList.indexOf(id);
 
         if (0 === idList.length || -1 === index) {
@@ -208,5 +210,4 @@ import { IDeviceInfo } from '../../interfaces/IDevice'
             }
         };
     };
-
-    export default self;
+    export default Discover

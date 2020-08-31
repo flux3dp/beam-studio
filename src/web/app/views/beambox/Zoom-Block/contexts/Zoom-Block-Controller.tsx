@@ -1,11 +1,11 @@
-import { ZoomBlock, ZoomBlockContextCaller } from '../Zoom-Block'
+import { ZoomBlock, ZoomBlockContextHelper } from '../Zoom-Block'
 
     const React = requireNode('react');;
     const updateZoomBlock = () => {
-        if (!ZoomBlockContextCaller) {
+        if (!ZoomBlockContextHelper.context) {
             console.log('ZoomBlock is not mounted now.');
         } else {
-            ZoomBlockContextCaller.updateZoomBlock();
+            ZoomBlockContextHelper.context.updateZoomBlock();
         }
     };
 

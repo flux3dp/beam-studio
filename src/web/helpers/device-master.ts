@@ -748,7 +748,6 @@ class DeviceMaster {
 
     _scanDeviceError(devices: IDeviceInfo[]) {
         const self = this;
-        console.log("Devices", devices);
         devices.forEach(function (info) {
             const deviceConn = self.getDeviceByUUID(info.uuid);
             if (typeof deviceConn.errors === 'string') {

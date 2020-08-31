@@ -18,7 +18,8 @@ import NotificationCollection from './views/Notification-Collection'
 
         args.state.lang = i18n.lang;
         // Shpuldn;t pass props and state using args.
-        const component = React.createElement(view(args), args.props);
+        const elem = view(args);
+        const component = React.createElement(elem, args.props);
         ReactDOM.render(component, el);
     };
 

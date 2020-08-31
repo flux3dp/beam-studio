@@ -6,7 +6,7 @@ import { TopBar } from '../views/beambox/Top-Bar/Top-Bar'
 import { TopBarContextProvider } from '../views/beambox/Top-Bar/contexts/Top-Bar-Context'
 import { ZoomBlock } from '../views/beambox/Zoom-Block/Zoom-Block'
 import { ZoomBlockContextProvider } from '../views/beambox/Zoom-Block/contexts/Zoom-Block-Context'
-import SvgEditor from './svg-editor'
+import { SVGEditor } from './svg-editor'
 import { AlertsAndProgress } from '../views/dialogs/AlertsAndProgress'
 import { Dialog } from '../views/dialogs/Dialog'
 import { AlertProgressContextProvider } from '../contexts/AlertProgressContext'
@@ -50,7 +50,7 @@ const electron = window['electron'];
                             <ZoomBlockContextProvider>
                                 <ZoomBlock />
                             </ZoomBlockContextProvider>
-                            <SvgEditor />
+                            <SVGEditor />
                             <div id='tool-panels-placeholder' />
                             <div id='image-trace-panel-placeholder' />
                             <Dialog index={0}/>

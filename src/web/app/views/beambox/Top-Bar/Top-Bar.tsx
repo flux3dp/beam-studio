@@ -12,7 +12,7 @@ import PreviewModeController from '../../../actions/beambox/preview-mode-control
 import DialogCaller from '../../../contexts/DialogCaller'
 import Modal from '../../../widgets/Modal'
 import LeftPanel from '../Left-Panels/Left-Panel'
-import { TopBarContext } from './contexts/Top-Bar-Context'
+import { TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context'
 import { TopBarHints } from './Top-Bar-Hints'
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller'
 import TutorialConstants from '../../../constants/tutorial-constants'
@@ -35,14 +35,6 @@ const workarea = window['workarea'];
     const LANG = i18n.lang.topbar;
     const isNotMac = process.platform !== 'darwin';
     let _contextCaller;
-
-    class ContextHelper {
-        static get _contextCaller() {
-            return _contextCaller;
-        }
-    }
-    
-    export const TopBarContextCaller = ContextHelper._contextCaller;
 
     export class TopBar extends React.Component {
         constructor() {
@@ -555,3 +547,9 @@ const workarea = window['workarea'];
         }
     }
     TopBar.contextType = TopBarContext;
+
+    export class TopBarContextHelper {
+        static get context(): TopBarContextProvider {
+            return _contextCaller;
+        }
+    }

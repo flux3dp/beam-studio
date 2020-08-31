@@ -1,4 +1,4 @@
-import { ZoomBlockContext } from './contexts/Zoom-Block-Context'
+import { ZoomBlockContext, ZoomBlockContextProvider } from './contexts/Zoom-Block-Context'
 import Constant from '../../../actions/beambox/constant'
 import macOSWindowSize from '../../../constants/macOS-Window-Size'
 import * as i18n from '../../../../helpers/i18n'
@@ -11,6 +11,7 @@ const svgEditor = window['svgEditor'];
     const util = requireNode('util');
     const child_process = requireNode('child_process');
     const exec = util.promisify(child_process.exec);
+    const { ContextMenu, MenuItem, ContextMenuTrigger } = requireNode('react-contextmenu');
     
     let _contextCaller;
 
@@ -144,7 +145,6 @@ const svgEditor = window['svgEditor'];
         render() {
             const ratio = this.calculatCurrentRatio();
             const ratioInPercent = Math.round(ratio * 100);
-            const { ContextMenu, MenuItem, ContextMenuTrigger } = require('react-contextmenu');
             return (
                 <div className="zoom-block">
                     <ContextMenuTrigger id="zoom-block-contextmenu" holdToDisplay={-1}>
@@ -175,10 +175,8 @@ const svgEditor = window['svgEditor'];
         }
     } 
     ZoomBlock.contextType = ZoomBlockContext;
-class ContextHelper {
-    static get _contextCaller() {
+export class ZoomBlockContextHelper {
+    static get context(): ZoomBlockContextProvider {
         return _contextCaller;
     }
 }
-
-export const ZoomBlockContextCaller = ContextHelper._contextCaller;

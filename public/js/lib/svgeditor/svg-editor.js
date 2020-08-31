@@ -22,7 +22,7 @@
 TODOS
 1. JSDoc
 */
-alert("SVGEDITORSHOULDNOTLOAD");
+console.error("SVGEDITORSHOULDNOTLOAD");
 (function() {
 
 	if (window.svgEditor) {

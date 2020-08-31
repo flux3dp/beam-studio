@@ -52,9 +52,9 @@ import SvgLaserParser from '../../../helpers/api/svg-laser-parser'
 import { IFont } from '../../../interfaces/IFont'
 
 // @ts-expect-error
-import Dxf2Svg = require('../lib/dxf2svg')
+import Dxf2Svg = require('dxf2svg')
 // @ts-expect-error
-import ImageTracer = require('../lib/svgeditor/imagetracer')
+import ImageTracer = require('imagetracer')
 
 const React = requireNode('react');
 const ReactDOM = requireNode('react-dom');
@@ -98,12 +98,8 @@ class GlobalRefHelper {
     static get svgedit() {
         return window['svgedit'];
     }
-    static get svgEditor() {
-        return window['svgEditor'];
-    }
 }
 const svgedit = GlobalRefHelper.svgedit;
-const svgEditor = GlobalRefHelper.svgEditor;
 
 interface ISVGEditor {
     addDropDown(elem: string, callback: JQuery.EventHandler<HTMLLIElement, JQuery.MouseUpEvent<HTMLLIElement>>, dropUp?: boolean)
@@ -244,7 +240,7 @@ interface ISVGConfig {
     allowedOrigins?: string[]
 }
 
-    window['svgEditor'] = (function($) {
+const svgEditor = window['svgEditor'] = (function($) {
 
         // EDITOR PROPERTIES: (defined below)
         //		curPrefs, curConfig, canvas, storage, uiStrings

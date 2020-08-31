@@ -1,5 +1,3 @@
-const { nodeName } = require('jquery');
-
     const React = requireNode('react');;
     const { createContext } = React;
     export const TopBarContext = createContext();

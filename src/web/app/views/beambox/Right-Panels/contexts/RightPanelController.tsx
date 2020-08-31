@@ -1,5 +1,5 @@
 import BeamboxGlobalInteraction from '../../../../actions/beambox/beambox-global-interaction'
-import { RightPanelContextCaller } from '../Right-Panel'
+import { RightPanelContextHelper } from '../Right-Panel'
 
 const React = requireNode('react');;
     const setSelectedElement = (elem) => {
@@ -9,26 +9,26 @@ const React = requireNode('react');;
             BeamboxGlobalInteraction.onObjectBlur();
             BeamboxGlobalInteraction.onObjectFocus([elem]);
         }
-        if (!RightPanelContextCaller) {
+        if (!RightPanelContextHelper.context) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanelContextCaller.setSelectedElement(elem);
+            RightPanelContextHelper.context.setSelectedElement(elem);
         }
     };
 
     const toPathEditMode = () => {
-        if (!RightPanelContextCaller) {
+        if (!RightPanelContextHelper.context) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanelContextCaller.setMode('path-edit');
+            RightPanelContextHelper.context.setMode('path-edit');
         }
     }
 
     const toElementMode = () => {
-        if (!RightPanelContextCaller) {
+        if (!RightPanelContextHelper.context) {
             console.log('RightPanel is not mounted now.');
         } else {
-            RightPanelContextCaller.setMode('element');
+            RightPanelContextHelper.context.setMode('element');
         }
     }
 

@@ -26,22 +26,20 @@
 // 12) path.js
 // 13) coords.js
 // 14) recalculate.js
-alert("SVGCANVS.jS")
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'jsx!app/actions/beambox/Laser-Panel-Controller',
     'app/actions/beambox/preview-mode-controller',
-    'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
-    'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
-    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'app/views/beambox/Right-Panels/contexts/LayerPanelController',
+    'app/views/beambox/Right-Panels/contexts/ObjectPanelController',
+    'app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/views/beambox/Top-Bar/contexts/Top-Bar-Hints-Controller',
-    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
+    'app/views/beambox/Top-Bar/Top-Bar-Hints',
+    'app/views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
+    'app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/progress-actions',
@@ -53,13 +51,12 @@ define([
     'helpers/local-storage',
     'helpers/shortcuts',
     'helpers/symbol-maker',
-    'lib/svgeditor/imagetracer'
+    'imagetracer'
 ], function (
     i18n,
     BeamboxPreference,
     Alert,
     AlertConstants,
-    LaserPanelController,
     PreviewModeController,
     LayerPanelController,
     ObjectPanelController,
@@ -82,6 +79,30 @@ define([
     SymbolMaker,
     ImageTracer
 ) {
+    i18n = __importStar(i18n);
+    BeamboxPreference = BeamboxPreference.default;
+    Alert = Alert.default;
+    AlertConstants = AlertConstants.default;
+    PreviewModeController = PreviewModeController.default;
+    LayerPanelController = LayerPanelController.default;
+    ObjectPanelController = ObjectPanelController.default;
+    TopBarController = TopBarController.default;
+    TopBarHintsController = TopBarHintsController.default;
+    TopBarHints = TopBarHints.default;
+    TutorialController = TutorialController.default;
+    TutorialConstants = TutorialConstants.default;
+    ZoomBlockController = ZoomBlockController.default;
+    BeamboxActions = BeamboxActions.default;
+    Constant = Constant.default;
+    ProgressActions = ProgressActions.default;
+    ProgressConstants = ProgressConstants.default;
+    TopbarActions = TopbarActions.default;
+    Config = Config.default;
+    BeamFileHelper = BeamFileHelper.default;
+    ImageData = ImageData.default;
+    LocalStorage = __importStar(LocalStorage);
+    shortcuts = shortcuts.default;
+    SymbolMaker = SymbolMaker.default;
     const LANG = i18n.lang.beambox;
     // Class: SvgCanvas
     // The main SvgCanvas class that manages all SVG-related functions
@@ -613,7 +634,7 @@ define([
             cur_text.font_postscriptName = defaultFont.postscriptName;
         }
 
-        const { Menu, MenuItem } = requireNode('electron');.remote;
+        const { Menu, MenuItem } = requireNode('electron').remote;
         this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
         Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
         this.isBorderlessMode = BeamboxPreference.read('borderless');

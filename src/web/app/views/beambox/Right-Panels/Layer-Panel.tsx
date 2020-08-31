@@ -455,7 +455,7 @@ import * as i18n from '../../../../helpers/i18n'
         }
 
         render() {
-            const { ContextMenu, MenuItem, ContextMenuTrigger } = require('react-contextmenu');
+            const { ContextMenu, MenuItem, ContextMenuTrigger } = requireNode('react-contextmenu');
             if (!svgCanvas) {
                 setTimeout(() => {
                     this.setState(this.state);
