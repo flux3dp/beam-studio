@@ -338,14 +338,9 @@ define([
         });
         $(path).insertAfter($textElement);
         $(path).mouseover(svgCanvas.handleGenerateSensorArea).mouseleave(svgCanvas.handleGenerateSensorArea);
-        const isVerti = $textElement.data('verti');
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        if (isVerti) {
-            const pbbox = svgCanvas.calculateTransformedBBox(path);
-            svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
-        } else {
-            svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
-        }
+        // output of fluxsvg will locate at (0,0), so move it.
+        svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
         if (!isTempConvert) {
             let textElem = $textElement[0];
             let parent = textElem.parentNode;

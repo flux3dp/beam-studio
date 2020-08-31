@@ -7937,7 +7937,12 @@ define([
                 textActions.setCursor();
             }
             textActions.setIsVertical(val);
-            textActions.updateMultiLineTextElem(selectedElements[0]);
+            const elem = selectedElements[0];
+            const angle = svgedit.utilities.getRotationAngle(elem);
+            this.setRotationAngle(0, true, elem);
+            textActions.updateMultiLineTextElem(elem);
+            this.setRotationAngle(angle, true, elem);
+            window.updateContextPanel();
         }
 
         this.getTextIsVertical = () => {
