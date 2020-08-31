@@ -98,7 +98,7 @@ gulp.task('sass:watch', function () {
     return gulp.watch('./public/sass/**/*.scss', ['sass']);
 });
 
-gulp.task('electron', function () {
+gulp.task('ts:watch', function () {
     return gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], ['frontend']);
 });
 
@@ -112,7 +112,7 @@ gulp.task('webserver', ['sass:watch'], function () {
         }));
 });
 
-gulp.task('dev', ['sass:watch', 'frontend', 'sass', 'electron', 'webserver'], () => {
+gulp.task('dev', ['sass:watch', 'frontend', 'sass', 'ts:watch', 'webserver'], () => {
     return new Promise(() => {});
 });
 
