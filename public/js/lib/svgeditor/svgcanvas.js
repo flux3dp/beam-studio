@@ -89,7 +89,7 @@ define([
     TopBarController = TopBarController.default;
     TopBarHintsController = TopBarHintsController.default;
     TopBarHints = TopBarHints.default;
-    TutorialController = TutorialController.default;
+    TutorialController = __importStar(TutorialController);
     TutorialConstants = TutorialConstants.default;
     ZoomBlockController = ZoomBlockController.default;
     BeamboxActions = BeamboxActions.default;
