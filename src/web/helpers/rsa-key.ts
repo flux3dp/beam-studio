@@ -1,9 +1,11 @@
 import * as _localStorage from './local-storage'
 // @ts-expect-error
-import JSEncrypt = require('jsencrypt');
+import _JSEncrypt = require('jsencrypt');
 const RSA_KEY_NAME = 'flux-rsa-key';
+console.log("JSEncrypt", _JSEncrypt);
 
 export default function(createNewKey: boolean = false) {
+    // @ts-expect-error
     let rsaCipher = new JSEncrypt({ default_key_size: 1024 }),
         newKey = rsaCipher.getPrivateKey(),
         rsaKey = _localStorage.get(RSA_KEY_NAME) || newKey;
