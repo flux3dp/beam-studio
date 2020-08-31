@@ -1,25 +1,25 @@
-import { AlertsAndProgress, AlertsAndProgressContextCaller }  from '../views/dialogs/AlertsAndProgress'
+import { AlertsAndProgress, AlertsAndProgressContextHelper }  from '../views/dialogs/AlertsAndProgress'
 
 export default {
     popUp: (args) => {
-        if (!AlertsAndProgressContextCaller) {
+        if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
         } else {
-            AlertsAndProgressContextCaller.popUp(args);
+            AlertsAndProgressContextHelper.context.popUp(args);
         }
     },
     popById: (id) => {
-        if (!AlertsAndProgressContextCaller) {
+        if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
         } else {
-            AlertsAndProgressContextCaller.popById(id);
+            AlertsAndProgressContextHelper.context.popById(id);
         }
     },
     popUpDeviceBusy: (id) => {
-        if (!AlertsAndProgressContextCaller) {
+        if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
         } else {
-            AlertsAndProgressContextCaller.popUpDeviceBusy(id);
+            AlertsAndProgressContextHelper.context.popUpDeviceBusy(id);
         }
     }
 };
