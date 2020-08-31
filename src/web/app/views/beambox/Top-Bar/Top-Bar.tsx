@@ -462,7 +462,7 @@ const workarea = window['workarea'];
                 }
             } catch (e) {
                 // TOD: handle connection error
-                console.error(e.toString());
+                console.error(e);
                 Alert.popUp({
                     id: 'fatal-occurred',
                     message: '#813' + e.toString(),

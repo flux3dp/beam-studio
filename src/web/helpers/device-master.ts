@@ -167,14 +167,20 @@ class DeviceMaster {
         ProgressActions.open(ProgressConstants.NONSTOP, sprintf(lang.message.connectingMachine, device.info.name));
     
         try {
-            const controlSocket = new Control(uuid, {});
+            const controlSocket = new Control(uuid);
             await controlSocket.connect();
             device.control = controlSocket;
+            this.currentDevice = device;
             SocketMaster.setWebSocket(controlSocket);
             // TODO: !!! Add Control.disconnected handler
             console.log("Connected to " + uuid);
-        } catch (error) {
-            const errorCode = error.response.error.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
+            return {
+                success: true
+            };
+        } catch (e) {
+            console.error(e);
+            if (e.error) e = e.error;
+            const errorCode = e.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
             if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode)) {
                 if (device.info.password) {
                     const authed = await self.showAuthDialog(uuid);

@@ -19,14 +19,9 @@ const CONNECITON_TIMEOUT_ERROR = {
 };
 const lang = i18n.lang;
 class Control {
-    private opts: {
-        onError: (error) => {}
-        onConnect: (data) => {}
-    }
-
     public isConnected = false;
     private ws: any | null;
-    private dedicatedWs: any[];
+    private dedicatedWs: any[] = [];
     private fileInfoWsId: number = 0;
     private mode: string = ''; // null, maintain or raw
     // todo: remove this??
@@ -38,10 +33,8 @@ class Control {
     };
     protected uuid: string;
 
-    constructor(uuid: string, opts) {
+    constructor(uuid: string) {
         this.uuid = uuid;
-        this.opts = opts;
-        this.commandCallback.onError = opts.onError
     }
 
     get connection() {
@@ -51,28 +44,12 @@ class Control {
     async connect() {
         // possible error
         /*if(response.error === 'REMOTE_IDENTIFY_ERROR') {
-            opts.onError(response);setTimeout(() => {
-                createWs();
-            }, 3 * 1000);
-        }
         else if(response.error === 'UNKNOWN_DEVICE') {
-            ProgressActions.close();
-            Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_ERROR,
-                message: lang.message.unknown_device
-            });
-        }
         else if(response.error === 'NOT_FOUND' || response.error === 'DISCONNECTED') {
-            opts.onError(response);
-        }
-        else if(response.code === 1006) {
-                        ProgressActions.close();
-                        Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: lang.message.cant_connect_to_device
-                        });
+        else if(response.code === 1006) message: lang.message.cant_connect_to_device
                         opts.onFatal(response);*/
-        this.ws = await this.createWs(this.uuid, this.opts);
+        
+        this.ws = await this.createWs(this.uuid);
     }
 
     useDefaultResponse (command) {
@@ -86,29 +63,29 @@ class Control {
         return d.promise();
     };
 
-    async createWs (uuid, opts, dedicated: boolean = false) {
-        let timer;
+    async createWs (uuid, dedicated: boolean = false) {
+        let timeoutTimer;
         let url = uuid;
         const commandCallback = this.commandCallback;
-
-            let newSocket = Websocket({
+        let newSocket;
+        await new Promise((resolve, reject) => {
+            newSocket = Websocket({
                 method: `control/${url}`,
                 onMessage: (data) => {
                     switch (data.status) {
                     case 'connecting':
-                        opts.onConnect(data);
-                        clearTimeout(timer);
-                        timer = setTimeout(() => {
-                            opts.onError(CONNECITON_TIMEOUT_ERROR)
+                        clearTimeout(timeoutTimer);
+                        timeoutTimer = setTimeout(() => {
+                            reject(CONNECITON_TIMEOUT_ERROR)
                         }, CONNECTION_TIMEOUT);
                         break;
                     case 'connected':
-                        clearTimeout(timer);
+                        clearTimeout(timeoutTimer);
                         if (!dedicated) {
                             this.createDedicatedWs(this.fileInfoWsId);
                         }
                         // TODO: add interface to connected data
-                        opts.onConnect(data, dedicated);
+                        resolve(data);
                         break;
                     default:
                         this.isConnected = true;
@@ -122,35 +99,35 @@ class Control {
                     }
                 },
                 onError: (response) => {
-                    clearTimeout(timer);
+                    clearTimeout(timeoutTimer);
                     // TODO: add interface to response data
                     this.commandCallback.onError(response);
                 },
                 onFatal: (response) => {
-                    clearTimeout(timer);
-                    opts.onError(response);
+                    clearTimeout(timeoutTimer);
+                    reject(response);
                     // TODO: add interface to response data
                     this.commandCallback.onError(response);
                 },
                 onClose: (response) => {
-                    clearTimeout(timer);
+                    clearTimeout(timeoutTimer);
                     this.isConnected = false;
                     // TODO: add interface to response data
-                    opts.onFatal(response);
+                    reject(response);
                 },
                 onOpen() {
                     newSocket.send(rsaKey());
                 },
                 autoReconnect: false
             });
-
-            return newSocket;
-        };
+        });
+        return newSocket;
+    }
 
         // id is int
         createDedicatedWs (id) {
             if(!this.dedicatedWs[id]) {
-                this.dedicatedWs[id] = this.createWs(this.uuid, this.opts, true);
+                this.dedicatedWs[id] = this.createWs(this.uuid, true);
             }
             return this.dedicatedWs[id];
         }
