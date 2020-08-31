@@ -211,7 +211,7 @@ define([
                 if (configIndex >= 0) {
                     const config = customizedLaserConfigs[configIndex];
                     if (config.isDefault) {
-                        if (defaultLaserOptions.includes(customized[i].key)) {
+                        if (defaultLaserOptions.includes(config.key)) {
                             const {speed, power, repeat} = this._getDefaultParameters(config.key);
                             layer.setAttribute('data-speed', speed);
                             layer.setAttribute('data-strength', power);

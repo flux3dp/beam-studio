@@ -194,8 +194,8 @@ define([
                 power: currentLayer.getAttribute('data-strength'),
                 repeat: currentLayer.getAttribute('data-repeat'),
                 height: currentLayer.getAttribute('data-height'),
-                zstep: currentLayer.getAttribute('data-zstep'),
-                diode: currentLayer.getAttribute('data-diode'),
+                zStep: currentLayer.getAttribute('data-zstep'),
+                isDiode: currentLayer.getAttribute('data-diode'),
                 configName: currentLayer.getAttribute('data-configName'),
             };
 

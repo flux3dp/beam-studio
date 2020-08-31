@@ -361,17 +361,6 @@ define([
             LocalStorage.set('customizedLaserConfigs', this.editingCustomizedLaserConfigs);
             LocalStorage.set('defaultLaserConfigsInUse', this.editingDefaultLaserConfigsInUse);
             this.props.onClose();
-            // if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
-            //     document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
-            //     const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
-            //     const speed = selectedConfig.speed;
-            //     const power = selectedConfig.power;
-            //     const repeat = selectedConfig.repeat || 1;
-            //     const zStep = selectedConfig.zStep || 0;
-            //     this.props.onApply(speed, power, repeat, zStep, this.state.selectedItem);
-            // } else {
-            //     this.props.onClose();
-            // }
         }
 
         _handleCancel = () => {
