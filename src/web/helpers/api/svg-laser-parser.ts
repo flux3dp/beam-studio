@@ -13,9 +13,10 @@ import history from '../data-history'
 import AlertConfig from './alert-config'
 import setParams from './set-params'
 import * as i18n from '../i18n'
-
-const svgCanvas = window['svgCanvas'];
-    'use strict';
+import { getSVGAsync } from '../svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
     // Because the preview image size is 640x640
     var MAXWIDTH = 640;

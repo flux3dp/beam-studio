@@ -2,9 +2,10 @@ import { ZoomBlockContext, ZoomBlockContextProvider } from './contexts/Zoom-Bloc
 import Constant from '../../../actions/beambox/constant'
 import macOSWindowSize from '../../../constants/macOS-Window-Size'
 import * as i18n from '../../../../helpers/i18n'
-
-const svgCanvas = window['svgCanvas'];
-const svgEditor = window['svgEditor'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.zoom_block;

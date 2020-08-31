@@ -7,7 +7,10 @@ import * as i18n from './i18n'
 import Alert from '../app/contexts/AlertCaller'
 import AlertConstants from '../app/constants/alert-constants'
 import Progress from '../app/contexts/ProgressCaller'
-const svgEditor = window['svgEditor'];
+import { getSVGAsync } from './svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
     const path = requireNode('path');
     const util = requireNode('util');

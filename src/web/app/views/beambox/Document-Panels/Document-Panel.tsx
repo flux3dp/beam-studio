@@ -8,8 +8,10 @@ import BeamboxPreference from '../../../actions/beambox/beambox-preference'
 import Constant from '../../../actions/beambox/constant'
 import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
 import * as i18n from '../../../../helpers/i18n'
-const svgEditor = window['svgEditor'];
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
     const LANG = i18n.lang.beambox.document_panel;
 

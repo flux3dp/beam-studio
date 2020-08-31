@@ -1,5 +1,8 @@
 import shortcuts from '../../helpers/shortcuts'
-const svgCanvas = window['svgCanvas']
+import { getSVGAsync } from '../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
 
     export default class CurveControl extends React.PureComponent {

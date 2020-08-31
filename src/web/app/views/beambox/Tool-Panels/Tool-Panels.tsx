@@ -10,8 +10,10 @@ import OffsetDistPanel from './OffsetDist'
 import NestSpacingPanel from './NestSpacing'
 import NestGAPanel from './NestGA'
 import NestRotationPanel from './NestRotation'
-
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 const React = requireNode('react');
 const ClassNames = requireNode('classnames')
     const LANG = i18n.lang.beambox.tool_panels;

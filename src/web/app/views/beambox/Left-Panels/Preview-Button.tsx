@@ -17,10 +17,13 @@ import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Pane
 import shortcuts from '../../../../helpers/shortcuts'
 import VersionChecker from '../../../../helpers/version-checker'
 import * as i18n from '../../../../helpers/i18n'
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 const classNames = requireNode('classnames')
 
 const workarea = window['workarea'];
-const svgEditor = window['svgEditor'];
     const React = requireNode('react');;
     const ReactDOM = requireNode('react-dom');
 

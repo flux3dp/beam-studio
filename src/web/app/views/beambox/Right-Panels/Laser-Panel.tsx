@@ -19,8 +19,10 @@ import * as TutorialController from '../../../views/tutorials/Tutorial-Controlle
 import TutorialConstants from '../../../constants/tutorial-constants'
 import Constant from '../../../actions/beambox/constant'
 import DiodeBoundaryDrawer from '../../../actions/beambox/diode-boundary-drawer'
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
-const svgCanvas = window['svgCanvas'];
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
 

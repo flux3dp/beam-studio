@@ -6,7 +6,10 @@ import PreviewModeController from '../../../actions/beambox/preview-mode-control
 import InterProcessApi from '../../../../helpers/api/inter-process'
 import shortcuts from '../../../../helpers/shortcuts'
 import * as i18n from '../../../../helpers/i18n'
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
 
@@ -18,11 +21,9 @@ const svgCanvas = window['svgCanvas'];
         constructor() {
             super();
             this.state = {};
-            console.log("Left Panel Init");
         }
 
         componentDidMount() {
-            console.log("Left Panel Onmount");
             // Selection Management
 
             $('#layerpanel').mouseup(() => {
@@ -125,7 +126,6 @@ const svgCanvas = window['svgCanvas'];
         render() {
             const { isPreviewing } = this.props;
             const leftPanelClass = classNames('left-toolbar', {win: isWin});
-            console.log("Left Panel Render");
             if (!isPreviewing) {
                 return (
                     <div className={leftPanelClass}>

@@ -5,11 +5,13 @@ import config from '../../helpers/api/config'
 import Logger from '../../helpers/logger'
 import DeviceMaster from '../../helpers/device-master'
 import AlertActions from './alert-actions'
-
+import { getSVGAsync } from '../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const lang = i18n.lang;
     const FLUX = window['FLUX'];
     const analytics = window['analytics'];
-    const svgEditor = window['svgEditor'];
     const electron = window['electron'];
     // prevent delete (back) behavior
 

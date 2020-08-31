@@ -5,7 +5,10 @@ import Alert from '../../../../contexts/AlertCaller'
 import AlertConstants from '../../../../constants/alert-constants'
 import Constant from '../../../../actions/beambox/constant'
 import * as i18n from '../../../../../helpers/i18n'
-const svgCanvas = window['svgCanvas']
+import { getSVGAsync } from '../../../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;

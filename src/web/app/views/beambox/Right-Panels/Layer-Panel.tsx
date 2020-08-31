@@ -7,12 +7,13 @@ import AlertConstants from '../../../constants/alert-constants'
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller'
 import TutorialConstants from '../../../constants/tutorial-constants'
 import * as i18n from '../../../../helpers/i18n'
+import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
     const LANG = i18n.lang.beambox.right_panel.layer_panel;
-    const svgCanvas = window['svgCanvas'];
-    const updateContextPanel = window['updateContextPanel'];
     let _contextCaller;
 
     class ContextHelper {
@@ -87,7 +88,7 @@ import * as i18n from '../../../../helpers/i18n'
                     if (TutorialController.getNextStepRequirement() === TutorialConstants.ADD_NEW_LAYER) {
                         TutorialController.handleNextStep();
                     }
-                    updateContextPanel();
+                    window['updateContextPanel']();
                     this.addLayerLaserConfig(newName);
                     this.setState(this.state);
                 },
@@ -114,7 +115,7 @@ import * as i18n from '../../../../helpers/i18n'
                         return;
                     }
                     svgCanvas.cloneLayer(newName);
-                    updateContextPanel();
+                    window['updateContextPanel']();
                     this.cloneLayerLaserConfig(newName, oldName);
                     this.setState(this.state);
                 },
@@ -123,7 +124,7 @@ import * as i18n from '../../../../helpers/i18n'
 
         deleteLayer = () => {
             if (svgCanvas.deleteCurrentLayer()) {
-                updateContextPanel();
+                window['updateContextPanel']();
                 this.setState(this.state);
             }
         }
@@ -141,13 +142,13 @@ import * as i18n from '../../../../helpers/i18n'
                 return;
             }
             svgCanvas.mergeLayer();
-            updateContextPanel();
+            window['updateContextPanel']();
             this.setState(this.state);
         }
 
         mergeAllLayer = () => {
             svgCanvas.mergeAllLayers();
-            updateContextPanel();
+            window['updateContextPanel']();
             this.setState(this.state);
         }
 

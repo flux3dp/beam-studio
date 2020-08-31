@@ -22,6 +22,7 @@ export const getSVGEdit = () => {
 export const getSVGAsync = (callback: (p: ISVGGlobal) => void) => {
     const refreshTimer = setInterval(() => {
         if (!window['svgCanvas']) return;
+        if (!window['svgEditor']) return;
         callback({
             Canvas: getSVGCanvas(),
             Editor: getSVGEditor(),

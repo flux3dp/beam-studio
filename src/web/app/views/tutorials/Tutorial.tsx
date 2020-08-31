@@ -5,7 +5,10 @@ import Alert from '../../contexts/AlertCaller'
 import AlertConstants from '../../constants/alert-constants'
 import TutorialConstants from '../../constants/tutorial-constants'
 import * as i18n from '../../../helpers/i18n'
-const svgCanvas = window['svgCanvas'];
+import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
     const { createContext } = React;

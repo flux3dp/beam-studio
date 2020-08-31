@@ -3,8 +3,10 @@
  */
 import grayScale from './grayscale'
 import BeamboxPreference from '../app/actions/beambox/beambox-preference'
-
-const svgEditor = window['svgEditor'];
+import { getSVGAsync } from './svg-editor-helper'
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
 export default function(source, opts) {
         opts.onComplete = opts.onComplete || function() {};

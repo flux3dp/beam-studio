@@ -284,6 +284,7 @@ const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
                     GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
                 })
                 .catch((errMsg) => {
+                    console.error(errMsg);
                     // TODO: handle err message
                     Alert.popUp({
                         id: 'menu-item',

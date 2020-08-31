@@ -9,13 +9,9 @@ import Tutorials from './tutorials'
 import Alert from '../../contexts/AlertCaller'
 import DialogCaller from '../../contexts/DialogCaller'
 import { getSVGAsync } from '../../../helpers/svg-editor-helper'
-    let svgCanvas;
-    let svgEditor;
-
-    getSVGAsync((globalSVG) => {
-        svgCanvas = globalSVG.Canvas;
-        svgEditor = globalSVG.Edit;
-    });
+let svgCanvas;
+let svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
 class BeamboxGlobalInteraction extends GlobalInteraction {
     constructor() {
