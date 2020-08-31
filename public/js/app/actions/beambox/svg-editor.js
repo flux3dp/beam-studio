@@ -1850,6 +1850,7 @@ define([
                                     $('#text').focus().select();
                                 }, 100);
                             }
+                            svgCanvas.textActions.setIsVertical((elem.getAttribute('data-verti') === 'true'));
                         } // text
                         else if (el_name === 'image') {
                             if (svgCanvas.getMode() === 'image') {

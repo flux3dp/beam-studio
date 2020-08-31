@@ -2523,6 +2523,7 @@ define([
                                 if (selected.tagName === 'text') {
                                     cur_text.font_size = selected.getAttribute('font-size');
                                     cur_text.font_family = selected.getAttribute('font-family');
+                                    cur_text.font_postscriptName = selected.getAttribute('font-postscript');
                                 }
                                 selectorManager.requestSelector(selected).showGrips(true);
 
@@ -3534,11 +3535,6 @@ define([
                     textActions.init();
 
                     $(curtext).css('cursor', 'text');
-
-                    //				if (svgedit.browser.supportsEditableText()) {
-                    //					curtext.setAttribute('editable', 'simple');
-                    //					return;
-                    //				}
 
                     if (!arguments.length) {
                         setCursor();
