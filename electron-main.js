@@ -133,7 +133,7 @@ const backendManager = new BackendManager({
 });
 backendManager.start();
 //Run monitorexe api
-/*const monitorManager = new MonitorManager({
+const monitorManager = null; /* = new MonitorManager({
     location: process.env.BACKEND
 });
 //kill process first, in case last time shut down
@@ -212,7 +212,9 @@ function createWindow () {
             });
             const closeBeamStudio = () => {
                 isCloseConfirmed = true;
-                monitorManager.killProc();
+                if (monitorManager) {
+                    monitorManager.killProc();
+                }
                 backendManager.stop();
                 mainWindow.close();
                 shouldCloseShadowWindow = true;
