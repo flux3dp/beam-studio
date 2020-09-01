@@ -82,13 +82,17 @@ define([
                 if (fontNameMapObj[font.family]) {
                     fontName = fontNameMapObj[font.family];
                 } else {
-                    let fontInfo = fontkit.openSync(font.path);
-                    if (fontInfo.fonts && fontInfo.fonts[0]) {
-                        fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
-                    }
-                    if (fontInfo) {
-                        const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
-                        fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                    try {
+                        let fontInfo = fontkit.openSync(font.path);
+                        if (fontInfo.fonts && fontInfo.fonts[0]) {
+                            fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
+                        }
+                        if (fontInfo) {
+                            const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
+                            fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                        }
+                    } catch (err) {
+                        console.warn(`Error when get font name of ${font.family}:`, err);
                     }
                 }
                 fontNameMap.set(font.family, fontName);
