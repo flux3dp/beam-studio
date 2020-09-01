@@ -1,5 +1,3 @@
-const { resolve } = require('q');
-
 define([
     'jsx!widgets/Modal',
     'jsx!views/dialogs/Dialog',
