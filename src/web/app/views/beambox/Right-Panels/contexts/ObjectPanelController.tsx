@@ -1,27 +1,27 @@
 import Constant from '../../../../actions/beambox/constant'
-import { ObjectPanel, ObjectPanelContextCaller } from '../Object-Panel'
+import { ObjectPanelContextHelper } from '../Object-Panel'
     const React = requireNode('react');;
     const updateDimensionValues = (newValue) => {
-        if (!ObjectPanelContextCaller) {
-            //console.log('ObjectPanel is not mounted now.');
+        if (!ObjectPanelContextHelper.context) {
+            console.log('ObjectPanel is not mounted now.');
         } else {
-            ObjectPanelContextCaller.updateDimensionValues(newValue);
+            ObjectPanelContextHelper.context.updateDimensionValues(newValue);
         }
     };
 
     const getDimensionValues = (key) => {
-        if (!ObjectPanelContextCaller) {
+        if (!ObjectPanelContextHelper.context) {
             //console.log('ObjectPanel is not mounted now.');
         } else {
-            return ObjectPanelContextCaller.getDimensionValues(key);
+            return ObjectPanelContextHelper.context.getDimensionValues(key);
         }
     }
 
     const updateObjectPanel = () => {
-        if (!ObjectPanelContextCaller) {
+        if (!ObjectPanelContextHelper.context) {
             //console.log('ObjectPanel is not mounted now.');
         } else {
-            ObjectPanelContextCaller.updateObjectPanel();
+            ObjectPanelContextHelper.context.updateObjectPanel();
         }
     };
 

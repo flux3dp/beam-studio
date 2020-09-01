@@ -1,7 +1,7 @@
 import DimensionPanel from './Dimension-Panel'
 import OptionsPanel from './Options-Panel'
 import ActionsPanel from './Actions-Panel'
-import { ObjectPanelContext } from './contexts/ObjectPanelContext'
+import { ObjectPanelContext, ObjectPanelContextProvider } from './contexts/ObjectPanelContext'
 import DialogCaller from '../../../contexts/DialogCaller'
 import Alert from '../../../contexts/AlertCaller'
 import AlertConstants from '../../../constants/alert-constants'
@@ -15,13 +15,6 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
     const LANG = i18n.lang.beambox.right_panel.object_panel;
     let _contextCaller;
 
-    class ContextHelper {
-        static get _contextCaller() {
-            return _contextCaller;
-        }
-    }
-    
-    export const ObjectPanelContextCaller = ContextHelper._contextCaller;
 
     export class ObjectPanel extends React.Component {
         constructor(props) {
@@ -155,3 +148,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
         }
     }
     ObjectPanel.contextType = ObjectPanelContext;
+
+
+export class ObjectPanelContextHelper {
+    static get context(): ObjectPanelContextProvider {
+        return _contextCaller;
+    }
+}
