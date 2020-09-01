@@ -22,6 +22,10 @@ define([
 
     const dns = require('dns');
     const dnsPromise = dns.promises;
+    let lastSendMessage = 0;
+    let BUFFER = 100;
+    let timer;
+    const SEND_DEVICES_INTERVAL = 5000;
     var ws = ws || new Websocket({
             method: 'discover'
         }),
@@ -75,15 +79,18 @@ define([
                 }
             }
 
-        //    if (existDefaultPrinter && device.uuid === defaultPrinter.uuid ) {
-        //        initializeMachine.defaultPrinter.set(device);
-        //    }
-
             clearTimeout(timer);
-            timer = setTimeout(() => {
+            if (Date.now() - lastSendMessage > BUFFER) {
                 printers = DeviceList(_devices);
                 sendFoundPrinter();
-            }, BUFFER);
+                lastSendMessage = Date.now();
+            } else {
+                timer = setTimeout(() => {
+                    printers = DeviceList(_devices);
+                    sendFoundPrinter();
+                    lastSendMessage = Date.now();
+                }, BUFFER);
+            }  
         },
         poke = function(targetIP) {
             if (targetIP == null) { return; };
@@ -94,22 +101,26 @@ define([
         pokeTcp = function(targetIP) {
             if (targetIP == null) { return; };
             printers = [];
-            _devices = {};
             ws.send(JSON.stringify({ 'cmd' : 'poketcp', 'ipaddr': targetIP }));
         },
         testTcp = function(targetIP) {
             if (targetIP == null) { return; };
             ws.send(JSON.stringify({ 'cmd' : 'testtcp', 'ipaddr': targetIP }));
         },
-        BUFFER = 100,
         pokeIPAddr = localStorage.getItem('poke-ip-addr'),
-        pokeIPs = (pokeIPAddr ? pokeIPAddr.split(/[,;] ?/) : ['']),
-        timer;
+        pokeIPs = (pokeIPAddr ? pokeIPAddr.split(/[,;] ?/) : ['']);
 
     if ('' === pokeIPs[0]) {
         Config().write('poke-ip-addr', '192.168.1.1');
         pokeIPs = ['192.168.1.1'];
     }
+
+    const sendDevicesInterval = setInterval(() => {
+        if (Date.now() - lastSendMessage > BUFFER) {
+            sendFoundPrinter();
+            lastSendMessage = Date.now();
+        }
+    }, SEND_DEVICES_INTERVAL);
 
     ws.onMessage(onMessage);
 
