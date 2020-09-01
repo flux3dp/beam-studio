@@ -424,7 +424,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
         // Escape for Whitelists
         const whiteList = ['標楷體'];
-        const whiteKeyWords = ['華康', 'Adobe'];
+        const whiteKeyWords = ['華康', 'Adobe', '文鼎'];
         if (whiteList.indexOf(fontFamily) >= 0) {
             return fontFamily;
         }
