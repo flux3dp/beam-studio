@@ -1329,6 +1329,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 刻印（二極體雷射）',
                             save: '新增目前參數',
                             export: '匯出參數',
+                            import: '匯入參數',
                             more: '管理',
                             parameters: '選擇參數'
                         },
@@ -1351,6 +1352,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: '不鏽鋼 - 刻印（二極體雷射）',
                             save: '新增目前參數',
                             export: '匯出參數',
+                            import: '匯入參數',
                             more: '管理',
                             parameters: '選擇參數'
                         },

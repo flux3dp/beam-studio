@@ -6183,6 +6183,7 @@ define([
                         }
                     }); 
                 };
+                editor.importLaserConfig = importLaserConfig;
 
                 var importImage = function (e) {
                     Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});

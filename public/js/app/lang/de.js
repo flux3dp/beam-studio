@@ -1332,6 +1332,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: 'Metall - Gravur (Diodenlaser)',
                             save: 'Aktuelle Parameter hinzufügen',
                             export: 'Export',
+                            import: 'Importieren',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'
                         },
@@ -1354,6 +1355,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: 'Metall - Gravur (Diodenlaser)',
                             save: 'Aktuelle Parameter hinzufügen',
                             export: 'Export',
+                            import: 'Importieren',
                             more: 'Verwalten',
                             parameters: 'Voreinstellungen'
                         },

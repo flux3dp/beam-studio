@@ -54,6 +54,7 @@ define([
     const functionalLaserOptions = [
         'save',
         'export',
+        'import',
         'more',
     ];
 
@@ -180,6 +181,22 @@ define([
                 fs.writeFileSync(targetFilePath, JSON.stringify(laserConfig));
             }
         }
+
+        importLaserConfig = async () => {
+            const dialogOptions = {
+                properties: ['openFile'],
+                filters: [
+                    { name: 'JSON', extensions: ['json', 'JSON']},
+                ]
+            };
+            const res = await DialogCaller.showOpenDialog(dialogOptions);
+            if (res) {
+                const filePath = res[0];
+                const file = await fetch(filePath);
+                const fileBlob = await file.blob();
+                svgEditor.importLaserConfig(fileBlob);
+            }
+        };
 
         updateData = () => {
             this.initDefaultConfig();
@@ -389,6 +406,9 @@ define([
                 this.setState({ modal: 'more' });
             } else if (value === 'export') {
                 this.exportLaserConfigs();
+                this._handleCancelModal();
+            } else if (value === 'import') {
+                this.importLaserConfig();
                 this._handleCancelModal();
             } else {
                 const customizedConfigs = LocalStorage.get('customizedLaserConfigs').find((e) => e.name === value);

@@ -1332,6 +1332,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: 'Metal - Engraving (Diode Laser)',
                             save: 'Add current parameters',
                             export: 'Export',
+                            import: 'Import',
                             more: 'Manage',
                             parameters: 'Presets'
                         },
@@ -1354,6 +1355,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: 'Metal - Engraving (Diode Laser)',
                             save: 'Add current parameters',
                             export: 'Export',
+                            import: 'Import',
                             more: 'Manage',
                             parameters: 'Presets'
                         },

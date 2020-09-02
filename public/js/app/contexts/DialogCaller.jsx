@@ -237,6 +237,21 @@ define([
                     resolve(filePath);
                 })
             });
+        },
+        showOpenDialog: async (option) => {
+            if (!option) {
+                option = {
+                    properties: ['openFile'],
+                    filters: [
+                        { name: 'All Files', extensions: ['*']},
+                    ]
+                };
+            }
+            if (!option.properties) {
+                option.properties = ['openFile'];
+            }
+            const res =  await dialog.showOpenDialog(option);
+            return res;
         }
     }
 });

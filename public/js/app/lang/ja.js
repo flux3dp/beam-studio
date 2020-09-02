@@ -1332,6 +1332,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: '金属 - 彫刻 (ダイオードレーザー)',
                             save: '現在のパラメーターを追加',
                             export: '書き出す',
+                            import: 'インポート',
                             more: '管理する',
                             parameters: 'パラメーター…'
                         },
@@ -1354,6 +1355,7 @@ define(function() {
                             stainless_steel_bw_engraving_diode: '金属 - 彫刻 (ダイオードレーザー)',
                             save: '現在のパラメーターを追加',
                             export: '書き出す',
+                            import: 'インポート',
                             more: '管理する',
                             parameters: 'パラメーター…'
                         }
