@@ -93,6 +93,17 @@ define([
             );
         }
 
+        _renderChildren = (children) => {
+            if (!children) {
+                return null;
+            }
+            return (
+                <div className='alert-children'>
+                    {children}
+                </div>
+            );
+        }
+
         render = () => {
             const { alert, popFromStack } = this.props;
             const {checkboxChecked} = this.state;
@@ -136,6 +147,7 @@ define([
                     <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
                         {this._renderCaption(alert.caption)}
                         {this._renderMessage(alert)}
+                        {this._renderChildren(alert.children)}
                         {checkBox}
                         <ButtonGroup buttons={buttons}/>
                     </div>

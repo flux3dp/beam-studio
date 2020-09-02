@@ -5,6 +5,7 @@ define([
     'app/contexts/ProgressCaller',
     'app/constants/keycode-constants',
     'helpers/api/discover',
+    'helpers/device-list',
     'helpers/i18n'
 ], function(
     Modal,
@@ -13,11 +14,13 @@ define([
     Progress,
     KeycodeConstants,
     Discover,
+    DeviceList,
     i18n
 ) {
     const React = require('react');
     const ReactDOM = require('react-dom');
     const LANG = i18n.lang.beambox.network_testing_panel;
+    const { shell } = require('electron').remote
 
     
     class NetworkTestingPanel extends React.Component {
@@ -50,8 +53,10 @@ define([
                     local_ips.push(iface.address);
                 });
             });
-            //Just for tcppoke
-            this.discover = Discover('network-testing-panel', () => {});
+            this.discoveredDevices = [];
+            this.discover = Discover('network-testing-panel', (devices) => {
+                this.discoveredDevices = DeviceList(devices);
+            });
             this.state = {
                 ip: ip,
                 localIp: local_ips
@@ -72,8 +77,8 @@ define([
             }
             this._createSession();
             this.stopFlag = false;
-            this.pingTimes = 0;
-            this.success = 0;
+            this.pingCounts = 0;
+            this.successedPing = 0;
             this.totalRRT = 0;
             this.startTime = new Date();
             const raiseFlag = window.setTimeout(() =>{
@@ -109,7 +114,7 @@ define([
         }
 
         _pingTarget() {
-            this.pingTimes += 1;
+            this.pingCounts += 1;
             this.session.pingHost(this.state.ip, (error, target, sent, rcvd) => {
                 const elapsedTime = new Date() - this.startTime;
                 const percentage =  parseInt(100 * elapsedTime / this.TEST_TIME);
@@ -131,7 +136,7 @@ define([
                     }
                 }
                 else {
-                    this.success += 1;
+                    this.successedPing += 1;
                     this.totalRRT += (rcvd - sent);
                 }
                 if (!this.stopFlag) {
@@ -142,20 +147,46 @@ define([
             });
         };
 
+        _calculateConnectionQuality() {
+            const failedPings = this.pingCounts - this.successedPing;
+            const avgRRT = this.totalRRT/this.successedPing;
+            if (avgRRT < 2) { // If rrt < 2 ms, net-ping is more prone to timeout. deduct 1 for each failed ping.
+                return 100 - failedPings;
+            } else {// deduct 3 for each failed ping, quality would be less than 70 when more than 10 fails occur.
+                return 100 - 3 * failedPings;
+            }
+        }
+
         _calculateResult() {
-            console.log(`success rate: ${this.success}/${this.pingTimes}`);
-            const avg =  parseInt(100 * (this.totalRRT/this.success)) / 100;
+            const avg =  parseInt(100 * (this.totalRRT/this.successedPing)) / 100;
+            console.log(`success rate: ${this.successedPing}/${this.pingCounts}`);
             console.log(`average rrt of success: ${avg} ms`);
             this.session.close();
             Progress.popById('network-testing');
-            const healthiness = parseInt(100 * this.success / this.pingTimes);
-            if (healthiness !== 0) {
+            const connectionQuality = this._calculateConnectionQuality();
+            if (this.successedPing > 0) {
                 this.discover.poke(this.state.ip);
                 this.discover.testTcp(this.state.ip);
+                let message = `${LANG.connection_quality} : ${connectionQuality}\n${LANG.average_response} : ${avg} ms`;
+                let children = null;
+                if (connectionQuality < 70 || avg > 100) {
+                    message = `${LANG.network_unhealthy}\n${message}`;
+                } else if (!this.discoveredDevices || !this.discoveredDevices.find((device) => device.ipaddr === this.state.ip)) {
+                    message = `${LANG.device_not_on_list}\n${message}`;
+                } else {
+                    children = (
+                        <div className='hint-container network-testing'>
+                            <div className='hint' onClick={() => {shell.openExternal(LANG.link_device_often_on_list)}}>{LANG.hint_device_often_on_list}</div>
+                            <div className='hint' onClick={() => {shell.openExternal(LANG.link_connect_failed_when_sending_job)}}>{LANG.hint_connect_failed_when_sending_job}</div>
+                            <div className='hint' onClick={() => {shell.openExternal(LANG.link_connect_camera_timeout)}}>{LANG.hint_connect_camera_timeout}</div>
+                        </div>
+                    );
+                }
                 Alert.popUp({
                     type: AlertConstants.SHOW_INFO,
-                    message: `${LANG.network_healthiness} : ${healthiness} %\n${LANG.average_response}: ${avg} ms`,
-                    caption: LANG.test_completed
+                    message,
+                    caption: LANG.test_completed,
+                    children,
                 });
             } else {
                 let match = false;
@@ -189,6 +220,7 @@ define([
         }
 
         _onInputKeydown(e) {
+            e.stopPropagation();
             if (e.keyCode === KeycodeConstants.KEY_RETURN) {
                 this._onInputBlur();
                 this._onStart();

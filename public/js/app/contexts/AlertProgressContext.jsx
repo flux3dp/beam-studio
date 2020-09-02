@@ -29,7 +29,7 @@ define([
         };
 
         pushToStack = (elem) => {
-            if (elem.id) console.log(`alert/progress id: ${elem.id} popped up`);
+            // if (elem.id) console.log(`alert/progress id: ${elem.id} popped up`);
             this.state.alertProgressStack.push(elem);
             this.setState(this.state);
         }
@@ -76,7 +76,7 @@ define([
         }
 
         popUp = (args) => {
-            let {id, type, message, caption} = args;
+            let {id, type, message, caption, children} = args;
             message = message || '';
             switch (type) {
                 case AlertConstants.SHOW_POPUP_INFO:
@@ -97,6 +97,7 @@ define([
                 id,
                 caption,
                 message,
+                children,
                 buttons,
                 checkBoxText,
                 checkBoxCallbacks
