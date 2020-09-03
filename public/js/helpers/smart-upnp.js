@@ -74,6 +74,7 @@ define([
 			if(guessIPs.length == 0) return;
 			var ip = guessIPs.shift();
 			Discover.poke(ip);
+			Discover.testTcp(ip);
         },
 
 		addSolidIP: function(ip){

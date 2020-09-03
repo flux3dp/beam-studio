@@ -207,6 +207,8 @@ define([
                     ipTestCountDown: TIMEOUT,
                 });
                 this.discover.poke(ip);
+                this.discover.pokeTcp(ip);
+                this.discover.testTcp(ip);
                 clearInterval(this.testCountDown);
                 this.testCountDown = setInterval(() => {
                     if (this.state.isTesting && this.state.ipAvailability === null) {

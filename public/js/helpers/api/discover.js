@@ -204,11 +204,9 @@ define([
 
         return {
             connection: ws,
-            poke: (targetIP) => {
-                poke(targetIP);
-                pokeTcp(targetIP);
-            },
-            testTcp: testTcp,
+            poke: poke,         //UDP poke
+            pokeTcp: pokeTcp,   //Add to tcp poke list
+            testTcp: testTcp,   // Test tcp poke
             countDevices: function(){
                 let count = 0;
                 for(var i in _devices) count++;

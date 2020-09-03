@@ -75,6 +75,9 @@ define([
                 })
                 return;
             }
+            this.discover.poke(this.state.ip);
+            this.discover.pokeTcp(this.state.ip);
+            this.discover.testTcp(this.state.ip);
             this._createSession();
             this.stopFlag = false;
             this.pingCounts = 0;
@@ -165,8 +168,6 @@ define([
             Progress.popById('network-testing');
             const connectionQuality = this._calculateConnectionQuality();
             if (this.successedPing > 0) {
-                this.discover.poke(this.state.ip);
-                this.discover.testTcp(this.state.ip);
                 let message = `${LANG.connection_quality} : ${connectionQuality}\n${LANG.average_response} : ${avg} ms`;
                 let children = null;
                 if (connectionQuality < 70 || avg > 100) {
