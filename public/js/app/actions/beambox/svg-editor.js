@@ -33,6 +33,7 @@ define([
     'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
+    'app/actions/beambox/open-bottom-boundary-drawer',
     'app/actions/beambox/preview-mode-controller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
@@ -63,6 +64,7 @@ define([
     TopBarController,
     BeamboxPreference,
     Constant,
+    OpenBottomBoundaryDrawer,
     PreviewModeController,
     Alert,
     AlertConstants,
@@ -850,6 +852,7 @@ define([
             });
 
             editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
+            OpenBottomBoundaryDrawer.update();
             var supportsNonSS, resize_timer, Actions, curScrollPos,
                 palette = [ // Todo: Make into configuration item?
                     '#000000', '#3f3f3f', '#7f7f7f', '#bfbfbf', '#ffffff',

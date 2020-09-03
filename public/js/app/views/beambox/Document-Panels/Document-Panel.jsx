@@ -6,6 +6,7 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
+    'app/actions/beambox/open-bottom-boundary-drawer',
     'app/actions/beambox/preview-mode-background-drawer',
     'helpers/i18n',
 ], function(
@@ -16,6 +17,7 @@ define([
     BeamboxActions,
     BeamboxPreference,
     Constant,
+    OpenBottomBoundaryDrawer,
     PreviewModeBackgroundDrawer,
     i18n
 ) {
@@ -139,6 +141,7 @@ define([
                 svgEditor.resetView();
                 PreviewModeBackgroundDrawer.updateCanvasSize();
             }
+            OpenBottomBoundaryDrawer.update();
             BeamboxActions.updateLaserPanel();
         }
 
