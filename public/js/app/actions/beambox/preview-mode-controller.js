@@ -2,7 +2,9 @@ define([
     'Rx',
     'app/actions/beambox/preview-mode-background-drawer',
     'helpers/device-master',
+    'app/constants/alert-constants',
     'app/constants/device-constants',
+    'app/contexts/AlertCaller',
     'app/contexts/ProgressCaller',
     'app/actions/global-actions',
     'helpers/sprintf',
@@ -14,7 +16,9 @@ define([
     Rx,
     PreviewModeBackgroundDrawer,
     DeviceMaster,
+    AlertConstants,
     DeviceConstants,
+    Alert,
     Progress,
     GlobalActions,
     sprintf,
@@ -43,9 +47,12 @@ define([
 
             await DeviceMaster.select(selectedPrinter);
 
-            Progress.openNonstopProgress({id: 'start-preview-mode', message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name)});
-
             try {
+                Progress.openNonstopProgress({
+                    id: 'start-preview-mode',
+                    message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name),
+                    timeout: 30000,
+                });
                 await this._retrieveCameraOffset();
                 const laserSpeed = await DeviceMaster.getLaserSpeed();
 
@@ -55,7 +62,6 @@ define([
                 }
                 let res = await DeviceMaster.enterRawMode();
                 res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
-                res = await DeviceMaster.rawMove({x: 0 ,y: 0}); // for faster homing
                 res = await DeviceMaster.rawHome();
                 await DeviceMaster.connectCamera(selectedPrinter);
                 PreviewModeBackgroundDrawer.start(this.cameraOffset);
@@ -66,7 +72,7 @@ define([
                 this.isPreviewModeOn = true;
             } catch (error) {
                 if (this.originalSpeed !== 1) {
-                    await DeviceMaster.setLaserSpeed(this.originalSpeed);
+                    DeviceMaster.setLaserSpeed(this.originalSpeed);
                     this.originalSpeed = 1;
                 }
                 throw error;
@@ -112,6 +118,11 @@ define([
                 return true;
             } catch (error) {
                 console.log(error);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: error.message,
+                });
+                $(workarea).css('cursor', 'auto');
                 if (!PreviewModeBackgroundDrawer.isClean()) {
                     BeamboxActions.endDrawingPreviewBlob();
                     this.isDrawing = false;
@@ -285,7 +296,9 @@ define([
 
             await DeviceMaster.select(this.storedPrinter);
             const res = await DeviceMaster.rawMove(movement);
-            console.log('Preview raw move respond: ', res);
+            if (res) {
+                console.log('Preview raw move respond: ', res.text);
+            }
             await this._waitUntilEstimatedMovementTime(movementX, movementY);
 
             const imgUrl = await this._getPhotoFromMachine();

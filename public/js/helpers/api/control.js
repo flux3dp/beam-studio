@@ -123,10 +123,12 @@ define([
             return dedicatedWs[id];
         };
 
-        const useDefaultResponse = (command) => {
+        const useDefaultResponse = (command, timeout=30000) => {
             let d = $.Deferred();
 
-            events.onMessage = (response) => { d.resolve(response); };
+            events.onMessage = (response) => {
+                d.resolve(response);
+            };
             events.onError = (response) => { d.reject(response); };
             events.onFatal = (response) => { d.reject(response); };
 
@@ -899,6 +901,9 @@ define([
                 let d = $.Deferred();
                 let isCmdResent = false;
                 events.onMessage = (response) => {
+                    if (response) {
+                        console.log('raw homing:\t', response.text);
+                    }
                     if (response.status === 'raw' && response.text.startsWith('ok')) {
                         d.resolve(response);
                     } else if (response.text.indexOf('ER:RESET') >= 0) {
@@ -929,10 +934,10 @@ define([
                 args.f = args.f || '6000';
                 command += 'F' + args.f;
                 if (typeof args.x !== 'undefined') {
-                    command += 'X' +  Math.round(args.x * 1000) / 1000;
+                    command += 'X' +  Math.round(args.x * 100) / 100;
                 };
                 if (typeof args.y !== 'undefined') {
-                    command += 'Y' + Math.round(args.y * 1000) / 1000;
+                    command += 'Y' + Math.round(args.y * 100) / 100;
                 };
                 console.log('raw move command:', command);
                 return useDefaultResponse(command);

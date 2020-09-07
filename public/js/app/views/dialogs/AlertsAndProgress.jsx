@@ -16,6 +16,25 @@ define([
     class Progress extends React.Component {
         constructor(props) {
             super(props);
+            const { progress } = this.props;
+            const { timeout, timeoutCallback } = progress;
+            if (timeout) {
+                this.closeTimeout = setTimeout(() => {
+                    const { popById } = this.context;
+                    if (!progress.id) {
+                        console.warn('Progress without ID', progress);
+                    } else {
+                        popById(progress.id);
+                    }
+                    if (timeoutCallback) {
+                        timeoutCallback();
+                    }
+                }, timeout);
+            };
+        }
+
+        componentWillUnmount() {
+            clearTimeout(this.closeTimeout);
         }
 
         _renderCaption = (caption) => {
@@ -60,6 +79,7 @@ define([
             );
         }
     }
+    Progress.contextType = AlertProgressContext;
 
     class Alert extends React.Component {
         constructor(props) {
@@ -195,7 +215,6 @@ define([
                     {components}
                 </div>
             );
-            ;
         }
     };
     AlertsAndProgress.contextType = AlertProgressContext;

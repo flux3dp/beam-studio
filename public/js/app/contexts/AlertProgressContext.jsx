@@ -9,6 +9,7 @@ define([
     const { createContext } = React;
     const AlertProgressContext = createContext();
     const LANG = i18n.lang.alert;
+    let progressID = 0;
 
     class AlertProgressContextProvider extends React.Component {
         constructor(props) {
@@ -36,10 +37,15 @@ define([
 
         openProgress = (args) => {
             let {id, type, message, caption} = args;
+            if (!id) {
+                id = `progress_${progressID}`;
+                progressID = (progressID + 1) % 100000;
+            }
             message = message || '';
             caption = caption || '';
 
             this.pushToStack({
+                ...args,
                 id,
                 type,
                 caption,
