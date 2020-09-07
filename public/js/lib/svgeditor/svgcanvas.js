@@ -44,8 +44,7 @@ define([
     'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/topbar',
     'helpers/api/config',
     'helpers/beam-file-helper',
@@ -71,8 +70,7 @@ define([
     ZoomBlockController,
     BeamboxActions,
     Constant,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     TopbarActions,
     Config,
     BeamFileHelper,
@@ -9132,7 +9130,10 @@ define([
                 return;
             }
             let batchCmd = new svgedit.history.BatchCommand('Vectorize Image');
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.photo_edit_panel.processing);
+            Progress.openNonstopProgress({
+                id: 'vectorize-image',
+                message: LANG.photo_edit_panel.processing,
+            });
             const imgUrl = await new Promise((resolve) => {
                 ImageData(
                     $(img).attr("origImage"),
@@ -9197,7 +9198,7 @@ define([
                 selectorManager.requestSelector(g).resize();
                 
                 addCommandToHistory(batchCmd);
-                ProgressActions.close();
+                Progress.popById('vectorize-image');
             });
         }
 
@@ -9264,7 +9265,10 @@ define([
                 // apply style
                 const descendants = Array.from(g.querySelectorAll('*'));
                 const nodeNumbers = descendants.length;
-                ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.right_panel.object_panel.actions_panel.disassembling} - 0%`, false);
+                Progress.openSteppingProgress({
+                    id: 'disassemble-use',
+                    message: `${LANG.right_panel.object_panel.actions_panel.disassembling} - 0%`,
+                })
                 //Wait for progress open
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
                 let currentProgress = 0;
@@ -9282,13 +9286,19 @@ define([
                     svgedit.recalculate.recalculateDimensions(child);
                     const progress = Math.round(200 * j / nodeNumbers) / 2;
                     if (progress > currentProgress) {
-                        ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.disassembling} - ${Math.round(9000 * j / nodeNumbers) / 100}%`, progress * 0.9);
+                        Progress.update('disassemble-use', {
+                            message: `${LANG.right_panel.object_panel.actions_panel.disassembling} - ${Math.round(9000 * j / nodeNumbers) / 100}%`,
+                            percentage: progress * 0.9,
+                        });
                         //Wait for progress update
                         await new Promise((resolve) => {setTimeout(resolve, 50)});
                         currentProgress = progress;
                     }
                 }
-                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 90%`, 90);
+                Progress.update('disassemble-use', {
+                    message: `${LANG.right_panel.object_panel.actions_panel.ungrouping} - 90%`,
+                    percentage: 90,
+                });
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
                 let start = Date.now();
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
@@ -9307,8 +9317,11 @@ define([
                         batchCmd.addSubCommand(cmd);
                     }
                 }
-                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 100%`, 100);
-                ProgressActions.close();
+                Progress.update('disassemble-use', {
+                    message: `${LANG.right_panel.object_panel.actions_panel.ungrouping} - 100%`,
+                    percentage: 100,
+                });
+                Progress.popById('disassemble-use');
                 if (!tempGroup) {
                     this.tempGroupSelectedElements();
                 }

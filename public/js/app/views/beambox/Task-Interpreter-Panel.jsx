@@ -4,8 +4,6 @@ define([
     'jsx!widgets/Vertical-Slider-Control',
     'app/stores/beambox-store',
     'app/actions/beambox/bottom-right-funcs',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
     'helpers/i18n'
 ], function(
     Modal,
@@ -13,8 +11,6 @@ define([
     VerticalSlider,
     BeamboxStore,
     BottomRightFuncs,
-    ProgressActions,
-    ProgressConstants,
     i18n
 ) {
     const React = require('react');
@@ -272,7 +268,6 @@ define([
             ctx.stroke();
             ctx.closePath();
             gcodeCtx.drawImage(this.canvas, 0, 0);
-            ProgressActions.close();
         }
 
         _onListWheel(e) {

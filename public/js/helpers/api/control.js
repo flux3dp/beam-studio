@@ -10,9 +10,8 @@ define([
     'app/constants/device-constants',
     'helpers/rsa-key',
     'app/contexts/AlertCaller',
-    'app/constants/alert-constants',
-    'app/actions/progress-actions'
-], function($, i18n, Websocket, convertToTypedArray, DeviceConstants, rsaKey, Alert, AlertConstants, ProgressActions) {
+    'app/constants/alert-constants'
+], function($, i18n, Websocket, convertToTypedArray, DeviceConstants, rsaKey, Alert, AlertConstants) {
     'use strict';
 
     return function(uuid, opts) {
@@ -79,7 +78,6 @@ define([
                         }, 3 * 1000);
                     }
                     else if(response.error === 'UNKNOWN_DEVICE') {
-                        ProgressActions.close();
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
                             message: lang.message.unknown_device
@@ -89,7 +87,6 @@ define([
                         opts.onError(response);
                     }
                     else if(response.code === 1006) {
-                        ProgressActions.close();
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_ERROR,
                             message: lang.message.cant_connect_to_device
@@ -126,11 +123,26 @@ define([
         const useDefaultResponse = (command, timeout=30000) => {
             let d = $.Deferred();
 
+            const timeoutTimer = setTimeout(() => {
+                d.reject({
+                    status: 'error',
+                    text:'TIMEOUT',
+                    error: 'TIMEOUT',
+                });
+            }, timeout);
+
             events.onMessage = (response) => {
+                clearTimeout(timeoutTimer);
                 d.resolve(response);
             };
-            events.onError = (response) => { d.reject(response); };
-            events.onFatal = (response) => { d.reject(response); };
+            events.onError = (response) => {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            };
+            events.onFatal = (response) => {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            };
 
             ws.send(command);
             return d.promise();

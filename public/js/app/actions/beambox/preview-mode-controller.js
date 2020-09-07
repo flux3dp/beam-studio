@@ -75,6 +75,7 @@ define([
                     DeviceMaster.setLaserSpeed(this.originalSpeed);
                     this.originalSpeed = 1;
                 }
+                DeviceMaster.endRawMode();
                 throw error;
             } finally {
                 Progress.popById('start-preview-mode');

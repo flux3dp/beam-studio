@@ -7,8 +7,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/alert-actions',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/input-lightbox-actions',
     'app/constants/input-lightbox-constants',
     'helpers/round'
@@ -18,8 +17,7 @@ define([
     Alert,
     AlertConstants,
     AlertActions,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     InputLightboxActions,
     InputLightboxConstants,
     round
@@ -40,15 +38,15 @@ define([
 
         _uploadToDevice = (file) => {
           DeviceMaster.selectDevice(printer).done(function() {
-              ProgressActions.open(ProgressConstants.STEPPING, '', '', false);
+              Progress.openSteppingProgress({id: 'update-firmware', message: ''});
               doUpdate(file).progress((r) => {
                   r.percentage = round(r.percentage || 0, -2);
-                  ProgressActions.updating(
-                      lang.update.updating + ' (' + r.percentage + '%)',
-                      r.percentage
-                  );
+                  Progress.update('update-firmware', {
+                      message: lang.update.updating + ' (' + r.percentage + '%)',
+                      percentage: r.percentage
+                  });
               }).always(() => {
-                  ProgressActions.close();
+                  Progress.popById('update-firmware');
               }).done(
                   _onFinishUpdate.bind(null, true)
               ).fail(
@@ -123,15 +121,15 @@ define([
                 onFinishUpdate;
 
             DeviceMaster.selectDevice(printer).done(function() {
-                ProgressActions.open(ProgressConstants.STEPPING, '', '', false);
+                Progress.openSteppingProgress({id: 'update-firmware', message: ''});
                 doUpdate(file).progress((r) => {
                     r.percentage = round(r.percentage || 0, -2);
-                    ProgressActions.updating(
-                        lang.update.updating + ' (' + r.percentage + '%)',
-                        r.percentage
-                    );
+                    Progress.update('update-firmware', {
+                        message: lang.update.updating + ' (' + r.percentage + '%)',
+                        percentage: r.percentage
+                    });
                 }).always(() => {
-                    ProgressActions.close();
+                    Progress.popById('update-firmware');
                 }).done(
                     _onFinishUpdate.bind(null, true)
                 ).fail(

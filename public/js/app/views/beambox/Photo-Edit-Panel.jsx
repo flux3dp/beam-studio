@@ -5,8 +5,7 @@ define([
     'helpers/i18n',
     'helpers/image-data',
     'helpers/JimpHelper',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'jsx!widgets/Modal',
     'jsx!widgets/Button-Group',
     'jsx!widgets/Curve-Control',
@@ -17,8 +16,7 @@ define([
     i18n,
     ImageData,
     JimpHelper,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     Modal,
     ButtonGroup,
     CurveControl,
@@ -33,7 +31,10 @@ define([
     class PhotoEditPanel extends React.Component {
         constructor(props) {
             super(props);
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             this.state = {
                 origSrc: this.props.src,
                 previewSrc: this.props.src,
@@ -71,7 +72,6 @@ define([
 
         async _handlePreprocess() {
             let imgBlobUrl = this.state.origSrc;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
                 const res = await fetch(imgBlobUrl)
                 const blob = await res.blob();
@@ -111,7 +111,7 @@ define([
                         });
                     }
                 } else if (this.props.mode === 'crop') {
-                    ProgressActions.close();
+                    Progress.popById('photo-edit-processing');
 
                     this.setState({
                         imageWidth: w,
@@ -127,7 +127,7 @@ define([
                 
             } catch (err) {
                 console.log(err)
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -164,7 +164,10 @@ define([
                 this._handleSetAttribute('data-shading', true);
             }
 
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             ImageData(
                 this.state.src, {
                     grayscale: {
@@ -179,7 +182,7 @@ define([
                         svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
                         svgCanvas.selectOnly([elem], true);
 
-                        ProgressActions.close();
+                        Progress.popById('photo-edit-processing');
                     }
                 }
             );
@@ -244,7 +247,7 @@ define([
                 if (this.props.mode === 'crop' && !this.state.isCropping) {
                     this._handleStartCrop();
                 }
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             };
             return (
                 <Modal>
@@ -266,7 +269,10 @@ define([
         }
 
         _handleGrayScale = () => {
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             ImageData(
                 this.state.src,
                 {
@@ -278,7 +284,7 @@ define([
                     },
                     isFullResolution: true,
                     onComplete: (result) => {
-                        ProgressActions.close();
+                        Progress.popById('photo-edit-processing');
                         if (this.state.grayScaleUrl) {
                             URL.revokeObjectURL(this.state.grayScaleUrl);
                         }
@@ -321,7 +327,10 @@ define([
             const k_corner = -sharpness / 4;
             const k_m = -4 * (k_edge + k_corner) + 1;
             const kernal = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 let imageData = await fetch(imgBlobUrl);
                 imageData = await imageData.blob();
@@ -344,10 +353,10 @@ define([
                     this.setState({src: src}, () => this._handleComplete());
                 }
                 
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -379,7 +388,10 @@ define([
             const h = Math.min(image.naturalHeight - y, cropData.height);
 
             let imgBlobUrl = this.state.src;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 let imageData = await fetch(imgBlobUrl);
                 imageData = await imageData.blob();
@@ -398,16 +410,19 @@ define([
                     imageWidth: cropData.width,
                     imageHeight: cropData.height
                 }, () => {
-                    ProgressActions.close();
+                    Progress.popById('photo-edit-processing');
                     if (complete) {
-                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                        Progress.openNonstopProgress({
+                            id: 'photo-edit-processing',
+                            message: LANG.processing,
+                        });
                         let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
                     }
                 });
                 
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -439,11 +454,11 @@ define([
                 }
                 this.state.srcHistory.push(this.state.src);
                 this.state.src = src;
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
                 this._handleComplete();
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -473,11 +488,11 @@ define([
                 this.state.shading = true;
                 this.state.threshold = 255;
                 this.state.src = src;
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
                 this._handleComplete();
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -503,7 +518,10 @@ define([
         async _handleCurve(isPreview) {
             const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
             let imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 let imageData = await fetch(imgBlobUrl);
                 imageData = await imageData.blob();
@@ -528,10 +546,10 @@ define([
                 } else {
                     this.setState({src: src}, () => this._handleComplete());
                 }
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -620,7 +638,6 @@ define([
                     break;
                 case 'invert':
                 case 'stamp':
-                    ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
                     renderContent = (<div/>)
                     break;
                 default:

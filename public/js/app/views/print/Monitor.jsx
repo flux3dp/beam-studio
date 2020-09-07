@@ -7,8 +7,7 @@ define([
     'app/actions/beambox/constant',
     'app/actions/alert-actions',
     'app/stores/alert-store',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/constants/device-constants',
     'app/actions/global-actions',
     'app/constants/global-constants',
@@ -33,8 +32,7 @@ define([
     Constant,
     AlertActions,
     AlertStore,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     DeviceConstants,
     GlobalActions,
     GlobalConstants,
@@ -570,12 +568,15 @@ define([
             else {
                 this._addHistory();
                 const device = DeviceMaster.getSelectedDevice();
-                ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
+                Progress.openNonstopProgress({
+                    id: 'prepare-relocate',
+                    message: lang.monitor.prepareRelocate,
+                });
                 await this._getCameraOffset();
                 await DeviceMaster.enterRawMode();
                 await DeviceMaster.rawSetRotary(false); // Disable Rotary
                 await DeviceMaster.rawHome();
-                ProgressActions.close();
+                Progress.popById('prepare-relocate');
                 store.dispatch(MonitorActionCreator.setCurrentPosition({x: 0, y: 0}));
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.CAMERA_RELOCATE));
             }

@@ -30,8 +30,11 @@ define([
         };
 
         pushToStack = (elem) => {
-            // if (elem.id) console.log(`alert/progress id: ${elem.id} popped up`);
+            if (elem.id) {
+                console.log('alert/progress poped', elem.id);
+            }
             this.state.alertProgressStack.push(elem);
+            console.log(this.state.alertProgressStack);
             this.setState(this.state);
         }
 

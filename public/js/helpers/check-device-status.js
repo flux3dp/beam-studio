@@ -9,8 +9,7 @@ define([
     'app/actions/beambox/preview-mode-controller',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants'
+    'app/contexts/ProgressCaller',
 ], function(
     $,
     i18n,
@@ -19,8 +18,7 @@ define([
     PreviewModeController,
     Alert,
     AlertConstants,
-    ProgressActions,
-    ProgressConstants
+    Progress,
 ) {
 
     const lang = i18n.get();
@@ -42,7 +40,10 @@ define([
                     deferred.resolve('ok');
                     break;
                 case 'abort':
-                    ProgressActions.open(ProgressConstants.NONSTOP);
+                    Progress.openNonstopProgress({
+                        id: 'device-master-abort',
+                        timeout: 30000,
+                    });
                     await DeviceMaster.stop();
                     timer = setInterval(async () => {
                         const report = await DeviceMaster.getReport();
@@ -52,7 +53,7 @@ define([
                             }, 500);
                         } else if (report.st_id === DeviceConstants.status.IDLE) {
                             clearInterval(timer);
-                            ProgressActions.close();
+                            Progress.popById('device-master-abort');
                             deferred.resolve('ok', report.st_id);
                         }
                     }, 1000);
@@ -73,7 +74,6 @@ define([
             case DeviceConstants.status.SCAN:
             case DeviceConstants.status.MAINTAIN:
                 // ask kick?
-                ProgressActions.close();
                 Alert.popUp({
                     id: 'kick',
                     message: lang.message.device_is_used,
@@ -103,7 +103,6 @@ define([
                 }
                 else {
                     // ask for abort
-                    ProgressActions.close();
                     if (forceAbort) {
                         onYes('abort');
                     } else {
@@ -119,7 +118,6 @@ define([
             default:
                 // device busy
                 console.log('Device Busy ', printer.st_id);
-                ProgressActions.close();
                 Alert.popUpDeviceBusy('on-select-printer');
                 break;
         }

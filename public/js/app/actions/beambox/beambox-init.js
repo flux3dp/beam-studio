@@ -373,8 +373,10 @@ define([
                         });
                         return;
                     }
-                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                    Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
                     await checkDeviceStatus(device);
+                    Progress.popById('check-device-status');
+                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                     DeviceMaster.select(device)
                         .done(() => {
                             Progress.popById('connect');
@@ -401,8 +403,10 @@ define([
                     const vc = VersionChecker(device.version);
                     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                     if (isAvailableVersion) {
-                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                        Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
                         await checkDeviceStatus(device);
+                        Progress.popById('check-device-status');
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         DeviceMaster.select(device)
                             .done(() => {
                                 Progress.popById('connect');

@@ -10,8 +10,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'helpers/check-device-status',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/preview-mode-controller',
     'helpers/api/camera-calibration',
     'app/actions/beambox/constant',
@@ -27,8 +26,7 @@ define([
     Alert,
     AlertConstants,
     CheckDeviceStatus,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     PreviewModeController,
     CameraCalibration,
     Constant,
@@ -149,7 +147,6 @@ define([
                                 } catch (error) {
                                     this.setState({isCutButtonDisabled: false});
                                     console.log(error);
-                                    ProgressActions.close();
                                     Alert.popUp({
                                         id: 'menu-item',
                                         type: AlertConstants.SHOW_POPUP_ERROR,
@@ -211,7 +208,11 @@ define([
             let blobUrl;
             try {
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 cameraOffset = PreviewModeController.getCameraOffset();
                 this.cameraOffset = cameraOffset;
                 const movementX = Constant.camera.calibrationPicture.centerX + Constant.diode.defaultOffsetX - cameraOffset.x;
@@ -220,7 +221,7 @@ define([
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
             this.imageUrl = blobUrl;
         }
@@ -385,7 +386,11 @@ define([
 
         moveAndRetakePicture = async (dir) => {
             try {
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 let {cameraMovedX, cameraMovedY} = this.state;
                 switch(dir) {
                     case 'up':
@@ -411,7 +416,7 @@ define([
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
         }
 

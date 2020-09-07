@@ -6,8 +6,7 @@ define([
     'app/constants/alert-constants',
     'app/actions/alert-actions',
     'app/actions/beambox',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/input-lightbox-actions',
     'app/constants/device-constants',
     'helpers/api/control',
@@ -33,8 +32,7 @@ define([
     AlertConstants,
     AlertActions,
     BeamboxActions,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     InputLightboxActions,
     DeviceConstants,
     DeviceController,
@@ -95,12 +93,9 @@ define([
     // Deprecated!
     function selectDevice(device, deferred) {
         const goAuth = (uuid) => {
-            ProgressActions.close();
             _selectedDevice = {};
 
             const handleSubmit = (password) => {
-                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.message.authenticating);
-
                 auth(device.uuid, password).done((data) => {
                     device.plaintext_password = password;
                     selectDevice(device, d);
@@ -140,7 +135,7 @@ define([
 
                     if (response.status.toUpperCase() === DeviceConstants.CONNECTED) {
                         if (options == null || (options && !options.dedicated)) {
-                            ProgressActions.close();
+                            Progress.popById('select-device');
                         }
                         let exist = _devices.some(dev => { return dev.uuid === device.uuid; });
                         if (!exist) {
@@ -151,7 +146,7 @@ define([
                 },
                 onError: function (response) {
                     console.log('createDeviceController onError', response);
-                    ProgressActions.close();
+                    Progress.popById('select-device');
                     // TODO: shouldn't do replace
                     response.error = response.error.replace(/^.*\:\s+(\w+)$/g, '$1');
                     switch (response.error.toUpperCase()) {
@@ -167,13 +162,10 @@ define([
                                 goAuth(_device.uuid);
                             }
                             else {
-                                ProgressActions.open(ProgressConstants.NONSTOP, sprintf(lang.message.connectingMachine, _device.name));
-
                                 auth(_device.uuid, '').done((data) => {
                                     selectDevice(device, d);
                                 })
                                     .fail(() => {
-                                        ProgressActions.close();
                                         Alert.popUp({
                                             id: 'auth-error-with-diff-computer',
                                             message: lang.message.auth_error,
@@ -219,6 +211,7 @@ define([
                 },
                 onFatal: function (response) {
                     console.log('createDeviceController onFatal', response);
+                    Progress.popById('select-device');
                     // process fatal
                     if (!_wasKilled) {
                         _selectedDevice = {};
@@ -330,7 +323,11 @@ define([
                 d.resolve(DeviceConstants.CONNECTED);
             }
             else {
-                ProgressActions.open(ProgressConstants.NONSTOP, sprintf(lang.message.connectingMachine, device.name));
+                Progress.openNonstopProgress({
+                    id: 'select-device',
+                    message: sprintf(lang.message.connectingMachine, device.name),
+                    timeout: 30000,
+                });
                 _device = {
                     uuid: device.uuid,
                     source: device.source,
@@ -347,20 +344,24 @@ define([
     }
 
     function auth(uuid, password) {
-        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.authenticating);
+        Progress.openNonstopProgress({
+            id: 'device-master-auth',
+            message: lang.message.authenticating,
+            timeout: 30000,
+        });
 
         let d = $.Deferred(),
             opts = {
                 onError: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     d.reject(data);
                 },
                 onSuccess: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     d.resolve(data);
                 },
                 onFail: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     d.reject(data);
                 }
             };
@@ -382,7 +383,6 @@ define([
                 }
             },
             onError: function (response) {
-                ProgressActions.close();
                 // TODO: shouldn't do replace
                 response.error = response.error.replace(/^.*\:\s+(\w+)$/g, '$1');
                 switch (response.error.toUpperCase()) {
@@ -395,12 +395,9 @@ define([
                             goAuth(_device.uuid);
                         }
                         else {
-                            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.message.authenticating);
                             auth(_device.uuid, '').then((data) => {
-                                ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, sprintf(lang.message.connectingMachine, _device.name));
                                 selectDevice(device, d);
                             }).fail(() => {
-                                ProgressActions.close();
                                 Alert.popUp({
                                     id: 'auth-error-with-diff-computer',
                                     message: lang.message.auth_error,
@@ -410,7 +407,6 @@ define([
                         }
                         break;
                     case DeviceConstants.MONITOR_TOO_OLD:
-                        ProgressActions.close();
                         Alert.popUp({
                             id: 'auth-error-with-diff-computer',
                             message: lang.message.monitor_too_old.content,
@@ -535,35 +531,6 @@ define([
         return d.promise();
     }
 
-    function runMovementTests() {
-        let d = $.Deferred();
-
-        fetch(DeviceConstants.MOVEMENT_TEST).then(res => res.blob()).then(async blob => {
-            const device = getSelectedDevice();
-            const vc = VersionChecker(device.version);
-            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
-                await setOriginX(origin.x);
-                await setOriginY(origin.y);
-            }
-            go(blob).fail(() => {
-                // Error while uploading task
-                d.reject(['UPLOAD_FAILED']);
-            })
-                .then(() => {
-                    ProgressActions.open(ProgressConstants.NONSTOP, lang.message.runningTests);
-                    waitTillCompleted().fail((error) => {
-                        // Error while running test
-                        d.reject(error);
-                    }).then(() => {
-                        // Completed
-                        d.resolve();
-                    });
-                });
-        });
-
-        return d.promise();
-    }
-
     function runBeamboxCameraTest() {
         let d = $.Deferred();
 
@@ -579,7 +546,7 @@ define([
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
                 })
                 .then(() => {
-                    ProgressActions.open(ProgressConstants.STEPPING, lang.camera_calibration.drawing_calibration_image, false);
+                    Progress.openSteppingProgress({id: 'camera-cali-task', message: lang.camera_calibration.drawing_calibration_image});
                     let taskTotalSecs = 30;
                     let elapsedSecs = 0;
                     let progressUpdateTimer = setInterval(() => {
@@ -588,17 +555,19 @@ define([
                             clearInterval(progressUpdateTimer);
                             return;
                         }
-                        ProgressActions.updating(lang.camera_calibration.drawing_calibration_image, (elapsedSecs / taskTotalSecs) * 100);
+                        Progress.update('camera-cali-task', {
+                            percentage: (elapsedSecs / taskTotalSecs) * 100
+                        });
                     }, 100);
                     waitTillCompleted()
                         .fail((err) => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('camera-cali-task');
                             d.reject(err); // Error while running test
                         })
                         .then(() => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('camera-cali-task');
                             d.resolve();
                         });
 
@@ -623,7 +592,7 @@ define([
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
                 })
                 .then(() => {
-                    ProgressActions.open(ProgressConstants.STEPPING, lang.diode_calibration.drawing_calibration_image, false);
+                    Progress.openSteppingProgress({id: 'diode-cali-task', message: lang.diode_calibration.drawing_calibration_image});
                     let taskTotalSecs = 35;
                     let elapsedSecs = 0;
                     let progressUpdateTimer = setInterval(() => {
@@ -632,17 +601,20 @@ define([
                             clearInterval(progressUpdateTimer);
                             return;
                         }
-                        ProgressActions.updating(lang.diode_calibration.drawing_calibration_image, (elapsedSecs / taskTotalSecs) * 100);
+
+                        Progress.update('diode-cali-task', {
+                            percentage: (elapsedSecs / taskTotalSecs) * 100
+                        });
                     }, 100);
                     waitTillCompleted()
                         .fail((err) => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('diode-cali-task');
                             d.reject(err); // Error while running test
                         })
                         .then(() => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('diode-cali-task');
                             d.resolve();
                         });
 
@@ -1802,7 +1774,6 @@ define([
             this.resume = resume;
             this.runBeamboxCameraTest = runBeamboxCameraTest;
             this.doDiodeCalibrationCut = doDiodeCalibrationCut;
-            this.runMovementTests = runMovementTests;
             this.select = select;
             this.selectDevice = selectDevice;
             this.setDeviceSetting = setDeviceSetting;

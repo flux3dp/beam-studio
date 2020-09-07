@@ -11,11 +11,9 @@ define([
     'helpers/version-checker',
     'app/constants/device-constants',
     'app/contexts/AlertCaller',
-    'app/actions/alert-actions',
     'app/constants/alert-constants',
     'helpers/check-device-status',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/preview-mode-controller',
     'helpers/api/camera-calibration',
     'helpers/sprintf',
@@ -33,11 +31,9 @@ define([
     VersionChecker,
     DeviceConstants,
     Alert,
-    AlertActions,
     AlertConstants,
     CheckDeviceStatus,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     PreviewModeController,
     CameraCalibration,
     sprintf,
@@ -218,7 +214,11 @@ define([
             try {
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
                 parent.lastConfig = PreviewModeController._getCameraOffset();
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
                 const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
@@ -226,7 +226,7 @@ define([
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
             return blobUrl;
         };
@@ -249,11 +249,10 @@ define([
                             } catch (error) {
                                 setCutButtonDisabled(false);
                                 console.log(error);
-                                ProgressActions.close();
                                 Alert.popUp({
                                     id: 'menu-item',
                                     type: AlertConstants.SHOW_POPUP_ERROR,
-                                    message: '#815 ' + (error.message || DeviceErrorHandler.translate(error.error) || 'Fail to cut and capture'),
+                                    message: '#815 ' + (error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture'),
                                     callbacks: async () => {
                                         const report = await DeviceMaster.getReport();
                                         device.st_id = report.st_id;
@@ -566,8 +565,11 @@ define([
 
     const moveAndRetakePicture = async (dir, updateImgBlobUrl) => {
         try {
-
-            ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+            Progress.openNonstopProgress({
+                id: 'taking-picture',
+                message: LANG.taking_picture,
+                timeout: 30000,
+            });
             let {x, y} = cameraPosition;
             switch(dir) {
                 case 'up':
@@ -590,7 +592,7 @@ define([
         } catch (error) {
             throw error;
         } finally {
-            ProgressActions.close();
+            Progress.popById('taking-picture');
         }
     }
 

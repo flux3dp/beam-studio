@@ -4,8 +4,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/constants/device-constants',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/bottom-right-funcs',
     'app/actions/beambox/constant',
@@ -33,8 +32,7 @@ define([
     Alert,
     AlertConstants,
     DeviceConstants,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     BeamboxPreference,
     BottomRightFuncs,
     Constant,
@@ -163,14 +161,16 @@ define([
             FnWrapper.useSelectTool();
             svgCanvas.clearSelection();
             const vc = VersionChecker(device.version);
-
-            ProgressActions.open(ProgressConstants.NONSTOP, lang.message.tryingToConenctMachine);
+            Progress.openNonstopProgress({
+                id: 'start-preview-controller',
+                message: lang.message.tryingToConenctMachine,
+            });
             if (!vc.meetRequirement('USABLE_VERSION')) {
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: lang.beambox.popup.should_update_firmware_to_continue,
                 });
-                ProgressActions.close();
+                Progress.popById('start-preview-controller');
                 return;
             }
 
@@ -182,10 +182,10 @@ define([
                     message,
                     caption
                 });
-                ProgressActions.close();
+                Progress.popById('start-preview-controller');
                 return;
             }
-            ProgressActions.close();
+            Progress.popById('start-preview-controller');
 
             $(workarea).css('cursor', 'wait');
             try {
@@ -362,7 +362,6 @@ define([
             const allowedWorkareas = Constant.allowedWorkarea[device.model];
             if (currentWorkarea && allowedWorkareas) {
                 if (!allowedWorkareas.includes(currentWorkarea)) {
-                    ProgressActions.close();
                     Alert.popUp({
                         id: 'workarea unavailable',
                         message: lang.message.unavailableWorkarea,
@@ -476,18 +475,18 @@ define([
 
         handleSelectDevice = async (device, callback) => {
             this.hideDeviceList();
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
             device = DeviceMaster.usbDefaultDeviceCheck(device);
             try {
                 const status = await DeviceMaster.selectDevice(device);
                 if (status === DeviceConstants.CONNECTED) {
-                    ProgressActions.open(ProgressConstants.NONSTOP);
+                    Progress.openNonstopProgress({
+                        id: 'check-device-status',
+                    });
                     await checkDeviceStatus(device);
-                    ProgressActions.close();
+                    Progress.popById('check-device-status');
                     callback(device);
                 }
                 else if (status === DeviceConstants.TIMEOUT) {
-                    ProgressActions.close();
                     Alert.popUp({
                         id: _id,
                         message: lang.message.connectionTimeout,
@@ -496,7 +495,6 @@ define([
                 }
             } catch (e) {
                 console.error(e.toString());
-                ProgressActions.close();
                 Alert.popUp({
                     id: 'fatal-occurred',
                     message: '#813' + e.toString(),
