@@ -77,12 +77,17 @@ define([
             BeamboxPreference.write('enable-diode', false);
         }
 
-        const defaultBorderless = BeamboxPreference.read('default-borderless');
+        let defaultBorderless = BeamboxPreference.read('default-borderless');
         if (defaultBorderless === undefined) {
             BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
-        } else {
-            BeamboxPreference.write('borderless', defaultBorderless);
+            defaultBorderless = BeamboxPreference.read('default-borderless');
         }
+        if (Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'))) {
+            BeamboxPreference.write('borderless', defaultBorderless);
+        } else {
+            BeamboxPreference.write('borderless', false);
+        }
+
         const config = Config();
         if (!config.read('default-units')) {
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;

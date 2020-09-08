@@ -68,6 +68,7 @@ define([
             'fbm1': ['fbm1']
         },
         addonsSupportList: {
+            openBottom: ['fbm1'],
             autoFocus: ['fbm1'],
             hybridLaser: ['fbm1'],
         },

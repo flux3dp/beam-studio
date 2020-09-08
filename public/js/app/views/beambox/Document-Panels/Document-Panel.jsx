@@ -146,6 +146,7 @@ define([
         }
 
         render() {
+            const doesSupportOpenBottom = Constant.addonsSupportList.openBottom.includes(this.state.workarea);
             const doesSupportHybrid = Constant.addonsSupportList.hybridLaser.includes(this.state.workarea);
             const doesSupportAutofocus = Constant.addonsSupportList.autoFocus.includes(this.state.workarea);
             return (
@@ -178,7 +179,8 @@ define([
                                 onText={LANG.enable}
                                 offText={LANG.disable}
                                 label={LANG.borderless_mode}
-                                default={this.state.borderlessMode}
+                                default={doesSupportOpenBottom && this.state.borderlessMode}
+                                isDisabled={!doesSupportOpenBottom}
                                 onChange={(id, val) => this._handleBorderlessModeChange(val)} />
                             <SwitchControl
                                 id="autofocus-module"

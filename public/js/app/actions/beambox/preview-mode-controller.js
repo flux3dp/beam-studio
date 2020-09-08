@@ -218,7 +218,8 @@ define([
                 }
             }
             const borderless = BeamboxPreference.read('borderless') || false;
-            const configName = borderless ? 'camera_offset_borderless' : 'camera_offset';
+            const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
+            const configName = (supportOpenBottom && borderless) ? 'camera_offset_borderless' : 'camera_offset';
             const resp = await DeviceMaster.getDeviceSetting(configName);
             console.log(`Reading ${configName}\nResp = ${resp.value}`);
             resp.value = ` ${resp.value}`;

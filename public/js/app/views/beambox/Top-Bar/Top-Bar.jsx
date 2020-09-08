@@ -109,7 +109,8 @@ define([
         renderPreviewButton = () => {
             const { isPreviewing } = this.state;
             const borderless = BeamboxPreference.read('borderless') || false;
-            const previewText = borderless ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
+            const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
+            const previewText = (borderless && supportOpenBottom) ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
             return (
                 <div className={classNames('preview-button-container', {previewing: isPreviewing})}>
                     <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>

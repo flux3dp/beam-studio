@@ -9,7 +9,6 @@ define([
     const createBoundary = () => {
         openBottomBoundarySVG = document.createElementNS(window.svgedit.NS.SVG, 'svg');
         openBottomBoundaryRect = document.createElementNS(window.svgedit.NS.SVG, 'rect');
-        console.log($('#canvasBackground'));
         $('#canvasBackground').append(openBottomBoundarySVG);
         openBottomBoundarySVG.appendChild(openBottomBoundaryRect);
         $(openBottomBoundarySVG).attr({
@@ -35,7 +34,8 @@ define([
 
     const update = () => {
         const isOpenBottom = BeamboxPreference.read('borderless');
-        if (isOpenBottom) {
+        const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
+        if (isOpenBottom && supportOpenBottom) {
             show();
         } else {
             hide();
