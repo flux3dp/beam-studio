@@ -9,6 +9,7 @@ import Websocket from '../../helpers/websocket'
 
     const React = requireNode('react');;
     const classNames = requireNode('classnames');
+    const dns = requireNode('dns');
 
     const lang = i18n.lang.initialize;
     const TIMEOUT = 20;
@@ -68,7 +69,6 @@ import Websocket from '../../helpers/websocket'
             }
 
             checkRpiIp = async () => {
-                const dns = require('dns');
                 const dnsPromise = dns.promises;
                 try {
                     const lookupOptions = {

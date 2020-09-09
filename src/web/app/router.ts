@@ -4,6 +4,15 @@ import Backbone from 'backbone'
 import config from '../helpers/api/config'
 import appSettings from './app-settings'
 import Home from './pages/Home'
+import SelectMachineType from './pages/Select-Machine-Type';
+import SelectConnectionType from './pages/Select-Connection-Type';
+import SkipConnectMachine from './pages/Skip-Connect-Machine';
+import ConnectWiFi from './pages/Connect-Wi-Fi';
+import ConnectWired from './pages/Connect-Wired';
+import ConnectEthernet from './pages/Connect-Ethernet';
+import ConnectMachineIp from './pages/Connect-Machine-Ip';
+import ConnectBeambox from './pages/Connect-Beambox';
+import ConnectBeamo from './pages/Connect-Beamo';
 import Settings from './pages/Settings'
 import Beambox from './pages/Beambox'
 import NotificationCollection from './views/Notification-Collection'
@@ -63,38 +72,98 @@ import NotificationCollection from './views/Notification-Collection'
         },
 
         initial: function(step, other) {
-            var map = {
-                    'select-machine-type': 'Select-Machine-Type',
-                    'select-connection-type': 'Select-Connection-Type',
-                    'skip-connect-machine': 'Skip-Connect-Machine',
-                    'connect-wi-fi': 'Connect-Wi-Fi',
-                    'connect-wired': 'Connect-Wired',
-                    'connect-ethernet': 'Connect-Ethernet',
-                    'connect-machine-ip': 'Connect-Machine-Ip',
-                    'connect-beambox': 'Connect-Beambox',
-                    'connect-beamo': 'Connect-Beamo',
-                    'connect-machine': 'Connect-Machine',
-                    'select': 'Wifi-Select',
-                    'set-printer': 'Wifi-Set-Printer',
-                    'set-password': 'Wifi-Set-Password',
-                    'setup-complete': 'Wifi-Setup-Complete'
-                },
-                view_name = 'Wifi-Home';
-
-            if (true === map.hasOwnProperty(step)) {
-                view_name = map[step];
-            }
-
-            window['requirejs'](['jsx!pages/' + view_name], function(view) {
-                _display(
-                    view,
-                    {
-                        props: {
-                            other: other
+            switch(step) {
+                case 'select-machine-type':
+                    _display(
+                        SelectMachineType,
+                        {
+                            props: {
+                                other: other
+                            }
                         }
-                    }
-                );
-            });
+                    );
+                    break;
+                case 'select-connection-type':
+                    _display(
+                        SelectConnectionType,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    );
+                    break;
+                case 'skip-connect-machine':
+                    _display(
+                        SkipConnectMachine,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-wi-fi':
+                    _display(
+                        ConnectWiFi,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-wired':
+                    _display(
+                        ConnectWired,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-ethernet':
+                    _display(
+                        ConnectEthernet,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-machine-ip':
+                    _display(
+                        ConnectMachineIp,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-beambox':
+                    _display(
+                        ConnectBeambox,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+                case 'connect-beamo':
+                    _display(
+                        ConnectBeamo,
+                        {
+                            props: {
+                                other: other
+                            }
+                        }
+                    )
+                    break;
+            }
         },
 
         appendNotificationCollection: function() {
