@@ -44,7 +44,7 @@ define(function() {
         HEATING         : 'HEATING',
         MONITOR_TOO_OLD : 'FLUXMONITOR_VERSION_IS_TOO_OLD',
         RESOURCE_BUSY   : 'RESOURCE_BUSY',
-
+        NOT_FOUND       : 'NOT_FOUND',
         // folder
         NOT_EXIST       : 'NOT_EXIST',
         PREVIEW         : 'PREVIEW',
