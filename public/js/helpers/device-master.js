@@ -1442,7 +1442,7 @@ define([
 
                             defaultPrinterWarningShowed = true;
 
-                            if (Config().read('notification') === '1') {
+                            if (Config().read('notification') === 1) {
                                 Notification.requestPermission((permission) => {
                                     if (permission === 'granted') {
                                         let notification = new Notification(device.name, {

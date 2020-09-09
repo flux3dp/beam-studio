@@ -88,6 +88,9 @@ define([
         }
 
         _updateConfigChange = (id, val) => {
+            if (!isNaN(Number(val))) {
+                val = Number(val);
+            }
             this.configChanges[id] = val;
             this.forceUpdate();
         }
@@ -172,12 +175,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: (this.configChanges['notification'] || Config().read('notification')) === '0'
+                    selected: this._getConfigEditingValue('notification') === 0
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: (this.configChanges['notification'] || Config().read('notification')) === '1'
+                    selected: this._getConfigEditingValue('notification') === 1
                 }
             ];
 
@@ -185,12 +188,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.notification_off,
-                    selected: (this.configChanges['auto_check_update'] || Config().read('auto_check_update'))  === '0'
+                    selected: this._getConfigEditingValue('auto_check_update') === 0
                 },
                 {
                     value: 1,
                     label: lang.settings.notification_on,
-                    selected: (this.configChanges['auto_check_update'] || Config().read('auto_check_update')) !== '0'
+                    selected: this._getConfigEditingValue('auto_check_update') !== 0
                 }
             ];
 
@@ -198,12 +201,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.off,
-                    selected: (this.configChanges['guessing_poke'] || Config().read('guessing_poke')) === '0'
+                    selected: this._getConfigEditingValue('guessing_poke') === 0
                 },
                 {
                     value: 1,
                     label: lang.settings.on,
-                    selected: (this.configChanges['guessing_poke'] || Config().read('guessing_poke')) !== '0'
+                    selected: this._getConfigEditingValue('guessing_poke') !== 0
                 }
             ];
 
@@ -211,12 +214,12 @@ define([
                 {
                     value: 0,
                     label: lang.settings.off,
-                    selected: (this.configChanges['auto_connect'] || Config().read('auto_connect')) === '0'
+                    selected: this._getConfigEditingValue('auto_connect') === 0
                 },
                 {
                     value: 1,
                     label: lang.settings.on,
-                    selected: (this.configChanges['auto_connect'] || Config().read('auto_connect')) !== '0'
+                    selected: this._getConfigEditingValue('auto_connect') !== 0
                 }
             ];
 
@@ -224,12 +227,12 @@ define([
                 {
                     value: 'mm',
                     label: lang.menu.mm,
-                    selected: (this.configChanges['default-units'] || Config().read('default-units')) === 'mm'
+                    selected: this._getConfigEditingValue('default-units') === 'mm'
                 },
                 {
                     value: 'inches',
                     label: lang.menu.inches,
-                    selected: (this.configChanges['default-units'] || Config().read('default-units')) === 'inches'
+                    selected: this._getConfigEditingValue('default-units') === 'inches'
                 },
             ];
 

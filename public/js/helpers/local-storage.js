@@ -16,7 +16,7 @@ define(['localStorage'], function(localStorage) {
             var item = store.get(name),
                 temp_item;
 
-            item = (item ? item : '');
+            item = (item !== undefined ? item : '');
 
             try {
                 temp_item = JSON.parse(item);

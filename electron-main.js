@@ -198,6 +198,18 @@ function createWindow () {
         mainWindow.webContents
             .executeJavaScript('({...localStorage});', true)
             .then(localStorage => {
+                const keysNeedParse = ['auto_check_update', 'auto_connect', 'guessing_poke', 'loop_compensation', 'notification', 'printer-is-ready'];
+                for (let key in localStorage) {
+                    if (keysNeedParse.includes(key)) {
+                        try {
+                            localStorage[key] = JSON.parse(localStorage[key]);
+                            console.log(key, localStorage[key]);
+                        } catch (e) {
+                            console.log(key, e);
+                            //Error when parsing 
+                        }
+                    }
+                }
                 store.set(localStorage);
             });
     }

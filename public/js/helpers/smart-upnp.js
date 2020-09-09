@@ -21,7 +21,7 @@ define([
 		 */
 		init: (discoverObj) => {
 			Discover = discoverObj;
-			if (Config().read('guessing_poke') !== '0') {
+			if (Config().read('guessing_poke') !== 0) {
 				setInterval(function() {
 					if(Discover.countDevices() === 0){
 						self.pokeNext();

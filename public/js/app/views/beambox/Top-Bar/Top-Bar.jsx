@@ -394,7 +394,7 @@ define([
         showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
             const { deviceList } = this;
             if (deviceList.length > 0) {
-                if (LocalStorage.get('auto_connect') !== '0' && deviceList.length === 1) {
+                if (LocalStorage.get('auto_connect') !== 0 && deviceList.length === 1) {
                     this.handleSelectDevice(deviceList[0], (device) => {selectDeviceCallback(device)});
                     return;
                 }
