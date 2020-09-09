@@ -188,12 +188,10 @@ define([
                                 return;
                             }
 
-                            let message = lang.message.unable_to_find_machine;
-
                             success(false);
                             Alert.popUp({
                                 id: 'not-found',
-                                message: `#831 ${message}`,
+                                message: `#831 ${lang.message.unable_to_find_machine}`,
                                 type: AlertConstants.SHOW_POPUP_ERROR
                             });
                             break;
@@ -203,12 +201,10 @@ define([
                                 return;
                             }
 
-                            let message = lang.message.disconnected;
-
                             success(false);
                             Alert.popUp({
                                 id: 'disconnected',
-                                message: `#832 ${message}`,
+                                message: `#832 ${lang.message.disconnected}`,
                                 type: AlertConstants.SHOW_POPUP_ERROR
                             });
                             break;
