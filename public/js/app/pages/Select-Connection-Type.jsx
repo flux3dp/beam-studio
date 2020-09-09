@@ -1,8 +1,10 @@
 define([
     'jsx!widgets/Modal',
+    'helpers/local-storage',
     'helpers/i18n',
 ], function (
     Modal,
+    LocalStorage,
     i18n
 ) {
     'use strict';
@@ -66,14 +68,14 @@ define([
             }
 
             renderButtons = () => {
-                const isNewUser = localStorage.getItem('printer-is-ready') !== 'true';
+                const isNewUser = !LocalStorage.get('printer-is-ready');
                 return (
                     <div className="btn-page-container">
                         <div className="btn-page primary" onClick={() => {
                             if (isNewUser) {
-                                localStorage.setItem('new-user', true);
+                                LocalStorage.set('new-user', true);
                             }
-                            localStorage.setItem('printer-is-ready', true);
+                            LocalStorage.set('printer-is-ready', true);
                             location.hash = '#studio/beambox';
                         }} >
                             {isNewUser ? lang.skip : lang.cancel}

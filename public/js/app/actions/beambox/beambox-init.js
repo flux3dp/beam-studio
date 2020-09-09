@@ -24,6 +24,7 @@ define([
     'helpers/check-firmware',
     'helpers/device-master',
     'helpers/firmware-updater',
+    'helpers/local-storage',
     'helpers/output-error',
     'helpers/sprintf',
     'helpers/version-checker',
@@ -54,6 +55,7 @@ define([
     checkFirmware,
     DeviceMaster,
     firmwareUpdater,
+    LocalStorage,
     OutputError,
     sprintf,
     VersionChecker,
@@ -566,7 +568,7 @@ define([
     showTutorial = () => {
         if (!AlertConfig.read('skip-interface-tutorial')) {
             const LANG = i18n.lang.tutorial;
-            const isNewUser = localStorage.getItem('new-user') === 'true';
+            const isNewUser = LocalStorage.get('new-user');
             Alert.popUp({
                 id: 'ask-tutorial',
                 caption: LANG.welcome,
@@ -574,7 +576,7 @@ define([
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
                     const tutorialCallback = () => {
-                        localStorage.removeItem('new-user');
+                        LocalStorage.removeAt('new-user');
                         AlertConfig.write('skip-interface-tutorial', true);
                         Alert.popUp({
                             message: LANG.tutorial_complete,
@@ -587,7 +589,7 @@ define([
                     }
                 },
                 onNo: () => {
-                    localStorage.removeItem('new-user');
+                    LocalStorage.removeAt('new-user');
                     AlertConfig.write('skip-interface-tutorial', true);
                     if (isNewUser) {
                         Alert.popUp({

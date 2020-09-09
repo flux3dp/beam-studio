@@ -5,6 +5,7 @@ define([
     'helpers/api/discover',
     'helpers/device-list',
     'helpers/device-master',
+    'helpers/local-storage',
     'helpers/i18n',
     'helpers/websocket',
 ], function (
@@ -14,6 +15,7 @@ define([
     Discover,
     DeviceList,
     DeviceMaster,
+    LocalStorage,
     i18n,
     Websocket
 ) {
@@ -236,19 +238,19 @@ define([
                 const model = modelMap[device.model] || 'fbb1b';
                 BeamboxPreference.write('model', model);
                 BeamboxPreference.write('workarea', model);
-                let pokeIPs = localStorage.getItem('poke-ip-addr');
+                let pokeIPs = LocalStorage.get('poke-ip-addr');
                 pokeIPs = (pokeIPs ? pokeIPs.split(/[,;] ?/) : []);
                 if (!pokeIPs.includes(machineIp)) {
                     if (pokeIPs.length > 19) {
                         pokeIPs = pokeIPs.slice(pokeIPs.length - 19, pokeIPs.length);
                     }
                     pokeIPs.push(machineIp);
-                    localStorage.setItem('poke-ip-addr', pokeIPs.join(','));
+                    LocalStorage.set('poke-ip-addr', pokeIPs.join(','));
                 }
-                if (!localStorage.getItem('printer-is-ready')) {
-                    localStorage.setItem('new-user', true);
+                if (!LocalStorage.get('printer-is-ready')) {
+                    LocalStorage.set('new-user', true);
                 }
-                localStorage.setItem('printer-is-ready', true);
+                LocalStorage.set('printer-is-ready', true);
                 location.hash = '#studio/beambox';
                 location.reload();
             }

@@ -2,7 +2,7 @@ define([
     'jquery',
     'reactPropTypes',
     'helpers/i18n'
-], function($, PropTypes, i18n, localStorage) {
+], function($, PropTypes, i18n) {
     'use strict';
     const React = require('react');
 

@@ -46,7 +46,7 @@ define([
         },
         hasBeenCompleted: function() {
             // If you initialized before and you're not in initialization screen
-            return 'true' === config().read('printer-is-ready') && (!~location.href.indexOf('initialize/'));
+            return config().read('printer-is-ready') && (!~location.href.indexOf('initialize/'));
         },
         settingPrinter: {
             get: function() {

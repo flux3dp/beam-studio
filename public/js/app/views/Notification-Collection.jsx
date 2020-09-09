@@ -32,6 +32,7 @@ define([
     'helpers/firmware-updater',
     'helpers/device-list',
     'helpers/device-master',
+    'helpers/local-storage',
 ], function(
     $,
     Notifier,
@@ -65,7 +66,8 @@ define([
     checkFirmware,
     firmwareUpdater,
     DeviceList,
-    DeviceMaster
+    DeviceMaster,
+    LocalStorage,
 ) {
     'use strict';
     const React = require('react');
@@ -308,7 +310,7 @@ define([
                       payload.device.version
                     ),
                     releaseNote = (
-                      'zh-tw' === localStorage['active-lang'] ?
+                      'zh-tw' === LocalStorage.get('active-lang') ?
                       payload.updateInfo.changelog_zh :
                       payload.updateInfo.changelog_en
                     );

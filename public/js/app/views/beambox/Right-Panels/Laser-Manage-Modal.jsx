@@ -31,7 +31,7 @@ define([
             super(props);
             this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
             this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
-            this.unit = localStorage.getItem('default-units') || 'mm';
+            this.unit = LocalStorage.get('default-units') || 'mm';
             const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === props.selectedItem);
             this.unsavedChanges = {};
             this.state = {

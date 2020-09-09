@@ -4,6 +4,7 @@ define([
     'jsx!widgets/Modal',
     'helpers/api/usb-config',
     'helpers/api/config',
+    'helpers/local-storage',
     'app/actions/alert-actions'
 ], function(
     initializeMachine,
@@ -11,6 +12,7 @@ define([
     Modal,
     usbConfig,
     config,
+    LocalStorage,
     AlertActions
 ) {
     'use strict';
@@ -102,7 +104,7 @@ define([
                             .progress(tryAgain)
                             .done((response) => {
                                 if (response.action === 'GOOD') {
-                                    let pokeIPAddr = localStorage.getItem('poke-ip-addr');
+                                    let pokeIPAddr = LocalStorage.get('poke-ip-addr');
 
                                     if (pokeIPAddr && pokeIPAddr !== '') {
                                         const pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
@@ -112,10 +114,10 @@ define([
                                                 pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
                                             }
 
-                                            localStorage.setItem('poke-ip-addr', `${pokeIPAddr}, ${response.ipaddr[0]}`);
+                                            LocalStorage.set('poke-ip-addr', `${pokeIPAddr}, ${response.ipaddr[0]}`);
                                         }
                                     } else {
-                                        localStorage.setItem('poke-ip-addr', response.ipaddr[0]);
+                                        LocalStorage.set('poke-ip-addr', response.ipaddr[0]);
                                     }
 
                                     location.hash = '#initialize/connect/setup-complete';

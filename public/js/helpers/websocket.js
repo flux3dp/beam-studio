@@ -4,6 +4,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'helpers/output-error',
+    'helpers/local-storage',
     'helpers/logger',
     'helpers/blob-segments',
 ], function(
@@ -12,6 +13,7 @@ define([
     Alert,
     AlertConstants,
     outputError,
+    LocalStorage,
     Logger,
     blobSegments
 ) {
@@ -45,8 +47,8 @@ define([
         var lang = i18n.get(),
             { dev } = window.FLUX,
             dev = false,
-            customHost = localStorage.getItem('host'),
-            customPort = localStorage.getItem('port'),
+            customHost = LocalStorage.get('host'),
+            customPort = LocalStorage.get('port'),
             defaultCallback = function(result) {},
             defaultOptions = {
                 hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),

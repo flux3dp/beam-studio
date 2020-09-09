@@ -1,10 +1,12 @@
 define([
     'jquery',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
 ], function(
     $,
     UnitInput,
+    LocalStorage,
     i18n
 )   {
     const React = require('react');
@@ -27,7 +29,7 @@ define([
 
         _getValueCaption() {
             const spacing = this.state.spacing, 
-                units = localStorage.getItem('default-units') | 'mm';
+                units = LocalStorage.get('default-units') | 'mm';
             if (units === 'inches') {
                 return `${Number(spacing/25.4).toFixed(3)}\"`;
             } else {

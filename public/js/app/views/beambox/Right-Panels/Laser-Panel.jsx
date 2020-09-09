@@ -110,7 +110,7 @@ define([
         }
 
         initDefaultConfig = () => {
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             if (!LocalStorage.get('defaultLaserConfigsInUse') || !LocalStorage.get('customizedLaserConfigs')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
                     const {speed, power, repeat} = this._getDefaultParameters(e);
@@ -672,7 +672,7 @@ define([
                     break;
                 }
             }
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             const speedPanel = this._renderSpeed(hasVector, unit);
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();

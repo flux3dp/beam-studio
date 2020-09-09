@@ -7,6 +7,7 @@ define([
     'app/actions/initialize-machine',
     'helpers/api/config',
     'helpers/device-list',
+    'helpers/local-storage',
     'helpers/logger',
     'helpers/smart-upnp',
     'helpers/api/cloud'
@@ -15,9 +16,11 @@ define([
     initializeMachine,
     Config,
     DeviceList,
+    LocalStorage,
     Logger,
     SmartUpnp,
-    CloudApi) {
+    CloudApi
+) {
     'use strict';
 
     const dns = require('dns');
@@ -53,7 +56,7 @@ define([
                     device.uuid = device.addr.toString();
                 }
 
-                let pokeIPAddr = localStorage.getItem('poke-ip-addr');
+                let pokeIPAddr = LocalStorage.get('poke-ip-addr');
 
                 if (pokeIPAddr && pokeIPAddr !== '') {
                     const pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
@@ -63,10 +66,10 @@ define([
                             pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
                         }
 
-                        localStorage.setItem('poke-ip-addr', `${pokeIPAddr}, ${device.ipaddr}`);
+                        LocalStorage.set('poke-ip-addr', `${pokeIPAddr}, ${device.ipaddr}`);
                     }
                 } else {
-                    localStorage.setItem('poke-ip-addr', device.ipaddr);
+                    LocalStorage.set('poke-ip-addr', device.ipaddr);
                 }
 
                 _devices[device.uuid] = device;
@@ -107,7 +110,7 @@ define([
             if (targetIP == null) { return; };
             ws.send(JSON.stringify({ 'cmd' : 'testtcp', 'ipaddr': targetIP }));
         },
-        pokeIPAddr = localStorage.getItem('poke-ip-addr'),
+        pokeIPAddr = LocalStorage.get('poke-ip-addr'),
         pokeIPs = (pokeIPAddr ? pokeIPAddr.split(/[,;] ?/) : ['']);
 
     if ('' === pokeIPs[0]) {

@@ -22,6 +22,7 @@ define([
     'helpers/check-device-status',
     'helpers/device-list',
     'helpers/device-master',
+    'helpers/local-storage',
     'helpers/sprintf',
     'helpers/symbol-maker',
     'helpers/version-checker',
@@ -50,6 +51,7 @@ define([
     checkDeviceStatus,
     DeviceList,
     DeviceMaster,
+    LocalStorage,
     sprintf,
     SymbolMaker,
     VersionChecker,
@@ -321,7 +323,7 @@ define([
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
                     if (!AlertConfig.read('skip_path_speed_warning')) {
                         let message = lang.beambox.popup.too_fast_for_path;
-                        if (localStorage.getItem('default-units') === 'inches') {
+                        if (LocalStorage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                             console.log(message);
                         }
@@ -339,7 +341,7 @@ define([
                 } else {
                     if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
                         let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
-                        if (localStorage.getItem('default-units') === 'inches') {
+                        if (LocalStorage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                         }
                         Alert.popUp({
@@ -392,7 +394,7 @@ define([
         showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
             const { deviceList } = this;
             if (deviceList.length > 0) {
-                if (localStorage.getItem('auto_connect') !== '0' && deviceList.length === 1) {
+                if (LocalStorage.get('auto_connect') !== '0' && deviceList.length === 1) {
                     this.handleSelectDevice(deviceList[0], (device) => {selectDeviceCallback(device)});
                     return;
                 }

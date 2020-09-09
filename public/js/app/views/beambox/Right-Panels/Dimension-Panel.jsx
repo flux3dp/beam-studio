@@ -5,6 +5,7 @@ define([
     'app/constants/alert-constants',
     'app/actions/beambox/constant',
     'app/constants/keycode-constants',
+    'helpers/local-storage',
     'helpers/symbol-maker',
     'helpers/i18n'
 ], function(
@@ -14,6 +15,7 @@ define([
     AlertConstants,
     Constant,
     KeycodeConstants,
+    LocalStorage,
     SymbolMaker,
     i18n
 ) {
@@ -193,7 +195,7 @@ define([
             const { getDimensionValues } = this.props;
             const dimensionValues = getDimensionValues();
             const isRatioFixed = dimensionValues.isRatioFixed || false;
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             const isInch = unit === 'inches';
             switch(type) {
                 case 'x':

@@ -18,6 +18,7 @@ const url = require('url');
 const fs = require('fs');
 const os = require('os');
 const exec = require('child_process').exec;
+const Store = require('electron-store');
 
 let mainWindow;
 let menuManager;
@@ -187,6 +188,20 @@ function createWindow () {
         },
         vibrancy: 'light'});
 
+    const store = new Store();
+
+    if (!store.get('poke-ip-addr')) {
+        store.set('poke-ip-addr', '192.168.1.1');
+    }
+    
+    if (!store.get('customizedLaserConfigs')) {
+        mainWindow.webContents
+            .executeJavaScript('({...localStorage});', true)
+            .then(localStorage => {
+                store.set(localStorage);
+            });
+    }
+    
     // mainWindow.maximize();
 
     mainWindow.loadURL(url.format({

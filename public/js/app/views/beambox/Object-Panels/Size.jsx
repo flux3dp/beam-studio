@@ -3,6 +3,7 @@ define([
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'helpers/symbol-maker',
     'app/actions/beambox/constant',
@@ -12,6 +13,7 @@ define([
     PropTypes,
     FnWrapper,
     UnitInput,
+    LocalStorage,
     i18n,
     SymbolMaker,
     Constant,
@@ -131,7 +133,7 @@ define([
         getValueCaption = () => {
             const width = this.state.width, 
                 height = this.state.height,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(width/25.4).toFixed(3)}\" x ${Number(height/25.4).toFixed(3)}\"`;
             } else {

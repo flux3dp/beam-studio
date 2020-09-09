@@ -3,9 +3,10 @@ define([
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'app/actions/beambox/constant',
-], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, LocalStorage, i18n, Constant) {
     const React = require('react');
 
     const LANG = i18n.lang.beambox.object_panels;
@@ -31,7 +32,7 @@ define([
 
         getValueCaption = () => {
             const rx = this.state.rx,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(rx/25.4).toFixed(3)}\"`;
             } else {

@@ -2,9 +2,10 @@ define([
     'jquery',
     'reactPropTypes',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'app/actions/beambox/constant'
-], function($, PropTypes, UnitInput, i18n, Constant) {
+], function($, PropTypes, UnitInput, LocalStorage, i18n, Constant) {
     'use strict';
     const React = require('react');
 
@@ -46,7 +47,7 @@ define([
         getValueCaption = () => {
             const dx = this.state.dx, 
                 dy = this.state.dy,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(dx/25.4).toFixed(3)}\", ${Number(dy/25.4).toFixed(3)}\"`;
             } else {

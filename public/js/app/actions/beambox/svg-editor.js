@@ -52,6 +52,7 @@ define([
     'helpers/api/alert-config',
     'helpers/api/config',
     'helpers/api/svg-laser-parser',
+    'helpers/local-storage',
     'lib/svgeditor/imagetracer',
 ], function (
     ToolPanelsController,
@@ -83,6 +84,7 @@ define([
     AlertConfig,
     Config,
     SvgLaserParser,
+    LocalStorage,
     ImageTracer
 ) {
     const React = require('react');
@@ -354,7 +356,7 @@ define([
                     (curConfig.forceStorage || (!curConfig.noStorageOnLoad && document.cookie.match(/(?:^|;\s*)store=prefsAndContent/)))
             ) {
                 var name = 'svgedit-' + curConfig.canvasName;
-                var cached = editor.storage.getItem(name);
+                var cached = editor.storage.get(name);
                 if (cached) {
                     editor.loadFromString(cached);
                 }
@@ -366,7 +368,7 @@ define([
                 if (defaultPrefs.hasOwnProperty(key)) { // It's our own config, so we don't need to iterate up the prototype chain
                     var storeKey = 'svg-edit-' + key;
                     if (editor.storage) {
-                        var val = editor.storage.getItem(storeKey);
+                        var val = editor.storage.get(storeKey);
                         if (val) {
                             defaultPrefs[key] = String(val); // Convert to string for FF (.value fails in Webkit)
                         }
@@ -518,7 +520,7 @@ define([
             // Some FF versions throw security errors here when directly accessing
             try {
                 if ('localStorage' in window) { // && onWeb removed so Webkit works locally
-                    editor.storage = localStorage;
+                    editor.storage = LocalStorage;
                 }
             } catch (err) { console.log(e); }
 
@@ -6124,15 +6126,15 @@ define([
                                     const newConfigs = JSON.parse(configString);
                                     const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
                                     const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
-                                    const currentConfig = JSON.parse(localStorage.getItem('customizedLaserConfigs'));
+                                    const currentConfig = JSON.parse(LocalStorage.get('customizedLaserConfigs'));
                                     for (let i = 0; i < currentConfig.length; i++) {
                                         const config = currentConfig[i];
                                         if (!config.isDefault && !configNames.has(config.name)) {
                                             customizedLaserConfigs.push(config);
                                         }
                                     }
-                                    localStorage.setItem('customizedLaserConfigs', JSON.stringify(customizedLaserConfigs));
-                                    localStorage.setItem('defaultLaserConfigsInUse', JSON.stringify(defaultLaserConfigsInUse));
+                                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
+                                    LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
                                     LayerPanelController.updateLayerPanel();
                                     resolve();
                                 };

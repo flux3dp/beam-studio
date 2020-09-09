@@ -7,6 +7,7 @@ define([
     'app/constants/alert-constants',
     'jsx!views/tutorials/Tutorial-Controller',
     'jsx!constants/tutorial-constants',
+    'helpers/local-storage',
     'helpers/symbol-maker',
     'helpers/i18n'
 ], function(
@@ -18,6 +19,7 @@ define([
     AlertConstants,
     TutorialController,
     TutorialConstants,
+    LocalStorage,
     SymbolMaker,
     i18n
 ){
@@ -357,7 +359,7 @@ define([
             const output = svgCanvas.getSvgString();
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
-            let currentFilePath = window.electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
+            let currentFilePath = window.electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, LocalStorage.get('lang'));
             if (currentFilePath) {
                 this.setCurrentFileName(currentFilePath);
                 return true;
@@ -416,7 +418,7 @@ define([
             SymbolMaker.switchImageSymbolForAll(true);
             const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
             const langFile = i18n.lang.topmenu.file;
-            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
+            window.electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, LocalStorage.get('lang'));
         },
 
         exportAsImage: async (type) => {
@@ -431,10 +433,10 @@ define([
             Progress.popById('export_image');
             switch (type) {
                 case 'png':
-                    window.electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));
+                    window.electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, LocalStorage.get('lang'));
                     break;
                 case 'jpg':
-                    window.electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
+                    window.electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, LocalStorage.get('lang'));
             }
         },
 

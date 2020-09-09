@@ -1,11 +1,13 @@
 define([
     'reactPropTypes',
     'app/constants/keycode-constants',
+    'helpers/local-storage',
     'helpers/round',
     'plugins/classnames/index'
 ], function(
     PropTypes,
     keyCodeConstants,
+    LocalStorage,
     round,
     ClassNames
 ) {
@@ -126,7 +128,7 @@ define([
 
         getLengthUnit() {
             if (this.props.unit === 'mm') {
-                let unit = localStorage.getItem('default-units') || 'mm';
+                let unit = LocalStorage.get('default-units') || 'mm';
                 if (unit === 'mm') {
                     return this.props.abbr ? '' : 'mm';
                 } else {

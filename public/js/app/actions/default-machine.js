@@ -21,7 +21,7 @@ define([
             return config().read('default-printer') || {};
         },
         clear: () => {
-            localStorage.removeItem('default-printer');
+            config().removeItem('default-printer');
         }
     };
 });

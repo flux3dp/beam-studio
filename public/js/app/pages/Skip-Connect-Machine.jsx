@@ -2,11 +2,13 @@ define([
     'jsx!widgets/Modal',
     'app/actions/beambox/beambox-preference',
     'app/actions/beambox/constant',
+    'helpers/local-storage',
     'helpers/i18n',
 ], function (
     Modal,
     BeamboxPreference,
     Constant,
+    LocalStorage,
     i18n
 ) {
     'use strict';
@@ -18,10 +20,10 @@ define([
         return class SkipConnectMachine extends React.Component{
 
             onStart = () => {
-                if (!localStorage.getItem('printer-is-ready')) {
-                    localStorage.setItem('new-user', true);
+                if (!LocalStorage.get('printer-is-ready')) {
+                    LocalStorage.set('new-user', true);
                 }
-                localStorage.setItem('printer-is-ready', true);
+                LocalStorage.set('printer-is-ready', true);
                 location.hash = '#studio/beambox';
                 location.reload();
             }

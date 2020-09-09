@@ -13,6 +13,7 @@ define([
     'helpers/data-history',
     'helpers/api/alert-config',
     'helpers/api/set-params',
+    'helpers/local-storage',
     'helpers/i18n'
 ], function(
     $,
@@ -25,6 +26,7 @@ define([
     history,
     AlertConfig,
     setParams,
+    LocalStorage,
     i18n
 ) {
     'use strict';
@@ -383,7 +385,7 @@ define([
                     }
                 };
 
-                let loop_compensation = Number(localStorage.getItem('loop_compensation') || '0');
+                let loop_compensation = Number(LocalStorage.get('loop_compensation') || '0');
                 if (loop_compensation > 0) {
                     ws.send(['set_params', 'loop_compensation', loop_compensation].join(' '));    
                 }

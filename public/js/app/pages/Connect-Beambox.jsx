@@ -4,6 +4,7 @@ define([
     'app/actions/initialize-machine',
     'app/actions/alert-actions',
     'app/actions/beambox/beambox-preference',
+    'helpers/local-storage',
     'helpers/sprintf',
     'helpers/i18n'
 ], function (
@@ -12,6 +13,7 @@ define([
     initializeMachine,
     AlertActions,
     BeamboxPreference,
+    LocalStorage,
     sprintf,
     i18n
 ) {
@@ -24,7 +26,7 @@ define([
                 const splitUrl = location.href.split('#');
                 BeamboxPreference.write('model', (splitUrl.length > 2 && splitUrl[2] === 'Pro') ? 'fbb1p' : 'fbb1b');
                 
-                const pokeIPAddr = localStorage.getItem('poke-ip-addr');
+                const pokeIPAddr = LocalStorage.get('poke-ip-addr');
                 const deviceIP = document.getElementById('machine_ip_init').value;
                 
                 if (deviceIP) {
@@ -37,14 +39,14 @@ define([
                             if (pokeIPAddrArr.length > 19) {
                                 pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length);
                             }
-                            localStorage.setItem('poke-ip-addr', `${pokeIPAddr}, ${deviceIP}`);
+                            LocalStorage.set('poke-ip-addr', `${pokeIPAddr}, ${deviceIP}`);
                         }
                     } else {
-                        localStorage.setItem('poke-ip-addr', deviceIP);
+                        LocalStorage.set('poke-ip-addr', deviceIP);
                     }
                 }
 
-                localStorage.setItem('default-app', 'beambox');
+                LocalStorage.set('default-app', 'beambox');
                 initializeMachine.completeSettingUp(true);
                 location.reload();
             }

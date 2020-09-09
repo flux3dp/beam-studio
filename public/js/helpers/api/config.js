@@ -41,6 +41,10 @@ define([
                 if(configs === '') configs = {};
                 configs[item_key] = item_value;
                 this.write(key, configs);
+            },
+
+            remove: function(key) {
+                _localStorage.removeAt(key);
             }
         };
 

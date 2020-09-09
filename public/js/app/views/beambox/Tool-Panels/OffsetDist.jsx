@@ -3,12 +3,14 @@ define([
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'app/actions/beambox/constant'
 ], function(
     $,
     PropTypes,
     FnWrapper,
+    LocalStorage,
     UnitInput,
     i18n,
     Constant
@@ -33,7 +35,7 @@ define([
 
         _getValueCaption() {
             const dist = this.state.distance, 
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(dist/25.4).toFixed(3)}\"`;
             } else {

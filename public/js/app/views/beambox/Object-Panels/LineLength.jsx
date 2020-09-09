@@ -2,8 +2,9 @@ define([
     'jquery',
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
+    'helpers/local-storage',
     'helpers/i18n'
-], function($, PropTypes, FnWrapper, i18n) {
+], function($, PropTypes, FnWrapper, LocalStorage, i18n) {
     'use strict';
     const React = require('react');
 
@@ -20,7 +21,7 @@ define([
                 y1 = this.props.y1,
                 x2 = this.props.x2, 
                 y2 = this.props.y2,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 x1 /= 25.4;
                 x2 /= 25.4;

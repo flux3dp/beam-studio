@@ -3,9 +3,10 @@ define([
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'app/actions/beambox/constant'
-], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, LocalStorage, i18n, Constant) {
     'use strict';
     const React = require('react');
 
@@ -39,7 +40,7 @@ define([
         getValueCaption = () => {
             const cx = this.state.cx, 
                 cy = this.state.cy,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `${Number(cx/25.4).toFixed(3)}\", ${Number(cy/25.4).toFixed(3)}\"`;
             } else {

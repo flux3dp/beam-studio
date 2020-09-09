@@ -2,6 +2,7 @@ define([
     'reactPropTypes',
     'plugins/classnames/index',
     'app/actions/beambox/constant',
+    'helpers/local-storage',
     'helpers/i18n',
     'jsx!views/beambox/Tool-Panels/RowColumn',
     'jsx!views/beambox/Tool-Panels/Interval',
@@ -15,6 +16,7 @@ define([
     PropTypes,
     ClassNames,
     Constant,
+    LocalStorage,
     i18n,
     RowColumnPanel,
     IntervalPanel,
@@ -239,7 +241,7 @@ define([
         }
 
         render() {
-            const lang = localStorage.getItem('active-lang') || 'en';
+            const lang = LocalStorage.get('active-lang') || 'en';
             const positionStyle = this._findPositionStyle();
             const classes = ClassNames('tool-panels', lang);
             return (

@@ -1,5 +1,7 @@
 define(['localStorage'], function(localStorage) {
     'use strict';
+    const Store = require('electron-store');
+    var store = new Store();
 
     return {
         /**
@@ -11,11 +13,10 @@ define(['localStorage'], function(localStorage) {
          */
         get : function(name) {
             name = name || '';
-
-            var item = localStorage.getItem(name),
+            var item = store.get(name),
                 temp_item;
 
-            item = (null === item ? '' : item);
+            item = (item ? item : '');
 
             try {
                 temp_item = JSON.parse(item);
@@ -41,9 +42,9 @@ define(['localStorage'], function(localStorage) {
          */
         set : function(name, val) {
             name = name || '';
-            val = ('object' === typeof val ? JSON.stringify(val) : val);
+            //val = ('object' === typeof val ? JSON.stringify(val) : val);
 
-            localStorage.setItem(name, val);
+            store.set(name, val);
 
             return this;
         },
@@ -56,7 +57,7 @@ define(['localStorage'], function(localStorage) {
          * @return this
          */
         removeAt : function(name) {
-            localStorage.removeItem(name);
+            store.delete(name);
 
             return this;
         },
@@ -67,7 +68,7 @@ define(['localStorage'], function(localStorage) {
          * @return this
          */
         clearAll : function() {
-            localStorage.clear();
+            store.clear();
 
             return this;
         },
@@ -93,7 +94,7 @@ define(['localStorage'], function(localStorage) {
          * @return bool
          */
         isExisting : function(key) {
-            return ('string' === typeof localStorage.getItem(key) ? true : false);
+            return store.has(key);
         }
 
     };

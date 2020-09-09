@@ -3,9 +3,10 @@ define([
     'reactPropTypes',
     'app/actions/beambox/svgeditor-function-wrapper',
     'jsx!widgets/Unit-Input-v2',
+    'helpers/local-storage',
     'helpers/i18n',
     'app/actions/beambox/constant',
-], function($, PropTypes, FnWrapper, UnitInput, i18n, Constant) {
+], function($, PropTypes, FnWrapper, UnitInput, LocalStorage, i18n, Constant) {
     'use strict';
     const React = require('react');
 
@@ -52,7 +53,7 @@ define([
                 y1 = this.state.y1,
                 x2 = this.state.x2, 
                 y2 = this.state.y2,
-                units = localStorage.getItem('default-units') || 'mm';
+                units = LocalStorage.get('default-units') || 'mm';
             if (units === 'inches') {
                 return `A (${Number(x1/25.4).toFixed(1)}, ${Number(y1/25.4).toFixed(1)}), B (${Number(x2/25.4).toFixed(1)}, ${Number(y2/25.4).toFixed(1)})`;
             } else {

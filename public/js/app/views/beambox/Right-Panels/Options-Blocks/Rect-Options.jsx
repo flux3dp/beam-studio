@@ -5,6 +5,7 @@ define([
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
     'app/actions/beambox/constant',
+    'helpers/local-storage',
     'helpers/i18n'
 ], function(
     InFillBlock,
@@ -13,6 +14,7 @@ define([
     Alert,
     AlertConstants,
     Constant,
+    LocalStorage,
     i18n
 ) {
     const React = require('react');
@@ -35,7 +37,7 @@ define([
 
         renderRoundCornerBlock() {
             const { dimensionValues } = this.props;
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             const isInch = unit === 'inches';
             return (
                 <div className="option-block" key="rounded-corner">

@@ -22,6 +22,9 @@ define([
     'use strict';
 
     const LANG = i18n.lang.beambox;
+    const Store = require('electron-store');
+    const store = new Store();
+
     function obfuse(str){
         var output = [],
             c;
@@ -77,14 +80,16 @@ define([
         output.push(JSON.stringify(report_info.ws, null, 2))
 
         output.push('\n\n======::storage::======\n');
+        console.log(store.store);
 
-        for(let key in localStorage) {
-            let value = localStorage[key];
+        for(let key in store.store) {
+            let value = store.get(key);
+            console.log(key, value);
             if(typeof value == "string" && value.startsWith("-----BEGIN RSA PRIVATE KEY-----\n")) {
                 value = "[hidden]";
             }
             if (typeof value == "function") continue;
-            output.push(`${key}=${value}\n\n`);
+            output.push(`${key}=${typeof(value) === 'object' ? JSON.stringify(value) : value}\n\n`);
         }
 
         output.push('\n\n======::generic::======\n');

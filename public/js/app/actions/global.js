@@ -1,7 +1,6 @@
 define([
     'jquery',
     'helpers/i18n',
-    'helpers/local-storage',
     'helpers/shortcuts',
     'helpers/api/config',
     'helpers/logger',
@@ -10,7 +9,6 @@ define([
 ], function(
     $,
     i18n,
-    localStorage,
     shortcuts,
     config,
     Logger,
@@ -150,8 +148,6 @@ define([
             hash = location.hash,
             onFinished = function(data) {
                 var is_ready = data;
-
-                is_ready = ('true' === is_ready);
 
                 if (true === is_ready && ('' === hash || hash.startsWith('#initialize'))) {
                     location.hash = "#studio/beambox";
