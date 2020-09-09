@@ -5936,6 +5936,10 @@ define([
                     });
                 }
                 function _symbolWrapper(symbolContents, unit) {
+                    if (symbolContents.tagName === 'g' && symbolContents.childNodes.length === 0) {
+                        console.log('wrapping empty group, return null');
+                        return null;
+                    }
                     const rootViewBox = svg.getAttribute('viewBox');
                     const rootWidth = unit2Pixel(svg.getAttribute('width'), unit);
                     const rootHeight = unit2Pixel(svg.getAttribute('height'), unit);
@@ -6150,14 +6154,21 @@ define([
             }
             async function appendUseElement(symbol, type, layerName) {
                 // create a use element
+                if (!symbol) {
+                    return null;
+                }
                 const use_el = svgdoc.createElementNS(NS.SVG, 'use');
                 use_el.id = getNextId();
                 setHref(use_el, '#' + symbol.id);
                 //switch currentLayer, and create layer if necessary
-                if ((type === 'layer' && symbol.getAttribute('data-id')) || (type === 'color' && symbol.getAttribute('data-color') || (type === 'image-trace'))) {
+                if ((type === 'layer' && layerName) || (type === 'color' && symbol.getAttribute('data-color') || (type === 'image-trace'))) {
 
                     const color = symbol.getAttribute('data-color');
-                    layerName = (type === 'image-trace') ? 'Traced Path' : symbol.getAttribute('data-id') || rgbToHex(color);
+                    if (type === 'image-trace') {
+                        layerName = 'Traced Path';
+                    } else if (type === 'color') {
+                        layerName = rgbToHex(color);
+                    }
 
                     const isLayerExist = svgCanvas.setCurrentLayer(layerName);
                     if (!isLayerExist) {
@@ -6296,8 +6307,7 @@ define([
             const svg = svgdoc.adoptNode(newDoc.documentElement);
             const {symbols, confirmedType} = parseSvg(svg, _type);
 
-            const use_elements = await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)));
-
+            const use_elements = (await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)))).filter((elem) => elem);
             use_elements.forEach(elem => {
                 if (this.isUseLayerColor) {
                     this.updateElementColor(elem);
@@ -9547,6 +9557,10 @@ define([
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
+            }
+            const len = selectedElements.filter((elem) => elem).length;
+            if (len < 1) {
+                return;
             }
             if (!type) {
                 type = 'g';

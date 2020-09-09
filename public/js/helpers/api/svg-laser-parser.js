@@ -435,6 +435,52 @@ define([
                 ws.send(args.join(' '));
                 return $deferred.promise();
             },
+            divideSVGbyLayer: function(opts) {
+                var $deferred = $.Deferred();
+                opts = opts || {};
+                opts.onProgressing = opts.onProgressing || function() {};
+                opts.onFinished = opts.onFinished || function() {};
+                lastOrder = 'divideSVGbyLayer';
+
+                var args = ['divide_svg_by_layer'],
+                    blobs = [],
+                    duration,
+                    currentLength = 0,
+                    finalBlobs = {},
+                    currentName = '';
+                //set scale when devide svg, default value is 254 / 72
+                if (opts.scale) {
+                    args.push('-s');
+                    args.push(Math.floor(opts.scale * 100) / 100);
+                }
+
+                events.onMessage = function(data) {
+                    if (data.name) {
+                        currentName = data.name;
+                        currentLength = data.length;
+                        if (currentName == 'bitmap') {
+                            finalBlobs["bitmap_offset"] = data.offset;
+                        }
+                    } else if (data instanceof Blob) {
+                        blobs.push(data);
+                        var blob = new Blob(blobs);
+
+                        if (currentLength === blob.size) {
+                            blobs = [];
+                            finalBlobs[currentName] = blob;
+                        }
+                    } else if (data.status === 'ok') {
+                        $deferred.resolve({res: true, data: finalBlobs});
+                    } else if (data.status === 'Error') {
+                        Progress.popById('loading_image');
+                        $deferred.resolve({res: false, data: data.message});
+                    }
+
+                };
+
+                ws.send(args.join(' '));
+                return $deferred.promise();
+            },
             uploadPlainSVG: function(file, skipVersionWarning = false) {
                 var $deferred = $.Deferred();
 

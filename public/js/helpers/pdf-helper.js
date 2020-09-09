@@ -41,7 +41,7 @@ define([
                     data = await data.blob();
                     data.name = file.name + '.svg';
                     data.lastModifiedDate = file.lastModifiedDate;
-                    svgEditor.importSvg(data, true);
+                    svgEditor.importSvg(data, true, false);
                 } else {
                     throw stderr
                 }
@@ -77,7 +77,7 @@ define([
                     data = await data.blob();
                     data.name = file.name + '.svg';
                     data.lastModifiedDate = file.lastModifiedDate;
-                    svgEditor.importSvg(data, true);
+                    svgEditor.importSvg(data, true, false);
                 } else {
                     throw stderr
                 }
