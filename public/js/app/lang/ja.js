@@ -1877,6 +1877,7 @@ define(function() {
             uploading_fcode: 'FCodeのアップロード中',
             cant_connect_to_device: '#827 マシンを接続できません。接続を確認してください',
             unable_to_find_machine: 'マシンを見つけることができません',
+            disconnected: '接続が不安定です。デバイスの接続を確認して、後で再試行してください',
             unable_to_start: '#830 タスクを開始することができません。これが再び起きた場合は、バグレポートでご連絡ください：\n',
             camera_fail_to_transmit_image: '画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。'
         },

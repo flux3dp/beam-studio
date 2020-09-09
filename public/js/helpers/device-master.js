@@ -182,20 +182,38 @@ define([
                                 type: AlertConstants.SHOW_POPUP_ERROR
                             });
                             break;
+                        case DeviceConstants.NOT_FOUND:
+                            if (_devices.some(d => d.serial === device.serial)) {
+                                success(false);
+                                return;
+                            }
+
+                            let message = lang.message.unable_to_find_machine;
+
+                            success(false);
+                            Alert.popUp({
+                                id: 'not-found',
+                                message: `#831 ${message}`,
+                                type: AlertConstants.SHOW_POPUP_ERROR
+                            });
+                            break;
+                        case DeviceConstants.DISCONNECTED:
+                            if (_devices.some(d => d.serial === device.serial)) {
+                                success(false);
+                                return;
+                            }
+
+                            let message = lang.message.disconnected;
+
+                            success(false);
+                            Alert.popUp({
+                                id: 'disconnected',
+                                message: `#832 ${message}`,
+                                type: AlertConstants.SHOW_POPUP_ERROR
+                            });
+                            break;
                         default:
                             let message = lang.message.unknown_error;
-
-                            if (response.error === 'NOT_FOUND' || response.error === 'DISCONNECTED') {
-                                // if connected usb is the usb version of default device
-                                // if(device.serial === self.usbProfile.serial) {
-                                if (_devices.some(d => d.serial === device.serial)) {
-                                    success(false);
-                                    return;
-                                }
-                                else {
-                                    message = lang.message.unable_to_find_machine;
-                                }
-                            }
 
                             if (response.error === 'UNKNOWN_DEVICE') {
                                 message = lang.message.unknown_device;

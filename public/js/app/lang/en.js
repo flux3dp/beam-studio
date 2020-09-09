@@ -1875,6 +1875,7 @@ define(function() {
             uploading_fcode: 'Uploading FCode',
             cant_connect_to_device: '#827 Unable to connect the machine, please check your connection',
             unable_to_find_machine: 'Unable to find machine ',
+            disconnected: 'Connection unstable, Please check device connection and try again later',
             unable_to_start: '#830 Unable to start the task. Please try again. If this happens again, please contact us with bug report:\n',
             camera_fail_to_transmit_image: 'Something went wrong with image transmission. Please try restarting your Beambox or contact us.'
         },

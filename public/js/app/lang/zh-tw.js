@@ -1875,6 +1875,7 @@ define(function() {
             uploading_fcode: '正在上傳 fcode',
             cant_connect_to_device: '#827 無法連結機器，請確認機器是否開啟，以及與機器的連結方式',
             unable_to_find_machine: '無法連接到機器 ',
+            disconnected: '連線不穩，請確認機器連線狀況並稍後再試一次',
             unable_to_start: '#830 無法開始工作，如果持續發生，請附上錯誤回報，與我們聯絡:\n',
             camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。'
         },
