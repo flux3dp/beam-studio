@@ -22,6 +22,7 @@ define([
     'use strict';
     const React = require('react');
     const classNames = require('classnames');
+    const ping = require('net-ping');
 
     const lang = i18n.lang.initialize;
     const TIMEOUT = 20;
@@ -34,11 +35,11 @@ define([
                 this.state = {
                     rpiIp: null,
                     machineIp: null,
-                    ipAvailability: null,
+                    didConnectMachine: null,
                     firmwareVersion: null,
                     cameraAvailability: null,
                     device: null,
-                    ipTestCountDown: TIMEOUT,
+                    connectionTestCountDown: TIMEOUT,
                     isTesting: false,
                     hadTested: false
                 };
@@ -50,14 +51,16 @@ define([
 
                 this.discover = Discover('connect-machine-ip', (machines) => {
                     const deviceList = DeviceList(machines);
-                    const {ipAvailability, machineIp} = this.state;
-                    if (ipAvailability === null && machineIp !== null) {
+                    const {isIpValid, didConnectMachine, machineIp} = this.state;
+                    const shouldTryConnect = isIpValid || (isIpValid === undefined);
+                    if (shouldTryConnect && didConnectMachine === null && machineIp !== null) {
                         for (let i=0; i < deviceList.length; i++) {
                             let device = deviceList[i];
                             if (device.ipaddr === machineIp) {
                                 clearInterval(this.testCountDown);
                                 this.setState({
-                                    ipAvailability: true,
+                                    isIpValid: true,
+                                    didConnectMachine: true,
                                     firmwareVersion: device.version,
                                     device: device,
                                 });
@@ -72,8 +75,8 @@ define([
             }
 
             componentDidUpdate() {
-                const {ipAvailability, cameraAvailability} = this.state;
-                if (ipAvailability && (cameraAvailability === null)) {
+                const {didConnectMachine, cameraAvailability} = this.state;
+                if (didConnectMachine && (cameraAvailability === null)) {
                     this.testCamera();
                 }
             }
@@ -156,24 +159,24 @@ define([
             }
 
             renderTestInfos = () => {
-                const {machineIp, isIPValid, ipAvailability, firmwareVersion, cameraAvailability, ipTestCountDown} = this.state;
+                const {machineIp, isIpValid, didConnectMachine, testIpInfo, firmwareVersion, cameraAvailability, connectionTestCountDown} = this.state;
                 if (machineIp !== null) {
-                    let ipStatus = `${ipTestCountDown}s`;
+                    const shouldTryConnect = isIpValid || (isIpValid === undefined);
+                    const ipStatus = isIpValid ? 'OK' : testIpInfo;
+                    let connectionStatus = `${connectionTestCountDown}s`;
                     let cameraStatus = '';
-                    if (ipAvailability !== null) {
-                        ipStatus = ipAvailability ? 'OK' : 'Fail';
-                    }
-                    if (!isIPValid) {
-                        ipStatus = 'Invalid IP';
+                    if (didConnectMachine !== null) {
+                        connectionStatus = didConnectMachine ? 'OK' : 'Fail';
                     }
                     if (cameraAvailability !== null) {
                         cameraStatus = cameraAvailability ? 'OK' : 'Fail';
                     }
                     return (
                         <div className="test-infos">
-                            <div className="test-info">{`${lang.connect_machine_ip.check_ip}... ${ipStatus}`}</div>
-                            {ipAvailability ? <div className="test-info">{`${lang.connect_machine_ip.check_firmware}... ${firmwareVersion}`}</div> : null}
-                            {ipAvailability ? <div className="test-info">{`${lang.connect_machine_ip.check_camera}... ${cameraStatus}`}</div> : null}
+                            <div className="test-info">{`${lang.connect_machine_ip.check_ip}... ${ipStatus || ''}`}</div>
+                            {shouldTryConnect ? <div className="test-info">{`${lang.connect_machine_ip.check_connection}... ${connectionStatus}`}</div> : null}
+                            {didConnectMachine ? <div className="test-info">{`${lang.connect_machine_ip.check_firmware}... ${firmwareVersion}`}</div> : null}
+                            {didConnectMachine ? <div className="test-info">{`${lang.connect_machine_ip.check_camera}... ${cameraStatus}`}</div> : null}
                         </div>
                     )
                 } else {
@@ -187,38 +190,103 @@ define([
                 }
             }
 
-            startTesting = () => {
+            pingTarget = async () => {
+                return new Promise((resolve, reject) => {
+                    const ip = this.refs.ipInput.value;
+                    try {
+                        const session = ping.createSession();
+                        session.on('error', (error) => {
+                            console.log ("session error: " + error);
+                            resolve(undefined);
+                            throw(error);
+                        });
+                        const doPing = () => {
+                            session.pingHost(ip, (error, target, sent, rcvd) => {
+                                if (error) {
+                                    console.log(error);
+                                    pingTries -= 1;
+                                    console.log(pingTries);
+                                    if (pingTries === 0) {
+                                        resolve(false);
+                                    } else {
+                                        doPing();
+                                    }
+                                } else {
+                                    console.log('rrt', rcvd - sent);
+                                    resolve(true);
+                                }
+                            });
+                        }
+                        let pingTries = 3;
+                        doPing();
+                    } catch (e) {
+                        console.log(e);
+                        resolve(undefined);
+                    }
+                });
+            }
+
+            startTesting = async () => {
                 const ip = this.refs.ipInput.value;
-                const isIPValid = ipRex.test(ip);
-                if (!isIPValid) {
-                    this.setState({
-                        machineIp: ip,
-                        isIPValid
-                    });
-                    return;
-                }
+                const isIPFormatValid = ipRex.test(ip);
                 this.setState({
-                    machineIp: ip,
-                    isIPValid,
-                    ipAvailability: null,
+                    isIpValid: null,
+                    testIpInfo: null,
+                    didConnectMachine: null,
                     firmwareVersion: null,
                     cameraAvailability: null,
                     device: null,
-                    isTesting: true,
-                    hadTested: false,
-                    ipTestCountDown: TIMEOUT,
                 });
+                if (!isIPFormatValid) {
+                    this.setState({
+                        machineIp: ip,
+                        isIpValid: false,
+                        testIpInfo: `${lang.connect_machine_ip.invalid_ip}${lang.connect_machine_ip.invalid_format}`,
+                    });
+                    return;
+                } else if (ip.trim().startsWith('169.254')) {
+                    this.setState({
+                        machineIp: ip,
+                        isIpValid: false,
+                        testIpInfo: `${lang.connect_machine_ip.invalid_ip}${lang.connect_machine_ip.starts_with_169254}`,
+                    });
+                    return;
+                }
                 this.discover.poke(ip);
                 this.discover.pokeTcp(ip);
                 this.discover.testTcp(ip);
+                // Ping Target
+                this.setState({
+                    isTesting: true,
+                    hadTested: false,
+                    machineIp: ip,
+                });
+                const isIpValid = await this.pingTarget();
+                if (isIpValid === false) {
+                    this.setState({
+                        machineIp: ip,
+                        isIpValid: false,
+                        testIpInfo: `${lang.connect_machine_ip.unreachable}`,
+                        isTesting: false,
+                        hadTested: true,
+                    });
+                    return;
+                }
+                // Connecting to Machine
+                this.setState({
+                    machineIp: ip,
+                    isIpValid,
+                    connectionTestCountDown: TIMEOUT,
+                });
+                
                 clearInterval(this.testCountDown);
                 this.testCountDown = setInterval(() => {
-                    if (this.state.isTesting && this.state.ipAvailability === null) {
-                        if (this.state.ipTestCountDown > 1) {
-                            this.setState({ipTestCountDown: this.state.ipTestCountDown - 1});
+                    if (this.state.isTesting && this.state.didConnectMachine === null) {
+                        if (this.state.connectionTestCountDown > 1) {
+                            this.setState({connectionTestCountDown: this.state.connectionTestCountDown - 1});
                         } else {
                             this.setState({
-                                ipAvailability: false,
+                                didConnectMachine: false,
                                 isTesting: false,
                                 hadTested: true
                             });
@@ -256,7 +324,7 @@ define([
             }
 
             renderNextButton = () => {
-                const {isTesting, hadTested, ipAvailability, cameraAvailability, device} = this.state;
+                const {isTesting, hadTested, didConnectMachine, cameraAvailability, device} = this.state;
                 let onClick, label;
                 let className = classNames('btn-page', 'next', 'primary');
                 if (!isTesting && !hadTested) {
@@ -267,7 +335,7 @@ define([
                     onClick = () => {};
                     className = classNames('btn-page', 'next', 'primary', 'disabled');
                 } else if (hadTested) {
-                    if (ipAvailability) {
+                    if (didConnectMachine) {
                         label = lang.connect_machine_ip.finish_setting;
                         onClick = this.onFinish;
                     } else {

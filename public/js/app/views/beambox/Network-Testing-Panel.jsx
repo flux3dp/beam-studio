@@ -72,7 +72,13 @@ define([
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: LANG.empty_ip
-                })
+                });
+                return;
+            } else if (this.state.ip.trim().startsWith('169.254')) {
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: LANG.ip_startswith_169
+                });
                 return;
             }
             this.discover.poke(this.state.ip);
