@@ -64,7 +64,7 @@ gulp.task('runBrowserify', function() {
         .pipe(notify('Frontend finished.'));
 });
   
-gulp.task('frontend', ['frontendSrc'], function() {});
+gulp.task('frontend', ['frontendSrc'], (cb) => cb());
 
 gulp.task('babel', function () {
     return gulp.src(['public/js/**/*.js*', '!public/js/require.js', '!public/js/main.js', '!public/js/plugins/**/*.js', '!public/js/lib/**/*.js', '!public/js/helpers/CircularGridHelper.js', '!**/*.json'])
