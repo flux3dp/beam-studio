@@ -31,6 +31,7 @@ import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/Obj
 import TopBarController from '../../views/beambox/Top-Bar/contexts/Top-Bar-Controller'
 import BeamboxPreference from './beambox-preference'
 import Constant from './constant'
+import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer'
 import PreviewModeController from './preview-mode-controller'
 import Alert from '../../contexts/AlertCaller'
 import AlertConstants from '../../constants/alert-constants'
@@ -41,6 +42,7 @@ import TopbarActions from '../topbar'
 import AwsHelper from '../../../helpers/aws-helper'
 import BeamFileHelper from '../../../helpers/beam-file-helper'
 import ImageData from '../../../helpers/image-data'
+import LocalStorage from '../../../helpers/local-storage'
 import PdfHelper from '../../../helpers/pdf-helper'
 import Shortcuts from '../../../helpers/shortcuts'
 import SymbolMaker from '../../../helpers/symbol-maker'
@@ -50,6 +52,7 @@ import AlertConfig from '../../../helpers/api/alert-config'
 import Config from '../../../helpers/api/config'
 import SvgLaserParser from '../../../helpers/api/svg-laser-parser'
 import { IFont } from '../../../interfaces/IFont'
+import { IStorage } from '../../../interfaces/IStorage'
 
 // @ts-expect-error
 import Dxf2Svg = require('dxf2svg')
@@ -124,7 +127,7 @@ interface ISVGEditor {
     setPanning: (active: any) => void
     setWorkAreaContextMenu: () => void
     setZoomWithWindow: () => void
-    storage: Storage
+    storage: IStorage
     toolButtonClick: (button: any, noHiding: any) => boolean
     updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => void
     triggerGridTool: () => void
@@ -136,6 +139,7 @@ interface ISVGEditor {
     handleFile: (file: any) => void
     loadFromString(arg0: any)
     importBvg: (file: any) => Promise<void>
+    importLaserConfig: (file: any) => Promise<void>
     openPrep(arg0: (ok: any) => void)
     resetView: () => void
     zoomIn: () => void
@@ -269,7 +273,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             setPanning: (active: any) => {},
             setWorkAreaContextMenu: () => {},
             setZoomWithWindow: () => {},
-            storage: localStorage,
+            storage: LocalStorage,
             toolButtonClick: (button: any, noHiding: any) => { return false },
             updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => {},
             triggerGridTool: () => {},
@@ -281,6 +285,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             handleFile: (file) => {},
             loadFromString: (arg0) => {},
             importBvg: async (file) => {},
+            importLaserConfig: async (file) => {},
             openPrep: () => {},
             resetView: () => {},
             zoomIn: () => {},
@@ -553,7 +558,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     (curConfig.forceStorage || (!curConfig.noStorageOnLoad && document.cookie.match(/(?:^|;\s*)store=prefsAndContent/)))
             ) {
                 var name = 'svgedit-' + curConfig.canvasName;
-                var cached = editor.storage.getItem(name);
+                var cached = editor.storage.get(name);
                 if (cached) {
                     editor.loadFromString(cached);
                 }
@@ -565,7 +570,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 if (defaultPrefs.hasOwnProperty(key)) { // It's our own config, so we don't need to iterate up the prototype chain
                     var storeKey = 'svg-edit-' + key;
                     if (editor.storage) {
-                        var val = editor.storage.getItem(storeKey);
+                        var val = editor.storage.get(storeKey);
                         if (val) {
                             defaultPrefs[key] = String(val); // Convert to string for FF (.value fails in Webkit)
                         }
@@ -715,7 +720,12 @@ const svgEditor = window['svgEditor'] = (function($) {
             // var host = location.hostname,
             //	onWeb = host && host.indexOf('.') >= 0;
             // Some FF versions throw security errors here when directly accessing
-            editor.storage = localStorage;
+            try {
+                if ('localStorage' in window) { // && onWeb removed so Webkit works locally
+                    editor.storage = LocalStorage;
+                }
+            } catch (err) { console.log(err); }
+
             // Todo: Avoid var-defined functions and group functions together, etc. where possible
             var good_langs = [];
             $('#lang_select option').each(function (this: HTMLOptionElement) {
@@ -1047,6 +1057,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             });
 
             window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
+            OpenBottomBoundaryDrawer.update();
             var supportsNonSS, resize_timer, Actions, curScrollPos,
                 palette = [ // Todo: Make into configuration item?
                     '#000000', '#3f3f3f', '#7f7f7f', '#bfbfbf', '#ffffff',
@@ -2052,6 +2063,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     $('#text').focus().select();
                                 }, 100);
                             }
+                            svgCanvas.textActions.setIsVertical((elem.getAttribute('data-verti') === 'true'));
                         } // text
                         else if (el_name === 'image') {
                             if (svgCanvas.getMode() === 'image') {
@@ -5823,9 +5835,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                 const readSVG = (blob, type, layerName?: string) => {
                     return new Promise((resolve, reject) => {
                         var reader = new FileReader();
-                        reader.onloadend = function (e) {
+                        reader.onloadend = async function (e) {
                             let svgString = e.target.result as string;
-                            if (type !== 'color') {
+                            if (!['color', 'layer'].includes(type)) {
                                 svgString = svgString.replace(/<svg[^>]*>/, (svgTagString) => {
                                     svgTagString = svgTagString.replace(/"([^"]*)pt"/g, (_, valWithoutPt) => {
                                         return `"${valWithoutPt}"`
@@ -5850,7 +5862,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 svgString = svgString.substr(0, indexLeft) + svgString.substring(indexLeft+8, indexRight) + svgString.substr(indexRight+9);
                             }
 
-                            if (type !== 'color') {
+                            if (!['color', 'layer'].includes(type)) {
                                 svgString = svgString.replace(/<image[^>]*>[^<]*<[^\/]*\/image>/g, (match) => {
                                     return '';
                                 });
@@ -5859,84 +5871,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 });
                             }
 
-                            // Insert CSS style into the node
-                            if (type === 'layer') {
-                                const indexStyle = svgString.indexOf('<style');
-
-                                if (indexStyle > -1) {
-                                    const styleString = svgString.slice(indexStyle, svgString.indexOf('/style>'));
-                                    let classPrefix = '';
-
-                                    if (styleString.indexOf('.st') > -1) {
-                                        classPrefix = 'st';
-                                    } else if (styleString.indexOf('.cls-') > -1) {
-                                        classPrefix = 'cls-';
-                                    } else {
-                                        console.log('Unknown Class Prefix');
-                                    }
-
-                                    if (classPrefix !== '') {
-                                        let styleStrings = [];
-                                        let index = (classPrefix === 'st' ? 0 : 1);
-
-                                        while(true) {
-                                            const splitStyleString = styleString.split(`.${classPrefix}${index}`);
-                                            let classStyle = 'style="';
-
-                                            if (splitStyleString.length === 1) {
-                                                break;
-                                            }
-
-                                            for (let i = 1; i < splitStyleString.length; i++) {
-                                                const leftBrace = splitStyleString[i].indexOf('{') + 1;
-                                                const rightBrace = splitStyleString[i].indexOf('}');
-                                                const style = `${splitStyleString[i].slice(leftBrace, rightBrace).trim()}`;
-
-                                                classStyle += style;
-                                            }
-
-                                            classStyle += '"';
-                                            styleStrings[index] = classStyle;
-                                            index += 1;
-                                        }
-
-                                        for (let i = (classPrefix === 'st' ? 0 : 1); i < styleStrings.length; i++) {
-                                            const className = `class="${classPrefix}${i}"`;
-                                            const split = svgString.split(className);
-
-                                            if (split.length === 1) {
-                                                continue;
-                                            }
-
-                                            svgString = split[0];
-
-                                            for (let j = 1; j < split.length; j++) {
-                                                svgString += `${styleStrings[i]}${split[j]}`;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
                             const modifiedSvgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;').replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
-                            const newElement = svgCanvas.importSvgString(modifiedSvgString, type, layerName);
+                            const newElement = await svgCanvas.importSvgString(modifiedSvgString, type, layerName);
 
                             //Apply style
                             svgCanvas.svgToString($('#svgcontent')[0], 0);
 
-                            svgCanvas.ungroupSelectedElement();
-                            svgCanvas.ungroupSelectedElement();
-                            svgCanvas.groupSelectedElements();
-                            svgCanvas.alignSelectedElements('m', 'page');
-                            svgCanvas.alignSelectedElements('c', 'page');
-                            // highlight imported element, otherwise we get strange empty selectbox
-                            try {
-                                svgCanvas.selectOnly([newElement]);
-                            } catch(e) {
-                                console.warn('Reading empty SVG');
-                                resolve(false);
-                            }
-                            // svgCanvas.ungroupSelectedElement(); //for flatten symbols (convertToGroup)
                             Progress.popById('loading_image');
                             resolve(newElement);
                         };
@@ -5944,7 +5884,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     });
                 }
                 editor.readSVG = readSVG;
-                const importSvg = async (file, skipVersionWarning = false) => {
+                const importSvg = async (file, skipVersionWarning=false, supportByLayer=true) => {
                     const checkSvgfileSupportByLayer = async (file) => {
                         return new Promise((resolve) => {
                             const reader = new FileReader();
@@ -5985,7 +5925,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                             }
                             return;
                         }
-                        let outputs = await svgWebSocket.divideSVG();
+                        let outputs;
+                        if (type === 'layer') {
+                            outputs = await svgWebSocket.divideSVGbyLayer();
+                        } else {
+                            outputs = await svgWebSocket.divideSVG();
+                        }
                         if (!outputs.res) {
                             Alert.popUp({
                                 type: AlertConstants.SHOW_POPUP_ERROR,
@@ -6004,13 +5949,27 @@ const svgEditor = window['svgEditor'] = (function($) {
                         } else {
                             outputs = outputs.data;
                         }
-
+                        let newElements = [];
+                        let newElement;
                         if (type === 'color') {
-                            await readSVG(outputs['strokes'], type);
-
-                            await readSVG(outputs['colors'], type);
+                            newElement = await readSVG(outputs['strokes'], type);
+                            newElements.push(newElement);
+                            newElement = await readSVG(outputs['colors'], type);
+                            newElements.push(newElement);
+                        } else if (type === 'layer') {
+                            for(let key in outputs) {
+                                if (!['bitmap', 'bitmap_offset'].includes(key)) {
+                                    if (key === 'nolayer') {
+                                        newElement = await readSVG(outputs[key], type);
+                                    } else {
+                                        newElement = await readSVG(outputs[key], type, key);
+                                    }
+                                    newElements.push(newElement);
+                                }
+                            }
                         } else {
-                            await readSVG(file, type);
+                            newElement = await readSVG(file, type);
+                            newElements.push(newElement);
                         }
 
                         if (outputs['bitmap'].size > 0) {
@@ -6022,10 +5981,18 @@ const svgEditor = window['svgEditor'] = (function($) {
 
                             await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
+                        newElements = newElements.filter((elem) => elem);
+                        svgCanvas.selectOnly(newElements);
+                        if (newElements.length > 1) {
+                            svgCanvas.tempGroupSelectedElements();
+                        }
                     }
-                    const doesSupportByLayer = await checkSvgfileSupportByLayer(file);
-                    const buttonLabels = doesSupportByLayer ? [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer] : [LANG.popup.layer_by_color, LANG.popup.nolayer];
-                    const callbacks = doesSupportByLayer ? [() => importAs('layer'), () => importAs('color'), () => importAs('nolayer')] : [() => importAs('color'), () => importAs('nolayer')]
+                    const buttonLabels = [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer];
+                    const callbacks = [() => importAs('layer'), () => importAs('color'), () => importAs('nolayer')];
+                    if (!supportByLayer) {
+                        buttonLabels.splice(0, 1);
+                        callbacks.splice(0, 1);
+                    }
                     Alert.popUp({
                         id: 'confirm_mouse_input_device',
                         message: LANG.popup.select_import_method,
@@ -6375,15 +6342,15 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     const newConfigs = JSON.parse(configString);
                                     const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
                                     const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
-                                    const currentConfig = JSON.parse(localStorage.getItem('customizedLaserConfigs'));
+                                    const currentConfig = JSON.parse(LocalStorage.get('customizedLaserConfigs'));
                                     for (let i = 0; i < currentConfig.length; i++) {
                                         const config = currentConfig[i];
                                         if (!config.isDefault && !configNames.has(config.name)) {
                                             customizedLaserConfigs.push(config);
                                         }
                                     }
-                                    localStorage.setItem('customizedLaserConfigs', JSON.stringify(customizedLaserConfigs));
-                                    localStorage.setItem('defaultLaserConfigsInUse', JSON.stringify(defaultLaserConfigsInUse));
+                                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
+                                    LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
                                     LayerPanelController.updateLayerPanel();
                                     resolve();
                                 };
@@ -6392,6 +6359,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         }
                     }); 
                 };
+                editor.importLaserConfig = importLaserConfig;
 
                 var importImage = function (e) {
                     Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});

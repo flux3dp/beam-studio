@@ -3,10 +3,8 @@ import * as i18n from './i18n'
 import sprintf from './sprintf'
 import Alert from '../app/contexts/AlertCaller'
 import AlertConstants from '../app/constants/alert-constants'
-import AlertActions from '../app/actions/alert-actions'
 import BeamboxActions from '../app/actions/beambox'
-import ProgressActions from '../app/actions/progress-actions'
-import ProgressConstants from '../app/constants/progress-constants'
+import Progress from '../app/contexts/ProgressCaller'
 import InputLightboxActions from '../app/actions/input-lightbox-actions'
 import DeviceConstants from '../app/constants/device-constants'
 import { SelectionResult, ConnectionError } from '../app/constants/connection-constants'
@@ -94,16 +92,14 @@ class DeviceMaster {
 
     async showAuthDialog(uuid: string): Promise<boolean> { // return authed or not
         const device = this.getDeviceByUUID(uuid);
-        ProgressActions.close();
         let authResult = await new Promise<{success:boolean,data:any,password:string}>((resolve, reject) => {
             InputLightboxActions.open('auth', {
                 caption: sprintf(lang.input_machine_password.require_password, device.info.name),
                 inputHeader: lang.input_machine_password.password,
                 confirmText: lang.input_machine_password.connect,
                 type: InputLightBoxConstants.TYPE_PASSWORD,
-                onSubmit: async (password) => {
-                    ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.message.authenticating);
-                    resolve(this.auth(device.info.uuid, password));
+                onSubmit: async (password: string) => {
+                    resolve(await this.auth(device.info.uuid, password));
                 },
                 onClose: () => {
                     resolve({success: false, data: 'cancel', password: ''});
@@ -133,19 +129,23 @@ class DeviceMaster {
     };
 
     async auth(uuid: string, password?: string){
-        ProgressActions.open(ProgressConstants.NONSTOP, lang.message.authenticating);
+        Progress.openNonstopProgress({
+            id: 'device-master-auth',
+            message: lang.message.authenticating,
+            timeout: 30000,
+        });
         return await new Promise<{success: boolean, data: any, password: string}>((resolve) => {
             Touch({
                 onError: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     resolve({success: false, data, password});
                 },
                 onSuccess: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     resolve({success: true, data, password});
                 },
                 onFail: function (data) {
-                    ProgressActions.close();
+                    Progress.popById('device-master-auth');
                     resolve({success: false, data, password});
                 }
             }).send(uuid, password || '');
@@ -163,8 +163,11 @@ class DeviceMaster {
             this.currentDevice = device;
             return { success: true }
         }
-    
-        ProgressActions.open(ProgressConstants.NONSTOP, sprintf(lang.message.connectingMachine, device.info.name));
+        Progress.openNonstopProgress({
+            id: 'select-device',
+            message: sprintf(lang.message.connectingMachine, device.info.name),
+            timeout: 30000,
+        });
     
         try {
             const controlSocket = new Control(uuid);
@@ -174,10 +177,12 @@ class DeviceMaster {
             SocketMaster.setWebSocket(controlSocket);
             // TODO: !!! Add Control.disconnected handler
             console.log("Connected to " + uuid);
+            Progress.popById('select-device');
             return {
                 success: true
             };
         } catch (e) {
+            Progress.popById('select-device');
             console.error(e);
             if (e.error) e = e.error;
             const errorCode = e.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
@@ -188,10 +193,14 @@ class DeviceMaster {
                         return await self.selectDevice(printer);
                     }
                 } else {
-                    ProgressActions.open(ProgressConstants.NONSTOP, sprintf(lang.message.connectingMachine, device.info.name));
+                    Progress.openNonstopProgress({
+                        id: 'select-device',
+                        message: sprintf(lang.message.connectingMachine, device.info.name),
+                        timeout: 30000,
+                    });
                     const authResult = await self.auth(uuid);
                     if (!authResult.success) {
-                        ProgressActions.close();
+                        Progress.popById('select-device');
                         Alert.popUp({
                             id: 'auth-error-with-diff-computer',//ADD new error code?
                             message: lang.message.auth_error,
@@ -217,9 +226,9 @@ class DeviceMaster {
                         errMessage = lang.message.unable_to_find_machine;
                         break;
                     case ConnectionError.DISCONNECTED:
-                        errMessage = "#891 Device disconnected";
+                        errMessage = `#891 ${lang.message.disconnected}`;
                         if (this.discoveredDevices.some(d => d.uuid === uuid)) {
-                            errMessage = "#892 Device disconnected";
+                            errMessage = `#892 ${lang.message.disconnected}`;
                         }
                         break;
                     case ConnectionError.UNKNOWN_DEVICE:
@@ -241,7 +250,7 @@ class DeviceMaster {
                 }
             }
         } finally {
-            ProgressActions.close();
+            Progress.popById('select-device');
         }
     }
 
@@ -343,17 +352,16 @@ class DeviceMaster {
 
         fetch(DeviceConstants.BEAMBOX_CAMERA_TEST).then(res => res.blob()).then(async blob => {
             const vc = VersionChecker(this.currentDevice.info.version);
-            // TODO: Where is the origin defined?
-            /*if (vc.meetRequirement('RELOCATE_ORIGIN')) {
-                await setOriginX(origin.x);
-                await setOriginY(origin.y);
-            }*/
+            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                await this.setOriginX(0);
+                await this.setOriginY(0);
+            }
             this.go(blob)
                 .fail(() => {
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
                 })
                 .then(() => {
-                    ProgressActions.open(ProgressConstants.STEPPING, lang.camera_calibration.drawing_calibration_image);
+                    Progress.openSteppingProgress({id: 'camera-cali-task', message: lang.camera_calibration.drawing_calibration_image});
                     let taskTotalSecs = 30;
                     let elapsedSecs = 0;
                     let progressUpdateTimer = setInterval(() => {
@@ -362,17 +370,19 @@ class DeviceMaster {
                             clearInterval(progressUpdateTimer);
                             return;
                         }
-                        ProgressActions.updating(lang.camera_calibration.drawing_calibration_image, (elapsedSecs / taskTotalSecs) * 100);
+                        Progress.update('camera-cali-task', {
+                            percentage: (elapsedSecs / taskTotalSecs) * 100
+                        });
                     }, 100);
                     this.waitTillCompleted()
                         .fail((err) => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('camera-cali-task');
                             d.reject(err); // Error while running test
                         })
                         .then(() => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('camera-cali-task');
                             d.resolve();
                         });
 
@@ -387,17 +397,16 @@ class DeviceMaster {
 
         fetch(DeviceConstants.DIODE_CALIBRATION).then(res => res.blob()).then(async blob => {
             const vc = VersionChecker(this.currentDevice.info.version);
-            // TODO: Where is the origin defined?
-            /*if (vc.meetRequirement('RELOCATE_ORIGIN')) {
-                await setOriginX(origin.x);
-                await setOriginY(origin.y);
-            }*/
+            if (vc.meetRequirement('RELOCATE_ORIGIN')) {
+                await this.setOriginX(0);
+                await this.setOriginY(0);
+            }
             this.go(blob)
                 .fail(() => {
                     d.reject('UPLOAD_FAILED'); // Error while uploading task
                 })
                 .then(() => {
-                    ProgressActions.open(ProgressConstants.STEPPING, lang.diode_calibration.drawing_calibration_image);
+                    Progress.openSteppingProgress({id: 'diode-cali-task', message: lang.diode_calibration.drawing_calibration_image});
                     let taskTotalSecs = 35;
                     let elapsedSecs = 0;
                     let progressUpdateTimer = setInterval(() => {
@@ -406,17 +415,19 @@ class DeviceMaster {
                             clearInterval(progressUpdateTimer);
                             return;
                         }
-                        ProgressActions.updating(lang.diode_calibration.drawing_calibration_image, (elapsedSecs / taskTotalSecs) * 100);
+                        Progress.update('diode-cali-task', {
+                            percentage: (elapsedSecs / taskTotalSecs) * 100
+                        });
                     }, 100);
                     this.waitTillCompleted()
                         .fail((err) => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('diode-cali-task');
                             d.reject(err); // Error while running test
                         })
                         .then(() => {
                             clearInterval(progressUpdateTimer);
-                            ProgressActions.close();
+                            Progress.popById('diode-cali-task');
                             d.resolve();
                         });
 
@@ -759,7 +770,10 @@ class DeviceMaster {
             if (typeof deviceConn.errors === 'string') {
                 if (deviceConn.errors !== info.error_label && info.error_label) {
                     if (window.debug) {
-                        AlertActions.showError(info.name + ': ' + info.error_label);
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: info.name + ': ' + info.error_label,
+                        })
                         deviceConn.errors = info.error_label;
                     }
                 } else if (!info.error_label) {
@@ -787,20 +801,26 @@ class DeviceMaster {
                             }
 
                             if (deviceConn.info.st_id === DeviceConstants.status.COMPLETED) {
-                                AlertActions.showInfo(message, function (growl) {
-                                    growl.remove(function () { });
-                                    this.selectDevice(defaultPrinter).then(function () {
-                                        GlobalActions.showMonitor(defaultPrinter);
-                                    });
-                                });
-                            } else {
-                                if (message !== '') {
-                                    AlertActions.showWarning(message, function (growl) {
-                                        growl.remove(function () { });
+                                Alert.popUp({
+                                    type: AlertConstants.SHOW_POPUP_INFO,
+                                    message,
+                                    callbacks: () => {
                                         this.selectDevice(defaultPrinter).then(function () {
                                             GlobalActions.showMonitor(defaultPrinter);
                                         });
-                                    }, true);
+                                    }
+                                });
+                            } else {
+                                if (message !== '') {
+                                    Alert.popUp({
+                                        type: AlertConstants.SHOW_POPUP_WARNING,
+                                        message,
+                                        callbacks: () => {
+                                            this.selectDevice(defaultPrinter).then(function () {
+                                                GlobalActions.showMonitor(defaultPrinter);
+                                            });
+                                        }
+                                    });
                                 }
                             }
 
@@ -820,7 +840,6 @@ class DeviceMaster {
                     }
                     else {
                         if ($('#growls').length > 0) {
-                            AlertActions.closeNotification();
                             this.defaultPrinterWarningShowed = false;
                         }
                     }

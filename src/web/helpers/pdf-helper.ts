@@ -17,7 +17,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
     const child_process = requireNode('child_process');
     const exec = util.promisify(child_process.exec);
     const execFile = util.promisify(child_process.execFile);
-    const resourcesRoot = process['defaultApp'] ? process.cwd() : process['resourcesPath'];
+    const resourcesRoot = true || process['defaultApp'] ? process.cwd() : process['resourcesPath'];
     const lang = i18n.lang.beambox.popup.pdf2svg;
     let pdf2svgPath = null;
     if (process.platform === 'darwin') {
@@ -38,7 +38,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                     const blob = await resp.blob();
                     blob['name'] = file.name + '.svg';
                     blob['lastModifiedDate'] = file.lastModifiedDate;
-                    svgEditor.importSvg(blob, true);
+                    svgEditor.importSvg(blob, true, false);
                 } else {
                     throw stderr
                 }
@@ -74,7 +74,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                     const blob = await resp.blob();
                     blob['name'] = file.name + '.svg';
                     blob['lastModifiedDate'] = file.lastModifiedDate;
-                    svgEditor.importSvg(blob, true);
+                    svgEditor.importSvg(blob, true, false);
                 } else {
                     throw stderr
                 }

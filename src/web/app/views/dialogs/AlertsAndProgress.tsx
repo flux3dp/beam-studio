@@ -9,6 +9,25 @@ let _contextCaller;
 class Progress extends React.Component {
     constructor(props) {
         super(props);
+        const { progress } = this.props;
+        const { timeout, timeoutCallback } = progress;
+        if (timeout) {
+            this.closeTimeout = setTimeout(() => {
+                const { popById } = this.context;
+                if (!progress.id) {
+                    console.warn('Progress without ID', progress);
+                } else {
+                    popById(progress.id);
+                }
+                if (timeoutCallback) {
+                    timeoutCallback();
+                }
+            }, timeout);
+        };
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.closeTimeout);
     }
 
     _renderCaption = (caption) => {
@@ -53,6 +72,7 @@ class Progress extends React.Component {
         );
     }
 }
+Progress.contextType = AlertProgressContext;
 
 class Alert extends React.Component {
     constructor(props) {
@@ -82,6 +102,17 @@ class Alert extends React.Component {
         return (
             <div className="modal-checkbox">
                 <input type="checkbox" onClick={_handleCheckboxClick}></input>{checkBoxText}
+            </div>
+        );
+    }
+
+    _renderChildren = (children) => {
+        if (!children) {
+            return null;
+        }
+        return (
+            <div className='alert-children'>
+                {children}
             </div>
         );
     }
@@ -129,6 +160,7 @@ class Alert extends React.Component {
                 <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
                     {this._renderCaption(alert.caption)}
                     {this._renderMessage(alert)}
+                    {this._renderChildren(alert.children)}
                     {checkBox}
                     <ButtonGroup buttons={buttons}/>
                 </div>
@@ -176,7 +208,6 @@ export class AlertsAndProgress extends React.Component {
                 {components}
             </div>
         );
-        ;
     }
 };
 

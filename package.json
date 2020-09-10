@@ -1,7 +1,7 @@
 {
   "name": "beam-studio",
   "productName": "Beam Studio",
-  "version": "1.4.2-alpha",
+  "version": "1.4.4-alpha",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -22,6 +22,7 @@
     "custom-electron-titlebar": "^3.2.2",
     "electron-localshortcut": "^3.2.1",
     "electron-notarize": "^0.2.0",
+    "electron-store": "^6.0.0",
     "electron-updater": "^4.2.0",
     "font-manager": "^0.3.0",
     "fontkit": "^1.8.1",

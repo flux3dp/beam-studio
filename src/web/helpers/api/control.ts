@@ -52,12 +52,29 @@ class Control {
         this.ws = await this.createWs(this.uuid);
     }
 
-    useDefaultResponse (command) {
+    useDefaultResponse (command, timeout=30000) {
         let d = $.Deferred();
 
-        this.commandCallback.onMessage = (response) => { d.resolve(response); };
-        this.commandCallback.onError = (response) => { d.reject(response); };
-        this.commandCallback.onFatal = (response) => { d.reject(response); };
+        const timeoutTimer = setTimeout(() => {
+            d.reject({
+                status: 'error',
+                text:'TIMEOUT',
+                error: 'TIMEOUT',
+            });
+        }, timeout);
+
+        this.commandCallback.onMessage = (response) => {
+            clearTimeout(timeoutTimer);
+            d.resolve(response);
+        };
+        this.commandCallback.onError = (response) => {
+            clearTimeout(timeoutTimer);
+            d.reject(response);
+        };
+        this.commandCallback.onFatal = (response) => {
+            clearTimeout(timeoutTimer);
+            d.reject(response);
+        };
 
         this.ws.send(command);
         return d.promise();

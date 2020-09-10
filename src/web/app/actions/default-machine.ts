@@ -16,6 +16,6 @@ import { IDeviceInfo } from '../../interfaces/IDevice';
             return config().read('default-printer') || {};
         },
         clear: () => {
-            localStorage.removeItem('default-printer');
+            config().remove('default-printer');
         }
     };

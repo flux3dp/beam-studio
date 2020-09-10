@@ -10,7 +10,11 @@ import AlertConstants from '../app/constants/alert-constants'
 import Progress from '../app/contexts/ProgressCaller'
 // @ts-expect-error
 import fileSaver = require('plugins/file-saver/file-saver.min');
+const Store = requireNode('electron-store');
+
 const LANG = i18n.lang.beambox;
+
+const store = new Store();
 function obfuse(str){
     var output = [],
         c;
@@ -67,17 +71,17 @@ let getOutput = () => {
 
     output.push('\n\n======::storage::======\n');
 
-    for(let key in localStorage) {
-        let value = localStorage[key];
+    for(let key in store.store) {
+        let value = store.get(key);
+        console.log(key, value);
         if(typeof value == "string" && value.startsWith("-----BEGIN RSA PRIVATE KEY-----\n")) {
             value = "[hidden]";
         }
         if (typeof value == "function") continue;
-        output.push(`${key}=${value}\n\n`);
+        output.push(`${key}=${typeof(value) === 'object' ? JSON.stringify(value) : value}\n\n`);
     }
 
     output.push('\n\n======::generic::======\n');
-    // MODIFIED: report_info.generic->general
     output.push(JSON.stringify(report_info.general, null, 2));
 
     return output;

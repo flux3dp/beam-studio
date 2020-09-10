@@ -42,8 +42,7 @@ define([
     'app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
-    'app/actions/progress-actions',
-    'app/constants/progress-constants',
+    'app/contexts/ProgressCaller',
     'app/actions/topbar',
     'helpers/api/config',
     'helpers/beam-file-helper',
@@ -68,8 +67,7 @@ define([
     ZoomBlockController,
     BeamboxActions,
     Constant,
-    ProgressActions,
-    ProgressConstants,
+    Progress,
     TopbarActions,
     Config,
     BeamFileHelper,
@@ -94,13 +92,12 @@ define([
     ZoomBlockController = ZoomBlockController.default;
     BeamboxActions = BeamboxActions.default;
     Constant = Constant.default;
-    ProgressActions = ProgressActions.default;
-    ProgressConstants = ProgressConstants.default;
+    Progress = Progress.default;
     TopbarActions = TopbarActions.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
     ImageData = ImageData.default;
-    LocalStorage = __importStar(LocalStorage);
+    LocalStorage = LocalStorage.default;
     shortcuts = shortcuts.default;
     SymbolMaker = SymbolMaker.default;
     const LANG = i18n.lang.beambox;
@@ -2544,6 +2541,7 @@ define([
                                 if (selected.tagName === 'text') {
                                     cur_text.font_size = selected.getAttribute('font-size');
                                     cur_text.font_family = selected.getAttribute('font-family');
+                                    cur_text.font_postscriptName = selected.getAttribute('font-postscript');
                                 }
                                 selectorManager.requestSelector(selected).showGrips(true);
 
@@ -3555,11 +3553,6 @@ define([
                     textActions.init();
 
                     $(curtext).css('cursor', 'text');
-
-                    //				if (svgedit.browser.supportsEditableText()) {
-                    //					curtext.setAttribute('editable', 'simple');
-                    //					return;
-                    //				}
 
                     if (!arguments.length) {
                         setCursor();
@@ -5963,6 +5956,10 @@ define([
                     });
                 }
                 function _symbolWrapper(symbolContents, unit) {
+                    if (symbolContents.tagName === 'g' && symbolContents.childNodes.length === 0) {
+                        console.log('wrapping empty group, return null');
+                        return null;
+                    }
                     const rootViewBox = svg.getAttribute('viewBox');
                     const rootWidth = unit2Pixel(svg.getAttribute('width'), unit);
                     const rootHeight = unit2Pixel(svg.getAttribute('height'), unit);
@@ -6177,14 +6174,21 @@ define([
             }
             async function appendUseElement(symbol, type, layerName) {
                 // create a use element
+                if (!symbol) {
+                    return null;
+                }
                 const use_el = svgdoc.createElementNS(NS.SVG, 'use');
                 use_el.id = getNextId();
                 setHref(use_el, '#' + symbol.id);
                 //switch currentLayer, and create layer if necessary
-                if ((type === 'layer' && symbol.getAttribute('data-id')) || (type === 'color' && symbol.getAttribute('data-color') || (type === 'image-trace'))) {
+                if ((type === 'layer' && layerName) || (type === 'color' && symbol.getAttribute('data-color') || (type === 'image-trace'))) {
 
                     const color = symbol.getAttribute('data-color');
-                    layerName = (type === 'image-trace') ? 'Traced Path' : symbol.getAttribute('data-id') || rgbToHex(color);
+                    if (type === 'image-trace') {
+                        layerName = 'Traced Path';
+                    } else if (type === 'color') {
+                        layerName = rgbToHex(color);
+                    }
 
                     const isLayerExist = svgCanvas.setCurrentLayer(layerName);
                     if (!isLayerExist) {
@@ -6323,8 +6327,7 @@ define([
             const svg = svgdoc.adoptNode(newDoc.documentElement);
             const {symbols, confirmedType} = parseSvg(svg, _type);
 
-            const use_elements = await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)));
-
+            const use_elements = (await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)))).filter((elem) => elem);
             use_elements.forEach(elem => {
                 if (this.isUseLayerColor) {
                     this.updateElementColor(elem);
@@ -7962,7 +7965,12 @@ define([
                 textActions.setCursor();
             }
             textActions.setIsVertical(val);
-            textActions.updateMultiLineTextElem(selectedElements[0]);
+            const elem = selectedElements[0];
+            const angle = svgedit.utilities.getRotationAngle(elem);
+            this.setRotationAngle(0, true, elem);
+            textActions.updateMultiLineTextElem(elem);
+            this.setRotationAngle(angle, true, elem);
+            window.updateContextPanel();
         }
 
         this.getTextIsVertical = () => {
@@ -9152,7 +9160,10 @@ define([
                 return;
             }
             let batchCmd = new svgedit.history.BatchCommand('Vectorize Image');
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.photo_edit_panel.processing);
+            Progress.openNonstopProgress({
+                id: 'vectorize-image',
+                message: LANG.photo_edit_panel.processing,
+            });
             const imgUrl = await new Promise((resolve) => {
                 ImageData(
                     $(img).attr("origImage"),
@@ -9217,7 +9228,7 @@ define([
                 selectorManager.requestSelector(g).resize();
                 
                 addCommandToHistory(batchCmd);
-                ProgressActions.close();
+                Progress.popById('vectorize-image');
             });
         }
 
@@ -9284,7 +9295,10 @@ define([
                 // apply style
                 const descendants = Array.from(g.querySelectorAll('*'));
                 const nodeNumbers = descendants.length;
-                ProgressActions.open(ProgressConstants.STEPPING, '', `${LANG.right_panel.object_panel.actions_panel.disassembling} - 0%`, false);
+                Progress.openSteppingProgress({
+                    id: 'disassemble-use',
+                    message: `${LANG.right_panel.object_panel.actions_panel.disassembling} - 0%`,
+                })
                 //Wait for progress open
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
                 let currentProgress = 0;
@@ -9302,13 +9316,19 @@ define([
                     svgedit.recalculate.recalculateDimensions(child);
                     const progress = Math.round(200 * j / nodeNumbers) / 2;
                     if (progress > currentProgress) {
-                        ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.disassembling} - ${Math.round(9000 * j / nodeNumbers) / 100}%`, progress * 0.9);
+                        Progress.update('disassemble-use', {
+                            message: `${LANG.right_panel.object_panel.actions_panel.disassembling} - ${Math.round(9000 * j / nodeNumbers) / 100}%`,
+                            percentage: progress * 0.9,
+                        });
                         //Wait for progress update
                         await new Promise((resolve) => {setTimeout(resolve, 50)});
                         currentProgress = progress;
                     }
                 }
-                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 90%`, 90);
+                Progress.update('disassemble-use', {
+                    message: `${LANG.right_panel.object_panel.actions_panel.ungrouping} - 90%`,
+                    percentage: 90,
+                });
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
                 let start = Date.now();
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
@@ -9327,8 +9347,11 @@ define([
                         batchCmd.addSubCommand(cmd);
                     }
                 }
-                ProgressActions.updating(`${LANG.right_panel.object_panel.actions_panel.ungrouping} - 100%`, 100);
-                ProgressActions.close();
+                Progress.update('disassemble-use', {
+                    message: `${LANG.right_panel.object_panel.actions_panel.ungrouping} - 100%`,
+                    percentage: 100,
+                });
+                Progress.popById('disassemble-use');
                 if (!tempGroup) {
                     this.tempGroupSelectedElements();
                 }
@@ -9554,6 +9577,10 @@ define([
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
+            }
+            const len = selectedElements.filter((elem) => elem).length;
+            if (len < 1) {
+                return;
             }
             if (!type) {
                 type = 'g';

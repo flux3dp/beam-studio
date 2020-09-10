@@ -1,8 +1,9 @@
 // @ts-expect-error
 import PropTypes = require('reactPropTypes')
 import keyCodeConstants from '../constants/keycode-constants'
-const ClassNames = requireNode('classnames')
+import LocalStorage from '../../helpers/local-storage'
 
+const ClassNames = requireNode('classnames')
 const React = requireNode('react');;
 
     class UnitInput extends React.Component{
@@ -119,7 +120,7 @@ const React = requireNode('react');;
 
         getLengthUnit() {
             if (this.props.unit === 'mm') {
-                let unit = localStorage.getItem('default-units') || 'mm';
+                let unit = LocalStorage.get('default-units') || 'mm';
                 if (unit === 'mm') {
                     return this.props.abbr ? '' : 'mm';
                 } else {

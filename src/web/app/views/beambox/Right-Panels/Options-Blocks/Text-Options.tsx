@@ -121,7 +121,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                                 <Select
                                     className={classNames('font-react-select-container', {'no-triangle': isOnlyOneOption})}
                                     classNamePrefix={'react-select'}
-                                    defaultValue={{value: fontFamily, label: FontFuncs.fontNameMap.get(fontFamily)}}
+                                    value={{value: fontFamily, label: FontFuncs.fontNameMap.get(fontFamily)}}
                                     onChange={value => this.handleFontFamilyChange(value)}
                                     onKeyDown={(e) => {
                                         e.stopPropagation();

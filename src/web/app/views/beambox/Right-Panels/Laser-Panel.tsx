@@ -11,7 +11,7 @@ import ButtonGroup from '../../../widgets/Button-Group'
 import DropdwonControl from '../../../widgets/Dropdown-Control'
 import Modal from '../../../widgets/Modal'
 import LaserManageModal from './Laser-Manage-Modal'
-import * as LocalStorage from '../../../../helpers/local-storage'
+import LocalStorage from '../../../../helpers/local-storage'
 import * as i18n from '../../../../helpers/i18n'
 import Alert from '../../../contexts/AlertCaller'
 import AlertConstants from '../../../constants/alert-constants'
@@ -35,6 +35,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
     const functionalLaserOptions = [
         'save',
         'export',
+        'import',
         'more',
     ];
 
@@ -91,7 +92,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
         }
 
         initDefaultConfig = () => {
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             if (!LocalStorage.get('defaultLaserConfigsInUse') || !LocalStorage.get('customizedLaserConfigs')) {
                 const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
                     const {speed, power, repeat} = this._getDefaultParameters(e);
@@ -105,9 +106,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     }
                 });
                 let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-                // @ts-expect-error
                 customizedLaserConfigs = customizedLaserConfigs.filter((config) => !config.isDefault);
-                // @ts-expect-error
                 customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
                 const defaultLaserConfigsInUse = {};
                 defaultLaserOptions.forEach(e => {
@@ -168,6 +167,22 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
             }
         }
 
+        importLaserConfig = async () => {
+            const dialogOptions = {
+                properties: ['openFile'],
+                filters: [
+                    { name: 'JSON', extensions: ['json', 'JSON']},
+                ]
+            };
+            const res = await DialogCaller.showOpenDialog(dialogOptions);
+            if (res) {
+                const filePath = res[0];
+                const file = await fetch(filePath);
+                const fileBlob = await file.blob();
+                svgedit.importLaserConfig(fileBlob);
+            }
+        };
+
         updateData = () => {
             this.initDefaultConfig();
             this.updatePresetLayerConfig();
@@ -178,8 +193,8 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 strength:   layerData.power,
                 repeat:     layerData.repeat,
                 height:     layerData.height,
-                zStep:      layerData.zstep,
-                isDiode:    parseInt(layerData.diode) > 0,
+                zStep:      layerData.zStep,
+                isDiode:    parseInt(layerData.isDiode) > 0,
             });
         }
 
@@ -376,6 +391,9 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 this.setState({ modal: 'more' });
             } else if (value === 'export') {
                 this.exportLaserConfigs();
+                this._handleCancelModal();
+            } else if (value === 'import') {
+                this.importLaserConfig();
                 this._handleCancelModal();
             } else {
                 const customizedConfigs = (LocalStorage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
@@ -640,7 +658,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     break;
                 }
             }
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             const speedPanel = this._renderSpeed(hasVector, unit);
             const strengthPanel = this._renderStrength();
             const repeatPanel = this._renderRepeat();

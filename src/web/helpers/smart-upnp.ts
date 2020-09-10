@@ -18,7 +18,7 @@ import Config from './api/config'
 		 */
 		init: (discoverObj) => {
 			Discover = discoverObj;
-			if (Config().read('guessing_poke') !== '0') {
+			if (Config().read('guessing_poke') !== 0) {
 				setInterval(function() {
 					if(Discover.countDevices() === 0){
 						self.pokeNext();
@@ -71,6 +71,7 @@ import Config from './api/config'
 			if(guessIPs.length == 0) return;
 			var ip = guessIPs.shift();
 			Discover.poke(ip);
+			Discover.testTcp(ip);
         },
 
 		addSolidIP: function(ip){

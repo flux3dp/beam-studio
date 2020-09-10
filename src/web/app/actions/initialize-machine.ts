@@ -2,7 +2,7 @@
  * initialize machine helper
  */
 import config from '../../helpers/api/config'
-import * as _localStorage from '../../helpers/local-storage'
+import _localStorage from '../../helpers/local-storage'
 import settings from '../app-settings'
 import { IDeviceInfo } from '../../interfaces/IDevice';
 
@@ -40,7 +40,7 @@ import { IDeviceInfo } from '../../interfaces/IDevice';
         },
         hasBeenCompleted: function() {
             // If you initialized before and you're not in initialization screen
-            return 'true' === config().read('printer-is-ready') && (!~location.href.indexOf('initialize/'));
+            return config().read('printer-is-ready') && (!~location.href.indexOf('initialize/'));
         },
         settingPrinter: {
             get: function() {

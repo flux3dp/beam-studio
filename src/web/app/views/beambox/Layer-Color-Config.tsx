@@ -3,7 +3,7 @@ import UnitInput from '../../widgets/Unit-Input-v2'
 import ValidationTextInput from '../../widgets/Validation-Text-Input'
 import Alert from '../../contexts/AlertCaller'
 import AlertConstants from '../../constants/alert-constants'
-import * as LocalStorage from '../../../helpers/local-storage'
+import LocalStorage from '../../../helpers/local-storage'
 import * as i18n from '../../../helpers/i18n'
 
     const React = requireNode('react');;

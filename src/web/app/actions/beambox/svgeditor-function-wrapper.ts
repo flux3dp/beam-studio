@@ -8,6 +8,7 @@ import TutorialConstants from '../../constants/tutorial-constants'
 import SymbolMaker from '../../../helpers/symbol-maker'
 import * as i18n from '../../../helpers/i18n'
 import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+
 let svgCanvas;
 let svgedit;
 let svgEditor;
@@ -190,8 +191,8 @@ const electron = window['electron'];
                 power: currentLayer.getAttribute('data-strength'),
                 repeat: currentLayer.getAttribute('data-repeat'),
                 height: currentLayer.getAttribute('data-height'),
-                zstep: currentLayer.getAttribute('data-zstep'),
-                diode: currentLayer.getAttribute('data-diode'),
+                zStep: currentLayer.getAttribute('data-zstep'),
+                isDiode: currentLayer.getAttribute('data-diode'),
                 configName: currentLayer.getAttribute('data-configName'),
             };
 

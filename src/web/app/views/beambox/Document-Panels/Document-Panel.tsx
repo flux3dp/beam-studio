@@ -6,6 +6,7 @@ import RadioControl from '../../../widgets/Radio-Control'
 import BeamboxActions from '../../../actions/beambox'
 import BeamboxPreference from '../../../actions/beambox/beambox-preference'
 import Constant from '../../../actions/beambox/constant'
+import OpenBottomBoundaryDrawer from '../../../actions/beambox/open-bottom-boundary-drawer'
 import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer'
 import * as i18n from '../../../../helpers/i18n'
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
@@ -132,10 +133,12 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                 svgEditor.resetView();
                 PreviewModeBackgroundDrawer.updateCanvasSize();
             }
+            OpenBottomBoundaryDrawer.update();
             BeamboxActions.updateLaserPanel();
         }
 
         render() {
+            const doesSupportOpenBottom = Constant.addonsSupportList.openBottom.includes(this.state.workarea);
             const doesSupportHybrid = Constant.addonsSupportList.hybridLaser.includes(this.state.workarea);
             const doesSupportAutofocus = Constant.addonsSupportList.autoFocus.includes(this.state.workarea);
             return (
@@ -169,7 +172,8 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                                 onText={LANG.enable}
                                 offText={LANG.disable}
                                 label={LANG.borderless_mode}
-                                default={this.state.borderlessMode}
+                                default={doesSupportOpenBottom && this.state.borderlessMode}
+                                isDisabled={!doesSupportOpenBottom}
                                 onChange={(id, val) => this._handleBorderlessModeChange(val)} />
                             <SwitchControl
                                 id="autofocus-module"

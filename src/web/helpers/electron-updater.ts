@@ -12,26 +12,6 @@ const ipc = electron['ipc'];
 const events = electron['events'];
 const FLUX = window['FLUX'];
 
-//return true if v1 > v2
-const versionCompare = (v1, v2) => {
-    if (!v1) {
-        return false;
-    }
-    if (!v2) {
-        return true;
-    }
-    v1 = v1.split('.');
-    v2 = v2.split('.');
-    for(let i = 0; i < Math.min(v1.length, v2.length); i++) {
-        if (Number(v1[i]) > Number(v2[i])) {
-            return true;
-        } else if (Number(v1[i]) < Number(v2[i])) {
-            return false;
-        }
-    }
-    return false;
-}
-
 const checkForUpdate = (isAutoCheck) => {
     let currentChannel = FLUX.version.split('-')[1] || 'latest';
     if (!isAutoCheck) {
@@ -169,7 +149,7 @@ export default {
     },
 
     autoCheck: function() {
-        let isAutoCheck = Config().read('auto_check_update') === '1' || !Config().read('auto_check_update');
+        let isAutoCheck = Config().read('auto_check_update') === 1 || !Config().read('auto_check_update');
         if (isAutoCheck) {
             checkForUpdate(isAutoCheck);
         }

@@ -18,6 +18,7 @@ const url = require('url');
 const fs = require('fs');;
 const os = require('os');
 const exec = require('child_process').exec;
+const Store = require('electron-store');
 
 let mainWindow;
 let menuManager;
@@ -187,6 +188,32 @@ function createWindow () {
         },
         vibrancy: 'light'});
 
+    const store = new Store();
+
+    if (!store.get('poke-ip-addr')) {
+        store.set('poke-ip-addr', '192.168.1.1');
+    }
+    
+    if (!store.get('customizedLaserConfigs')) {
+        mainWindow.webContents
+            .executeJavaScript('({...localStorage});', true)
+            .then(localStorage => {
+                const keysNeedParse = ['auto_check_update', 'auto_connect', 'guessing_poke', 'loop_compensation', 'notification', 'printer-is-ready'];
+                for (let key in localStorage) {
+                    if (keysNeedParse.includes(key)) {
+                        try {
+                            localStorage[key] = JSON.parse(localStorage[key]);
+                            console.log(key, localStorage[key]);
+                        } catch (e) {
+                            console.log(key, e);
+                            //Error when parsing 
+                        }
+                    }
+                }
+                store.set(localStorage);
+            });
+    }
+    
     // mainWindow.maximize();
 
     mainWindow.loadURL(url.format({
@@ -426,7 +453,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
         // Escape for Whitelists
         const whiteList = ['標楷體'];
-        const whiteKeyWords = ['華康', 'Adobe'];
+        const whiteKeyWords = ['華康', 'Adobe', '文鼎'];
         if (whiteList.indexOf(fontFamily) >= 0) {
             return fontFamily;
         }

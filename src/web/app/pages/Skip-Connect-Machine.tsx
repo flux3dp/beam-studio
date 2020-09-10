@@ -1,6 +1,5 @@
 import Modal from '../widgets/Modal'
-import BeamboxPreference from '../actions/beambox/beambox-preference'
-import Constant from '../actions/beambox/constant'
+import LocalStorage from '../../helpers/local-storage'
 import * as i18n from '../../helpers/i18n'
     const React = requireNode('react');;
 
@@ -10,10 +9,10 @@ import * as i18n from '../../helpers/i18n'
         return class SkipConnectMachine extends React.Component{
 
             onStart = () => {
-                if (!localStorage.getItem('printer-is-ready')) {
-                    localStorage.setItem('new-user', 'true');
+                if (!LocalStorage.get('printer-is-ready')) {
+                    LocalStorage.set('new-user', true);
                 }
-                localStorage.setItem('printer-is-ready', 'true');
+                LocalStorage.set('printer-is-ready', true);
                 location.hash = '#studio/beambox';
                 location.reload();
             }

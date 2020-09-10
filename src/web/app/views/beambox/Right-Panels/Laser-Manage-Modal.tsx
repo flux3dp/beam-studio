@@ -6,7 +6,7 @@ import AlertConstants from '../../../constants/alert-constants'
 import BeamboxPreference from '../../../actions/beambox/beambox-preference'
 import RightPanelConstants from '../../../constants/right-panel-constants'
 import isObjectEmpty from '../../../../helpers/is-object-empty'
-import * as LocalStorage from '../../../../helpers/local-storage'
+import LocalStorage from '../../../../helpers/local-storage'
 import * as i18n from '../../../../helpers/i18n'
 
     const React = requireNode('react');;
@@ -19,7 +19,7 @@ import * as i18n from '../../../../helpers/i18n'
             super(props);
             this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
             this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
-            this.unit = localStorage.getItem('default-units') || 'mm';
+            this.unit = LocalStorage.get('default-units') || 'mm';
             const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === props.selectedItem);
             this.unsavedChanges = {};
             this.state = {
@@ -349,17 +349,6 @@ import * as i18n from '../../../../helpers/i18n'
             LocalStorage.set('customizedLaserConfigs', this.editingCustomizedLaserConfigs);
             LocalStorage.set('defaultLaserConfigsInUse', this.editingDefaultLaserConfigsInUse);
             this.props.onClose();
-            // if (this.state.isSelectingCustomized && this.state.selectedItem != '') {
-            //     document.getElementById('laser-config-dropdown').value = this.state.selectedItem;
-            //     const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === this.state.selectedItem);
-            //     const speed = selectedConfig.speed;
-            //     const power = selectedConfig.power;
-            //     const repeat = selectedConfig.repeat || 1;
-            //     const zStep = selectedConfig.zStep || 0;
-            //     this.props.onApply(speed, power, repeat, zStep, this.state.selectedItem);
-            // } else {
-            //     this.props.onClose();
-            // }
         }
 
         _handleCancel = () => {

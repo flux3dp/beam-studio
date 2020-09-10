@@ -13,52 +13,52 @@ import { AlertProgressContextProvider } from '../contexts/AlertProgressContext'
 import { DialogContextProvider } from '../contexts/DialogContext'
 
 const electron = window['electron'];
-    const React = requireNode('react');;
-    const LANG = i18n.lang.beambox;
-    BeamboxInit.init();
+const React = requireNode('react');;
+const LANG = i18n.lang.beambox;
+BeamboxInit.init();
 
-    class Beambox extends React.Component {
-        constructor(props) {
-            super(props);
-        }
-        componentDidMount() {
-            BeamboxGlobalInteraction.attach();
-
-            // need to run after svgedit packages loaded, so place it at componentDidMouont
-            if (BeamboxPreference.read('show_guides')) {
-                BeamboxInit.displayGuides();
-            }
-
-            let ipc = electron.ipc;
-            let events = electron.events;
-            ipc.send(events.FRONTEND_READY);
-            BeamboxInit.showTutorial();
-            BeamboxInit.checkOSVersion();
-        }
-        componentWillUnmount() {
-            BeamboxGlobalInteraction.detach();
-        }
-
-        render() {
-            return (
-                <AlertProgressContextProvider>
-                    <DialogContextProvider>
-                        <div className="studio-container beambox-studio">
-                            <TopBarContextProvider>
-                                <TopBar />
-                            </TopBarContextProvider>
-                            <ZoomBlockContextProvider>
-                                <ZoomBlock />
-                            </ZoomBlockContextProvider>
-                            <SVGEditor />
-                            <div id='tool-panels-placeholder' />
-                            <div id='image-trace-panel-placeholder' />
-                            <Dialog index={0}/>
-                            <AlertsAndProgress index={0}/>
-                        </div>
-                    </DialogContextProvider>
-                </AlertProgressContextProvider>
-            );
-        }
+class Beambox extends React.Component {
+    constructor(props) {
+        super(props);
     }
-    export default () => Beambox;
+    componentDidMount() {
+        BeamboxGlobalInteraction.attach();
+
+        // need to run after svgedit packages loaded, so place it at componentDidMouont
+        if (BeamboxPreference.read('show_guides')) {
+            BeamboxInit.displayGuides();
+        }
+
+        let ipc = electron.ipc;
+        let events = electron.events;
+        ipc.send(events.FRONTEND_READY);
+        BeamboxInit.showTutorial();
+        BeamboxInit.checkOSVersion();
+    }
+    componentWillUnmount() {
+        BeamboxGlobalInteraction.detach();
+    }
+
+    render() {
+        return (
+            <AlertProgressContextProvider>
+                <DialogContextProvider>
+                    <div className="studio-container beambox-studio">
+                        <TopBarContextProvider>
+                            <TopBar />
+                        </TopBarContextProvider>
+                        <ZoomBlockContextProvider>
+                            <ZoomBlock />
+                        </ZoomBlockContextProvider>
+                        <SVGEditor />
+                        <div id='tool-panels-placeholder' />
+                        <div id='image-trace-panel-placeholder' />
+                        <Dialog index={0}/>
+                        <AlertsAndProgress index={0}/>
+                    </div>
+                </DialogContextProvider>
+            </AlertProgressContextProvider>
+        );
+    }
+}
+export default () => Beambox;

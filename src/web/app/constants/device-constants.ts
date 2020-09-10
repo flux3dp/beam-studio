@@ -17,9 +17,11 @@ export default {
     OK              : 'OK',
     IDLE            : 'IDLE',
     RESUMING        : 'RESUMING',
+    AUTH_ERROR      : 'AUTH_ERROR',
     HEAD_OFFLINE    : 'HEAD_OFFLINE',
     HEAD_ERROR      : 'HEAD_ERROR',
     WRONG_HEAD      : 'WRONG_HEAD',
+    AUTH_FAILED     : 'AUTH_FAILED',
     HEADER_OFFLINE  : 'HEADER_OFFLINE',
     HEADER_ERROR    : 'HEADER_ERROR',
     WRONG_HEADER    : 'WRONG_HEADER',
@@ -37,8 +39,9 @@ export default {
     SCANNING        : 'SCANNING',
     CALIBRATING     : 'CALIBRATING',
     HEATING         : 'HEATING',
+    MONITOR_TOO_OLD : 'FLUXMONITOR_VERSION_IS_TOO_OLD',
     RESOURCE_BUSY   : 'RESOURCE_BUSY',
-
+    NOT_FOUND       : 'NOT_FOUND',
     // folder
     NOT_EXIST       : 'NOT_EXIST',
     PREVIEW         : 'PREVIEW',

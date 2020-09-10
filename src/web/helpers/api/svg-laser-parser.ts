@@ -12,6 +12,7 @@ import convertToTypedArray from '../convertToTypedArray'
 import history from '../data-history'
 import AlertConfig from './alert-config'
 import setParams from './set-params'
+import LocalStorage from '../local-storage'
 import * as i18n from '../i18n'
 import { getSVGAsync } from '../svg-editor-helper'
 let svgCanvas;
@@ -373,7 +374,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                     }
                 };
 
-                let loop_compensation = Number(localStorage.getItem('loop_compensation') || '0');
+                let loop_compensation = Number(LocalStorage.get('loop_compensation') || '0');
                 if (loop_compensation > 0) {
                     ws.send(['set_params', 'loop_compensation', loop_compensation].join(' '));    
                 }
@@ -387,6 +388,52 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
                 lastOrder = 'divideSVG';
 
                 var args = ['divide_svg'],
+                    blobs = [],
+                    duration,
+                    currentLength = 0,
+                    finalBlobs = {},
+                    currentName = '';
+                //set scale when devide svg, default value is 254 / 72
+                if (opts.scale) {
+                    args.push('-s');
+                    args.push(String(Math.floor(opts.scale * 100) / 100));
+                }
+
+                events.onMessage = function(data) {
+                    if (data.name) {
+                        currentName = data.name;
+                        currentLength = data.length;
+                        if (currentName == 'bitmap') {
+                            finalBlobs["bitmap_offset"] = data.offset;
+                        }
+                    } else if (data instanceof Blob) {
+                        blobs.push(data);
+                        var blob = new Blob(blobs);
+
+                        if (currentLength === blob.size) {
+                            blobs = [];
+                            finalBlobs[currentName] = blob;
+                        }
+                    } else if (data.status === 'ok') {
+                        $deferred.resolve({res: true, data: finalBlobs});
+                    } else if (data.status === 'Error') {
+                        Progress.popById('loading_image');
+                        $deferred.resolve({res: false, data: data.message});
+                    }
+
+                };
+
+                ws.send(args.join(' '));
+                return $deferred.promise();
+            },
+            divideSVGbyLayer: function(opts?) {
+                var $deferred = $.Deferred();
+                opts = opts || {};
+                opts.onProgressing = opts.onProgressing || function() {};
+                opts.onFinished = opts.onFinished || function() {};
+                lastOrder = 'divideSVGbyLayer';
+
+                var args = ['divide_svg_by_layer'],
                     blobs = [],
                     duration,
                     currentLength = 0,

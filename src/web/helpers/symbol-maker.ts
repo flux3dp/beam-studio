@@ -10,6 +10,9 @@ let clipCount = 1;
 const electron = window['electron'];
 
     const makeSymbol = (elem, attrs, batchCmd, defs, type) => {
+        if (!elem) {
+            return null;
+        }
         const NS = svgedit.NS;
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
         const symbol = svgdoc.createElementNS(NS.SVG, 'symbol');

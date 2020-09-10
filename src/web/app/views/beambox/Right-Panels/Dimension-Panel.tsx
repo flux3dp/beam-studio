@@ -2,6 +2,7 @@ import UnitInput from '../../../widgets/Unit-Input-v2'
 import Constant from '../../../actions/beambox/constant'
 import KeycodeConstants from '../../../constants/keycode-constants'
 import SymbolMaker from '../../../../helpers/symbol-maker'
+import LocalStorage from '../../../../helpers/local-storage'
 import * as i18n from '../../../../helpers/i18n'
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
 let svgCanvas, svgedit;
@@ -183,7 +184,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
             const { getDimensionValues } = this.props;
             const dimensionValues = getDimensionValues();
             const isRatioFixed = dimensionValues.isRatioFixed || false;
-            const unit = localStorage.getItem('default-units') || 'mm';
+            const unit = LocalStorage.get('default-units') || 'mm';
             const isInch = unit === 'inches';
             switch(type) {
                 case 'x':

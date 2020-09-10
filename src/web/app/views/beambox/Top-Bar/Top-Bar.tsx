@@ -1,8 +1,11 @@
+import $ from 'jquery'
 import DefaultMachine from '../../../actions/default-machine'
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
 import Alert from '../../../contexts/AlertCaller'
 import AlertConstants from '../../../constants/alert-constants'
+import { ConnectionError } from '../../../constants/connection-constants'
 import DeviceConstants from '../../../constants/device-constants'
+import Progress from '../../../contexts/ProgressCaller'
 import ProgressActions from '../../../actions/progress-actions'
 import ProgressConstants from '../../../constants/progress-constants'
 import BeamboxPreference from '../../../actions/beambox/beambox-preference'
@@ -21,6 +24,7 @@ import Discover from '../../../../helpers/api/discover'
 import checkDeviceStatus from '../../../../helpers/check-device-status'
 import DeviceList from '../../../../helpers/device-list'
 import DeviceMaster from '../../../../helpers/device-master'
+import LocalStorage from '../../../../helpers/local-storage'
 import sprintf from '../../../../helpers/sprintf'
 import SymbolMaker from '../../../../helpers/symbol-maker'
 import VersionChecker from '../../../../helpers/version-checker'
@@ -86,7 +90,8 @@ const workarea = window['workarea'];
         renderPreviewButton = () => {
             const { isPreviewing } = this.state;
             const borderless = BeamboxPreference.read('borderless') || false;
-            const previewText = borderless ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
+            const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
+            const previewText = (borderless && supportOpenBottom) ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
             return (
                 <div className={classNames('preview-button-container', {previewing: isPreviewing})}>
                     <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>
@@ -138,14 +143,16 @@ const workarea = window['workarea'];
             FnWrapper.useSelectTool();
             svgCanvas.clearSelection();
             const vc = VersionChecker(device.version);
-
-            ProgressActions.open(ProgressConstants.NONSTOP, lang.message.tryingToConenctMachine);
+            Progress.openNonstopProgress({
+                id: 'start-preview-controller',
+                message: lang.message.tryingToConenctMachine,
+            });
             if (!vc.meetRequirement('USABLE_VERSION')) {
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
                     message: lang.beambox.popup.should_update_firmware_to_continue,
                 });
-                ProgressActions.close();
+                Progress.popById('start-preview-controller');
                 return;
             }
 
@@ -157,10 +164,10 @@ const workarea = window['workarea'];
                     message,
                     caption
                 });
-                ProgressActions.close();
+                Progress.popById('start-preview-controller');
                 return;
             }
-            ProgressActions.close();
+            Progress.popById('start-preview-controller');
 
             $(workarea).css('cursor', 'wait');
             try {
@@ -295,7 +302,7 @@ const workarea = window['workarea'];
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
                     if (!AlertConfig.read('skip_path_speed_warning')) {
                         let message = lang.beambox.popup.too_fast_for_path;
-                        if (localStorage.getItem('default-units') === 'inches') {
+                        if (LocalStorage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                             console.log(message);
                         }
@@ -313,7 +320,7 @@ const workarea = window['workarea'];
                 } else {
                     if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
                         let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
-                        if (localStorage.getItem('default-units') === 'inches') {
+                        if (LocalStorage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                         }
                         Alert.popUp({
@@ -337,7 +344,6 @@ const workarea = window['workarea'];
             const allowedWorkareas = Constant.allowedWorkarea[device.model];
             if (currentWorkarea && allowedWorkareas) {
                 if (!allowedWorkareas.includes(currentWorkarea)) {
-                    ProgressActions.close();
                     Alert.popUp({
                         id: 'workarea unavailable',
                         message: lang.message.unavailableWorkarea,
@@ -367,7 +373,7 @@ const workarea = window['workarea'];
         showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
             const { deviceList } = this;
             if (deviceList.length > 0) {
-                if (localStorage.getItem('auto_connect') !== '0' && deviceList.length === 1) {
+                if (LocalStorage.get('auto_connect') !== 0 && deviceList.length === 1) {
                     this.handleSelectDevice(deviceList[0], (device) => {selectDeviceCallback(device)});
                     return;
                 }
@@ -451,25 +457,30 @@ const workarea = window['workarea'];
 
         handleSelectDevice = async (device, callback) => {
             this.hideDeviceList();
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, lang.initialize.connecting);
             try {
                 const status = await DeviceMaster.selectDevice(device);
                 if (status.success) {
-                    ProgressActions.open(ProgressConstants.NONSTOP);
+                    Progress.openNonstopProgress({
+                        id: 'check-device-status',
+                    });
                     await checkDeviceStatus(device);
-                    ProgressActions.close();
+                    Progress.popById('check-device-status');
                     callback(device);
                 }
+                else if (status.error === DeviceConstants.TIMEOUT) {
+                    Alert.popUp({
+                        message: lang.message.connectionTimeout,
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                    });
+                }
             } catch (e) {
-                // TOD: handle connection error
-                console.error(e);
+                console.error(e.toString());
                 Alert.popUp({
                     id: 'fatal-occurred',
                     message: '#813' + e.toString(),
                     type: AlertConstants.SHOW_POPUP_ERROR,
                 });
             } finally {
-                ProgressActions.close();
             }
         }
 

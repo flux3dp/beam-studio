@@ -24,6 +24,7 @@ import firmwareUpdater from '../../../helpers/firmware-updater'
 import OutputError from '../../../helpers/output-error'
 import sprintf from '../../../helpers/sprintf'
 import VersionChecker from '../../../helpers/version-checker'
+import LocalStorage from '../../../helpers/local-storage'
 import * as i18n from '../../../helpers/i18n'
 import { IFont } from '../../../interfaces/IFont'
 import { getSVGAsync } from '../../../helpers/svg-editor-helper'
@@ -48,12 +49,17 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
             BeamboxPreference.write('enable-diode', false);
         }
 
-        const defaultBorderless = BeamboxPreference.read('default-borderless');
+        let defaultBorderless = BeamboxPreference.read('default-borderless');
         if (defaultBorderless === undefined) {
             BeamboxPreference.write('default-borderless', BeamboxPreference.read('borderless'));
-        } else {
-            BeamboxPreference.write('borderless', defaultBorderless);
+            defaultBorderless = BeamboxPreference.read('default-borderless');
         }
+        if (Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'))) {
+            BeamboxPreference.write('borderless', defaultBorderless);
+        } else {
+            BeamboxPreference.write('borderless', false);
+        }
+
         const config = Config();
         if (!config.read('default-units')) {
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -345,8 +351,10 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
                         });
                         return;
                     }
-                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                    Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
                     await checkDeviceStatus(device);
+                    Progress.popById('check-device-status');
+                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                     DeviceMaster.select(device)
                         .then(() => {
                             Progress.popById('connect');
@@ -374,8 +382,10 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
                     const vc = VersionChecker(device.version);
                     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                     if (isAvailableVersion) {
-                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                        Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
                         await checkDeviceStatus(device);
+                        Progress.popById('check-device-status');
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         DeviceMaster.select(device)
                             .then(() => {
                                 Progress.popById('connect');
@@ -531,7 +541,7 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
     const showTutorial = () => {
         if (!AlertConfig.read('skip-interface-tutorial')) {
             const LANG = i18n.lang.tutorial;
-            const isNewUser = localStorage.getItem('new-user') === 'true';
+            const isNewUser = LocalStorage.get('new-user');
             Alert.popUp({
                 id: 'ask-tutorial',
                 caption: LANG.welcome,
@@ -539,7 +549,7 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
                     const tutorialCallback = () => {
-                        localStorage.removeItem('new-user');
+                        LocalStorage.removeAt('new-user');
                         AlertConfig.write('skip-interface-tutorial', true);
                         Alert.popUp({
                             message: LANG.tutorial_complete,
@@ -552,7 +562,7 @@ getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
                     }
                 },
                 onNo: () => {
-                    localStorage.removeItem('new-user');
+                    LocalStorage.removeAt('new-user');
                     AlertConfig.write('skip-interface-tutorial', true);
                     if (isNewUser) {
                         Alert.popUp({

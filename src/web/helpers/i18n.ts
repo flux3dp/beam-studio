@@ -1,4 +1,4 @@
-import * as localStorage from './local-storage'
+import localStorage from './local-storage'
 import AppSettings from '../app/app-settings'
 import LangDe from '../app/lang/de'
 import LangEn from '../app/lang/en'

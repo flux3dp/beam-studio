@@ -4,8 +4,7 @@ import $ from 'jquery'
 import * as i18n from '../../../helpers/i18n'
 import ImageData from '../../../helpers/image-data'
 import JimpHelper from '../../../helpers/JimpHelper'
-import ProgressActions from '../../actions/progress-actions'
-import ProgressConstants from '../../constants/progress-constants'
+import Progress from '../../contexts/ProgressCaller'
 import Modal from '../../widgets/Modal'
 import ButtonGroup from '../../widgets/Button-Group'
 import CurveControl from '../../widgets/Curve-Control'
@@ -13,8 +12,12 @@ import SliderControl from '../../widgets/Slider-Control'
 // @ts-expect-error
 import Cropper = require('cropper');
 import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+
 let svgCanvas, svgedit;
-getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgedit = globalSVG.Edit
+});
 
     const React = requireNode('react');;
     const LANG = i18n.lang.beambox.photo_edit_panel;
@@ -24,7 +27,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
     class PhotoEditPanel extends React.Component {
         constructor(props) {
             super(props);
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             this.state = {
                 origSrc: this.props.src,
                 previewSrc: this.props.src,
@@ -62,7 +68,6 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
 
         async _handlePreprocess() {
             let imgBlobUrl = this.state.origSrc;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
             try {
                 const res = await fetch(imgBlobUrl)
                 const blob = await res.blob();
@@ -102,7 +107,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                         });
                     }
                 } else if (this.props.mode === 'crop') {
-                    ProgressActions.close();
+                    Progress.popById('photo-edit-processing');
 
                     this.setState({
                         imageWidth: w,
@@ -118,7 +123,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 
             } catch (err) {
                 console.log(err)
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -155,7 +160,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 this._handleSetAttribute('data-shading', true);
             }
 
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             ImageData(
                 this.state.src, {
                     grayscale: {
@@ -170,7 +178,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                         svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
                         svgCanvas.selectOnly([elem], true);
 
-                        ProgressActions.close();
+                        Progress.popById('photo-edit-processing');
                     }
                 }
             );
@@ -235,7 +243,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 if (this.props.mode === 'crop' && !this.state.isCropping) {
                     this._handleStartCrop();
                 }
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             };
             return (
                 <Modal>
@@ -257,7 +265,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
         }
 
         _handleGrayScale = () => {
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             ImageData(
                 this.state.src,
                 {
@@ -269,7 +280,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     },
                     isFullResolution: true,
                     onComplete: (result) => {
-                        ProgressActions.close();
+                        Progress.popById('photo-edit-processing');
                         if (this.state.grayScaleUrl) {
                             URL.revokeObjectURL(this.state.grayScaleUrl);
                         }
@@ -312,7 +323,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
             const k_corner = -sharpness / 4;
             const k_m = -4 * (k_edge + k_corner) + 1;
             const kernel = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 const resp = await fetch(imgBlobUrl);
                 const respData = await resp.blob();
@@ -335,10 +349,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     this.setState({src: src}, () => this._handleComplete());
                 }
                 
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -370,7 +384,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
             const h = Math.min(image.naturalHeight - y, cropData.height);
 
             let imgBlobUrl = this.state.src;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 const resp = await fetch(imgBlobUrl);
                 const respData = await resp.blob();
@@ -389,16 +406,19 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     imageWidth: cropData.width,
                     imageHeight: cropData.height
                 }, () => {
-                    ProgressActions.close();
+                    Progress.popById('photo-edit-processing');
                     if (complete) {
-                        ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+                        Progress.openNonstopProgress({
+                            id: 'photo-edit-processing',
+                            message: LANG.processing,
+                        });
                         let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
                     }
                 });
                 
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -430,11 +450,11 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 }
                 this.state.srcHistory.push(this.state.src);
                 this.state.src = src;
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
                 this._handleComplete();
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -463,11 +483,11 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 this.state.shading = true;
                 this.state.threshold = 255;
                 this.state.src = src;
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
                 this._handleComplete();
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -493,7 +513,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
         async _handleCurve(isPreview) {
             const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
             let imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
-            ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
+            Progress.openNonstopProgress({
+                id: 'photo-edit-processing',
+                message: LANG.processing,
+            });
             try {
                 const resp = await fetch(imgBlobUrl);
                 const respBlob = await resp.blob();
@@ -518,10 +541,10 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                 } else {
                     this.setState({src: src}, () => this._handleComplete());
                 }
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             } catch(e) {
                 console.error(e);
-                ProgressActions.close();
+                Progress.popById('photo-edit-processing');
             }
         }
 
@@ -610,7 +633,6 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     break;
                 case 'invert':
                 case 'stamp':
-                    ProgressActions.open(ProgressConstants.NONSTOP_WITH_MESSAGE, LANG.processing);
                     renderContent = (<div/>)
                     break;
                 default:

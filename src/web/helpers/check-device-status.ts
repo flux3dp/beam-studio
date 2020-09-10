@@ -8,8 +8,7 @@ import DeviceConstants from '../app/constants/device-constants'
 import PreviewModeController from '../app/actions/beambox/preview-mode-controller'
 import Alert from '../app/contexts/AlertCaller'
 import AlertConstants from '../app/constants/alert-constants'
-import ProgressActions from '../app/actions/progress-actions'
-import ProgressConstants from '../app/constants/progress-constants'
+import Progress from '../app/contexts/ProgressCaller'
 
 const lang = i18n.lang;
 
@@ -30,7 +29,10 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
                 deferred.resolve('ok');
                 break;
             case 'abort':
-                ProgressActions.open(ProgressConstants.NONSTOP);
+                Progress.openNonstopProgress({
+                    id: 'device-master-abort',
+                    timeout: 30000,
+                });
                 await DeviceMaster.stop();
                 timer = setInterval(async () => {
                     const report = await DeviceMaster.getReport();
@@ -40,7 +42,7 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
                         }, 500);
                     } else if (report.st_id === DeviceConstants.status.IDLE) {
                         clearInterval(timer);
-                        ProgressActions.close();
+                        Progress.popById('device-master-abort');
                         deferred.resolve('ok', report.st_id);
                     }
                 }, 1000);
@@ -61,7 +63,6 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
         case DeviceConstants.status.SCAN:
         case DeviceConstants.status.MAINTAIN:
             // ask kick?
-            ProgressActions.close();
             Alert.popUp({
                 id: 'kick',
                 message: lang.message.device_is_used,
@@ -91,7 +92,6 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
             }
             else {
                 // ask for abort
-                ProgressActions.close();
                 if (forceAbort) {
                     onYes('abort');
                 } else {
@@ -107,7 +107,6 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
         default:
             // device busy
             console.log('Device Busy ', printer.st_id);
-            ProgressActions.close();
             Alert.popUpDeviceBusy('on-select-printer');
             break;
     }

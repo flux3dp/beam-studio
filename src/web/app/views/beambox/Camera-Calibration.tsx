@@ -10,8 +10,7 @@ import VersionChecker from '../../../helpers/version-checker'
 import Alert from '../../contexts/AlertCaller'
 import AlertConstants from '../../constants/alert-constants'
 import CheckDeviceStatus from '../../../helpers/check-device-status'
-import ProgressActions from '../../actions/progress-actions'
-import ProgressConstants from '../../constants/progress-constants'
+import Progress from '../../contexts/ProgressCaller'
 import PreviewModeController from '../../actions/beambox/preview-mode-controller'
 import CameraCalibration from '../../../helpers/api/camera-calibration'
 import Constant from '../../actions/beambox/constant'
@@ -200,7 +199,11 @@ getSVGAsync((globalSVG) => {
             try {
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
                 parent.lastConfig = PreviewModeController._getCameraOffset();
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
                 const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
                 blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
@@ -208,7 +211,7 @@ getSVGAsync((globalSVG) => {
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
             return blobUrl;
         };
@@ -231,11 +234,10 @@ getSVGAsync((globalSVG) => {
                             } catch (error) {
                                 setCutButtonDisabled(false);
                                 console.log(error);
-                                ProgressActions.close();
                                 Alert.popUp({
                                     id: 'menu-item',
                                     type: AlertConstants.SHOW_POPUP_ERROR,
-                                    message: '#815 ' + (error.message || DeviceErrorHandler.translate(error.error) || 'Fail to cut and capture'),
+                                    message: '#815 ' + (error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture'),
                                     callbacks: async () => {
                                         const report = await DeviceMaster.getReport();
                                         device.st_id = report.st_id;
@@ -551,8 +553,11 @@ getSVGAsync((globalSVG) => {
 
     const moveAndRetakePicture = async (dir, updateImgBlobUrl) => {
         try {
-
-            ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+            Progress.openNonstopProgress({
+                id: 'taking-picture',
+                message: LANG.taking_picture,
+                timeout: 30000,
+            });
             let {x, y} = cameraPosition;
             switch(dir) {
                 case 'up':
@@ -575,7 +580,7 @@ getSVGAsync((globalSVG) => {
         } catch (error) {
             throw error;
         } finally {
-            ProgressActions.close();
+            Progress.popById('taking-picture');
         }
     }
 

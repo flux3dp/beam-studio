@@ -10,8 +10,7 @@ import CheckDeviceStatus from '../../../helpers/check-device-status'
 import DeviceErrorHandler from '../../../helpers/device-error-handler'
 import Alert from '../../contexts/AlertCaller'
 import AlertConstants from '../../constants/alert-constants'
-import ProgressActions from '../../actions/progress-actions'
-import ProgressConstants from '../../constants/progress-constants'
+import Progress from '../../contexts/ProgressCaller'
 import PreviewModeController from '../../actions/beambox/preview-mode-controller'
 import Constant from '../../actions/beambox/constant'
 
@@ -133,7 +132,6 @@ import Constant from '../../actions/beambox/constant'
                                 } catch (error) {
                                     this.setState({isCutButtonDisabled: false});
                                     console.log(error);
-                                    ProgressActions.close();
                                     Alert.popUp({
                                         id: 'menu-item',
                                         type: AlertConstants.SHOW_POPUP_ERROR,
@@ -195,7 +193,11 @@ import Constant from '../../actions/beambox/constant'
             let blobUrl;
             try {
                 await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 cameraOffset = PreviewModeController.getCameraOffset();
                 this.cameraOffset = cameraOffset;
                 const movementX = Constant.camera.calibrationPicture.centerX + Constant.diode.defaultOffsetX - cameraOffset.x;
@@ -204,7 +206,7 @@ import Constant from '../../actions/beambox/constant'
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
             this.imageUrl = blobUrl;
         }
@@ -368,7 +370,11 @@ import Constant from '../../actions/beambox/constant'
 
         moveAndRetakePicture = async (dir) => {
             try {
-                ProgressActions.open(ProgressConstants.NONSTOP, LANG.taking_picture);
+                Progress.openNonstopProgress({
+                    id: 'taking-picture',
+                    message: LANG.taking_picture,
+                    timeout: 30000,
+                });
                 let {cameraMovedX, cameraMovedY} = this.state;
                 switch(dir) {
                     case 'up':
@@ -394,7 +400,7 @@ import Constant from '../../actions/beambox/constant'
             } catch (error) {
                 throw error;
             } finally {
-                ProgressActions.close();
+                Progress.popById('taking-picture');
             }
         }
 

@@ -88,7 +88,7 @@ module.exports = {
         set_as_default: 'Set as Default',
         calibrate_origin: 'Calibrate Origin ( Home )',
         calibrate_beambox_camera: 'Calibrate Camera',
-        calibrate_beambox_camera_borderless: 'Calibrate Camera (Borderless)',
+        calibrate_beambox_camera_borderless: 'Calibrate Camera (Open Bottom)',
         calibrate_diode_module: 'Calibrate Hybrid Module',
         movement_test: 'Run Movement Test',
         turn_on_laser: 'Turn On Scanning Laser',

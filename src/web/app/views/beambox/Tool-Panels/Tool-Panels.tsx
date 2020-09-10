@@ -1,6 +1,7 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
+import $ from 'jquery'
+const PropTypes = require('reactPropTypes');
 import Constant from '../../../actions/beambox/constant'
+import LocalStorage from '../../../../helpers/local-storage'
 import * as i18n from '../../../../helpers/i18n'
 import RowColumnPanel from './RowColumn'
 import IntervalPanel from './Interval'
@@ -230,7 +231,7 @@ const ClassNames = requireNode('classnames')
         }
 
         render() {
-            const lang = localStorage.getItem('active-lang') || 'en';
+            const lang = LocalStorage.get('active-lang') || 'en';
             const positionStyle = this._findPositionStyle();
             const classes = ClassNames('tool-panels', lang);
             return (

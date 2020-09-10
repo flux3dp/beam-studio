@@ -13,7 +13,7 @@ declare global {
 }
 
 export default function() {
-    console.log(`Beam-Studio: ${"1.0.0"}`);
+    console.log(`Beam-Studio: ${window['FLUX'].version}`);
 
     if(allowTracking) {
         // google analytics

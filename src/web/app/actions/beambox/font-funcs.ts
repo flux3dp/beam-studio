@@ -72,13 +72,17 @@
                 if (fontNameMapObj[font.family]) {
                     fontName = fontNameMapObj[font.family];
                 } else {
-                    let fontInfo = fontkit.openSync(font.path);
-                    if (fontInfo.fonts && fontInfo.fonts[0]) {
-                        fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
-                    }
-                    if (fontInfo) {
-                        const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
-                        fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                    try {
+                        let fontInfo = fontkit.openSync(font.path);
+                        if (fontInfo.fonts && fontInfo.fonts[0]) {
+                            fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
+                        }
+                        if (fontInfo) {
+                            const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
+                            fontName = fontInfo.name.records.fontFamily[navigator.language] || fontInfo.name.records.fontFamily[firstNotEn] || fontInfo.name.records.fontFamily['en'] || fontName;
+                        }
+                    } catch (err) {
+                        console.warn(`Error when get font name of ${font.family}:`, err);
                     }
                 }
                 fontNameMap.set(font.family, fontName);
@@ -149,7 +153,7 @@
         
         // Escape for Whitelists
         const whiteList = ['標楷體'];
-        const whiteKeyWords = ['華康', 'Adobe'];
+        const whiteKeyWords = ['華康', 'Adobe', '文鼎'];
         if (whiteList.indexOf(fontFamily) >= 0) {
             return {font: originFont};
         }
@@ -329,14 +333,9 @@
         });
         $(path).insertAfter($textElement);
         $(path).mouseover(svgCanvas.handleGenerateSensorArea).mouseleave(svgCanvas.handleGenerateSensorArea);
-        const isVerti = $textElement.data('verti');
         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-        if (isVerti) {
-            const pbbox = svgCanvas.calculateTransformedBBox(path);
-            svgCanvas.moveElements([bbox.x + bbox.width - pbbox.x - pbbox.width], [bbox.y + bbox.height - pbbox.y - pbbox.height], [path], false);
-        } else {
-            svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
-        }
+        // output of fluxsvg will locate at (0,0), so move it.
+        svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
         if (!isTempConvert) {
             let textElem = $textElement[0];
             let parent = textElem.parentNode;

@@ -3,7 +3,7 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-config
  */
 import Websocket from '../websocket';
-import * as _localStorage from '../local-storage';
+import _localStorage from '../local-storage';
 
 export default function() {
     var stardardOptions = function(opts) {
@@ -38,6 +38,10 @@ export default function() {
             if(configs === '') configs = {};
             configs[item_key] = item_value;
             this.write(key, configs);
+        },
+
+        remove: function(key) {
+            _localStorage.removeAt(key);
         }
     };
 

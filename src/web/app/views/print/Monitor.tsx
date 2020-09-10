@@ -4,6 +4,7 @@ import BeamboxPreference from '../../actions/beambox/beambox-preference'
 import Constant from '../../actions/beambox/constant'
 import AlertActions from '../../actions/alert-actions'
 import AlertStore from '../../stores/alert-store'
+import Progress from '../../contexts/ProgressCaller'
 import ProgressActions from '../../actions/progress-actions'
 import ProgressConstants from '../../constants/progress-constants'
 import DeviceConstants from '../../constants/device-constants'
@@ -539,12 +540,15 @@ const React = requireNode('react');;
             }
             else {
                 this._addHistory();
-                ProgressActions.open(ProgressConstants.NONSTOP, lang.monitor.prepareRelocate);
+                Progress.openNonstopProgress({
+                    id: 'prepare-relocate',
+                    message: lang.monitor.prepareRelocate,
+                });
                 await this._getCameraOffset();
                 await DeviceMaster.enterRawMode();
                 await DeviceMaster.rawSetRotary(false); // Disable Rotary
                 await DeviceMaster.rawHome();
-                ProgressActions.close();
+                Progress.popById('prepare-relocate');
                 store.dispatch(MonitorActionCreator.setCurrentPosition({x: 0, y: 0}));
                 store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.CAMERA_RELOCATE));
             }
