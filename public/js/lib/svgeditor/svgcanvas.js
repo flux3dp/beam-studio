@@ -1271,6 +1271,7 @@ define([
                 height: 100,
             }
             const intersectList = getIntersectionList(selectionRegion).reverse();
+            curBBoxes = [];
             const clickPoint = svgcontent.createSVGPoint();
             for (let i=0; i < intersectList.length; i++) {
                 let pointInStroke = false;
