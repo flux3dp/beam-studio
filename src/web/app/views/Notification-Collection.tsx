@@ -150,6 +150,7 @@ export default function(args) {
             GlobalStore.onShowMonitor(this._handleOpenMonitor);
             GlobalStore.onCloseAllView(this._handleCloseAllView);
             GlobalStore.onCloseMonitor(this._handlecloseMonitor);
+            GlobalStore.onSliceComplete(this._handleSliceReport);
 
             // checking FLUX studio laster version in website that is going to
             // popup update dialog if newser FLUX Studio has been relwased.
