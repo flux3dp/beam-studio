@@ -38,7 +38,6 @@ import AlertConstants from '../../constants/alert-constants'
 import Progress from '../../contexts/ProgressCaller'
 import ProgressConstants from '../../constants/progress-constants'
 import KeycodeConstants from '../../constants/keycode-constants'
-import TopbarActions from '../topbar'
 import AwsHelper from '../../../helpers/aws-helper'
 import BeamFileHelper from '../../../helpers/beam-file-helper'
 import ImageData from '../../../helpers/image-data'
@@ -55,12 +54,11 @@ import { IFont } from '../../../interfaces/IFont'
 import { IStorage } from '../../../interfaces/IStorage'
 
 // @ts-expect-error
-import Dxf2Svg = require('dxf2svg')
+import Dxf2Svg = require('dxf2svg');
 // @ts-expect-error
 import ImageTracer = require('imagetracer')
 
 const React = requireNode('react');
-const ReactDOM = requireNode('react-dom');
 const LANG = i18n.lang.beambox;
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 // TODO: change to require('svgedit')
@@ -2069,16 +2067,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                             if (svgCanvas.getMode() === 'image') {
                                 setImageURL(svgCanvas.getHref(elem));
                             }
-                            // TODO: seems not read correctly
-                            const threshold = $(elem).attr('data-threshold');
-                            let shading = $(elem).attr('data-shading');
-                            if (shading === 'false') {
-                                // @ts-expect-error
-                                shading = false;
-                            } else {
-                                // @ts-expect-error
-                                shading = Boolean(shading);
-                            }
                         } // image
                         else if (el_name === 'g' || el_name === 'use') {
                             $('#container_panel').show();
@@ -2174,9 +2162,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                 // if elems[1] is present, then we have more than one element
                 selectedElement = (elems.length === 1 || elems[1] == null ? elems[0] : null);
                 multiselected = (elems.length >= 2 && elems[1] != null);
-                const isAlignToolboxShowed = (elems.length >= 1) && (elems[0] !== null );
-                const isDistributeToolboxShowed = multiselected && elems.length >=3 ;
-                const isImageToolboxShowed = !multiselected && elems[0] && elems[0].nodeName === "image";
                 if (selectedElement != null) {
                     // unless we're already in always set the mode of the editor to select because
                     // upon creation of a text element the editor is switched into
@@ -2185,21 +2170,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     if (!is_node) {
                         updateToolbar();
                     }
-                }
-                if (isAlignToolboxShowed) {
-                    TopbarActions.showAlignToolbox();
-                } else {
-                    TopbarActions.closeAlignToolbox();
-                }
-                if (isDistributeToolboxShowed) {
-                    TopbarActions.showDistributeToolbox();
-                } else {
-                    TopbarActions.closeDistributeToolbox();
-                }
-                if (isImageToolboxShowed) {
-                    TopbarActions.showImageToolbox();
-                } else {
-                    TopbarActions.closeImageToolbox();
                 }
                 // Deal with pathedit mode
                 togglePathEditMode(is_node, elems);

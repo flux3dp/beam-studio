@@ -1,5 +1,4 @@
-// @ts-expect-error
-import Flux = require('reactFlux');
+const Flux = requireNode('flux');
 var flux = new Flux.Dispatcher();
 
 export default {

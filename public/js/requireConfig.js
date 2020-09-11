@@ -19,7 +19,6 @@ requirejs.config({
         events: '../lib/events',
         Rx: '../lib/rx.lite.min',
         Redux: '../lib/redux.min',
-        reactFlux: '../lib/flux.min',
         jqueryGrowl: '../lib/jquery.growl',
         dxf2svg: '../lib/dxf2svg',
         // SVG Editor Libraries Begin

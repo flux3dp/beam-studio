@@ -43,7 +43,6 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/contexts/ProgressCaller',
-    'app/actions/topbar',
     'helpers/api/config',
     'helpers/beam-file-helper',
     'helpers/image-data',
@@ -68,7 +67,6 @@ define([
     BeamboxActions,
     Constant,
     Progress,
-    TopbarActions,
     Config,
     BeamFileHelper,
     ImageData,
@@ -93,7 +91,6 @@ define([
     BeamboxActions = BeamboxActions.default;
     Constant = Constant.default;
     Progress = Progress.default;
-    TopbarActions = TopbarActions.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
     ImageData = ImageData.default;
@@ -1079,7 +1076,6 @@ define([
             if (!noCall) {
                 call('selected', selectedElements);
             }
-            TopbarActions.updateTopMenu();
         };
 
         // TODO: do we need to worry about selectedBBoxes here?
@@ -1162,7 +1158,6 @@ define([
             while (selectedElements[0] == null) {
                 selectedElements.shift(0);
             }
-            TopbarActions.updateTopMenu();
             LayerPanelController.updateLayerPanel();
         };
 
