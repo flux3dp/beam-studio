@@ -7,8 +7,7 @@ onmessage = async (e) => {
             let svgBlob = new Blob([svgString], {
                 type: 'image/svg+xml;charset=utf-8'
             });
-            // @ts-expect-error
-            postMessage(svgBlob);
+            postMessage(svgBlob, null);
             break;
         case 'imageDataToBlob':
             const {imageData, bb, imageRatio} = e.data;
@@ -21,8 +20,7 @@ onmessage = async (e) => {
             outCtx.imageSmoothingEnabled = false;
             outCtx.drawImage(imgCanvas, bb.x * imageRatio, bb.y * imageRatio, outCanvas.width, outCanvas.height, 0, 0, outCanvas.width, outCanvas.height);
             const imageBlob = await outCanvas.convertToBlob({type: 'image/png'});
-            // @ts-expect-error
-            postMessage(imageBlob);
+            postMessage(imageBlob, null);
             break;
     }
-}
+};
