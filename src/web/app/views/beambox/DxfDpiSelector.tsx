@@ -43,7 +43,7 @@ import * as i18n from '../../../helpers/i18n';
                 <div className='caption'>
                     {lang.message.please_enter_dpi}
                     <br/>
-                    2.54, 25.4, 72, 96 etc.
+                    1, 2.54, 25.4, 72, 96 etc.
                 </div>
                 <div className="message" style={{textAlign: 'center'}}>
                     <input

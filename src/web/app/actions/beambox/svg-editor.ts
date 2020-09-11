@@ -6005,7 +6005,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     readImage(file);
                 };
                 const importDxf = async file => {
-                    let defaultDpiValue = 25.4;
+                    let defaultDpiValue = 1;
                     let parsed = null;
                     await new Promise(resolve => {
                         const reader = new FileReader();
