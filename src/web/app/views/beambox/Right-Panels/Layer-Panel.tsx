@@ -109,8 +109,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
                     if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
                         Alert.popUp({
                             id: 'dupli layer name',
-                            // @ts-expect-error
-                            message: uiStrings.notification.dupeLayerName, // todo: ui string is undefined??
+                            message: LANG.notification.dupeLayerName,
                         });
                         return;
                     }

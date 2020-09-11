@@ -154,18 +154,12 @@ import LaserPanel from '../../views/beambox/Right-Panels/Laser-Panel'
         }
 
         initConfig(name) {
-            // @ts-expect-error
-            _getSpeed(name, _getConfig(name).speed);
-            // @ts-expect-error
-            _getStrength(name, _getConfig(name).strength);
-            // @ts-expect-error
-            _getRepeat(name, _getConfig(name).repeat);
-            // @ts-expect-error
-            _getHeight(name, _getConfig(name).height);
-            // @ts-expect-error
-            _getDiode(name, _getConfig(name).diode);
-            // @ts-expect-error
-            _getZStep(name, _getConfig(name).zstep);
+            _getSpeed(name);
+            _getStrength(name);
+            _getRepeat(name);
+            _getHeight(name);
+            _getDiode(name);
+            _getZStep(name);
         }
 
         cloneConfig(name, baseName) {
