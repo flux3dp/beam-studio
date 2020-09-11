@@ -1,10 +1,10 @@
-import Modal from '../widgets/Modal'
-import BeamboxPreference from '../actions/beambox/beambox-preference'
-import keyCodeConstants from '../constants/keycode-constants'
-import Discover from '../../helpers/api/discover'
-import DeviceMaster from '../../helpers/device-master'
-import LocalStorage from '../../helpers/local-storage'
-import * as i18n from '../../helpers/i18n'
+import Modal from '../widgets/Modal';
+import BeamboxPreference from '../actions/beambox/beambox-preference';
+import keyCodeConstants from '../constants/keycode-constants';
+import Discover from '../../helpers/api/discover';
+import DeviceMaster from '../../helpers/device-master';
+import LocalStorage from '../../helpers/local-storage';
+import * as i18n from '../../helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
@@ -362,6 +362,6 @@ class ConnectMachine extends React.Component{
             <Modal className={wrapperClassName} content={content} />
         );
     }
-
 };
+
 export default () => ConnectMachine

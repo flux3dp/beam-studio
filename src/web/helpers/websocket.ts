@@ -1,13 +1,11 @@
-import isJson from './is-json'
-import * as i18n from './i18n'
-import Alert from '../app/contexts/AlertCaller'
-import AlertStore from '../app/stores/alert-store'
-import AlertConstants from '../app/constants/alert-constants'
-import outputError from './output-error'
-import Logger from './logger'
-import blobSegments from './blob-segments'
-
-'use strict';
+import isJson from './is-json';
+import * as i18n from './i18n';
+import Alert from '../app/contexts/AlertCaller';
+import AlertStore from '../app/stores/alert-store';
+import AlertConstants from '../app/constants/alert-constants';
+import outputError from './output-error';
+import Logger from './logger';
+import blobSegments from './blob-segments';
 
 window['FLUX'].websockets = [];
 window['FLUX'].websockets.list = function() {

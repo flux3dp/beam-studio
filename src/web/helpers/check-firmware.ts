@@ -1,5 +1,5 @@
-import $ from 'jquery'
-import versionCompare from './version-compare'
+import $ from 'jquery';
+import versionCompare from './version-compare';
 
 const infoMap = {
     delta: {
@@ -19,8 +19,8 @@ const infoMap = {
             downloadUrl: 'https://s3-us-west-1.amazonaws.com/fluxstudio/firmware/beambox/beamboxfirmware-[version].fxfw'
         },
     }
-
 };
+
 function checkMachineSeries(model) {
     switch (model) {
         case 'fbb1b':

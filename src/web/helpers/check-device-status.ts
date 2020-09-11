@@ -1,14 +1,14 @@
 /**
  * check device status and action
  */
-import $ from 'jquery'
-import * as i18n from './i18n'
-import DeviceMaster from './device-master'
-import DeviceConstants from '../app/constants/device-constants'
-import PreviewModeController from '../app/actions/beambox/preview-mode-controller'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import Progress from '../app/contexts/ProgressCaller'
+import $ from 'jquery';
+import * as i18n from './i18n';
+import DeviceMaster from './device-master';
+import DeviceConstants from '../app/constants/device-constants';
+import PreviewModeController from '../app/actions/beambox/preview-mode-controller';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import Progress from '../app/contexts/ProgressCaller';
 
 const lang = i18n.lang;
 

@@ -1,4 +1,4 @@
-const {app, ipcMain, BrowserWindow, dialog} = require('electron');;
+const {app, ipcMain, BrowserWindow, dialog} = require('electron');
 const electronLocalshortcut = require('electron-localshortcut');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
@@ -15,7 +15,7 @@ const FontManager = require('font-manager');
 const TextToSVG = require('text-to-svg');
 const path = require('path');
 const url = require('url');
-const fs = require('fs');;
+const fs = require('fs');
 const os = require('os');
 const exec = require('child_process').exec;
 const Store = require('electron-store');

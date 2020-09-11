@@ -1,10 +1,10 @@
-import Modal from '../../widgets/Modal'
-import Alert from '../../contexts/AlertCaller'
-import AlertConstants from '../../constants/alert-constants'
-import Progress from '../../contexts/ProgressCaller'
-import KeycodeConstants from '../../constants/keycode-constants'
-import Discover from '../../../helpers/api/discover'
-import * as i18n from '../../../helpers/i18n'
+import Modal from '../../widgets/Modal';
+import Alert from '../../contexts/AlertCaller';
+import AlertConstants from '../../constants/alert-constants';
+import Progress from '../../contexts/ProgressCaller';
+import KeycodeConstants from '../../constants/keycode-constants';
+import Discover from '../../../helpers/api/discover';
+import * as i18n from '../../../helpers/i18n';
 
 const React = requireNode('react');
 const ping = requireNode('net-ping');

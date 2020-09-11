@@ -1,9 +1,9 @@
-import ProgressConstants from '../../constants/progress-constants'
-import Modal from '../../widgets/Modal'
-import ButtonGroup from '../../widgets/Button-Group'
-import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/AlertProgressContext'
+import ProgressConstants from '../../constants/progress-constants';
+import Modal from '../../widgets/Modal';
+import ButtonGroup from '../../widgets/Button-Group';
+import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/AlertProgressContext';
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const classNames = requireNode('classnames');
 let _contextCaller;
 class Progress extends React.Component {

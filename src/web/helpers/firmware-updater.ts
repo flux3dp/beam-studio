@@ -1,16 +1,16 @@
 /**
  * firmware updater
  */
-import * as i18n from './i18n'
-import DeviceMaster from './device-master'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import AlertActions from '../app/actions/alert-actions'
-import Progress from '../app/contexts/ProgressCaller' 
-import ProgressActions from '../app/actions/progress-actions'
-import ProgressConstants from '../app/constants/progress-constants'
-import InputLightboxActions from '../app/actions/input-lightbox-actions'
-import InputLightboxConstants from '../app/constants/input-lightbox-constants'
+import * as i18n from './i18n';
+import DeviceMaster from './device-master';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import AlertActions from '../app/actions/alert-actions';
+import Progress from '../app/contexts/ProgressCaller';
+import ProgressActions from '../app/actions/progress-actions';
+import ProgressConstants from '../app/constants/progress-constants';
+import InputLightboxActions from '../app/actions/input-lightbox-actions';
+import InputLightboxConstants from '../app/constants/input-lightbox-constants';
     
 
 export default function(response, printer, type: string, forceUpdate?: boolean) {

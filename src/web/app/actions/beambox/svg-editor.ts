@@ -22,36 +22,36 @@
 TODOS
 1. JSDoc
 */
-import ToolPanelsController from './Tool-Panels-Controller'
-import Announcement from '../../actions/announcement'
-import DxfDpiSelector from '../../views/beambox/DxfDpiSelector'
-import RightPanelController from '../../views/beambox/Right-Panels/contexts/RightPanelController'
-import LayerPanelController from '../../views/beambox/Right-Panels/contexts/LayerPanelController'
-import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/ObjectPanelController'
-import TopBarController from '../../views/beambox/Top-Bar/contexts/Top-Bar-Controller'
-import BeamboxPreference from './beambox-preference'
-import Constant from './constant'
-import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer'
-import PreviewModeController from './preview-mode-controller'
-import Alert from '../../contexts/AlertCaller'
-import AlertConstants from '../../constants/alert-constants'
-import Progress from '../../contexts/ProgressCaller'
-import ProgressConstants from '../../constants/progress-constants'
-import KeycodeConstants from '../../constants/keycode-constants'
-import AwsHelper from '../../../helpers/aws-helper'
-import BeamFileHelper from '../../../helpers/beam-file-helper'
-import ImageData from '../../../helpers/image-data'
-import LocalStorage from '../../../helpers/local-storage'
-import PdfHelper from '../../../helpers/pdf-helper'
-import Shortcuts from '../../../helpers/shortcuts'
-import SymbolMaker from '../../../helpers/symbol-maker'
-import * as i18n from '../../../helpers/i18n'
+import ToolPanelsController from './Tool-Panels-Controller';
+import Announcement from '../../actions/announcement';
+import DxfDpiSelector from '../../views/beambox/DxfDpiSelector';
+import RightPanelController from '../../views/beambox/Right-Panels/contexts/RightPanelController';
+import LayerPanelController from '../../views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/ObjectPanelController';
+import TopBarController from '../../views/beambox/Top-Bar/contexts/Top-Bar-Controller';
+import BeamboxPreference from './beambox-preference';
+import Constant from './constant';
+import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
+import PreviewModeController from './preview-mode-controller';
+import Alert from '../../contexts/AlertCaller';
+import AlertConstants from '../../constants/alert-constants';
+import Progress from '../../contexts/ProgressCaller';
+import ProgressConstants from '../../constants/progress-constants';
+import KeycodeConstants from '../../constants/keycode-constants';;
+import AwsHelper from '../../../helpers/aws-helper';
+import BeamFileHelper from '../../../helpers/beam-file-helper';
+import ImageData from '../../../helpers/image-data';
+import LocalStorage from '../../../helpers/local-storage';
+import PdfHelper from '../../../helpers/pdf-helper';
+import Shortcuts from '../../../helpers/shortcuts';
+import SymbolMaker from '../../../helpers/symbol-maker';
+import * as i18n from '../../../helpers/i18n';
 
-import AlertConfig from '../../../helpers/api/alert-config'
-import Config from '../../../helpers/api/config'
-import SvgLaserParser from '../../../helpers/api/svg-laser-parser'
-import { IFont } from '../../../interfaces/IFont'
-import { IStorage } from '../../../interfaces/IStorage'
+import AlertConfig from '../../../helpers/api/alert-config';
+import Config from '../../../helpers/api/config';
+import SvgLaserParser from '../../../helpers/api/svg-laser-parser';
+import { IFont } from '../../../interfaces/IFont';
+import { IStorage } from '../../../interfaces/IStorage';
 
 // @ts-expect-error
 import Dxf2Svg = require('dxf2svg');

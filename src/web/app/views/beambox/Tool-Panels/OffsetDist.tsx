@@ -1,8 +1,8 @@
-import UnitInput from'../../../widgets/Unit-Input-v2'
-import LocalStorage from '../../../../helpers/local-storage'
-import * as i18n from '../../../../helpers/i18n'
+import UnitInput from'../../../widgets/Unit-Input-v2';
+import LocalStorage from '../../../../helpers/local-storage';
+import * as i18n from '../../../../helpers/i18n';
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const LANG = i18n.lang.beambox.tool_panels;
 
 class OffsetDistPanel extends React.Component{

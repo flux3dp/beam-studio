@@ -1,57 +1,74 @@
-    const React = requireNode('react');;
-    const { createContext } = React;
-    export const TopBarContext = createContext();
+const React = requireNode('react');
+const { createContext } = React;
+export const TopBarContext = createContext();
 
-    export class TopBarContextProvider extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                fileName: null,
-                selectedElem: null,
-                hasUnsavedChange: false,
-                isDrawing: false,
-                isDrawn: false
-            }
+export class TopBarContextProvider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fileName: null,
+            selectedElem: null,
+            hasUnsavedChange: false,
+            isDrawing: false,
+            isDrawn: false
         }
+    }
 
-        updateTopBar = () => {
-            this.setState(this.state);
-        }
+    updateTopBar = () => {
+        this.setState(this.state);
+    }
 
-        setHasUnsavedChange = (hasUnsavedChange) => {
-            this.setState({hasUnsavedChange});
-        }
+    setHasUnsavedChange = (hasUnsavedChange) => {
+        this.setState({hasUnsavedChange});
+    }
 
-        setElement = (elem) => {
-            this.setState({selectedElem: elem});
-        }
+    setElement = (elem) => {
+        this.setState({selectedElem: elem});
+    }
 
-        setFileName = (fileName) => {
-            this.setState({fileName});
-        }
+    setFileName = (fileName) => {
+        this.setState({fileName});
+    }
 
-        setPreviewModeIsDrawing = (isDrawing) => {
-            this.setState({isDrawing})
-        }
+    setPreviewModeIsDrawing = (isDrawing) => {
+        this.setState({isDrawing})
+    }
 
-        setPreviewModeIsDrawn = (isDrawn) => {
-            this.setState({isDrawn})
-        }
+    setPreviewModeIsDrawn = (isDrawn) => {
+        this.setState({isDrawn})
+    }
 
-        setTopBarPreviewMode = (isPreviewMode) => {
-            this.isPreviewMode = isPreviewMode;
-        }
+    setTopBarPreviewMode = (isPreviewMode) => {
+        this.isPreviewMode = isPreviewMode;
+    }
 
-        getTopBarPreviewMode = () => {
-            return this.isPreviewMode;
-        }
+    getTopBarPreviewMode = () => {
+        return this.isPreviewMode;
+    }
 
-        setShouldStartPreviewController = (shouldStartPreviewController) => {
-            this.setState({shouldStartPreviewController});
-        }
+    setShouldStartPreviewController = (shouldStartPreviewController) => {
+        this.setState({shouldStartPreviewController});
+    }
 
-        render() {
-            const {
+    render() {
+        const {
+            updateTopBar,
+            setElement,
+            setFileName,
+            setHasUnsavedChange,
+            setTopBarPreviewMode,
+            getTopBarPreviewMode,
+            setShouldStartPreviewController,
+            isPreviewMode,
+        } = this;
+        const {
+            fileName,
+            selectedElem,
+            hasUnsavedChange,
+            shouldStartPreviewController,
+        } = this.state;
+        return (
+            <TopBarContext.Provider value={{
                 updateTopBar,
                 setElement,
                 setFileName,
@@ -60,32 +77,15 @@
                 getTopBarPreviewMode,
                 setShouldStartPreviewController,
                 isPreviewMode,
-            } = this;
-            const {
                 fileName,
                 selectedElem,
                 hasUnsavedChange,
                 shouldStartPreviewController,
-            } = this.state;
-            return (
-                <TopBarContext.Provider value={{
-                    updateTopBar,
-                    setElement,
-                    setFileName,
-                    setHasUnsavedChange,
-                    setTopBarPreviewMode,
-                    getTopBarPreviewMode,
-                    setShouldStartPreviewController,
-                    isPreviewMode,
-                    fileName,
-                    selectedElem,
-                    hasUnsavedChange,
-                    shouldStartPreviewController,
-                }}>
-                    {this.props.children}
-                </TopBarContext.Provider>
-            );
-        }
-    };
+            }}>
+                {this.props.children}
+            </TopBarContext.Provider>
+        );
+    }
+};
 
-    export default {TopBarContextProvider, TopBarContext};
+export default {TopBarContextProvider, TopBarContext};

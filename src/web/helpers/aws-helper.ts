@@ -1,8 +1,7 @@
-import * as i18n from './i18n'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import Progress from '../app/contexts/ProgressCaller'
-'use strict';
+import * as i18n from './i18n';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import Progress from '../app/contexts/ProgressCaller';
 
 const LANG = i18n.lang.beambox;
 export default {

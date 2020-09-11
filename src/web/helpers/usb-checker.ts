@@ -1,4 +1,4 @@
-import Websocket from './websocket'
+import Websocket from './websocket';
 let CHANNELS = {},
     TEST,
     interval = 3000,

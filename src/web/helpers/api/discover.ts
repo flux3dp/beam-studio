@@ -2,18 +2,17 @@
  * API discover
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-discover
  */
-import Websocket from '../websocket'
-import initializeMachine from '../../app/actions/initialize-machine'
-import Config from './config'
-import DeviceList from '../device-list'
-import LocalStorage from '../local-storage'
-import Logger from '../logger'
-import SmartUpnp from '../smart-upnp'
-import CloudApi from './cloud'
-import { IDeviceInfo } from '../../interfaces/IDevice'
+import Websocket from '../websocket';
+import initializeMachine from '../../app/actions/initialize-machine';
+import Config from './config';
+import DeviceList from '../device-list';
+import LocalStorage from '../local-storage';
+import Logger from '../logger';
+import SmartUpnp from '../smart-upnp';
+import CloudApi from './cloud';
+import { IDeviceInfo } from '../../interfaces/IDevice';
 
 const dns = requireNode('dns');
-'use strict';
 
 const dnsPromise = dns.promises;
 let lastSendMessage = 0;
@@ -220,4 +219,5 @@ const Discover = function(id: string, getPrinters: (printers: IDeviceInfo[]) => 
         }
     };
 };
+
 export default Discover

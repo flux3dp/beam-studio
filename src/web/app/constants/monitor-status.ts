@@ -1,4 +1,4 @@
-import DeviceConstants from './device-constants'
+import DeviceConstants from './device-constants';
 let monitorLang;
 
 export default {

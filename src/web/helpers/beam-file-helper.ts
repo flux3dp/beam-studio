@@ -60,7 +60,7 @@ import Progress from '../app/contexts/ProgressCaller'
 
 */
 
-const fs = requireNode('fs');;
+const fs = requireNode('fs');
 const electronRemote = requireNode('electron').remote;
 const { dialog } = electronRemote;
 const getFilePath = async (title, allFiles, extensionName, extensions, filename) => {

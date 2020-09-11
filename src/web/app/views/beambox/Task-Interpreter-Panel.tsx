@@ -1,17 +1,17 @@
 import Modal from '../../widgets/Modal'
-import SelectView from '../../widgets/Select'
-import VerticalSlider from '../../widgets/Vertical-Slider-Control'
-import BeamboxStore from '../../stores/beambox-store'
-import BottomRightFuncs from '../../actions/beambox/bottom-right-funcs'
-import ProgressActions from '../../actions/progress-actions'
-import ProgressConstants from '../../constants/progress-constants'
-import * as i18n from '../../../helpers/i18n'
-import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+import SelectView from '../../widgets/Select';
+import VerticalSlider from '../../widgets/Vertical-Slider-Control';
+import BeamboxStore from '../../stores/beambox-store';
+import BottomRightFuncs from '../../actions/beambox/bottom-right-funcs';
+import ProgressActions from '../../actions/progress-actions';
+import ProgressConstants from '../../constants/progress-constants';
+import * as i18n from '../../../helpers/i18n';
+import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const ReactDOM = requireNode('react-dom');
 const LANG = i18n.lang.topmenu;
 const SerialPort = requireNode('serialport');

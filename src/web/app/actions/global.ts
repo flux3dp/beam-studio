@@ -1,11 +1,11 @@
-import $ from 'jquery'
-import * as i18n from '../../helpers/i18n'
-import shortcuts from '../../helpers/shortcuts'
-import config from '../../helpers/api/config'
-import Logger from '../../helpers/logger'
-import DeviceMaster from '../../helpers/device-master'
-import AlertActions from './alert-actions'
-import { getSVGAsync } from '../../helpers/svg-editor-helper'
+import $ from 'jquery';
+import * as i18n from '../../helpers/i18n';
+import shortcuts from '../../helpers/shortcuts';
+import config from '../../helpers/api/config';
+import Logger from '../../helpers/logger';
+import DeviceMaster from '../../helpers/device-master';
+import AlertActions from './alert-actions';
+import { getSVGAsync } from '../../helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });

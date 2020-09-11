@@ -1,10 +1,10 @@
-import * as i18n from './i18n'
-import Config from './api/config'
-import sprintf from './sprintf'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import Progress from '../app/contexts/ProgressCaller'
-import FnWrapper from '../app/actions/beambox/svgeditor-function-wrapper'
+import * as i18n from './i18n';
+import Config from './api/config';
+import sprintf from './sprintf';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import Progress from '../app/contexts/ProgressCaller';
+import FnWrapper from '../app/actions/beambox/svgeditor-function-wrapper';
 
 const electron = window["electron"];
 const LANG = i18n.lang.update.software;
@@ -155,4 +155,4 @@ export default {
         }
     },
     switchVersion
-}
+};

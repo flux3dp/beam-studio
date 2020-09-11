@@ -1,78 +1,77 @@
-import Dispatcher from '../dispatcher/global-dispatcher'
-import GlobalConstants from '../constants/global-constants'
-const EventEmitter = require('events')
+import Dispatcher from '../dispatcher/global-dispatcher';
+import GlobalConstants from '../constants/global-constants';
+const EventEmitter = require('events');
 
-    var GlobalStore;
+var GlobalStore;
 
-    GlobalStore = Object.assign(EventEmitter.prototype, {
+GlobalStore = Object.assign(EventEmitter.prototype, {
+    onShowMonitor(callback) {
+        this.on(GlobalConstants.SHOW_MONITOR, callback);
+    },
 
-        onShowMonitor(callback) {
-            this.on(GlobalConstants.SHOW_MONITOR, callback);
-        },
+    onCloseMonitor(callback) {
+        this.on(GlobalConstants.CLOSE_MONITOR, callback);
+    },
 
-        onCloseMonitor(callback) {
-            this.on(GlobalConstants.CLOSE_MONITOR, callback);
-        },
+    onCloseAllView(callback) {
+        this.on(GlobalConstants.CLOSE_ALL_VIEW, callback);
+    },
 
-        onCloseAllView(callback) {
-            this.on(GlobalConstants.CLOSE_ALL_VIEW, callback);
-        },
+    onCancelPreview(callback) {
+        this.on(GlobalConstants.CANCEL_PREVIEW, callback);
+    },
 
-        onCancelPreview(callback) {
-            this.on(GlobalConstants.CANCEL_PREVIEW, callback);
-        },
+    onSliceComplete(callback) {
+        this.on(GlobalConstants.SLICE_COMPLETE, callback);
+    },
 
-        onSliceComplete(callback) {
-            this.on(GlobalConstants.SLICE_COMPLETE, callback);
-        },
+    onMonitorClosed(callback) {
+        this.on(GlobalConstants.MONITOR_CLOSED, callback);
+    },
 
-        onMonitorClosed(callback) {
-            this.on(GlobalConstants.MONITOR_CLOSED, callback);
-        },
+    onResetDialogMenuIndex(callback) {
+        this.on(GlobalConstants.RESET_DIALOG_MENU_INDEX, callback);
+    },
 
-        onResetDialogMenuIndex(callback) {
-            this.on(GlobalConstants.RESET_DIALOG_MENU_INDEX, callback);
-        },
+    removeShowMoniotorListener(callback) {
+        this.removeListener(GlobalConstants.SHOW_MONITOR, callback);
+    },
 
-        removeShowMoniotorListener(callback) {
-            this.removeListener(GlobalConstants.SHOW_MONITOR, callback);
-        },
+    removeCloseMonitorListener(callback) {
+        this.removeListener(GlobalConstants.CLOSE_MONITOR, callback);
+    },
 
-        removeCloseMonitorListener(callback) {
-            this.removeListener(GlobalConstants.CLOSE_MONITOR, callback);
-        },
+    removeCloseAllViewListener(callback) {
+        this.removeListener(GlobalConstants.CLOSE_ALL_VIEW, callback);
+    },
 
-        removeCloseAllViewListener(callback) {
-            this.removeListener(GlobalConstants.CLOSE_ALL_VIEW, callback);
-        },
+    removeCancelPreviewListener(callback) {
+        this.removeListener(GlobalConstants.CANCEL_PREVIEW, callback);
+    },
 
-        removeCancelPreviewListener(callback) {
-            this.removeListener(GlobalConstants.CANCEL_PREVIEW, callback);
-        },
+    removeSliceCompleteListener(callback) {
+        this.removeListener(GlobalConstants.SLICE_COMPLETE, callback);
+    },
 
-        removeSliceCompleteListener(callback) {
-            this.removeListener(GlobalConstants.SLICE_COMPLETE, callback);
-        },
+    removeMonitorClosedListener(callback) {
+        this.removeListener(GlobalConstants.MONITOR_CLOSED, callback);
+    },
 
-        removeMonitorClosedListener(callback) {
-            this.removeListener(GlobalConstants.MONITOR_CLOSED, callback);
-        },
+    removeResetDialogMenuIndexListener(callback) {
+        this.removeListener(GlobalConstants.RESET_DIALOG_MENU_INDEX, callback);
+    },
 
-        removeResetDialogMenuIndexListener(callback) {
-            this.removeListener(GlobalConstants.RESET_DIALOG_MENU_INDEX, callback);
-        },
+    dispatcherIndex: Dispatcher.register(function(payload) {
+        var actionType = payload.actionType;
 
-        dispatcherIndex: Dispatcher.register(function(payload) {
-            var actionType = payload.actionType;
+        if(GlobalConstants[actionType]) {
+            GlobalStore.emit(actionType, payload);
+        }
+        else {
+            throw new console.error('unknown method');
+        }
+    })
 
-            if(GlobalConstants[actionType]) {
-                GlobalStore.emit(actionType, payload);
-            }
-            else {
-                throw new console.error('unknown method');
-            }
-        })
+});
 
-    });
-
-    export default GlobalStore;
+export default GlobalStore;

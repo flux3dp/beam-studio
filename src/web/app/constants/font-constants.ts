@@ -3,20 +3,20 @@
 // https://en.wikipedia.org/wiki/List_of_CJK_fonts#Sans-serif
 
 export default {
-        'zh-CN': {
-            darwin: 'STHeiti',
-            win32: 'Microsoft YaHei',
-        },
-        'zh-TW': {
-            darwin: 'Heiti TC',
-            win32: '微軟正黑體',
-        },
-        'ja': {
-            darwin: 'Hiragino Maru Gothic ProN',
-            win32: 'Meiryo',
-        },
-        'ko': {
-            darwin: 'Apple SD Gothic Neo',
-            win32: 'Malgun Gothic',
-        }
-    };
+    'zh-CN': {
+        darwin: 'STHeiti',
+        win32: 'Microsoft YaHei',
+    },
+    'zh-TW': {
+        darwin: 'Heiti TC',
+        win32: '微軟正黑體',
+    },
+    'ja': {
+        darwin: 'Hiragino Maru Gothic ProN',
+        win32: 'Meiryo',
+    },
+    'ko': {
+        darwin: 'Apple SD Gothic Neo',
+        win32: 'Malgun Gothic',
+    }
+};

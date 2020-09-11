@@ -1,13 +1,13 @@
-import Modal from '../widgets/Modal'
-import ButtonGroup from '../widgets/Button-Group'
-import initializeMachine from '../actions/initialize-machine'
-import AlertActions from '../actions/alert-actions'
-import BeamboxPreference from '../actions/beambox/beambox-preference'
-import sprintf from '../../helpers/sprintf'
-import LocalStorage from '../../helpers/local-storage'
-import * as i18n from '../../helpers/i18n'
+import Modal from '../widgets/Modal';
+import ButtonGroup from '../widgets/Button-Group';
+import initializeMachine from '../actions/initialize-machine';
+import AlertActions from '../actions/alert-actions';
+import BeamboxPreference from '../actions/beambox/beambox-preference';
+import sprintf from '../../helpers/sprintf';
+import LocalStorage from '../../helpers/local-storage';
+import * as i18n from '../../helpers/i18n';
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const LANG = i18n.lang.initialize;
 
 export default function () {

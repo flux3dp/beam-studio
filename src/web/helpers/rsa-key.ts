@@ -1,4 +1,4 @@
-import LocalStorage from './local-storage'
+import LocalStorage from './local-storage';
 // @ts-expect-error
 import _JSEncrypt = require('jsencrypt');
 const RSA_KEY_NAME = 'flux-rsa-key';

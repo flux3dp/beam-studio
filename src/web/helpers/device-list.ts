@@ -1,4 +1,4 @@
-import _localStorage from './local-storage'
+import _localStorage from './local-storage';
 import { IDeviceInfo } from '../interfaces/IDevice';
 
 export default function(devices: { [key: string] : IDeviceInfo }) {

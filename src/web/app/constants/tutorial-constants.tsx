@@ -1,9 +1,8 @@
-import BeamboxPreference from '../actions/beambox/beambox-preference'
-import Constant from '../actions/beambox/constant'
-import * as i18n from '../../helpers/i18n'
-'use strict';
+import BeamboxPreference from '../actions/beambox/beambox-preference';
+import Constant from '../actions/beambox/constant';
+import * as i18n from '../../helpers/i18n';
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const electron = requireNode('electron');
 const LANG = i18n.lang.tutorial;
 

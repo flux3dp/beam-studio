@@ -1,4 +1,4 @@
-const React = requireNode('react');;
+const React = requireNode('react');
 
 class ButtonGroup extends React.Component{
     render() {
@@ -82,8 +82,10 @@ class ButtonGroup extends React.Component{
         );
     }
 };
+
 ButtonGroup.defaultProps = {
     buttons: [],
     className: ''
 };
+
 export default ButtonGroup;

@@ -1,6 +1,6 @@
-import Dispatcher from '../dispatcher/alert-dispatcher'
-import AlertConstants from '../constants/alert-constants'
-const EventEmitter = require("events")
+import Dispatcher from '../dispatcher/alert-dispatcher';
+import AlertConstants from '../constants/alert-constants';
+const EventEmitter = require("events");
 
 var NOTIFY_EVENT            = 'notify',
     POPUP_EVENT             = 'popup',
@@ -241,4 +241,3 @@ AlertStore = Object.assign(EventEmitter.prototype, {
 });
 
 export default AlertStore;
-

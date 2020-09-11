@@ -2,7 +2,7 @@ import $ from 'jquery'
 import * as i18n from './i18n';
 'use strict';
 const LANG = i18n.lang;
-const electron = requireNode('electron');;
+const electron = requireNode('electron');
 
 export default function () {
     if (process.platform !== 'win32') return;

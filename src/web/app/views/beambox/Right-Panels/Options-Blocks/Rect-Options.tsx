@@ -1,14 +1,14 @@
-import InFillBlock from '../../../../views/beambox/Right-Panels/Options-Blocks/Infill-Block'
-import UnitInput from '../../../../widgets/Unit-Input-v2'
-import Constant from '../../../../actions/beambox/constant'
-import LocalStorage from '../../../../../helpers/local-storage'
-import * as i18n from '../../../../../helpers/i18n'
-import { getSVGAsync } from '../../../../../helpers/svg-editor-helper'
+import InFillBlock from '../../../../views/beambox/Right-Panels/Options-Blocks/Infill-Block';
+import UnitInput from '../../../../widgets/Unit-Input-v2';
+import Constant from '../../../../actions/beambox/constant';
+import LocalStorage from '../../../../../helpers/local-storage';
+import * as i18n from '../../../../../helpers/i18n';
+import { getSVGAsync } from '../../../../../helpers/svg-editor-helper';
 
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
-const React = requireNode('react');;
+const React = requireNode('react');
 const classNames = requireNode('classnames');
 const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
 

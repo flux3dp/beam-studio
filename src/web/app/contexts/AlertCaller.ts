@@ -1,4 +1,4 @@
-import { AlertsAndProgress, AlertsAndProgressContextHelper }  from '../views/dialogs/AlertsAndProgress'
+import { AlertsAndProgress, AlertsAndProgressContextHelper }  from '../views/dialogs/AlertsAndProgress';
 
 export default {
     popUp: (args) => {

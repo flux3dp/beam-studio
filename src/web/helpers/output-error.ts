@@ -1,13 +1,13 @@
 /**
  * output error log
  */
-import $ from 'jquery'
-import * as i18n from './i18n'
-import html2canvas from 'html2canvas'
-import Logger from './logger'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import Progress from '../app/contexts/ProgressCaller'
+import $ from 'jquery';
+import * as i18n from './i18n';
+import html2canvas from 'html2canvas';
+import Logger from './logger';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import Progress from '../app/contexts/ProgressCaller';
 // @ts-expect-error
 import fileSaver = require('plugins/file-saver/file-saver.min');
 const Store = requireNode('electron-store');

@@ -1,203 +1,206 @@
-import keyCodeConstants from '../constants/keycode-constants'
-import LocalStorage from '../../helpers/local-storage'
+import keyCodeConstants from '../constants/keycode-constants';
+import LocalStorage from '../../helpers/local-storage';
 
-const ClassNames = requireNode('classnames')
-const React = requireNode('react');;
+const ClassNames = requireNode('classnames');
+const React = requireNode('react');
 const PropTypes = requireNode('prop-types');
 
-    class UnitInput extends React.Component{
-        constructor(props) {
-            super(props);
-            this.state = {
-                displayValue:   this.getTransformedValue(this._validateValue(this.props.defaultValue)),
-                savedValue:     Number(this.props.defaultValue).toFixed(this.props.decimal)
-            };
-            this._handleBlur = this._handleBlur.bind(this);
-            this._handleKeyUp = this._handleKeyUp.bind(this);
-            this._handleKeyDown = this._handleKeyDown.bind(this);
-            this._handleChange = this._handleChange.bind(this);
-            this._handleInput = this._handleInput.bind(this);
-        }
+class UnitInput extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayValue:   this.getTransformedValue(this._validateValue(this.props.defaultValue)),
+            savedValue:     Number(this.props.defaultValue).toFixed(this.props.decimal)
+        };
+        this._handleBlur = this._handleBlur.bind(this);
+        this._handleKeyUp = this._handleKeyUp.bind(this);
+        this._handleKeyDown = this._handleKeyDown.bind(this);
+        this._handleChange = this._handleChange.bind(this);
+        this._handleInput = this._handleInput.bind(this);
+    }
 
-        UNSAFE_componentWillReceiveProps (nextProps) {
-            const val = this._validateValue(nextProps.defaultValue);
+    UNSAFE_componentWillReceiveProps (nextProps) {
+        const val = this._validateValue(nextProps.defaultValue);
 
-            this.setState({
-                displayValue: this.getTransformedValue(Number(val)),
-                savedValue: val
-            });
-        }
+        this.setState({
+            displayValue: this.getTransformedValue(Number(val)),
+            savedValue: val
+        });
+    }
 
-        //always return valid value
-        _validateValue(val) {
-            let value: string | number = parseFloat(val);
+    //always return valid value
+    _validateValue(val) {
+        let value: string | number = parseFloat(val);
 
-            if(isNaN(value)) {
-                if (this.state) {
-                    value = this.state.savedValue;
-                } else {
-                    value = Number(this.props.defaultValue).toFixed(this.props.decimal);
-                }
+        if(isNaN(value)) {
+            if (this.state) {
+                value = this.state.savedValue;
             } else {
-                // check value boundary
-                value = Math.min(value, this.props.max);
-                value = Math.max(value, this.props.min);
+                value = Number(this.props.defaultValue).toFixed(this.props.decimal);
             }
-
-            return Number(value).toFixed(this.props.decimal);
+        } else {
+            // check value boundary
+            value = Math.min(value, this.props.max);
+            value = Math.max(value, this.props.min);
         }
 
-        _updateValue(newVal) {
-            if (this.getLengthUnit() === 'in') {
-                newVal *= 25.4;
-            }
-            const newValue = this._validateValue(newVal);
+        return Number(value).toFixed(this.props.decimal);
+    }
 
-            this.setState({displayValue: this.getTransformedValue(newValue)});
-
-            if(newValue!==this.state.savedValue) {
-                this.setState({savedValue: newValue});
-                this.props.getValue(Number(newValue));
-            }
+    _updateValue(newVal) {
+        if (this.getLengthUnit() === 'in') {
+            newVal *= 25.4;
         }
+        const newValue = this._validateValue(newVal);
 
-        // UI Events
-        _handleBlur(e) {
+        this.setState({displayValue: this.getTransformedValue(newValue)});
+
+        if(newValue!==this.state.savedValue) {
+            this.setState({savedValue: newValue});
+            this.props.getValue(Number(newValue));
+        }
+    }
+
+    // UI Events
+    _handleBlur(e) {
+        this._updateValue(e.target.value);
+        this.props.onBlur();
+    }
+
+    _handleFocus(e) {
+        this.props.onFocus();
+    }
+
+    _handleChange(e) {
+        this.setState({displayValue: e.target.value});
+    }
+
+    _handleInput(e) {
+        if (this.props.isDoOnInput && !e.nativeEvent.inputType) {
             this._updateValue(e.target.value);
-            this.props.onBlur();
         }
+    }
 
-        _handleFocus(e) {
-            this.props.onFocus();
-        }
+    _handleKeyUp(e) {
+        e.stopPropagation();
+        this.props.onKeyUp(e);
+    }
 
-        _handleChange(e) {
-            this.setState({displayValue: e.target.value});
-        }
+    _handleKeyDown(e) {
+        const step = Math.abs(this.props.step);
 
-        _handleInput(e) {
-            if (this.props.isDoOnInput && !e.nativeEvent.inputType) {
-                this._updateValue(e.target.value);
-            }
-        }
+        e.stopPropagation();
 
-        _handleKeyUp(e) {
-            e.stopPropagation();
-            this.props.onKeyUp(e);
-        }
+        switch (e.keyCode) {
+            case keyCodeConstants.KEY_RETURN:
+                const activeElement = document.activeElement as HTMLElement;
 
-        _handleKeyDown(e) {
-            const step = Math.abs(this.props.step);
+                // this seems unnecessary
+                // this._updateValue(e.target.value);
 
-            e.stopPropagation();
-
-            switch (e.keyCode) {
-                case keyCodeConstants.KEY_RETURN:
-                    const activeElement = document.activeElement as HTMLElement;
-
-                    // this seems unnecessary
-                    // this._updateValue(e.target.value);
-
-                    if (activeElement.tagName === 'INPUT') {
-                        activeElement.blur();
-                    }
-
-                    return;
-                case keyCodeConstants.KEY_ESC:
-                    this.setState({displayValue: this.getTransformedValue(this.state.savedValue)});
-                    return;
-                case keyCodeConstants.KEY_UP:
-                    if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step + step);
-                    return;
-                case keyCodeConstants.KEY_DOWN:
-                    if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step - step);
-                    return;
-                default:
-                    return;
-            }
-        }
-
-        getLengthUnit() {
-            if (this.props.unit === 'mm') {
-                let unit = LocalStorage.get('default-units') || 'mm';
-                if (unit === 'mm') {
-                    return this.props.abbr ? '' : 'mm';
-                } else {
-                    return this.props.abbr ? '\"' : 'in';
+                if (activeElement.tagName === 'INPUT') {
+                    activeElement.blur();
                 }
+
+                return;
+            case keyCodeConstants.KEY_ESC:
+                this.setState({displayValue: this.getTransformedValue(this.state.savedValue)});
+                return;
+            case keyCodeConstants.KEY_UP:
+                if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step + step);
+                return;
+            case keyCodeConstants.KEY_DOWN:
+                if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step - step);
+                return;
+            default:
+                return;
+        }
+    }
+
+    getLengthUnit() {
+        if (this.props.unit === 'mm') {
+            let unit = LocalStorage.get('default-units') || 'mm';
+            if (unit === 'mm') {
+                return this.props.abbr ? '' : 'mm';
             } else {
-                return this.props.abbr ? '' : this.props.unit;
+                return this.props.abbr ? '\"' : 'in';
             }
+        } else {
+            return this.props.abbr ? '' : this.props.unit;
+        }
+    }
+
+    getTransformedValue(value) {
+        if (this.getLengthUnit() === 'in') {
+            return Number(value / 25.4).toFixed(4);
+        } else {
+            return value;
+        }
+    }
+
+    render() {
+        let _renderUnit = '';
+        if(this.props.unit !== '') {
+            _renderUnit = <span className="unit">{this.getLengthUnit()}</span>;
         }
 
-        getTransformedValue(value) {
-            if (this.getLengthUnit() === 'in') {
-                return Number(value / 25.4).toFixed(4);
-            } else {
-                return value;
-            }
-        }
+        let className = this.props.className;
+        className['ui ui-control-unit-input-v2'] = true;
 
-        render() {
-            let _renderUnit = '';
-            if(this.props.unit !== '') {
-                _renderUnit = <span className="unit">{this.getLengthUnit()}</span>;
-            }
+        return (
+            <div className={ClassNames(className)}>
+                <input
+                    type={this.props.type}
+                    step={this.props.step}
+                    value={this.state.displayValue}
+                    onFocus={(e) => {this._handleFocus(e)}}
+                    onBlur={this._handleBlur}
+                    onKeyUp={this._handleKeyUp}
+                    onKeyDown={this._handleKeyDown}
+                    onChange={this._handleChange}
+                    onInput={this._handleInput}
+                    disabled={this.props.disabled}
+                />
+                {_renderUnit}
+            </div>
+        );
+    }
+};
 
-            let className = this.props.className;
-            className['ui ui-control-unit-input-v2'] = true;
+UnitInput.propTypes = {
+    getValue: PropTypes.func.isRequired,
+    defaultValue: PropTypes.number.isRequired,
+    className: PropTypes.object,
+    type: PropTypes.string,
+    unit: PropTypes.string,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+    decimal: PropTypes.number,
+    disabled: PropTypes.bool,
+    abbr: PropTypes.bool,
+    isDoOnInput: PropTypes.bool,
+    onKeyUp: PropTypes.func,
+    onBlur: PropTypes.func,
+    onFocus: PropTypes.func,
+};
 
-            return (
-                <div className={ClassNames(className)}>
-                    <input
-                        type={this.props.type}
-                        step={this.props.step}
-                        value={this.state.displayValue}
-                        onFocus={(e) => {this._handleFocus(e)}}
-                        onBlur={this._handleBlur}
-                        onKeyUp={this._handleKeyUp}
-                        onKeyDown={this._handleKeyDown}
-                        onChange={this._handleChange}
-                        onInput={this._handleInput}
-                        disabled={this.props.disabled}
-                    />
-                    {_renderUnit}
-                </div>
-            );
-        }
-    };
-    UnitInput.propTypes = {
-        getValue: PropTypes.func.isRequired,
-        defaultValue: PropTypes.number.isRequired,
-        className: PropTypes.object,
-        type: PropTypes.string,
-        unit: PropTypes.string,
-        min: PropTypes.number,
-        max: PropTypes.number,
-        step: PropTypes.number,
-        decimal: PropTypes.number,
-        disabled: PropTypes.bool,
-        abbr: PropTypes.bool,
-        isDoOnInput: PropTypes.bool,
-        onKeyUp: PropTypes.func,
-        onBlur: PropTypes.func,
-        onFocus: PropTypes.func,
-    };
-    UnitInput.defaultProps = {
-        getValue: function(NewValue) {},
-        defaultValue: 0,
-        className: {},
-        type: 'text',
-        unit: '',
-        min: Number.MIN_SAFE_INTEGER,
-        max: Number.MAX_SAFE_INTEGER,
-        step: 1,
-        decimal: 2,
-        disabled: false,
-        abbr: false,
-        isDoOnInput: false,
-        onKeyUp: () => {},
-        onBlur: () => {},
-        onFocus: () => {},
-    };
-    export default UnitInput;
+UnitInput.defaultProps = {
+    getValue: function(NewValue) {},
+    defaultValue: 0,
+    className: {},
+    type: 'text',
+    unit: '',
+    min: Number.MIN_SAFE_INTEGER,
+    max: Number.MAX_SAFE_INTEGER,
+    step: 1,
+    decimal: 2,
+    disabled: false,
+    abbr: false,
+    isDoOnInput: false,
+    onKeyUp: () => {},
+    onBlur: () => {},
+    onFocus: () => {},
+};
+
+export default UnitInput;

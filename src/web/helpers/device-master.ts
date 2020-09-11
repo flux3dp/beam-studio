@@ -1,24 +1,24 @@
-import $ from 'jquery'
-import * as i18n from './i18n'
-import sprintf from './sprintf'
-import Alert from '../app/contexts/AlertCaller'
-import AlertConstants from '../app/constants/alert-constants'
-import BeamboxActions from '../app/actions/beambox'
-import Progress from '../app/contexts/ProgressCaller'
-import InputLightboxActions from '../app/actions/input-lightbox-actions'
-import DeviceConstants from '../app/constants/device-constants'
-import { SelectionResult, ConnectionError } from '../app/constants/connection-constants'
-import Control from './api/control'
-import Touch from './api/touch'
-import Discover from './api/discover'
-import Config from './api/config'
-import GlobalActions from '../app/actions/global-actions'
-import InputLightBoxConstants from '../app/constants/input-lightbox-constants'
-import DeviceList from './device-list'
-import Camera from './api/camera'
-import SocketMaster from './socket-master'
-import DeviceErrorHandler from './device-error-handler'
-import VersionChecker from './version-checker'
+import $ from 'jquery';
+import * as i18n from './i18n';
+import sprintf from './sprintf';
+import Alert from '../app/contexts/AlertCaller';
+import AlertConstants from '../app/constants/alert-constants';
+import BeamboxActions from '../app/actions/beambox';
+import Progress from '../app/contexts/ProgressCaller';
+import InputLightboxActions from '../app/actions/input-lightbox-actions';
+import DeviceConstants from '../app/constants/device-constants';
+import { SelectionResult, ConnectionError } from '../app/constants/connection-constants';
+import Control from './api/control';
+import Touch from './api/touch';
+import Discover from './api/discover';
+import Config from './api/config';
+import GlobalActions from '../app/actions/global-actions';
+import InputLightBoxConstants from '../app/constants/input-lightbox-constants';
+import DeviceList from './device-list';
+import Camera from './api/camera';
+import SocketMaster from './socket-master';
+import DeviceErrorHandler from './device-error-handler';
+import VersionChecker from './version-checker';
 
 interface IDeviceInfo {
     st_id: number
@@ -663,7 +663,7 @@ class DeviceMaster {
         }).always(() => {
             clearTimeout(timeout);
         });
-        return d.promise();;
+        return d.promise();
     }
 
     getPreviewInfo() {

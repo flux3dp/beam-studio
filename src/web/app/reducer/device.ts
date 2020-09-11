@@ -1,28 +1,28 @@
-import C from '../constants/action-creator-device'
+import C from '../constants/action-creator-device';
 
-    let initialState = {
-        status: {},
-        jobInfo: []
-    };
+let initialState = {
+    status: {},
+    jobInfo: []
+};
 
-    /**
-    * State list
-    * status            : (object), machine status
-    * jobInfo           : (array), active job info, array of object
-    * usbFolderExist    : (bool), wether usb drive (folder) exist in machine or not
-    */
+/**
+* State list
+* status            : (object), machine status
+* jobInfo           : (array), active job info, array of object
+* usbFolderExist    : (bool), wether usb drive (folder) exist in machine or not
+*/
 
-    export default (state = initialState, action) => {
+export default (state = initialState, action) => {
 
-        var _action = {};
+    var _action = {};
 
-        _action[C.UPDATE_DEVICE_STATUS] = () => Object.assign({}, state, { status: action.status });
-        _action[C.UPDATE_JOB_INFO] = () => Object.assign({}, state, { jobInfo: action.jobInfo });
-        _action[C.UPDATE_USB_FOLDER_EXISTANCE] = () => Object.assign({}, state, { usbFolderExist: action.usbFolderExist });
+    _action[C.UPDATE_DEVICE_STATUS] = () => Object.assign({}, state, { status: action.status });
+    _action[C.UPDATE_JOB_INFO] = () => Object.assign({}, state, { jobInfo: action.jobInfo });
+    _action[C.UPDATE_USB_FOLDER_EXISTANCE] = () => Object.assign({}, state, { usbFolderExist: action.usbFolderExist });
 
-        if (typeof _action[action.type] !== 'function') {
-            return state;
-        }
+    if (typeof _action[action.type] !== 'function') {
+        return state;
+    }
 
-        return _action[action.type]();
-    };
+    return _action[action.type]();
+};

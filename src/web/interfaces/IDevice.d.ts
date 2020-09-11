@@ -1,5 +1,5 @@
-import Control from "../helpers/api/control";
-import Camera from "../helpers/api/camera";
+import Control from '../helpers/api/control';
+import Camera from '../helpers/api/camera';
 
 export interface IDeviceInfo {
     ipaddr: string;

@@ -10,6 +10,7 @@ export enum ConnectionError {
     RESOURCE_BUSY = 'RESOURCE_BUSY',
     FLUXMONITOR_VERSION_IS_TOO_OLD = 'FLUXMONITOR_VERSION_IS_TOO_OLD'
 }
+
 export interface SelectionResult {
     success: boolean;
     error?: ConnectionError;

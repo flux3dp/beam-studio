@@ -1,5 +1,5 @@
-import $ from "jquery"
-import KeycodeConstants from '../app/constants/keycode-constants'
+import $ from 'jquery';
+import KeycodeConstants from '../app/constants/keycode-constants';
 /**
  * setting up shortcut
  */

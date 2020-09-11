@@ -1,15 +1,15 @@
 // @ts-expect-error
 import Rx = require('Rx');
-import PreviewModeBackgroundDrawer from './preview-mode-background-drawer'
-import DeviceMaster from '../../../helpers/device-master'
-import Alert from '../../contexts/AlertCaller'
-import AlertConstants from '../../constants/alert-constants'
-import Progress from '../../contexts/ProgressCaller'
-import sprintf from '../../../helpers/sprintf'
-import * as i18n from '../../../helpers/i18n'
-import Constant from './constant'
-import BeamboxPreference from './beambox-preference'
-import BeamboxActions from '../beambox'
+import PreviewModeBackgroundDrawer from './preview-mode-background-drawer';
+import DeviceMaster from '../../../helpers/device-master';
+import Alert from '../../contexts/AlertCaller';
+import AlertConstants from '../../constants/alert-constants';
+import Progress from '../../contexts/ProgressCaller';
+import sprintf from '../../../helpers/sprintf';
+import * as i18n from '../../../helpers/i18n';
+import Constant from './constant';
+import BeamboxPreference from './beambox-preference';
+import BeamboxActions from '../beambox';
 
 class PreviewModeController {
     isDrawing: boolean;

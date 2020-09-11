@@ -1,4 +1,4 @@
-import Config from '../../../helpers/api/config'
+import Config from '../../../helpers/api/config';
 const DEFAULT_PREFERENCE = {
     'should_remind_calibrate_camera': true,
     'mouse_input_device': (process.platform === 'darwin') ? 'TOUCHPAD' : 'MOUSE',
@@ -12,23 +12,23 @@ const DEFAULT_PREFERENCE = {
 const config = Config();
 
 class BeamboxPreference {
-        constructor() {
-            // set default preference if key or even beambox-preference doesn't exist
-            let pref: any = config.read('beambox-preference');
-            pref = pref === '' ? {} : pref;
-            const fullPref = Object.assign(DEFAULT_PREFERENCE, pref);
-            config.write('beambox-preference', fullPref);
-        }
+    constructor() {
+        // set default preference if key or even beambox-preference doesn't exist
+        let pref: any = config.read('beambox-preference');
+        pref = pref === '' ? {} : pref;
+        const fullPref = Object.assign(DEFAULT_PREFERENCE, pref);
+        config.write('beambox-preference', fullPref);
+    }
 
-        read(key) {
-            return config.read('beambox-preference')[key];
-        }
+    read(key) {
+        return config.read('beambox-preference')[key];
+    }
 
-        write(key, value) {
-            const pref = config.read('beambox-preference');
-            pref[key] = value;
-            config.write('beambox-preference', pref);
-        }
+    write(key, value) {
+        const pref = config.read('beambox-preference');
+        pref[key] = value;
+        config.write('beambox-preference', pref);
+    }
 }
 
 const instance = new BeamboxPreference();

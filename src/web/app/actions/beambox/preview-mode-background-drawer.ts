@@ -1,9 +1,9 @@
 // @ts-expect-error
 import Rx = require('Rx');
-import BeamboxPreference from './beambox-preference'
-import Constant from './constant'
-import * as i18n from '../../../helpers/i18n'
-import { getSVGAsync } from '../../../helpers/svg-editor-helper'
+import BeamboxPreference from './beambox-preference';
+import Constant from './constant';
+import * as i18n from '../../../helpers/i18n';
+import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas;
 let svgedit;
 getSVGAsync((globalSVG) => {
@@ -12,7 +12,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const LANG = i18n.lang.beambox.left_panel;
-
 
 class PreviewModeBackgroundDrawer {
     canvas: HTMLCanvasElement;

@@ -1,33 +1,33 @@
-import $ from 'jquery'
-import config from '../../helpers/api/config'
-import AlertActions from '../actions/alert-actions'
-import AlertStore from '../stores/alert-store'
-import AlertConstants from '../constants/alert-constants'
-import ProgressStore from '../stores/progress-store'
-import ProgressConstants from '../constants/progress-constants'
-import InputLightboxStore from '../stores/input-lightbox-store'
-import Progress from '../widgets/Progress'
-import InputLightbox from '../widgets/Input-Lightbox'
-import NotificationModal from '../widgets/Notification-Modal'
-import UpdateDialog from '../views/Update-Dialog'
-import CameraCalibration from '../views/beambox/Camera-Calibration'
-import GlobalActions from '../actions/global-actions'
-import GlobalStore from '../stores/global-store'
-import Monitor from '../views/print/Monitor'
-import Modal from '../widgets/Modal'
-import LocalStorage from '../../helpers/local-storage'
-import checkFirmware from '../../helpers/check-firmware'
-import firmwareUpdater from '../../helpers/firmware-updater'
-import DeviceMaster from '../../helpers/device-master'
+import $ from 'jquery';
+import config from '../../helpers/api/config';
+import AlertActions from '../actions/alert-actions';
+import AlertStore from '../stores/alert-store';
+import AlertConstants from '../constants/alert-constants';
+import ProgressStore from '../stores/progress-store';
+import ProgressConstants from '../constants/progress-constants';
+import InputLightboxStore from '../stores/input-lightbox-store';
+import Progress from '../widgets/Progress';
+import InputLightbox from '../widgets/Input-Lightbox';
+import NotificationModal from '../widgets/Notification-Modal';
+import UpdateDialog from '../views/Update-Dialog';
+import CameraCalibration from '../views/beambox/Camera-Calibration';
+import GlobalActions from '../actions/global-actions';
+import GlobalStore from '../stores/global-store';
+import Monitor from '../views/print/Monitor';
+import Modal from '../widgets/Modal';
+import LocalStorage from '../../helpers/local-storage';
+import checkFirmware from '../../helpers/check-firmware';
+import firmwareUpdater from '../../helpers/firmware-updater';
+import DeviceMaster from '../../helpers/device-master';
 // @ts-expect-error
-import Notifier = require('jqueryGrowl')
+import Notifier = require('jqueryGrowl');
 declare global {
     interface JQueryStatic {
         growl: any
     }
 }
 
-const React = requireNode('react');;
+const React = requireNode('react');
 
 export default function(args) {
     args = args || {};

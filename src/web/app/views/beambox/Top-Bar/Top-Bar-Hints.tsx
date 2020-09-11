@@ -1,105 +1,106 @@
-import * as i18n from '../../../../helpers/i18n'
-    const React = requireNode('react');;
-    const LANG = i18n.lang.topbar;
-    const classNames = requireNode('classnames');
-    const { createContext } = React;
-    const HintContext = createContext();
-    let _contextCaller;
+import * as i18n from '../../../../helpers/i18n';
+const React = requireNode('react');
+const LANG = i18n.lang.topbar;
+const classNames = requireNode('classnames');
+const { createContext } = React;
+const HintContext = createContext();
+let _contextCaller;
 
-    class ContextHelper {
-        static get _contextCaller() {
-            return _contextCaller;
+class ContextHelper {
+    static get _contextCaller() {
+        return _contextCaller;
+    }
+}
+
+export const TopBarHintsContextCaller = ContextHelper._contextCaller;
+
+export const Constants = {
+    POLYGON: 'POLYGON',
+}
+
+export class HintContextProvider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hintType: null,
         }
     }
-    
-    export const TopBarHintsContextCaller = ContextHelper._contextCaller;
 
-    export const Constants = {
-        POLYGON: 'POLYGON',
+    setHint = (hintType) => {
+        this.setState({hintType});
     }
 
-    export class HintContextProvider extends React.Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                hintType: null,
-            }
-        }
+    removeHint = () => {
+        this.setState({hintType: null});
+    }
 
-        setHint = (hintType) => {
-            this.setState({hintType});
-        }
+    render() {
+        const {
+            setHint,
+            removeHint
+        } = this;
 
-        removeHint = () => {
-            this.setState({hintType: null});
-        }
-
-        render() {
-            const {
+        const {
+            hintType
+        } = this.state;
+        return (
+            <HintContext.Provider value={{
                 setHint,
-                removeHint
-            } = this;
-
-            const {
+                removeHint,
                 hintType
-            } = this.state;
-            return (
-                <HintContext.Provider value={{
-                    setHint,
-                    removeHint,
-                    hintType
-                }}>
-                    {this.props.children}
-                </HintContext.Provider>
-            );
+            }}>
+                {this.props.children}
+            </HintContext.Provider>
+        );
+    }
+}
+
+class HintContextConsumer extends React.Component {
+    componentDidMount() {
+        _contextCaller = this.context;
+    }
+
+    componentWillUnmount() {
+        _contextCaller = null;
+    }
+
+    renderTextHint(textContent) {
+        return (
+            <div>
+                {textContent}
+            </div>
+        );
+    }
+
+    renderContent() {
+        const { hintType } = this.context;
+        if (!hintType) {
+            return null;
+        }
+        if (hintType === Constants.POLYGON) {
+            return this.renderTextHint(LANG.hint.polygon);
+        } else {
+            return null;
         }
     }
 
-    class HintContextConsumer extends React.Component {
-        componentDidMount() {
-            _contextCaller = this.context;
-        }
-
-        componentWillUnmount() {
-            _contextCaller = null;
-        }
-
-        renderTextHint(textContent) {
-            return (
-                <div>
-                    {textContent}
-                </div>
-            );
-        }
-
-        renderContent() {
-            const { hintType } = this.context;
-            if (!hintType) {
-                return null;
-            }
-            if (hintType === Constants.POLYGON) {
-                return this.renderTextHint(LANG.hint.polygon);
-            } else {
-                return null;
-            }
-        }
-
-        render() {
-            return (
-                <div className='hint-container'>
-                    {this.renderContent()}
-                </div>
-            );
-        }
-    };
-    HintContextConsumer.contextType = HintContext;
-
-    export class TopBarHints extends React.Component {
-        render() {
-            return (
-                <HintContextProvider>
-                    <HintContextConsumer />
-                </HintContextProvider>
-            );
-        }
+    render() {
+        return (
+            <div className='hint-container'>
+                {this.renderContent()}
+            </div>
+        );
     }
+};
+
+HintContextConsumer.contextType = HintContext;
+
+export class TopBarHints extends React.Component {
+    render() {
+        return (
+            <HintContextProvider>
+                <HintContextConsumer />
+            </HintContextProvider>
+        );
+    }
+}

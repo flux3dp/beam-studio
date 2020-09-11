@@ -1,7 +1,7 @@
-import * as i18n from '../../helpers/i18n'
-import AlertConstants from '../constants/alert-constants'
+import * as i18n from '../../helpers/i18n';
+import AlertConstants from '../constants/alert-constants';
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const { createContext } = React;
 const LANG = i18n.lang.alert;
 let progressID = 0;
