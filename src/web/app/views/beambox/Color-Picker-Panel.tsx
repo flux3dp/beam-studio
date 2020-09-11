@@ -37,7 +37,7 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
         }
 
         renderPickr() {
-            const Pickr = require('@simonwep/pickr');
+            const Pickr = requireNode('@simonwep/pickr');
             const origColor = $(this.layer).attr('data-color');
             this.pickr = Pickr.create({
                 el: '.pickr',
