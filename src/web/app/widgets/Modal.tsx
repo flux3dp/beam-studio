@@ -81,5 +81,4 @@ View.defaultProps = {
     className: {}
 }
 
-
 export default View;
