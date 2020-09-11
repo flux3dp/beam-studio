@@ -5877,7 +5877,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                             //Apply style
                             svgCanvas.svgToString($('#svgcontent')[0], 0);
 
-                            Progress.popById('loading_image');
                             resolve(newElement);
                         };
                         reader.readAsText(blob);
@@ -5981,6 +5980,7 @@ const svgEditor = window['svgEditor'] = (function($) {
 
                             await readImage(outputs['bitmap'], 1, outputs['bitmap_offset']); //magic number dpi/ inch/pixel
                         }
+                        Progress.popById('loading_image');
                         newElements = newElements.filter((elem) => elem);
                         svgCanvas.selectOnly(newElements);
                         if (newElements.length > 1) {

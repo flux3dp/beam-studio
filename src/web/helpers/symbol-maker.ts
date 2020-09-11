@@ -247,7 +247,7 @@ const electron = window['electron'];
     const sendTaskToWorker = async (data) => {
         return new Promise((resolve, reject) => {
             const path = requireNode('path');
-            const workerPath = path.join(__dirname, 'js', 'helpers', 'symbol-helper', 'image-symbol-worker.js');
+            const workerPath = path.join(__dirname, 'js', 'dist', 'helpers', 'symbol-helper', 'image-symbol-worker.js');
             const worker = new Worker(workerPath);
             worker.postMessage(data);
             worker.onerror = (e) => console.log(e);
