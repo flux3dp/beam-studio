@@ -34,6 +34,7 @@
     "nan": "^2.4.0",
     "net-ping": "^1.2.3",
     "node-machine-id": "^1.1.12",
+    "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-contextmenu": "^2.13.0",
     "react-dom": "^16.13.0",

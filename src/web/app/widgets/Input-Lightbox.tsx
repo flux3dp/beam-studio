@@ -1,14 +1,13 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
 import * as i18n from '../../helpers/i18n'
 import Constants from '../constants/input-lightbox-constants'
 import Modal from './Modal'
 import AlertDialog from './AlertDialog'
-const classNames = requireNode('classnames')
 
-    'use strict';
-    const React = requireNode('react');;
-    const ReactDOM = requireNode('react-dom');
+'use strict';
+const React = requireNode('react');
+const ReactDOM = requireNode('react-dom');
+const classNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
 
     var acceptableTypes = [
             Constants.TYPE_TEXT,

@@ -1,8 +1,8 @@
-const PropTypes = require('reactPropTypes')
 import GlobalConstants from '../../../app/constants/global-constants'
 import DeviceConstants from '../../../app/constants/device-constants'
 
-    const React = requireNode('react');;
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 
     class MonitorHeader extends React.Component{
         constructor(props) {

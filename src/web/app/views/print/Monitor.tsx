@@ -24,10 +24,10 @@ import VersionChecker from '../../../helpers/version-checker'
 import { IProgress } from '../../../interfaces/IProgress'
 
 const Redux = require('Redux')
-const PropTypes = require('reactPropTypes')
 
-const ClassNames = requireNode('classnames')
-const React = requireNode('react');;
+const React = requireNode('react');
+const ClassNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
 
     let _id = 'MONITOR',
         start,
@@ -933,7 +933,7 @@ const React = requireNode('react');;
             let subClass = ClassNames('sub', { 'hide': false });
 
             return (
-                <div className="flux-monitor" tabIndex="1" onBlur={this.onBlur} onFocus={this.onFocus}>
+                <div className="flux-monitor" tabIndex={1} onBlur={this.onBlur} onFocus={this.onFocus}>
                     <div className="main">
                         <MonitorHeader
                             name={DeviceMaster.currentDevice.info.name}

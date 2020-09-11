@@ -1,10 +1,9 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
 import keyCodeConstants from '../constants/keycode-constants'
 import LocalStorage from '../../helpers/local-storage'
 
 const ClassNames = requireNode('classnames')
 const React = requireNode('react');;
+const PropTypes = requireNode('prop-types');
 
     class UnitInput extends React.Component{
         constructor(props) {

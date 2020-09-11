@@ -1,10 +1,9 @@
-const PropTypes = require('reactPropTypes')
 import GlobalConstants from '../../../app/constants/global-constants'
 import DeviceConstants from '../../../app/constants/device-constants'
 import MonitorStatus from '../../../app/constants/monitor-status'
 import FormatDuration from '../../../helpers/duration-formatter'
 
-    const React = requireNode('react');;
+const React = requireNode('react');
 
     const findObjectContainsProperty = (infoArray = [], propertyName) => {
         return infoArray.filter((o) => Object.keys(o).some(n => n === propertyName));

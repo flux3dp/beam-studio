@@ -1,10 +1,9 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes');
 import Modal from './Modal'
 import AlertDialog from './AlertDialog'
 import ProgressConstants from '../constants/progress-constants'
 
-    const React = requireNode('react');;
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 
     var acceptableTypes = [
         ProgressConstants.WAITING,

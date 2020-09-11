@@ -1,9 +1,8 @@
 import $ from 'jquery'
-// @ts-expect-error
-import ReactCx = require('reactClassset')
 
-    'use strict';
-    const React = requireNode('react');;
+'use strict';
+const React = requireNode('react');
+const classNames = requireNode('classnames');
 
     var deferred = $.Deferred();
 
@@ -123,7 +122,7 @@ import ReactCx = require('reactClassset')
         render() {
             var self = this,
                 props = self.props,
-                className = ReactCx.cx(props.className);
+                className = classNames(props.className);
 
             return (
                 <input

@@ -1,6 +1,5 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
 const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 
     class SliderControl extends React.Component{
         constructor(props) {

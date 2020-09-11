@@ -1,9 +1,7 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
-const ClassNames = requireNode('classnames')
-
-    'use strict';
-    const React = requireNode('react');;
+'use strict';
+const React = requireNode('react');
+const ClassNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
 
     export default class CheckboxControl extends React.Component{
         static propTypes = {

@@ -1,8 +1,6 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
-
-    'use strict';
-    const React = requireNode('react');;
+'use strict';
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 
     class DropDownControl extends React.Component{
         constructor(props) {

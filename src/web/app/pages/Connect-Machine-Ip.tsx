@@ -6,7 +6,7 @@ import DeviceMaster from '../../helpers/device-master'
 import LocalStorage from '../../helpers/local-storage'
 import * as i18n from '../../helpers/i18n'
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const classNames = requireNode('classnames');
 const dns = requireNode('dns');
 const ping = requireNode('net-ping');

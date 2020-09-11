@@ -1,5 +1,3 @@
-const PropTypes = require('reactPropTypes')
-const ClassNames = requireNode('classnames')
 import MonitorActionCreator from '../../action-creators/monitor'
 import GlobalConstants from '../../constants/global-constants'
 import DeviceConstants from '../../constants/device-constants'
@@ -7,7 +5,9 @@ import DeviceMaster from '../../../helpers/device-master'
 import FormatDuration from '../../../helpers/duration-formatter'
 import RawMovePanel from '../../widgets/Raw-Move-Panel'
 import VersionChecker from '../../../helpers/version-checker'
-    const React = requireNode('react');;
+
+const React = requireNode('react');
+const ClassNames = requireNode('classnames');
 
     'use strict';
 

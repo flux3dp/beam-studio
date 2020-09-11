@@ -1,7 +1,6 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
-    const React = requireNode('react');;
-    const classNames = requireNode('classnames');
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
+const classNames = requireNode('classnames');
 
     class SwitchControl extends React.Component{
         constructor(props) {

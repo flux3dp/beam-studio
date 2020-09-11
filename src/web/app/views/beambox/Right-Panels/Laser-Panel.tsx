@@ -1,6 +1,5 @@
 import $ from 'jquery'
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
+
 import BeamboxPreference from '../../../actions/beambox/beambox-preference'
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper'
 import RightPanelConstants from '../../../constants/right-panel-constants'
@@ -23,8 +22,9 @@ import { getSVGAsync } from '../../../../helpers/svg-editor-helper'
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
-    const React = requireNode('react');;
-    const classNames = requireNode('classnames');
+const React = requireNode('react');
+const classNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
 
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
     const defaultLaserOptions = [

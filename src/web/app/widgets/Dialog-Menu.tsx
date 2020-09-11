@@ -1,13 +1,11 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
-// @ts-expect-error
-import ReactCx = require('reactClassset')
 import $ from 'jquery'
 import GlobalStore from '../stores/global-store'
 import List from './List'
 
-    const React = requireNode('react');;
-    const ReactDOM = requireNode('react-dom');
+const React = requireNode('react');
+const classNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
+
     export default class DialogMenu extends React.Component{
         static propTypes = {
             arrowDirection: PropTypes.oneOf(['LEFT', 'RIGHT', 'UP', 'BOTTOM']),
@@ -47,7 +45,7 @@ import List from './List'
         }
 
         _renderItem = () => {
-            const arrowClassName = ReactCx.cx({
+            const arrowClassName = classNames({
                 'arrow': true,
                 'arrow-left': 'LEFT' === this.props.arrowDirection,
                 'arrow-right': 'RIGHT' === this.props.arrowDirection,
@@ -92,7 +90,7 @@ import List from './List'
                                         }
                                     }}
                                 />
-                                <div className={ReactCx.cx(itemLabelClassName)}>
+                                <div className={classNames(itemLabelClassName)}>
                                     {label}
                                 </div>
                                 <label className='dialog-window'>
@@ -116,7 +114,7 @@ import List from './List'
                 <List
                     ref="uiDialogMenu"
                     items={this._renderItem()}
-                    className={ReactCx.cx(className)}
+                    className={classNames(className)}
                 />
             );
         }

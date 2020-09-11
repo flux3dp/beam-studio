@@ -1,5 +1,4 @@
 import $ from 'jquery'
-const PropTypes = require('reactPropTypes');
 import Constant from '../../../actions/beambox/constant'
 import LocalStorage from '../../../../helpers/local-storage'
 import * as i18n from '../../../../helpers/i18n'
@@ -16,7 +15,8 @@ let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 const React = requireNode('react');
-const ClassNames = requireNode('classnames')
+const ClassNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
     const LANG = i18n.lang.beambox.tool_panels;
 
     let _mm2pixel = function(pixel_input) {

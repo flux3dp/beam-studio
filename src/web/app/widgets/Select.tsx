@@ -1,9 +1,9 @@
 // refer to: https://gist.github.com/jbottigliero/7982340,
 //           https://github.com/JedWatson/react-select
-// @ts-expect-error
-import PropTypes = require('reactPropTypes')
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
+
     
-    const React = requireNode('react');;
 
     class Select extends React.Component{
         render() {

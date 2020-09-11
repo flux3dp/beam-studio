@@ -1,10 +1,11 @@
 import $ from 'jquery'
-const PropTypes = require('reactPropTypes')
 import shortcuts from '../../helpers/shortcuts'
 import AlertConstants from '../constants/alert-constants'
 import Modal from './Modal'
 import AlertDialog from './AlertDialog'
-    const React = requireNode('react');;
+
+const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 
     var lang,
         acceptableTypes = [

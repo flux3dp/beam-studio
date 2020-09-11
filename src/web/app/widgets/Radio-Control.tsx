@@ -1,7 +1,6 @@
-// @ts-expect-error
-import PropTypes = require('reactPropTypes');
-const ClassNames = requireNode('classnames');
 const React = requireNode('react');
+const ClassNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
 
     class RadioControl extends React.Component{
         constructor(props) {

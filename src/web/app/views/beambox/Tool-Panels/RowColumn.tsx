@@ -1,9 +1,9 @@
 import $ from 'jquery'
-const PropTypes = require('reactPropTypes')
 import UnitInput from'../../../widgets/Unit-Input-v2'
 import * as i18n from '../../../../helpers/i18n'
 
-    const React = requireNode('react');;
+    const React = requireNode('react');
+    const PropTypes = requireNode('prop-types');
 
     const LANG = i18n.lang.beambox.tool_panels;
     

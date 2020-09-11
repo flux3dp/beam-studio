@@ -1,11 +1,10 @@
 import $ from 'jquery'
 import shortcuts from '../../helpers/shortcuts';
-// @ts-expect-error
-import PropTypes = require('reactPropTypes');
-// @ts-expect-error
-import ReactCx = require('reactClassset');
-const React = requireNode('react');;
+const React = requireNode('react');
 const ReactDOM = requireNode('react-dom');
+const classNames = requireNode('classnames');
+const PropTypes = requireNode('prop-types');
+
 
 class View extends React.Component{
     constructor(props) {
@@ -57,7 +56,7 @@ class View extends React.Component{
         var backgroundClass;
 
         this.props.className['modal-window'] = true;
-        backgroundClass = ReactCx.cx(this.props.className);
+        backgroundClass = classNames(this.props.className);
 
         return (
             <div className={backgroundClass}>
