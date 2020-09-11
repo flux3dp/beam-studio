@@ -6,8 +6,7 @@ import KeycodeConstants from '../../constants/keycode-constants'
 import Discover from '../../../helpers/api/discover'
 import * as i18n from '../../../helpers/i18n'
 
-const React = requireNode('react');;
-const ReactDOM = requireNode('react-dom');
+const React = requireNode('react');
 const ping = requireNode('net-ping');
 const LANG = i18n.lang.beambox.network_testing_panel;
 const { shell } = requireNode('electron').remote
@@ -23,7 +22,7 @@ class NetworkTestingPanel extends React.Component {
         }
         this.TEST_TIME = 30000;
         let local_ips = [];
-        const os = require('os');
+        const os = requireNode('os');
         let ifaces = os.networkInterfaces();
         Object.keys(ifaces).forEach(function (ifname) {
             let alias = 0;
@@ -210,7 +209,7 @@ class NetworkTestingPanel extends React.Component {
     }
 
     _onInputBlur() {
-        let value = ReactDOM.findDOMNode(this.refs.textInput).value;
+        let value = this.refs.textInput.value;
         this.state.ip = value.replace(' ', '');
         return;
     }
