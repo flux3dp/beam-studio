@@ -109,8 +109,8 @@ var methods = {
             return ('string' === typeof defaultPrinter['uuid']);
         },
         get: function(): IDeviceInfo {
-            // @ts-expect-error
-            return config().read('default-printer') || {};
+            const defaultDevice = (config().read('default-printer') || {}) as IDeviceInfo;
+            return defaultDevice;
         },
         clear: function() {
             _localStorage.removeAt('default-printer');

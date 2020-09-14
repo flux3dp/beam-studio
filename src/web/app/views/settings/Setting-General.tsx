@@ -145,8 +145,7 @@ class SettingGeneral extends React.Component{
 
     render() {
         let { supported_langs } = this.props;
-        // @ts-expect-error
-        let printer: IDeviceInfo = this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get(),
+        let printer: IDeviceInfo = (this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get()) as IDeviceInfo,
             default_machine_button,
             tableStyle = {width: '70%'},
             pokeIP = Config().read('poke-ip-addr'),

@@ -596,13 +596,12 @@ class Monitor extends React.Component{
                     let p = Math.floor(progress.step / progress.total * 100);
                     store.dispatch(MonitorActionCreator.setUploadProgress(p));
                 })
-                .fail((error) => {
+                .fail((error: {error: string[]}) => {
                     // TODO: figuire out what error is
                     // reset status
                     store.dispatch(MonitorActionCreator.setUploadProgress(''));
                     store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
                     this._startReport();
-                    // @ts-expect-error
                     AlertActions.showPopupError('', lang.message.unable_to_start + error.error.join('_'));
                 });
             }

@@ -123,9 +123,7 @@ class MonitorDisplay extends React.Component{
 
         let _files = files.map((item, i) => {
             if(!item[0]) {
-                // this is ... no idea...
-                // @ts-expect-error
-                item = [result.files[i]];
+                return null;
             }
             let imgSrc = item[2] instanceof Blob ? URL.createObjectURL(item[2]) : 'img/ph_s.png';
             let selected = Monitor.selectedItem.name === item[0],
