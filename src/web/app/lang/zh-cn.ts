@@ -1540,7 +1540,7 @@ export default {
                 sharp: '尖角',
                 round: '圆角',
                 fail_message: '生成偏移物件失败',
-                not_support_message: '选取物件中含有不支援的类型：\n图片、群组、文字、汇入图档\n这些类型的物件将被忽略。',
+                not_support_message: '选取物件中含有不支援的类型：\n图片、群组、文字、汇入图档。',
             },
             _nest: {
                 start_nest: '开始排列',

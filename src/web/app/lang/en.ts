@@ -1537,7 +1537,7 @@ export default {
                 sharp: 'Sharp',
                 round: 'Round',
                 fail_message: 'Failed to Offset Objects.',
-                not_support_message: 'Selected elements containing unsupported SVG tag：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;\nThese objects will be skipped.',
+                not_support_message: 'Selected elements containing unsupported SVG tag：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;.',
             },
             _nest: {
                 start_nest: 'Arrange',

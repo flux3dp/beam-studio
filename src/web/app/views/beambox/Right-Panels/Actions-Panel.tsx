@@ -67,7 +67,7 @@ class ActionsPanel extends React.Component {
         Progress.popById('convert-font');
     }
 
-    renderButtons = (label, onClick, isFullLine, isDisabled?: boolean) => {
+    renderButtons = (label: string, onClick: Function, isFullLine?: boolean, isDisabled?: boolean) => {
         const className = classNames('btn', 'btn-default', {'btn-full': isFullLine, 'btn-half': !isFullLine, 'disabled': isDisabled});
         return (
             <div className="btn-container" onClick={() => {onClick()}} key={label}>
@@ -148,8 +148,11 @@ class ActionsPanel extends React.Component {
     }
 
     renderMultiSelectActions = () => {
+        const { elem } = this.props;
+        const childs: HTMLElement[] = Array.from(elem.childNodes);
+        const supportOffset = childs.every((child) => {return !['g', 'text', 'image', 'use'].includes(child.tagName)});
         let content = [];
-        content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false));
+        content.push(this.renderButtons(LANG.offset, () => svgEditor.triggerOffsetTool(), false, !supportOffset));
         content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
         return content;
     }

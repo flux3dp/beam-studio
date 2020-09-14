@@ -56,7 +56,7 @@ import { IStorage } from '../../../interfaces/IStorage';
 // @ts-expect-error
 import Dxf2Svg = require('dxf2svg');
 // @ts-expect-error
-import ImageTracer = require('imagetracer')
+import ImageTracer = require('imagetracer');
 
 const React = requireNode('react');
 const LANG = i18n.lang.beambox;
@@ -3830,6 +3830,18 @@ const svgEditor = window['svgEditor'] = (function($) {
             editor.triggerGridTool = triggerGridTool;
 
             let triggerOffsetTool = function () {
+                if (selectedElement.tagName === 'g' && selectedElement.getAttribute('data-tempgroup') === 'true') {
+                    const childs: HTMLElement[] = Array.from(selectedElement.childNodes);
+                    const supportOffset = childs.every((child) => {return !['g', 'text', 'image', 'use'].includes(child.tagName)});
+                    if (!supportOffset) {
+                        Alert.popUp({
+                            id: 'Offset not support',
+                            message: LANG.tool_panels._offset.not_support_message,
+                            caption: LANG.left_panel.label.offset
+                        });
+                        return;
+                    }
+                }
                 if (selectedElement != null || multiselected) {
                     ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
                     ToolPanelsController.setType('offset');
