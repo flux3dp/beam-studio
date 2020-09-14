@@ -94,10 +94,10 @@ export class TopBar extends React.Component {
         const previewText = (borderless && supportOpenBottom) ? `${LANG.preview} ${LANG.borderless}` : LANG.preview
         return (
             <div className={classNames('preview-button-container', {previewing: isPreviewing})}>
-                <div className="img-container" onClick={() => {isPreviewing ? () => {} : this.changeToPreviewMode()}}>
+                <div className="img-container" onClick={() => {isPreviewing ? this.showCameraPreviewDeviceList() : this.changeToPreviewMode()}}>
                     <img src="img/top-bar/icon-camera.svg" draggable={false}/>
                 </div>
-                {isPreviewing ? <div className="title">{previewText}</div> : null}
+                {isPreviewing ? <div className="title" onClick={() => this.showCameraPreviewDeviceList()}>{previewText}</div> : null}
                 {isPreviewing ?
                     <div className='cross-wrapper' onClick={() => {this.endPreviewMode()}}>
                         <div className="bars bar1 shadow"></div>
