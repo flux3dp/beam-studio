@@ -11,7 +11,6 @@ requirejs.config({
         underscore: '../lib/underscore',
         svgeditor: '../lib/svgeditor',
         imagetracer: '../lib/svgeditor/imagetracer',
-        jsencrypt: '../lib/jsencrypt',
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
         events: '../lib/events',
