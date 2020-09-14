@@ -2,8 +2,6 @@ import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
 import FontFuncs from '../../../actions/beambox/font-funcs';
 import Progress from '../../../contexts/ProgressCaller';
 import DialogCaller from '../../../contexts/DialogCaller';
-import Alert from '../../../contexts/AlertCaller';
-import AlertConstants from '../../../constants/alert-constants';
 import Constant from '../../../actions/beambox/constant';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import * as i18n from '../../../../helpers/i18n';

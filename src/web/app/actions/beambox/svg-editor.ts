@@ -5975,9 +5975,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     readImage(file);
                 };
                 const importDxf = async file => {
-                    let defaultDpiValue = 1;
-                    let parsed = null;
-                    await new Promise(resolve => {
+                    const { defaultDpiValue, parsed } = await new Promise(resolve => {
                         const reader = new FileReader();
                         reader.onloadend = evt => {
                             if (!AlertConfig.read('skip_dxf_version_warning')) {
@@ -5999,8 +5997,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 }
                             }
 
-                            parsed = Dxf2Svg.parseString(evt.target.result);
-                            
+                            let defaultDpiValue = 1;
+                            let parsed = Dxf2Svg.parseString(evt.target.result);
+
                             if (parsed.header.insunits == '1') {
                                 defaultDpiValue = 25.4;
                             }
@@ -6016,8 +6015,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             if (parsed.header.insunits == '6') {
                                 defaultDpiValue = 100;
                             }
-                            // @ts-expect-error can't resolve 2 value?
-                            resolve(parsed, defaultDpiValue);
+                            resolve({parsed, defaultDpiValue});
                         };
                         reader.readAsText(file);
                     });
@@ -6063,7 +6061,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     for (let i in outputLayers) {
                         const layerName = i;
                         const layer = outputLayers[i];
-                        console.log(i);
                         const isLayerExist = svgCanvas.setCurrentLayer(layerName);
                         if (!isLayerExist) {
                             svgCanvas.getCurrentDrawing();

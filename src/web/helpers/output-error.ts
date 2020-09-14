@@ -1,20 +1,17 @@
 /**
  * output error log
  */
-import $ from 'jquery';
 import * as i18n from './i18n';
-import html2canvas from 'html2canvas';
 import Logger from './logger';
 import Alert from '../app/contexts/AlertCaller';
 import AlertConstants from '../app/constants/alert-constants';
+import ElectronDialogs from '../app/actions/electron-dialogs';
 import Progress from '../app/contexts/ProgressCaller';
-// @ts-expect-error
-import fileSaver = require('plugins/file-saver/file-saver.min');
 const Store = requireNode('electron-store');
+const store = new Store();
 
 const LANG = i18n.lang.beambox;
 
-const store = new Store();
 function obfuse(str){
     var output = [],
         c;
@@ -88,24 +85,20 @@ let getOutput = () => {
 }
 
 export default {
-    downloadErrorLog: function() {
-        var $deferred = $.Deferred();
+    downloadErrorLog: async () => {
+        console.log('Outputing');
 
-        console.log("Outputing");
-        html2canvas(window.document.body).then(function(canvas) {
-            var jpegUrl = canvas.toDataURL('image/jpeg');
-            let report_blob;
+        let output = getOutput();
+        const fileName = `bugreport_${Math.floor(Date.now() / 1000)}.txt`;
+        const targetFilePath = await ElectronDialogs.saveFileDialog(LANG.popup.bug_report, fileName, [
+            {extensionName: 'txt', extensions: ['txt']}
+        ], false);
 
-            let output = getOutput();
-            
-
-            report_blob = new Blob(output, {type: 'text/html'});
-            window['saveAs'](report_blob, 'bugreport_' + Math.floor(Date.now() / 1000) + '.txt');
-
-            $deferred.resolve();
-        });
-
-        return $deferred.promise();
+        if (targetFilePath) {
+            const fs = requireNode('fs');
+            fs.writeFileSync(targetFilePath, output.join(''));
+        }
+        return;
     },
     uploadBackendErrorLog: async () => {
         Progress.openNonstopProgress({id: 'output-error-log', message: LANG.popup.progress.uploading});

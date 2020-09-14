@@ -14,27 +14,27 @@ class VerticalSlider extends React.Component {
     }
 
     componentDidMount() {
-        const sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
-        const sliderBarRadiusStr = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
+        const sliderHeight = this.refs.sliderTrack.offsetHeight;
+        const sliderBarRadiusStr = $(this.refs.sliderBar).css('border-width');
         //This is a hack: Assuming unit is "px", may cause problem
         const sliderBarRadius = parseFloat(sliderBarRadiusStr.match(/[0-9]*/)[0]);
         const sliderTop = (this.props.max - this.state.value) / (this.props.max - this.props.min) * sliderHeight - sliderBarRadius;
-        $(ReactDOM.findDOMNode(this.refs.sliderBar)).css({top: sliderTop});
+        $(this.refs.sliderBar).css({top: sliderTop});
     }
 
     componentDidUpdate() {
-        const sliderHeight = $(ReactDOM.findDOMNode(this.refs.sliderTrack)).height();
-        const sliderBarRadiusStr = $(ReactDOM.findDOMNode(this.refs.sliderBar)).css('border-width');
+        const sliderHeight = this.refs.sliderTrack.offsetHeight;
+        const sliderBarRadiusStr = $(this.refs.sliderBar).css('border-width');
         //This is a hack: Assuming unit is "px", may cause problem
         const sliderBarRadius = parseFloat(sliderBarRadiusStr.match(/[0-9]*/)[0]);
         let sliderTop = (this.props.max - this.state.value) / (this.props.max - this.props.min) * sliderHeight - sliderBarRadius;
-        $(ReactDOM.findDOMNode(this.refs.sliderBar)).css({top: sliderTop});
+        $(this.refs.sliderBar).css({top: sliderTop});
     }
 
     _handleMouseDown(e) {
         //console.log(e.clientY, $(e.target).position().top);
-        let top = $(ReactDOM.findDOMNode(this.refs.verticalSlider)).position().top;
-        let height = $(ReactDOM.findDOMNode(this.refs.verticalSlider)).height();
+        let top = $(this.refs.verticalSlider).position().top;
+        let height = $(this.refs.verticalSlider).height();
         let newValue = this.props.max - (e.clientY - top) / (height) * (this.props.max - this.props.min);
         newValue = Math.round(newValue / this.props.step) * this.props.step;
         newValue = Math.max(Math.min(this.props.max, newValue), this.props.min);
@@ -50,8 +50,8 @@ class VerticalSlider extends React.Component {
 
     _handleMouseMove(e) {
         if (this.isDragging) {
-            let top = $(ReactDOM.findDOMNode(this.refs.verticalSlider)).position().top;
-            let height = $(ReactDOM.findDOMNode(this.refs.verticalSlider)).height();
+            let top = $(this.refs.verticalSlider).position().top;
+            let height = $(this.refs.verticalSlider).height();
             let newValue = this.props.max - (e.clientY - top) / (height) * (this.props.max - this.props.min);
             newValue = Math.round(newValue / this.props.step) * this.props.step;
             newValue = Math.max(Math.min(this.props.max, newValue), this.props.min);

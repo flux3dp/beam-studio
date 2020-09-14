@@ -10,9 +10,8 @@ class UpdateDialog extends React.Component{
 
     _onSkip = () => {
         var key = this.props.type + '-update-ignore-list',
-            ignoreList = config().read(key) || [];
+            ignoreList = (config().read(key) || []) as Array<string>;
 
-        // @ts-expect-error
         ignoreList.push(this.props.latestVersion);
 
         // save skip version and close

@@ -1,9 +1,9 @@
-import Constant from '../../../../actions/beambox/constant'
+import Constant from '../../../../actions/beambox/constant';
 import { ObjectPanelContextHelper } from '../Object-Panel';
 const React = requireNode('react');
 const updateDimensionValues = (newValue) => {
     if (!ObjectPanelContextHelper.context) {
-        console.log('ObjectPanel is not mounted now.');
+        // console.log('ObjectPanel is not mounted now.');
     } else {
         ObjectPanelContextHelper.context.updateDimensionValues(newValue);
     }

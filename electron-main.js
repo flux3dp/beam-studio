@@ -263,7 +263,9 @@ function createWindow () {
                 }
             });
         } else {
-            monitorManager.killProc();
+            if (monitorManager) {
+                monitorManager.killProc();
+            }
             backendManager.stop();
             shouldCloseShadowWindow = true;
             try {

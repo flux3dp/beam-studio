@@ -15,7 +15,6 @@ requirejs.config({
         jsencrypt: '../lib/jsencrypt',
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
-        html2canvas: '../lib/html2canvas.min',
         events: '../lib/events',
         Rx: '../lib/rx.lite.min',
         Redux: '../lib/redux.min',

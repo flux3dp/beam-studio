@@ -1,4 +1,5 @@
 import isJson from './is-json';
+import LocalStorage from './local-storage';
 import * as i18n from './i18n';
 import Alert from '../app/contexts/AlertCaller';
 import AlertStore from '../app/stores/alert-store';
@@ -33,8 +34,8 @@ var hadConnected = false,
 //      onOpen        - fired on connection connecting
 export default function(options) {
     var { dev } = window['FLUX'],
-        customHost = localStorage.getItem('host'),
-        customPort = localStorage.getItem('port'),
+        customHost = LocalStorage.get('host'),
+        customPort = LocalStorage.get('port'),
         defaultCallback = function(result) {},
         defaultOptions = {
             hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
@@ -201,7 +202,7 @@ export default function(options) {
                 socketOptions.onClose(result);
 
                 var outputLog = function() {
-                        outputError.downloadErrorLog().done(onCancel);
+                        outputError.downloadErrorLog().then(onCancel);
                     },
                     onCancel = function() {
                         removeListener();

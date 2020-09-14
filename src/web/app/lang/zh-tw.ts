@@ -1202,6 +1202,7 @@ export default {
             },
             ungroup_use: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
             vectorize_shading_image: '漸層影像在向量化時將花費較多時間，且容易有雜點，請將影像漸層關閉後再執行。',
+            bug_report: '錯誤回報',
         },
         zoom_block: {
             fit_to_window: '配合視窗尺寸',

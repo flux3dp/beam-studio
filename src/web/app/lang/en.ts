@@ -1206,6 +1206,7 @@ export default {
             },
             ungroup_use: 'This will ungroup imported DXF or SVG. Because the file may contain a great amount of elements, it may take time to ungroup. Are you sure to proceed?',
             vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
+            bug_report: 'Bug Report',
         },
         zoom_block: {
             fit_to_window: 'Fit to Window',

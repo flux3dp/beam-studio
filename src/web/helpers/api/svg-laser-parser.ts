@@ -576,7 +576,7 @@ export default function(opts) {
 
                     ws.send([
                         'upload_plain_svg',
-                        encodeURIComponent(file.name),
+                        'plain-svg',
                         file.size
                     ].join(' '));
                 }
@@ -619,8 +619,7 @@ export default function(opts) {
             });
             ws.send([
                 'upload_plain_svg',
-                // @ts-expect-error TODO: fix file.name
-                encodeURIComponent(file.name),
+                'text-svg',
                 file.size
             ].join(' '));
             return $deferred.promise();

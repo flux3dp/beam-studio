@@ -1,13 +1,14 @@
 import $ from 'jquery';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
+import Constant from '../../../actions/beambox/constant';
+import DiodeBoundaryDrawer from '../../../actions/beambox/diode-boundary-drawer';
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
+import ElectronDialogs from '../../../actions/electron-dialogs';
 import RightPanelConstants from '../../../constants/right-panel-constants';
 import BeamboxStore from '../../../stores/beambox-store';
 import DialogCaller from '../../../contexts/DialogCaller';
 import UnitInput from '../../../widgets/Unit-Input-v2';
-import ButtonGroup from '../../../widgets/Button-Group';
 import DropdwonControl from '../../../widgets/Dropdown-Control';
-import Modal from '../../../widgets/Modal';
 import LaserManageModal from './Laser-Manage-Modal';
 import LocalStorage from '../../../../helpers/local-storage';
 import * as i18n from '../../../../helpers/i18n';
@@ -15,8 +16,6 @@ import Alert from '../../../contexts/AlertCaller';
 import AlertConstants from '../../../constants/alert-constants';
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
-import Constant from '../../../actions/beambox/constant';
-import DiodeBoundaryDrawer from '../../../actions/beambox/diode-boundary-drawer';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
@@ -150,7 +149,7 @@ class LaserPanel extends React.Component{
     }
 
     exportLaserConfigs = async () => {
-        const targetFilePath = await DialogCaller.saveFileDialog(LANG.export_config, '', [
+        const targetFilePath = await ElectronDialogs.saveFileDialog(LANG.export_config, '', [
             {extensionName: 'JSON', extensions: ['json']}
         ], true);
         if (targetFilePath) {
@@ -173,7 +172,7 @@ class LaserPanel extends React.Component{
                 { name: 'JSON', extensions: ['json', 'JSON']},
             ]
         };
-        const res = await DialogCaller.showOpenDialog(dialogOptions);
+        const res = await ElectronDialogs.showOpenDialog(dialogOptions);
         if (res) {
             const filePath = res[0];
             const file = await fetch(filePath);

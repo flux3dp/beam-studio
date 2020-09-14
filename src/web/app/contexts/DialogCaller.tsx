@@ -207,40 +207,4 @@ export default {
             );
         })
     },
-    saveFileDialog: (title: string, filename: string, filters, isAllfileAvailable) => {
-        const isMac = (process.platform === 'darwin');
-        const langFile = i18n.lang.topmenu.file;
-        filters = filters.map((filter) => {
-            const { extensionName, extensions } = filter;
-            return {name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName, extensions: extensions};
-        });
-        if (isAllfileAvailable) {
-            filters.push({ name: langFile.all_files, extensions: ['*'] });
-        }
-        const options = {
-            defaultPath: filename,
-            title,
-            filters
-        };
-        return new Promise((resolve) => {
-            dialog.showSaveDialog(options, (filePath) => {
-                resolve(filePath);
-            })
-        });
-    },
-    showOpenDialog: async (option) => {
-        if (!option) {
-            option = {
-                properties: ['openFile'],
-                filters: [
-                    { name: 'All Files', extensions: ['*']},
-                ]
-            };
-        }
-        if (!option.properties) {
-            option.properties = ['openFile'];
-        }
-        const res =  await dialog.showOpenDialog(option);
-        return res;
-    }
 }

@@ -11,8 +11,7 @@ let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
-const React = requireNode('react');
-const ReactDOM = requireNode('react-dom');
+const React = requireNode('react');;
 const LANG = i18n.lang.topmenu;
 const SerialPort = requireNode('serialport');
 const LINES_PER_PAGE = 100;
@@ -175,7 +174,7 @@ class TaskInterpreterPanel extends React.Component {
     }
 
     _openFile() {
-        this.file = ReactDOM.findDOMNode(this.refs.taskInput).files[0];
+        this.file = this.refs.taskInput.files[0];
         this._importGcode();
     }
 
@@ -326,7 +325,7 @@ class TaskInterpreterPanel extends React.Component {
     }
 
     _sendCommand() {
-        const command = ReactDOM.findDOMNode(this.refs.command).value;
+        const command = this.refs.command.value;
         if (this.port && this.port.isOpen) {
             let suc = this.port.write(`${command}\n`);
             this.state.consoleText += `> ${command}\n`;
@@ -336,8 +335,8 @@ class TaskInterpreterPanel extends React.Component {
             if (suc) {
                 console.log(`Successfully write:\n${command}`)
             }
-            ReactDOM.findDOMNode(this.refs.command).value = '';
-            //ReactDOM.findDOMNode(this.refs.command).focus();
+            this.refs.command.value = '';
+            //this.refs.command.focus();
         }
     }
 
