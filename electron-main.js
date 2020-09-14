@@ -133,13 +133,18 @@ const backendManager = new BackendManager({
     c: console
 });
 backendManager.start();
+
 //Run monitorexe api
-const monitorManager = null; /* = new MonitorManager({
-    location: process.env.BACKEND
-});
-//kill process first, in case last time shut down
-monitorManager.killProcSync();
-monitorManager.startProc();*/
+monitorManager = null;
+if (process.argv.includes('--monitor')) {
+    console.log('Starting Monitor');
+    monitorManager = new MonitorManager({
+        location: process.env.BACKEND
+    });
+    //kill process first, in case last time shut down
+    monitorManager.killProcSync();
+    monitorManager.startProc();
+}
 
 let shadowWindow;
 let shouldCloseShadowWindow = false;
