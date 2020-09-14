@@ -752,78 +752,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                 // Export updated config
                 editor.curConfig = curConfig;
             }
-            (function () {
-                // Load config/data from URL if given
-                var src, qstr;
-                urldata = $.deparam.querystring(true);
-                if (!$.isEmptyObject(urldata)) {
-                    if (urldata.dimensions) {
-                        urldata.dimensions = urldata.dimensions.split(',');
-                    }
-
-                    if (urldata.bkgd_color) {
-                        urldata.bkgd_color = '#' + urldata.bkgd_color;
-                    }
-
-                    if (urldata.extensions) {
-                        // For security reasons, disallow cross-domain or cross-folder extensions via URL
-                        urldata.extensions = urldata.extensions.match(/[:\/\\]/) ? '' : urldata.extensions.split(',');
-                    }
-
-                    // Disallowing extension paths via URL for
-                    // security reasons, even for same-domain
-                    // ones given potential to interact in undesirable
-                    // ways with other script resources
-                    $.each(
-                        [
-                            'extPath', 'imgPath',
-                            'langPath', 'jGraduatePath'
-                        ],
-                        function (pathConfig) {
-                            if (urldata[pathConfig]) {
-                                delete urldata[pathConfig];
-                            }
-                        }
-                    );
-
-                    editor.setConfig(urldata, {
-                        overwrite: false
-                    }); // Note: source and url (as with storagePrompt later) are not set on config but are used below
-
-                    setupCurConfig();
-
-                    if (!curConfig.preventURLContentLoading) {
-                        src = urldata.source;
-                        // @ts-expect-error
-                        qstr = $.param.querystring();
-                        if (!src) { // urldata.source may have been null if it ended with '='
-                            if (qstr.indexOf('source=data:') >= 0) {
-                                src = qstr.match(/source=(data:[^&]*)/)[1];
-                            }
-                        }
-                        if (src) {
-                            if (src.indexOf('data:') === 0) {
-                                editor.loadFromDataURI(src);
-                            } else {
-                                editor.loadFromString(src);
-                            }
-                            return;
-                        }
-                        if (urldata.url) {
-                            editor.loadFromURL(urldata.url);
-                            return;
-                        }
-                    }
-                    if (!urldata.noStorageOnLoad || curConfig.forceStorage) {
-                        editor.loadContentAndPrefs();
-                    }
-                    setupCurPrefs();
-                } else {
-                    setupCurConfig();
-                    editor.loadContentAndPrefs();
-                    setupCurPrefs();
-                }
-            })();
+            setupCurConfig();
+            editor.loadContentAndPrefs();
+            setupCurPrefs();
 
             var setIcon = editor.setIcon = function (elem, icon_id) {
                 var icon = (typeof icon_id === 'string') ? $.getSvgIcon(icon_id, true) : icon_id.clone();
@@ -1729,10 +1660,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     updateRulers();
                     workarea.scroll();
                 }
-                if (urldata.storagePrompt !== true && !editor.storagePromptClosed) {
-                    $('#dialog_box').hide();
-                }
-
             };
 
             var updateToolButtonState = function () {

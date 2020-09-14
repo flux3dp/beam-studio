@@ -474,6 +474,7 @@ export default function(opts) {
         },
         uploadPlainSVG: function(file, skipVersionWarning = false) {
             var $deferred = $.Deferred();
+            const warningCollection = [];
 
             events.onMessage = function(data) {
                 switch (data.status) {
@@ -484,7 +485,6 @@ export default function(opts) {
                         $deferred.resolve('ok');
                         break;
                     case 'warning':
-                        // @ts-expect-error
                         warningCollection.push(data.message);
                         break;
                 }
@@ -587,6 +587,7 @@ export default function(opts) {
         },
         uploadPlainTextSVG: function($textElement, bbox) {
             var $deferred = $.Deferred();
+            const warningCollection = [];
 
             events.onMessage = function(data) {
             switch (data.status) {
@@ -597,7 +598,6 @@ export default function(opts) {
                     $deferred.resolve('ok');
                     break;
                 case 'warning':
-                    // @ts-expect-error
                     warningCollection.push(data.message);
                     break;
                 }

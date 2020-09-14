@@ -154,12 +154,9 @@ class LaserPanel extends React.Component{
         ], true);
         if (targetFilePath) {
             const fs = requireNode('fs');
-            const laserConfig = {};
+            const laserConfig = {} as {customizedLaserConfigs: any, defaultLaserConfigsInUse: any};
 
-            // @ts-expect-error
             laserConfig.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-            
-            // @ts-expect-error
             laserConfig.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
             fs.writeFileSync(targetFilePath, JSON.stringify(laserConfig));
         }
@@ -644,8 +641,7 @@ class LaserPanel extends React.Component{
 
     render() {
         const layer = svgCanvas.getCurrentDrawing().getLayerByName(this.props.layerName);
-        // @ts-expect-error unsure..
-        const paths = $(layer).find('path, rect, ellipse, polygon, line', 'text');
+        const paths = $(layer).find('path, rect, ellipse, polygon, line, text');
         let hasVector = false;
         for (let j = 0; j < paths.length; j++) {
             const path = paths[j],

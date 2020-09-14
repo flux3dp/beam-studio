@@ -55,7 +55,6 @@ class ImageTracePanel extends React.Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', () => this._handleResizeWindow());
         BeamboxStore.onCropperShown(() => this.openCropper());
 
         if (TESTING_IT) {
@@ -97,21 +96,7 @@ class ImageTracePanel extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', () => this._handleResizeWindow());
         BeamboxStore.removeCropperShownListener(() => this.openCropper());
-    }
-
-    _handleResizeWindow() {
-        if (this.state.currentStep !== STEP_APPLY) {
-            return;
-        }
-
-        const imageTrace = document.getElementById('imageTrace');
-        const tunedImage = document.getElementById('tunedImage') as HTMLImageElement;
-        const style = `left: ${tunedImage.x}px; top: ${tunedImage.y}px; width: ${tunedImage.width}px; height: ${tunedImage.height}px;`;
-
-        // @ts-expect-error
-        imageTrace.style = style;
     }
 
     _getImageTrace(imageTrace) {

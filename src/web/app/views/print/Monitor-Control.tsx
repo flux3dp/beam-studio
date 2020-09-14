@@ -291,19 +291,13 @@ class MonitorControl extends React.Component{
             middleButton = Monitor.mode === GlobalConstants.FILE ? this._operation().download : action,
             rightButton = this._operation().camera;
         if (Monitor.mode !== GlobalConstants.CAMERA_RELOCATE) {
-            // @ts-expect-error
-            if(leftButton !== '') {
-                leftButton = leftButton(leftButtonOn);
-            }
+            leftButton = leftButton(leftButtonOn);
 
             if(middleButton !== '') {
                 middleButton = middleButton(middleButtonOn);
             }
 
-            // @ts-expect-error
-            if(rightButton !== '') {
-                rightButton = rightButton(rightButtonOn);
-            }
+            rightButton = rightButton(rightButtonOn);
         } else {
             leftButton = this._renderCancelButton();
             middleButton = null;
