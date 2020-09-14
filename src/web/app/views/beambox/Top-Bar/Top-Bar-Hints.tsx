@@ -4,15 +4,13 @@ const LANG = i18n.lang.topbar;
 const classNames = requireNode('classnames');
 const { createContext } = React;
 const HintContext = createContext();
-let _contextCaller;
+let _context;
 
-class ContextHelper {
-    static get _contextCaller() {
-        return _contextCaller;
+export class ContextHelper {
+    static get context() {
+        return _context;
     }
 }
-
-export const TopBarHintsContextCaller = ContextHelper._contextCaller;
 
 export const Constants = {
     POLYGON: 'POLYGON',
@@ -57,11 +55,11 @@ export class HintContextProvider extends React.Component {
 
 class HintContextConsumer extends React.Component {
     componentDidMount() {
-        _contextCaller = this.context;
+        _context = this.context;
     }
 
     componentWillUnmount() {
-        _contextCaller = null;
+        _context = null;
     }
 
     renderTextHint(textContent) {

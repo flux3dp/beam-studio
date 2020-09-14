@@ -1,20 +1,18 @@
-import { TopBarHints, TopBarHintsContextCaller } from '../Top-Bar-Hints';
-
-    const React = requireNode('react');
+import { TopBarHints, ContextHelper } from '../Top-Bar-Hints';
 
     const setHint = (hintType) => {
-        if (!TopBarHintsContextCaller) {
+        if (!ContextHelper.context) {
             console.log('TopBarHints is not mounted now.');
         } else {
-            TopBarHintsContextCaller.setHint(hintType);
+            ContextHelper.context.setHint(hintType);
         }
     }
 
     const removeHint = () => {
-        if (!TopBarHintsContextCaller) {
+        if (!ContextHelper.context) {
             console.log('TopBarHints is not mounted now.');
         } else {
-            TopBarHintsContextCaller.removeHint();
+            ContextHelper.context.removeHint();
         }
     }
 
