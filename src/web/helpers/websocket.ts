@@ -63,7 +63,7 @@ export default function(options) {
         },
         origanizeOptions = function(opts) {
             for (var name in defaultOptions) {
-                if (false === opts.hasOwnProperty(name) || 'undefined' === typeof opts[name]) {
+                if (name !== 'port' && (false === opts.hasOwnProperty(name) || 'undefined' === typeof opts[name])) {
                     opts[name] = defaultOptions[name];
                 }
             }
