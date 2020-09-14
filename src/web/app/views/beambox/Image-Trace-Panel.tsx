@@ -2,6 +2,7 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
 import BeamboxActions from '../../actions/beambox';
+import Constants from '../../actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '../../actions/beambox/preview-mode-background-drawer';
 import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper';
 import BeamboxStore from '../../stores/beambox-store';
@@ -10,8 +11,7 @@ import ImageData from '../../../helpers/image-data';
 import ImageTracerApi from '../../../helpers/api/image-tracer';
 import Modal from '../../widgets/Modal';
 import SliderControl from '../../widgets/Slider-Control';
-// @ts-expect-error
-import Cropper = require('cropper');
+
 // @ts-expect-error
 import ImageTracer = require('imagetracer');
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
@@ -19,6 +19,7 @@ let svgCanvas;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
 
 const React = requireNode('react');
+const Cropper = requireNode('cropperjs');
 const LANG = i18n.lang.beambox.image_trace_panel;
 
 const imageTracerWebSocket = ImageTracerApi();
@@ -48,7 +49,8 @@ class ImageTracePanel extends React.Component {
             imageTrace: '',
             cropData: {},
             preCrop: {},
-            threshold: 128
+            threshold: 128,
+            cropperStyle: {},
         };
     }
 
@@ -376,17 +378,20 @@ class ImageTracePanel extends React.Component {
         const coordinates = PreviewModeBackgroundDrawer.getCoordinates();
         const sourceWidth = (coordinates.maxX - coordinates.minX) + 465.17;
         const sourceHeight = (coordinates.maxY - coordinates.minY) + 465.17;
-        const maxAllowableWidth = $('.top-bar').width() - 100;
-        const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 120;
+        const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth;
+        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 80;
         const ratio = Math.min(maxAllowableHieght / sourceHeight, maxAllowableWidth / sourceWidth);
         const destWidth = sourceWidth * ratio;
         const destHeight = sourceHeight * ratio;
+        const containerStyle = (sourceWidth / maxAllowableWidth > sourceHeight / maxAllowableHieght) ?
+            {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
 
         this.setState({
             preCrop: {
                 offsetX: coordinates.minX,
                 offsetY: coordinates.minY,
             },
+            cropperStyle: containerStyle,
         });
 
         cropper = new Cropper(
@@ -398,14 +403,13 @@ class ImageTracePanel extends React.Component {
                 targetHeight: destHeight
             }
         );
-
     }
 
     _renderCropperModal() {
         return (
             <Modal>
                 <div className='cropper-panel'>
-                    <div className='main-content'>
+                    <div className='main-content' style={this.state.cropperStyle}>
                         <img
                             id= 'previewForCropper'
                             onLoad={()=> this._renderCropper()}
@@ -503,8 +507,8 @@ class ImageTracePanel extends React.Component {
         } = this.state;
         const footer = this._renderImageTraceFooter();
         const it = ((currentStep === STEP_APPLY) && (imageTrace!=='')) ? this._getImageTraceDom() : null;
-        const maxAllowableWidth = $('.top-bar').width() - 390;
-        const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 160;
+        const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth ;
+        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 60;
         const containerStyle = (TESTING_IT || (cropData.width / maxAllowableWidth > cropData.height / maxAllowableHieght)) ? 
             {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
 

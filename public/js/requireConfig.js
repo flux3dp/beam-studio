@@ -10,7 +10,6 @@ requirejs.config({
         backbone: '../lib/backbone',
         underscore: '../lib/underscore',
         svgeditor: '../lib/svgeditor',
-        cropper: '../lib/cropper',
         imagetracer: '../lib/svgeditor/imagetracer',
         jsencrypt: '../lib/jsencrypt',
         cssHome: '../../css/3rd-party-plugins',

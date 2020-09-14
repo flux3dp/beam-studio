@@ -1,6 +1,7 @@
 
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
+import Constants from '../../actions/beambox/constant'
 import * as i18n from '../../../helpers/i18n';
 import ImageData from '../../../helpers/image-data';
 import JimpHelper from '../../../helpers/JimpHelper';
@@ -9,8 +10,6 @@ import Modal from '../../widgets/Modal';
 import ButtonGroup from '../../widgets/Button-Group';
 import CurveControl from '../../widgets/Curve-Control';
 import SliderControl from '../../widgets/Slider-Control';
-// @ts-expect-error
-import Cropper = require('cropper');
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 
 let svgCanvas, svgedit;
@@ -20,8 +19,10 @@ getSVGAsync((globalSVG) => {
 });
 
 const React = requireNode('react');
-const LANG = i18n.lang.beambox.photo_edit_panel;
+const Cropper = requireNode('cropperjs');
 const jimp = requireNode('jimp');
+
+const LANG = i18n.lang.beambox.photo_edit_panel;
 
 let cropper = null;
 class PhotoEditPanel extends React.Component {
@@ -234,8 +235,8 @@ class PhotoEditPanel extends React.Component {
             default:
                 break;
         }
-        const maxAllowableWidth = $('.top-bar').width() - rightWidth;
-        const maxAllowableHieght = $(window).height() - 2 * $('.top-bar').height() - 180;
+        const maxAllowableWidth = window.innerWidth - rightWidth;
+        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 180;
         const containerStyle = (this.state.imageWidth / maxAllowableWidth > this.state.imageHeight / maxAllowableHieght) ? 
             {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
         const footer = this._renderPhotoEditFooter();
