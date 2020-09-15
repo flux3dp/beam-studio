@@ -1622,12 +1622,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     autoCenter = true;
                 }
 
-                if (w === w_orig && h === h_orig) {
-                    workarea.css('overflow', 'hidden');
-                } else {
-                    workarea.css('overflow', 'hidden');
-                }
-
                 const old_canvas_width = cnvs.width();
                 cnvs.width(w).height(h);
                 const new_canvas_width = cnvs.width();

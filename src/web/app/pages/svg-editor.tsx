@@ -26,7 +26,7 @@ export class SVGEditor extends React.Component {
         return (
             <div>
                 <TaskInterpreterPanel />
-                <div id="svg_editor">
+                <div id="svg_editor" className={classNames({'mac': process.platform === 'darwin'})}>
                     <div id="rulers" className={classNames({'mac': process.platform === 'darwin'})}>
                         <div id="ruler_corner" />
                         <div id="ruler_x">
@@ -41,7 +41,7 @@ export class SVGEditor extends React.Component {
                         </div>
                         <div id="ruler_unit_shower">mm</div>
                     </div>
-                    <div id="workarea">
+                    <div id="workarea" className={classNames({'mac': process.platform === 'darwin'})}>
                         <style
                             id="styleoverrides"
                             type="text/css"
