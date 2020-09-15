@@ -6,6 +6,7 @@ import svgEditor from '../actions/beambox/svg-editor';
 
 // TODO: fix loading these libraries?
 const React = requireNode('react');
+const classNames = requireNode('classnames');
 let LANG = i18n.lang.beambox;
 export class SVGEditor extends React.Component {
     componentDidMount(node) {
@@ -26,7 +27,7 @@ export class SVGEditor extends React.Component {
             <div>
                 <TaskInterpreterPanel />
                 <div id="svg_editor">
-                    <div id="rulers">
+                    <div id="rulers" className={classNames({'mac': process.platform === 'darwin'})}>
                         <div id="ruler_corner" />
                         <div id="ruler_x">
                             <div>

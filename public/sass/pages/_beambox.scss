@@ -1567,8 +1567,11 @@
         #rulers {
             pointer-events: none;
             z-index: 1;
-            width: calc(100vw - 292px);
+            width: calc(100vw - 308px);
             height: 100vh;
+            &.mac {
+                width: calc(100vw - 292px);
+            }
             #ruler_corner {
                 top: 0px;
                 width: 15px;
@@ -1596,13 +1599,15 @@
                     margin-top: -17px;
                 }
             }
-        }
-        #ruler_unit_shower {
-            top: 0px;
-            right: 0px;
-            color: #333;
-            font-size: 12px;
-            font-weight: 300;
+            #ruler_unit_shower {
+                top: 0px;
+                right: 0px;
+                height: 15px;
+                border-bottom: 1px solid #000;
+                color: #333;
+                font-size: 12px;
+                font-weight: 300;
+            }
         }
         #main_button,
         #tools_left,
