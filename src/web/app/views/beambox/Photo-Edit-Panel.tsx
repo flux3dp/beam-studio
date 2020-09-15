@@ -494,13 +494,15 @@ class PhotoEditPanel extends React.Component {
 
     // CURVE
     _renderCurvePanel() {
+        const updateCurveFunction = (curvefunction) => {this._updateCurveFunction(curvefunction)};
+        const handleCurve = () => {this._handleCurve(true)};
         return (
             <div className='right-part'>
                 <div className='curve-panel'>
                     <div className='title'>{LANG.curve}</div>
                     <CurveControl
-                        updateCurveFunction={this._updateCurveFunction.bind(this)}
-                        updateImage={() => {this._handleCurve(true)}}
+                        updateCurveFunction={updateCurveFunction}
+                        updateImage={handleCurve}
                     />
                 </div>
             </div>
@@ -508,6 +510,7 @@ class PhotoEditPanel extends React.Component {
     }
 
     _updateCurveFunction(curvefunction) {
+        console.log(curvefunction);
         this.curvefunction = curvefunction;
     }
 

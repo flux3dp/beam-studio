@@ -93,12 +93,11 @@ export default {
     },
     showDocumentSettings: () => {
         if (isIdExist('docu-setting')) return;
+        const unmount = () => {popDialogById('docu-setting')};
         addDialogComponent('docu-setting',
             <Modal>
                 <DocumentPanel
-                    unmount={() => {
-                        popDialogById('docu-setting')
-                    }}
+                    unmount={unmount}
                 />
             </Modal>
         );
