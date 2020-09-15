@@ -485,9 +485,11 @@ define([
                     Progress.openNonstopProgress({
                         id: 'check-device-status',
                     });
-                    await checkDeviceStatus(device);
+                    const res = await checkDeviceStatus(device);
                     Progress.popById('check-device-status');
-                    callback(device);
+                    if (res) {
+                        callback(device);
+                    }
                 }
                 else if (status === DeviceConstants.TIMEOUT) {
                     Alert.popUp({
