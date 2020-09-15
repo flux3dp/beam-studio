@@ -67,7 +67,8 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
                 id: 'kick',
                 message: lang.message.device_is_used,
                 buttonType: AlertConstants.YES_NO,
-                onYes: () => {onYes('kick')}
+                onYes: () => {onYes('kick')},
+                onNo: () => {deferred.resolve(false)}
             });
             break;
         case DeviceConstants.status.COMPLETED:
@@ -99,7 +100,8 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
                         id: 'abort',
                         message: lang.message.device_is_used,
                         buttonType: AlertConstants.YES_NO,
-                        onYes: () => {onYes('abort')}
+                        onYes: () => {onYes('abort')},
+                        onNo: () => {deferred.resolve(false)}
                     });
                 }
             }
