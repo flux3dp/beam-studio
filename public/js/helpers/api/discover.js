@@ -58,7 +58,7 @@ define([
 
                 let pokeIPAddr = LocalStorage.get('poke-ip-addr');
 
-                if (pokeIPAddr && pokeIPAddr !== '') {
+                if (device.ipaddr && pokeIPAddr && pokeIPAddr !== '') {
                     const pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
 
                     if (pokeIPAddrArr.indexOf(device.ipaddr) === -1 && device.ipaddr !== 'raspberrypi.local') {
