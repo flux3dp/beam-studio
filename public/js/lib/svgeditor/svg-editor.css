@@ -93,41 +93,11 @@ select {
 	overflow: hidden;
 }
 
-#ruler_corner {
-	top: 41px;
-	left: 0px;
-	width: 15px;
-	height: 15px;
-}
-
-#ruler_x {
-	height: 15px;
-	top: 41px;
-	left: 16px;
-	right: 0px;
-	border-bottom: 1px solid;
-	border-left: 1px solid #777;
-}
-
 #ruler_y {
-	width: 15px;
-	top: 55px;
-	left: 0px;
-	bottom: 0px;
-	border-right: 1px solid;
-	border-top: 1px solid #777;
-}
-
-#ruler_x canvas:first-child {
-	margin-left: -2px;
 }
 
 #ruler_x canvas {
 	float: left;
-}
-
-#ruler_y canvas:first-child {
-	margin-top: -107px;
 }
 
 #ruler_x > div,
@@ -996,22 +966,6 @@ span.zoom_tool {
 		height: 90px;
 		background: #F0F0F0;
 	}
-	#workarea, #sidepanels {
-		top: 70px;
-	}
-	#rulers #ruler_corner,
-	#rulers #ruler_x, #tools_left {
-		top: 90px;
-	}
-
-	#rulers #ruler_y {
-		top: 106px;
-	}
-
-	#cur_context_panel {
-		top: 87px;
-	}
-
 	#selected_panel {
 		clear: right;
 	}

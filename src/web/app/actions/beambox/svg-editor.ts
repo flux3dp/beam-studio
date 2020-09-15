@@ -59,6 +59,7 @@ import Dxf2Svg = require('dxf2svg');
 import ImageTracer = require('imagetracer');
 
 const React = requireNode('react');
+const electron = requireNode('electron');
 const LANG = i18n.lang.beambox;
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 // TODO: change to require('svgedit')
@@ -428,7 +429,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 gridColor: 'rgba(0,0,0,0.18)',
                 baseUnit: 'px',
                 snappingStep: 10,
-                showRulers: false,
+                showRulers: true,
                 // URL BEHAVIOR CONFIGURATION
                 preventAllURLConfig: true,
                 preventURLContentLoading: true,
@@ -1408,7 +1409,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     2. 當超過limit時 會畫很多個canvas 因瀏覽器canvas不能畫太長 (大約30000px) 第一個canvas畫不下時就比第二個canvas拿出來繼續畫
                     3. 上述這些canvas根據css margin排列 因某種神秘原因ruler_y的canvas要加上margin-top:-3px
                 */
-                function updateRuler(axis) {
+                function updateRuler(axis: string) {
                     // axis = x or y
                     const isX = (axis === 'x');
                     const side = isX ? 'width' : 'height';
@@ -5441,11 +5442,15 @@ const svgEditor = window['svgEditor'] = (function($) {
                     $('#tool_wireframe').click();
                 }
 
-                // if (curConfig.showlayers) {
-                // 	toggleSidePanel();
-                // }
-
-                $('#rulers').toggle(!!curConfig.showRulers);
+                const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+                const { Menu } = electron.remote;
+                curConfig.showRulers = shouldShowRulers;
+                Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+                if (shouldShowRulers) {
+                    document.getElementById('rulers').style.display = '';
+                } else {
+                    document.getElementById('rulers').style.display = 'none';
+                }
 
                 if (curConfig.showRulers) {
                     ($('#show_rulers')[0] as HTMLInputElement).checked = true;
@@ -6548,8 +6553,8 @@ const svgEditor = window['svgEditor'] = (function($) {
             editor.resetView();
             const isZoomWithWindow = !(svgCanvas.isZoomWithWindow || false);
             svgCanvas.isZoomWithWindow = isZoomWithWindow;
-            requireNode('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-            .submenu.items.filter(i => i.id === 'ZOOM_WITH_WINDOW')[0].checked = isZoomWithWindow;
+            electron.remote.Menu.getApplicationMenu().items.find(i => i.id === '_view')
+            .submenu.items.find(i => i.id === 'ZOOM_WITH_WINDOW').checked = isZoomWithWindow;
             if (isZoomWithWindow) {
                 window.addEventListener('resize', editor.resetView);
             } else {

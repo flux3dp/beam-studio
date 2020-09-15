@@ -11471,9 +11471,20 @@ define([
         this.toggleGrid = function() {
             const showGrid = !(svgEditor.curConfig.showGrid || false);
             svgEditor.curConfig.showGrid = showGrid;
-            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_GRIDS')[0].checked = showGrid;
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_GRIDS').checked = showGrid;
             const canvasGridDisplay = showGrid ? 'inline' : 'none';
             $('#canvasGrid').attr('style', `display: ${canvasGridDisplay}`);
+        }
+
+        this.toggleRulers = () => {
+            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+            BeamboxPreference.write('show_rulers', shouldShowRulers);
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            if (shouldShowRulers) {
+                document.getElementById('rulers').style.display = '';
+            } else {
+                document.getElementById('rulers').style.display = 'none';
+            }
         }
 
         this.setRotaryMode = function(val) {

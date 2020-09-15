@@ -125,6 +125,7 @@ module.exports = {
         zoom_with_window: 'Auto Fit to Window Size',
         borderless_mode: 'Borderless Mode',
         show_grids: 'Show Grids',
+        show_rulers: 'Show Rulers',
         show_layer_color: 'Use Layer Color',
         disassemble_use: 'Disassemble SVG'
     },
@@ -254,6 +255,7 @@ module.exports = {
         zoom_with_window: '自動配合視窗尺寸',
         borderless_mode: '開蓋模式',
         show_grids: '顯示格線',
+        show_rulers: '顯示尺規',
         show_layer_color: '顯示圖層顏色',
         disassemble_use: '解散圖檔'
     },
@@ -383,6 +385,7 @@ module.exports = {
         zoom_with_window: '自动配合视窗尺寸',
         borderless_mode: '开盖模式',
         show_grids: '显示格线',
+        show_rulers: '显示尺规',
         show_layer_color: '显示图层颜色',
         disassemble_use: '解散图档'
     },
@@ -512,6 +515,7 @@ module.exports = {
         zoom_with_window: '自動的にウィンドウサイズに合わせる',
         borderless_mode: 'ボーダーレスモード',
         show_grids: 'グリッドを表示',
+        show_rulers: '定規を表示',
         show_layer_color: 'レイヤーカラーを表示',
         disassemble_use: 'SVGを逆アセンブル'
     },
@@ -641,6 +645,7 @@ module.exports = {
         zoom_with_window: 'Automatische Anpassung an Fenstergröße',
         borderless_mode: 'Randloser Modus',
         show_grids: 'Gitter anzeigen',
+        show_rulers: 'Lineale anzeigen',
         show_layer_color: 'Verwenden Sie Ebenenfarbe',
         disassemble_use: 'SVG zerlegen'
     },
