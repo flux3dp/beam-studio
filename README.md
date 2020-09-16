@@ -1,24 +1,25 @@
-# FLUX Studio
+# Beam Studio
 ---
 
 ## Introduction
 
-FLUX Studio is the companion application for [FLUX Delta Series](http://flux3dp.com). It gives creators an intuitive interface to control over every function of the machine.
+Beam Studio is the companion application for [FLUX Beam Series](http://flux3dp.com). It gives creators an intuitive interface to control over every function of the machine.
 
 ## Requirement
 
 * [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node).
 * FLUX Studio requires websocket api to run. Dowload the source code of [FLUXGhost](https://github.com/flux3dp/fluxghost).
-* Install [FLUXClient](https://github.com/flux3dp/fluxclient).
-* [Slic3r](http://slic3r.org/) and [Cura v15.04.5](https://ultimaker.com/en/products/cura-software/list) binary files. For OS X users, you can also find them in /Applications/FLUX\ Studio.app folder.
+* [FLUXClient](https://github.com/flux3dp/fluxclient) or [FLUXClient-dev](https://github.com/flux3dp/fluxclient-dev) (for developers)
+* [FluxSVG](https://github.com/flux3dp/fluxsvg) calculate SVG when importing SVG files and exporting tasks. (for developers)
+* [Beamify](https://github.com/flux3dp/beamify) convert SVG path to f-code path. (for developers)
 
 ## Install dependency
 
-1. Install necessary node packages `$> npm i --save-dev`
+1. Install necessary node packages `$> npm i --save-dev` or `$> yarn install`, depending on your packages manager.
 
 ## Build javascript/css resources
 
-1. Build resource `$> gulp jsx sass`
+1. Build resource `$> gulp dev`
 
 ## Rebuild module for electron `$> node_modules/.bin/electron-rebuild`
 * Rebuild C++ module to make it compatible with the node inside of electron.
@@ -29,10 +30,6 @@ FLUX Studio is the companion application for [FLUX Delta Series](http://flux3dp.
 
 * Run default: `npm start`
 * Support environment variables
-** `BACKEND`: path to fluxghost backend
-** `GHOST_SLIC3R`: path to slic3r application
-** `GHOST_CURA`: path to cura application
-** `GHOST_CURA2`: path to cura2 application
 
 
 ## License
