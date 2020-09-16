@@ -1071,10 +1071,11 @@ define([
                     selectedElements[i] = null;
                 }
                 //		selectedBBoxes[0] = null;
-            }
-            selectedElements = [];
-            if (!noCall) {
-                call('selected', selectedElements);
+
+                selectedElements = [];
+                if (!noCall) {
+                    call('selected', selectedElements);
+                }
             }
         };
 

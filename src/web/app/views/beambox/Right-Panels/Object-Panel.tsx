@@ -24,7 +24,6 @@ export class ObjectPanel extends React.Component {
 
     componentDidMount() {
         _contextCaller = this.context;
-        window['updateContextPanel']();
     }
 
     componentWillUnmount() {

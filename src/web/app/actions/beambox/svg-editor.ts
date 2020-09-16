@@ -1795,9 +1795,11 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 LayerPanelController.updateLayerPanel();
                 var menu_items = $('#cmenu_canvas li');
+                /*
                 $('#selected_panel, #multiselected_panel, #g_panel, #rect_panel, #circle_panel,' +
-                        '#ellipse_panel, #line_panel, #text_panel, #image_panel, #container_panel,' +
-                        ' #use_panel, #a_panel').hide();
+                '#ellipse_panel, #line_panel, #text_panel, #image_panel, #container_panel,' +
+                ' #use_panel, #a_panel').hide();
+                */
                 if (elem != null) {
                     var elname = elem.nodeName;
                     // If this is a link with no transform and one child, pretend
@@ -1827,7 +1829,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     }
 
                     if (!is_node && currentMode !== 'pathedit') {
-                        $('#selected_panel').show();
+                        //$('#selected_panel').show();
                         // Elements in this array already have coord fields
                         if (['line', 'circle', 'ellipse'].indexOf(elname) >= 0) {
                             $('#xy_panel').hide();
@@ -1922,6 +1924,7 @@ const svgEditor = window['svgEditor'] = (function($) {
 
                     var el_name = elem.tagName;
 
+                    /*
                     var link_href = null;
                     if (el_name === 'a') {
                         link_href = svgCanvas.getHref(elem);
@@ -1941,11 +1944,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                     if (link_href) {
                         $('#link_url').val(link_href);
                     }
+                    */
 
                     if (panels[el_name]) {
                         const cur_panels = panels[el_name];
 
-                        $('#' + el_name + '_panel').show();
+                        //$('#' + el_name + '_panel').show();
                         const newDimensionValue = {};
 
                         $.each(cur_panels, function (i, item) {
@@ -1959,57 +1963,62 @@ const svgEditor = window['svgEditor'] = (function($) {
                         });
                         ObjectPanelController.updateDimensionValues(newDimensionValue);
 
-                        if (el_name === 'text') {
-                            $('#text_panel').css('display', 'inline');
-                            $('#tool_font_size').css('display', 'inline');
-                            if (svgCanvas.getItalic()) {
-                                $('#tool_italic').addClass('push_button_pressed').removeClass('tool_button');
-                            } else {
-                                $('#tool_italic').removeClass('push_button_pressed').addClass('tool_button');
-                            }
-                            if (svgCanvas.getBold()) {
-                                $('#tool_bold').addClass('push_button_pressed').removeClass('tool_button');
-                            } else {
-                                $('#tool_bold').removeClass('push_button_pressed').addClass('tool_button');
-                            }
-                            // TODO: Check the elem type if it's really svg text element
-                            const textElem: SVGTextElement = elem;
-                            $('#font_size').val(elem.getAttribute('font-size'));
-                            let multiLineTextContent = Array.from(textElem.childNodes).map(child => child.textContent).join('\x0b');
-                            $('#text').val(multiLineTextContent);
-                            if (svgCanvas.addedNew) {
-                                // Timeout needed for IE9
-                                setTimeout(function () {
-                                    $('#text').focus().select();
-                                }, 100);
-                            }
-                            svgCanvas.textActions.setIsVertical((elem.getAttribute('data-verti') === 'true'));
-                        } // text
-                        else if (el_name === 'image') {
-                            if (svgCanvas.getMode() === 'image') {
-                                setImageURL(svgCanvas.getHref(elem));
-                            }
-                        } // image
-                        else if (el_name === 'g' || el_name === 'use') {
-                            $('#container_panel').show();
-                            var title = svgCanvas.getTitle();
-                            var label = $('#g_title')[0] as HTMLInputElement;
-                            label.value = title;
-                            setInputWidth(label);
-                            $('#g_title').prop('disabled', el_name === 'use');
-
-                            if ((el_name === 'use') && ($(elem).attr('data-xform'))) {
-                                const location = svgCanvas.getSvgRealLocation(elem);
-                                ObjectPanelController.updateDimensionValues({
-                                    x: location.x,
-                                    y: location.y,
-                                    width: location.width,
-                                    height: location.height
-                                });
-                            }
-                        }
-                        else if (el_name === 'path') {
-                            //$('#container_panel').show();
+                        switch(el_name) {
+                            case 'text':
+                                $('#text_panel').css('display', 'inline');
+                                $('#tool_font_size').css('display', 'inline');
+                                if (svgCanvas.getItalic()) {
+                                    $('#tool_italic').addClass('push_button_pressed').removeClass('tool_button');
+                                } else {
+                                    $('#tool_italic').removeClass('push_button_pressed').addClass('tool_button');
+                                }
+                                if (svgCanvas.getBold()) {
+                                    $('#tool_bold').addClass('push_button_pressed').removeClass('tool_button');
+                                } else {
+                                    $('#tool_bold').removeClass('push_button_pressed').addClass('tool_button');
+                                }
+                                // TODO: Check the elem type if it's really svg text element
+                                const textElem: SVGTextElement = elem;
+                                $('#font_size').val(elem.getAttribute('font-size'));
+                                let multiLineTextContent = Array.from(textElem.childNodes).map(child => child.textContent).join('\x0b');
+                                $('#text').val(multiLineTextContent);
+                                if (svgCanvas.addedNew) {
+                                    // Timeout needed for IE9
+                                    setTimeout(function () {
+                                        $('#text').focus().select();
+                                    }, 100);
+                                }
+                                svgCanvas.textActions.setIsVertical((elem.getAttribute('data-verti') === 'true'));
+                                break;
+                            case 'image':
+                                if (svgCanvas.getMode() === 'image') {
+                                    setImageURL(svgCanvas.getHref(elem));
+                                }
+                                break;
+                            case 'g':
+                            case 'use':
+                                $('#container_panel').show();
+                                var title = svgCanvas.getTitle();
+                                var label = $('#g_title')[0] as HTMLInputElement;
+                                label.value = title;
+                                setInputWidth(label);
+                                $('#g_title').prop('disabled', el_name === 'use');
+    
+                                if ((el_name === 'use') && ($(elem).attr('data-xform'))) {
+                                    const location = svgCanvas.getSvgRealLocation(elem);
+                                    ObjectPanelController.updateDimensionValues({
+                                        x: location.x,
+                                        y: location.y,
+                                        width: location.width,
+                                        height: location.height
+                                    });
+                                }
+                                break;
+                            case 'path':
+                                //$('#container_panel').show();
+                                break;
+                            default:
+                                break;
                         }
                     }
                     
@@ -2025,7 +2034,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     ObjectPanelController.updateDimensionValues({isRatioFixed});
                 } // if (elem != null)
                 else if (multiselected) {
-                    $('#multiselected_panel').show();
+                    //$('#multiselected_panel').show();
                     menu_items
                         .enableContextMenuItems('#group')
                         .disableContextMenuItems('#ungroup');
