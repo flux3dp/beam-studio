@@ -484,6 +484,7 @@ define([
                 if (status === DeviceConstants.CONNECTED) {
                     Progress.openNonstopProgress({
                         id: 'check-device-status',
+                        timeout: 30000,
                     });
                     const res = await checkDeviceStatus(device);
                     Progress.popById('check-device-status');

@@ -380,7 +380,7 @@ define([
                         });
                         return;
                     }
-                    Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
+                    Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting, timeout: 30000});
                     await checkDeviceStatus(device);
                     Progress.popById('check-device-status');
                     Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
@@ -410,7 +410,7 @@ define([
                     const vc = VersionChecker(device.version);
                     const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                     if (isAvailableVersion) {
-                        Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
+                        Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting, timeout: 30000});
                         await checkDeviceStatus(device);
                         Progress.popById('check-device-status');
                         Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
