@@ -339,14 +339,12 @@ svgedit.utilities.findTempUse = function() {
 		svgElement.setAttribute('id', 'svg_defs');
 		svgCanvas.appendChild(svgElement);
 	}
-	var uses = svgElement.getElementsByTagNameNS(NS.SVG, 'use');
-	if (uses.length > 0) {
-		uses = uses[0];
-	} else {
-		uses = svgElement.ownerDocument.createElementNS(NS.SVG, 'use');
-		svgElement.appendChild(uses);
+	let use = Array.from(svgElement.childNodes).find((node) => node.tagName === 'use');
+	if (!use) {
+		use = document.createElementNS(NS.SVG, 'use');
+		svgElement.appendChild(use);
 	}
-	return uses;
+	return use;
 };
 
 // Function: findDefs
