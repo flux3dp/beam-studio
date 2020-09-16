@@ -292,9 +292,11 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
         let bbText = symbol.getAttribute('data-bbox');
         let bb: {height: number, width: number, x: number, y: number};
         if (!bbText) {
+            // Unable to getBBox if <use> not mounted
             const useElemForBB = svgedit.utilities.findTempUse();
             svgedit.utilities.setHref(useElemForBB, '#' + symbol.id);
             bb = useElemForBB.getBBox();
+            console.log(bb);
             svgedit.utilities.setHref(useElemForBB, '');
             bb.height = Math.max(1, bb.height);
             bb.width = Math.max(1, bb.width);
