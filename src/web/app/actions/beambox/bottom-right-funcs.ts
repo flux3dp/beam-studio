@@ -279,19 +279,21 @@ export default {
         if (!fcodeBlob) {
             return;
         }
-        await DeviceMaster.select(device)
-            .then(() => {
-                GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
-            })
-            .catch((errMsg) => {
-                console.error(errMsg);
-                // TODO: handle err message
-                Alert.popUp({
-                    id: 'menu-item',
-                    message: `#807 ${errMsg}`,
-                    type: AlertConstants.SHOW_POPUP_ERROR,
-                });
+        try {
+            const res = await DeviceMaster.select(device);
+            if (!res) {
+                return;
+            }
+            GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
+        } catch(errMsg) {
+            console.error(errMsg);
+            // TODO: handle err message
+            Alert.popUp({
+                id: 'menu-item',
+                message: `#807 ${errMsg}`,
+                type: AlertConstants.SHOW_POPUP_ERROR,
             });
+        }
     },
 
     exportFcode: async function () {

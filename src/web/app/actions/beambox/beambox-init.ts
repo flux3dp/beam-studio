@@ -157,34 +157,41 @@ const initMenuBarEvents = () => {
     const ipc = electron.ipcRenderer;
 
     const getLog = async function (printer, log: string) {
-        await DeviceMaster.select(printer);
-        Progress.openSteppingProgress({id: 'get_log'});
-        let downloader = DeviceMaster.downloadLog(log);
-        downloader.then(async (file) => {
-            Progress.popById('get_log');
-            const targetFilePath = await ElectronDialogs.saveFileDialog(log , log, [{extensionName: 'log', extensions: ['log']}]);
+        try {
+            const res = await DeviceMaster.select(printer);
+            if (res.success) {
+                Progress.openSteppingProgress({id: 'get_log', message: 'downloading',});
+                let downloader = DeviceMaster.downloadLog(log);
+                downloader.then(async (file) => {
+                    Progress.popById('get_log');
+                    const targetFilePath = await ElectronDialogs.saveFileDialog(log , log, [{extensionName: 'log', extensions: ['log']}]);
 
-            if (targetFilePath) {
-                const fs = requireNode('fs');
-                const arrBuf = await new Response(file[1]).arrayBuffer();
-                const buf = Buffer.from(arrBuf);
-                fs.writeFileSync(targetFilePath, buf);
+                    if (targetFilePath) {
+                        const fs = requireNode('fs');
+                        const arrBuf = await new Response(file[1]).arrayBuffer();
+                        const buf = Buffer.from(arrBuf);
+                        fs.writeFileSync(targetFilePath, buf);
+                    }
+                }).progress((progress: {completed: number, size: number}) => {
+                    Progress.update('get_log', {
+                        message: 'downloading', percentage: progress.completed / progress.size * 100});
+                }).fail((data) => {
+                    Progress.popById('get_log');
+                    let msg = data === 'canceled' ?
+                        LANG.topmenu.device.download_log_canceled : LANG.topmenu.device.download_log_error;
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        message: msg
+                    });
+                });
             }
-        }).progress((progress: {completed: number, size: number}) => {
-            Progress.update('get_log', {
-                message: 'downloading', percentage: progress.completed / progress.size * 100});
-        }).fail((data) => {
-            Progress.popById('get_log');
-            let msg = data === 'canceled' ?
-                LANG.device.download_log_canceled : LANG.device.download_log_error;
-            Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_INFO,
-                message: msg
-            });
-        });
+        } catch (e) {
+            console.error(e);
+            return;
+        }
     };
 
-    const executeFirmwareUpdate = function (printer, type) {
+    const executeFirmwareUpdate = async function (printer, type) {
         var currentPrinter = printer,
             checkToolheadFirmware = function () {
                 var $deferred = $.Deferred();
@@ -298,17 +305,20 @@ const initMenuBarEvents = () => {
                     processUpdate();
                 }
             };
-
         // TODO: Handle the error better (output eresp)
-        DeviceMaster.select(printer).then((status) => {
-            checkStatus();
-        }).catch((resp) => {
+        try {
+            const res = await DeviceMaster.select(printer);
+            if (res.success) {
+                checkStatus();
+            }
+        } catch(resp) {
+            console.error(resp);
             Alert.popUp({
-                id: 'menu-item',
+                id: 'exec-fw-update',
                 type: AlertConstants.SHOW_POPUP_ERROR,
-                message: LANG.message.connectionTimeout
+                message: resp,
             });
-        });
+        }
     };
 
     const registerAllDeviceMenuClickEvents = () => {
@@ -319,19 +329,11 @@ const initMenuBarEvents = () => {
             let _action = {},
                 lang = i18n.lang;
 
-            _action['DASHBOARD'] = (device) => {
-                DeviceMaster.selectDevice(device).then(status => {
-                    // todo: don't need to handle connection error in status select.
-                    // TODO: handle the error better
+            _action['DASHBOARD'] = async (device) => {
+                const res = await DeviceMaster.select(device);
+                if (res.success) {
                     GlobalActions.showMonitor(device, '', '', GlobalConstants.DEVICE_LIST);
-                }).catch((resp) => {
-                    // TODO: output resp
-                    Alert.popUp({
-                        id: 'menu-item',
-                        type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: lang.message.connectionTimeout
-                    });
-                });
+                }
             };
 
             _action['MACHINE_INFO'] = (device) => {
@@ -358,24 +360,22 @@ const initMenuBarEvents = () => {
                     });
                     return;
                 }
-                Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
-                await checkDeviceStatus(device);
-                Progress.popById('check-device-status');
-                Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
-                DeviceMaster.select(device)
-                    .then(() => {
-                        Progress.popById('connect');
+                try {
+                    const deviceStatus = await checkDeviceStatus(device);
+                    if (!deviceStatus) {
+                        return;
+                    }
+                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                    const res = await DeviceMaster.select(device);
+                    Progress.popById('connect');
+                    if (res.success) {
                         const isBorderless = false;
                         DialogCaller.showCameraCalibration(device, isBorderless);
-                    })
-                    .catch((error) => {
-                        // handle error correctly
-                        Progress.popById('connect');
-                        Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: lang.message.connectionTimeout,
-                        });
-                    });
+                    }
+                } catch (e) {
+                    Progress.popById('connect');
+                    console.error(e);
+                }
             };
 
             _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = async (device) => {
@@ -389,24 +389,22 @@ const initMenuBarEvents = () => {
                 const vc = VersionChecker(device.version);
                 const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                 if (isAvailableVersion) {
-                    Progress.openNonstopProgress({id: 'check-device-status', caption: lang.message.connecting});
-                    await checkDeviceStatus(device);
-                    Progress.popById('check-device-status');
-                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
-                    DeviceMaster.select(device)
-                        .then(() => {
-                            Progress.popById('connect');
+                    try {
+                        const deviceStatus = await checkDeviceStatus(device);
+                        if (!deviceStatus) {
+                            return;
+                        }
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                        const res = await DeviceMaster.select(device);
+                        Progress.popById('connect');
+                        if (res.success) {
                             const isBorderless = true;
                             DialogCaller.showCameraCalibration(device, isBorderless);
-                        })
-                        .catch((resp) => {
-                            // Output error correctly
-                            Progress.popById('connect');
-                            Alert.popUp({
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                message: lang.message.connectionTimeout,
-                            });
-                        });
+                        }
+                    } catch (e) {
+                        Progress.popById('connect');
+                        console.error(e);
+                    }
                 } else {
                     const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`;
                     Alert.popUp({
@@ -414,10 +412,9 @@ const initMenuBarEvents = () => {
                         message,
                     });
                 }
-
             };
 
-            _action['CALIBRATE_DIODE_MODULE'] = (device) => {
+            _action['CALIBRATE_DIODE_MODULE'] = async (device) => {
                 if (location.hash !== '#studio/beambox') {
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_INFO,
@@ -428,20 +425,17 @@ const initMenuBarEvents = () => {
                 const vc = VersionChecker(device.version);
                 const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
                 if (diodeAvailable) {
-                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
-                    DeviceMaster.select(device)
-                        .then(() => {
-                            Progress.popById('connect');
+                    try {
+                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
+                        const res = await DeviceMaster.select(device);
+                        Progress.popById('connect');
+                        if (res.success) {
                             DialogCaller.showDiodeCalibration(device);
-                        })
-                        .catch((resp) => {
-                            // handle error correctly
-                            Progress.popById('connect');
-                            Alert.popUp({
-                                type: AlertConstants.SHOW_POPUP_ERROR,
-                                message: lang.message.connectionTimeout,
-                            });
-                        });
+                        }
+                    } catch (e) {
+                        Progress.popById('connect');
+                        console.error(e);
+                    }
                 } else {
                     const message = `${lang.diode_calibration.update_firmware_msg1} 3.0.0 ${lang.diode_calibration.update_firmware_msg2}`;
                     Alert.popUp({
@@ -451,16 +445,18 @@ const initMenuBarEvents = () => {
                 }
             };
 
-            _action['UPDATE_FIRMWARE'] = (device) => {
-                checkDeviceStatus(device).then(() => {
+            _action['UPDATE_FIRMWARE'] = async (device) => {
+                const deviceStatus = await checkDeviceStatus(device);
+                if (deviceStatus) {
                     executeFirmwareUpdate(device, 'firmware');
-                });
+                }
             };
 
-            _action['UPDATE_TOOLHEAD'] = (device) => {
-                checkDeviceStatus(device).then(() => {
+            _action['UPDATE_TOOLHEAD'] = async (device) => {
+                const deviceStatus = await checkDeviceStatus(device);
+                if (deviceStatus) {
                     executeFirmwareUpdate(device, 'toolhead');
-                });
+                }
             };
 
             _action['LOG_NETWORK'] = (device) => {
@@ -479,16 +475,16 @@ const initMenuBarEvents = () => {
                 getLog(device, 'fluxusbd.log');
             };
 
-            _action['LOG_USBLIST'] = (device) => {
-                DeviceMaster.selectDevice(device).then(status => {
-                    DeviceMaster.lsusb().then( res => {
-                        Alert.popUp({
-                            type: AlertConstants.SHOW_POPUP_INFO,
-                            message: res.usbs.join('\n'),
-                            caption: lang.topmenu.device.log.usblist
-                        });
+            _action['LOG_USBLIST'] = async (device) => {
+                const res = await DeviceMaster.select(device);
+                if (res.success) {
+                    const data = await DeviceMaster.lsusb();
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        message: data.usbs.join('\n'),
+                        caption: lang.topmenu.device.log.usblist
                     });
-                });
+                }
             };
 
             _action['LOG_CAMERA'] = (device) => {

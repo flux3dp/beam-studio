@@ -36,7 +36,10 @@ class PreviewModeController {
     async start(selectedPrinter, errCallback) {
         await this._reset();
 
-        await DeviceMaster.select(selectedPrinter);
+        const res = await DeviceMaster.select(selectedPrinter);
+        if (!res.success) {
+            return;
+        }
 
         try {
             Progress.openNonstopProgress({
@@ -79,11 +82,13 @@ class PreviewModeController {
         PreviewModeBackgroundDrawer.end();
         const storedPrinter = this.storedPrinter;
         await this._reset();
-        await DeviceMaster.select(storedPrinter);
-        await DeviceMaster.endRawMode();
-        if (this.originalSpeed !== 1) {
-            await DeviceMaster.setLaserSpeed(this.originalSpeed);
-            this.originalSpeed = 1;
+        const res = await DeviceMaster.select(storedPrinter);
+        if (res.success) {
+            await DeviceMaster.endRawMode();
+            if (this.originalSpeed !== 1) {
+                await DeviceMaster.setLaserSpeed(this.originalSpeed);
+                this.originalSpeed = 1;
+            }
         }
     }
 
@@ -286,11 +291,13 @@ class PreviewModeController {
         if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
             movement.f = movement.f * 0.6;
         }
-
-        await DeviceMaster.select(this.storedPrinter);
-        const res = await DeviceMaster.rawMove(movement);
-        if (res) {
-            console.log('Preview raw move respond: ', res.text);
+        const selectRes = await DeviceMaster.select(this.storedPrinter);
+        if (!selectRes.success) {
+            return;
+        }
+        const moveRes = await DeviceMaster.rawMove(movement);
+        if (moveRes) {
+            console.log('Preview raw move respond: ', moveRes.text);
         }
         await this._waitUntilEstimatedMovementTime(movementX, movementY);
 

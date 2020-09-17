@@ -157,7 +157,10 @@ class DiodeCalibration extends React.Component {
 
     doCuttingTask = async () => {
         const { device } = this.props;
-        await DeviceMaster.select(device);
+        const res = await DeviceMaster.select(device);
+        if (!res.success) {
+            throw 'Fail to select device';
+        }
         const laserPower = Number((await DeviceMaster.getLaserPower()).value);
         const fanSpeed = Number((await DeviceMaster.getFan()).value);
         this.origFanSpeed = fanSpeed;

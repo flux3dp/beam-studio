@@ -94,10 +94,13 @@ class ConnectMachine extends React.Component{
     testCamera = async () => {
         const {device} = this.state;
         try {
-            await DeviceMaster.select(device); // TODO: Handle connection error
+            const res = await DeviceMaster.select(device);
+            if (!res.success) {
+                throw 'Fail to select device';
+            }
             await DeviceMaster.connectCamera(device);
             const imgBlob = await DeviceMaster.takeOnePicture();
-            await DeviceMaster.disconnectCamera();
+            DeviceMaster.disconnectCamera();
             if (imgBlob.size >= 30) {
                 this.setState({
                     cameraAvailability: true,

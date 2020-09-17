@@ -49,9 +49,7 @@ class InputLightBox extends React.Component{
 
         result = this.props.onSubmit(returnValue, e);
 
-        if (('boolean' === typeof result && true === result) || 'undefined' === typeof result) {
-            this._onClose.apply(null, [e, reactid, 'submit']);
-        }
+        this._onClose.apply(null, [e, reactid, 'submit']);
     }
 
     _inputKeyUp = (e) => {

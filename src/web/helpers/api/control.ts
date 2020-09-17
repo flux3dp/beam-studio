@@ -142,11 +142,11 @@ class Control {
     }
 
     // id is int
-    createDedicatedWs (id) {
+    async createDedicatedWs (id) {
         if(!this.dedicatedWs[id]) {
-            this.dedicatedWs[id] = this.createWs(this.uuid, true);
+            this.dedicatedWs[id] = await this.createWs(this.uuid, true);
         }
-        return this.dedicatedWs[id];
+        return;
     }
 
     prepareUpload (d, data) {
@@ -361,8 +361,10 @@ class Control {
     }
 
     async killSelf() {
-        this.dedicatedWs[this.fileInfoWsId].send('kick');
-        this.dedicatedWs[this.fileInfoWsId].close();
+        if (this.dedicatedWs[this.fileInfoWsId]) {
+            this.dedicatedWs[this.fileInfoWsId].send('kick');
+            this.dedicatedWs[this.fileInfoWsId].close();
+        }
         this.ws.send('kick');
         this.ws.close();
         await new Promise(r => setTimeout(r, 500));

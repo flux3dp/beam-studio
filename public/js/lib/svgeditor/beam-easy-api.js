@@ -80,7 +80,7 @@ define([
         }
 
         async selectMachine(machineName) {
-            return new Promise(resolve => {
+            return new Promise(async (resolve) => {
                 let isSuccessSelected = false;
                 let interval = window.setInterval(() => {
                     let targets = this.machines.filter(m => m.name === machineName);
@@ -89,16 +89,16 @@ define([
                     if (!device) {
                         return;
                     } else {
-                        DeviceMaster.select(device).done(() => {
+                        const res = await DeviceMaster.select(device);
+                        if (res.success) {
                             this.isWorking = device.st_id === 16;
                             isSuccessSelected = true;
                             window.clearInterval(interval);
                             resolve(true);
-                        })
-                        .fail((error) => {
+                        } else {
                             console.log(`Failed to connect to`, machineName);
-                            this.dispatchEvent(new CustomEvent('ERROR', {detail: {error}}));
-                        });
+                            this.dispatchEvent(new CustomEvent('ERROR', {detail: {error: res.error}}));
+                        }
                         return;
                     }
 

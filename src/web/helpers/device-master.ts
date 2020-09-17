@@ -158,17 +158,23 @@ class DeviceMaster {
         const uuid = printer.uuid;
         const device: IDeviceConnection = this.getDeviceByUUID(uuid);
         const self = this;
-        
-        if (device.control && device.control.isConnected) {
-            this.currentDevice = device;
-            return { success: true }
-        }
         Progress.openNonstopProgress({
             id: 'select-device',
             message: sprintf(lang.message.connectingMachine, device.info.name),
             timeout: 30000,
         });
-    
+        if (device.control && device.control.isConnected) {
+            try {
+                // Check device.control is still connected
+                const info = await device.control.report();
+                this.currentDevice = device;
+                Object.assign(device.info, info);
+                Progress.popById('select-device');
+                return { success: true }
+            } catch (e) {
+                await device.control.killSelf();
+            }
+        }
         try {
             const controlSocket = new Control(uuid);
             await controlSocket.connect();
@@ -186,6 +192,7 @@ class DeviceMaster {
             console.error(e);
             if (e.error) e = e.error;
             const errorCode = e.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
+            // AUTH_FAILED seems to not be used by firmware and fluxghost anymore.
             if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode)) {
                 if (device.info.password) {
                     const authed = await self.showAuthDialog(uuid);

@@ -164,7 +164,10 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
         return;
     };
     const _doCuttingTask = async function(parent) {
-        await DeviceMaster.select(device);
+        const res = await DeviceMaster.select(device);
+        if (!res.success) {
+            throw 'Fail to select device';
+        }
         const laserPower = Number((await DeviceMaster.getLaserPower()).value);
         const fanSpeed = Number((await DeviceMaster.getFan()).value);
         parent.origFanSpeed = fanSpeed;

@@ -12,7 +12,7 @@ import Progress from '../app/contexts/ProgressCaller';
 
 const lang = i18n.lang;
 
-export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
+export default async function(printer, allowPause?: boolean, forceAbort?: boolean) {
     if(!printer) { return; }
     const deferred = $.Deferred();
 
@@ -21,7 +21,11 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
         if (PreviewModeController.isPreviewMode()) {
             await PreviewModeController.end();
         }
-        await DeviceMaster.selectDevice(printer);
+        const res = await DeviceMaster.select(printer);
+        if (!res.success) {
+            deferred.resolve(false);
+            return;
+        }
         switch (id) {
             case 'kick':
                 await DeviceMaster.kick();
@@ -74,14 +78,13 @@ export default function(printer, allowPause?: boolean, forceAbort?: boolean) {
         case DeviceConstants.status.COMPLETED:
         case DeviceConstants.status.ABORTED:
             // quit
-            DeviceMaster.selectDevice(printer)
-                .then(() => {
-                    DeviceMaster.quit()
-                        .then(() => {
-                            deferred.resolve('ok');
-                        });
-                });
-            break;
+            const res = await DeviceMaster.selectDevice(printer);
+            if (res.success) {
+                await DeviceMaster.quit();
+                deferred.resolve('ok');
+            } else {
+                deferred.resolve(false);
+            }
         case DeviceConstants.status.RUNNING:
         case DeviceConstants.status.PAUSED:
         case DeviceConstants.status.PAUSED_FROM_STARTING:

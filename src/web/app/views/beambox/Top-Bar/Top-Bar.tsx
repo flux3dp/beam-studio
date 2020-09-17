@@ -458,31 +458,20 @@ export class TopBar extends React.Component {
     handleSelectDevice = async (device, callback) => {
         this.hideDeviceList();
         try {
-            const status = await DeviceMaster.selectDevice(device);
+            const status = await DeviceMaster.select(device);
             if (status.success) {
-                Progress.openNonstopProgress({
-                    id: 'check-device-status',
-                });
                 const res = await checkDeviceStatus(device);
-                Progress.popById('check-device-status');
                 if (res) {
                     callback(device);
                 }
             }
-            else if (status.error === DeviceConstants.TIMEOUT) {
-                Alert.popUp({
-                    message: lang.message.connectionTimeout,
-                    type: AlertConstants.SHOW_POPUP_ERROR,
-                });
-            }
         } catch (e) {
-            console.error(e.toString());
+            console.error(e);
             Alert.popUp({
                 id: 'fatal-occurred',
                 message: '#813' + e.toString(),
                 type: AlertConstants.SHOW_POPUP_ERROR,
             });
-        } finally {
         }
     }
 

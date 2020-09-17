@@ -24,15 +24,16 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
 
     doUpdate = ( 'firmware' === type ? DeviceMaster.updateFirmware : DeviceMaster.updateToolhead );
 
-    _uploadToDevice = (file) => {
-        DeviceMaster.selectDevice(printer).then(function() {
-        Progress.openSteppingProgress({id: 'update-firmware', message: ''});
+    _uploadToDevice = async (file) => {
+        const res = await DeviceMaster.select(printer);
+        if (res.success) {
+            Progress.openSteppingProgress({id: 'update-firmware', message: lang.update.updating + ' (0%)'});
             doUpdate(file).progress((r) => {
                 r.percentage = Number(r.percentage || 0).toFixed(2);
                 Progress.update('update-firmware', {
-                message: lang.update.updating + ' (' + r.percentage + '%)',
-                percentage: r.percentage
-            });
+                    message: lang.update.updating + ' (' + r.percentage + '%)',
+                    percentage: r.percentage
+                });
             }).always(() => {
                 Progress.popById('update-firmware');
             }).done(
@@ -40,7 +41,7 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
             ).fail(
                 _onFinishUpdate.bind(null, false)
             );
-        });
+        }
     }
 
     _onFinishUpdate = (isSuccess) => {
@@ -104,12 +105,12 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
         InputLightboxActions.open( name, content );
     };
 
-    onSubmit = function(files, e) {
+    onSubmit = async function(files, e) {
         let file = files.item(0),
             onFinishUpdate;
-
-        DeviceMaster.selectDevice(printer).then(function() {
-            Progress.openSteppingProgress({id: 'update-firmware', message: ''});
+        const res = await DeviceMaster.select(printer);
+        if (res.success) {
+            Progress.openSteppingProgress({id: 'update-firmware', message: lang.update.updating + ' (0%)'});
             doUpdate(file).progress((r) => {
                 r.percentage = Math.round(r.percentage * 100) / 100;
                 Progress.update('update-firmware', {
@@ -123,7 +124,7 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
             ).fail(
                 _onFinishUpdate.bind(null, false)
             );
-        });
+        }
     };
 
     const quitTask = () => {
