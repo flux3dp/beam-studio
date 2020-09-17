@@ -116,21 +116,21 @@ class TextOptions extends React.Component {
             const isOnlyOneOption = options.length === 1;
             return (
                 <div className="option-block">
-                        <div className="label">{LANG.font_family}</div>
-                        <div className="select-container">
-                            <Select
-                                className={classNames('font-react-select-container', {'no-triangle': isOnlyOneOption})}
-                                classNamePrefix={'react-select'}
-                                value={{value: fontFamily, label: FontFuncs.fontNameMap.get(fontFamily)}}
-                                onChange={value => this.handleFontFamilyChange(value)}
-                                onKeyDown={(e) => {
-                                    e.stopPropagation();
-                                }}
-                                disabled={isOnlyOneOption}
-                                options={options}
-                                styles={styles}
-                            />
-                        </div>
+                    <div className="label">{LANG.font_family}</div>
+                    <div className="select-container">
+                        <Select
+                            className={classNames('font-react-select-container', {'no-triangle': isOnlyOneOption})}
+                            classNamePrefix={'react-select'}
+                            value={{value: fontFamily, label: FontFuncs.fontNameMap.get(fontFamily)}}
+                            onChange={value => this.handleFontFamilyChange(value)}
+                            onKeyDown={(e) => {
+                                e.stopPropagation();
+                            }}
+                            disabled={isOnlyOneOption}
+                            options={options}
+                            styles={styles}
+                        />
+                    </div>
                 </div>
             );
         } else {
