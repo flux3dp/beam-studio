@@ -115,9 +115,10 @@ class SettingGeneral extends React.Component{
         }
     }
 
-    _resetFS = () => {
+    _resetBS = () => {
         if(confirm(this.state.lang.settings.confirm_reset)) {
             LocalStorage.clearAllExceptIP();
+            localStorage.clear();
             location.hash = '#';
             location.reload();
         }
@@ -756,7 +757,7 @@ class SettingGeneral extends React.Component{
                     />
                 </Controls>
 
-                <a className='font5' onClick={this._resetFS}>
+                <a className='font5' onClick={this._resetBS}>
                     <b>{lang.settings.reset_now}</b>
                 </a>
                 <div className="clearfix" />
