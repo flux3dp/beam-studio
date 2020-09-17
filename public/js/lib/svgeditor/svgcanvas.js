@@ -9937,23 +9937,35 @@ define([
             if (selectedElements.length <= 1) {
                 return;
             }
-            const type = 'g';
 
-            // create and insert the group element
-            let g = addSvgElementFromJson({
-                'element': type,
-                'attr': {
-                    'id': getNextId(),
-                    'data-tempgroup': true,
-                    'data-ratiofixed': true,
-                }
-            });
-            // Move to direct under svgcontent to avoid group under invisible layer
-            $('#svgcontent')[0].appendChild(g);
+            const hasAlreadyTempGroup = selectedElements[0].getAttribute('data-tempgroup');
+            const type = 'g';
+            let g;
+
+            if (hasAlreadyTempGroup) {
+                g = selectedElements[0];
+            } else {
+                // create and insert the group element
+                g = addSvgElementFromJson({
+                    'element': type,
+                    'attr': {
+                        'id': getNextId(),
+                        'data-tempgroup': true,
+                        'data-ratiofixed': true,
+                    }
+                });
+
+                // Move to direct under svgcontent to avoid group under invisible layer
+                $('#svgcontent')[0].appendChild(g);
+            }
 
             // now move all children into the group
             var i = selectedElements.length;
             while (i--) {
+                if (hasAlreadyTempGroup && i === 0) {
+                    break;
+                }
+
                 var elem = selectedElements[i];
                 if (elem == null) {
                     continue;
@@ -9994,6 +10006,10 @@ define([
                     });
                     g.appendChild(imageBorder);
                 }
+            }
+
+            if (hasAlreadyTempGroup) {
+                tempGroup = null;
             }
 
             // update selection
