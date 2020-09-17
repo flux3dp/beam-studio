@@ -6355,6 +6355,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             importLaserConfig(file);
                             break;
                         case 'unknown':
+                            Progress.popById('loading_image');
                             Alert.popUp({
                                 id: 'import_unknown',
                                 message: LANG.svg_editor.unnsupported_file_type,
