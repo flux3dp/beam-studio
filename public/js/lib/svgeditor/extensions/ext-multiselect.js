@@ -22,7 +22,11 @@ svgEditor.addExtension('ext-multiselect', function() {'use strict';
                 const elems = opts.elems.filter(v => !!v);
                 if (elems.length > 1) {
                     const selectedLayers = elems.map(elem => {
-                        return svgCanvas.getObjectLayer(elem).title;
+                        const objectLayer = svgCanvas.getObjectLayer(elem);
+                        if (objectLayer) {
+                            return objectLayer.title;
+                        } 
+                        return null;
                     });
                     $('tr.layer').toArray().map(layer => {
                         var layerName = $(layer).find('.layername')[0];
