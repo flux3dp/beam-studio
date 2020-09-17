@@ -2,7 +2,9 @@
  * API camera
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
-const Rx = require('Rx');
+
+// @ts-expect-error
+import Rx = require('Rx');
 import Websocket from '../websocket';
 import rsaKey from '../rsa-key';
 import VersionChecker from '../version-checker';
