@@ -6212,7 +6212,7 @@ define([
                                 }
                             }
                         } else if (type === 'color') {
-                            let layerColorConfig = LocalStorage.get('layer-color-config');
+                            let layerColorConfig = LocalStorage.get('layer-color-config') || {};
                             let index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
                             let laserConst = LANG.right_panel.laser_panel;
                             if (index !== undefined) {
