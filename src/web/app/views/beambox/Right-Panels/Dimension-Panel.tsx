@@ -36,6 +36,8 @@ class DimensionPanel extends React.Component {
         super(props);
         this.state = {
         };
+        this.unit = LocalStorage.get('default-units') === 'inches' ? 'in' : 'mm';
+        this.unitInputClass = this.unitInputClass;
     }
 
     componentWillUnmount() {
@@ -184,16 +186,15 @@ class DimensionPanel extends React.Component {
         const { getDimensionValues } = this.props;
         const dimensionValues = getDimensionValues();
         const isRatioFixed = dimensionValues.isRatioFixed || false;
-        const unit = LocalStorage.get('default-units') || 'mm';
-        const isInch = unit === 'inches';
+
         switch(type) {
             case 'x':
                 return (
                     <div className="dimension-container" key={type}>
                         <div className="label">{'X'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.x)}
                             getValue={(val) => this.handlePositionChange('x', val)}
                         />
@@ -204,8 +205,8 @@ class DimensionPanel extends React.Component {
                     <div className="dimension-container" key={type}>
                         <div className="label">{'Y'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.y)}
                             getValue={(val) => this.handlePositionChange('y', val)}
                         />
@@ -218,8 +219,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'1'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.x1)}
                             getValue={(val) => this.handlePositionChange('x1', val)}
                         />
@@ -232,8 +233,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'1'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.y1)}
                             getValue={(val) => this.handlePositionChange('y1', val)}
                         />
@@ -246,8 +247,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'2'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.x2)}
                             getValue={(val) => this.handlePositionChange('x2', val)}
                         />
@@ -260,8 +261,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'2'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.y2)}
                             getValue={(val) => this.handlePositionChange('y2', val)}
                         />
@@ -274,8 +275,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'C'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.cx)}
                             getValue={(val) => this.handlePositionChange('cx', val)}
                         />
@@ -288,8 +289,8 @@ class DimensionPanel extends React.Component {
                             <sub>{'C'}</sub>
                         </div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.cy)}
                             getValue={(val) => this.handlePositionChange('cy', val)}
                         />
@@ -303,19 +304,19 @@ class DimensionPanel extends React.Component {
                         </div>
                         <UnitInput
                             unit='deg'
-                            className={{'dimension-input': true}}
+                            className={this.unitInputClass}
                             defaultValue={dimensionValues.rotation}
                             getValue={(val) => this.handleRotationChange(val)}
                         />
                     </div>
-                )
+                );
             case 'w':
                 return (
                     <div className="dimension-container" key={type}>
                         <div className="label">{'W'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             onBlur={() => this.handleSizeBlur()}
                             onKeyUp={(e) => this.handleSizeKeyUp(e)}
                             defaultValue={this.getDisplayValue(dimensionValues.width)}
@@ -328,8 +329,8 @@ class DimensionPanel extends React.Component {
                     <div className="dimension-container" key={type}>
                         <div className="label">{'H'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             onBlur={() => this.handleSizeBlur()}
                             onKeyUp={(e) => this.handleSizeKeyUp(e)}
                             defaultValue={this.getDisplayValue(dimensionValues.height)}
@@ -342,8 +343,8 @@ class DimensionPanel extends React.Component {
                     <div className="dimension-container" key={type}>
                         <div className="label">{'W'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.rx * 2)}
                             getValue={(val) => this.handleSizeChange('rx', val / 2)}
                         />
@@ -354,8 +355,8 @@ class DimensionPanel extends React.Component {
                     <div className="dimension-container" key={type}>
                         <div className="label">{'H'}</div>
                         <UnitInput
-                            unit={isInch ? 'in' : 'mm'}
-                            className={{'dimension-input': true}}
+                            unit={this.unit}
+                            className={this.unitInputClass}
                             defaultValue={this.getDisplayValue(dimensionValues.ry * 2)}
                             getValue={(val) => this.handleSizeChange('ry', val / 2)}
                         />
