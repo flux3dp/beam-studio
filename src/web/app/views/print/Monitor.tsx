@@ -3,6 +3,7 @@ import DeviceMaster from '../../../helpers/device-master';
 import BeamboxPreference from '../../actions/beambox/beambox-preference';
 import Constant from '../../actions/beambox/constant';
 import AlertActions from '../../actions/alert-actions';
+import ElectronDialogs from '../../actions/electron-dialogs';
 import AlertStore from '../../stores/alert-store';
 import Progress from '../../contexts/ProgressCaller';
 import ProgressActions from '../../actions/progress-actions';
@@ -485,9 +486,16 @@ class Monitor extends React.Component{
         };
         let { Monitor } = store.getState();
 
-        DeviceMaster.downloadFile(Monitor.currentPath, Monitor.selectedItem.name).then((file) => {
+        DeviceMaster.downloadFile(Monitor.currentPath, Monitor.selectedItem.name).then(async (file) => {
             store.dispatch(MonitorActionCreator.setDownloadProgress({size:'', left:''}));
-            window['saveAs'](file[1], Monitor.selectedItem.name);
+
+            const targetFilePath = await ElectronDialogs.saveFileDialog(Monitor.selectedItem.name , Monitor.selectedItem.name, [], true);
+            if (targetFilePath) {
+                const fs = requireNode('fs');
+                const arrBuf = await new Response(file[1]).arrayBuffer();
+                const buf = Buffer.from(arrBuf);
+                fs.writeFileSync(targetFilePath, buf);
+            }
         }).progress((p) => {
             downloadProgressDisplay(p);
         }).fail((error) => {

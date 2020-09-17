@@ -2,6 +2,7 @@ import $ from 'jquery';
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
 import Tutorials from './tutorials';
+import ElectronDialogs from '../electron-dialogs';
 import InitializeMachine from '../initialize-machine';
 import GlobalActions from '../global-actions';
 import GlobalConstants from '../../constants/global-constants';
@@ -155,14 +156,20 @@ const initMenuBarEvents = () => {
     const electron = requireNode('electron');;
     const ipc = electron.ipcRenderer;
 
-    const getLog = async function (printer, log) {
+    const getLog = async function (printer, log: string) {
         await DeviceMaster.select(printer);
         Progress.openSteppingProgress({id: 'get_log'});
         let downloader = DeviceMaster.downloadLog(log);
-        downloader.then((file) => {
+        downloader.then(async (file) => {
             Progress.popById('get_log');
-            window['saveAs'](file[1], log);
+            const targetFilePath = await ElectronDialogs.saveFileDialog(log , log, [{extensionName: 'log', extensions: ['log']}]);
 
+            if (targetFilePath) {
+                const fs = requireNode('fs');
+                const arrBuf = await new Response(file[1]).arrayBuffer();
+                const buf = Buffer.from(arrBuf);
+                fs.writeFileSync(targetFilePath, buf);
+            }
         }).progress((progress: {completed: number, size: number}) => {
             Progress.update('get_log', {
                 message: 'downloading', percentage: progress.completed / progress.size * 100});

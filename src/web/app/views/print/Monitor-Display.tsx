@@ -1,3 +1,4 @@
+import ElectronDialogs from '../../actions/electron-dialogs';
 import MonitorActionCreator from '../../action-creators/monitor';
 import GlobalConstants from '../../constants/global-constants';
 import DeviceConstants from '../../constants/device-constants';
@@ -433,14 +434,20 @@ class MonitorDisplay extends React.Component{
         );
     }
 
-    _handleSnapshot = () => {
+    _handleSnapshot = async () => {
         if(previewBlob == null) return;
         let targetDevice = DeviceMaster.currentDevice.info,
             fileName = (targetDevice ? targetDevice.name + ' ' : '') + new Date().
                 toLocaleString('en-GB', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).
                 replace(/(\d+)\/(\d+)\/(\d+)\, (\d+):(\d+):(\d+)/, '$3-$1-$2 $4-$5-$6')+ ".jpg";
-
-        window['saveAs'](previewBlob, fileName);
+        
+        const targetFilePath = await ElectronDialogs.saveFileDialog(fileName , fileName, [{extensionName: 'jpg', extensions: ['jpg']}]);
+        if (targetFilePath) {
+            const fs = requireNode('fs');
+            const arrBuf = await new Response(previewBlob).arrayBuffer();
+            const buf = Buffer.from(arrBuf);
+            fs.writeFileSync(targetFilePath, buf);
+        }
     }
 
     _renderSpinner = () => {
