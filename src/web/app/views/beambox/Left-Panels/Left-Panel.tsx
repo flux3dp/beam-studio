@@ -21,6 +21,7 @@ class LeftPanel extends React.Component {
     constructor() {
         super();
         this.state = {};
+        this.leftPanelClass = classNames('left-toolbar', { win: isWin });
     }
 
     componentDidMount() {
@@ -124,12 +125,12 @@ class LeftPanel extends React.Component {
 
     render() {
         const { isPreviewing } = this.props;
-        const leftPanelClass = classNames('left-toolbar', {win: isWin});
+
         if (!isPreviewing) {
             return (
-                <div className={leftPanelClass}>
+                <div className={this.leftPanelClass}>
                     {this._renderToolButton('cursor','Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
-                    {this._renderToolButton('photo','Photo', LANG.label.photo + ' (I)', () => {FnWrapper.importImage()})}
+                    {this._renderToolButton('photo','Photo', LANG.label.photo + ' (I)', FnWrapper.importImage)}
                     {this._renderToolButton('text','Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
                     {this._renderToolButton('rect','Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
                     {this._renderToolButton('oval','Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
@@ -142,14 +143,14 @@ class LeftPanel extends React.Component {
             const isDrawing = PreviewModeController.isDrawing;
             const isDrawn = !PreviewModeBackgroundDrawer.isClean();
             return (
-                <div className={leftPanelClass}>
+                <div className={this.leftPanelClass}>
                     {this._renderToolButton('shoot', 'Shoot', LANG.label.preview, () => {
                         if (!PreviewModeController.isPreviewMode()) {
                             this.props.setShouldStartPreviewController(true)
                         }
                     }, 'active')}
-                    {this._renderToolButton('trace', 'Trace', LANG.label.trace, () => this.startImageTrace(), '', isDrawing || !isDrawn)}
-                    {this._renderToolButton('trash', 'Trash', LANG.label.clear_preview, () => {this.clearPreview()}, '', isDrawing || !isDrawn)}
+                    {this._renderToolButton('trace', 'Trace', LANG.label.trace, this.startImageTrace, '', isDrawing || !isDrawn)}
+                    {this._renderToolButton('trash', 'Trash', LANG.label.clear_preview, this.clearPreview, '', isDrawing || !isDrawn)}
                 </div>
             );
         }
