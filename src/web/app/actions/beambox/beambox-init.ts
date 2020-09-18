@@ -352,14 +352,7 @@ const initMenuBarEvents = () => {
                 });
             };
 
-            _action['CALIBRATE_BEAMBOX_CAMERA'] = async (device) => {
-                if (location.hash !== '#studio/beambox') {
-                    Alert.popUp({
-                        type: AlertConstants.SHOW_POPUP_INFO,
-                        message: lang.camera_calibration.please_goto_beambox_first,
-                    });
-                    return;
-                }
+            const calibrateCamera = async (device, isBorderless: boolean) => {
                 try {
                     const deviceStatus = await checkDeviceStatus(device);
                     if (!deviceStatus) {
@@ -369,13 +362,24 @@ const initMenuBarEvents = () => {
                     const res = await DeviceMaster.select(device);
                     Progress.popById('connect');
                     if (res.success) {
-                        const isBorderless = false;
                         DialogCaller.showCameraCalibration(device, isBorderless);
                     }
                 } catch (e) {
                     Progress.popById('connect');
                     console.error(e);
                 }
+
+            }
+
+            _action['CALIBRATE_BEAMBOX_CAMERA'] = async (device) => {
+                if (location.hash !== '#studio/beambox') {
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_INFO,
+                        message: lang.camera_calibration.please_goto_beambox_first,
+                    });
+                    return;
+                }
+                calibrateCamera(device, false);
             };
 
             _action['CALIBRATE_BEAMBOX_CAMERA_BORDERLESS'] = async (device) => {
@@ -389,22 +393,7 @@ const initMenuBarEvents = () => {
                 const vc = VersionChecker(device.version);
                 const isAvailableVersion = vc.meetRequirement('BORDERLESS_MODE');
                 if (isAvailableVersion) {
-                    try {
-                        const deviceStatus = await checkDeviceStatus(device);
-                        if (!deviceStatus) {
-                            return;
-                        }
-                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
-                        const res = await DeviceMaster.select(device);
-                        Progress.popById('connect');
-                        if (res.success) {
-                            const isBorderless = true;
-                            DialogCaller.showCameraCalibration(device, isBorderless);
-                        }
-                    } catch (e) {
-                        Progress.popById('connect');
-                        console.error(e);
-                    }
+                    calibrateCamera(device, true);
                 } else {
                     const message = `${lang.camera_calibration.update_firmware_msg1} 2.5.1 ${lang.camera_calibration.update_firmware_msg2}`;
                     Alert.popUp({
