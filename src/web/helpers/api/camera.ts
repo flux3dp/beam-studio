@@ -117,8 +117,7 @@ class Camera {
     getLiveStreamSource() {
         this._ws.send('enable_streaming');
         return this._source
-            .pipe(timeout(TIMEOUT))
-            .pipe(asObservable());
+            .pipe(timeout(TIMEOUT));
     }
 
     closeWs() {
