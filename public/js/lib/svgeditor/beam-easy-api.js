@@ -80,9 +80,9 @@ define([
         }
 
         async selectMachine(machineName) {
-            return new Promise(async (resolve) => {
+            return new Promise((resolve) => {
                 let isSuccessSelected = false;
-                let interval = window.setInterval(() => {
+                let interval = window.setInterval(async () => {
                     let targets = this.machines.filter(m => m.name === machineName);
                     let device = targets[0];
                     this.device = device;
