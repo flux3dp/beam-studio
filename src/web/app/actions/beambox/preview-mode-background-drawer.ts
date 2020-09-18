@@ -1,9 +1,11 @@
-// @ts-expect-error
-import Rx = require('Rx');
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
 import * as i18n from '../../../helpers/i18n';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+
+const Rxjs = requireNode('rxjs');
+const { concatMap, filter, map, switchMap, take, timeout } = requireNode('rxjs/operators');
+
 let svgCanvas;
 let svgedit;
 getSVGAsync((globalSVG) => {
@@ -40,22 +42,22 @@ class PreviewModeBackgroundDrawer {
         // { x, y, angle, scaleRatioX, scaleRatioY }
         this.cameraOffset = cameraOffset;
 
-        this.backgroundDrawerSubject = new Rx.Subject();
+        this.backgroundDrawerSubject = new Rxjs.Subject();
         this.backgroundDrawerSubject
-            .concatMap(p => Rx.Observable.fromPromise(p))
+            .pipe(concatMap(p => Rxjs.from(p)))
             .subscribe(blob => this._drawBlobToBackground(blob));
     }
 
     end() {
         if (this.backgroundDrawerSubject) {
-            this.backgroundDrawerSubject.onCompleted();
+            this.backgroundDrawerSubject.complete();
         }
     }
 
     async draw(imgUrl, x, y, last = false, callBack= () => {}) {
         const p = this._prepareCroppedAndRotatedImgBlob(imgUrl, x, y, last, callBack);
 
-        this.backgroundDrawerSubject.onNext(p);
+        this.backgroundDrawerSubject.next(p);
         // await p;  if you want to know the time when image transfer to Blob, which is almost the same time background is drawn.
     }
 

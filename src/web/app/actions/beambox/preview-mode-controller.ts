@@ -1,5 +1,3 @@
-// @ts-expect-error
-import Rx = require('Rx');
 import PreviewModeBackgroundDrawer from './preview-mode-background-drawer';
 import DeviceMaster from '../../../helpers/device-master';
 import Alert from '../../contexts/AlertCaller';
@@ -10,6 +8,9 @@ import * as i18n from '../../../helpers/i18n';
 import Constant from './constant';
 import BeamboxPreference from './beambox-preference';
 import BeamboxActions from '../beambox';
+
+const Rxjs = requireNode('rxjs');
+const { concatMap, filter, map, switchMap, take, timeout, timer } = requireNode('rxjs/operators');
 
 class PreviewModeController {
     isDrawing: boolean;
@@ -322,7 +323,7 @@ class PreviewModeController {
         timeToWait *= 1.2;
         timeToWait += 100;
         this.lastPosition = [movementX, movementY];
-        await Rx.Observable.timer(timeToWait).toPromise();
+        await new Promise((resolve, reject) => { setTimeout(() => resolve(), timeToWait)});
     }
 
     //just fot _getPhotoAfterMoveTo()

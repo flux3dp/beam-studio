@@ -3,12 +3,13 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
 
-// @ts-expect-error
-import Rx = require('Rx');
 import Websocket from '../websocket';
 import rsaKey from '../rsa-key';
 import VersionChecker from '../version-checker';
 import * as i18n from '../i18n';
+
+const Rxjs = requireNode('rxjs');
+const { concatMap, filter, map, switchMap, take, timeout } = requireNode('rxjs/operators');
 
 const TIMEOUT = 15000;
 const LANG = i18n.lang;
@@ -34,20 +35,20 @@ class Camera {
             version: null
         };
         this._ws = null;
-        this._wsSubject = new Rx.Subject();
+        this._wsSubject = new Rxjs.Subject();
         this._source = this._wsSubject
             .asObservable()
-            .filter(x => x instanceof Blob)
-            .switchMap(blob => {
+            .pipe(filter(x => x instanceof Blob))
+            .pipe(switchMap(blob => {
                 if (blob.size < 30) {
                     // if stream return extremely small blob (i.e. when camera hardware connection fail)
-                    return Rx.Observable.throw(new Error(LANG.message.camera_fail_to_transmit_image));
+                    return Rxjs.throwError(new Error(LANG.message.camera_fail_to_transmit_image));
                 } else {
-                    return Rx.Observable.of(blob);
+                    return Rxjs.of(blob);
                 }
-            })
-            .map(blob => this.preprocessImage(blob))
-            .concatMap(p => Rx.Observable.fromPromise(p));
+            }))
+            .pipe(map(blob => this.preprocessImage(blob)))
+            .pipe(concatMap(p => Rxjs.from(p)));
     }
 
     // let subject get response from websocket
@@ -60,18 +61,18 @@ class Camera {
         this._ws = Websocket({
             method: method,
             onOpen: () => this._ws.send(rsaKey()),
-            onMessage: (res) => this._wsSubject.onNext(res),
-            onError: (res) => this._wsSubject.onError(new Error(res.error?res.error.toString():res)),
-            onFatal: (res) => this._wsSubject.onError(new Error(res.error?res.error.toString():res)),
-            onClose: () => this._wsSubject.onCompleted(),
+            onMessage: (res) => this._wsSubject.next(res),
+            onError: (res) => this._wsSubject.error(new Error(res.error?res.error.toString():res)),
+            onFatal: (res) => this._wsSubject.error(new Error(res.error?res.error.toString():res)),
+            onClose: () => this._wsSubject.complete(),
             autoReconnect: false
         });
 
         // if response.status === 'connected' within TIMEOUT, the promise resolve. and the websocket will keep listening.
         await this._wsSubject
-            .filter(res => res.status === 'connected')
-            .take(1)
-            .timeout(TIMEOUT)
+            .pipe(filter(res => res.status === 'connected'))
+            .pipe(take(1))
+            .pipe(timeout(TIMEOUT))
             .toPromise();
 
         // check whether the camera need flip
@@ -81,26 +82,26 @@ class Camera {
     }
 
     async _getCameraOffset() {
-        const tempWsSubject = new Rx.Subject();
+        const tempWsSubject = new Rxjs.Subject();
         const tempWs = Websocket({
             method: (this._device.source === 'h2h') ? `control/usb/${parseInt(this._device.uuid)}` : `control/${this._device.uuid}`,
             onOpen: () => tempWs.send(rsaKey()),
-            onMessage: (res) => tempWsSubject.onNext(res),
-            onError: (res) => tempWsSubject.onError(new Error(res.error?res.error.toString():res)),
-            onFatal: (res) => tempWsSubject.onError(new Error(res.error?res.error.toString():res)),
-            onClose: () => tempWsSubject.onCompleted(),
+            onMessage: (res) => tempWsSubject.next(res),
+            onError: (res) => tempWsSubject.error(new Error(res.error?res.error.toString():res)),
+            onFatal: (res) => tempWsSubject.error(new Error(res.error?res.error.toString():res)),
+            onClose: () => tempWsSubject.complete(),
             autoReconnect: false
         });
         await tempWsSubject
-            .filter(res => res.status === 'connected')
-            .take(1)
-            .timeout(TIMEOUT)
+            .pipe(filter(res => res.status === 'connected'))
+            .pipe(take(1))
+            .pipe(timeout(TIMEOUT))
             .toPromise();
 
         tempWs.send('config get camera_offset');
         const camera_offset = await tempWsSubject
-            .take(1)
-            .timeout(TIMEOUT)
+            .pipe(take(1))
+            .pipe(timeout(TIMEOUT))
             .toPromise();
         return camera_offset.value;
     }
@@ -108,16 +109,16 @@ class Camera {
     async oneShot() {
         this._ws.send('require_frame');
         return await this._source
-            .take(1)
-            .timeout(TIMEOUT)
+            .pipe(take(1))
+            .pipe(timeout(TIMEOUT))
             .toPromise();
     }
 
     getLiveStreamSource() {
         this._ws.send('enable_streaming');
         return this._source
-            .timeout(TIMEOUT)
-            .asObservable();
+            .pipe(timeout(TIMEOUT))
+            .pipe(asObservable());
     }
 
     closeWs() {

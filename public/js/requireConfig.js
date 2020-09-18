@@ -14,7 +14,6 @@ requirejs.config({
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
         events: '../lib/events',
-        Rx: '../lib/rx.lite.min',
         Redux: '../lib/redux.min',
         jqueryGrowl: '../lib/jquery.growl',
         dxf2svg: '../lib/dxf2svg',
@@ -130,9 +129,6 @@ requirejs.config({
         },
         events: {
             exports: 'events'
-        },
-        Rx: {
-            exports: 'Rx'
         },
         Redux: {
             exports: 'Redux'
