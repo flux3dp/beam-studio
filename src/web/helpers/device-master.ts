@@ -166,9 +166,11 @@ class DeviceMaster {
         if (device.control && device.control.isConnected) {
             try {
                 // Check device.control is still connected
-                const info = await device.control.report();
+                if (device.control.getMode() !== 'raw') {
+                    const info = await device.control.report();
+                    Object.assign(device.info, info);
+                }
                 this.currentDevice = device;
-                Object.assign(device.info, info);
                 Progress.popById('select-device');
                 return { success: true }
             } catch (e) {

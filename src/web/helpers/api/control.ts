@@ -5,11 +5,7 @@
 import $ from 'jquery';
 import * as i18n from '../i18n';
 import Websocket from '../websocket';
-import DeviceConstants from '../../app/constants/device-constants';
 import rsaKey from '../rsa-key';
-import Alert from '../../app/contexts/AlertCaller';
-import AlertConstants from '../../app/constants/alert-constants';
-import ProgressActions from '../../app/actions/progress-actions';
 
 const CONNECTION_TIMEOUT = 12 * 1000;
 const CONNECITON_TIMEOUT_ERROR = {
@@ -391,6 +387,10 @@ class Control {
 
         this.ws.send('play info');
         return d.promise();
+    }
+
+    getMode () {
+        return this.mode;
     }
 
     select (path, fileName) {
