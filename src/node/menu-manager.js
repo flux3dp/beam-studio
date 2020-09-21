@@ -2,7 +2,9 @@ const EventEmitter = require('events');
 const {app, BrowserWindow, Menu, MenuItem, shell, ipcMain} = require('electron');
 const resource = require('./menu-resource');
 const events = require('./ipc-events');
+const Store = require('electron-store');
 
+const store = new Store();
 let r = resource['en'];
 
 function _buildOSXAppMenu(callback) {
@@ -299,8 +301,8 @@ class MenuManager extends EventEmitter {
         this._device_list = {};
         this.constructMenu();
 
-        ipcMain.on(events.NOTIFY_LANGUAGE, (e, language) => {
-            language = language || 'en';
+        ipcMain.on(events.NOTIFY_LANGUAGE, (e) => {
+            const language = store.get('active-lang') || 'en';
             r = resource[language];
             if (!r) {
                 r = resource['en'];

@@ -75,7 +75,7 @@
             });
 
             ipc.send(events.CHECK_BACKEND_STATUS);
-            ipc.send(events.NOTIFY_LANGUAGE, localStorage.getItem('active-lang'));
+            ipc.send(events.NOTIFY_LANGUAGE);
 
         } else {
             window.process = {}
