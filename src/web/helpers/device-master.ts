@@ -155,6 +155,9 @@ class DeviceMaster {
     // TODO: Remove deferred.. 
     async selectDevice(printer: IDeviceInfo, deferred?): Promise<SelectionResult> {
         // Match the device from the newest received device list
+        if (!printer) {
+            return { success: false };
+        }
         const uuid = printer.uuid;
         const device: IDeviceConnection = this.getDeviceByUUID(uuid);
         const self = this;
