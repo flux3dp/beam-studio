@@ -85,7 +85,7 @@ jobs:
 
           yarn install
           gulp sass
-          gulp jsx
+          gulp frontend
 
           cd ./node_modules/text-to-svg
           npm install --save-dev
