@@ -9,6 +9,7 @@ let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
 const React = requireNode('react');
+const classNames = requireNode('classnames');
 const LANG = i18n.lang.beambox.right_panel.object_panel;
 
 const panelMap = {
@@ -36,7 +37,7 @@ class DimensionPanel extends React.Component {
         this.state = {
         };
         this.unit = LocalStorage.get('default-units') === 'inches' ? 'in' : 'mm';
-        this.unitInputClass = {'dimension-input': true};
+        this.unitInputClass = classNames({'dimension-input': true});
     }
 
     componentWillUnmount() {
