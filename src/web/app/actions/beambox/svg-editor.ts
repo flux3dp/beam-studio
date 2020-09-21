@@ -239,7 +239,11 @@ interface ISVGConfig {
 }
 
 const svgEditor = window['svgEditor'] = (function($) {
-
+        // set workarea according to default model.
+        const defaultModel = BeamboxPreference.read('model');
+        if (defaultModel !== undefined) {
+            BeamboxPreference.write('workarea', defaultModel);
+        }
         // EDITOR PROPERTIES: (defined below)
         //		curPrefs, curConfig, canvas, storage, uiStrings
         //
@@ -307,10 +311,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             dimensions: [Constant.dimension.getWidth(), Constant.dimension.getHeight()],
             uiStrings: {}
         };
-        const defaultModel = BeamboxPreference.read('model');
-        if (defaultModel !== undefined) {
-            BeamboxPreference.write('workarea', defaultModel);
-        }
 
         const availableLangMap = {
             'de': 'de',
