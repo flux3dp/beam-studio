@@ -79,6 +79,7 @@ class PreviewModeController {
 
     async end() {
         console.log('end of pmc');
+        this.isPreviewModeOn = false;
         PreviewModeBackgroundDrawer.clearBoundary();
         PreviewModeBackgroundDrawer.end();
         const storedPrinter = this.storedPrinter;
@@ -115,11 +116,13 @@ class PreviewModeController {
             }
             return true;
         } catch (error) {
-            console.log(error);
-            Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_ERROR,
-                message: error.message,
-            });
+            if (this.isPreviewModeOn) {
+                console.log(error);
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: error.message,
+                });
+            }
             $('#workarea').css('cursor', 'auto');
             if (!PreviewModeBackgroundDrawer.isClean()) {
                 BeamboxActions.endDrawingPreviewBlob();
