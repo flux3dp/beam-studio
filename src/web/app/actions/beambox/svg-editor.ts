@@ -6535,13 +6535,15 @@ const svgEditor = window['svgEditor'] = (function($) {
         };
 
         editor.resetView = function() {
-            const sidePanelsWidth = Constant.sidePanelsWidth;
-            const topBarHeight = Constant.topBarHeight;
+            const hasRulers = !!BeamboxPreference.read('show_rulers');
+            const sidePanelsWidth = Constant.sidePanelsWidth + (hasRulers ? Constant.rulerWidth : 0);
+            const topBarHeight = Constant.topBarHeight + (hasRulers ? Constant.rulerWidth : 0);
             const workareaToDimensionRatio = Math.min((window.innerWidth - sidePanelsWidth) / Constant.dimension.getWidth(), (window.innerHeight - topBarHeight) / Constant.dimension.getHeight());
             const zoomLevel = workareaToDimensionRatio * 0.95;
-            const workAreaWidth = Constant.dimension.getWidth() * zoomLevel, workAreaHeight = Constant.dimension.getHeight() * zoomLevel;
-            const offsetX = (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2;
-            const offsetY = (window.innerHeight - topBarHeight - workAreaHeight) / 2;
+            const workAreaWidth = Constant.dimension.getWidth() * zoomLevel;
+            const workAreaHeight = Constant.dimension.getHeight() * zoomLevel;
+            const offsetX = (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2 + (hasRulers ? Constant.rulerWidth : 0);
+            const offsetY = (window.innerHeight - topBarHeight - workAreaHeight) / 2 + (hasRulers ? Constant.rulerWidth : 0);
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
