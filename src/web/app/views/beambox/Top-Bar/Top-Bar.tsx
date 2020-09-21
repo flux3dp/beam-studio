@@ -37,7 +37,6 @@ getSVGAsync((globalSVG) => {
     svgEditor = globalSVG.Editor;
 });
 
-const workarea = window['workarea'];
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 const lang = i18n.lang;
@@ -127,6 +126,7 @@ export class TopBar extends React.Component {
             return false;
         });
         setTopBarPreviewMode(true);
+        const workarea = window['workarea'];
         $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
         this.setState({ isPreviewing: true });
         if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_PREVIEW_MODE) {
@@ -140,6 +140,8 @@ export class TopBar extends React.Component {
 
     startPreviewModeController = async (device) => {
         const { setTopBarPreviewMode } = this.context;
+        const workarea = window['workarea'];
+
         FnWrapper.useSelectTool();
         svgCanvas.clearSelection();
         const vc = VersionChecker(device.version);
@@ -455,7 +457,7 @@ export class TopBar extends React.Component {
         );
     }
 
-    handleSelectDevice = async (device, callback) => {
+    handleSelectDevice = async (device, callback: Function) => {
         this.hideDeviceList();
         try {
             const status = await DeviceMaster.select(device);
