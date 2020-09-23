@@ -6435,10 +6435,19 @@ define([
             }
         }
 
+        var preventDoubleZoomIn = false;
+
         editor.zoomIn = function() {
-            editor.zoomChanged(window, {
-                zoomLevel: svgCanvas.getZoom() * 1.1
-            });
+            if (!preventDoubleZoomIn) {
+                editor.zoomChanged(window, {
+                    zoomLevel: svgCanvas.getZoom() * 1.1
+                });
+                preventDoubleZoomIn = true;
+
+                setTimeout(() => {
+                    preventDoubleZoomIn = false;
+                }, 10);
+            }
         };
 
         editor.zoomOut = function() {
