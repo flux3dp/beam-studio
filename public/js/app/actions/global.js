@@ -83,7 +83,7 @@ define([
             shortcuts.on([FN_KEY, 'v'], function() { window.document.execCommand('paste'); });
             shortcuts.on([FN_KEY, '0'], function() { console.log("Reset View!"); window.svgEditor.resetView(); });
             shortcuts.on([FN_KEY, 'plus'], function() { console.log("Zoom In"); window.svgEditor.zoomIn(); });
-            shortcuts.on([FN_KEY, 'minus'], function() { console.log("Zoom Out"); window.svgEditor.zoomOut(); });
+            shortcuts.on([FN_KEY, 'shift', 'minus'], function() { console.log("Zoom Out"); svgEditor.zoomOut(); });
 
             shortcuts.on(['ctrl', 'alt', 'd'], function(e) {
                 if(electron) {
