@@ -90,6 +90,12 @@ class SvgNestButtons extends React.Component {
 
             points.source = id;
             points.id = elemPoints.length;
+
+            // SvgNest does not support 2 points line segment, here is a hacking to allow the arrangement
+            if (points.length === 2) {
+                points.push(points[1]);
+            }
+
             elemPoints.push(points);
 
             let elementsToUndo = [elem];
