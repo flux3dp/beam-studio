@@ -28,5 +28,7 @@ define(function() {
         KEY_C        : 67,
         KEY_V        : 86,
         KEY_X        : 88,
+        KEY_NUM_PLUS : 107,
+        KEY_NUM_MINUS: 109,
     };
 });
