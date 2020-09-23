@@ -5,8 +5,6 @@ import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
-const SvgNest = window['SvgNest'];
-const ClipperLib = window['ClipperLib'];
 // TODO confim this statement is true
 const selectedElements = window['selectedElements'];
 const React = requireNode('react');
@@ -22,6 +20,7 @@ class SvgNestButtons extends React.Component {
 
     nestElements = (elements, containerElem?: HTMLElement, config?: any) => {
         let containerPoints;
+        const ClipperLib = window['ClipperLib'];
         if (containerElem) {
             const containerDpath = svgedit.utilities.getPathDFromElement(containerElem);
             const bbox = svgedit.utilities.getBBox(containerElem);
@@ -46,11 +45,18 @@ class SvgNestButtons extends React.Component {
 
             let bbox;
             const id = elem.getAttribute('id');
-            if (elem.tagName === 'use') {
-                bbox = svgCanvas.getSvgRealLocation(elem);
-            } else {
-                bbox = svgCanvas.calculateTransformedBBox(elem);
+
+            switch(elem.tagName) {
+                case 'use':
+                    bbox = svgCanvas.getSvgRealLocation(elem);
+                    break;
+                case 'filter':
+                    continue;
+                default:
+                    bbox = svgCanvas.calculateTransformedBBox(elem);
+                    break;
             }
+
             const rotation = {
                 angle: svgedit.utilities.getRotationAngle(elem),
                 cx: bbox.x + bbox.width / 2,
@@ -115,6 +121,7 @@ class SvgNestButtons extends React.Component {
                 this.undoNestChanges.push(undoRecord);
             }
         }
+        const SvgNest = window['SvgNest'];
 
         if (config) {
             SvgNest.config(config);
@@ -123,6 +130,7 @@ class SvgNestButtons extends React.Component {
     }
 
     stopNestElement = () => {
+        const SvgNest = window['SvgNest'];
         SvgNest.stop();
         let batchCmd = new svgedit.history.BatchCommand('Svg Nest');
         for(let i = 0; i < this.undoNestChanges.length; i++) {
