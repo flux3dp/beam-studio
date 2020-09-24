@@ -128,6 +128,7 @@ interface ISVGEditor {
     setZoomWithWindow: () => void
     storage: IStorage
     toolButtonClick: (button: any, noHiding: any) => boolean
+    updateRulers: () => void
     updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => void
     triggerGridTool: () => void
     handlePaste: () => Promise<void>
@@ -278,6 +279,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             setZoomWithWindow: () => {},
             storage: LocalStorage,
             toolButtonClick: (button: any, noHiding: any) => { return false },
+            updateRulers: () => {},
             updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => {},
             triggerGridTool: () => {},
             handlePaste: async () => {},
@@ -756,6 +758,12 @@ const svgEditor = window['svgEditor'] = (function($) {
             setupCurConfig();
             editor.loadContentAndPrefs();
             setupCurPrefs();
+
+            const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+            const { Menu } = electron.remote;
+            curConfig.showRulers = shouldShowRulers;
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
 
             var setIcon = editor.setIcon = function (elem, icon_id) {
                 var icon = (typeof icon_id === 'string') ? $.getSvgIcon(icon_id, true) : icon_id.clone();
@@ -1595,7 +1603,19 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 updateRuler('x');
                 updateRuler('y');
+                const workArea = document.getElementById('workarea');
+                if (workArea) {
+                    const rulerX = document.getElementById('ruler_x');
+                    const rulerY = document.getElementById('ruler_y');
+                    if (rulerX) {
+                        rulerX.scrollLeft = workArea.scrollLeft;
+                    }
+                    if (rulerY) {
+                        rulerY.scrollTop = workArea.scrollTop - workArea.offsetTop;
+                    }
+                }
             }
+            editor.updateRulers = updateRulers;
 
 
             var updateCanvas = editor.updateCanvas = function (zoomData?: {
@@ -1651,9 +1671,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                     _scrollToMakePointStatic(workarea, staticPoint, zoomRatio, old_scroll);
                 }
 
-                if (curConfig.showRulers) {
+                const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+                if (shouldShowRulers) {
                     updateRulers();
-                    workarea.scroll();
                 }
             };
 
@@ -5445,16 +5465,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     $('#tool_wireframe').click();
                 }
 
-                const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
-                const { Menu } = electron.remote;
-                curConfig.showRulers = shouldShowRulers;
-                Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
-                if (shouldShowRulers) {
-                    document.getElementById('rulers').style.display = '';
-                } else {
-                    document.getElementById('rulers').style.display = 'none';
-                }
-
                 if (curConfig.showRulers) {
                     ($('#show_rulers')[0] as HTMLInputElement).checked = true;
                 }
@@ -6551,8 +6561,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                 x: (parseFloat($('#canvasBackground').attr('x')) - offsetX) / zoomLevel,
                 y: (parseFloat($('#canvasBackground').attr('y')) - offsetY) / zoomLevel
             };
-            $('#workarea')[0].scrollLeft = defaultScroll.x * zoomLevel;
-            $('#workarea')[0].scrollTop = defaultScroll.y * zoomLevel;
+            const workArea = document.getElementById('workarea');
+            workArea.scrollLeft = defaultScroll.x * zoomLevel;
+            workArea.scrollTop = defaultScroll.y * zoomLevel;
         };
 
         editor.setZoomWithWindow = function() {

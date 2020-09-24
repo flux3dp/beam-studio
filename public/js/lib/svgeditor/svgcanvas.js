@@ -11497,11 +11497,8 @@ define([
             const shouldShowRulers = !BeamboxPreference.read('show_rulers');
             BeamboxPreference.write('show_rulers', shouldShowRulers);
             Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
-            if (shouldShowRulers) {
-                document.getElementById('rulers').style.display = '';
-            } else {
-                document.getElementById('rulers').style.display = 'none';
-            }
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
+            svgEditor.updateRulers();
         }
 
         this.setRotaryMode = function(val) {

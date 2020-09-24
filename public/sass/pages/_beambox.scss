@@ -567,6 +567,7 @@
         #sidepanels {
             border: none;
             position: fixed;
+            background-color: #f8f8f8;
             width: $sidePanelWidth;
             padding: 0px;
             opacity: 1.0;
@@ -1588,11 +1589,17 @@
         }
         #rulers {
             pointer-events: none;
+            position: absolute;
             z-index: 1;
             width: calc(100vw - 308px);
             height: 100vh;
             &.mac {
                 width: calc(100vw - 292px);
+            }
+            div {
+                position: absolute;
+                background: #F0F0F0;
+                overflow: hidden;
             }
             #ruler_corner {
                 top: 0px;

@@ -78,33 +78,6 @@ select {
 	background: -webkit-gradient(radial, center center, 3, center center, 1000, from(#bbb), to(#222));
 }
 
-/* Rulers
-——————————————————————————————————————*/
-
-#rulers {
-	position: absolute;
-	width: calc(100vw - 188px);
-	height: 100vh;
-}
-
-#rulers > div {
-	position: absolute;
-	background: #F0F0F0;
-	overflow: hidden;
-}
-
-#ruler_y {
-}
-
-#ruler_x canvas {
-	float: left;
-}
-
-#ruler_x > div,
-#ruler_y > div {
-	overflow: hidden;
-}
-
 #palette_holder {
 	overflow: hidden;
 	margin-top: 5px;
