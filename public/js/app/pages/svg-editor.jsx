@@ -213,6 +213,7 @@ define([
 ) {
     'use strict';
     const React = require('react');
+    const classNames = require('classnames');
     let LANG = i18n.lang.beambox;
     RightPanel = RightPanel.RightPanel;
     const RightPanelContextProvider = RightPanelContext.RightPanelContextProvider;
@@ -235,7 +236,7 @@ define([
                 <div>
                     <TaskInterpreterPanel />
                     <div id="svg_editor">
-                        <div id="rulers">
+                        <div id="rulers" className={classNames({ mac: process.platform === 'darwin' })}>
                             <div id="ruler_corner" />
                             <div id="ruler_x">
                                 <div>

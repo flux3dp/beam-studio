@@ -89,6 +89,7 @@ define([
 ) {
     const React = require('react');
     const ReactDOM = require('react-dom');
+    const electron = require('electron');
     const LANG = i18n.lang.beambox;
     const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
     if (window.svgEditor) {
@@ -228,7 +229,7 @@ define([
                 gridColor: 'rgba(0,0,0,0.18)',
                 baseUnit: 'px',
                 snappingStep: 10,
-                showRulers: false,
+                showRulers: true,
                 // URL BEHAVIOR CONFIGURATION
                 preventAllURLConfig: true,
                 preventURLContentLoading: true,
@@ -622,6 +623,12 @@ define([
                     editor.loadContentAndPrefs();
                     setupCurPrefs();
                 }
+
+                const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+                const { Menu } = electron.remote;
+                curConfig.showRulers = shouldShowRulers;
+                Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+                document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
             })();
 
             var setIcon = editor.setIcon = function (elem, icon_id, forcedSize) {
@@ -1462,7 +1469,19 @@ define([
                 }
                 updateRuler('x');
                 updateRuler('y');
+                const workArea = document.getElementById('workarea');
+                if (workArea) {
+                    const rulerX = document.getElementById('ruler_x');
+                    const rulerY = document.getElementById('ruler_y');
+                    if (rulerX) {
+                        rulerX.scrollLeft = workArea.scrollLeft;
+                    }
+                    if (rulerY) {
+                        rulerY.scrollTop = workArea.scrollTop - workArea.offsetTop;
+                    }
+                } 
             }
+            editor.updateRulers = updateRulers;
 
 
             var updateCanvas = editor.updateCanvas = function (zoomData) {
@@ -5314,12 +5333,6 @@ define([
                     $('#tool_wireframe').click();
                 }
 
-                // if (curConfig.showlayers) {
-                // 	toggleSidePanel();
-                // }
-
-                $('#rulers').toggle(!!curConfig.showRulers);
-
                 if (curConfig.showRulers) {
                     $('#show_rulers')[0].checked = true;
                 }
@@ -6404,12 +6417,13 @@ define([
         };
 
         editor.resetView = function() {
-            const sidePanelsWidth = Constant.sidePanelsWidth;
+            const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+            const sidePanelsWidth = Constant.sidePanelsWidth + (shouldShowRulers ? Constant.rulerWidth : 0);
             const topBarHeight = Constant.topBarHeight;
             const workareaToDimensionRatio = Math.min((window.innerWidth - sidePanelsWidth) / Constant.dimension.getWidth(), (window.innerHeight - topBarHeight) / Constant.dimension.getHeight());
             const zoomLevel = workareaToDimensionRatio * 0.95;
             const workAreaWidth = Constant.dimension.getWidth() * zoomLevel, workAreaHeight = Constant.dimension.getHeight() * zoomLevel;
-            const offsetX = (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2;
+            const offsetX = (window.innerWidth - sidePanelsWidth - workAreaWidth) / 2 + (shouldShowRulers ? Constant.rulerWidth : 0);
             const offsetY = (window.innerHeight - topBarHeight - workAreaHeight) / 2;
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
@@ -6418,16 +6432,16 @@ define([
                 x: ($('#canvasBackground').attr('x') - offsetX) / zoomLevel,
                 y: ($('#canvasBackground').attr('y') - offsetY) / zoomLevel
             };
-            $('#workarea')[0].scrollLeft = defaultScroll.x * zoomLevel;
-            $('#workarea')[0].scrollTop = defaultScroll.y * zoomLevel;
+            const workArea = document.getElementById('workarea');
+            workArea.scrollLeft = defaultScroll.x * zoomLevel;
+            workArea.scrollTop = defaultScroll.y * zoomLevel;
         };
 
         editor.setZoomWithWindow = function() {
             editor.resetView();
             const isZoomWithWindow = !(svgCanvas.isZoomWithWindow || false);
             svgCanvas.isZoomWithWindow = isZoomWithWindow;
-            require('electron').remote.Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0]
-            .submenu.items.filter(i => i.id === 'ZOOM_WITH_WINDOW')[0].checked = isZoomWithWindow;
+            electron.remote.Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'ZOOM_WITH_WINDOW').checked = isZoomWithWindow;
             if (isZoomWithWindow) {
                 window.addEventListener('resize', editor.resetView);
             } else {

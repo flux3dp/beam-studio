@@ -103,6 +103,7 @@ define([
                 'ZOOM_WITH_WINDOW': () => svgEditor.setZoomWithWindow(),
                 'BORDERLESS_MODE': () => svgCanvas.toggleBorderless(),
                 'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
+                'SHOW_RULERS': () => svgCanvas.toggleRulers(),
                 'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
                 'NETWORK_TESTING': () => DialogCaller.showNetworkTestingPanel(),
                 'ABOUT_BEAM_STUDIO': () => DialogCaller.showAboutBeamStudio(),

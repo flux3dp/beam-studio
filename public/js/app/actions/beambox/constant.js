@@ -79,5 +79,6 @@ define([
         topBarHeight: process.platform === 'win32' ? 75 : 40, //px
         topBarHeightWithoutTitleBar: 40, //px
         layerListHeight: 240, //px
+        rulerWidth: 15, //px
     };
 });

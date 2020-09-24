@@ -135,7 +135,8 @@ function buildMenu(callback) {
             { 'id': 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback},
             { 'id': 'ZOOM_WITH_WINDOW', label: r.zoom_with_window || 'Zoom With Window', click: callback, type:'checkbox'},
             { type:'separator'},
-            { 'id': 'SHOW_GRIDS', label: r.show_grids || 'Show Grids', click: callback, type:'checkbox', checked: true},
+            { 'id': 'SHOW_GRIDS', label: r.show_grids || 'Show Grids', click: callback, type:'checkbox', checked: true },
+            { 'id': 'SHOW_RULERS', label: r.show_rulers, click: callback, type:'checkbox' },
             { 'id': 'SHOW_LAYER_COLOR', label: r.show_layer_color || 'Show Layer Color', click: callback, type:'checkbox'}
         ]
     });
