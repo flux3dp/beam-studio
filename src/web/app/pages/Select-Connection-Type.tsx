@@ -68,6 +68,7 @@ class SelectConnectionType extends React.Component{
                     }
                     LocalStorage.set('printer-is-ready', true);
                     location.hash = '#studio/beambox';
+                    location.reload();
                 }} >
                     {isNewUser ? lang.skip : lang.cancel}
                 </div>
