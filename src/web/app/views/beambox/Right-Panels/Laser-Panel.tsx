@@ -639,6 +639,10 @@ class LaserPanel extends React.Component{
         }
     }
 
+    _getDefaultLaserOptions = () => {
+        return this.props.configName || defaultLaserOptions[0];
+    }
+
     render() {
         const layer = svgCanvas.getCurrentDrawing().getLayerByName(this.props.layerName);
         const paths = $(layer).find('path, rect, ellipse, polygon, line, text');
@@ -705,7 +709,7 @@ class LaserPanel extends React.Component{
                 <div className="layerparams">
                     <DropdwonControl
                         id='laser-config-dropdown'
-                        default={defaultLaserOptions[0]}
+                        default={this._getDefaultLaserOptions()}
                         onChange={this._handleParameterTypeChanged}
                         options={dropdownOptions}
                     />
