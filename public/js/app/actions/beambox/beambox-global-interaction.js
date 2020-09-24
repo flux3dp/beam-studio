@@ -25,22 +25,26 @@ define([
         constructor() {
             super();
             const loadExampleFile = function(path) {
-                var oReq = new XMLHttpRequest();
-                oReq.open('GET', path, true);
-                oReq.responseType = 'blob';
+                FnWrapper.toggleUnsavedChangedDialog(
+                    () => {
+                        var oReq = new XMLHttpRequest();
+                        oReq.open('GET', path, true);
+                        oReq.responseType = 'blob';
 
-                oReq.onload = async function(oEvent) {
-                    let res = oReq.response;
-                    let buf = new Buffer.from(await new Response(res).arrayBuffer());
-                    let string = buf.toString();
-                    if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
-                        const LANG = i18n.lang.beambox.right_panel.layer_panel;
-                        string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
+                        oReq.onload = async function(oEvent) {
+                            let res = oReq.response;
+                            let buf = new Buffer.from(await new Response(res).arrayBuffer());
+                            let string = buf.toString();
+                            if (i18n.getActiveLang() && i18n.getActiveLang() !== 'en') {
+                                const LANG = i18n.lang.beambox.right_panel.layer_panel;
+                                string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
+                            }
+                            svgEditor.importBvgString(string);
+                        };
+
+                        oReq.send();
                     }
-                    svgEditor.importBvgString(string);
-                };
-
-                oReq.send();
+                )
             }
             
             this._actions = {
