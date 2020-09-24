@@ -1539,10 +1539,9 @@ define([
                 } else if (staticPoint) {
                     _scrollToMakePointStatic(workarea, staticPoint, zoomRatio, old_scroll);
                 }
-
-                if (curConfig.showRulers) {
+                const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+                if (shouldShowRulers) {
                     updateRulers();
-                    workarea.scroll();
                 }
                 if (urldata.storagePrompt !== true && !editor.storagePromptClosed) {
                     $('#dialog_box').hide();
