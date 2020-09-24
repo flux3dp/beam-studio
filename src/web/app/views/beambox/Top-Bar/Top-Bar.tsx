@@ -98,7 +98,7 @@ export class TopBar extends React.Component {
                 </div>
                 {isPreviewing ? <div className="title" onClick={() => this.showCameraPreviewDeviceList()}>{previewText}</div> : null}
                 {isPreviewing ?
-                    <div className='cross-wrapper' onClick={() => {this.endPreviewMode()}}>
+                    <div className='cross-wrapper' onClick={this.endPreviewMode}>
                         <div className="bars bar1 shadow"></div>
                         <div className="bars bar2 shadow"></div>
                         <div className="bars bar1"></div>
@@ -201,7 +201,7 @@ export class TopBar extends React.Component {
         }
     }
 
-    endPreviewMode() {
+    endPreviewMode = () => {
         const { setTopBarPreviewMode } = this.context;
         try {
             if (PreviewModeController.isPreviewMode()) {
@@ -541,8 +541,8 @@ export class TopBar extends React.Component {
                 <LeftPanel
                     isPreviewing={isPreviewing}
                     setShouldStartPreviewController={setShouldStartPreviewController}
-                    endPreviewMode={() => this.endPreviewMode()}
-                    />
+                    endPreviewMode={this.endPreviewMode}
+                />
                 <div className={classNames('top-bar', {win: isNotMac})}>
                     {this.renderFileName()}
                     {this.renderPreviewButton()}
