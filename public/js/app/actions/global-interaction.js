@@ -19,10 +19,12 @@ function(
             PREFERENCE: () => {
                 FnWrapper.toggleUnsavedChangedDialog(() => {
                     location.hash = '#studio/settings';
-                });   
+                });
             },
             ADD_NEW_MACHINE: () => {
-                location.hash = '#initialize/connect/select-connection-type';
+                FnWrapper.toggleUnsavedChangedDialog(() => {
+                    location.hash = '#initialize/connect/select-connection-type';
+                });
             },
             RELOAD_APP: () => {
                 location.reload();
