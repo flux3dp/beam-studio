@@ -63,7 +63,10 @@ const checkForUpdate = (isAutoCheck) => {
                             buttonType: AlertConstants.YES_NO,
                             message: msg,
                             caption: LANG.check_update,
-                            onYes: () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
+                            onYes: async () => {
+                                const res = await FnWrapper.toggleUnsavedChangedDialog();
+                                if (res) ipc.send(events.QUIT_AND_INSTALL);
+                            }
                         });
                     });
                     ipc.on(events.DOWNLOAD_PROGRESS, (event, progress) => {
@@ -118,7 +121,10 @@ const switchVersion = () => {
                             buttonType: AlertConstants.YES_NO,
                             message: msg,
                             caption: LANG.switch_version,
-                            onYes: () => {FnWrapper.toggleUnsavedChangedDialog(() => {ipc.send(events.QUIT_AND_INSTALL)})}
+                            onYes: async () => {
+                                const res = await FnWrapper.toggleUnsavedChangedDialog();
+                                if (res) ipc.send(events.QUIT_AND_INSTALL);
+                            }
                         });
                     });
                     ipc.on(events.DOWNLOAD_PROGRESS, (event, progress) => {

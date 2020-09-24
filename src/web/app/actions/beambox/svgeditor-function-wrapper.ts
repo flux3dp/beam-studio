@@ -378,30 +378,34 @@ const funcs =  {
         svgCanvas.setHasUnsavedChange(false);
     },
 
-    toggleUnsavedChangedDialog: function (callback) {
-        electron.ipc.send('SAVE_DIALOG_POPPED');
-        if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
-            callback();
-        } else {
-            Alert.popById('unsaved_change_dialog');
-            Alert.popUp({
-                id: 'unsaved_change_dialog',
-                message: LANG.popup.save_unsave_changed,
-                buttonLabels: [i18n.lang.alert.save, i18n.lang.alert.dont_save, i18n.lang.alert.cancel],
-                callbacks: [
-                    async () => {
-                        if (await this.saveFile()) {
-                            callback();
-                        }
-                    },
-                    () => {
-                        callback();
-                    },
-                    () => {},
-                ],
-                primaryButtonIndex: 0
-            });
-        }
+    toggleUnsavedChangedDialog: async function () {
+        return new Promise((resolve) => {
+            electron.ipc.send('SAVE_DIALOG_POPPED');
+            if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
+                resolve(true);
+            } else {
+                Alert.popById('unsaved_change_dialog');
+                Alert.popUp({
+                    id: 'unsaved_change_dialog',
+                    message: LANG.popup.save_unsave_changed,
+                    buttonLabels: [i18n.lang.alert.save, i18n.lang.alert.dont_save, i18n.lang.alert.cancel],
+                    callbacks: [
+                        async () => {
+                            if (await this.saveFile()) {
+                                resolve(true);
+                            }
+                        },
+                        () => {
+                            resolve(true);
+                        },
+                        () => {
+                            resolve(false);
+                        },
+                    ],
+                    primaryButtonIndex: 0
+                });
+            }
+        });
     },
 
     exportAsSVG: function() {

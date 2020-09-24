@@ -16,7 +16,9 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG
 class BeamboxGlobalInteraction extends GlobalInteraction {
     constructor() {
         super();
-        const loadExampleFile = function(path) {
+        const loadExampleFile = async (path: string) => {
+            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            if (!res) return; 
             var oReq = new XMLHttpRequest();
             oReq.open('GET', path, true);
             oReq.responseType = 'blob';

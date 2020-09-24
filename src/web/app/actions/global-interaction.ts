@@ -14,13 +14,13 @@ if (electron) {
     events = electron.events;
 
     defaultAction = {
-        PREFERENCE: () => {
-            FnWrapper.toggleUnsavedChangedDialog(() => {
-                location.hash = '#studio/settings';
-            });   
+        PREFERENCE: async () => {
+            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            if (res) location.hash = '#studio/settings';
         },
-        ADD_NEW_MACHINE: () => {
-            location.hash = '#initialize/connect/select-connection-type';
+        ADD_NEW_MACHINE: async () => {
+            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            if (res) location.hash = '#initialize/connect/select-connection-type';
         },
         RELOAD_APP: () => {
             location.reload();
@@ -36,11 +36,10 @@ if (electron) {
         }
     });
 
-    ipc.on('WINDOW_CLOSE', (event, e) => {
+    ipc.on('WINDOW_CLOSE', async (event, e) => {
         const ipc = electron.ipc;
-        FnWrapper.toggleUnsavedChangedDialog(() => {
-            ipc.send('CLOSE_REPLY', true);
-        });
+        const res = await FnWrapper.toggleUnsavedChangedDialog();
+        if (res) ipc.send('CLOSE_REPLY', true);
     });
 }
 
