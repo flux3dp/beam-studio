@@ -37,7 +37,7 @@ const functionalLaserOptions = [
     'more',
 ];
 
-class LaserPanel extends React.Component{
+class LaserPanel extends React.PureComponent {
     constructor(props) {
         super(props);
         this.initDefaultConfig();
@@ -53,15 +53,16 @@ class LaserPanel extends React.Component{
             selectedItem:   LocalStorage.get('customizedLaserConfigs')[0] ? LocalStorage.get('customizedLaserConfigs')[0].name : '',
             isSelectingCustomized: true
         };
+        this.unit = LocalStorage.get('default-units') || 'mm';
     }
 
     componentDidMount() {
         BeamboxStore.removeAllUpdateLaserPanelListeners();
-        BeamboxStore.onUpdateLaserPanel(() => this.updateData());
+        BeamboxStore.onUpdateLaserPanel(this.updateData);
     }
 
     componentWillUnmount() {
-        BeamboxStore.removeUpdateLaserPanelListener(() => this.updateData());
+        BeamboxStore.removeUpdateLaserPanelListener(this.updateData);
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -656,8 +657,7 @@ class LaserPanel extends React.Component{
                 break;
             }
         }
-        const unit = LocalStorage.get('default-units') || 'mm';
-        const speedPanel = this._renderSpeed(hasVector, unit);
+        const speedPanel = this._renderSpeed(hasVector, this.unit);
         const strengthPanel = this._renderStrength();
         const repeatPanel = this._renderRepeat();
         const enableHeightPanel = this._renderEnableHeight();
@@ -676,14 +676,14 @@ class LaserPanel extends React.Component{
             return {
                 value : item,
                 key: item,
-                label: (LANG.dropdown[unit][item] ? LANG.dropdown[unit][item] : item)
+                label: (LANG.dropdown[this.unit][item] ? LANG.dropdown[this.unit][item] : item)
             };
         });
         const functionalOptions = functionalLaserOptions.map((item) => {
             return {
                 value : item,
                 key: item,
-                label: LANG.dropdown[unit][item]
+                label: LANG.dropdown[this.unit][item]
             };
         });
         const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
