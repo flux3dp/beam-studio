@@ -402,6 +402,9 @@ define([
                         if (parent === svgcontent) {
                             canvas.identifyLayers();
                         }
+                        elems.forEach((elem) => {
+                            canvas.updateElementColor(elem);
+                        });
                     } else if (cmdType === InsertElementCommand.type() ||
                         cmdType === RemoveElementCommand.type()) {
                         if (cmd.parent === svgcontent) {
@@ -2472,6 +2475,7 @@ define([
                     case 'resize':
                     case 'multiselect':
                         if (current_mode === 'multiselect') {
+                            curBBoxes = [];
                             let intersectedElements = getIntersectionList();
                             intersectedElements = intersectedElements.filter((elem) => {
                                 const layer = svgCanvas.getObjectLayer(elem);
