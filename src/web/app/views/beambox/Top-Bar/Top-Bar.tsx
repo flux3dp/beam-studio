@@ -44,7 +44,7 @@ const LANG = i18n.lang.topbar;
 const isNotMac = process.platform !== 'darwin';
 let _contextCaller;
 
-export class TopBar extends React.Component {
+export class TopBar extends React.PureComponent {
     constructor() {
         super();
         this.deviceList = [];
@@ -55,6 +55,7 @@ export class TopBar extends React.Component {
             deviceListDir: 'right',
             selectDeviceCallback: () => {},
         };
+        this.topBarClassName = classNames('top-bar', { win: isNotMac });
     }
 
     componentDidMount() {
@@ -543,7 +544,7 @@ export class TopBar extends React.Component {
                     setShouldStartPreviewController={setShouldStartPreviewController}
                     endPreviewMode={this.endPreviewMode}
                 />
-                <div className={classNames('top-bar', {win: isNotMac})}>
+                <div className={this.topBarClassName}>
                     {this.renderFileName()}
                     {this.renderPreviewButton()}
                     {this.renderGoButton()}
