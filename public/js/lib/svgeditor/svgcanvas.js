@@ -1478,6 +1478,11 @@ define([
                 evt.preventDefault();
 
                 if (right_click) {
+                    if (current_mode === 'path') {
+                        pathActions.finishPath(false);
+                        current_mode = 'select';
+                        return;
+                    }
                     current_mode = 'select';
                     $('.tool-btn').removeClass('active');
                     $('#left-Cursor').addClass('active');
@@ -3841,9 +3846,50 @@ define([
                 return element;
             };
 
+            const finishPath = (toEditMode = true) => {
+                const xAlignLine = document.getElementById('x_align_line');
+                if (xAlignLine) xAlignLine.remove();
+                const yAlignLine = document.getElementById('y_align_line');
+                if (yAlignLine) yAlignLine.remove();
+
+                if (!drawn_path) {
+                    return;
+                }
+
+                const stretchy = document.getElementById('path_stretch_line');
+                let id = getId();
+                firstCtrl = null;
+                svgedit.path.removePath_(id);
+
+                let element = document.getElementById(id);
+                if (stretchy) stretchy.remove();
+                let len = drawn_path.pathSegList.numberOfItems;
+                drawn_path = null;
+                started = false;
+                if (len > 1) {
+                    element.setAttribute('opacity', cur_shape.opacity);
+                    element.setAttribute('style', 'pointer-events:inherit');
+                    cleanupElement(element);
+                    addCommandToHistory(new svgedit.history.InsertElementCommand(element));
+                    if (toEditMode) {
+                        pathActions.toEditMode(element);
+                        call('changed', [element]);
+                    } else {
+                        const pathPointGripContainer = document.getElementById('pathpointgrip_container');
+                        if (pathPointGripContainer) pathPointGripContainer.remove();
+                    }
+                } else {
+                    if (element) element.remove();
+                    canvas.setMode(previousMode);
+                }
+
+                shortcuts.off(['esc']);
+                shortcuts.on(['esc'], svgEditor.clickSelect);
+            }
+
             return {
                 mouseDown: function (evt, mouse_target, start_x, start_y) {
-                    var id;
+                    //
                     $('#x_align_line').remove();
                     $('#y_align_line').remove();
                     if (current_mode === 'path') {
@@ -3901,35 +3947,8 @@ define([
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
                             svgedit.path.addDrawingPoint(index, mouse_x, mouse_y);
-                            const endPathMode = () => {
-                                $('#x_align_line').remove();
-                                $('#y_align_line').remove();
-                                id = getId();
-                                firstCtrl = null;
-                                svgedit.path.removePath_(id);
-                                let element = svgedit.utilities.getElem(id);
-                                $(stretchy).remove();
-                                let len = drawn_path.pathSegList.numberOfItems;
-                                drawn_path = null;
-                                started = false;
-                                if (len > 1) {
-                                    element.setAttribute('opacity', cur_shape.opacity);
-                                    element.setAttribute('style', 'pointer-events:inherit');
-                                    cleanupElement(element);
-                                    pathActions.toEditMode(element);
-                                    addCommandToHistory(new svgedit.history.InsertElementCommand(element));
-                                    call('changed', [element]);
-                                } else {
-                                    $(element).remove();
-                                    $('#pathpointgrip_container').remove();
-                                    canvas.setMode(previousMode);
-                                }
-
-                                shortcuts.off(['esc']);
-                                shortcuts.on(['esc'], svgEditor.clickSelect);
-                            }
                             shortcuts.off(['esc']);
-                            shortcuts.on(['esc'], endPathMode);
+                            shortcuts.on(['esc'], finishPath);
                         } else {
                             // determine if we clicked on an existing point
                             var seglist = drawn_path.pathSegList;
@@ -3949,7 +3968,7 @@ define([
                             }
 
                             // get path element that we are in the process of creating
-                            id = getId();
+                            let id = getId();
 
                             // Remove previous path object if previously created
                             svgedit.path.removePath_(id);
@@ -4290,6 +4309,7 @@ define([
                     }
                     hasMoved = false;
                 },
+                finishPath: finishPath,
                 toEditMode: function (element) {
                     svgedit.path.path = svgedit.path.getPath_(element);
                     const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
@@ -7183,6 +7203,9 @@ define([
         // Parameters:
         // name - String with the new mode to change to
         this.setMode = function (name) {
+            if (current_mode === 'path') {
+                pathActions.finishPath(false);
+            }
             pathActions.clear(true);
             textActions.clear();
             cur_properties = (selectedElements[0] && selectedElements[0].nodeName === 'text') ? cur_text : cur_shape;
@@ -9974,12 +9997,11 @@ define([
             }
 
             // now move all children into the group
-            var i = selectedElements.length;
-            while (i--) {
+            var len = selectedElements.length;
+            for (let i = 0; i < len ;i++) {
                 if (hasAlreadyTempGroup && i === 0) {
-                    break;
+                    continue;
                 }
-
                 var elem = selectedElements[i];
                 if (elem == null) {
                     continue;
@@ -9990,6 +10012,9 @@ define([
                 }
                 const original_layer = this.getObjectLayer(elem).title;
                 $(elem).attr('data-original-layer', original_layer);
+                if (elem.nextSibling) {
+                    $(elem).attr('data-next-sibling', elem.nextSibling.id);
+                }
                 g.appendChild(elem);
                 if (['image', 'use'].includes(elem.tagName)) {
                     const imageBorder = svgdoc.createElementNS(NS.SVG, 'rect');
@@ -10088,9 +10113,8 @@ define([
 
                 var i = 0;
 
-                while (g.firstChild) {
-                    var elem = g.firstChild;
-                    var oldNextSibling = elem.nextSibling;
+                while (g.lastChild) {
+                    var elem = g.lastChild;
                     var oldParent = elem.parentNode;
 
                     if (elem.getAttribute('data-imageborder') === 'true') {
@@ -10100,19 +10124,28 @@ define([
 
                     // Remove child title elements
                     if (elem.tagName === 'title') {
-                        var nextSibling = elem.nextSibling;
                         oldParent.removeChild(elem);
                         continue;
                     }
                     const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
-                        original_layer.appendChild(elem);
+                        if (elem.getAttribute('data-next-sibling')) {
+                            original_layer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            elem.removeAttribute('data-next-sibling')
+                        } else {
+                            original_layer.appendChild(elem);
+                        }
                         if (this.isUseLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
-                        currentLayer.appendChild(elem);
+                        if (elem.getAttribute('data-next-sibling')) {
+                            currentLayer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            elem.removeAttribute('data-next-sibling')
+                        } else {
+                            currentLayer.appendChild(elem);
+                        }
                         if (this.isUseLayerColor) {
                             this.updateElementColor(elem);
                         }
