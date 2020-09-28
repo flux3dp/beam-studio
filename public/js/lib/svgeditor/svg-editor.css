@@ -939,6 +939,14 @@ span.zoom_tool {
 		height: 90px;
 		background: #F0F0F0;
 	}
+	#workarea, #sidepanels {
+		top: 70px;
+	}
+
+	#cur_context_panel {
+		top: 87px;
+	}
+
 	#selected_panel {
 		clear: right;
 	}

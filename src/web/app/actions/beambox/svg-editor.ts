@@ -1670,7 +1670,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                 } else if (staticPoint) {
                     _scrollToMakePointStatic(workarea, staticPoint, zoomRatio, old_scroll);
                 }
-
                 const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
                 if (shouldShowRulers) {
                     updateRulers();
@@ -6579,10 +6578,19 @@ const svgEditor = window['svgEditor'] = (function($) {
             }
         }
 
+        var preventDoubleZoomIn = false;
+
         editor.zoomIn = function() {
-            editor.zoomChanged(window, {
-                zoomLevel: svgCanvas.getZoom() * 1.1
-            });
+            if (!preventDoubleZoomIn) {
+                editor.zoomChanged(window, {
+                    zoomLevel: svgCanvas.getZoom() * 1.1
+                });
+                preventDoubleZoomIn = true;
+
+                setTimeout(() => {
+                    preventDoubleZoomIn = false;
+                }, 10);
+            }
         };
 
         editor.zoomOut = function() {

@@ -2492,6 +2492,7 @@ define([
                     case 'resize':
                     case 'multiselect':
                         if (current_mode === 'multiselect') {
+                            curBBoxes = [];
                             let intersectedElements = getIntersectionList();
                             intersectedElements = intersectedElements.filter((elem) => {
                                 const layer = svgCanvas.getObjectLayer(elem);
@@ -6607,11 +6608,21 @@ define([
         this.toggleUseLayerColor = () => {
             this.isUseLayerColor = !(this.isUseLayerColor);
             BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
-            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_LAYER_COLOR').checked = this.isUseLayerColor;
             const layers = $('#svgcontent > g.layer').toArray();
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
             });
+        };
+
+        this.toggleRulers = () => {
+            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
+            if (shouldShowRulers) {
+                svgEditor.updateRulers();
+            }
+            BeamboxPreference.write('show_rulers', shouldShowRulers);
         };
 
         let hexToRgb = (hexColorCode) => {

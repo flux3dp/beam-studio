@@ -1608,25 +1608,26 @@
             }
             #ruler_x {
                 top: 0px;
-                height: 15px;
                 left: 15px;
                 right: 0px;
+                height: 15px;
                 border-bottom: 1px solid;
                 border-left: 1px solid #777;
-                canvas:first-child {
+                canvas {
                     margin-left: -16px;
                 }
             }
             #ruler_y {
-                width: 15px;
                 top: 15px;
-                left: 0px;
                 bottom: 0px;
+                left: 0px;
+                width: 15px;
                 border-right: 1px solid;
                 border-top: 1px solid #777;
-                canvas:first-child {
+                canvas {
                     margin-top: -17px;
                 }
+
             }
             #ruler_unit_shower {
                 top: 0px;
