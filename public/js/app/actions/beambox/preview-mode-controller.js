@@ -288,13 +288,22 @@ define([
         //movementX, movementY in mm
         async _getPhotoAfterMoveTo(movementX, movementY) {
             const movement = {
-                f: Math.max(Constant.camera.movementSpeed.x, Constant.camera.movementSpeed.y), // firmware will used limited x, y speed still
                 x: movementX, // mm
                 y: movementY  // mm
             };
+            let feedrate = Math.min(Constant.camera.movementSpeed.x, Constant.camera.movementSpeed.y);
             if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
-                movement.f = movement.f * 0.6;
+                if (BeamboxPreference.read('preview_movement_speed_hl')) {
+                    feedrate = BeamboxPreference.read('preview_movement_speed_hl');
+                } else {
+                    feedrate *= 0.6;
+                }
+            } else {
+                if (BeamboxPreference.read('preview_movement_speed')) {
+                    feedrate = BeamboxPreference.read('preview_movement_speed');
+                }
             }
+            movement.f = feedrate// firmware will used limited x, y speed still
 
             await DeviceMaster.select(this.storedPrinter);
             const res = await DeviceMaster.rawMove(movement);
@@ -310,16 +319,21 @@ define([
 
         //movementX, movementY in mm
         async _waitUntilEstimatedMovementTime(movementX, movementY) {
-            const speed = {
-                x: Constant.camera.movementSpeed.x / 60 / 1000, // speed: mm per millisecond
-                y: Constant.camera.movementSpeed.y / 60 / 1000 // speed: mm per millisecond
-            };
-            let timeToWait = Math.hypot((this.lastPosition[0] - movementX)/speed.x, (this.lastPosition[1] - movementY)/speed.y);
-
+            
+            let feedrate = Math.min(Constant.camera.movementSpeed.x, Constant.camera.movementSpeed.y);
             if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
-                timeToWait = timeToWait / 0.6;
+                if (BeamboxPreference.read('preview_movement_speed_hl')) {
+                    feedrate = BeamboxPreference.read('preview_movement_speed_hl');
+                } else {
+                    feedrate *= 0.6;
+                }
+            } else {
+                if (BeamboxPreference.read('preview_movement_speed')) {
+                    feedrate = BeamboxPreference.read('preview_movement_speed');
+                }
             }
 
+            let timeToWait = (Math.hypot(this.lastPosition[0] - movementX, this.lastPosition[1] - movementY) / feedrate) * 60000; // min => ms
             // wait for moving camera to take a stable picture, this value need to be optimized
             timeToWait *= 1.2;
             timeToWait += 100;

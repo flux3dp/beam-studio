@@ -374,10 +374,7 @@ define([
             const defaultEntries = this.renderDefaultEntries();
             const customizedEntries = this.renderCustomizedEntries();
 
-            const unitMaxSpeed = {mm: 300, inches: 12}[this.unit];
-            const unitMinSpeed = {mm: 3, inches: 0.118}[this.unit];
             const speedUnit = {mm: 'mm/s', inches: 'in/s'}[this.unit];
-            const unitDisplaySpeed = displaySpeed / {mm: 1, inches: 25.4}[this.unit];
             const unitSpeedDecimal = {mm: 1, inches: 3}[this.unit];
             const zStepUnit = {mm: 'mm', inches: 'in'}[this.unit];
             const unitZStepDcimal = {mm: 2, inches: 4}[this.unit];
@@ -429,12 +426,12 @@ define([
                                 <div className='control'>
                                     <span className='label'>{LANG.laser_speed.text}</span>
                                     <UnitInput
-                                        min={unitMinSpeed}
-                                        max={unitMaxSpeed}
+                                        min={3}
+                                        max={300}
                                         disabled={disableControl}
                                         unit={speedUnit}
-                                        getValue={(val) => {this.handleSpeedInputChange(selectedItem, val)}}
-                                        defaultValue={unitDisplaySpeed}
+                                        getValue={(val) => {this.handleUnsavedChange(selectedItem, 'speed', val)}}
+                                        defaultValue={displaySpeed}
                                         decimal={unitSpeedDecimal}
                                         step={1}
                                     />

@@ -57,7 +57,7 @@ define([
         }
 
         _updateValue(newVal) {
-            if (this.getLengthUnit() === 'in') {
+            if (['in', 'in/s'].includes(this.getLengthUnit())) {
                 newVal *= 25.4;
             }
             const newValue = this._validateValue(newVal);
@@ -140,7 +140,7 @@ define([
         }
 
         getTransformedValue(value) {
-            if (this.getLengthUnit() === 'in') {
+            if (['in', 'in/s'].includes(this.getLengthUnit())) {
                 return Number(value / 25.4).toFixed(4);
             } else {
                 return value;

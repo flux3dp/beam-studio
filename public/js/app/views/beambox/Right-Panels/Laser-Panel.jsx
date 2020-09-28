@@ -242,9 +242,6 @@ define([
         };
 
         _handleSpeedChange = (val, unit) => {
-            if (unit === 'inches') {
-                val *= 25.4;
-            }
             this.setState({speed: val});
             this.props.funcs.writeSpeed(this.props.layerName, val);
         }
@@ -489,19 +486,16 @@ define([
         _renderSpeed = (hasVector, unit) => {
             const maxValue = 300;
             const minValue = 3;
-            const maxValueDisplay = {mm: 300, inches: 12}[unit];
-            const minValueDisplay = {mm: 3, inches: 0.118}[unit];
             const unitDisplay = {mm: 'mm/s', inches: 'in/s'}[unit];
-            const valueDisplay = this.state.speed / {mm: 1, inches: 25.4}[unit];
             const decimalDisplay = {mm: 1, inches: 2}[unit];
             return (
                 <div className='panel'>
                     <span className='title'>{LANG.speed}</span>
                     <UnitInput
-                        min={minValueDisplay}
-                        max={maxValueDisplay}
+                        min={minValue}
+                        max={maxValue}
                         unit={unitDisplay}
-                        defaultValue={valueDisplay}
+                        defaultValue={this.state.speed}
                         getValue={(val) => {this._handleSpeedChange(val, unit)}}
                         decimal={decimalDisplay}
                     />
