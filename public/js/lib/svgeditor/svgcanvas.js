@@ -9949,8 +9949,8 @@ define([
             $('#svgcontent')[0].appendChild(g);
 
             // now move all children into the group
-            var i = selectedElements.length;
-            while (i--) {
+            var len = selectedElements.length;
+            for (let i = 0; i < len ;i++) {
                 var elem = selectedElements[i];
                 if (elem == null) {
                     continue;
@@ -9961,6 +9961,9 @@ define([
                 }
                 const original_layer = this.getObjectLayer(elem).title;
                 $(elem).attr('data-original-layer', original_layer);
+                if (elem.nextSibling) {
+                    $(elem).attr('data-next-sibling', elem.nextSibling.id);
+                }
                 g.appendChild(elem);
                 if (['image', 'use'].includes(elem.tagName)) {
                     const imageBorder = svgdoc.createElementNS(NS.SVG, 'rect');
@@ -10055,9 +10058,8 @@ define([
 
                 var i = 0;
 
-                while (g.firstChild) {
-                    var elem = g.firstChild;
-                    var oldNextSibling = elem.nextSibling;
+                while (g.lastChild) {
+                    var elem = g.lastChild;
                     var oldParent = elem.parentNode;
 
                     if (elem.getAttribute('data-imageborder') === 'true') {
@@ -10067,19 +10069,28 @@ define([
 
                     // Remove child title elements
                     if (elem.tagName === 'title') {
-                        var nextSibling = elem.nextSibling;
                         oldParent.removeChild(elem);
                         continue;
                     }
                     const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
-                        original_layer.appendChild(elem);
+                        if (elem.getAttribute('data-next-sibling')) {
+                            original_layer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            elem.removeAttribute('data-next-sibling')
+                        } else {
+                            original_layer.appendChild(elem);
+                        }
                         if (this.isUseLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
-                        currentLayer.appendChild(elem);
+                        if (elem.getAttribute('data-next-sibling')) {
+                            currentLayer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            elem.removeAttribute('data-next-sibling')
+                        } else {
+                            currentLayer.appendChild(elem);
+                        }
                         if (this.isUseLayerColor) {
                             this.updateElementColor(elem);
                         }
