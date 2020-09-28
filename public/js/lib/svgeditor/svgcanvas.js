@@ -1461,6 +1461,11 @@ define([
                 evt.preventDefault();
 
                 if (right_click) {
+                    if (current_mode === 'path') {
+                        pathActions.finishPath(false);
+                        current_mode = 'select';
+                        return;
+                    }
                     current_mode = 'select';
                     $('.tool-btn').removeClass('active');
                     $('#left-Cursor').addClass('active');
@@ -3824,9 +3829,50 @@ define([
                 return element;
             };
 
+            const finishPath = (toEditMode = true) => {
+                const xAlignLine = document.getElementById('x_align_line');
+                if (xAlignLine) xAlignLine.remove();
+                const yAlignLine = document.getElementById('y_align_line');
+                if (yAlignLine) yAlignLine.remove();
+
+                if (!drawn_path) {
+                    return;
+                }
+
+                const stretchy = document.getElementById('path_stretch_line');
+                let id = getId();
+                firstCtrl = null;
+                svgedit.path.removePath_(id);
+
+                let element = document.getElementById(id);
+                if (stretchy) stretchy.remove();
+                let len = drawn_path.pathSegList.numberOfItems;
+                drawn_path = null;
+                started = false;
+                if (len > 1) {
+                    element.setAttribute('opacity', cur_shape.opacity);
+                    element.setAttribute('style', 'pointer-events:inherit');
+                    cleanupElement(element);
+                    addCommandToHistory(new svgedit.history.InsertElementCommand(element));
+                    if (toEditMode) {
+                        pathActions.toEditMode(element);
+                        call('changed', [element]);
+                    } else {
+                        const pathPointGripContainer = document.getElementById('pathpointgrip_container');
+                        if (pathPointGripContainer) pathPointGripContainer.remove();
+                    }
+                } else {
+                    if (element) element.remove();
+                    canvas.setMode(previousMode);
+                }
+
+                shortcuts.off(['esc']);
+                shortcuts.on(['esc'], svgEditor.clickSelect);
+            }
+
             return {
                 mouseDown: function (evt, mouse_target, start_x, start_y) {
-                    var id;
+                    //
                     $('#x_align_line').remove();
                     $('#y_align_line').remove();
                     if (current_mode === 'path') {
@@ -3884,35 +3930,8 @@ define([
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
                             svgedit.path.addDrawingPoint(index, mouse_x, mouse_y);
-                            const endPathMode = () => {
-                                $('#x_align_line').remove();
-                                $('#y_align_line').remove();
-                                id = getId();
-                                firstCtrl = null;
-                                svgedit.path.removePath_(id);
-                                let element = svgedit.utilities.getElem(id);
-                                $(stretchy).remove();
-                                let len = drawn_path.pathSegList.numberOfItems;
-                                drawn_path = null;
-                                started = false;
-                                if (len > 1) {
-                                    element.setAttribute('opacity', cur_shape.opacity);
-                                    element.setAttribute('style', 'pointer-events:inherit');
-                                    cleanupElement(element);
-                                    pathActions.toEditMode(element);
-                                    addCommandToHistory(new svgedit.history.InsertElementCommand(element));
-                                    call('changed', [element]);
-                                } else {
-                                    $(element).remove();
-                                    $('#pathpointgrip_container').remove();
-                                    canvas.setMode(previousMode);
-                                }
-
-                                shortcuts.off(['esc']);
-                                shortcuts.on(['esc'], svgEditor.clickSelect);
-                            }
                             shortcuts.off(['esc']);
-                            shortcuts.on(['esc'], endPathMode);
+                            shortcuts.on(['esc'], finishPath);
                         } else {
                             // determine if we clicked on an existing point
                             var seglist = drawn_path.pathSegList;
@@ -3932,7 +3951,7 @@ define([
                             }
 
                             // get path element that we are in the process of creating
-                            id = getId();
+                            let id = getId();
 
                             // Remove previous path object if previously created
                             svgedit.path.removePath_(id);
@@ -4273,6 +4292,7 @@ define([
                     }
                     hasMoved = false;
                 },
+                finishPath: finishPath,
                 toEditMode: function (element) {
                     svgedit.path.path = svgedit.path.getPath_(element);
                     const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
@@ -7166,6 +7186,9 @@ define([
         // Parameters:
         // name - String with the new mode to change to
         this.setMode = function (name) {
+            if (current_mode === 'path') {
+                pathActions.finishPath(false);
+            }
             pathActions.clear(true);
             textActions.clear();
             cur_properties = (selectedElements[0] && selectedElements[0].nodeName === 'text') ? cur_text : cur_shape;
