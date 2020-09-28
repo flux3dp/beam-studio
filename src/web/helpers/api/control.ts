@@ -928,12 +928,9 @@ class Control {
         const command = 'M172';
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
-                console.log('raw line check:\t', response.text);
                 responseString += response.text;
-                console.log(responseString)
             }
             let resps = responseString.split('\n');
-            console.log(resps);
             const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
             if (i >= 0) {
                 this.isLineCheckMode = false;
