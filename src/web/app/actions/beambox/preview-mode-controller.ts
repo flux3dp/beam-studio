@@ -58,6 +58,9 @@ class PreviewModeController {
             let res = await DeviceMaster.enterRawMode();
             res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
             res = await DeviceMaster.rawHome();
+            res = await DeviceMaster.rawStartLineCheckMode();
+            res = await DeviceMaster.rawSetFan(false);
+            res = await DeviceMaster.rawSetAirPump(false);
             await DeviceMaster.connectCamera(selectedPrinter);
             PreviewModeBackgroundDrawer.start(this.cameraOffset);
             PreviewModeBackgroundDrawer.drawBoundary();
@@ -70,6 +73,7 @@ class PreviewModeController {
                 DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
+            DeviceMaster.rawEndLineCheckMode();
             DeviceMaster.endRawMode();
             throw error;
         } finally {
@@ -86,6 +90,7 @@ class PreviewModeController {
         await this._reset();
         const res = await DeviceMaster.select(storedPrinter);
         if (res.success) {
+            await DeviceMaster.rawEndLineCheckMode();
             await DeviceMaster.endRawMode();
             if (this.originalSpeed !== 1) {
                 await DeviceMaster.setLaserSpeed(this.originalSpeed);
@@ -209,6 +214,7 @@ class PreviewModeController {
     async _retrieveCameraOffset() {
         // cannot getDeviceSetting during maintainMode. So we force to end it.
         try {
+            await DeviceMaster.rawEndLineCheckMode();
             await DeviceMaster.endRawMode();
         } catch (error) {
             if ( (error.status === 'error') && (error.error && error.error[0] === 'OPERATION_ERROR') ) {

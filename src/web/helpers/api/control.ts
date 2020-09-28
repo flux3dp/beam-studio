@@ -20,6 +20,8 @@ class Control {
     private dedicatedWs: any[] = [];
     private fileInfoWsId: number = 0;
     private mode: string = ''; // null, maintain or raw
+    private currentLineNumber: number = 0;
+    private isLineCheckMode: boolean = false;
     // todo: remove this??
     private commandCallback = {
         onMessage: (event: any) => {},
@@ -73,6 +75,79 @@ class Control {
         };
 
         this.ws.send(command);
+        return d.promise();
+    };
+
+    calculateCRC(command: string) {
+        let crc = 0;
+        for (let i = 0; i < command.length; i++) {
+            if (command[i] != ' ') {
+                let charCode = command.charCodeAt(i);
+                crc ^= charCode;
+                crc += charCode;
+            }
+        }
+        crc %= 65536;
+        return crc;
+    }
+
+    buildLineCheckCommand(command: string) {
+        command = `N${this.currentLineNumber}${command}`;
+        let crc = this.calculateCRC(command);
+        return `${command} *${crc}`;
+    }
+
+    rawLineCheckCommand(command: string, timeout=30000) {
+        let d = $.Deferred();
+
+        const timeoutTimer = setTimeout(() => {
+            d.reject({
+                status: 'error',
+                text:'TIMEOUT',
+                error: 'TIMEOUT',
+            });
+        }, timeout);
+
+        this.commandCallback.onMessage = (response) => {
+            if (response && response.status === 'raw') {
+                console.log(response.text);
+                if (response.text.startsWith(`L${this.currentLineNumber}`)) {
+                    clearTimeout(timeoutTimer);
+                    this.currentLineNumber += 1;
+                    d.resolve();
+                } else if (response.text.startsWith('ERL')) {
+                    const correctLineNumber = Number(response.text.substring(3).split(' ')[0]);
+                    this.currentLineNumber = correctLineNumber;
+                    let cmd = this.buildLineCheckCommand(command);
+                    console.log(cmd);
+                    this.ws.send(cmd);
+                } else if (response.text.startsWith('ER')) {
+                    let cmd = this.buildLineCheckCommand(command);
+                    console.log(cmd);
+                    this.ws.send(cmd);
+                }
+            }
+            if (response.text.indexOf('ER:RESET') >= 0) {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            } else if (response.text.indexOf('error:') >= 0) {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            }
+        };
+
+        this.commandCallback.onError = (response) => {
+            clearTimeout(timeoutTimer);
+            d.reject(response);
+        };
+        this.commandCallback.onFatal = (response) => {
+            clearTimeout(timeoutTimer);
+            d.reject(response);
+        };
+
+        let cmd = this.buildLineCheckCommand(command);
+        console.log(cmd);
+        this.ws.send(cmd);
         return d.promise();
     };
 
@@ -804,6 +879,90 @@ class Control {
         return d.promise();
     }
 
+    rawStartLineCheckMode() {
+        let d = $.Deferred();
+        let isCmdResent = false;
+        let responseString = '';
+        const command = '$@';
+        this.commandCallback.onMessage = (response) => {
+            if (response && response.status === 'raw') {
+                console.log('raw line check:\t', response.text);
+                responseString += response.text;
+            }
+            let resps = responseString.split('\n');
+            
+            const i = resps.findIndex((r) => r === 'CTRL LINECHECK_ENABLED');
+            if (i >= 0 && resps[i+1].startsWith('ok')) {
+                this.isLineCheckMode = true;
+                this.currentLineNumber = 1;
+                d.resolve();
+            }
+            if (response.text.indexOf('ER:RESET') >= 0) {
+                d.reject(response);
+            } else if (response.text.indexOf('error:') >= 0) {
+                // Resend command for error code
+                const errorCode = parseInt(response.text.substring(6));
+                switch (errorCode) {
+                    default:
+                        if (!isCmdResent) {
+                            isCmdResent = true;
+                            setTimeout(() => {
+                                isCmdResent = false;
+                                responseString = '';
+                                this.ws.send(command);
+                            }, 200);
+                        }
+                }
+            }
+        };
+        this.commandCallback.onError = (response) => { d.reject(response); };
+        this.commandCallback.onFatal = (response) => { d.reject(response); };
+        this.ws.send(command);
+        return d.promise();
+    }
+
+    rawEndLineCheckMode() {
+        let d = $.Deferred();
+        let isCmdResent = false;
+        let responseString = '';
+        const command = 'M172';
+        this.commandCallback.onMessage = (response) => {
+            if (response && response.status === 'raw') {
+                console.log('raw line check:\t', response.text);
+                responseString += response.text;
+                console.log(responseString)
+            }
+            let resps = responseString.split('\n');
+            console.log(resps);
+            const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
+            if (i >= 0) {
+                this.isLineCheckMode = false;
+                d.resolve();
+            }
+            if (response.text.indexOf('ER:RESET') >= 0) {
+                d.reject(response);
+            } else if (response.text.indexOf('error:') >= 0) {
+                // Resend command for error code
+                const errorCode = parseInt(response.text.substring(6));
+                switch (errorCode) {
+                    default:
+                        if (!isCmdResent) {
+                            isCmdResent = true;
+                            setTimeout(() => {
+                                isCmdResent = false;
+                                responseString = '';
+                                this.ws.send(command);
+                            }, 200);
+                        }
+                }
+            }
+        };
+        this.commandCallback.onError = (response) => { d.reject(response); };
+        this.commandCallback.onFatal = (response) => { d.reject(response); };
+        this.ws.send(command);
+        return d.promise();
+    }
+
     rawMove (args) {
         let command = 'G1';
         args.f = args.f || '6000';
@@ -814,8 +973,30 @@ class Control {
         if (typeof args.y !== 'undefined') {
             command += 'Y' + Math.round(args.y * 1000) / 1000;
         };
-        console.log('raw move command:', command);
-        return this.useDefaultResponse(command);
+        if (!this.isLineCheckMode) {
+            console.log('raw move command:', command);
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
+    }
+
+    rawSetAirPump(on) {
+        const command = on ? 'B3' : 'B4';
+        if (!this.isLineCheckMode) {
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
+    }
+
+    rawSetFan(on) {
+        const command = on ? 'B5' : 'B6';
+        if (!this.isLineCheckMode) {
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
     }
 
     rawSetRotary (on) {

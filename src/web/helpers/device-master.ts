@@ -534,12 +534,28 @@ class DeviceMaster {
         return SocketMaster.addTask('rawHome');
     }
 
+    rawStartLineCheckMode() {
+        return SocketMaster.addTask('rawStartLineCheckMode');
+    }
+
+    rawEndLineCheckMode() {
+        return SocketMaster.addTask('rawEndLineCheckMode');
+    }
+
     rawMove(args) {
         return SocketMaster.addTask('rawMove', args);
     }
 
     rawSetRotary(on) {
         return SocketMaster.addTask('rawSetRotary', on);
+    }
+
+    rawSetFan(on) {
+        return SocketMaster.addTask('rawSetFan', on);
+    }
+
+    rawSetAirPump(on) {
+        return SocketMaster.addTask('rawSetAirPump', on);
     }
 
     enterRawMode() {
