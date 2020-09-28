@@ -362,19 +362,6 @@ class SettingGeneral extends React.Component{
             }
         ];
 
-        const stripeOptions = [
-            {
-                value: true,
-                label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('stripe_compensation') === true
-            },
-            {
-                value: false,
-                label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('stripe_compensation') !== true
-            }
-        ];
-
         const maskOptions = [
             {
                 value: true,
@@ -464,6 +451,8 @@ class SettingGeneral extends React.Component{
             default_machine_button = (<span>{lang.settings.default_machine_button}</span>);
         }
 
+        const cameraMovementSpeed = Math.min(BeamboxConstant.camera.movementSpeed.x, BeamboxConstant.camera.movementSpeed.y);
+
         return (
             <div className='form general'>
                 <div className='subtitle'>{lang.settings.groups.general}</div>
@@ -518,6 +507,29 @@ class SettingGeneral extends React.Component{
                         className='font3'
                         options={autoConnectOptions}
                         onChange={(e) => this._updateConfigChange('auto_connect', e.target.value)}
+                    />
+                </Controls>
+
+                <div className='subtitle'>{lang.settings.groups.camera}</div>
+                <Controls label={lang.settings.preview_movement_speed}>
+                    <UnitInput
+                        unit={this._getConfigEditingValue('default-units') === 'mm' ? 'mm/s' : 'in/s'}
+                        min={3}
+                        max={300}
+                        defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed') || cameraMovementSpeed) / 60}
+                        getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed', val * 60)}
+                        className={{half: true}}
+                    />
+                </Controls>
+
+                <Controls label={lang.settings.preview_movement_speed_hl}>
+                    <UnitInput
+                        unit={this._getConfigEditingValue('default-units') === 'mm' ? 'mm/s' : 'in/s'}
+                        min={3}
+                        max={300}
+                        defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed_hl') || (cameraMovementSpeed * 0.6)) / 60}
+                        getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed_hl', val * 60)}
+                        className={{half: true}}
                     />
                 </Controls>
 
