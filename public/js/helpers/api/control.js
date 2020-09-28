@@ -21,6 +21,8 @@ define([
 
         let timeout = 12 * 1000,
             timer,
+            isLineCheckMode = false,
+            currentLineNumber = 1,
             isConnected = false,
             lang = i18n.get(),
             ws,
@@ -145,6 +147,79 @@ define([
             };
 
             ws.send(command);
+            return d.promise();
+        };
+
+        const calculateCRC = (command) => {
+            let crc = 0;
+            for (let i = 0; i < command.length; i++) {
+                if (command[i] != ' ') {
+                    let charCode = command[i].charCodeAt();
+                    crc ^= charCode;
+                    crc += charCode;
+                }
+            }
+            crc %= 65536;
+            return crc;
+        }
+
+        const buildLineCheckCommand = (command) => {
+            command = `N${currentLineNumber}${command}`;
+            let crc = calculateCRC(command);
+            return `${command} *${crc}`;
+        }
+
+        const rawLineCheckCommand = (command, timeout=30000) => {
+            let d = $.Deferred();
+
+            const timeoutTimer = setTimeout(() => {
+                d.reject({
+                    status: 'error',
+                    text:'TIMEOUT',
+                    error: 'TIMEOUT',
+                });
+            }, timeout);
+            
+            events.onMessage = (response) => {
+                if (response && response.status === 'raw') {
+                    console.log(response.text);
+                    if (response.text.startsWith(`L${currentLineNumber}`)) {
+                        clearTimeout(timeoutTimer);
+                        currentLineNumber += 1;
+                        d.resolve();
+                    } else if (response.text.startsWith('ERL')) {
+                        const correctLineNumber = Number(response.text.substring(3).split(' ')[0]);
+                        currentLineNumber = correctLineNumber;
+                        let cmd = buildLineCheckCommand(command);
+                        console.log(cmd);
+                        ws.send(cmd);
+                    } else if (response.text.startsWith('ER')) {
+                        let cmd = buildLineCheckCommand(command);
+                        console.log(cmd);
+                        ws.send(cmd);
+                    }
+                }
+                if (response.text.indexOf('ER:RESET') >= 0) {
+                    clearTimeout(timeoutTimer);
+                    d.reject(response);
+                } else if (response.text.indexOf('error:') >= 0) {
+                    clearTimeout(timeoutTimer);
+                    d.reject(response);
+                }
+            };
+
+            events.onError = (response) => {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            };
+            events.onFatal = (response) => {
+                clearTimeout(timeoutTimer);
+                d.reject(response);
+            };
+
+            let cmd = buildLineCheckCommand(command);
+            console.log(cmd);
+            ws.send(cmd);
             return d.promise();
         };
 
@@ -941,6 +1016,90 @@ define([
                 return d.promise();
             },
 
+            rawStartLineCheckMode: () => {
+                let d = $.Deferred();
+                let isCmdResent = false;
+                let responseString = '';
+                const command = '$@';
+                events.onMessage = (response) => {
+                    if (response && response.status === 'raw') {
+                        console.log('raw line check:\t', response.text);
+                        responseString += response.text;
+                    }
+                    let resps = responseString.split('\n');
+                    
+                    const i = resps.findIndex((r) => r === 'CTRL LINECHECK_ENABLED');
+                    if (i >= 0 && resps[i+1].startsWith('ok')) {
+                        isLineCheckMode = true;
+                        currentLineNumber = 1;
+                        d.resolve();
+                    }
+                    if (response.text.indexOf('ER:RESET') >= 0) {
+                        d.reject(response);
+                    } else if (response.text.indexOf('error:') >= 0) {
+                        // Resend command for error code
+                        const errorCode = parseInt(response.text.substring(6));
+                        switch (errorCode) {
+                            default:
+                                if (!isCmdResent) {
+                                    isCmdResent = true;
+                                    setTimeout(() => {
+                                        isCmdResent = false;
+                                        responseString = '';
+                                        ws.send(command);
+                                    }, 200);
+                                }
+                        }
+                    }
+                };
+                events.onError = (response) => { d.reject(response); };
+                events.onFatal = (response) => { d.reject(response); };
+                ws.send(command);
+                return d.promise();
+            },
+
+            rawEndLineCheckMode: () => {
+                let d = $.Deferred();
+                let isCmdResent = false;
+                let responseString = '';
+                const command = 'M172';
+                events.onMessage = (response) => {
+                    if (response && response.status === 'raw') {
+                        console.log('raw line check:\t', response.text);
+                        responseString += response.text;
+                        console.log(responseString)
+                    }
+                    let resps = responseString.split('\n');
+                    console.log(resps);
+                    const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
+                    if (i >= 0) {
+                        isLineCheckMode = false;
+                        d.resolve();
+                    }
+                    if (response.text.indexOf('ER:RESET') >= 0) {
+                        d.reject(response);
+                    } else if (response.text.indexOf('error:') >= 0) {
+                        // Resend command for error code
+                        const errorCode = parseInt(response.text.substring(6));
+                        switch (errorCode) {
+                            default:
+                                if (!isCmdResent) {
+                                    isCmdResent = true;
+                                    setTimeout(() => {
+                                        isCmdResent = false;
+                                        responseString = '';
+                                        ws.send(command);
+                                    }, 200);
+                                }
+                        }
+                    }
+                };
+                events.onError = (response) => { d.reject(response); };
+                events.onFatal = (response) => { d.reject(response); };
+                ws.send(command);
+                return d.promise();
+            },
+
             rawMove: (args) => {
                 let command = 'G1';
                 args.f = args.f || '6000';
@@ -951,8 +1110,30 @@ define([
                 if (typeof args.y !== 'undefined') {
                     command += 'Y' + Math.round(args.y * 100) / 100;
                 };
-                console.log('raw move command:', command);
-                return useDefaultResponse(command);
+                if (!isLineCheckMode) {
+                    console.log('raw move command:', command);
+                    return useDefaultResponse(command);
+                } else {
+                    return rawLineCheckCommand(command);
+                }
+            },
+
+            rawSetAirPump: (on) => {
+                const command = on ? 'B3' : 'B4';
+                if (!isLineCheckMode) {
+                    return useDefaultResponse(command);
+                } else {
+                    return rawLineCheckCommand(command);
+                }
+            },
+
+            rawSetFan: (on) => {
+                const command = on ? 'B5' : 'B6';
+                if (!isLineCheckMode) {
+                    return useDefaultResponse(command);
+                } else {
+                    return rawLineCheckCommand(command);
+                }
             },
 
             rawSetRotary: (on) => {

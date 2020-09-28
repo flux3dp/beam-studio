@@ -885,12 +885,28 @@ define([
         return SocketMaster.addTask('rawHome');
     }
 
+    function rawStartLineCheckMode() {
+        return SocketMaster.addTask('rawStartLineCheckMode');
+    }
+
+    function rawEndLineCheckMode() {
+        return SocketMaster.addTask('rawEndLineCheckMode');
+    }
+
     function rawMove(args) {
         return SocketMaster.addTask('rawMove', args);
     }
 
     function rawSetRotary(on) {
         return SocketMaster.addTask('rawSetRotary', on);
+    }
+
+    function rawSetFan(on) {
+        return SocketMaster.addTask('rawSetFan', on);
+    }
+
+    function rawSetAirPump(on) {
+        return SocketMaster.addTask('rawSetAirPump', on);
     }
 
     function enterRawMode() {
@@ -1780,7 +1796,11 @@ define([
             this.quit = quit;
             this.quitTask = quitTask;
             this.rawHome = rawHome;
+            this.rawStartLineCheckMode = rawStartLineCheckMode;
+            this.rawEndLineCheckMode = rawEndLineCheckMode;
             this.rawMove = rawMove;
+            this.rawSetAirPump = rawSetAirPump;
+            this.rawSetFan = rawSetFan;
             this.rawSetRotary = rawSetRotary;
             this.readyCamera = readyCamera;
             this.reconnect = reconnect;
