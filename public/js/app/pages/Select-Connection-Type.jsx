@@ -14,6 +14,10 @@ define([
 
     return function () {
         return class SelectConnectionType extends React.Component{
+            constructor(props) {
+                super(props);
+                this.state = {};
+            }
 
             onClick = (method) => {
                 switch (method) {
@@ -77,6 +81,7 @@ define([
                             }
                             LocalStorage.set('printer-is-ready', true);
                             location.hash = '#studio/beambox';
+                            this.setState({isLoading: true});
                         }} >
                             {isNewUser ? lang.skip : lang.cancel}
                         </div>
@@ -85,6 +90,11 @@ define([
             }
 
             render() {
+                if (this.state.isLoading) {
+                    return (
+                        <div className='spinner-roller absolute-center'></div>
+                    );
+                }
                 const wrapperClassName = {
                     'initialization': true
                 };
