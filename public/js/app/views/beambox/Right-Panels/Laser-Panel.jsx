@@ -556,7 +556,6 @@ define([
                         unit={'mm'}
                         defaultValue={this.state.height}
                         getValue={this._handleHeightChange}
-                        decimal={2}
                     />
                 </div>
             );
@@ -577,7 +576,6 @@ define([
                         unit={'mm'}
                         defaultValue={this.state.zStep}
                         getValue={this._handleZStepChange}
-                        decimal={2}
                     />
                 </div>
             );
