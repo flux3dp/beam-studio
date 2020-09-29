@@ -3,6 +3,7 @@ import SelectView from '../widgets/Select';
 import Modal from '../widgets/Modal';
 
 const React = requireNode('react');
+const electron = requireNode('electron');
 
 export default function(args) {
     args = args || {};
@@ -32,6 +33,7 @@ export default function(args) {
 
         _changeActiveLang = (e) => {
             i18n.setActiveLang(e.currentTarget.value);
+            electron.ipcRenderer.send('NOTIFY_LANGUAGE');
             this.setState({
                 lang: i18n.lang
             });

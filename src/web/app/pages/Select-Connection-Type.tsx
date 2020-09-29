@@ -6,6 +6,11 @@ const React = requireNode('react');
 const lang = i18n.lang.initialize;
 
 class SelectConnectionType extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
     onClick = (method) => {
         switch (method) {
             case 'wi-fi':
@@ -68,6 +73,7 @@ class SelectConnectionType extends React.Component{
                     }
                     LocalStorage.set('printer-is-ready', true);
                     location.hash = '#studio/beambox';
+                    this.setState({isLoading: true});
                     location.reload();
                 }} >
                     {isNewUser ? lang.skip : lang.cancel}
@@ -77,6 +83,11 @@ class SelectConnectionType extends React.Component{
     }
 
     render() {
+        if (this.state.isLoading) {
+            return (
+                <div className='spinner-roller absolute-center'></div>
+            );
+        }
         const wrapperClassName = {
             'initialization': true
         };

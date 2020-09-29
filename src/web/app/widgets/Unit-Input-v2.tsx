@@ -6,17 +6,30 @@ const React = requireNode('react');
 const PropTypes = requireNode('prop-types');
 
 class UnitInput extends React.Component{
+    private decimal: number = 0;
     constructor(props) {
         super(props);
+        this.setDecimal();
         this.state = {
             displayValue:   this.getTransformedValue(this._validateValue(this.props.defaultValue)),
-            savedValue:     Number(this.props.defaultValue).toFixed(this.props.decimal)
+            savedValue:     Number(this.props.defaultValue).toFixed(this.decimal)
         };
         this._handleBlur = this._handleBlur.bind(this);
         this._handleKeyUp = this._handleKeyUp.bind(this);
         this._handleKeyDown = this._handleKeyDown.bind(this);
         this._handleChange = this._handleChange.bind(this);
         this._handleInput = this._handleInput.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prepStates) {
+        if (prevProps.unit !== this.props.unit) {
+            this.setDecimal();
+            const val = this._validateValue(this.props.defaultValue);
+            this.setState({
+                displayValue: this.getTransformedValue(Number(val)),
+                savedValue: val
+            });
+        }
     }
 
     UNSAFE_componentWillReceiveProps (nextProps) {
@@ -28,6 +41,19 @@ class UnitInput extends React.Component{
         });
     }
 
+    setDecimal() {
+        if (this.props.decimal !== undefined) {
+            this.decimal = this.props.decimal;
+            return;
+        }
+        if (['in', 'in/s'].includes(this.getLengthUnit())) {
+            this.decimal = 4;
+            return;
+        }
+        this.decimal = 2;
+        return;
+    }
+
     //always return valid value
     _validateValue(val) {
         let value: string | number = parseFloat(val);
@@ -36,7 +62,7 @@ class UnitInput extends React.Component{
             if (this.state) {
                 value = this.state.savedValue;
             } else {
-                value = Number(this.props.defaultValue).toFixed(this.props.decimal);
+                value = Number(this.props.defaultValue).toFixed(this.decimal);
             }
         } else {
             // check value boundary
@@ -44,7 +70,7 @@ class UnitInput extends React.Component{
             value = Math.max(value, this.props.min);
         }
 
-        return Number(value).toFixed(this.props.decimal);
+        return Number(value).toFixed(this.decimal);
     }
 
     _updateValue(newVal) {
@@ -132,7 +158,7 @@ class UnitInput extends React.Component{
 
     getTransformedValue(value) {
         if (['in', 'in/s'].includes(this.getLengthUnit())) {
-            return Number(value / 25.4).toFixed(4);
+            return Number(value / 25.4).toFixed(this.decimal);
         } else {
             return value;
         }
@@ -194,7 +220,6 @@ UnitInput.defaultProps = {
     min: Number.MIN_SAFE_INTEGER,
     max: Number.MAX_SAFE_INTEGER,
     step: 1,
-    decimal: 2,
     disabled: false,
     abbr: false,
     isDoOnInput: false,
