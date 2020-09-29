@@ -124,10 +124,12 @@ define([
                 return true;
             } catch (error) {
                 console.log(error);
-                Alert.popUp({
-                    type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: error.message,
-                });
+                if (this.isPreviewModeOn) {
+                    Alert.popUp({
+                        type: AlertConstants.SHOW_POPUP_ERROR,
+                        message: error.message,
+                    });
+                }
                 $(workarea).css('cursor', 'auto');
                 if (!PreviewModeBackgroundDrawer.isClean()) {
                     BeamboxActions.endDrawingPreviewBlob();
