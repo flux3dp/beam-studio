@@ -1542,13 +1542,14 @@ define([
                             justClearSelection = true;
                         }
                         const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouse_target);
+                        const isElemTempGroup = mouse_target.getAttribute('data-tempgroup') === 'true';
                         let layerSelectable = false;
                         if (mouseTargetObjectLayer && mouseTargetObjectLayer.elem) {
                             if (mouseTargetObjectLayer.elem.getAttribute('display') !== 'none' && !mouseTargetObjectLayer.elem.getAttribute('data-lock')) {
                                 layerSelectable = true;
                             }
                         }
-                        if (mouse_target !== svgroot && layerSelectable) {
+                        if (mouse_target !== svgroot && (isElemTempGroup || layerSelectable)) {
                             // if this element is not yet selected, clear selection and select it
                             if (selectedElements.indexOf(mouse_target) === -1) {
                                 // only clear selection if shift is not pressed (otherwise, add
