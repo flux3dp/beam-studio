@@ -523,9 +523,10 @@ define([
                     <div className='subtitle'>{lang.settings.groups.camera}</div>
                     <Controls label={lang.settings.preview_movement_speed}>
                         <UnitInput
-                            unit={this._getConfigEditingValue('default-units') === 'mm' ? 'mm/s' : 'in/s'}
+                            unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
                             min={3}
                             max={300}
+                            decimal={this._getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
                             defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed') || cameraMovementSpeed) / 60}
                             getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed', val * 60)}
                             className={{half: true}}
@@ -534,9 +535,10 @@ define([
 
                     <Controls label={lang.settings.preview_movement_speed_hl}>
                         <UnitInput
-                            unit={this._getConfigEditingValue('default-units') === 'mm' ? 'mm/s' : 'in/s'}
+                            unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
                             min={3}
                             max={300}
+                            decimal={this._getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
                             defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed_hl') || (cameraMovementSpeed * 0.6)) / 60}
                             getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed_hl', val * 60)}
                             className={{half: true}}

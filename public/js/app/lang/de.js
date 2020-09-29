@@ -498,7 +498,7 @@ define(function() {
                 general: 'Allgemeines',
                 update: 'Software-Updates',
                 connection: 'Verbindung',
-                camera: 'Camera',
+                camera: 'Kamera',
                 editor: 'Editor',
                 engraving: 'Rastering (Scannen)',
                 path: 'Vektor (Umrisse)',
