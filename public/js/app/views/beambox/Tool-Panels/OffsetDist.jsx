@@ -10,8 +10,8 @@ define([
     $,
     PropTypes,
     FnWrapper,
-    LocalStorage,
     UnitInput,
+    LocalStorage,
     i18n,
     Constant
 )   {
