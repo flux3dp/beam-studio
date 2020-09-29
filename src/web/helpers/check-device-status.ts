@@ -85,6 +85,7 @@ export default async function(printer, allowPause?: boolean, forceAbort?: boolea
             } else {
                 deferred.resolve(false);
             }
+            break;
         case DeviceConstants.status.RUNNING:
         case DeviceConstants.status.PAUSED:
         case DeviceConstants.status.PAUSED_FROM_STARTING:
