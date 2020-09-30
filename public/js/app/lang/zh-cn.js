@@ -1430,7 +1430,7 @@ define(function() {
                         bevel: '生成斜角',
                         invert: '色彩反转',
                         convert_to_path: '转换为路径',
-                        wait_for_parsing_font: '解析字体中... 请稍待 10 秒',
+                        wait_for_parsing_font: '解析字体中...',
                         offset: '位移複製',
                         array: '阵列',
                         decompose_path: '解散非连续路径',
@@ -1513,7 +1513,7 @@ define(function() {
                 vertical_text: '直书',
                 convert_to_path: '转换为路径',
                 convert_to_path_to_get_precise_result: '部分字体在不同系统间有差异，输出前请将字体转换成路径，以确保文本正确显示',
-                wait_for_parsing_font: '解析字体中... 请稍待 10 秒',
+                wait_for_parsing_font: '解析字体中...',
                 text_to_path: {
                     font_substitute_pop: '文字:『%s』中含有当前字体:『%s』不支援的字元: %s，\n将替换成以下字体:『%s』。',
                     check_thumbnail_warning: '转换文字时出现字体不支援的情形，请在送出工作前，再次检查预览图确认文字是否如预期转换。'
