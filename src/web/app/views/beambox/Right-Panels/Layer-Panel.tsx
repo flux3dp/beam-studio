@@ -13,16 +13,15 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.E
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
+const { ContextMenu, MenuItem, ContextMenuTrigger } = requireNode('react-contextmenu');
 const LANG = i18n.lang.beambox.right_panel.layer_panel;
 let _contextCaller;
 
-class ContextHelper {
-    static get _contextCaller() {
+export class ContextHelper {
+    static get context() {
         return _contextCaller;
     }
 }
-
-export const LayerPanelContextCaller = ContextHelper._contextCaller;
 
 export class LayerPanel extends React.Component {
     constructor() {
@@ -455,7 +454,6 @@ export class LayerPanel extends React.Component {
     }
 
     render() {
-        const { ContextMenu, MenuItem, ContextMenuTrigger } = requireNode('react-contextmenu');
         if (!svgCanvas) {
             setTimeout(() => {
                 this.setState(this.state);

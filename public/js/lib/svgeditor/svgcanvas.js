@@ -420,7 +420,11 @@ define([
                             canvas.identifyLayers();
                         }
                         elems.forEach((elem) => {
-                            canvas.updateElementColor(elem);
+                            if (elem.classList.contains('layer')) {
+                                LayerPanelController.updateLayerPanel();
+                            } else {
+                                canvas.updateElementColor(elem);
+                            }
                         });
                     } else if (cmdType === InsertElementCommand.type() ||
                         cmdType === RemoveElementCommand.type()) {

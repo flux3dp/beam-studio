@@ -1,10 +1,9 @@
-import { LayerPanel, LayerPanelContextCaller } from '../Layer-Panel';
-const React = requireNode('react');
+import { ContextHelper } from '../Layer-Panel';
 const updateLayerPanel = () => {
-    if (!LayerPanelContextCaller) {
+    if (!ContextHelper.context) {
         //console.log('LayerPanel is not mounted now.');
     } else {
-        LayerPanelContextCaller.updateLayerPanel();
+        ContextHelper.context.updateLayerPanel();
     }
 };
 

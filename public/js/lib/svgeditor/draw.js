@@ -393,19 +393,19 @@
         hrService.startBatchCommand('Merge Layer');
 
         var layerNextSibling = current_group.nextSibling;
-        hrService.removeElement(current_group, layerNextSibling, this.svgElem_);
 
-        while (current_group.firstChild) {
-            var child = current_group.firstChild;
-            if (child.localName == 'title') {
-                hrService.removeElement(child, child.nextSibling, current_group);
-                current_group.removeChild(child);
+        const children = current_group.childNodes;
+        for (let i = 0; i < children.length; i++) {
+            let child = children[i];
+            if (child.localName == 'title' || child.tagName === 'filter') {
                 continue;
             }
             var oldNextSibling = child.nextSibling;
             prevGroup.appendChild(child);
             hrService.moveElement(child, oldNextSibling, current_group);
+            i -= 1;
         }
+        hrService.removeElement(current_group, layerNextSibling, this.svgElem_);
 
         // Remove current layer's group
         this.current_layer.removeGroup();

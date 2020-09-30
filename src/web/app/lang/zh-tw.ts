@@ -1264,7 +1264,7 @@ export default {
                 layer_cutting: '切割圖層',
                 move_elems_to: '移動到：',
                 notification: {
-                    dupeLayerName: '喔不！已經有另一個同樣名稱的圖層了！',
+                    dupeLayerName: '圖層名稱與現有圖層重複，請使用別的名稱。',
                     newName: '新圖層名稱',
                     enterUniqueLayerName: '請輸入一個不重複的名稱',
                     enterNewLayerName: '請輸入新圖層的名稱',
