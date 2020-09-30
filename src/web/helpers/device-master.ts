@@ -53,9 +53,9 @@ class DeviceMaster {
         const self = this;
         Discover(
             'device-master',
-            function (devices) {
+            (devices) => {
                 self.discoveredDevices = devices;
-                self._scanDeviceError(devices);
+                this._scanDeviceError(devices);
             }
         );
     }
@@ -791,7 +791,7 @@ class DeviceMaster {
         return d.promise();
     }
 
-    _scanDeviceError(devices: IDeviceInfo[]) {
+    _scanDeviceError = (devices: IDeviceInfo[]) => {
         const self = this;
         devices.forEach(function (info) {
             const deviceConn = self.getDeviceByUUID(info.uuid);
