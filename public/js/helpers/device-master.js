@@ -1428,6 +1428,9 @@ define([
                         message = `${lang.device.aborted}`;
                     }
                     else {
+                        if (!device.error_label) {
+                            return;
+                        }
                         message = `${lang.device.pausedFromError}`;
                         message = device.error_label === '' ? '' : message;
                     }
