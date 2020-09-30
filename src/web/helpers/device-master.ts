@@ -819,7 +819,9 @@ class DeviceMaster {
                     } else if (deviceConn.info.st_id === DeviceConstants.status.ABORTED) {
                         message = `${lang.device.aborted}`;
                     } else {
-                        console.log(info.error_label);
+                        if (!info.error_label) {
+                            return;
+                        }
                         message = `${lang.device.pausedFromError}`;
                         message = deviceConn.info.error_label === '' ? '' : message;
                     }
