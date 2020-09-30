@@ -1265,7 +1265,7 @@ define(function() {
                     layer_cutting: '切割图层',
                     move_elems_to: '移动到：',
                     notification: {
-                        dupeLayerName: '已存在同名的图层!',
+                        dupeLayerName: '图层名称与现有图层重复，请使用别的名称。',
                         newName: '新图层名称',
                         enterUniqueLayerName: '请输入一个唯一的图层名称',
                         enterNewLayerName: '请输入新的图层名称',
