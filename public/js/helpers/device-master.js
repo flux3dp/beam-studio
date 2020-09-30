@@ -55,7 +55,7 @@ define([
     let lang = i18n.get(),
         SocketMaster,
         defaultPrinter,
-        defaultPrinterWarningShowed = false,
+        unnotifiedDeviceUUIDs = [],
         _instance = null,
         _stopChangingFilament = false,
         _stopChangingFilamentCallback,
@@ -1417,65 +1417,38 @@ define([
             else {
                 _errors[device.serial] = '';
             }
-            if (defaultPrinter) {
-                if (defaultPrinter.serial === device.serial) {
-                    if (
-                        device.st_id === DeviceConstants.status.PAUSED_FROM_RUNNING ||
-                            device.st_id === DeviceConstants.status.COMPLETED ||
-                            device.st_id === DeviceConstants.status.ABORTED
-                    ) {
-                        if (!defaultPrinterWarningShowed) {
-                            let message = '';
-                            if (device.st_id === DeviceConstants.status.COMPLETED) {
-                                message = `${lang.device.completed}`;
-                            }
-                            else if (device.st_id === DeviceConstants.status.ABORTED) {
-                                message = `${lang.device.aborted}`;
-                            }
-                            else {
-                                message = `${lang.device.pausedFromError}`;
-                                message = device.error_label === '' ? '' : message;
-                            }
 
-                            if (device.st_id === DeviceConstants.status.COMPLETED) {
-                                AlertActions.showInfo(message, function (growl) {
-                                    growl.remove(function () { });
-                                    selectDevice(defaultPrinter).then(function () {
-                                        GlobalActions.showMonitor(defaultPrinter);
-                                    });
-                                }, true);
-                            }
-                            else {
-                                if (message !== '') {
-                                    AlertActions.showWarning(message, function (growl) {
-                                        growl.remove(function () { });
-                                        selectDevice(defaultPrinter).then(function () {
-                                            GlobalActions.showMonitor(defaultPrinter);
-                                        });
-                                    }, true);
-                                }
-                            }
-
-                            defaultPrinterWarningShowed = true;
-
-                            if (Config().read('notification') === 1) {
-                                Notification.requestPermission((permission) => {
-                                    if (permission === 'granted') {
-                                        let notification = new Notification(device.name, {
-                                            icon: 'img/icon-home-s.png',
-                                            body: message
-                                        });
-                                    }
-                                });
-                            }
-                        }
+            if ([DeviceConstants.status.PAUSED_FROM_RUNNING, DeviceConstants.status.COMPLETED, DeviceConstants.status.ABORTED].includes(device.st_id)) {
+                if (unnotifiedDeviceUUIDs.find((uuid) => uuid === device.uuid)) {
+                    let message = '';
+                    if (device.st_id === DeviceConstants.status.COMPLETED) {
+                        message = `${lang.device.completed}`;
+                    }
+                    else if (device.st_id === DeviceConstants.status.ABORTED) {
+                        message = `${lang.device.aborted}`;
                     }
                     else {
-                        if ($('#growls').length > 0) {
-                            AlertActions.closeNotification();
-                            defaultPrinterWarningShowed = false;
-                        }
+                        message = `${lang.device.pausedFromError}`;
+                        message = device.error_label === '' ? '' : message;
                     }
+
+                    const index = unnotifiedDeviceUUIDs.findIndex((uuid) => uuid === device.uuid);
+                    unnotifiedDeviceUUIDs.splice(index, 1);
+
+                    if (Config().read('notification') === 1) {
+                        Notification.requestPermission((permission) => {
+                            if (permission === 'granted') {
+                                let notification = new Notification(device.name, {
+                                    icon: 'img/icon-home-s.png',
+                                    body: message
+                                });
+                            }
+                        });
+                    }
+                }
+            } else if ([DeviceConstants.status.RUNNING].includes(device.st_id)){
+                if (!unnotifiedDeviceUUIDs.find((uuid) => uuid === device.uuid)) {
+                    unnotifiedDeviceUUIDs.push(device.uuid);
                 }
             }
         });
