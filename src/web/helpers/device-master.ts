@@ -44,7 +44,7 @@ const lang = i18n.lang;
 class DeviceMaster {
     private deviceConnections: Map<string, IDeviceConnection>;
     private discoveredDevices: IDeviceInfo[];
-    private defaultPrinterWarningShowed: boolean = false;
+    private unnotifiedDeviceUUIDs: string[] = [];
     private _currentDevice: IDeviceConnection;
     
     constructor() {
@@ -810,67 +810,37 @@ class DeviceMaster {
             } else {
                 deviceConn.errors = [];
             }
-            if (defaultPrinter) {
-                if (defaultPrinter.serial === info.serial) {
-                    if (
-                        [DeviceConstants.status.PAUSED_FROM_RUNNING,
-                        DeviceConstants.status.COMPLETED,
-                        DeviceConstants.status.ABORTED].includes(info.st_id)
-                    ) {
-                        if (!this.defaultPrinterWarningShowed) {
-                            let message = '';
-                            if (deviceConn.info.st_id === DeviceConstants.status.COMPLETED) {
-                                message = `${lang.device.completed}`;
-                            } else if (deviceConn.info.st_id === DeviceConstants.status.ABORTED) {
-                                message = `${lang.device.aborted}`;
-                            } else {
-                                message = `${lang.device.pausedFromError}`;
-                                message = deviceConn.info.error_label === '' ? '' : message;
-                            }
 
-                            if (deviceConn.info.st_id === DeviceConstants.status.COMPLETED) {
-                                Alert.popUp({
-                                    type: AlertConstants.SHOW_POPUP_INFO,
-                                    message,
-                                    callbacks: () => {
-                                        this.selectDevice(defaultPrinter).then(function () {
-                                            GlobalActions.showMonitor(defaultPrinter);
-                                        });
-                                    }
-                                });
-                            } else {
-                                if (message !== '') {
-                                    Alert.popUp({
-                                        type: AlertConstants.SHOW_POPUP_WARNING,
-                                        message,
-                                        callbacks: () => {
-                                            this.selectDevice(defaultPrinter).then(function () {
-                                                GlobalActions.showMonitor(defaultPrinter);
-                                            });
-                                        }
-                                    });
-                                }
-                            }
+            if ([DeviceConstants.status.PAUSED_FROM_RUNNING, DeviceConstants.status.COMPLETED, DeviceConstants.status.ABORTED].includes(info.st_id)) {
+                if (self.unnotifiedDeviceUUIDs.find((uuid) => uuid === info.uuid)) {
+                    let message = '';
+                    if (deviceConn.info.st_id === DeviceConstants.status.COMPLETED) {
+                        message = `${lang.device.completed}`;
+                    } else if (deviceConn.info.st_id === DeviceConstants.status.ABORTED) {
+                        message = `${lang.device.aborted}`;
+                    } else {
+                        console.log(info.error_label);
+                        message = `${lang.device.pausedFromError}`;
+                        message = deviceConn.info.error_label === '' ? '' : message;
+                    }
 
-                            this.defaultPrinterWarningShowed = true;
+                    const index = self.unnotifiedDeviceUUIDs.findIndex((uuid) => uuid === info.uuid);
+                    self.unnotifiedDeviceUUIDs.splice(index, 1);
 
-                            if (Config().read('notification') === '1') {
-                                Notification.requestPermission((permission) => {
-                                    if (permission === 'granted') {
-                                        let notification = new Notification(deviceConn.info.name, {
-                                            icon: 'img/icon-home-s.png',
-                                            body: message
-                                        });
-                                    }
+                    if (Config().read('notification') === 1) {
+                        Notification.requestPermission((permission) => {
+                            if (permission === 'granted') {
+                                let notification = new Notification(deviceConn.info.name, {
+                                    icon: 'img/icon-home-s.png',
+                                    body: message
                                 });
                             }
-                        }
+                        });
                     }
-                    else {
-                        if ($('#growls').length > 0) {
-                            this.defaultPrinterWarningShowed = false;
-                        }
-                    }
+                }
+            } else if ([DeviceConstants.status.RUNNING].includes(info.st_id)){
+                if (!self.unnotifiedDeviceUUIDs.find((uuid) => uuid === info.uuid)) {
+                    self.unnotifiedDeviceUUIDs.push(info.uuid);
                 }
             }
         });
