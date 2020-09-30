@@ -8854,6 +8854,7 @@ define([
                 this.currentFilePath = filePath;
                 this.updateRecentFiles(filePath);
                 try {
+                    svgCanvas.clearSelection();
                     if (filePath.endsWith('beam')) {
                         await BeamFileHelper.readBeam(filePath);
                     } else if (filePath.endsWith('bvg')) {
