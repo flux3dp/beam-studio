@@ -15,6 +15,7 @@ define([
     Progress
 ) {
     'use strict';
+    const fs = require('fs');
     const path = require('path');
     const util = require('util');
     const child_process = require('child_process');
@@ -22,6 +23,19 @@ define([
     const execFile = util.promisify(child_process.execFile);
     const resourcesRoot = process.defaultApp ? process.cwd() : process.resourcesPath;
     const lang = i18n.lang.beambox.popup.pdf2svg;
+
+    const programDataPath = path.join('C:', 'ProgramData');
+    const beamStudioDataPath = path.join(programDataPath, 'Beam Studio');
+    const win32TempFile = path.join(beamStudioDataPath, 'temp.pdf');
+    if (process.platform === 'win32') {
+        if (!fs.existsSync(programDataPath)) {
+            child_process.execSync(`mkdir "${programDataPath}"`);
+        }
+        if (!fs.existsSync(beamStudioDataPath)) {
+            child_process.execSync(`mkdir "${beamStudioDataPath}"`);
+        }
+    }
+
     let pdf2svgPath = null;
     if (process.platform === 'darwin') {
         pdf2svgPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'pdf2svg');
@@ -34,7 +48,12 @@ define([
         if (pdf2svgPath) {
             //mac or windows, using packed binary executable
             try {
-                const {stdout, stderr} = await execFile(pdf2svgPath, [file.path, outPath]);
+                let filePath = file.path;
+                if (process.platform === 'win32') {
+                    await exec(`cp "${file.path}" "${win32TempFile}"`);
+                    filePath = win32TempFile;
+                }
+                const {stdout, stderr} = await execFile(pdf2svgPath, [filePath, outPath]);
                 if (!stderr) {
                     console.log(outPath);
                     let data = await fetch(outPath);
@@ -43,7 +62,7 @@ define([
                     data.lastModifiedDate = file.lastModifiedDate;
                     svgEditor.importSvg(data, true, false);
                 } else {
-                    throw stderr
+                    throw stderr;
                 }
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e);
@@ -79,7 +98,7 @@ define([
                     data.lastModifiedDate = file.lastModifiedDate;
                     svgEditor.importSvg(data, true, false);
                 } else {
-                    throw stderr
+                    throw stderr;
                 }
             } catch (e) {
                 console.log('Fail to convert pdf 2 svg', e.message);
@@ -95,5 +114,5 @@ define([
     
     return {
         pdf2svg
-    }
+    };
 });
