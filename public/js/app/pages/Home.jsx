@@ -7,6 +7,7 @@ define([
 
     const React = require('react');
     const electron = require('electron');
+    const { Menu } = require('electron').remote;
 
     return function(args) {
         args = args || {};
@@ -37,6 +38,9 @@ define([
             _changeActiveLang = (e) => {
                 i18n.setActiveLang(e.currentTarget.value);
                 electron.ipcRenderer.send('NOTIFY_LANGUAGE');
+                if (process.platform === 'win32') {
+                    window.titlebar.updateMenu(Menu.getApplicationMenu());
+                }
                 this.setState({
                     lang: i18n.get()
                 });
