@@ -10149,68 +10149,63 @@ define([
             return tempGroup;
         }
 
-        // Function: moveToTopSelectedElement
-        // Repositions the selected element to the bottom in the DOM to appear on top of
-        // other elements
-        this.moveToTopSelectedElement = function () {
+        // Function: moveUpSelectedElement
+        // Move selected element up in layer
+        this.moveUpSelectedElement = function () {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            var selected = selectedElements[0];
+            let selected = selectedElements[0];
             if (selected != null) {
-                var t = selected;
-                var oldParent = t.parentNode;
-                var oldNextSibling = t.nextSibling;
-                t = t.parentNode.appendChild(t);
-                // If the element actually moved position, add the command and fire the changed
-                // event handler.
-                if (oldNextSibling !== t.nextSibling) {
-                    addCommandToHistory(new svgedit.history.MoveElementCommand(t, oldNextSibling, oldParent, 'top'));
-                    call('changed', [t]);
+                let t = selected;
+                let oldParent = t.parentNode;
+                let oldNextSibling = t.nextSibling;
+                let nextSibling = t.nextSibling;
+                if (nextSibling) {
+                    nextSibling = nextSibling.nextSibling;
+                    t = t.parentNode.insertBefore(t, nextSibling);
+                    // If the element actually moved position, add the command and fire the changed
+                    // event handler.
+                    if (oldNextSibling !== t.nextSibling) {
+                        addCommandToHistory(new svgedit.history.MoveElementCommand(t, oldNextSibling, oldParent, 'up'));
+                        call('changed', [t]);
+                    }
                 }
             }
         };
 
-        // Function: moveToBottomSelectedElement
-        // Repositions the selected element to the top in the DOM to appear under
-        // other elements
-        this.moveToBottomSelectedElement = function () {
+        // Function: moveDownSelectedElement
+        // Move selected element back in layer
+        this.moveDownSelectedElement = function () {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            var selected = selectedElements[0];
+            let selected = selectedElements[0];
             if (selected != null) {
-                var t = selected;
-                var oldParent = t.parentNode;
-                var oldNextSibling = t.nextSibling;
-                var firstChild = t.parentNode.firstChild;
-                if (firstChild.tagName === 'title') {
-                    firstChild = firstChild.nextSibling;
-                }
-                // This can probably be removed, as the defs should not ever apppear
-                // inside a layer group
-                if (firstChild.tagName === 'defs') {
-                    firstChild = firstChild.nextSibling;
-                }
-                t = t.parentNode.insertBefore(t, firstChild);
-                // If the element actually moved position, add the command and fire the changed
-                // event handler.
-                if (oldNextSibling !== t.nextSibling) {
-                    addCommandToHistory(new svgedit.history.MoveElementCommand(t, oldNextSibling, oldParent, 'bottom'));
-                    call('changed', [t]);
+                let t = selected;
+                let oldParent = t.parentNode;
+                let oldNextSibling = t.nextSibling;
+                let prevSibling = t.previousSibling;
+                if (prevSibling && !['title', 'filter'].includes(prevSibling.tagName)) {
+                    t = t.parentNode.insertBefore(t, prevSibling);
+                    // If the element actually moved position, add the command and fire the changed
+                    // event handler.
+                    if (oldNextSibling !== t.nextSibling) {
+                        addCommandToHistory(new svgedit.history.MoveElementCommand(t, oldNextSibling, oldParent, 'down'));
+                        call('changed', [t]);
+                    }
                 }
             }
         };
 
-        // Function: moveUpDownSelected
-        // Moves the select element up or down the stack, based on the visibly
-        // intersecting elements
+        // Function: moveTopBottomSelected
+        // Moves the select element to the top or bottom in group
         //
         // Parameters:
-        // dir - String that's either 'Up' or 'Down'
-        this.moveUpDownSelected = function (dir) {
+        // dir - String that's either 'top' or 'bottom'
+        this.moveTopBottomSelected = function (dir) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -10220,34 +10215,20 @@ define([
                 return;
             }
 
-            curBBoxes = [];
-            var closest, found_cur;
-            // jQuery sorts this list
-            var list = $(getIntersectionList(getStrokedBBox([selected]))).toArray();
-            if (dir === 'Down') {
-                list.reverse();
-            }
+            let t = selected;
+            const oldParent = t.parentNode;
+            const oldNextSibling = t.nextSibling;
 
-            $.each(list, function () {
-                if (!found_cur) {
-                    if (this === selected) {
-                        found_cur = true;
-                    }
-                    return;
+            if (dir === 'bottom') {
+                let firstChild = t.parentNode.firstChild;
+                while (['title', 'filter'].includes(firstChild.tagName)) {
+                    firstChild = firstChild.nextSibling;
                 }
-                closest = this;
-                return false;
-            });
-            if (!closest) {
-                return;
+                t = t.parentNode.insertBefore(t, firstChild);
+            } else {
+                t = t.parentNode.appendChild(t);
             }
 
-            var t = selected;
-            var oldParent = t.parentNode;
-            var oldNextSibling = t.nextSibling;
-            $(closest)[dir === 'Down' ? 'before' : 'after'](t);
-            // If the element actually moved position, add the command and fire the changed
-            // event handler.
             if (oldNextSibling != t.nextSibling) {
                 addCommandToHistory(new svgedit.history.MoveElementCommand(t, oldNextSibling, oldParent, 'Move ' + dir));
                 call('changed', [t]);

@@ -143,8 +143,8 @@ svgEditor.readLang({
         'group': '群組',
         'move_front': '移至最前',
         'move_up': '往前移',
-        'move_down': '移至最後',
-        'move_back': '往後移'
+        'move_down': '往後移',
+        'move_back': '移至最後'
     },
     layers: {
         'layer': '圖層',
