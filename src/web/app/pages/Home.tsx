@@ -4,6 +4,7 @@ import Modal from '../widgets/Modal';
 
 const React = requireNode('react');
 const electron = requireNode('electron');
+const { Menu } = electron.remote;
 
 export default function(args) {
     args = args || {};
@@ -34,6 +35,9 @@ export default function(args) {
         _changeActiveLang = (e) => {
             i18n.setActiveLang(e.currentTarget.value);
             electron.ipcRenderer.send('NOTIFY_LANGUAGE');
+            if (process.platform === 'win32') {
+                window['titlebar'].updateMenu(Menu.getApplicationMenu());
+            }
             this.setState({
                 lang: i18n.lang
             });

@@ -4029,21 +4029,27 @@ const svgEditor = window['svgEditor'] = (function($) {
                 svgCanvas.pasteElements('point', x, y);
             };
 
-            var moveToTopSelected = function () {
+            var moveUpSelectedElement = function () {
                 if (selectedElement != null) {
-                    svgCanvas.moveToTopSelectedElement();
+                    svgCanvas.moveUpSelectedElement();
                 }
             };
 
-            var moveToBottomSelected = function () {
+            var moveDownSelectedElement = function () {
                 if (selectedElement != null) {
-                    svgCanvas.moveToBottomSelectedElement();
+                    svgCanvas.moveDownSelectedElement();
                 }
             };
 
-            var moveUpDownSelected = function (dir) {
+            var moveTopSelectedElement = function () {
                 if (selectedElement != null) {
-                    svgCanvas.moveUpDownSelected(dir);
+                    svgCanvas.moveTopBottomSelected('top');
+                }
+            };
+
+            var moveBottomSelectedElement = function () {
+                if (selectedElement != null) {
+                    svgCanvas.moveTopBottomSelected('bottom');
                 }
             };
 
@@ -5080,12 +5086,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                 },
                 {
                     sel: '#tool_move_top',
-                    fn: moveToTopSelected,
+                    fn: moveTopSelectedElement,
                     evt: 'click'
                 },
                 {
                     sel: '#tool_move_bottom',
-                    fn: moveToBottomSelected,
+                    fn: moveBottomSelectedElement,
                     evt: 'click'
                 },
                 {
@@ -5159,8 +5165,8 @@ const svgEditor = window['svgEditor'] = (function($) {
                     // {key: 'shift+P', fn: selectNext},
                     // {key: [modKey+'up', true], fn: function(){zoomImage(2);}},
                     // {key: [modKey+'down', true], fn: function(){zoomImage(0.5);}},
-                    // {key: [modKey+']', true], fn: function(){moveUpDownSelected('Up');}},
-                    // {key: [modKey+'[', true], fn: function(){moveUpDownSelected('Down');}},
+                    // {key: [modKey+']', true], fn: function(){moveTopBottomSelected('Up');}},
+                    // {key: [modKey+'[', true], fn: function(){moveTopBottomSelected('Down');}},
                     // {key: ['up', true], fn: function(){moveSelected(0,-1);}},
                     // {key: ['down', true], fn: function(){moveSelected(0,1);}},
                     // {key: ['left', true], fn: function(){moveSelected(-1,0);}},
@@ -5420,16 +5426,16 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 svgCanvas.ungroupSelectedElement();
                                 break;
                             case 'move_front':
-                                moveToTopSelected();
+                                moveTopSelectedElement();
                                 break;
                             case 'move_up':
-                                moveUpDownSelected('Up');
+                                moveUpSelectedElement();
                                 break;
                             case 'move_down':
-                                moveUpDownSelected('Down');
+                                moveDownSelectedElement();
                                 break;
                             case 'move_back':
-                                moveToBottomSelected();
+                                moveBottomSelectedElement();
                                 break;
                             default:
                                 if (svgedit.contextmenu && svgedit.contextmenu.hasCustomHandler(action)) {
@@ -6265,7 +6271,10 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     const newConfigs = JSON.parse(configString);
                                     const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
                                     const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
-                                    const currentConfig = JSON.parse(LocalStorage.get('customizedLaserConfigs'));
+                                    let currentConfig = LocalStorage.get('customizedLaserConfigs');
+                                    if (typeof(currentConfig) === 'string') {
+                                        currentConfig = JSON.parse(currentConfig);
+                                    }
                                     for (let i = 0; i < currentConfig.length; i++) {
                                         const config = currentConfig[i];
                                         if (!config.isDefault && !configNames.has(config.name)) {
