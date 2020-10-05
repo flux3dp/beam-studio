@@ -6138,7 +6138,10 @@ define([
                                     const newConfigs = JSON.parse(configString);
                                     const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
                                     const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
-                                    const currentConfig = JSON.parse(LocalStorage.get('customizedLaserConfigs'));
+                                    let currentConfig = LocalStorage.get('customizedLaserConfigs');
+                                    if (typeof(currentConfig) === 'string') {
+                                        currentConfig = JSON.parse(currentConfig);
+                                    }
                                     for (let i = 0; i < currentConfig.length; i++) {
                                         const config = currentConfig[i];
                                         if (!config.isDefault && !configNames.has(config.name)) {
