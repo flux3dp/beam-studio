@@ -5932,6 +5932,7 @@ define([
                 };
 
                 const importBvgString = (str) => {
+                    svgCanvas.clearSelection();
                     editor.loadFromString(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
                     // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
                     if (typeof(str) === 'string') {
@@ -6020,6 +6021,7 @@ define([
                 editor.importBvgString = importBvgString;
 
                 const importBvgStringAsync = async (str) => {
+                    svgCanvas.clearSelection();
                     await editor.loadFromStringAsync(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
                     // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
                     if (typeof(str) === 'string') {
