@@ -84,7 +84,7 @@ define([
             shortcuts.on([FN_KEY, '0'], function() { console.log("Reset View!"); window.svgEditor.resetView(); });
             shortcuts.on([FN_KEY, 'plus'], function() { console.log("Zoom In"); window.svgEditor.zoomIn(); });
             shortcuts.on([FN_KEY, 'shift', 'minus'], function() { console.log("Zoom Out"); svgEditor.zoomOut(); });
-            shortcuts.on([FN_KEY, 'nmu_plus'], function() { console.log("Zoom In with numpad +"); svgEditor.zoomIn(); });
+            shortcuts.on([FN_KEY, 'num_plus'], function() { console.log("Zoom In with numpad +"); svgEditor.zoomIn(); });
             shortcuts.on([FN_KEY, 'num_minus'], function() { console.log("Zoom Out with numpad -"); svgEditor.zoomOut(); });
 
             shortcuts.on(['ctrl', 'alt', 'd'], function(e) {
