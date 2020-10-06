@@ -89,7 +89,7 @@ define([
                 return;
             }
             try {
-                const {stdout, stderr} = await exec(`pdf2svg ${file.path} ${outPath}`);
+                const {stdout, stderr} = await exec(`pdf2svg "${file.path}" "${outPath}"`);
                 console.log('out', stdout, 'err', stderr);
                 if (!stderr) {
                     let data = await fetch(outPath);
