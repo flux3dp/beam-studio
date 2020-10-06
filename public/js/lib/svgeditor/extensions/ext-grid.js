@@ -25,6 +25,8 @@ svgEditor.addExtension('view_grid', function() { 'use strict';
 		units = svgedit.units.getTypeMap(),
 		intervals = [0.01, 0.1, 1, 10, 100, 1000];
 
+	const defaultUnit = svgEditor.curConfig.defaultUnit;
+
 	$(hcanvas).hide().appendTo('body');
 
 	var canvasGrid = svgdoc.createElementNS(NS.SVG, 'svg');
@@ -82,7 +84,8 @@ svgEditor.addExtension('view_grid', function() { 'use strict';
 	function updateGrid(zoom) {
 		var i;
 		// TODO: Try this with <line> elements, then compare performance difference
-		var unit = units[svgEditor.curConfig.baseUnit]; // 1 = 1px
+		let unit = units[svgEditor.curConfig.baseUnit]; // 1 = 1px
+		if (defaultUnit === 'inches') unit *= 12.7; // 25.4 / 2
 		var u_multi = unit * zoom;
 		// Calculate the main number interval
 		var raw_m = 100 / u_multi;

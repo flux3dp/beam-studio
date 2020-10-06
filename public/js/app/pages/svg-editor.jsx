@@ -157,6 +157,7 @@ requirejs.config({
     }
 });
 define([
+    'helpers/local-storage',
     'helpers/i18n',
     'jsx!views/beambox/Task-Interpreter-Panel',
     'jsx!views/beambox/Right-Panels/Right-Panel',
@@ -206,6 +207,7 @@ define([
     'lib/svgeditor/canvg/rgbcolor',
 
 ], function (
+    LocalStorage,
     i18n,
     TaskInterpreterPanel,
     RightPanel,
@@ -248,7 +250,7 @@ define([
                                     <canvas width={15} />
                                 </div>
                             </div>
-                            <div id="ruler_unit_shower">mm</div>
+                            <div id="ruler_unit_shower">{LocalStorage.get('default-units') === 'inches' ? 'inch' : 'mm'}</div>
                         </div>
                         <div id="workarea">
                             <style

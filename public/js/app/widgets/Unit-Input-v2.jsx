@@ -40,7 +40,6 @@ define([
 
         componentDidUpdate(prevProps, prepStates) {
             if (prevProps.unit !== this.props.unit) {
-                console.log(prevProps.unit, this.props.unit);
                 this.setDecimal();
                 const val = this._validateValue(this.props.defaultValue);
                 this.setState({
