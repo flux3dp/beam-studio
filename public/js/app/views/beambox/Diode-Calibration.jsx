@@ -66,10 +66,10 @@ define([
             });
         }
 
-        onClose = () => {
+        onClose = async () => {
             this.props.onClose();
-            PreviewModeController.end();
-            DeviceMaster.setFan(this.origFanSpeed);
+            await PreviewModeController.end();
+            await DeviceMaster.setFan(this.origFanSpeed);
         }
 
         updateShowHint(show) {
