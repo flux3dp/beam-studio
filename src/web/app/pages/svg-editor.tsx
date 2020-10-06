@@ -1,3 +1,4 @@
+import LocalStorage from '../../helpers/local-storage';
 import * as i18n from '../../helpers/i18n';
 import TaskInterpreterPanel from '../views/beambox/Task-Interpreter-Panel';
 import { RightPanel } from '../views/beambox/Right-Panels/Right-Panel';
@@ -39,7 +40,7 @@ export class SVGEditor extends React.Component {
                                 <canvas width={15} />
                             </div>
                         </div>
-                        <div id="ruler_unit_shower">mm</div>
+                        <div id="ruler_unit_shower">{LocalStorage.get('default-units') === 'inches' ? 'inch' : 'mm'}</div>
                     </div>
                     <div id="workarea" className={classNames({'mac': process.platform === 'darwin'})}>
                         <style

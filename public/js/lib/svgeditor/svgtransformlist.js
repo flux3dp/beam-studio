@@ -266,7 +266,7 @@ svgedit.transformlist.getTransformList = function(elem) {
 	if (!svgedit.browser.supportsNativeTransformLists()) {
 		var id = elem.id || 'temp';
 		var t = listMap_[id];
-		if (!t || id === 'temp') {
+		if (!t || id === 'temp' || t._elem !== elem) {
 			listMap_[id] = new svgedit.transformlist.SVGTransformList(elem);
 			listMap_[id]._init();
 			t = listMap_[id];

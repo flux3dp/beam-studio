@@ -2972,9 +2972,7 @@ define([
                     evt.stopImmediatePropagation();
                     evt.preventDefault();
 
-                    if (targetZoom === undefined) {
-                        targetZoom = svgCanvas.getZoom();
-                    }
+                    targetZoom = svgCanvas.getZoom();
 
                     const mouseInputDevice = BeamboxPreference.read('mouse_input_device');
                     const isTouchpad = (mouseInputDevice === 'TOUCHPAD');
@@ -3020,9 +3018,9 @@ define([
                     function _zoomAsIllustrator() {
                         const delta = (evt.wheelDelta) ? evt.wheelDelta : (evt.detail) ? -evt.detail : 0;
                         if (isTouchpad) {
-                            targetZoom = targetZoom * 1.1 ** (delta / 500);
+                            targetZoom = targetZoom * 1.1 ** (delta / 100);
                         } else {
-                            targetZoom = targetZoom * 1.1 ** (delta / 250);
+                            targetZoom = targetZoom * 1.1 ** (delta / 50);
                         }
 
                         targetZoom = Math.min(20, targetZoom);
