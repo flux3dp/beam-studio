@@ -61,10 +61,10 @@ class CameraCalibrationStateMachine extends React.Component {
         });
     }
 
-    onClose() {
+    async onClose() {
         this.props.onClose();
-        PreviewModeController.end();
-        //DeviceMaster.setFan(this.origFanSpeed);
+        await PreviewModeController.end();
+        await DeviceMaster.setFan(this.origFanSpeed);
     }
 
     updateImgBlobUrl(val) {
