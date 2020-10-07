@@ -72,7 +72,7 @@ const pdf2svg = async (file) => {
         }
     } else {
         //Linux 
-        const outPath = path.join(resourcesRoot, 'out.svg');
+        const outPath = path.join('/tmp', 'out.svg');
         try {
             await exec('type pdf2svg');
         } catch(e) {
