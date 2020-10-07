@@ -61,7 +61,6 @@ export default {
     support: {
         no_webgl: '您的系統不支援 WebGL，建議您使用其他電腦開啟 Beam Studio',
         no_vcredist: '請安裝 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
-        osx_10_9: 'Beam Studio 目前不支援 OS X 10.9，敬請更新至更新的版本。'
     },
     generic_error: {
         UNKNOWN_ERROR: '[UE] 請重啟 Beam Studio',

@@ -11,8 +11,6 @@ import ConnectWiFi from './pages/Connect-Wi-Fi';
 import ConnectWired from './pages/Connect-Wired';
 import ConnectEthernet from './pages/Connect-Ethernet';
 import ConnectMachineIp from './pages/Connect-Machine-Ip';
-import ConnectBeambox from './pages/Connect-Beambox';
-import ConnectBeamo from './pages/Connect-Beamo';
 import Settings from './pages/Settings';
 import Beambox from './pages/Beambox';
 import NotificationCollection from './views/Notification-Collection';
@@ -42,7 +40,7 @@ export default Backbone.Router.extend({
                 [/^.*$/, 'e404', this.e404],
                 // initialize Flux Printer
                 [
-                    /^initialize\/connect\/?(select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-beambox|connect-beamo|connect-machine|select|set-printer|set-password|setup-complete)\/?(.*)?/,
+                    /^initialize\/connect\/?(select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-machine|select|set-printer|set-password|setup-complete)\/?(.*)?/,
                     'initial',
                     this.initial
                 ],
@@ -136,26 +134,6 @@ export default Backbone.Router.extend({
             case 'connect-machine-ip':
                 _display(
                     ConnectMachineIp,
-                    {
-                        props: {
-                            other: other
-                        }
-                    }
-                )
-                break;
-            case 'connect-beambox':
-                _display(
-                    ConnectBeambox,
-                    {
-                        props: {
-                            other: other
-                        }
-                    }
-                )
-                break;
-            case 'connect-beamo':
-                _display(
-                    ConnectBeamo,
                     {
                         props: {
                             other: other

@@ -61,7 +61,6 @@ export default {
     support: {
         no_webgl: 'WebGL wird nicht unterstützt. Bitte verwenden Sie andere Geräte.',
         no_vcredist: 'Bitte installieren Sie Visual C ++ Redistributable 2015 <br/> Das kann auf flux3dp.com heruntergeladen werden',
-        osx_10_9: 'OS X 10.9 wird nicht unterstützt. Bitte aktualisieren Sie auf eine neuere Version'
     },
     generic_error: {
         UNKNOWN_ERROR: '[UE] Bitte starte FLUX Studio neu',

@@ -130,14 +130,6 @@ FLUX.processPythonException = function(exception_str){
     }
 }
 
-//Process OS X Version Check
-if(window.navigator.userAgent.indexOf("Intel Mac OS X 10_9") !== -1){
-    AlertActions.showPopupError(
-        'error-osx_10_9',
-        lang.support.osx_10_9,
-    );
-};
-
 export default function(callback) {
     var $body = $('body'),
         hash = location.hash,

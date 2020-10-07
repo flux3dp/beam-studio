@@ -61,7 +61,6 @@ export default {
     support: {
         no_webgl: '您的系统不支持 WebGL，建议您使用其他电脑开启 Mozu Studio',
         no_vcredist: '请安装 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
-        osx_10_9: 'Mozu Studio 目前不支持 OS X 10.9，敬请更新至更新的版本。'
     },
     generic_error: {
         UNKNOWN_ERROR: '[UE] 请重启 Mozu Studio',

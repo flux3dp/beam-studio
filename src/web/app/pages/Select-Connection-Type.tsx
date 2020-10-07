@@ -23,7 +23,6 @@ class SelectConnectionType extends React.Component{
                 location.hash = '#initialize/connect/connect-ethernet';
                 break;
         }
-        //location.hash = '#initialize/connect/connect-beamo';
     }
 
     renderSelectConnectTypeStep = () => {
