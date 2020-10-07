@@ -49,6 +49,7 @@ export default {
         alerts: {
             start_preview_timeout: '#803 プレビューモードの開始時にタイムアウトが発生しました。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
             fail_to_start_preview: '#803 プレビューモードを開始できません。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
+            fail_to_connect_with_camera: '#803 マシンカメラとの接続を確立できませんでした。マシンまたはBeam Studioを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">ガイド</a>に従ってください。',
             power_too_high: 'パワーが高すぎる',
             power_too_high_msg: 'より低いレーザー出力（70％未満）を使用すると、レーザー管の寿命が延びます。\n「了解」と入力して続行します。' ,
             power_too_high_confirm: '了解',
@@ -1828,7 +1829,7 @@ export default {
         machineNotConnected: 'マシンが接続されていません',
         notPrinting: '印刷中ではありません',
         nothingToPrint: '印刷するものがありません（ソースBLOBがありません）',
-        connectionTimeout: '#805 ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
+        connectionTimeout: '#805 デバイス接続タイムアウト，ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
         device_not_found: {
             caption: '出るフォトのマシンが見つかりません',
             message: '#812 マシンのWi-Fiインジケーターを確認してください'

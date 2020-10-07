@@ -49,6 +49,7 @@ export default {
         alerts: {
             start_preview_timeout: '#803 Timeout has occured when starting preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
             fail_to_start_preview: '#803 Fail to start preview mode. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
+            fail_to_connect_with_camera: '#803 Failed to establish connection with machine camera. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">this guide</a>.',
             power_too_high: 'POWER TOO HIGH',
             power_too_high_msg: 'Using lower laser power (under 70%) will extends laser tube\'s lifetime.\nEnter "NOTED" to proceed.',
             power_too_high_confirm: 'NOTED',
@@ -1826,7 +1827,7 @@ export default {
         machineNotConnected: 'Machine is not connected',
         notPrinting: 'Printing is not in progress',
         nothingToPrint: 'Nothing to print (source blob missing)',
-        connectionTimeout: '#805 Please check your network state and your machine\'s Wi-Fi indicator.',
+        connectionTimeout: '#805 Device Connection Timeout. Please check your network state and your machine\'s Wi-Fi indicator.',
         device_not_found: {
             caption: 'Default Machine not found',
             message: '#812 Please check your machine\'s Wi-Fi indicator'

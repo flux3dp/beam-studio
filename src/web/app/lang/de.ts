@@ -49,6 +49,7 @@ export default {
         alerts: {
             start_preview_timeout: '#803 Beim Starten des Vorschaumodus ist eine Zeitüberschreitung aufgetreten. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
             fail_to_start_preview: '#803 Fehler beim Starten des Vorschaumodus. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
+            fail_to_connect_with_camera: '#803 Verbindung zur Maschinenkamera konnte nicht hergestellt werden. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001111355">diese Anleitung</a>.',
             power_too_high: 'Leistung zu hoch',
             power_too_high_msg: 'Die Verwendung einer niedrigeren Laserleistung (unter 70%) verlängert die Lebensdauer der Laserröhre!\nGeben Sie "OK" ein, um fortzufahren.' ,
             power_too_high_confirm: 'OK',
@@ -1826,7 +1827,7 @@ export default {
         machineNotConnected: 'Maschine ist nicht angeschlossen',
         notPrinting: 'Der Druck ist nicht im Gange',
         nothingToPrint: 'Nichts zu drucken (Quell-Blob fehlt)',
-        connectionTimeout: '#805 Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
+        connectionTimeout: '#805 Zeitlimit für Geräteverbindung. Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
         device_not_found: {
             caption: 'Standard-Maschine nicht gefunden',
             message: '#812 Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts'

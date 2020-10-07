@@ -183,7 +183,7 @@ export class TopBar extends React.PureComponent {
                 } else {
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_ERROR,
-                        message: `#803 ${errMessage}`,
+                        message: `${LANG.alerts.fail_to_start_preview}<br/>${errMessage}`,
                     });
                 }
                 setTopBarPreviewMode(false);
@@ -192,11 +192,18 @@ export class TopBar extends React.PureComponent {
             });
             $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
         } catch (error) {
-            console.log(error);
-            Alert.popUp({
-                type: AlertConstants.SHOW_POPUP_ERROR,
-                message: error.message ? (`#803 ${error.message}`) : LANG.alerts.fail_to_start_preview,
-            });
+            console.error(error);
+            if (error.message && error.message.startsWith('Camera WS')) {
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: `${LANG.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+                });
+            } else {
+                Alert.popUp({
+                    type: AlertConstants.SHOW_POPUP_ERROR,
+                    message: `${LANG.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+                });
+            }
             FnWrapper.useSelectTool();
             return;
         }

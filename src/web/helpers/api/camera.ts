@@ -62,8 +62,12 @@ class Camera {
             method: method,
             onOpen: () => this._ws.send(rsaKey()),
             onMessage: (res) => this._wsSubject.next(res),
-            onError: (res) => this._wsSubject.error(new Error(res.error?res.error.toString():res)),
-            onFatal: (res) => this._wsSubject.error(new Error(res.error?res.error.toString():res)),
+            onError: (res) => {
+                return this._wsSubject.error(new Error(`Camera WS ${res.error ? res.error.toString() : res}`))
+            },
+            onFatal: (res) => {
+                return this._wsSubject.error(new Error(`Camera WS ${res.error ? res.error.toString() : res}`))
+            },
             onClose: () => this._wsSubject.complete(),
             autoReconnect: false
         });

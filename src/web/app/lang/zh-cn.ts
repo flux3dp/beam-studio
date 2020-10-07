@@ -49,6 +49,7 @@ export default {
         alerts: {
             start_preview_timeout: '#803 启动相机预览时超时，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
             fail_to_start_preview: '#803 启动相机预览失败，请重新开启您的机器或是 Beam Studio，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
+            fail_to_connect_with_camera: '#803 与机器相机建立连线时失败，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此則引導</a>。',
             power_too_high: '功率过高',
             power_too_high_msg: '激光管在高功率（70％ 以上）下耗损较快，使用低功率可以延长雷试管使用寿命。\n输入「知道了」以继续。' ,
             power_too_high_confirm: '知道了',
@@ -1360,11 +1361,6 @@ export default {
                         more: '管理',
                         parameters: '选择参数'
                     },
-                    alerts: {
-                        start_preview_timeout: '#803 启动相机预览时超时，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
-                        fail_to_start_preview: '#803 启动相机预览失败，请重新启動您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/zh-tw/articles/360001111355">此则引导</a>。',
-
-                    }
                 },
                 laser_speed: {
                     text: '激光速度',
@@ -1830,7 +1826,7 @@ export default {
         machineNotConnected: 'Machine is not connected',
         notPrinting: 'Printing is not in progress',
         nothingToPrint: 'Nothing to print (source blob missing)',
-        connectionTimeout: '#805 请确认你的网络状态和机器的 Wi-Fi 指示灯是否为恒亮',
+        connectionTimeout: '#805 连接机器逾时，请确认你的网路状态和机器的 Wi-Fi 讯号符号。',
         device_not_found: {
             caption: '找不到默认机器',
             message: '#812 请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器'

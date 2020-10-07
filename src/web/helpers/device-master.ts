@@ -228,7 +228,7 @@ class DeviceMaster {
                 switch (errorCode) {
                     // TODO add error message localized
                     case ConnectionError.TIMEOUT:
-                        errMessage = '#890 Device Connection Timeout'
+                        errMessage = lang.message.connectionTimeout
                         break;
                     case ConnectionError.FLUXMONITOR_VERSION_IS_TOO_OLD:
                         errMessage = lang.message.monitor_too_old.content;
