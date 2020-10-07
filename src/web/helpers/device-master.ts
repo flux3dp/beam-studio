@@ -226,7 +226,6 @@ class DeviceMaster {
                 let errCaption = '';
                 let errMessage = lang.message.unknown_error;
                 switch (errorCode) {
-                    // TODO add error message localized
                     case ConnectionError.TIMEOUT:
                         errMessage = lang.message.connectionTimeout
                         break;
@@ -247,7 +246,7 @@ class DeviceMaster {
                         errMessage = lang.message.unknown_device;
                         break;
                     default:
-                        errMessage = `#821 Unhandled Exception ${errorCode}`
+                        errMessage = `${lang.message.unknown_error} ${errorCode}`
                 }
 
                 Alert.popUp({
