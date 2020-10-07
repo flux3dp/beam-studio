@@ -35,7 +35,7 @@ var hadConnected = false,
 export default function(options) {
     var { dev } = window['FLUX'],
         customHost = LocalStorage.get('host'),
-        customPort = LocalStorage.get('port'),
+        customPort = localStorage.getItem('port'),
         defaultCallback = function(result) {},
         defaultOptions = {
             hostname: customHost ? customHost : (dev ? '127.0.0.1' : '127.0.0.1'),
