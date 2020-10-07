@@ -13,6 +13,7 @@ import CheckDeviceStatus from '../../../helpers/check-device-status';
 import Progress from '../../contexts/ProgressCaller';
 import PreviewModeController from '../../actions/beambox/preview-mode-controller';
 import CameraCalibration from '../../../helpers/api/camera-calibration';
+import Config from '../../../helpers/api/config';
 import Constant from '../../actions/beambox/constant';
 import DeviceErrorHandler from '../../../helpers/device-error-handler';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
@@ -28,6 +29,7 @@ const LANG = i18n.lang.camera_calibration;
 const cameraCalibrationWebSocket = CameraCalibration();
 
 //View render the following steps
+const STEP_ASK_READJUST = Symbol();
 const STEP_REFOCUS = Symbol();
 const STEP_BEFORE_CUT = Symbol();
 const STEP_BEFORE_ANALYZE_PICTURE = Symbol();
@@ -37,19 +39,26 @@ let cameraPosition = {
     x: 0,
     y: 0
 };
+const calibratedMachineUUIDs = [];
 
 class CameraCalibrationStateMachine extends React.Component {
+    private props: any
+    private state: any
+    private setState: (newState) => void
+    private unit: string
+
     constructor(props) {
         super(props);
+        const didCalibrate = calibratedMachineUUIDs.includes(props.device.uuid);
 
         this.state = {
-            currentStep: STEP_REFOCUS,
+            currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_REFOCUS,
             currentOffset: {X: 15, Y: 30, R: 0, SX: 1.625, SY: 1.625},
             imgBlobUrl: '',
             showHint: false,
             shouldShowLastConfig: true
         };
-
+        this.unit = Config().read('default-units') as string || 'mm';
         this.updateCurrentStep = this.updateCurrentStep.bind(this);
         this.onClose = this.onClose.bind(this);
         this.updateImgBlobUrl = this.updateImgBlobUrl.bind(this);
@@ -64,7 +73,9 @@ class CameraCalibrationStateMachine extends React.Component {
     async onClose() {
         this.props.onClose();
         await PreviewModeController.end();
-        await DeviceMaster.setFan(this.origFanSpeed);
+        if (this.origFanSpeed) {
+            await DeviceMaster.setFan(this.origFanSpeed);
+        }
     }
 
     updateImgBlobUrl(val) {
@@ -88,6 +99,16 @@ class CameraCalibrationStateMachine extends React.Component {
 
     render() {
         const stepsMap = {
+            [STEP_ASK_READJUST]:
+                <StepAskReadjust
+                    device={this.props.device}
+                    model={this.props.model}
+                    parent={this}
+                    updateImgBlobUrl={this.updateImgBlobUrl}
+                    updateOffsetDataCb={this.updateOffsetData.bind(this)}
+                    gotoNextStep={this.updateCurrentStep}
+                    onClose={this.onClose}
+                />,
             [STEP_REFOCUS]:
                 <StepRefocus
                     gotoNextStep={this.updateCurrentStep}
@@ -114,6 +135,8 @@ class CameraCalibrationStateMachine extends React.Component {
                     updateOffsetDataCb={this.updateOffsetData.bind(this)}
                     showHint={this.state.showHint}
                     updateShowHint={this.updateShowHint.bind(this)}
+                    device={this.props.device}
+                    unit={this.unit}
                     parent={this}
 
                 />,
@@ -134,6 +157,64 @@ class CameraCalibrationStateMachine extends React.Component {
     }
 };
 
+const StepAskReadjust = ({device, model, parent, gotoNextStep, updateImgBlobUrl, updateOffsetDataCb, onClose}) => {
+    return (
+        <AlertDialog
+            caption={LANG.camera_calibration}
+            message={LANG.ask_for_readjust}
+            buttons={
+                [{
+                    label: LANG.cancel,
+                    className: 'btn-default pull-left',
+                    onClick: onClose
+                },
+                {
+                    label: LANG.skip,
+                    className: 'btn-default pull-right primary',
+                    onClick: async () => {
+                        try {
+                            let blobUrl;
+                            await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
+                            parent.lastConfig = PreviewModeController._getCameraOffset();
+                            Progress.openNonstopProgress({
+                                id: 'taking-picture',
+                                message: LANG.taking_picture,
+                                timeout: 30000,
+                            });
+                            const movementX = Constant.camera.calibrationPicture.centerX - Constant.camera.offsetX_ideal;
+                            const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
+                            blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
+                            cameraPosition = {x: movementX, y: movementY};
+                            await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
+                            updateImgBlobUrl(blobUrl);
+                            gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
+                        } catch (error) {
+                            console.log(error);
+                            Alert.popUp({
+                                id: 'menu-item',
+                                type: AlertConstants.SHOW_POPUP_ERROR,
+                                message: '#815 ' + (error.message || DeviceErrorHandler.translate(error) || 'Fail to cut and capture'),
+                                callbacks: async () => {
+                                    const report = await DeviceMaster.getReport();
+                                    device.st_id = report.st_id;
+                                    await CheckDeviceStatus(device, false, true);
+                                }
+                            });
+                        } finally {
+                            Progress.popById('taking-picture');
+                        }
+                    }
+                },
+                {
+                    label: LANG.do_engraving,
+                    className: 'btn-default pull-right',
+                    onClick: () => gotoNextStep(STEP_REFOCUS)
+                }]
+            }
+        />
+    );
+};
+
 const StepRefocus = ({gotoNextStep, onClose, model}) => (
     <AlertDialog
         caption={LANG.camera_calibration}
@@ -141,12 +222,12 @@ const StepRefocus = ({gotoNextStep, onClose, model}) => (
         buttons={
             [{
                 label: LANG.next,
-                className: 'btn-default btn-alone-right',
+                className: 'btn-default pull-right primary',
                 onClick: () => gotoNextStep(STEP_BEFORE_CUT)
             },
             {
                 label: LANG.cancel,
-                className: 'btn-default btn-alone-left',
+                className: 'btn-default pull-left',
                 onClick: onClose
             }]
         }
@@ -171,9 +252,7 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
         const laserPower = Number((await DeviceMaster.getLaserPower()).value);
         const fanSpeed = Number((await DeviceMaster.getFan()).value);
         parent.origFanSpeed = fanSpeed;
-
-        const deviceInfo = await DeviceMaster.getDeviceInfo();
-        const vc = VersionChecker(deviceInfo.version);
+        const vc = VersionChecker(device.version);
         const tempCmdAvailable = vc.meetRequirement('TEMP_I2C_CMD');
         if (tempCmdAvailable) {
             await DeviceMaster.setFanTemp(100);
@@ -225,7 +304,7 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
             buttons={
                 [{
                     label: LANG.start_engrave,
-                    className: classNames('btn-default btn-alone-right', {'disabled': isCutButtonDisabled}),
+                    className: classNames('btn-default pull-right primary', {'disabled': isCutButtonDisabled}),
                     onClick: async ()=>{
                         if (isCutButtonDisabled) {
                             return;
@@ -233,6 +312,9 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
                         try {
                             setCutButtonDisabled(true);
                             await cutThenCapture(updateOffsetDataCb, parent);
+                            if (!calibratedMachineUUIDs.includes(device.uuid)) {
+                                calibratedMachineUUIDs.push(device.uuid);
+                            }
                             gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
                         } catch (error) {
                             setCutButtonDisabled(false);
@@ -252,7 +334,7 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
                 },
                 {
                     label: LANG.cancel,
-                    className: 'btn-default btn-alone-left',
+                    className: 'btn-default pull-left',
                     onClick: onClose
                 }]
             }
@@ -260,10 +342,12 @@ const StepBeforeCut = ({device, updateImgBlobUrl, gotoNextStep, onClose, model, 
     );
 };
 
-const sendPictureThenSetConfig = async (result, imgBlobUrl, borderless) => {
+const sendPictureThenSetConfig = async (result, device, borderless) => {
+    result.X = Math.round(result.X * 10) / 10;
+    result.Y = Math.round(result.Y * 10) / 10;
     console.log("Setting camera_offset", borderless ? 'borderless' : '', result);
     if (result) {
-        await _doSetConfigTask(result.X, result.Y, result.R, result.SX, result.SY, borderless);
+        await _doSetConfigTask(device, result.X, result.Y, result.R, result.SX, result.SY, borderless);
     } else {
         throw new Error(LANG.analyze_result_fail);
     }
@@ -325,22 +409,22 @@ const _doAnalyzeResult = async (imgBlobUrl, x, y, angle, squareWidth, squareHeig
 
     const scaleRatioX = (square_size * Constant.dpmm) / squareWidth;
     const scaleRatioY = (square_size * Constant.dpmm) / squareHeight;
-    const deviationX = x - blobImgSize.width/2; // pixel
-    const deviationY = y - blobImgSize.height/2; // pixel
+    const deviationX = x - blobImgSize.width / 2; // pixel
+    const deviationY = y - blobImgSize.height / 2; // pixel
 
     const offsetX = -deviationX * scaleRatioX / Constant.dpmm + offsetX_ideal; //mm
     const offsetY = -deviationY * scaleRatioY / Constant.dpmm + offsetY_ideal; //mm
 
-    if ((0.8 > scaleRatioX/scaleRatio_ideal) || (scaleRatioX/scaleRatio_ideal > 1.2)) {
+    if ((0.8 > scaleRatioX / scaleRatio_ideal) || (scaleRatioX / scaleRatio_ideal > 1.2)) {
         return false;
     }
-    if ((0.8 > scaleRatioY/scaleRatio_ideal) || (scaleRatioY/scaleRatio_ideal > 1.2)) {
+    if ((0.8 > scaleRatioY / scaleRatio_ideal) || (scaleRatioY / scaleRatio_ideal > 1.2)) {
         return false;
     }
     if ((Math.abs(deviationX) > 400) || (Math.abs(deviationY) > 400)) {
         return false;
     }
-    if (Math.abs(angle) > 10*Math.PI/180) {
+    if (Math.abs(angle) > 10 * Math.PI / 180) {
         return false;
     }
     return {
@@ -369,18 +453,17 @@ const _doGetOffsetFromPicture = async function(imgBlobUrl, updateOffsetCb) {
     return hadGotOffsetFromPicture;
 };
 
-const _doSetConfigTask = async (X, Y, R, SX, SY, borderless) => {
+const _doSetConfigTask = async (device, X, Y, R, SX, SY, borderless) => {
     const parameterName = borderless ? 'camera_offset_borderless' : 'camera_offset';
-    const deviceInfo = await DeviceMaster.getDeviceInfo();
-    const vc = VersionChecker(deviceInfo.version);
+    const vc = VersionChecker(device.version);
     if(vc.meetRequirement('BEAMBOX_CAMERA_CALIBRATION_XY_RATIO')) {
-        await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2} SX:${SX} SY:${SY}`);
+        await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2} SX:${SX} SY:${SY}`);
     } else {
-        await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX+SY)/2}`);
+        await DeviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2}`);
     }
 };
 
-const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, parent}) => {
+const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, unit, device, parent}) => {
     const imageScale = 200 / 280;
     const mmToImage = 10 * imageScale;
     let imgBackground = {
@@ -407,7 +490,6 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
         top: 100 - lastSquareHeight / 2 - (parent.lastConfig.y - Constant.camera.calibrationPicture.centerY + cameraPosition.y) * mmToImage / parent.lastConfig.scaleRatioY,
         transform: `rotate(${-parent.lastConfig.angle * 180 / Math.PI}deg)`
     };
-
     let handleValueChange = function (key, val) {
         console.log('Key', key , '=', val);
         currentOffset[key] = val;
@@ -436,11 +518,11 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
                         type={'number'}
                         min={-50}
                         max={50}
-                        unit="mm"
+                        unit={'mm'}
                         defaultValue={currentOffset.X - 15}
                         getValue={(val) => handleValueChange('X', val + 15)}
-                        decimal={1}
-                        step={0.5}
+                        decimal={unit ==='inches' ? 3 : 1}
+                        step={unit ==='inches' ? 0.005 : 0.1}
                         isDoOnInput={true}
                     />
                 </div>
@@ -451,11 +533,11 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
                         type={'number'}
                         min={-50}
                         max={50}
-                        unit="mm"
+                        unit={'mm'}
                         defaultValue={currentOffset.Y - 30}
                         getValue={(val) => handleValueChange('Y', val + 30)}
-                        decimal={1}
-                        step={0.5}
+                        decimal={unit ==='inches' ? 3 : 1}
+                        step={unit ==='inches' ? 0.005 : 0.1}
                         isDoOnInput={true}
                     />
                 </div>
@@ -522,11 +604,11 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
             buttons={
                 [{
                     label: LANG.next,
-                    className: 'btn-default btn-alone-right-1',
+                    className: 'btn-default btn-alone-right-1 primary',
                     onClick: async () => {
                         try {
                             await PreviewModeController.end();
-                            await sendPictureThenSetConfig(currentOffset, imgBlobUrl, parent.props.borderless);
+                            await sendPictureThenSetConfig(currentOffset, device, parent.props.borderless);
                             gotoNextStep(STEP_FINISH);
                         } catch (error) {
                             console.log(error);
@@ -542,11 +624,14 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
                 {
                     label: LANG.back,
                     className: 'btn-default btn-alone-right-2',
-                    onClick: () => gotoNextStep(STEP_BEFORE_CUT)
+                    onClick: async () => {
+                        await PreviewModeController.end();
+                        gotoNextStep(STEP_BEFORE_CUT);
+                    }
                 },
                 {
                     label: LANG.cancel,
-                    className: 'btn-default btn-alone-left',
+                    className: 'btn-default pull-left',
                     onClick: onClose
                 }]
             }
@@ -554,7 +639,7 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
     );
 };
 
-const moveAndRetakePicture = async (dir, updateImgBlobUrl) => {
+const moveAndRetakePicture = async (dir: string, updateImgBlobUrl: Function) => {
     try {
         Progress.openNonstopProgress({
             id: 'taking-picture',
@@ -620,7 +705,7 @@ const StepFinish = ({parent, onClose}) => (
         buttons={
             [{
                 label: LANG.finish,
-                className: 'btn-default btn-alone-right',
+                className: 'btn-default pull-right primary',
                 onClick: () => {
                     BeamboxPreference.write('should_remind_calibrate_camera', false);
                     svgCanvas.toggleBorderless(parent.props.borderless);

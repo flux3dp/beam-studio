@@ -1,5 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
+import Config from '../../../helpers/api/config';
 import * as i18n from '../../../helpers/i18n';
 import BeamboxPreference from '../../actions/beambox/beambox-preference';
 import AlertDialog from '../../widgets/AlertDialog';
@@ -19,6 +20,7 @@ const classNames = requireNode('classnames');
 const LANG = i18n.lang.diode_calibration;
 
 //View render the following steps
+const STEP_ASK_READJUST = Symbol();
 const STEP_ALERT = Symbol();
 const STEP_CUT = Symbol();
 const STEP_ANALYZE = Symbol();
@@ -28,14 +30,17 @@ let cameraOffset = {
     x: 0,
     y: 0
 };
+const calibratedMachineUUIDs = [];
 
 class DiodeCalibration extends React.Component {
     constructor(props) {
         super(props);
+        const { device } = props;
+        const didCalibrate = calibratedMachineUUIDs.includes(device.uuid);
 
         this.imageScale = 0.5;
         this.state = {
-            currentStep: STEP_ALERT,
+            currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_ALERT,
             showHint: false,
             dx: 0,
             dy: 0,
@@ -54,7 +59,9 @@ class DiodeCalibration extends React.Component {
     onClose = async () => {
         this.props.onClose();
         await PreviewModeController.end();
-        await DeviceMaster.setFan(this.origFanSpeed);
+        if (this.origFanSpeed) {
+            await DeviceMaster.setFan(this.origFanSpeed);
+        }
     }
 
     updateShowHint(show) {
@@ -65,6 +72,9 @@ class DiodeCalibration extends React.Component {
         const { currentStep } = this.state;
         let content;
         switch (currentStep) {
+            case STEP_ASK_READJUST:
+                content = this.renderStepAskReadjust();
+                break;
             case STEP_ALERT:
                 content = this.renderStepAlert();
                 break;
@@ -85,6 +95,57 @@ class DiodeCalibration extends React.Component {
         );
     }
 
+    renderStepAskReadjust() {
+        const { device } = this.props;
+        return (
+            <AlertDialog
+                caption={LANG.diode_calibration}
+                message={LANG.ask_for_readjust}
+                buttons={
+                    [
+                        {
+                            label: LANG.cancel,
+                            className: 'btn-default pull-left',
+                            onClick: () => this.onClose()
+                        },
+                        {
+                            label: LANG.skip,
+                            className: 'btn-default pull-right primary',
+                            onClick: async () => {
+                                try {
+                                    await CheckDeviceStatus(device);
+                                    await this.doCaptureTask();
+                                    await this.cropAndRotateImg();
+                                    this.updateCurrentStep(STEP_ANALYZE);
+                                } catch (error) {
+                                    console.log(error);
+                                    Alert.popUp({
+                                        id: 'menu-item',
+                                        type: AlertConstants.SHOW_POPUP_ERROR,
+                                        message: '#815 ' + (error.message || DeviceErrorHandler.translate(error) || 'Fail to capture'),
+                                        callbacks: async () => {
+                                            const report = await DeviceMaster.getReport();
+                                            device.st_id = report.st_id;
+                                            await CheckDeviceStatus(device, false, true);
+                                        }
+                                    });
+                                } finally {
+                                    Progress.popById('taking-picture');
+                                }
+                            }
+                        },
+                        {
+                            label: LANG.do_engraving,
+                            className: 'btn-default pull-right',
+                            onClick: () => this.updateCurrentStep(STEP_ALERT)
+                        },
+                    ]
+                }
+            />
+        );
+
+    }
+
     renderStepAlert() {
         const { model } = this.props;
         return (
@@ -94,12 +155,12 @@ class DiodeCalibration extends React.Component {
                 buttons={
                     [{
                         label: LANG.next,
-                        className: 'btn-default btn-alone-right primary',
+                        className: 'btn-default pull-right primary',
                         onClick: () => this.updateCurrentStep(STEP_CUT)
                     },
                     {
                         label: LANG.cancel,
-                        className: 'btn-default btn-alone-left',
+                        className: 'btn-default pull-left',
                         onClick: () => this.onClose()
                     }]
                 }
@@ -117,7 +178,7 @@ class DiodeCalibration extends React.Component {
                 buttons={
                     [{
                         label: LANG.start_engrave,
-                        className: classNames('btn-default btn-alone-right primary', {'disabled': isCutButtonDisabled}),
+                        className: classNames('btn-default pull-right primary', {'disabled': isCutButtonDisabled}),
                         onClick: async ()=>{
                             if (isCutButtonDisabled) {
                                 return;
@@ -128,6 +189,9 @@ class DiodeCalibration extends React.Component {
                                 await this.doCuttingTask();
                                 await this.doCaptureTask();
                                 await this.cropAndRotateImg();
+                                if (!calibratedMachineUUIDs.includes(device.uuid)) {
+                                    calibratedMachineUUIDs.push(device.uuid);
+                                }
                                 this.updateCurrentStep(STEP_ANALYZE);
                             } catch (error) {
                                 this.setState({isCutButtonDisabled: false});
@@ -147,7 +211,7 @@ class DiodeCalibration extends React.Component {
                     },
                     {
                         label: LANG.cancel,
-                        className: 'btn-default btn-alone-left',
+                        className: 'btn-default pull-left',
                         onClick: () => this.onClose()
                     }]
                 }
@@ -322,7 +386,7 @@ class DiodeCalibration extends React.Component {
                 buttons={
                     [{
                         label: LANG.next,
-                        className: 'btn-default btn-alone-right primary',
+                        className: 'btn-default pull-right primary',
                         onClick: () => {
                             const offsetX = Constant.diode.defaultOffsetX + dx;
                             const offsetY = Constant.diode.defaultOffsetY + dy;
@@ -334,7 +398,7 @@ class DiodeCalibration extends React.Component {
                     },
                     {
                         label: LANG.cancel,
-                        className: 'btn-default btn-alone-left',
+                        className: 'btn-default pull-left',
                         onClick: () => this.onClose()
                     }]
                 }
@@ -415,7 +479,7 @@ class DiodeCalibration extends React.Component {
                 buttons={
                     [{
                         label: LANG.finish,
-                        className: 'btn-default btn-alone-right primary',
+                        className: 'btn-default pull-right primary',
                         onClick: () => this.onClose()
                     }]
                 }

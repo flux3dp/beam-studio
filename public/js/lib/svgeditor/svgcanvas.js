@@ -42,6 +42,7 @@ define([
     'app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
+    'app/actions/beambox/open-bottom-boundary-drawer',
     'app/contexts/ProgressCaller',
     'helpers/api/config',
     'helpers/beam-file-helper',
@@ -66,6 +67,7 @@ define([
     ZoomBlockController,
     BeamboxActions,
     Constant,
+    OpenBottomBoundaryDrawer,
     Progress,
     Config,
     BeamFileHelper,
@@ -90,6 +92,7 @@ define([
     ZoomBlockController = ZoomBlockController.default;
     BeamboxActions = BeamboxActions.default;
     Constant = Constant.default;
+    OpenBottomBoundaryDrawer = OpenBottomBoundaryDrawer.default;
     Progress = Progress.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
@@ -6928,6 +6931,7 @@ define([
                 borderless = turnOnBorderless;
             }
             BeamboxPreference.write('borderless', borderless);
+            OpenBottomBoundaryDrawer.update();
         };
 
         // Function: setConfig
