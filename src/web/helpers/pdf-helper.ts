@@ -18,7 +18,7 @@ const util = requireNode('util');
 const child_process = requireNode('child_process');
 const exec = util.promisify(child_process.exec);
 const execFile = util.promisify(child_process.execFile);
-const resourcesRoot = true || process['defaultApp'] ? process.cwd() : process['resourcesPath'];
+const resourcesRoot = process['defaultApp'] ? process.cwd() : process['resourcesPath'];
 const lang = i18n.lang.beambox.popup.pdf2svg;
 
 const programDataPath = path.join('C:', 'ProgramData');
