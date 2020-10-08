@@ -218,7 +218,7 @@ define([
         // Array with all the currently selected elements
         // default size of 1 until it needs to grow bigger
         var selectedElements = [];
-        let tempGroup = false;
+        let tempGroup = null;
 
         // Function: addSvgElementFromJson
         // Create a new SVG element based on the given object keys/values and add it to the current layer
@@ -1046,7 +1046,6 @@ define([
         var clearSelection = this.clearSelection = function (noCall) {
             if (selectedElements[0] != null) {
                 if (tempGroup) {
-                    tempGroup = false;
                     svgCanvas.ungroupTempGroup();
                 }
                 var i, elem,
@@ -10109,7 +10108,13 @@ define([
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
                         if (elem.getAttribute('data-next-sibling')) {
-                            original_layer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling');
+                            const nextSibling = original_layer.querySelector(nextSiblingId.replace('#', '\\#'));
+                            if (nextSibling) {
+                                original_layer.insertBefore(elem, nextSibling);
+                            } else {
+                                original_layer.appendChild(elem);
+                            }
                             elem.removeAttribute('data-next-sibling')
                         } else {
                             original_layer.appendChild(elem);
@@ -10119,7 +10124,13 @@ define([
                         }
                     } else {
                         if (elem.getAttribute('data-next-sibling')) {
-                            currentLayer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling');
+                            const nextSibling = currentLayer.querySelector(nextSiblingId.replace('#', '\\#'));
+                            if (nextSibling) {
+                                currentLayer.insertBefore(elem, nextSibling);
+                            } else {
+                                currentLayer.appendChild(elem);
+                            }
                             elem.removeAttribute('data-next-sibling')
                         } else {
                             currentLayer.appendChild(elem);
