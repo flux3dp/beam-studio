@@ -238,7 +238,7 @@ define([
         // Array with all the currently selected elements
         // default size of 1 until it needs to grow bigger
         var selectedElements = [];
-        let tempGroup = false;
+        let tempGroup = null;
 
         // Function: addSvgElementFromJson
         // Create a new SVG element based on the given object keys/values and add it to the current layer
@@ -1066,7 +1066,6 @@ define([
         var clearSelection = this.clearSelection = function (noCall) {
             if (selectedElements[0] != null) {
                 if (tempGroup) {
-                    tempGroup = false;
                     svgCanvas.ungroupTempGroup();
                 }
                 var i, elem,
@@ -5314,7 +5313,7 @@ define([
             if (tempGroup) {
                 this.ungroupTempGroup();
             }
-            this.removeAllTempGroup();
+            this.ungroupAllTempGroup();
             save_options.apply = false;
             return this.svgCanvasToString();
         };
@@ -6673,7 +6672,7 @@ define([
             const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
             const {r, g, b} = hexToRgb(color);
             let filter = Array.from(layer.childNodes).filter((child) => child.tagName === 'filter')[0];
-            if (filter && color !== '#000') {
+            if (filter) {
                 filter.setAttribute('id', `filter${color}`);
                 let colorMatrix = Array.from(filter.childNodes).filter((child) => child.tagName === 'feColorMatrix')[0];
                 if (colorMatrix) {
@@ -10072,45 +10071,21 @@ define([
             return g;
         };
 
-        // Function: ungroupTempGroup
-        // Not sure why but sometimes tempgroup would not be removed
-        // Use this function to remove it
-        this.removeAllTempGroup = () => {
-            const allTempGroups = Array.from(svgcontent.childNodes).filter((child) => child.getAttribute('data-tempgroup') === 'true');
-            allTempGroups.forEach((tempGroup) => {
-                this.ungroupTempGroup(tempGroup);
-                console.log(tempGroup);
-                if (tempGroup) {
-                    tempGroup.remove();
-                }
+        this.ungroupAllTempGroup = function() {
+            const allTempGroups = Array.from(document.querySelectorAll('[data-tempgroup="true"]'));
+            allTempGroups.forEach((g) => {
+                this.ungroupTempGroup(g);
             });
-            this.clearSelection();
-        }
+        };
 
         // Function: ungroupTempGroup
         // Unwraps all the elements in a selected group (g) element. This requires
         // significant recalculations to apply group's transforms, etc to its children
         this.ungroupTempGroup = function (elem=null) {
 
-            var g = elem || selectedElements[0];
+            let g = (elem || selectedElements[0]) || tempGroup;
             if (!g) {
                 return;
-            }
-            if ($(g).data('gsvg') || $(g).data('symbol')) {
-                // Is svg, so actually convert to group
-                convertToGroup(g);
-                return;
-            }
-            if (g.tagName === 'use') {
-                // Somehow doesn't have data set, so retrieve
-                var symbol = svgedit.utilities.getElem(getHref(g).substr(1));
-                $(g).data('symbol', symbol).data('ref', symbol);
-                convertToGroup(g);
-                return;
-            }
-            var parents_a = $(g).parents('a');
-            if (parents_a.length) {
-                g = parents_a[0];
             }
 
             // Look for parent "a"
@@ -10122,7 +10097,6 @@ define([
                     batchCmd.addSubCommand(cmd);
                 }
                 var parent = g.parentNode;
-                var anchor = g.nextSibling;
                 var children = new Array(g.childNodes.length);
 
                 var i = 0;
@@ -10145,7 +10119,13 @@ define([
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
                         if (elem.getAttribute('data-next-sibling')) {
-                            original_layer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
+                            const nextSibling = original_layer.querySelector(`#${nextSiblingId}`);
+                            if (nextSibling) {
+                                original_layer.insertBefore(elem, nextSibling);
+                            } else {
+                                original_layer.appendChild(nextSibling)
+                            }
                             elem.removeAttribute('data-next-sibling')
                         } else {
                             original_layer.appendChild(elem);
@@ -10155,7 +10135,13 @@ define([
                         }
                     } else {
                         if (elem.getAttribute('data-next-sibling')) {
-                            currentLayer.insertBefore(elem, document.getElementById(elem.getAttribute('data-next-sibling')));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
+                            const nextSibling = currentLayer.querySelector(`#${nextSiblingId}`);
+                            if (nextSibling) {
+                                currentLayer.insertBefore(elem, nextSibling);
+                            } else {
+                                currentLayer.appendChild(elem);
+                            }
                             elem.removeAttribute('data-next-sibling')
                         } else {
                             currentLayer.appendChild(elem);
@@ -10171,17 +10157,17 @@ define([
                     addCommandToHistory(batchCmd);
                 }
 
-                tempGroup = false;
+                tempGroup = null;
+                g = parent.removeChild(g);
                 // remove the group from the selection
                 clearSelection();
-                g = parent.removeChild(g);
             }
             return children;
         };
 
         this.getTempGroup = () => {
             return tempGroup;
-        }
+        };
 
         // Function: moveUpSelectedElement
         // Move selected element up in layer
