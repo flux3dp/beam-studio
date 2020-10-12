@@ -1,6 +1,6 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
-import * as i18n from '../../../helpers/i18n';
+import i18n from '../../../helpers/i18n';
 import Config from '../../../helpers/api/config';
 import SelectView from '../../widgets/Select';
 import UnitInput from '../../widgets/Unit-Input-v2';
