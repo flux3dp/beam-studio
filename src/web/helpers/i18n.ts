@@ -88,3 +88,12 @@ class LangCacheHelper {
 } 
 
 export const lang = LangCacheHelper.lang;
+
+export default {
+    getActiveLang,
+    setActiveLang,
+    get,
+    get lang() {
+        return langCache[activeLang];
+    }
+};
