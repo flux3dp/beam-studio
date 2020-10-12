@@ -10291,18 +10291,10 @@ define([
                     let y = 0;
                     // dx and dy could be arrays
                     if (dx.constructor == Array) {
-                        //				if (i==0) {
-                        //					selectedBBoxes[0].x += dx[0];
-                        //					selectedBBoxes[0].y += dy[0];
-                        //				}
                         xform.setTranslate(dx[i], dy[i]);
                         x = dx[i];
-                        y = dx[i];
+                        y = dy[i];
                     } else {
-                        //				if (i==0) {
-                        //					selectedBBoxes[0].x += dx;
-                        //					selectedBBoxes[0].y += dy;
-                        //				}
                         xform.setTranslate(dx, dy);
                         x = dx;
                         y = dy;

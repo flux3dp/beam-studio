@@ -5276,40 +5276,77 @@ const svgEditor = window['svgEditor'] = (function($) {
                             e.stopPropagation();
                             svgCanvas.selectAllInCurrentLayer();
                         });
+                        const moveUnit = LocalStorage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
                         Shortcuts.on(['up'], (e) => {
                             e.preventDefault();
                             if (selectedElement) {
-                                moveSelected(0, -1);
+                                moveSelected([0], [-moveUnit]);
                             } else {
-                                const scrollTop = $('#workarea').scrollTop() - 5;
-                                $('#workarea').scrollTop(scrollTop);
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollTop -= 5;
+                            }
+                        });
+                        Shortcuts.on(['shift', 'up'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected([0], [-moveUnit * 10]);
+                            } else {
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollTop -= 50;
                             }
                         });
                         Shortcuts.on(['down'], (e) => {
                             e.preventDefault();
                             if (selectedElement) {
-                                moveSelected(0, 1);
+                                moveSelected([0], [moveUnit]);
                             } else {
-                                const scrollTop = $('#workarea').scrollTop() + 5;
-                                $('#workarea').scrollTop(scrollTop);
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollTop += 5;
+                            }
+                        });
+                        Shortcuts.on(['shift', 'down'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected([0], [moveUnit * 10]);
+                            } else {
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollTop += 50;
                             }
                         });
                         Shortcuts.on(['left'], (e) => {
                             e.preventDefault();
                             if (selectedElement) {
-                                moveSelected(-1, 0);
+                                moveSelected([-moveUnit], [0]);
                             } else {
-                                const scrollLeft = $('#workarea').scrollLeft() - 5;
-                                $('#workarea').scrollLeft(scrollLeft);
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollLeft -= 5;
+                            }
+                        });
+                        Shortcuts.on(['shift', 'left'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected([-moveUnit * 10], [0]);
+                            } else {
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollLeft -= 50;
                             }
                         });
                         Shortcuts.on(['right'], (e) => {
                             e.preventDefault();
                             if (selectedElement) {
-                                moveSelected(1, 0);
+                                moveSelected([moveUnit], [0]);
                             } else {
-                                const scrollLeft = $('#workarea').scrollLeft() + 5;
-                                $('#workarea').scrollLeft(scrollLeft);
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollLeft += 5;
+                            }
+                        });
+                        Shortcuts.on(['shift', 'right'], (e) => {
+                            e.preventDefault();
+                            if (selectedElement) {
+                                moveSelected([moveUnit * 10], [0]);
+                            } else {
+                                const workArea = document.getElementById('workarea');
+                                workArea.scrollLeft += 50;
                             }
                         });
                         // +
