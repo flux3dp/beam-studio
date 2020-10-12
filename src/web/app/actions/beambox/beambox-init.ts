@@ -28,9 +28,7 @@ import VersionChecker from '../../../helpers/version-checker';
 import LocalStorage from '../../../helpers/local-storage';
 import * as i18n from '../../../helpers/i18n';
 import { IFont } from '../../../interfaces/IFont';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
-let svgedit;
-getSVGAsync((globalSVG) => { svgedit = globalSVG.Edit });
+import { getSVGEdit } from '../../../helpers/svg-editor-helper';
 
 const init = () => {
     ToolPanelsController.init('tool-panels-placeholder');
@@ -77,6 +75,7 @@ const init = () => {
 
 const displayGuides = () => {
     const guidesLines = (() => {
+        const svgedit = getSVGEdit();
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
         const NS = svgedit.NS;
         const linesGroup = svgdoc.createElementNS(NS.SVG, 'svg');
@@ -127,8 +126,10 @@ const displayGuides = () => {
         linesGroup.appendChild(lineVertical);
         return linesGroup;
     })();
-
-    $('#canvasBackground').get(0).appendChild(guidesLines);
+    const canvasBG = document.getElementById('canvasBackground');
+    if (canvasBG) {
+        canvasBG.appendChild(guidesLines);
+    }
 };
 
 const initDefaultFont = () => {
