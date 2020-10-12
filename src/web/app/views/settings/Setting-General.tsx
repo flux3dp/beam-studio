@@ -580,7 +580,7 @@ class SettingGeneral extends React.Component{
                 <Controls label={lang.settings.guides_origin}>
                     <span className='font2' style={{marginRight: '10px'}}>X</span>
                     <UnitInput
-                        unit='mm'
+                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getWidth()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('guide_x0')}
@@ -589,7 +589,7 @@ class SettingGeneral extends React.Component{
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
                     <UnitInput
-                        unit='mm'
+                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getHeight()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('guide_y0')}
@@ -636,7 +636,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.loop_compensation}>
                     <UnitInput
-                        unit='mm'
+                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={20}
                         defaultValue={Number(this._getConfigEditingValue('loop_compensation') || '0') / 10}
@@ -649,7 +649,7 @@ class SettingGeneral extends React.Component{
                     <div>
                         <Controls label={lang.settings.blade_radius}>
                             <UnitInput
-                                unit='mm'
+                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={30}
                                 step={0.01}
@@ -670,7 +670,7 @@ class SettingGeneral extends React.Component{
                         <Controls label={lang.settings.blade_precut_position}>
                             <span className='font2' style={{marginRight: '10px'}}>X</span>
                             <UnitInput
-                                unit='mm'
+                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={BeamboxConstant.dimension.getWidth()/10}
                                 defaultValue={this._getBeamboxPreferenceEditingValue('precut_x') || 0}
@@ -679,7 +679,7 @@ class SettingGeneral extends React.Component{
                             />
                             <span className='font2' style={{marginRight: '10px'}}>Y</span>
                             <UnitInput
-                                unit='mm'
+                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={BeamboxConstant.dimension.getHeight()/10}
                                 defaultValue={this._getBeamboxPreferenceEditingValue('precut_y') || 0}
@@ -753,7 +753,7 @@ class SettingGeneral extends React.Component{
                 <Controls label={lang.settings.diode_offset}>
                     <span className='font2' style={{marginRight: '10px'}}>X</span>
                     <UnitInput
-                        unit='mm'
+                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getWidth()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
@@ -762,7 +762,7 @@ class SettingGeneral extends React.Component{
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
                     <UnitInput
-                        unit='mm'
+                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getHeight()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
