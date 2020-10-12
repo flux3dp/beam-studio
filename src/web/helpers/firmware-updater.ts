@@ -112,7 +112,7 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
         if (res.success) {
             Progress.openSteppingProgress({id: 'update-firmware', message: lang.update.updating + ' (0%)'});
             doUpdate(file).progress((r) => {
-                r.percentage = Math.round(r.percentage * 100) / 100;
+                r.percentage = Number(r.percentage || 0).toFixed(2);
                 Progress.update('update-firmware', {
                     message: lang.update.updating + ' (' + r.percentage + '%)',
                     percentage: r.percentage
