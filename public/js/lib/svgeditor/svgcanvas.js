@@ -8751,8 +8751,8 @@ define([
             } catch (err) {
                 console.error('Async: Could not copy text: ', err);
             }
-
             canvas.clipBoard = $.merge([], selectedElements);
+            this.tempGroupSelectedElements();
         };
 
         this.pasteElements = async function (type, x, y) {
@@ -8822,6 +8822,7 @@ define([
 
             addCommandToHistory(batchCmd);
             call('changed', pasted);
+            this.tempGroupSelectedElements();
         };
 
         // Function: set
