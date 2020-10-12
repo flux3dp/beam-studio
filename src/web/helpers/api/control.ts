@@ -111,7 +111,7 @@ class Control {
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
                 console.log(response.text);
-                if (response.text.startsWith(`L${this.currentLineNumber}`)) {
+                if (response.text.startsWith(`LN${this.currentLineNumber}`) || response.text.startsWith(`L${this.currentLineNumber}`)) {
                     clearTimeout(timeoutTimer);
                     this.currentLineNumber += 1;
                     d.resolve();
