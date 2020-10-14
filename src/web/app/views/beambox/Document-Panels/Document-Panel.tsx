@@ -155,7 +155,7 @@ export default class DocumentPanel extends React.PureComponent {
                             id="workarea_dropdown"
                             label={LANG.workarea}
                             options={workareaOptions}
-                            default={this.state.workarea}
+                            value={this.state.workarea}
                             onChange={(id, val) => this._handleWorkareaChange(val)} />
                         <div className='sub-title'>{LANG.add_on}</div>
                         <SwitchControl
