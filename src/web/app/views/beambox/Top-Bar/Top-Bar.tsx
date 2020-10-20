@@ -8,10 +8,13 @@ import DeviceConstants from '../../../constants/device-constants';
 import Progress from '../../../contexts/ProgressCaller';
 import ProgressActions from '../../../actions/progress-actions';
 import ProgressConstants from '../../../constants/progress-constants';
+import BeamboxActions from '../../../actions/beambox';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import BottomRightFuncs from '../../../actions/beambox/bottom-right-funcs';
 import Constant from '../../../actions/beambox/constant';
+import OpenBottomBoundaryDrawer from '../../../actions/beambox/open-bottom-boundary-drawer';
 import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
+import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer';
 import DialogCaller from '../../../contexts/DialogCaller';
 import Modal from '../../../widgets/Modal';
 import LeftPanel from '../Left-Panels/Left-Panel';
@@ -19,6 +22,7 @@ import { TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context
 import { TopBarHints } from './Top-Bar-Hints';
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
+import { IDeviceInfo } from '../../../../interfaces/IDevice';
 import AlertConfig from '../../../../helpers/api/alert-config';
 import Discover from '../../../../helpers/api/discover';
 import checkDeviceStatus from '../../../../helpers/check-device-status';
@@ -30,6 +34,8 @@ import SymbolMaker from '../../../../helpers/symbol-maker';
 import VersionChecker from '../../../../helpers/version-checker';
 import * as i18n from '../../../../helpers/i18n';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
+import AlertCaller from '../../../contexts/AlertCaller';
+import { Model } from 'backbone';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => {
@@ -139,9 +145,30 @@ export class TopBar extends React.PureComponent {
         this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)});
     }
 
-    startPreviewModeController = async (device) => {
+    startPreviewModeController = async (device: IDeviceInfo) => {
         const { setTopBarPreviewMode } = this.context;
         const workarea = window['workarea'];
+        if (['fbm1', 'fbb1b', 'fbb1p'].includes(device.model) && device.model !== BeamboxPreference.read('workarea')) {
+            const res = await new Promise((resolve) => {
+                Alert.popUp({
+                    message: sprintf(lang.beambox.popup.change_workarea_before_preview, device.name),
+                    buttonType: AlertConstants.YES_NO,
+                    onYes: () => {
+                        BeamboxPreference.write('workarea', device.model);
+                        svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
+                        svgEditor.resetView();
+                        PreviewModeBackgroundDrawer.updateCanvasSize();
+                        BeamboxActions.updateLaserPanel();
+                        OpenBottomBoundaryDrawer.update();
+                        resolve(true);
+                    },
+                    onNo: () => resolve(false),
+                });
+            });
+            if (!res) {
+                return;
+            }
+        }
 
         FnWrapper.useSelectTool();
         svgCanvas.clearSelection();

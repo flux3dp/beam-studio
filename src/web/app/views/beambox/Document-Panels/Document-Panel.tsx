@@ -2,7 +2,6 @@
 import Modal from '../../../widgets/Modal';
 import DropDownControl from '../../../widgets/Dropdown-Control';
 import SwitchControl from '../../../widgets/Switch-Control';
-import RadioControl from '../../../widgets/Radio-Control';
 import BeamboxActions from '../../../actions/beambox';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import Constant from '../../../actions/beambox/constant';
@@ -127,7 +126,7 @@ export default class DocumentPanel extends React.PureComponent {
         BeamboxPreference.write('borderless', this.state.borderlessMode);
         BeamboxPreference.write('enable-diode', this.state.enableDiode);
         BeamboxPreference.write('enable-autofocus', this.state.enableAutofocus);
-        if (this.state.workarea != BeamboxPreference.read('workarea')) {
+        if (this.state.workarea !== BeamboxPreference.read('workarea')) {
             BeamboxPreference.write('workarea', this.state.workarea);
             svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
             svgEditor.resetView();
