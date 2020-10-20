@@ -3,7 +3,7 @@ import ElectronUpdater from '../../../helpers/electron-updater';
 import GlobalInteraction from '../global-interaction';
 import BeamboxActions from '../beambox';
 import BeamboxPreference from './beambox-preference';
-import BottomRightFuncs from './bottom-right-funcs';
+import ExportFuncs from './export-funcs';
 import FnWrapper from './svgeditor-function-wrapper';
 import Tutorials from './tutorials';
 import Alert from '../../contexts/AlertCaller';
@@ -57,7 +57,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'EXPORT_SVG': () => FnWrapper.exportAsSVG(),
             'EXPORT_PNG': () => FnWrapper.exportAsImage('png'),
             'EXPORT_JPG': () => FnWrapper.exportAsImage('jpg'),
-            'EXPORT_FLUX_TASK': () => BottomRightFuncs.exportFcode(),
+            'EXPORT_FLUX_TASK': () => ExportFuncs.exportFcode(),
             'UNDO': () => svgEditor.clickUndo(),
             'REDO': () => svgEditor.clickRedo(),
             'CUT': () => svgEditor.cutSelected(),

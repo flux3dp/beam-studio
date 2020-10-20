@@ -4,13 +4,13 @@ define([
     'helpers/device-master',
     'helpers/api/discover',
     'helpers/api/svg-laser-parser',
-    'app/actions/beambox/bottom-right-funcs',
+    'app/actions/beambox/export-funcs',
 ], function (
     BeamboxPreference,
     DeviceMaster,
     Discover,
     svgLaserParser,
-    BottomRightFuncs,
+    ExportFuncs,
 ) {
     const svgeditorParser = svgLaserParser.default({ type: 'svgeditor' });
     const MACHINE_STATUS = {
@@ -124,7 +124,7 @@ define([
                 </g>
             </svg>`;*/
             svgEditor.importBvgString(this.bvg);
-            let { uploadFile, thumbnailBlobURL } = await BottomRightFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
+            let { uploadFile, thumbnailBlobURL } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
             let r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
                 model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
                 engraveDpi: BeamboxPreference.read('engrave_dpi'),

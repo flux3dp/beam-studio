@@ -10,7 +10,7 @@ import ProgressActions from '../../../actions/progress-actions';
 import ProgressConstants from '../../../constants/progress-constants';
 import BeamboxActions from '../../../actions/beambox';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
-import BottomRightFuncs from '../../../actions/beambox/bottom-right-funcs';
+import ExportFuncs from '../../../actions/beambox/export-funcs';
 import Constant from '../../../actions/beambox/constant';
 import OpenBottomBoundaryDrawer from '../../../actions/beambox/open-bottom-boundary-drawer';
 import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
@@ -390,7 +390,7 @@ export class TopBar extends React.PureComponent {
             }
         }
         if (device === 'export_fcode') {
-            BottomRightFuncs.exportFcode();
+            ExportFuncs.exportFcode();
             return;
         }
         const vc = VersionChecker(device.version);
@@ -403,7 +403,7 @@ export class TopBar extends React.PureComponent {
             });
             return;
         } else {
-            BottomRightFuncs.uploadFcode(device);
+            ExportFuncs.uploadFcode(device);
         }
     }
 

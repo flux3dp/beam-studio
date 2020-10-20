@@ -2,7 +2,7 @@ import Modal from '../../widgets/Modal'
 import SelectView from '../../widgets/Select';
 import VerticalSlider from '../../widgets/Vertical-Slider-Control';
 import BeamboxStore from '../../stores/beambox-store';
-import BottomRightFuncs from '../../actions/beambox/bottom-right-funcs';
+import ExportFuncs from '../../actions/beambox/export-funcs';
 import ProgressActions from '../../actions/progress-actions';
 import ProgressConstants from '../../constants/progress-constants';
 import * as i18n from '../../../helpers/i18n';
@@ -179,7 +179,7 @@ class TaskInterpreterPanel extends React.Component {
     }
 
     async _fromScene() {
-        let gcodeBlob = await BottomRightFuncs.getGcode();
+        let gcodeBlob = await ExportFuncs.getGcode();
         const fileReader = new FileReader();
         fileReader.onloadend = (e) => {
             let gcodeList = (e.target.result as string).split('\n');
