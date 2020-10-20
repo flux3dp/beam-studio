@@ -576,7 +576,8 @@
             width: $sidePanelWidth;
             padding: 0px;
             opacity: 1.0;
-            overflow: visible;
+            overflow-x: visible;
+            overflow-y: scroll;
             z-index: 2;
             top: 40px;
             height: calc(100% - 40px);
