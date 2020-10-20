@@ -6,7 +6,7 @@
 import Websocket from '../websocket';
 import BeamboxActions from '../../app/actions/beambox';
 import FnWrapper from '../../app/actions/beambox/svgeditor-function-wrapper';
-import LaserPanelController from '../../app/actions/beambox/Laser-Panel-Controller';
+import { DataType, writeData } from '../laser-config-helper';
 
 export default function() {
     var ws = Websocket({
@@ -38,8 +38,8 @@ export default function() {
                                 power
                             } = layerDataJSON[layerName];
 
-                            LaserPanelController.funcs.writeSpeed(name, parseInt(speed));
-                            LaserPanelController.funcs.writeStrength(name, parseInt(power));
+                            writeData(name, DataType.speed, parseInt(speed));
+                            writeData(name, DataType.strength, parseInt(power));
                         }
 
                         BeamboxActions.updateLaserPanel();

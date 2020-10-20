@@ -1286,14 +1286,17 @@ export default {
                     lock: 'Lock Layer',
                     merge_down: 'Merge Down',
                     merge_all: 'Merge All',
+                    merge_selected: 'Merge Selected Layers',
                     move_elems_to: 'Move elements to:',
                     move_selected: 'Move selected elements to a different layer'
                 },
             },
             laser_panel: {
+                multi_layer: 'Multiple Layers',
                 parameters: 'Parameters',
                 strength: 'Power',
                 speed: 'Speed',
+                speed_contrain_warning: 'The cutting speed of vector path objects will be constrained to 20 mm/s.You can remove this limit at Preferences Settings.',
                 repeat: 'Execute',
                 focus_adjustment: 'Focus Adjustment',
                 height: 'Object Height',
@@ -1317,6 +1320,8 @@ export default {
                 export_config: 'Export Presets',
                 new_config_name: 'New Preset Name',
                 sure_to_load_config: 'This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?',
+                custom_preset: 'Custom',
+                various_preset: 'Various Presets',
                 dropdown: {
                     mm: {
                         wood_3mm_cutting: 'Wood - 3mm Cutting',

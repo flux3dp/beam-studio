@@ -131,6 +131,9 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
         if (selectedElements.length > 0 && selectedElements[0].getAttribute('data-tempgroup') === 'true') {
             selectedElements = Array.from(selectedElements[0].childNodes);
         }
+        if (selectedElements.length === 0) {
+            return;
+        }
         if (selectedElements[0].tagName ==='image') {
             this.enableMenuItems(['PHOTO_EDIT']);
         } else if (selectedElements[0].tagName ==='use') {

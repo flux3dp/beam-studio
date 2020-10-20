@@ -10,7 +10,9 @@ class UnitInput extends React.Component{
     constructor(props) {
         super(props);
         this.setDecimal();
+
         this.state = {
+            isEditing: false,
             displayValue:   this.getTransformedValue(this._validateValue(this.props.defaultValue)),
             savedValue:     Number(this.props.defaultValue).toFixed(this.decimal)
         };
@@ -79,7 +81,10 @@ class UnitInput extends React.Component{
         }
         const newValue = this._validateValue(newVal);
 
-        this.setState({displayValue: this.getTransformedValue(newValue)});
+        this.setState({
+            displayValue: this.getTransformedValue(newValue),
+            isEditing: false,
+        });
 
         if(newValue!==this.state.savedValue) {
             this.setState({savedValue: newValue});
@@ -98,7 +103,10 @@ class UnitInput extends React.Component{
     }
 
     _handleChange(e) {
-        this.setState({displayValue: e.target.value});
+        this.setState({
+            displayValue: e.target.value,
+            isEditing: true
+        });
     }
 
     _handleInput(e) {
@@ -173,12 +181,14 @@ class UnitInput extends React.Component{
         let className = this.props.className;
         className['ui ui-control-unit-input-v2'] = true;
 
+        const shouldHideValue = (this.props.displayEmpty && !this.state.isEditing);
+
         return (
             <div className={ClassNames(className)}>
                 <input
                     type={this.props.type}
                     step={this.props.step}
-                    value={this.state.displayValue}
+                    value={shouldHideValue ? '' : this.state.displayValue}
                     onFocus={(e) => {this._handleFocus(e)}}
                     onBlur={this._handleBlur}
                     onKeyUp={this._handleKeyUp}
@@ -195,7 +205,10 @@ class UnitInput extends React.Component{
 
 UnitInput.propTypes = {
     getValue: PropTypes.func.isRequired,
-    defaultValue: PropTypes.number.isRequired,
+    defaultValue: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.oneOf([null]),
+    ]),
     className: PropTypes.object,
     type: PropTypes.string,
     unit: PropTypes.string,
@@ -206,6 +219,7 @@ UnitInput.propTypes = {
     disabled: PropTypes.bool,
     abbr: PropTypes.bool,
     isDoOnInput: PropTypes.bool,
+    displayEmpty: PropTypes.bool,
     onKeyUp: PropTypes.func,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
@@ -223,6 +237,7 @@ UnitInput.defaultProps = {
     disabled: false,
     abbr: false,
     isDoOnInput: false,
+    displayEmpty: false,
     onKeyUp: () => {},
     onBlur: () => {},
     onFocus: () => {},

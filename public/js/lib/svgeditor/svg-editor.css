@@ -138,8 +138,6 @@ select {
 	border-style: solid;
 	border-width: 1px;
 	border-left: none;
-	overflow-x:hidden;
-	overflow-y:visible;
 }
 
 #layerpanel {
@@ -259,43 +257,6 @@ select {
 }
 #layerlist_container::-webkit-scrollbar-thumb:hover {
 	background-color: rgba(0,0,0,.5);
-}
-
-#layerlist tr.layer {
-	background-color: #FFFFFF;
-	margin: 0;
-	padding: 0;
-}
-
-#layerlist td.layervis {
-	width: 22px;
-	cursor: pointer;
-}
-
-#layerlist td.layerinvis {
-	background-image: none;
-	cursor: pointer;
-}
-
-#layerlist td.layervis * {
-	display: block;
-}
-
-#layerlist td.layerinvis * {
-	display: none;
-}
-
-#layerlist td.layername {
-	cursor: pointer;
-}
-
-#layerlist td.layername:hover {
-	/* color: blue; */
-	/* font-style: italic; */
-}
-
-#layerlist tr.layersel td.layername {
-	/* font-weight: bold; */
 }
 
 #selLayerLabel {

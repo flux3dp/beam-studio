@@ -1282,14 +1282,17 @@ export default {
                     lock: '锁定图层',
                     merge_down: '向下合并',
                     merge_all: '全部合并',
+                    merge_selected: '合并选取图层',
                     move_elems_to: '移动元素至:',
                     move_selected: '移动元素至另一个图层'
                 },
             },
             laser_panel: {
+                multi_layer: '多个图层',
                 parameters: '選擇參數',
                 strength: '功率',
                 speed: '速度',
+                speed_contrain_warning: '矢量路径速度将被限制在 20mm/s，您可以在偏好设定解除此限制。',
                 repeat: '运行次数',
                 focus_adjustment: '对焦调整',
                 height: '物件高度',
@@ -1313,6 +1316,8 @@ export default {
                 export_config: '汇出参数',
                 new_config_name: '新参数名称',
                 sure_to_load_config: '将要读取预设参数的排序与使用状况，并覆盖所有同名的自订参数，确定要继续进行吗？',
+                custom_preset: '自订',
+                various_preset: '多个参数',
                 dropdown: {
                     mm: {
                         wood_3mm_cutting: '木板 - 3mm 切割',

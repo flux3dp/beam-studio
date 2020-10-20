@@ -424,16 +424,13 @@ define([
                         }
                         elems.forEach((elem) => {
                             if (elem.classList.contains('layer')) {
-                                LayerPanelController.updateLayerPanel();
+                                LayerPanelController.setSelectedLayers([]);
                             } else {
                                 canvas.updateElementColor(elem);
                             }
                         });
                     } else if (cmdType === InsertElementCommand.type() ||
                         cmdType === RemoveElementCommand.type()) {
-                        if (cmd.parent === svgcontent) {
-                            canvas.identifyLayers();
-                        }
                         if (cmdType === InsertElementCommand.type()) {
                             if (isApply) {
                                 restoreRefElems(cmd.elem);
@@ -469,6 +466,11 @@ define([
                         //		parent.insertBefore(elem, sib);
                         //	}
                         //}
+                    } else if (cmdType === BatchCommand.type()) {
+                        if (['Delete Layer(s)', 'Clone Layer(s)', 'Merge Layer', 'Merge Layer(s)'].includes(cmd.text)) {
+                            canvas.identifyLayers();
+                            LayerPanelController.setSelectedLayers([]);
+                        }
                     }
                 }
             }
@@ -639,8 +641,8 @@ define([
         }
 
         const { Menu, MenuItem } = requireNode('electron').remote;
-        this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
-        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+        this.isUsingLayerColor = BeamboxPreference.read('use_layer_color');
+        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUsingLayerColor;
         this.isBorderlessMode = BeamboxPreference.read('borderless');
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
@@ -1302,7 +1304,7 @@ define([
                 } else {
                     elem.removeAttribute('stroke-width');
                 }
-                if (pointInStroke) {
+                if (pointInStroke || (elem === mouse_target)) {
                     break;
                 }
             }
@@ -1604,6 +1606,11 @@ define([
                             }
                         } else if (!right_click) {
                             clearSelection();
+                            const selectedLayers = LayerPanelController.getSelectedLayers();
+                            if (selectedLayers && selectedLayers.length > 1) {
+                                const currentLayerName = getCurrentDrawing().getCurrentLayerName();
+                                if (currentLayerName) LayerPanelController.setSelectedLayers([currentLayerName]);
+                            }
                             if (PreviewModeController.isPreviewMode()) {
                                 current_mode = 'preview';
                             } else if (TopBarController.getTopBarPreviewMode()) {
@@ -1765,7 +1772,7 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newRect);
                         }
                         selectOnly([newRect], true);
@@ -1792,7 +1799,7 @@ define([
                                 style: 'pointer-events:none'
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newLine);
                         }
                         selectOnly([newLine], true);
@@ -1829,7 +1836,7 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newElli);
                         }
                         selectOnly([newElli], true);
@@ -1855,7 +1862,7 @@ define([
                             }
                         });
                         //					newText.textContent = 'text';
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newText);
                         }
                         break;
@@ -2474,7 +2481,7 @@ define([
                 var attrs, t;
                 const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
 
-                selectedElems = selectedElements.filter((e) => e !== null);
+                selectedElements = selectedElements.filter((e) => e !== null);
                 switch (current_mode) {
                     case 'preview':
                         if (rubberBox != null) {
@@ -2524,7 +2531,6 @@ define([
                                 return true;
                             });
                             selectedElements = intersectedElements;
-                            selectedElems = intersectedElements;
                             call('selected', selectedElements);
                         }
                         if (rubberBox != null) {
@@ -2610,14 +2616,6 @@ define([
                                         canvas.removeFromSelection([t]);
                                     }
                                 }
-                                const mouse_target = getMouseTarget(evt);
-                                const current_layer = getCurrentDrawing().getCurrentLayer();
-                                const targetLayer = svgCanvas.getObjectLayer(mouse_target);
-                                if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== current_layer) {
-                                    svgCanvas.setCurrentLayer(targetLayer.title);
-                                    LayerPanelController.updateLayerPanel();
-                                    selectOnly([mouse_target], true);
-                                }
                             } // no change in mouse position
 
                             // Remove non-scaling stroke
@@ -2640,9 +2638,18 @@ define([
                             current_mode = 'select';
                         }
 
-                        if (selectedElems.length > 1) {
+                        if (selectedElements.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
+                        }
+
+                        const mouseTarget = getMouseTarget(evt);
+                        const currentLayer = getCurrentDrawing().getCurrentLayer();
+                        const targetLayer = svgCanvas.getObjectLayer(mouseTarget);
+                        if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+                            svgCanvas.setCurrentLayer(targetLayer.title);
+                            LayerPanelController.setSelectedLayers([targetLayer.title]);
+                            selectOnly([mouseTarget], true);
                         }
 
                         return;
@@ -2813,7 +2820,7 @@ define([
                         break;
                 }
 
-                if (selectedElems.length > 1) {
+                if (selectedElements.length > 1) {
                     svgCanvas.tempGroupSelectedElements();
                     window.updateContextPanel();
                 }
@@ -3951,7 +3958,7 @@ define([
                                     opacity: cur_shape.opacity / 2
                                 }
                             });
-                            if (canvas.isUseLayerColor) {
+                            if (canvas.isUsingLayerColor) {
                                 canvas.updateElementColor(drawn_path);
                             }
                             // set stretchy line to first point
@@ -6361,7 +6368,7 @@ define([
 
             const use_elements = (await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)))).filter((elem) => elem);
             use_elements.forEach(elem => {
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(elem);
                 }
                 $(use_elements).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
@@ -6590,7 +6597,7 @@ define([
                 // TODO: this is pretty brittle!
                 var oldLayer = elem.parentNode;
                 layer.appendChild(elem);
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(elem);
                 }
                 batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldLayer));
@@ -6599,23 +6606,6 @@ define([
             addCommandToHistory(batchCmd);
 
             return true;
-        };
-
-        this.lockLayer = function (hrService) {
-            const currentLayer = getCurrentDrawing().getCurrentLayer();
-            currentLayer.setAttribute('data-lock', true);
-            currentLayer.setAttribute('class', 'layer lock');
-            $('.layersel').addClass('lock');
-            getCurrentDrawing().setCurrentLayerPosition(0);
-            clearSelection();
-            leaveContext();
-        };
-
-        this.unlockLayer = function (layer, hrService) {
-            layer.removeAttribute('data-lock');
-            layer.setAttribute('class', 'layer');
-            clearSelection();
-            leaveContext();
         };
 
         this.mergeLayer = function (hrService) {
@@ -6637,10 +6627,10 @@ define([
         };
 
         this.toggleUseLayerColor = () => {
-            this.isUseLayerColor = !(this.isUseLayerColor);
-            BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
-            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_LAYER_COLOR').checked = this.isUseLayerColor;
-            const layers = $('#svgcontent > g.layer').toArray();
+            this.isUsingLayerColor = !(this.isUsingLayerColor);
+            BeamboxPreference.write('use_layer_color', this.isUsingLayerColor);
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_LAYER_COLOR').checked = this.isUsingLayerColor;
+            const layers = Array.from(document.querySelectorAll('g.layer'));
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
             });
@@ -6669,7 +6659,7 @@ define([
         };
 
         this.updateLayerColorFilter = (layer) => {
-            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(layer).attr('data-color') : '#000';
             const {r, g, b} = hexToRgb(color);
             let filter = Array.from(layer.childNodes).filter((child) => child.tagName === 'filter')[0];
             if (filter) {
@@ -6704,13 +6694,13 @@ define([
         }
 
         this.updateLayerColor = function(layer) {
-            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(layer).attr('data-color') : '#000';
             this.updateLayerColorFilter(layer);
             this.setElementsColor(layer.childNodes, color);
         };
 
         this.updateElementColor = function(elem) {
-            const color = this.isUseLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
             this.setElementsColor([elem], color);
         }
 
@@ -7891,7 +7881,7 @@ define([
             var selected = selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
-                const color = this.isUseLayerColor ? $(this.getObjectLayer(selected).elem).attr('data-color') : '#000';
+                const color = this.isUsingLayerColor ? $(this.getObjectLayer(selected).elem).attr('data-color') : '#000';
                 changeSelectedAttribute('fill', isFill ? color : '#fff');
                 changeSelectedAttribute('fill-opacity', isFill ? 1 : 0);
                 changeSelectedAttribute('stroke', isFill ? 'none' : color);
@@ -9110,7 +9100,7 @@ define([
                 }
             });
             batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(newElem));
-            if (this.isUseLayerColor) {
+            if (this.isUsingLayerColor) {
                 this.updateElementColor(newElem);
             }
 
@@ -9241,7 +9231,7 @@ define([
                 svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
                 ImageTracer.appendSVGString(svgstr, id);
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(g);
                 }
                 const imgBBox = img.getBBox();
@@ -9316,7 +9306,7 @@ define([
                 const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
                 svgCanvas.setCurrentLayer(layerTitle);
                 LayerPanelController.updateLayerPanel();
-                const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+                const color = this.isUsingLayerColor ? $(layer).data('color') : '#333';
                 const drawing = getCurrentDrawing();
 
                 const wireframe = $(elem).data('wireframe');
@@ -9688,7 +9678,7 @@ define([
                 addCommandToHistory(batchCmd);
             }
 
-            if (canvas.isUseLayerColor) {
+            if (canvas.isUsingLayerColor) {
                 canvas.updateElementColor(g);
             }
 
@@ -9956,7 +9946,7 @@ define([
                     const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     if (original_layer) {
                         original_layer.appendChild(elem);
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
@@ -10007,7 +9997,8 @@ define([
                 });
 
                 // Move to direct under svgcontent to avoid group under invisible layer
-                $('#svgcontent')[0].appendChild(g);
+                const svgcontent = document.getElementById('svgcontent');
+                svgcontent.appendChild(g);
             }
 
             // now move all children into the group
@@ -10131,7 +10122,7 @@ define([
                         } else {
                             original_layer.appendChild(elem);
                         }
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
@@ -10147,7 +10138,7 @@ define([
                         } else {
                             currentLayer.appendChild(elem);
                         }
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     }
@@ -10696,7 +10687,7 @@ define([
                         opacity: cur_shape.opacity
                     }
                 });
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(element);
                 }
             } else {

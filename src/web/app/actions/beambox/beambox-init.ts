@@ -14,7 +14,6 @@ import Progress from '../../contexts/ProgressCaller';
 import DeviceConstants from '../../constants/device-constants';
 import FontConstants from '../../constants/font-constants';
 import ToolPanelsController from './Tool-Panels-Controller';
-import LaserPanelController from './Laser-Panel-Controller';
 import ImageTracePanelController from './Image-Trace-Panel-Controller';
 import AlertConfig from '../../../helpers/api/alert-config';
 import Config from '../../../helpers/api/config';
@@ -32,7 +31,6 @@ import { getSVGEdit } from '../../../helpers/svg-editor-helper';
 
 const init = () => {
     ToolPanelsController.init('tool-panels-placeholder');
-    LaserPanelController.init('layer-laser-panel-placeholder');
     ImageTracePanelController.init('image-trace-panel-placeholder');
 
     if (Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {

@@ -11,6 +11,11 @@
                 stroke: #0091ff !important;
             }
         }
+        .layer {
+            &[data-lock=true] {
+                pointer-events: none !important;
+            }
+        }
     }
     user-select: none;
     padding: 5px;
@@ -571,6 +576,7 @@
             width: $sidePanelWidth;
             padding: 0px;
             opacity: 1.0;
+            overflow: visible;
             z-index: 2;
             top: 40px;
             height: calc(100% - 40px);
@@ -620,46 +626,79 @@
                 }
                 #layerlist {
                     width: 100%;
-                    .layercolor div{
-                        position: relative;
-                        top: 2px;
-                        border: 2px solid white;
-                        border-radius: 4px;
-                        background: black;
-                        width: 14px;
-                        height: 14px;
-                        margin-left: 10px;
-                        display: inline-block;
+                    .layercolor {
+                        width: 24px;
+                        div {
+                            cursor: pointer;
+                            position: relative;
+                            border: 2px solid white;
+                            border-radius: 4px;
+                            background: black;
+                            width: 14px;
+                            height: 14px;
+                            margin-left: 10px;
+                        }
                     }
                     .layervis {
+                        display: flex;
+                        align-items: center;
+                        min-width: 16px;
+                        height: 25px;
                         text-align: center;
+                        margin: 0 5px;
+                        cursor: pointer;
+                        &.layerinvis {
+                            i {
+                                display: none;
+                            }
+                        }
                     }
-                    tr.layer {
-                        height: 40px;
+                    .layer {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        min-height: 40px;
                         border: 1px solid #ffffff;
                         border-width: 0 0 0 5px;
-                        .layername {
-                            min-width: 100px;
-                            padding: 3px 0px 3px 20px;
-                        }
-                        &.layersel, &.layersel:hover {
-                            color: white;
-                            background-color: #444;
-                            border-color: #444;
-                            font-weight: normal;
-                        }
                         &:hover {
                             color: black;
-                            background-color: #ddd;
+                            background-color: #dddddd;
                             border-color: #dddddd;
                         }
-                        &.dragging {
-                            border-color: #0091ff;
+                        .layer-row {
+                            display: flex;
+                            align-items: center;
+                            min-height: 30px;
+                        }
+                        .drag-sensor-area {
+                            width: 100%;
+                            height: 5px;
+                        }
+                        .layername {
+                            width: 150px;
+                            padding: 3px 0px;
+                            margin-left: 10px;
+                            text-align: center;
+                            cursor: pointer;
+                        }
+                        &.layersel {
+                            color: white;
+                            background-color: #444444;
+                            border-color: #444444;
+                            font-weight: normal;
+                            &:hover:not(.current) {
+                                color: white;
+                                background-color: #444;
+                                border-color: #444444;
+                            }
+                            &.current {
+                                border-color: #0091ff;
+
+                            }
                         }
                         .layerlock {
-                            width: 19px;
-                            height: 14px;
-                            padding: 13px 5px 13px 0px;
+                            width: 14px;
+                            margin: 0 5px;
                             cursor: pointer;
                             img {
                                 display: none;
@@ -685,6 +724,101 @@
                             font-weight: normal;
                         }
                     }
+                    .drag-bar {
+                        width: 100%;
+                        height: 2px;
+                        background-color: #0091ff;
+                    }
+                }
+
+                #drag-image {
+                    position: absolute;
+                    z-index: -1;
+                    width: 100%;
+                    background-color: transparent;
+                    .layer-back {
+                        position: absolute;
+                        width: 100%;
+                        height: 40px;
+                        background-color: #444;
+                        border: 1px solid #fff;
+
+                    }
+                    .layercolor {
+                        width: 24px;
+                        div {
+                            cursor: pointer;
+                            position: relative;
+                            border: 2px solid white;
+                            border-radius: 4px;
+                            background: black;
+                            width: 14px;
+                            height: 14px;
+                            margin-left: 10px;
+                        }
+                    }
+                    .layervis {
+                        text-align: center;
+                        margin: 0 5px;
+                        &.layerinvis {
+                            i {
+                                display: none;
+                            }
+                        }
+                    }
+                    .layer {
+                        position: absolute;
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        min-height: 40px;
+                        color: white;
+                        background-color: #444;
+                        border: 1px solid #fff;
+                        font-weight: normal;
+                        .layer-row {
+                            display: flex;
+                            align-items: center;
+                            min-height: 30px;
+                        }
+                        .drag-sensor-area {
+                            width: 100%;
+                            height: 5px;
+                        }
+                        .layername {
+                            width: 150px;
+                            padding: 3px 0px;
+                            margin-left: 10px;
+                            text-align: center;
+                        }
+                        .layerlock {
+                            width: 14px;
+                            margin: 0 5px;
+                            cursor: pointer;
+                            img {
+                                display: none;
+                                height: 13px;
+                                filter: brightness(0%)
+                            }
+                        }
+                        &.layersel .layerlock {
+                            img {
+                                filter: brightness(0%) invert(100%);
+                            }
+                        }
+                        &.lock .layerlock {
+                            img {
+                                display: block;
+                            }
+                        }
+                        &.mark, &.mark:hover {
+                            color: white;
+                            border: 1px solid #666 !important;
+                            background-color: #666 !important;
+                            font-weight: normal;
+                        }
+                    }
                 }
                 .react-contextmenu {
                     display: none;
@@ -696,14 +830,24 @@
                     border: 1px solid rgba(0, 0, 0, 0.33);
                     border-radius: 4px;
                     padding: 5px 0px;
+                    &:focus {
+                        outline: none;
+                    }
+
                     .react-contextmenu-item {
                         padding: 0px 20px;
                         line-height: 20px;
                         height: 20px;
                         font-size: 12px;
-                        &:hover {
+                        &:hover:not(.react-contextmenu-item--disabled) {
                             color: #FFFFFF;
                             background-color: #2e5dea;
+                        }
+                        &.react-contextmenu-item--disabled {
+                            opacity: 0.3;
+                            &:focus {
+                                outline: none;
+                            }
                         }
                     }
                 }
@@ -1116,6 +1260,7 @@
                 font-weight: bold;
             }
         }
+        #laser-panel,
         #layer-laser-panel-placeholder {
             background-color: #F8F8F8;
             height: 100%;
@@ -1182,6 +1327,23 @@
                         margin-right: 10%;
                     }
                 }
+                .speed-warning {
+                    display: flex;
+                    margin-top: 15px;
+                    .warning-icon {
+                        width: 20px;
+                        height: 20px;
+                        border: 1px solid #333333;
+                        border-radius: 10px;
+                        line-height: 18px;
+                        text-align: center;
+                    }
+                    .warning-text {
+                        width: calc(100% - 20px);
+                        padding-left: 8px;
+                        font-size: 12px;
+                    }
+                }
             }
 
             .rainbow-slider {
@@ -1204,6 +1366,11 @@
                 &.speed-for-vector {
                     &::-webkit-slider-runnable-track {
                         background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5)), linear-gradient(to right, #89d307 0%,#9ede05 2%,#fff600 4%,#c50101 6%);
+                    }
+                }
+                &.hide-thumb {
+                    &::-webkit-slider-thumb {
+                        opacity: 0;
                     }
                 }
             }

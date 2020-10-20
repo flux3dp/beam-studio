@@ -1286,14 +1286,17 @@ export default {
                     lock: 'Ebene sperren',
                     merge_down: 'Nach unten zusammenführen',
                     merge_all: 'Alle zusammenführen',
+                    merge_selected: 'Ausgewählte zusammenführen',
                     move_elems_to: 'Verschiebe ausgewählte Objekte:',
                     move_selected: 'Verschiebe ausgewählte Objekte auf eine andere Ebene',
                 },
             },
             laser_panel: {
+                multi_layer: 'Mehrere Schichten',
                 parameters: 'Parameter',
                 strength: 'Leistung',
                 speed: 'Geschwindigkeit',
+                speed_contrain_warning: 'Die Schnittgeschwindigkeit von Vektorpfadobjekten wird auf 20mm/s begrenzt. Sie können diese Grenze in den Einstellungen für Einstellungen entfernen.',
                 repeat: 'Ausführen',
                 focus_adjustment: 'Fokuseinstellung',
                 height: 'Objekthöhe',
@@ -1317,6 +1320,8 @@ export default {
                 export_config: 'Parameter exportieren',
                 new_config_name: 'Neuer Parametername',
                 sure_to_load_config: 'Dadurch wird die Anordnung der Voreinstellungen geladen und die in der Datei festgelegten benutzerdefinierten Parameter ersetzt. Sind Sie sicher, dass Sie fortfahren?',
+                custom_preset: 'Benutzerdefiniert',
+                various_preset: 'Mehrere Voreinstellungen',
                 dropdown: {
                     mm: {
                         wood_3mm_cutting: 'Holz - 3mm Schneiden',

@@ -1179,7 +1179,7 @@ export default {
             speed_too_high_lower_the_quality: 'この解像度で速すぎる速度を使用すると、シェーディング彫刻の品質が低下する場合があります。',
             both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
             too_fast_for_path: 'パスオブジェクトを含む層で速すぎる速度を使用すると、切断時に精度が低下する場合があります。\n切断時に 20mm/s より速い速度を使用することはお勧めしません。',
-            too_fast_for_path_and_constrain: '次のレイヤー：％s \ nベクターパスオブジェクトが含まれていて、速度が 20mm/sを超えています。\ nベクターパスオブジェクトの切断速度は 20mm/s に制限されます。\ nこの制限は[好み]で削除できます。',
+            too_fast_for_path_and_constrain: '次のレイヤー：％s \nベクターパスオブジェクトが含まれていて、速度が 20mm/sを超えています。\nベクターパスオブジェクトの切断速度は 20mm/s に制限されます。\nこの制限は[好み]で削除できます。',
             should_update_firmware_to_continue: '#814 ご使用のファームウェアは、Beam Studioの一部の改善をサポートしていません。パフォーマンスとユーザー体験を向上させるには、ファームウェアをアップデートして続行してください。（メニュー>マシン>[お使いのマシン]>ファームウェアのアップデート',
             more_than_two_object: 'オブジェクトが多すぎます。2つのオブジェクトのみをサポートします',
             not_support_object_type: 'オブジェクトタイプをサポートしていません',
@@ -1278,6 +1278,7 @@ export default {
                     lock: 'レイヤーをロック',
                     merge_down: 'マージダウン',
                     merge_all: 'すべてをマージ',
+                    merge_selected: '選択したレイヤーをマージ',
                     move_elems_to: '移動先レイヤ:',
                     move_selected: '選択対象を別のレイヤに移動'
                 },
@@ -1291,9 +1292,11 @@ export default {
                 },
             },
             laser_panel: {
+                multi_layer: '複数のレイヤ',
                 parameters: 'パラメーター',
                 strength: '出力',
                 speed: '速度',
+                speed_contrain_warning: 'ベクターパスオブジェクトの切断速度は 20mm/s に制限されます。この制限は[好み]で削除できます。',
                 repeat: '実行',
                 focus_adjustment: 'フォーカスを調整する',
                 height: '高さ',
@@ -1317,6 +1320,8 @@ export default {
                 export_config: 'パラメータのエクスポート',
                 new_config_name: '新しいパラメータ名',
                 sure_to_load_config: 'これにより、プリセットの配置が読み込まれ、ファイルに設定されているカスタマイズされたパラメーターが置き換えられます。続行しますか？',
+                custom_preset: 'カスタム',
+                various_preset: '複数のプリセット',
                 dropdown: {
                     mm: {
                         wood_3mm_cutting: '木材 - 3mm 切断',

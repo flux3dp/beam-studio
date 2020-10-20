@@ -1,6 +1,4 @@
-
-/* eslint-disable react/no-multi-comp */
-import $ from 'jquery';
+import { getLayerElementByName } from '../../../helpers/layer-helper';
 import * as i18n from '../../../helpers/i18n';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas;
@@ -8,40 +6,26 @@ getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
 
 const LANG = i18n.lang.beambox.photo_edit_panel;
 const React = requireNode('react');
-const ReactDOM = requireNode('react-dom');
+const Pickr = requireNode('@simonwep/pickr');
 const classNames = requireNode('classnames');
 
-class ColorPickerPanel extends React.Component{
+export default class ColorPickerPanel extends React.Component{
+    private layer: Element
     constructor(props?) {
         super(props);
-        this.reactRoot = '';
-        this.me = null;
-        this.layer = null;
-        this.unmount = this.unmount.bind(this);
         this.width = 200;
+        this.layer = getLayerElementByName(props.layerName);
     }
 
-    init(reactRoot, layer, $me, callBack) {
-        this.reactRoot = reactRoot;
-        this.layer = layer;
-        this.$me = $me;
-        this.callBack = callBack;
-    }
-
-    render() {
-        if(this.layer) {
-            this._render();
-        } else {
-            this.unmount();
-        }
+    componentDidMount() {
+        this.renderPickr();
     }
 
     renderPickr() {
-        const Pickr = requireNode('@simonwep/pickr');
-        const origColor = $(this.layer).attr('data-color');
+        const origColor = this.layer.getAttribute('data-color') || '#333333';
         this.pickr = Pickr.create({
             el: '.pickr',
-            theme: 'monolith', // or 'monolith', or 'nano'
+            theme: 'monolith',
             inline: true,
             default: origColor,
             swatches: [
@@ -61,61 +45,40 @@ class ColorPickerPanel extends React.Component{
         });
     }
 
-    setPosition(left, top) {
-        left -= this.width;
-        this.style =  {
-            top,
-            left
-        }
-    }
-
     onApply() {
         const hexColor = this.pickr.getColor().toHEXA().toString();
-        $(this.layer).attr('data-color', hexColor);
-        if (svgCanvas.isUseLayerColor) {
-            svgCanvas.updateLayerColor(this.layer);
-        }
-        this.callBack();
-        this.unmount();
+        this.props.onColorChanged(hexColor);
+        this.props.onClose();
     }
 
-    unmount() {
-        this.element = null;
-        ReactDOM.unmountComponentAtNode(document.getElementById(this.reactRoot));
-    }
-
-    _renderfooter() {
+    renderfooter() {
         return (
             <div className='footer'>
-                {this._renderFooterButton(LANG.cancel, this.unmount.bind(this), classNames('btn', 'btn-default', 'pull-right'))}
-                {this._renderFooterButton(LANG.okay, this.onApply.bind(this), classNames('btn', 'btn-default', 'pull-right', 'primary'))}
+                {this.renderFooterButton(LANG.cancel, () => this.props.onClose(), classNames('btn', 'btn-default', 'pull-right'))}
+                {this.renderFooterButton(LANG.okay, () => this.onApply(), classNames('btn', 'btn-default', 'pull-right', 'primary'))}
             </div>
         );
     }
 
-    _renderFooterButton(label, onClick, className) {
+    renderFooterButton(label, onClick, className) {
         return(
-            <button
-                    className={className}
-                    onClick={() => {onClick()}}
-                >
+            <button className={className} onClick={() => {onClick()}}>
                     {label}
             </button>
         )
     }
 
-    _render() {
-        const footer = this._renderfooter();
-        ReactDOM.render(
-                <div className='color-picker-panel' style={this.style}>
-                    <div className='modal-background' onClick={this.unmount}></div>
-                    <div className='pickr'></div>
-                    {footer}
-                </div>, document.getElementById(this.reactRoot)
+    render() {
+        const footer = this.renderfooter();
+        const style = { top: this.props.top, left: this.props.left - this.width };
+        return(
+            <div className='color-picker-panel' style={style}>
+                <div className='modal-background' onClick={this.props.onClose}></div>
+                <div className='pickr'></div>
+                {footer}
+            </div>
         );
     }
 }
 
-const instance = new ColorPickerPanel();
 
-export default instance;

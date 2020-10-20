@@ -6183,6 +6183,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             $('#workarea').scrollTop(top);
                         }
                     }
+                    LayerPanelController.setSelectedLayers([]);
                 }
                 editor.importBvgString = importBvgString;
 
@@ -6267,6 +6268,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     await SymbolMaker.reRenderAllImageSymbol();
                     svgedit.utilities.findDefs().remove();
                     svgedit.utilities.moveDefsOutfromSvgContent();
+                    LayerPanelController.setSelectedLayers([]);
                 }
                 editor.importBvgStringAsync = importBvgStringAsync;
 
