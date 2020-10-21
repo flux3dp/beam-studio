@@ -57,7 +57,7 @@ class DropDownControl extends React.Component{
         }
 
         const firstChildSelected = this.props.options ? (this.selectedValue === this.props.options[0].value) : false ;
-        const className = classNames('dropdown-container', { 'first-child-selected': firstChildSelected });
+        const className = classNames('dropdown-container', { 'first-child-selected': firstChildSelected, 'more-than-one': this.props.options.length > 1});
         return (
             <div className="controls">
                 <div className="label pull-left">{this.props.label}</div>

@@ -643,15 +643,13 @@
                     .layervis {
                         display: flex;
                         align-items: center;
-                        min-width: 16px;
+                        width: 16px;
                         height: 25px;
                         text-align: center;
                         margin: 0 5px;
                         cursor: pointer;
-                        &.layerinvis {
-                            i {
-                                display: none;
-                            }
+                        img {
+                            width: 16px;
                         }
                     }
                     .layer {
@@ -665,6 +663,9 @@
                             color: black;
                             background-color: #dddddd;
                             border-color: #dddddd;
+                        }
+                        .vis-icon {
+                            filter: brightness(0);
                         }
                         .layer-row {
                             display: flex;
@@ -695,6 +696,9 @@
                             &.current {
                                 border-color: #0091ff;
 
+                            }
+                            .vis-icon {
+                                filter: brightness(0) invert(1);
                             }
                         }
                         .layerlock {
@@ -1270,7 +1274,6 @@
             border-width: 1px 0 0 0;
             border-radius: 4px;
             .layername {
-                height: 40px;
                 line-height: 20px;
                 padding: 10px 15px;
                 background: #F2F2F2;
@@ -1280,7 +1283,87 @@
                 font-weight: bold;
             }
             .layerparams {
-                padding: 10px 0;
+                padding: 10px 3px;
+                .layer-param-buttons {
+                    height: 25px;
+                    margin: 0 15px 5px;
+                    display: flex;
+                    justify-content: space-between;
+                    .left {
+                        display: flex;
+                    }
+                    .right {
+                        display: flex;
+                        align-items: flex-end;
+                    }
+                }
+                .icon-button {
+                    width: 20px;
+                    opacity: 0.5;
+                    &:not(:first-child) {
+                        margin-left: 10px;
+                    }
+                    &:hover:not(.disabled) {
+                        opacity: 1;
+                    }
+                    &.disabled {
+                        opacity: 0.3;
+                    }
+                    img {
+                        filter: brightness(0);
+                    }
+                }
+            }
+            .addon-block {
+                .label {
+                    height: 40px;
+                    line-height: 20px;
+                    padding: 10px 15px;
+                    background: #F2F2F2;
+                    border: 1px $panelBorderColor solid;
+                    border-width: 1px 0;
+                    text-align: left;
+                    color: #333;
+                    font-weight: bold;
+                }
+                .addon-setting {
+                    padding: 10px 3px;
+                }
+            }
+            .preset-dropdown-containter {
+                display: flex;
+                align-items: center;
+                .controls {
+                    width: calc(100% - 35px);
+                }
+            }
+            .add-preset-btn {
+                cursor: pointer;
+                width: 16px;
+                height: 16px;
+                margin: 0 0 0 3px;
+                opacity: 0.5;
+                &:hover:not(.disabled) {
+                    opacity: 1;
+                }
+                &.disabled {
+                    opacity: 0.3;
+                    cursor: default;
+                }
+                .bar {
+                    position: absolute;
+                    width: 2px;
+                    height: 16px;
+                    border-radius: 2px;
+                    border: 2px solid #000000;
+                    background-color: #000000;
+                }
+                .bar1 {
+                    transform: translateX(6px);
+                }
+                .bar2 {
+                    transform: translateX(16px) rotate(90deg) translateX(6px);
+                }
             }
             .panel {
                 margin-top: 20px;
@@ -1402,18 +1485,15 @@
                         font-size: 10pt;
                         color: #000;
                         width: calc(100% - 29px);
-                        margin-left: 15px;
-                        margin-top: 5px;
-                        margin-bottom: 7px;
+                        margin: 5px 0 5px 15px;
                     }
-                }
-
-                .first-child-selected {
-                    select {
-                        background-image: url("../img/icon-3d-arrow-down.png");
-                        background-position: calc(100% - 4px) center;
-                        background-repeat: no-repeat;
-                        background-size: 8px 8px;
+                    &.more-than-one {
+                        select {
+                            background-image: url("../img/icon-3d-arrow-down.png");
+                            background-position: calc(100% - 4px) center;
+                            background-repeat: no-repeat;
+                            background-size: 8px 8px;
+                        }
                     }
                 }
             }

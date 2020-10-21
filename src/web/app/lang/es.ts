@@ -387,12 +387,14 @@ export default {
                 },
             },
             laser_panel: {
+                preset_setting: 'Ajuste de parámetros (%s)',
                 multi_layer: 'Capas múltiples',
                 parameters: 'Parámetros',
                 strength: 'Poder',
                 speed: 'Velocidad',
                 speed_contrain_warning: 'La velocidad de corte de los objetos de trayectoria vectorial se limitará a 20mm/s. Puede eliminar este límite en Configuración de preferencias.',
                 repeat: 'Ejecutar',
+                add_on: 'Añadir',
                 focus_adjustment: 'Ajuste del enfoque',
                 height: 'La altura del objeto',
                 z_step: 'Paso Z',
@@ -418,6 +420,7 @@ export default {
                 custom_preset: 'Personalizado',
                 various_preset: 'Varios preajustes',
                 dropdown: {
+                    parameters: 'Preajustes',
                     save: 'Añade los parámetros actuales',
                     export: 'Exportar',
                     import: 'Importar',
@@ -439,7 +442,6 @@ export default {
                         glass_bw_engraving:  'Vidrio - Grabado',
                         metal_bw_engraving: 'Metal - Grabado',
                         stainless_steel_bw_engraving_diode: 'Metal - Grabado (Láser Diodo)',
-                        parameters: 'Preajustes'
                     },
                     inches: {
                         wood_3mm_cutting: 'Madera - Corte de 0.1\'\'',
@@ -458,7 +460,6 @@ export default {
                         glass_bw_engraving:  'Vidrio - Grabado',
                         metal_bw_engraving: 'Metal - Grabado',
                         stainless_steel_bw_engraving_diode: 'Metal - Grabado (Láser Diodo)',
-                        parameters: 'Preajustes'
                     },
                 },
                 laser_speed: {

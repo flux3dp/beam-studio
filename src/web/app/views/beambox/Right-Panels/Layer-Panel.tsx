@@ -474,6 +474,7 @@ export class LayerPanel extends React.Component {
             }
             const isLocked = layer.getAttribute('data-lock') === 'true';
             const isSelected = selectedLayers.includes(layerName);
+            const isVis = drawing.getLayerVisibility(layerName);
             items.push(
                 <div
                     key={layerName}
@@ -498,13 +499,13 @@ export class LayerPanel extends React.Component {
                         </div>
                         <div className='layername' onDoubleClick={() => this.layerDoubleClick(layerName)}>{layerName}</div>
                         <div
-                            className={classNames('layervis', {'layerinvis': !drawing.getLayerVisibility(layerName)})}
+                            className={classNames('layervis')}
                             onClick={(e: MouseEvent) => {
                                 e.stopPropagation();
                                 this.setLayerVisibility(layerName);
                             }}
                         >
-                            <i className='fa fa-eye'></i>
+                            <img className='vis-icon' src={isVis ? 'img/right-panel/icon-eyeopen.svg' : 'img/right-panel/icon-eyeclose.svg'} />
                         </div>
                         <div className='layerlock' onClick={(e: MouseEvent) => {
                             if (isLocked) {

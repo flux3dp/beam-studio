@@ -387,12 +387,14 @@ export default {
                 },
             },
             laser_panel: {
+                preset_setting: 'パラメータ設定 （%s）',
                 multi_layer: '複数のレイヤ',
                 parameters: 'パラメーター',
                 strength: '出力',
                 speed: '速度',
                 speed_contrain_warning: 'ベクターパスオブジェクトの切断速度は 20mm/s に制限されます。この制限は[好み]で削除できます。',
                 repeat: '実行',
+                add_on: '拡張機能',
                 focus_adjustment: 'フォーカスを調整する',
                 height: '高さ',
                 z_step: 'Z Step',
@@ -418,6 +420,7 @@ export default {
                 custom_preset: 'カスタム',
                 various_preset: '複数のプリセット',
                 dropdown: {
+                    parameters: 'パラメーター…',
                     save: '現在のパラメーターを追加',
                     export: '書き出す',
                     import: 'インポート',
@@ -439,7 +442,6 @@ export default {
                         glass_bw_engraving:  'ガラス - 彫刻',
                         metal_bw_engraving: '金属 - 彫刻',
                         stainless_steel_bw_engraving_diode: '金属 - 彫刻 (ダイオードレーザー)',
-                        parameters: 'パラメーター…'
                     },
                     inches: {
                         wood_3mm_cutting: '木材 - 0.1\'\' 切断',
@@ -458,7 +460,6 @@ export default {
                         glass_bw_engraving:  'ガラス - 彫刻',
                         metal_bw_engraving: '金属 - 彫刻',
                         stainless_steel_bw_engraving_diode: '金属 - 彫刻 (ダイオードレーザー)',
-                        parameters: 'パラメーター…'
                     }
                 },
                 laser_speed: {

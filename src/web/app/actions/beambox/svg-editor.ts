@@ -6321,7 +6321,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     }
                                     LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                                     LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-                                    LayerPanelController.updateLayerPanel();
+                                    LayerPanelController.setSelectedLayers(LayerPanelController.getSelectedLayers());
                                     resolve();
                                 };
                                 reader.readAsText(file);

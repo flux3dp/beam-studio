@@ -387,12 +387,14 @@ export default {
                 },
             },
             laser_panel: {
+                preset_setting: 'Parameters Setting (%s)',
                 multi_layer: 'Multiple Layers',
                 parameters: 'Parameters',
                 strength: 'Power',
                 speed: 'Speed',
                 speed_contrain_warning: 'The cutting speed of vector path objects will be constrained to 20 mm/s.You can remove this limit at Preferences Settings.',
                 repeat: 'Execute',
+                add_on: 'Add-on',
                 focus_adjustment: 'Focus Adjustment',
                 height: 'Object Height',
                 z_step: 'Z Step',
@@ -418,6 +420,7 @@ export default {
                 custom_preset: 'Custom',
                 various_preset: 'Various Presets',
                 dropdown: {
+                    parameters: 'Presets',
                     save: 'Add current parameters',
                     export: 'Export',
                     import: 'Import',
@@ -439,7 +442,6 @@ export default {
                         glass_bw_engraving:  'Glass - Engraving',
                         metal_bw_engraving: 'Metal - Engraving',
                         stainless_steel_bw_engraving_diode: 'Metal - Engraving (Diode Laser)',
-                        parameters: 'Presets'
                     },
                     inches: {
                         wood_3mm_cutting: 'Wood - 0.1\'\' Cutting',
@@ -458,7 +460,6 @@ export default {
                         glass_bw_engraving:  'Glass - Engraving',
                         metal_bw_engraving: 'Metal - Engraving',
                         stainless_steel_bw_engraving_diode: 'Metal - Engraving (Diode Laser)',
-                        parameters: 'Presets'
                     },
                 },
                 laser_speed: {

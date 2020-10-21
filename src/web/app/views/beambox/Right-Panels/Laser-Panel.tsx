@@ -19,8 +19,9 @@ import AlertConstants from '../../../constants/alert-constants';
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
-let svgCanvas, svgedit;
-getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
+import sprintf from '../../../../helpers/sprintf'
+let svgCanvas, svgEditor;
+getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor });
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
@@ -28,26 +29,12 @@ const PropTypes = requireNode('prop-types');
 
 const LANG = i18n.lang.beambox.right_panel.laser_panel;
 const defaultLaserOptions = [
-    'parameters',
     ...RightPanelConstants.laserPresetKeys,
 ];
-
-const functionalLaserOptions = [
-    'save',
-    'export',
-    'import',
-    'more',
-];
-
-const functionalOptions = functionalLaserOptions.map((item) => {
-    return {
-        value : item,
-        key: item,
-        label: LANG.dropdown[item],
-    };
-});
+const PARAMETERS_CONSTANT = 'parameters';
 
 const hiddenOptions = [
+    { value: PARAMETERS_CONSTANT, key: LANG.dropdown.parameters, label: LANG.dropdown.parameters},
     { value: LANG.custom_preset, key: LANG.custom_preset, label: LANG.custom_preset },
     { value: LANG.various_preset, key: LANG.various_preset, label: LANG.various_preset },
 ];
@@ -96,7 +83,7 @@ class LaserPanel extends React.PureComponent {
     initDefaultConfig = () => {
         const unit = this.unit;
         if (!LocalStorage.get('defaultLaserConfigsInUse') || !LocalStorage.get('customizedLaserConfigs')) {
-            const defaultConfigs = defaultLaserOptions.slice(1).map( e => {
+            const defaultConfigs = defaultLaserOptions.map( e => {
                 const {speed, power, repeat} = this._getDefaultParameters(e);
                 return {
                     name: LANG.dropdown[unit][e],
@@ -178,7 +165,7 @@ class LaserPanel extends React.PureComponent {
             const filePath = res[0];
             const file = await fetch(filePath);
             const fileBlob = await file.blob();
-            svgedit.importLaserConfig(fileBlob);
+            svgEditor.importLaserConfig(fileBlob);
         }
     };
 
@@ -333,13 +320,13 @@ class LaserPanel extends React.PureComponent {
     }
 
     _handleParameterTypeChanged = (id, value) => {
-        if (value === defaultLaserOptions[0]) {
+        if (value === PARAMETERS_CONSTANT) {
             this.setState({ original: value });
             return;
         }
         if (value === 'save') {
             DialogCaller.promptDialog({
-                caption: LANG.dropdown.mm.save,
+                caption: LANG.dropdown.save,
                 onYes: (name) => {
                     name = name.trim();
                     if (!name) {
@@ -351,12 +338,6 @@ class LaserPanel extends React.PureComponent {
                     this._handleCancelModal();
                 }
             });
-        } else if (value === 'more') {
-            this.setState({ modal: 'more' });
-        } else if (value === 'export') {
-            this.exportLaserConfigs();
-        } else if (value === 'import') {
-            this.importLaserConfig();
         } else {
             const customizedConfigs = (LocalStorage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
             const {
@@ -608,7 +589,7 @@ class LaserPanel extends React.PureComponent {
         } else if (this.state.configName === CUSTOM_PRESET_CONSTANT) {
             return LANG.custom_preset;
         }
-        return this.state.configName || defaultLaserOptions[0];
+        return this.state.configName || PARAMETERS_CONSTANT;
     }
 
     doLayersContainVector() {
@@ -660,7 +641,75 @@ class LaserPanel extends React.PureComponent {
         return ret;
     }
 
-    
+    renderLayerParameterButtons = () => {
+        return (
+            <div className='layer-param-buttons'>
+                <div className='left'>
+                    <div className='icon-button' title={LANG.dropdown.import} onClick={() => this.importLaserConfig()}>
+                        <img src={'img/right-panel/icon-open.svg'}/>
+                    </div>
+                    <div className='icon-button' title={LANG.dropdown.export} onClick={() => this.exportLaserConfigs()}>
+                        <img src={'img/right-panel/icon-export.svg'}/>
+                    </div>
+                </div>
+                <div className='right'>
+                    <div className='icon-button' title={LANG.dropdown.more} onClick={() => this.setState({ modal: 'more' })}>
+                        <img src={'img/right-panel/icon-setting.svg'}/>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    renderAddPresetButton() {
+        const { selectedLayers } = this.props;
+        const isDiabled = selectedLayers.length !== 1;
+        return (
+            <div className={classNames('add-preset-btn', { disabled: isDiabled })} onClick={() => {
+                if (isDiabled) return;
+
+                DialogCaller.promptDialog({
+                    caption: LANG.dropdown.save,
+                    onYes: (name) => {
+                        name = name.trim();
+                        if (!name) {
+                            return;
+                        }
+                        this._handleSaveConfig(name);
+                    },
+                    onCancel: () => {
+                        this._handleCancelModal();
+                    }
+                });
+            }}>
+                <div className= "bar bar1"/>
+                <div className= "bar bar2"/>
+            </div>
+        );
+    }
+
+    renderAddOnBlock = () => {
+        const enableHeightPanel = this._renderEnableHeight();
+        const heightPanel = this._renderHeight();
+        const zStepPanel = this._renderZStep();
+        const diodePanel = this._renderDiode();
+
+        if (!enableHeightPanel && !diodePanel) {
+            return null;
+        }
+
+        return (
+            <div className='addon-block'>
+                <div className='label'>{LANG.add_on}</div>
+                <div className='addon-setting'>
+                    {enableHeightPanel}
+                    {heightPanel}
+                    {zStepPanel}
+                    {diodePanel}
+                </div>
+            </div>
+        );
+    }
 
     render() {
         const { selectedLayers } = this.props;
@@ -674,10 +723,6 @@ class LaserPanel extends React.PureComponent {
         const speedPanel = this._renderSpeed();
         const strengthPanel = this._renderStrength();
         const repeatPanel = this._renderRepeat();
-        const enableHeightPanel = this._renderEnableHeight();
-        const heightPanel = this._renderHeight();
-        const zStepPanel = this._renderZStep();
-        const diodePanel = this._renderDiode();
         const modalDialog = this._renderModal();
 
         if (this.state.isDiode && BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
@@ -686,13 +731,6 @@ class LaserPanel extends React.PureComponent {
             DiodeBoundaryDrawer.hide();
         }
 
-        const defaultOptions = defaultLaserOptions.map((item) => {
-            return {
-                value : item,
-                key: item,
-                label: (LANG.dropdown[this.unit][item] ? LANG.dropdown[this.unit][item] : item)
-            };
-        });
         const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
         const customizedOptions = (customizedConfigs || customizedConfigs.length > 0) ? customizedConfigs.map((e) => {
             return {
@@ -702,34 +740,42 @@ class LaserPanel extends React.PureComponent {
             };
         }) : null ;
 
-        const dropdownOptions = (
-            customizedOptions ?
-                [defaultOptions[0]].concat(customizedOptions).concat(functionalOptions) :
-                defaultOptions.concat(functionalOptions)
-        );
+        let dropdownOptions: { value: string, key: string, label: string }[];
+        if (customizedOptions) {
+            dropdownOptions = customizedOptions;
+        } else {
+            dropdownOptions = defaultLaserOptions.map((item) => {
+                return {
+                    value : item,
+                    key: item,
+                    label: (LANG.dropdown[this.unit][item] ? LANG.dropdown[this.unit][item] : item)
+                };
+            });
+        }
 
         return (
             <div id='laser-panel'>
                 <div className="layername">
-                    {displayName}
+                    {sprintf(LANG.preset_setting, displayName)}
                 </div>
                 <div className="layerparams">
-                    <DropdownControl
-                        id='laser-config-dropdown'
-                        value={this._getDefaultLaserOptions()}
-                        onChange={this._handleParameterTypeChanged}
-                        options={dropdownOptions}
-                        hiddenOptions={hiddenOptions}
-                    />
+                    {this.renderLayerParameterButtons()}
+                    <div className='preset-dropdown-containter'>
+                        <DropdownControl
+                            id='laser-config-dropdown'
+                            value={this._getDefaultLaserOptions()}
+                            onChange={this._handleParameterTypeChanged}
+                            options={dropdownOptions}
+                            hiddenOptions={hiddenOptions}
+                        />
+                        {this.renderAddPresetButton()}
+                    </div>
                     {strengthPanel}
                     {speedPanel}
                     {repeatPanel}
-                    {enableHeightPanel}
-                    {heightPanel}
-                    {zStepPanel}
-                    {diodePanel}
                     {modalDialog}
                 </div>
+                {this.renderAddOnBlock()}
             </div>
         );
     }

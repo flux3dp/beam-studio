@@ -387,12 +387,14 @@ export default {
                 },
             },
             laser_panel: {
+                preset_setting: '參數調整（%s）',
                 multi_layer: '多個圖層',
                 parameters: '選擇參數',
                 strength: '功率',
                 speed: '速度',
                 speed_contrain_warning: '向量路徑速度將被限制在 20mm/s ，您可以在偏好設定解除此限制。',
                 repeat: '執行次數',
+                add_on: '擴充模組',
                 focus_adjustment: '對焦調整',
                 height: '物件高度',
                 z_step: '每次遞降',
@@ -418,6 +420,7 @@ export default {
                 custom_preset: '自訂',
                 various_preset: '多個參數',
                 dropdown: {
+                    parameters: '選擇參數',
                     save: '新增目前參數',
                     export: '匯出參數',
                     import: '匯入參數',
@@ -439,7 +442,6 @@ export default {
                         glass_bw_engraving:  '玻璃 - 刻印',
                         metal_bw_engraving: '不鏽鋼噴劑 - 刻印',
                         stainless_steel_bw_engraving_diode: '不鏽鋼 - 刻印（二極體雷射）',
-                        parameters: '選擇參數'
                     },
                     inches: {
                         wood_3mm_cutting: '木板 - 0.1\'\' 切割',
@@ -458,7 +460,6 @@ export default {
                         glass_bw_engraving:  '玻璃 - 刻印',
                         metal_bw_engraving: '不鏽鋼噴劑 - 刻印',
                         stainless_steel_bw_engraving_diode: '不鏽鋼 - 刻印（二極體雷射）',
-                        parameters: '選擇參數'
                     },
                 },
                 laser_speed: {

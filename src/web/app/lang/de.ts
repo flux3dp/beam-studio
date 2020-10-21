@@ -387,12 +387,14 @@ export default {
                 },
             },
             laser_panel: {
+                preset_setting: 'Parametereinstellung (%s)',
                 multi_layer: 'Mehrere Schichten',
                 parameters: 'Parameter',
                 strength: 'Leistung',
                 speed: 'Geschwindigkeit',
                 speed_contrain_warning: 'Die Schnittgeschwindigkeit von Vektorpfadobjekten wird auf 20mm/s begrenzt. Sie können diese Grenze in den Einstellungen für Einstellungen entfernen.',
                 repeat: 'Ausführen',
+                add_on: 'Hinzufügen',
                 focus_adjustment: 'Fokuseinstellung',
                 height: 'Objekthöhe',
                 z_step: 'Z Schritt',
@@ -418,6 +420,7 @@ export default {
                 custom_preset: 'Benutzerdefiniert',
                 various_preset: 'Mehrere Voreinstellungen',
                 dropdown: {
+                    parameters: 'Voreinstellungen',
                     save: 'Aktuelle Parameter hinzufügen',
                     export: 'Export',
                     import: 'Importieren',
@@ -439,7 +442,6 @@ export default {
                         glass_bw_engraving:  'Glas - Gravur',
                         metal_bw_engraving: 'Metall - Gravur',
                         stainless_steel_bw_engraving_diode: 'Metall - Gravur (Diodenlaser)',
-                        parameters: 'Voreinstellungen'
                     },
                     inches: {
                         wood_3mm_cutting: 'Holz - 0.1\'\' Schneiden',
@@ -458,7 +460,6 @@ export default {
                         glass_bw_engraving:  'Glas - Gravur',
                         metal_bw_engraving: 'Metall - Gravur',
                         stainless_steel_bw_engraving_diode: 'Metall - Gravur (Diodenlaser)',
-                        parameters: 'Voreinstellungen'
                     },
                 },
                 laser_speed: {
