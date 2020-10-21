@@ -318,6 +318,7 @@ const svgEditor = window['svgEditor'] = (function($) {
         const availableLangMap = {
             'de': 'de',
             'en': 'en',
+            'es': 'es',
             'ja': 'ja',
             'zh-tw': 'zh-TW',
             'zh-cn': 'zh-CN',

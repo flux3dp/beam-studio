@@ -36,11 +36,6 @@ beamboxStore = Object.assign(EventEmitter.prototype, {
         return beamboxStore;
     },
 
-    onCloseInsertObjectSubmenu: function(callback) {
-        this.on(Constants.CLOSE_INSERT_OBJECT_SUBMENU, callback);
-        return beamboxStore;
-    },
-
     onResetPreviewButton: function(callback) {
         this.on(Constants.RESET_PREVIEW_BUTTON, callback);
         return beamboxStore;
@@ -83,11 +78,6 @@ beamboxStore = Object.assign(EventEmitter.prototype, {
 
     removeClearCameraCanvasListener: function(callback) {
         this.removeListener(Constants.CLEAR_CAMERA_CANVAS, callback);
-        return beamboxStore;
-    },
-
-    removeCloseInsertObjectSubmenuListener: function(callback) {
-        this.removeListener(Constants.CLOSE_INSERT_OBJECT_SUBMENU, callback);
         return beamboxStore;
     },
 

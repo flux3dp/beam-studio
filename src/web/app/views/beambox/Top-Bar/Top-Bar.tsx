@@ -120,7 +120,7 @@ export class TopBar extends React.PureComponent {
         if (BeamboxPreference.read('should_remind_calibrate_camera')) {
             Alert.popUp({
                 type: AlertConstants.SHOW_INFO,
-                message: lang.beambox.left_panel.suggest_calibrate_camera_first,
+                message: LANG.alerts.suggest_calibrate_camera_first,
             });
             BeamboxPreference.write('should_remind_calibrate_camera', false);
             return;
@@ -441,11 +441,9 @@ export class TopBar extends React.PureComponent {
             return null;
         }
         let status = lang.machine_status;
-        let headModule = lang.head_module;
         let progress;
         let options = deviceList.map((device) => {
             let statusText = status[device.st_id] || status.UNKNOWN;
-            let headText = headModule[device.head_module] || headModule.UNKNOWN;
 
             if (device.st_prog === 0) {
                 progress = '';
@@ -467,7 +465,7 @@ export class TopBar extends React.PureComponent {
                     data-test-key={device.serial}
                 >
                     <label className="name">{device.name}</label>
-                    <label className="status">{headText} {statusText}</label>
+                    <label className="status">{statusText}</label>
                     <label className="progress">{progress}</label>
                     <label className="connection-type">
                         <div className="type">

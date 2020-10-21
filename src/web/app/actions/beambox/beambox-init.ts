@@ -192,42 +192,11 @@ const initMenuBarEvents = () => {
 
     const executeFirmwareUpdate = async function (printer, type) {
         var currentPrinter = printer,
-            checkToolheadFirmware = function () {
-                var $deferred = $.Deferred();
-
-                Progress.openNonstopProgress({id: 'check_head_firmware', caption: LANG.update.checkingHeadinfo});
-
-                if ('toolhead' === type) {
-                    DeviceMaster.headInfo().done(function (response) {
-                        currentPrinter.toolhead_version = response.version || '';
-
-                        if ('undefined' === typeof response.version) {
-                            $deferred.reject();
-                        }
-                        else {
-                            $deferred.resolve({ status: 'ok' });
-                        }
-                    }).fail(() => {
-                        $deferred.reject();
-                    });
-                }
-                else {
-                    $deferred.resolve({ status: 'ok' });
-                }
-
-                return $deferred;
-            },
             updateFirmware = function () {
                 checkFirmware(currentPrinter, type).done(function (response) {
                     var latestVersion = currentPrinter.version,
                         caption = LANG.update.firmware.latest_firmware.caption,
                         message = LANG.update.firmware.latest_firmware.message;
-
-                    if ('toolhead' === type) {
-                        latestVersion = currentPrinter.toolhead_version;
-                        caption = LANG.update.toolhead.latest_firmware.caption;
-                        message = LANG.update.toolhead.latest_firmware.message;
-                    }
 
                     if (!response.needUpdate) {
                         Alert.popUp({
@@ -240,9 +209,6 @@ const initMenuBarEvents = () => {
                                 firmwareUpdater(response, currentPrinter, type, true);
                             },
                             onCancel: () => {
-                                if ('toolhead' === type) {
-                                    DeviceMaster.quitTask();
-                                }
                             }
                         });
                     } else {
@@ -252,30 +218,12 @@ const initMenuBarEvents = () => {
                 })
                     .fail(function (response) {
                         firmwareUpdater(response, currentPrinter, type);
-                        Alert.popUp({
-                            id: 'latest-firmware',
-                            type: AlertConstants.SHOW_POPUP_INFO,
-                            message: LANG.monitor.cant_get_toolhead_version
-                        });
                     });
             },
             checkStatus = function () {
-                const processUpdate = () => {
-                    checkToolheadFirmware().always(function () {
-                        Progress.popById('check_head_firmware');
-                        updateFirmware();
-                    }).fail(function () {
-                        Alert.popUp({
-                            id: 'toolhead-offline',
-                            type: AlertConstants.SHOW_POPUP_ERROR,
-                            message: LANG.monitor.cant_get_toolhead_version
-                        });
-                    });
-                };
-
                 const handleYes = (id) => {
                     if (id === 'head-missing') {
-                        processUpdate();
+                        updateFirmware();
                     }
                 };
 
@@ -295,13 +243,13 @@ const initMenuBarEvents = () => {
                     DeviceMaster.enterMaintainMode().then(() => {
                         setTimeout(() => {
                             Progress.popById('check-status');
-                            processUpdate();
+                            updateFirmware();
                         }, 3000);
                     });
                 }
                 else {
                     Progress.popById('check-status');
-                    processUpdate();
+                    updateFirmware();
                 }
             };
         // TODO: Handle the error better (output eresp)
@@ -441,10 +389,7 @@ const initMenuBarEvents = () => {
             };
 
             _action['UPDATE_TOOLHEAD'] = async (device) => {
-                const deviceStatus = await checkDeviceStatus(device);
-                if (deviceStatus) {
-                    executeFirmwareUpdate(device, 'toolhead');
-                }
+                console.error('update toolhead function has been removed, \nUse flux studio');
             };
 
             _action['LOG_NETWORK'] = (device) => {

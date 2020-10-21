@@ -162,8 +162,8 @@ const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
     };
 };
 
-// fetchTaskCode: send svg string calculate taskcode, default output Fcode if isOutputGcode === true output gcode
-const fetchTaskCode = async (device: any = null, isOutputGcode: boolean = false) => {
+// fetchTaskCode: send svg string calculate taskcode, default output Fcode if shouldOutputGcode === true output gcode
+const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = false) => {
     let isErrorOccur = false;
     SymbolMaker.switchImageSymbolForAll(false);
     Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
@@ -214,7 +214,7 @@ const fetchTaskCode = async (device: any = null, isOutputGcode: boolean = false)
     Progress.openSteppingProgress({id: 'fetch-task', message: ''});
     const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
         const names = []; //don't know what this is for
-        const codeType = isOutputGcode ? 'gcode' : 'fcode';
+        const codeType = shouldOutputGcode ? 'gcode' : 'fcode';
         svgeditorParser.getTaskCode(
             names,
             {
@@ -256,7 +256,7 @@ const fetchTaskCode = async (device: any = null, isOutputGcode: boolean = false)
     });
     Progress.popById('fetch-task');
     
-    if (!isOutputGcode) {
+    if (!shouldOutputGcode) {
         return {
             fcodeBlob: taskCodeBlob,
             thumbnailBlobURL: thumbnailBlobURL,

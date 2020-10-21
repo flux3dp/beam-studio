@@ -2,7 +2,6 @@ import $ from 'jquery';
 import * as i18n from '../../helpers/i18n';
 import config from '../../helpers/api/config';
 import settings from '../app-settings';
-import DeviceSetting from '../views/settings/Setting-Device';
 import GeneralSetting from '../views/settings/Setting-General';
 const ClassNames = requireNode('classnames');
 const React = requireNode('react');
@@ -31,12 +30,6 @@ export default function(args) {
 
         _renderContent = () => {
             let view = args.child;
-
-            if (view == 'device') {
-                return (
-                    <DeviceSetting lang={this.state.lang} />
-                );
-            } 
 
             return (
                 <GeneralSetting

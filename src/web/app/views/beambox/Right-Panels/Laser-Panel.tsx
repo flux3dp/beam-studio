@@ -43,7 +43,7 @@ const functionalOptions = functionalLaserOptions.map((item) => {
     return {
         value : item,
         key: item,
-        label: LANG.dropdown.mm[item] // unit does not matter
+        label: LANG.dropdown[item],
     };
 });
 

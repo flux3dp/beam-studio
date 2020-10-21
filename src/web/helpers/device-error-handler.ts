@@ -25,11 +25,7 @@ const self = {
         let errorOutput = '';
 
         if (error.length) {
-            if (error[0] === 'CLOUD') {
-                console.log('device error handler', error);
-                errorOutput = lang.settings.flux_cloud[error.join('_')];
-            }
-            else if (error.length === 4) {
+            if (error.length === 4) {
                 // for wrong toolhead type;
                 if (error[1] === 'TYPE_ERROR') {
                     errorOutput = lang.monitor[error.slice(0, 2).join('_')];
@@ -38,8 +34,6 @@ const self = {
                     errorOutput = (error.length >= 2) ? lang.monitor[error.slice(0, 2).join('_')] : error.join('_');
                 }
             } else if (error.length === 3) {
-                errorOutput = self.processToolheadErrorCode(error[2]);
-                // for wrong toolhead type;
                 if (error[1] === 'TYPE_ERROR') {
                     errorOutput = lang.monitor[error.slice(0, 2).join('_')];
                 }
@@ -68,21 +62,6 @@ const self = {
 
 
         return errorOutput || '';
-    },
-    /**
-     *  Process error code ( mostly for toolhead error )
-     *  @param {String} argument - The error code
-     */
-    processToolheadErrorCode: (errorCode) => {
-        if (Number(errorCode) === parseInt(errorCode)) {
-            let m = parseInt(errorCode).toString(2).split('').reverse();
-            let message = m.map((flag, index) => {
-                return flag === '1' ? lang.head_module.error[index] : '';
-            });
-            return message.filter(entry => entry !== '').join('\n');
-        } else {
-            return '';
-        }
     },
     /**
      * Process change filament response

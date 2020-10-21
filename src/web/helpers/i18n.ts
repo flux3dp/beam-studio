@@ -2,6 +2,7 @@ import localStorage from './local-storage';
 import AppSettings from '../app/app-settings';
 import LangDe from '../app/lang/de';
 import LangEn from '../app/lang/en';
+import LangEs from '../app/lang/es';
 import LangJa from '../app/lang/ja';
 import LangZHTW from '../app/lang/zh-tw';
 import LangZHCN from '../app/lang/zh-cn';
@@ -10,6 +11,7 @@ const ACTIVE_LANG = 'active-lang',
     langCache = {
         'de': LangDe,
         'en': LangEn,
+        'es': LangEs,
         'zh-tw': LangZHTW,
         'ja': LangJa,
         'zh-cn': LangZHCN,

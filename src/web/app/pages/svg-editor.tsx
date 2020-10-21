@@ -1067,6 +1067,9 @@ export class SVGEditor extends React.Component {
                                     <option id="lang_ja" value="ja">
                                         日本語
                                     </option>
+                                    <option id="lang_zh-CN" value="es">
+                                        Español
+                                    </option>
                                     <option id="lang_zh-CN" value="zh-CN">
                                         簡中
                                     </option>

@@ -34,11 +34,6 @@ class MonitorInfo extends React.Component{
         );
     }
 
-    _getHeadInfo = () => {
-        let { Device } = this.props.context.store.getState();
-        return Device.status.module ? this.lang.monitor.device[Device.status.module] : '';
-    }
-
     _getStatus = () => {
         let { Monitor, Device } = this.props.context.store.getState();
 
@@ -125,7 +120,6 @@ class MonitorInfo extends React.Component{
             <div className="wrapper">
                 <div className="row">
                     <div className="head-info">
-                        {this._getHeadInfo()}
                     </div>
                     <div className="status right">
                         {this._getStatus()}

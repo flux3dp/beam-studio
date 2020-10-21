@@ -39,11 +39,6 @@ export default {
             actionType: BeamboxConstants.CLEAR_CAMERA_CANVAS
         });
     },
-    closeInsertObjectSubmenu: function() {
-        Dispatcher.dispatch({
-            actionType: BeamboxConstants.CLOSE_INSERT_OBJECT_SUBMENU
-        });
-    },
     resetPreviewButton: function() {
         Dispatcher.dispatch({
             actionType: BeamboxConstants.RESET_PREVIEW_BUTTON
