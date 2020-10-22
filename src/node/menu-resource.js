@@ -547,7 +547,7 @@ module.exports = {
         import_material_testing_engrave: 'Material Gravurtest',
         import_material_testing_line: 'Material Linientest',
         export_to: 'Exportieren nach...',
-        export_flux_task: 'FLUX-Aufgabe',
+        export_flux_task: 'FLUX-Datei',
         export_SVG: 'SVG',
         export_PNG: 'PNG',
         export_JPG: 'JPG',
@@ -556,7 +556,7 @@ module.exports = {
         about_beam_studio: 'Über Beam Studio',
         undo: 'Rückgängig machen',
         redo: 'Wiederholen',
-        cut: 'Schnitt',
+        cut: 'Ausschneiden',
         copy: 'Kopieren',
         paste: 'Einfügen',
         group: 'Gruppe',
@@ -646,7 +646,7 @@ module.exports = {
         borderless_mode: 'Randloser Modus',
         show_grids: 'Gitter anzeigen',
         show_rulers: 'Lineale anzeigen',
-        show_layer_color: 'Verwenden Sie Ebenenfarbe',
+        show_layer_color: 'Ebenenfarbe verwenden',
         disassemble_use: 'SVG zerlegen'
     },
     'es': {
