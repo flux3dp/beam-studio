@@ -6,8 +6,6 @@ import AlertActions from '../../actions/alert-actions';
 import ElectronDialogs from '../../actions/electron-dialogs';
 import AlertStore from '../../stores/alert-store';
 import Progress from '../../contexts/ProgressCaller';
-import ProgressActions from '../../actions/progress-actions';
-import ProgressConstants from '../../constants/progress-constants';
 import DeviceConstants from '../../constants/device-constants';
 import GlobalActions from '../../actions/global-actions';
 import GlobalConstants from '../../constants/global-constants';
@@ -575,16 +573,14 @@ class Monitor extends React.Component{
         const { relocateOrigin } = Monitor;
 
         store.dispatch(DeviceActionCreator.updateDeviceStatus(startingStatus));
-        store.dispatch(MonitorActionCreator.changeMode(
-            Monitor.mode === GlobalConstants.CAMERA ?
-            GlobalConstants.CAMERA
-            :
-            GlobalConstants.PRINT
-        ));
+
+        if (Monitor.mode === GlobalConstants.CAMERA) {
+            this._stopCamera();
+        }
+        store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.PRINT));
 
         if(Device.status.st_label === DeviceConstants.IDLE) {
             let { fCode } = this.props;
-            store.dispatch(MonitorActionCreator.changeMode(GlobalConstants.PRINT));
 
             const device = DeviceMaster.currentDevice.info;
             const vc = VersionChecker(device.version);
@@ -741,6 +737,7 @@ class Monitor extends React.Component{
     }
 
     _processReport = (report) => {
+        let { Monitor } = store.getState();
         if(!report.error) {
             if(this._isAbortedOrCompleted() && openedFrom !== GlobalConstants.DEVICE_LIST) {
                 //DeviceMaster.quit();
@@ -802,7 +799,9 @@ class Monitor extends React.Component{
 
             if(this._isAbortedOrCompleted()) {
                 //DeviceMaster.quit();
-                store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
+                if (Monitor.mode !== GlobalConstants.CAMERA) {
+                    store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
+                }
             }
         }
     }

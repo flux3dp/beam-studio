@@ -188,8 +188,8 @@ class MonitorControl extends React.Component{
 
         action = !!commands[currentStatus] ? commands[currentStatus]() : '';
 
-        // CAMERA mode
         if(Monitor.mode === GlobalConstants.CAMERA) {
+            // CAMERA mode
             if(statusId === DeviceConstants.status.MAINTAIN || this._getJobType() === '') {
                 middleButtonOn = false;
             }
@@ -211,16 +211,12 @@ class MonitorControl extends React.Component{
             else {
                 leftButtonOn = true;
             }
-        }
-
-        // FILE mode
-        else if(Monitor.mode === GlobalConstants.FILE) {
+        } else if(Monitor.mode === GlobalConstants.FILE) {
+            // FILE mode
             leftButtonOn = Monitor.currentPath !== '';
             middleButtonOn = selectedItem.type === type.FILE;
-        }
-
-        // PRINT mode
-        else if(Monitor.mode === GlobalConstants.PRINT) {
+        } else if(Monitor.mode === GlobalConstants.PRINT) {
+            // PRINT mode
             leftButtonOn = true;
 
             if(
@@ -248,10 +244,8 @@ class MonitorControl extends React.Component{
             if(statusId === DeviceConstants.status.INIT) {
                 leftButtonOn = false;
             }
-        }
-
-        // PREVIEW mode
-        else if (Monitor.mode === GlobalConstants.PREVIEW) {
+        } else if (Monitor.mode === GlobalConstants.PREVIEW) {
+            // PREVIEW mode
             middleButtonOn = true;
             if(
                 statusId === DeviceConstants.status.IDLE ||
@@ -270,16 +264,18 @@ class MonitorControl extends React.Component{
             else {
                 middleButtonOn = true;
             }
-        }
-
-        // FILE PREVIEW mode
-        else if (Monitor.mode === GlobalConstants.FILE_PREVIEW) {
+        } else if (Monitor.mode === GlobalConstants.FILE_PREVIEW) {
+            // FILE PREVIEW mode
             leftButtonOn = true;
             middleButtonOn = true;
 
             if( currentStatus === DeviceConstants.IDLE ) {
                 leftButtonOn = false;
             }
+        }
+
+        if (!['IDLE', 'PAUSED', 'ABORTED', 'COMPLETED'].includes(currentStatus)) {
+            rightButtonOn = false;
         }
 
         if(Object.keys(Device.status).length === 0) {
