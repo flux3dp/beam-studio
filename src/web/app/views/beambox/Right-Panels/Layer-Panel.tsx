@@ -156,17 +156,6 @@ export class LayerPanel extends React.Component {
         });
     }
 
-    moveLayerRel = (pos) => {
-        const drawing = svgCanvas.getCurrentDrawing();
-        const layerCount = drawing.getNumLayers();
-        let curIndex = drawing.getCurrentLayerPosition();
-        if (curIndex > 0 || curIndex < layerCount - 1) {
-            curIndex += pos;
-            svgCanvas.setCurrentLayerPosition(curIndex);
-            this.setState(this.state);
-        }
-    }
-
     moveToOtherLayer = (e) => {
         const select = e.target;
         const destLayer = select.options[select.selectedIndex].value;
@@ -364,6 +353,7 @@ export class LayerPanel extends React.Component {
         const { selectedLayers } = this.context;
         if (draggingDestIndex !== null) {
             moveLayersToPosition(selectedLayers, draggingDestIndex);
+            svgCanvas.sortTempGroupByLayer();
         }
         this.setState({
             draggingLayer: null,

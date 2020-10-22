@@ -6529,6 +6529,18 @@ define([
             return false;
         };
 
+        this.sortTempGroupByLayer = () => {
+            if (!tempGroup) return;
+            const drawing = getCurrentDrawing();
+            const allLayerNames = drawing.all_layers.map((layer) => layer.name_);
+            for (let i = 0; i < allLayerNames.length; i++) {
+                const elems = tempGroup.querySelectorAll(`[data-original-layer="${allLayerNames[i]}"]`);
+                for (let j = 0; j < elems.length; j++) {
+                    tempGroup.appendChild(elems[j]);
+                }
+            }
+        }
+
         // Function: setLayerVisibility
         // Sets the visibility of the layer. If the layer name is not valid, this function return
         // false, otherwise it returns true. This is an undo-able action.
@@ -6634,16 +6646,6 @@ define([
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
             });
-        };
-
-        this.toggleRulers = () => {
-            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
-            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
-            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
-            if (shouldShowRulers) {
-                svgEditor.updateRulers();
-            }
-            BeamboxPreference.write('show_rulers', shouldShowRulers);
         };
 
         let hexToRgb = (hexColorCode) => {
@@ -6753,6 +6755,16 @@ define([
                 }
             }
         }
+
+        this.toggleRulers = () => {
+            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
+            if (shouldShowRulers) {
+                svgEditor.updateRulers();
+            }
+            BeamboxPreference.write('show_rulers', shouldShowRulers);
+        };
 
         // Function: leaveContext
         // Return from a group context to the regular kind, make any previously
@@ -9257,10 +9269,12 @@ define([
                         $(child).remove();
                         i--;
                     } else {
-                        $(child).removeAttr('opacity');
+                        child.removeAttribute('opacity');
                         $(child).attr('id', getNextId());
                         $(child).attr('vector-effect', "non-scaling-stroke");
-                        $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                        child.addEventListener('mouseover', this.handleGenerateSensorArea);
+                        child.addEventListener('mouseleave', this.handleGenerateSensorArea);
+                        // $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
                     }
                 }
                 selectorManager.requestSelector(g).resize();
