@@ -44,7 +44,8 @@ svgedit.recalculate.init = function(editorContext) {
 // tx - The translation's x value
 // ty - The translation's y value
 svgedit.recalculate.updateClipPath = function(attr, tx, ty) {
-  var path = getRefElem(attr).firstChild;
+  const refElem = svgedit.utilities.getRefElem(attr);
+  var path = refElem.firstChild;
   var cp_xform = svgedit.transformlist.getTransformList(path);
   var newxlate = context_.getSVGRoot().createSVGTransform();
   newxlate.setTranslate(tx, ty);
@@ -443,7 +444,10 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
             if (child.getAttribute('clip-path')) {
               // tx, ty
               var attr = child.getAttribute('clip-path');
-              if (clipPaths_done.indexOf(attr) === -1) {
+              const refElem = svgedit.utilities.getRefElem(attr);
+              if (!refElem) {
+                child.removeAttribute('clip-path')
+              } else if (clipPaths_done.indexOf(attr) === -1) {
                 svgedit.recalculate.updateClipPath(attr, tx, ty);
                 clipPaths_done.push(attr);
               }
@@ -709,7 +713,8 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     if (!svgedit.browser.isWebkit()) {
       var fill = selected.getAttribute('fill');
       if (fill && fill.indexOf('url(') === 0) {
-        var paint = getRefElem(fill);
+        console.log(fill);
+        var paint = svgedit.utilities.getRefElem(fill);
         var type = 'pattern';
         if (paint.tagName !== type) type = 'gradient';
         var attrVal = paint.getAttribute(type + 'Units');
