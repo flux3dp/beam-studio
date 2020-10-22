@@ -39,7 +39,6 @@ export class LayerPanel extends React.Component {
             colorPanelLeft: null,
             colorPanelTop: null,
         };
-        console.log('TODO: visible/invisable icon');
     }
 
     componentDidMount() {
