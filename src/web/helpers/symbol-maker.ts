@@ -296,7 +296,6 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
             const useElemForBB = svgedit.utilities.findTempUse();
             svgedit.utilities.setHref(useElemForBB, '#' + symbol.id);
             bb = useElemForBB.getBBox();
-            console.log(bb);
             svgedit.utilities.setHref(useElemForBB, '');
             bb.height = Math.max(1, bb.height);
             bb.width = Math.max(1, bb.width);
@@ -361,13 +360,17 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
     });
 };
 
-const reRenderImageSymbol = async (useElement) => {
+const reRenderImageSymbol = async (useElement: SVGUseElement) => {
+    if (!useElement.parentNode) {
+        //Element has been deleted
+        return;
+    }
     const {width, height} = svgCanvas.getSvgRealLocation(useElement);
     const {width: origWidth, height: origHeight} = useElement.getBBox();
 
     const scale = Math.sqrt(width * height / (origWidth * origHeight));
     const href = svgCanvas.getHref(useElement);
-    const currentSymbol = $(href)[0];
+    const currentSymbol = document.querySelector(href);
     if (currentSymbol && currentSymbol.tagName === 'symbol') {
         const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
         if (origSymbolId) {

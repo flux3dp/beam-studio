@@ -9329,7 +9329,7 @@ define([
                 transform = `${transform} ${translate}`;
                 const href = this.getHref(elem);
                 const svg = $(href).toArray()[0];
-                let children = [...Array.from($(svg)[0].childNodes).reverse()];
+                let children = [...Array.from(svg.childNodes).reverse()];
                 let g = addSvgElementFromJson({
                     'element': 'g',
                     'attr': {
@@ -9382,7 +9382,6 @@ define([
                     percentage: 90,
                 });
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
-                let start = Date.now();
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
                 batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
                 elem.parentNode.removeChild(elem);
