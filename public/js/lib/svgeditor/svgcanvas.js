@@ -47,6 +47,7 @@ define([
     'helpers/api/config',
     'helpers/beam-file-helper',
     'helpers/image-data',
+    'helpers/layer-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
     'helpers/symbol-maker',
@@ -72,6 +73,7 @@ define([
     Config,
     BeamFileHelper,
     ImageData,
+    LayerHelper,
     LocalStorage,
     shortcuts,
     SymbolMaker,
@@ -97,6 +99,7 @@ define([
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
     ImageData = ImageData.default;
+    LayerHelper = __importStar(LayerHelper);
     LocalStorage = LocalStorage.default;
     shortcuts = shortcuts.default;
     SymbolMaker = SymbolMaker.default;
@@ -6713,7 +6716,13 @@ define([
         this.updateLayerColor = function(layer) {
             const color = this.isUsingLayerColor ? $(layer).attr('data-color') : '#000';
             this.updateLayerColorFilter(layer);
-            this.setElementsColor(layer.childNodes, color);
+            const elems = Array.from(layer.childNodes);
+            if (tempGroup) {
+                const layerName = LayerHelper.getLayerName(layer);
+                const multiSelectedElems = tempGroup.querySelectorAll(`[data-original-layer="${layerName}"]`);
+                elems.push(...multiSelectedElems);
+            }
+            this.setElementsColor(elems, color);
         };
 
         this.updateElementColor = function(elem) {

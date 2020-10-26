@@ -39,6 +39,14 @@ export const getLayerElementByName = (layerName: string) => {
     return layer;
 };
 
+export const getLayerName = (layer: Element) => {
+    const title = layer.querySelector('title');
+    if (title) {
+        return title.textContent;
+    }
+    return '';
+};
+
 export const deleteLayers = (layerNames: string[]) => {
     const drawing = svgCanvas.getCurrentDrawing();
     const batchCmd = new svgedit.history.BatchCommand('Delete Layer(s)');
@@ -267,9 +275,3 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
     }
     return { success: false };
 }
-
-export default {
-    getLayerElementByName,
-    deleteLayerByName,
-    cloneLayerByName,
-};
