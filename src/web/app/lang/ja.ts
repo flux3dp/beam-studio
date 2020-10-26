@@ -614,7 +614,7 @@ export default {
                 sharp: 'シャープ',
                 round: 'ラウンド',
                 fail_message: 'オブジェクトのオフセットに失敗しました。',
-                not_support_message: 'サポートされていないSVGタグを含む選択された要素：\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;。',
+                not_support_message: 'サポートされていないSVGタグを含む選択された要素：\nイメージ、グループ、テキスト、インポートされたオブジェクト。',
             },
             _nest: {
                 start_nest: '整列開始',

@@ -614,7 +614,7 @@ export default {
                 sharp: 'Scharf',
                 round: 'Runden',
                 fail_message: 'Fehler beim Versetzen von Objekten.',
-                not_support_message: 'Ausgewählte Elemente mit nicht unterstütztem SVG-Tag:\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;.',
+                not_support_message: 'Ausgewählte Elemente mit nicht unterstütztem SVG-Tag:\nBild, Gruppe, Text, Importierte Objekt.',
             },
             _nest: {
                 start_nest: 'Ordnen',

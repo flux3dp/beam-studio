@@ -614,7 +614,7 @@ export default {
                 sharp: 'Agudo',
                 round: 'Curvo',
                 fail_message: 'No se ha logrado compensar los objetos.',
-                not_support_message: 'Elementos seleccionados que contienen SVG no soportados tag:\n&lt;image&gt;, &lt;g&gt;, &lt;text&gt;, &lt;use&gt;.',
+                not_support_message: 'Elementos seleccionados que contienen SVG no soportados tag:\nImagen, Grupo, Texto, Objeto importado',
             },
             _nest: {
                 start_nest: 'Arreglar',
