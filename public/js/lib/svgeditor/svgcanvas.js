@@ -828,15 +828,30 @@ define([
             if (!parent) {
                 parent = $(svgcontent).children(); // Prevent layers from being included
             }
-            var contentElems = [];
-            $(parent).children().each(function (i, elem) {
-                if (elem.getBBox) {
-                    contentElems.push({
-                        'elem': elem,
-                        'bbox': getStrokedBBox([elem])
-                    });
+            const contentElems = [];
+            for (let i = 0; i < parent.length; i++) {
+                const childNodes = parent[i].childNodes;
+                if (childNodes) {
+                    for (let j = 0; j < childNodes.length; j++) {
+                        const elem = childNodes[j];
+                        if (elem.getBBox) {
+                            let bbox;
+                            if (elem.tagName === 'use') {
+                                bbox = canvas.getSvgRealLocation(elem);
+                            } else {
+                                bbox = canvas.calculateTransformedBBox(elem);
+                            }
+                            const angle = svgedit.utilities.getRotationAngle(elem);
+                            bbox = canvas.calculateRotatedBBox(bbox, angle);
+                            contentElems.push({
+                                elem,
+                                bbox,
+                            });
+                            
+                        }
+                    }
                 }
-            });
+            }
             return contentElems.reverse();
         };
 
@@ -11338,7 +11353,7 @@ define([
                 {x: bbox.x + bbox.width, y: bbox.y},
                 {x: bbox.x, y: bbox.y + bbox.height},
                 {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
-            ]
+            ];
             for (let i = tlist.numberOfItems-1; i >= 0; i--) {
                 const t = tlist.getItem(i);
                 if (t.type === 4) {
@@ -11350,10 +11365,7 @@ define([
                     return {x, y};
                 });
             };
-            let minX = points[0].x;
-            let minY = points[0].y;
-            let maxX = points[0].x;
-            let maxY = points[0].y;
+            let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
             points.forEach(p => {
                 minX = Math.min(p.x, minX);
                 maxX = Math.max(p.x, maxX);
@@ -11362,6 +11374,34 @@ define([
             });
             return {x: minX, y:minY, width: maxX - minX, height: maxY - minY};
         };
+
+        this.calculateRotatedBBox = (bbox, angle) => {
+            let points = [
+                {x: bbox.x, y: bbox.y},
+                {x: bbox.x + bbox.width, y: bbox.y},
+                {x: bbox.x, y: bbox.y + bbox.height},
+                {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
+            ];
+
+            const rad = angle * Math.PI / 180;
+            const cx = bbox.x + 0.5 * bbox.width;
+            const cy = bbox.y + 0.5 * bbox.height;
+            points.forEach((p) => {
+                const x = p.x - cx;
+                const y = p.y - cy;
+                p.x = cx + x * Math.cos(rad) - y * Math.sin(rad);
+                p.y = cy + x * Math.sin(rad) + y * Math.cos(rad);
+            });
+            let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
+            points.forEach(p => {
+                minX = Math.min(p.x, minX);
+                maxX = Math.max(p.x, maxX);
+                minY = Math.min(p.y, minY);
+                maxY = Math.max(p.y, maxY);
+            });
+
+            return { x: minX, y:minY, width: maxX - minX, height: maxY - minY };
+        }
 
         String.prototype.format = function () {
             a = this;
