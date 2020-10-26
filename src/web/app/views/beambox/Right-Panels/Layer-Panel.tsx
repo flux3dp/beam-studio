@@ -89,6 +89,7 @@ export class LayerPanel extends React.Component {
 
     lockSelectedLayers = () => {
         const { selectedLayers } = this.context;
+        svgCanvas.clearSelection();
         setLayersLock(selectedLayers, true);
         this.setState(this.state);
     }
