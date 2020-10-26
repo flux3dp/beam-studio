@@ -134,7 +134,6 @@ interface ISVGEditor {
     handlePaste: () => Promise<void>
     triggerOffsetTool: () => void
     loadFromStringAsync(arg0: any)
-    importBvgString: (str: any) => void
     importBvgStringAsync: (str: any) => Promise<void>
     handleFile: (file: any) => void
     loadFromString(arg0: any)
@@ -286,7 +285,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             handlePaste: async () => {},
             triggerOffsetTool: () => {},
             loadFromStringAsync: () => {},
-            importBvgString: (str) => {},
             importBvgStringAsync: async (str) => {},
             handleFile: (file) => {},
             loadFromString: (arg0) => {},
@@ -6099,95 +6097,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     Progress.popById('loading_image');
                 };
 
-                const importBvgString = (str) => {
-                    svgCanvas.clearSelection();
-                    editor.loadFromString(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
-                    // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
-                    if (typeof(str) === 'string') {
-                        let tmp = str.substr(str.indexOf('<use')).split('<use');
-
-                        for(let i = 1; i < tmp.length; ++i) {
-                            let elem, match, id, wireframe, xform;
-
-                            tmp[i] = tmp[i].substring(0, tmp[i].indexOf('/>'))
-                            match = tmp[i].match(/id="svg_\d+"/);
-                            if (match) {
-                                id = match[0].substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                            }
-                            match = tmp[i].match(/data-xform="[^"]*"/);
-                            if (match) {
-                                match = match[0];
-                                xform = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                            }
-                            match = tmp[i].match(/data-wireframe="[a-z]*"/);
-                            if (match) {
-                                match = match[0];
-                                wireframe = match.substring(match.indexOf('"')+1, match.lastIndexOf('"'));
-                            }
-
-                            elem = document.getElementById(id);
-                            if (elem) {
-                                elem.setAttribute('data-xform', xform);
-                                elem.setAttribute('data-wireframe', wireframe === 'true');
-                            }
-                        }
-                        let match = str.match(/data-rotary_mode="[a-zA-Z]+"/);
-                        if (match) {
-                            let rotaryMode = 'true' === match[0].substring(18, match[0].length - 1);
-                            svgCanvas.setRotaryMode(rotaryMode);
-                            svgCanvas.runExtensions('updateRotaryAxis');
-                            BeamboxPreference.write('rotary_mode', rotaryMode);
-                        }
-                        match = str.match(/data-engrave_dpi="[a-zA-Z]+"/);
-                        if (match) {
-                            let engraveDpi = match[0].substring(18, match[0].length - 1);
-                            BeamboxPreference.write('engrave_dpi', engraveDpi);
-                        } else {
-                            BeamboxPreference.write('engrave_dpi', 'medium');
-                        }
-                        if (Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
-                            match = str.match(/data-en_diode="([a-zA-Z]+)"/);
-                            if (match && match[1]) {
-                                if (match[1] === 'true') {
-                                    BeamboxPreference.write('enable-diode', true);
-                                } else {
-                                    BeamboxPreference.write('enable-diode', false);
-                                }
-                            }
-                        }
-                        if (Constant.addonsSupportList.autoFocus.includes(BeamboxPreference.read('workarea'))) {
-                            match = str.match(/data-en_af="([a-zA-Z]+)"/);
-                            if (match && match[1]) {
-                                if (match[1] === 'true') {
-                                    BeamboxPreference.write('enable-autofocus', true);
-                                } else {
-                                    BeamboxPreference.write('enable-autofocus', false);
-                                }
-                            }
-                        }
-                        LayerPanelController.updateLayerPanel();
-                        match = str.match(/data-zoom="[0-9\.]+"/);
-                        if (match) {
-                            let zoom = parseFloat(match[0].substring(11, match[0].length - 1));
-                            zoomChanged(window, {zoomLevel: zoom, staticPoint: {x: 0, y: 0}});
-                        }
-                        match = str.match(/data-left="[-0-9]+"/);
-                        if (match) {
-                            let left = parseInt(match[0].substring(11, match[0].length - 1));
-                            left = Math.round((left + Constant.dimension.getWidth()) * svgCanvas.getZoom());
-                            $('#workarea').scrollLeft(left);
-                        }
-                        match = str.match(/data-top="[-0-9]+"/);
-                        if (match) {
-                            let top = parseInt(match[0].substring(10, match[0].length - 1));
-                            top = Math.round((top + Constant.dimension.getHeight()) * svgCanvas.getZoom());
-                            $('#workarea').scrollTop(top);
-                        }
-                    }
-                    LayerPanelController.setSelectedLayers([]);
-                }
-                editor.importBvgString = importBvgString;
-
                 const importBvgStringAsync = async (str) => {
                     svgCanvas.clearSelection();
                     await editor.loadFromStringAsync(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
@@ -6279,7 +6188,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {
                             let str = evt.target.result;
-                            importBvgString(str);
+                            importBvgStringAsync(str);
                         };
                         reader.readAsText(file);
                     });

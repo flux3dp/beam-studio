@@ -31,7 +31,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                     const LANG = i18n.lang.beambox.right_panel.layer_panel;
                     string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
                 }
-                svgEditor.importBvgString(string);
+                await svgEditor.importBvgStringAsync(string);
             };
 
             oReq.send();

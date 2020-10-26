@@ -123,7 +123,7 @@ define([
                     <rect fill="black" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_1" stroke="#333333" height="913.57312" width="713.4571" y="196.98372" x="201.85626"/>
                 </g>
             </svg>`;*/
-            svgEditor.importBvgString(this.bvg);
+            await svgEditor.importBvgStringAsync(this.bvg);
             let { uploadFile, thumbnailBlobURL } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
             let r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
                 model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
