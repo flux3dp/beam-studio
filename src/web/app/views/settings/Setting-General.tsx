@@ -585,6 +585,7 @@ class SettingGeneral extends React.Component{
                         max={BeamboxConstant.dimension.getWidth()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('guide_x0')}
                         getValue={val => this._updateBeamboxPreferenceChange('guide_x0', val)}
+                        forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -594,6 +595,7 @@ class SettingGeneral extends React.Component{
                         max={BeamboxConstant.dimension.getHeight()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('guide_y0')}
                         getValue={val => this._updateBeamboxPreferenceChange('guide_y0', val)}
+                        forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                 </Controls>
@@ -641,6 +643,7 @@ class SettingGeneral extends React.Component{
                         max={20}
                         defaultValue={Number(this._getConfigEditingValue('loop_compensation') || '0') / 10}
                         getValue={(val) => this._updateConfigChange('loop_compensation', Number(val) * 10)}
+                        forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                 </Controls>
@@ -655,6 +658,7 @@ class SettingGeneral extends React.Component{
                                 step={0.01}
                                 defaultValue={this._getBeamboxPreferenceEditingValue('blade_radius') || 0}
                                 getValue={val => this._updateBeamboxPreferenceChange('blade_radius', val)}
+                                forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
                         </Controls>
@@ -675,6 +679,7 @@ class SettingGeneral extends React.Component{
                                 max={BeamboxConstant.dimension.getWidth()/10}
                                 defaultValue={this._getBeamboxPreferenceEditingValue('precut_x') || 0}
                                 getValue={val => this._updateBeamboxPreferenceChange('precut_x', val)}
+                                forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
                             <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -684,6 +689,7 @@ class SettingGeneral extends React.Component{
                                 max={BeamboxConstant.dimension.getHeight()/10}
                                 defaultValue={this._getBeamboxPreferenceEditingValue('precut_y') || 0}
                                 getValue={val => this._updateBeamboxPreferenceChange('precut_y', val)}
+                                forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
                         </Controls>
@@ -758,6 +764,7 @@ class SettingGeneral extends React.Component{
                         max={BeamboxConstant.dimension.getWidth()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
                         getValue={val => this._updateBeamboxPreferenceChange('diode_offset_x', val)}
+                        forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
@@ -767,6 +774,7 @@ class SettingGeneral extends React.Component{
                         max={BeamboxConstant.dimension.getHeight()/10}
                         defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
                         getValue={val => this._updateBeamboxPreferenceChange('diode_offset_y', val)}
+                        forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                 </Controls>

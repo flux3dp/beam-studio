@@ -153,7 +153,10 @@ class UnitInput extends React.Component{
 
     getLengthUnit() {
         if (this.props.unit === 'mm') {
-            let unit = LocalStorage.get('default-units') || 'mm';
+            let unit = 'mm';
+            if (!this.props.forceUsePropsUnit) {
+                unit = LocalStorage.get('default-units') || 'mm';
+            }
             if (unit === 'mm') {
                 return this.props.abbr ? '' : 'mm';
             } else {
@@ -220,6 +223,7 @@ UnitInput.propTypes = {
     abbr: PropTypes.bool,
     isDoOnInput: PropTypes.bool,
     displayMultiValue: PropTypes.bool,
+    forceUsePropsUnit: PropTypes.bool,
     onKeyUp: PropTypes.func,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
@@ -238,6 +242,7 @@ UnitInput.defaultProps = {
     abbr: false,
     isDoOnInput: false,
     displayMultiValue: false,
+    forceUsePropsUnit: false,
     onKeyUp: () => {},
     onBlur: () => {},
     onFocus: () => {},
