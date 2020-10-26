@@ -140,20 +140,24 @@ export const setLayerLock = (layerName: string, isLocked: boolean) => {
 };
 
 export const mergeSelectedLayers = (layerNames: string[], baseLayerName?: string) => {
+    svgCanvas.clearSelection();
     const batchCmd = new svgedit.history.BatchCommand('Merge Layer(s)');
     const drawing = svgCanvas.getCurrentDrawing();
-    let shouldMoveToTop = false;
+    sortLayerNamesByPosition(layerNames);
     if (!baseLayerName) {
-        sortLayerNamesByPosition(layerNames);
         baseLayerName = layerNames[0];
-        shouldMoveToTop = true;
     }
-    const layersToBeMerged = layerNames.filter((layerName) => layerName !== baseLayerName);
+    const baseLayerIndex = layerNames.findIndex(((layerName) => layerName === baseLayerName));
 
-    const cmd = mergeLayer(baseLayerName, layersToBeMerged, shouldMoveToTop);
+    let cmd = mergeLayer(baseLayerName, layerNames.slice(0, baseLayerIndex), true);
     if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
     }
+    cmd = mergeLayer(baseLayerName, layerNames.slice(baseLayerIndex + 1), false);
+    if (cmd && !cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+    }
+
     if (!batchCmd.isEmpty()) {
         svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
@@ -161,12 +165,12 @@ export const mergeSelectedLayers = (layerNames: string[], baseLayerName?: string
     return baseLayerName;
 };
 
-export const mergeLayer = (baseLayerName: string, layersToBeMerged: string[], shouldMoveToTop: boolean = false) => {
+export const mergeLayer = (baseLayerName: string, layersToBeMerged: string[], shouldInsertBefore: boolean) => {
     const baseLayer = getLayerElementByName(baseLayerName);
     if (baseLayer) {
+        const firstChildOfBase = Array.from(baseLayer.childNodes).find((node: Element) => !['title', 'filter'].includes(node.tagName));
         const batchCmd = new svgedit.history.BatchCommand(`Merge into ${baseLayer}`);
-        let isLayerMoved = false;
-        for (let i = layersToBeMerged.length - 1; i >= 0; i--) {
+        for (let i = 0; i < layersToBeMerged.length; i++) {
             const layer = getLayerElementByName(layersToBeMerged[i]);
             if (!layer) continue;
 
@@ -176,16 +180,13 @@ export const mergeLayer = (baseLayerName: string, layersToBeMerged: string[], sh
                 if (['title', 'filter'].includes(child.nodeName)) continue;
 
                 const nextSibling = child.nextSibling;
-                baseLayer.appendChild(child);
+                if (shouldInsertBefore) {
+                    baseLayer.insertBefore(child, firstChildOfBase);
+                } else {
+                    baseLayer.appendChild(child);
+                }
                 batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(child, nextSibling, layer));
-            }
-
-            if (shouldMoveToTop && !isLayerMoved) {
-                const parent = baseLayer.parentNode;
-                const nextSibling = baseLayer.nextSibling;
-                parent.insertBefore(baseLayer, layer);
-                batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(baseLayer, nextSibling, parent));
-                isLayerMoved = true;
+                j -= 1;
             }
 
             const cmd = deleteLayerByName(layersToBeMerged[i]);
