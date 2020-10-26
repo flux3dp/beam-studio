@@ -289,6 +289,7 @@ class LaserPanel extends React.PureComponent {
             });
 
             this.setState({
+                configName: name,
                 selectedItem: name,
                 original: name
             });
@@ -307,7 +308,8 @@ class LaserPanel extends React.PureComponent {
                     writeData(layerName, DataType.configName, name);
                 });
 
-                this.setState({ 
+                this.setState({
+                    configName: name,
                     selectedItem: name,
                     original: name
                 });
@@ -587,14 +589,17 @@ class LaserPanel extends React.PureComponent {
     }
 
     _getDefaultLaserOptions = () => {
-        const { hasMultiSpeed, hasMultiPower, hasMultiRepeat, hasMultiZStep, hasMultiDiode, hasMultiConfigName } = this.state;
+        const { configName, hasMultiSpeed, hasMultiPower, hasMultiRepeat, hasMultiZStep, hasMultiDiode, hasMultiConfigName } = this.state;
+        const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[] || [];
         if (hasMultiSpeed || hasMultiPower || hasMultiRepeat || hasMultiZStep || hasMultiDiode || hasMultiConfigName) {
             // multi select
             return LANG.various_preset;
-        } else if (this.state.configName === CUSTOM_PRESET_CONSTANT) {
+        } else if (configName === CUSTOM_PRESET_CONSTANT || customizedConfigs.findIndex((config) => config.name === configName) < 0) {
             return LANG.custom_preset;
+        } else if (configName) {
+            return configName;
         }
-        return this.state.configName || PARAMETERS_CONSTANT;
+        return PARAMETERS_CONSTANT;
     }
 
     doLayersContainVector() {
