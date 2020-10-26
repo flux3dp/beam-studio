@@ -38,23 +38,25 @@ class DropDownControl extends React.Component{
     }
 
     render() {
-        let _options = this.props.options.map(function(option) {
-            if (typeof option === 'object') {
-                return (<option key={option.value} value={option.value}>{option.label}</option>);
-            } else {
-                return (<option key={option} value={option}>{option}</option>);
-            }
-        });
+        let _options = [];
 
         if (this.props.hiddenOptions) {
             this.props.hiddenOptions.forEach((option) => {
                 if (typeof option === 'object') {
-                    _options.push(<option hidden key={option.value} value={option.value}>{option.label}</option>);
+                    _options.push(<option disabled hidden={option.value !== this.props.value} key={option.value} value={option.value}>{option.label}</option>);
                 } else {
-                    _options.push(<option hidden key={option} value={option}>{option}</option>);
+                    _options.push(<option disabled hidden={option !== this.props.value} key={option} value={option}>{option}</option>);
                 }
             });
         }
+
+        this.props.options.forEach(function(option) {
+            if (typeof option === 'object') {
+                _options.push(<option key={option.value} value={option.value}>{option.label}</option>);
+            } else {
+                _options.push(<option key={option} value={option}>{option}</option>);
+            }
+        });
 
         const firstChildSelected = this.props.options ? (this.selectedValue === this.props.options[0].value) : false ;
         const className = classNames('dropdown-container', { 'first-child-selected': firstChildSelected, 'more-than-one': this.props.options.length > 1});
@@ -63,7 +65,7 @@ class DropDownControl extends React.Component{
                 <div className="label pull-left">{this.props.label}</div>
                 <div className="control">
                     <div className={className}>
-                        <select id={this.props.id} onChange={this._handleChange} value={this.props.value}>
+                        <select id={this.props.id} onChange={this._handleChange} value={this.props.value} defaultValue={this.props.value}>
                             {_options}
                         </select>
                     </div>
