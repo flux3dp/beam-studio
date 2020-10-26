@@ -79,6 +79,7 @@ class LaserPanel extends React.PureComponent {
                 hasMultiHeight: false,
                 hasMultiZStep: false,
                 hasMultiDiode: false,
+                hasMultiConfigName: false,
             }
         }
         return null;
@@ -586,8 +587,8 @@ class LaserPanel extends React.PureComponent {
     }
 
     _getDefaultLaserOptions = () => {
-        const { hasMultiSpeed, hasMultiPower, hasMultiRepeat, hasMultiZStep, hasMultiDiode } = this.state;
-        if (hasMultiSpeed || hasMultiPower || hasMultiRepeat || hasMultiZStep || hasMultiDiode) {
+        const { hasMultiSpeed, hasMultiPower, hasMultiRepeat, hasMultiZStep, hasMultiDiode, hasMultiConfigName } = this.state;
+        if (hasMultiSpeed || hasMultiPower || hasMultiRepeat || hasMultiZStep || hasMultiDiode || hasMultiConfigName) {
             // multi select
             return LANG.various_preset;
         } else if (this.state.configName === CUSTOM_PRESET_CONSTANT) {

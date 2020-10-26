@@ -98,7 +98,7 @@ export const getLayersConfig = (layerNames: string[]) => {
     const { data: height, hasMultiValue: hasMultiHeight } = getMultiSelectData(layers, DataType.height);
     const { data: zStep, hasMultiValue: hasMultiZStep } = getMultiSelectData(layers, DataType.zstep);
     const { data: diode, hasMultiValue: hasMultiDiode } = getMultiSelectData(layers, DataType.diode);
-    const { data: configName } = getMultiSelectData(layers, DataType.configName);
+    const { data: configName, hasMultiValue: hasMultiConfigName } = getMultiSelectData(layers, DataType.configName);
 
     return {
         speed,
@@ -114,6 +114,7 @@ export const getLayersConfig = (layerNames: string[]) => {
         diode,
         hasMultiDiode,
         configName,
+        hasMultiConfigName,
     };
 };
 
