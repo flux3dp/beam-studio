@@ -59,10 +59,14 @@ class LaserPanel extends React.PureComponent {
     static getDerivedStateFromProps(props, state) {
         const { selectedLayers } = props;
         if (selectedLayers.length > 1) {
+            const drawing = svgCanvas.getCurrentDrawing();
+            const currentLayerName = drawing.getCurrentLayerName();
             const config = getLayersConfig(selectedLayers);
+            const currentLayerConfig = getLayerConfig(currentLayerName);
             return {
                 ...config,
-                isDiode: Boolean(config && config.diode && config.diode > 0),
+                ...currentLayerConfig,
+                isDiode: Boolean(currentLayerConfig && currentLayerConfig.diode && currentLayerConfig.diode > 0),
             }
         } else if (selectedLayers.length === 1) {
             const config = getLayerConfig(selectedLayers[0]);
@@ -405,10 +409,10 @@ class LaserPanel extends React.PureComponent {
                     defaultValue={this.state.power}
                     getValue={this._handleStrengthChange}
                     decimal={1}
-                    displayEmpty={hasMultipleValue}
+                    displayMultiValue={hasMultipleValue}
                     />
                 <div className="slider-container">
-                    <input className={classNames('rainbow-slider', { 'hide-thumb': hasMultipleValue })} type="range"
+                    <input className={classNames('rainbow-slider')} type="range"
                         min={minValue}
                         max={maxValue}
                         step={1}
@@ -435,10 +439,10 @@ class LaserPanel extends React.PureComponent {
                     defaultValue={this.state.speed}
                     getValue={(val) => {this._handleSpeedChange(val)}}
                     decimal={decimalDisplay}
-                    displayEmpty={hasMultipleValue}
+                    displayMultiValue={hasMultipleValue}
                 />
                 <div className="slider-container">
-                    <input className={classNames('rainbow-slider', { 'speed-for-vector': hasVector, 'hide-thumb': hasMultipleValue })} type="range"
+                    <input className={classNames('rainbow-slider', { 'speed-for-vector': hasVector })} type="range"
                         min={minValue}
                         max={maxValue}
                         step={1}
@@ -471,7 +475,7 @@ class LaserPanel extends React.PureComponent {
                     defaultValue={this.state.repeat}
                     getValue={this._handleRepeatChange}
                     decimal={0}
-                    displayEmpty={hasMultipleValue}
+                    displayMultiValue={hasMultipleValue}
                 />
             </div>
         );
@@ -506,7 +510,7 @@ class LaserPanel extends React.PureComponent {
                     unit={'mm'}
                     defaultValue={this.state.height}
                     getValue={this._handleHeightChange}
-                    displayEmpty={hasMultipleValue}
+                    displayMultiValue={hasMultipleValue}
                 />
             </div>
         );
@@ -528,7 +532,7 @@ class LaserPanel extends React.PureComponent {
                     unit={'mm'}
                     defaultValue={this.state.zStep}
                     getValue={this._handleZStepChange}
-                    displayEmpty={hasMultipleValue}
+                    displayMultiValue={hasMultipleValue}
                 />
             </div>
         );

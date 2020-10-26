@@ -181,14 +181,14 @@ class UnitInput extends React.Component{
         let className = this.props.className;
         className['ui ui-control-unit-input-v2'] = true;
 
-        const shouldHideValue = (this.props.displayEmpty && !this.state.isEditing);
+        const shouldHideValue = (this.props.displayMultiValue && !this.state.isEditing);
 
         return (
             <div className={ClassNames(className)}>
                 <input
                     type={this.props.type}
                     step={this.props.step}
-                    value={shouldHideValue ? '' : this.state.displayValue}
+                    value={shouldHideValue ? '-' : this.state.displayValue}
                     onFocus={(e) => {this._handleFocus(e)}}
                     onBlur={this._handleBlur}
                     onKeyUp={this._handleKeyUp}
@@ -219,7 +219,7 @@ UnitInput.propTypes = {
     disabled: PropTypes.bool,
     abbr: PropTypes.bool,
     isDoOnInput: PropTypes.bool,
-    displayEmpty: PropTypes.bool,
+    displayMultiValue: PropTypes.bool,
     onKeyUp: PropTypes.func,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
@@ -237,7 +237,7 @@ UnitInput.defaultProps = {
     disabled: false,
     abbr: false,
     isDoOnInput: false,
-    displayEmpty: false,
+    displayMultiValue: false,
     onKeyUp: () => {},
     onBlur: () => {},
     onFocus: () => {},

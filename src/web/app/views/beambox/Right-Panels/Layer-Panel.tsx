@@ -486,7 +486,13 @@ export class LayerPanel extends React.Component {
                                 onClick={(e: MouseEvent) => {this.openLayerColorPanel(e, layerName)}}
                             />
                         </div>
-                        <div className='layername' onDoubleClick={() => this.layerDoubleClick(layerName)}>{layerName}</div>
+                        <div className='layername'
+                            onDoubleClick={(e: MouseEvent) => {
+                                if (!e.ctrlKey && !e.shiftKey && !e.metaKey) this.layerDoubleClick(layerName)
+                            }}
+                        >
+                            {layerName}
+                        </div>
                         <div
                             className={classNames('layervis')}
                             onClick={(e: MouseEvent) => {
