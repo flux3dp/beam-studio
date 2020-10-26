@@ -10395,7 +10395,7 @@ define([
         };
 
         this.getCenter = function(elem) {
-            let centerX,centerY ;
+            let centerX, centerY;
             switch(elem.tagName) {
                 case 'image':
                 case 'rect':
@@ -10413,6 +10413,7 @@ define([
                 case 'polygon':
                 case 'path':
                 case 'use':
+                case 'text':
                     let realLocation = this.getSvgRealLocation(elem);
                     centerX = realLocation.x + realLocation.width/2 ;
                     centerY = realLocation.y + realLocation.height/2 ;
