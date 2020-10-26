@@ -43,6 +43,7 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/beambox/open-bottom-boundary-drawer',
+    'app/actions/beambox/svgeditor-function-wrapper',
     'app/contexts/ProgressCaller',
     'helpers/api/config',
     'helpers/beam-file-helper',
@@ -69,6 +70,7 @@ define([
     BeamboxActions,
     Constant,
     OpenBottomBoundaryDrawer,
+    FnWrapper,
     Progress,
     Config,
     BeamFileHelper,
@@ -95,6 +97,7 @@ define([
     BeamboxActions = BeamboxActions.default;
     Constant = Constant.default;
     OpenBottomBoundaryDrawer = OpenBottomBoundaryDrawer.default;
+    FnWrapper = FnWrapper.default;
     Progress = Progress.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
@@ -8938,7 +8941,10 @@ define([
                 if (process.platform !== 'win32') {
                     label = filePath.replace(':', '/');
                 }
-                recentMenu.append(new MenuItem({'id': label, label: label, click: () => {this.loadRecentFile(filePath)}}));
+                recentMenu.append(new MenuItem({'id': label, label: label, click: async () => {
+                    const res = await FnWrapper.toggleUnsavedChangedDialog();
+                    if (res) this.loadRecentFile(filePath);
+                }}));
             });
             recentMenu.append(new MenuItem({ type: 'separator' }));
             recentMenu.append(new MenuItem({'id': 'CLEAR_RECENT', label: i18n.lang.topmenu.file.clear_recent, click: () => {this.cleanRecentFiles()}}));
