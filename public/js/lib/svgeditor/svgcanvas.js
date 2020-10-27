@@ -5373,17 +5373,9 @@ define([
                                 resolve(canvas.toDataURL('image/png'));
                                 break;
                             case 'jpg':
-                                let imgData = ctx.getImageData(0, 0, width, height);
-                                let data = imgData.data;
-                                for(let i = 0; i < data.length; i += 4){
-                                    if(data[i+3] == 0){
-                                        data[i]=255;
-                                        data[i+1]=255;
-                                        data[i+2]=255;
-                                        data[i+3]=255;
-                                    }
-                                }
-                                ctx.putImageData(imgData,0,0);
+                                ctx.globalCompositeOperation = 'destination-over';
+                                ctx.fillStyle = 'white';
+                                ctx.fillRect(0, 0, width, height);
                                 resolve(canvas.toDataURL('image/jpeg', 1.0));
                                 break;
                             default:
