@@ -3890,8 +3890,10 @@ define([
                 if (xAlignLine) xAlignLine.remove();
                 const yAlignLine = document.getElementById('y_align_line');
                 if (yAlignLine) yAlignLine.remove();
-
+                $('#workarea').css('cursor', 'default');
                 if (!drawn_path) {
+                    const pathPointGripContainer = document.getElementById('pathpointgrip_container');
+                    if (pathPointGripContainer) pathPointGripContainer.remove();
                     return;
                 }
 
