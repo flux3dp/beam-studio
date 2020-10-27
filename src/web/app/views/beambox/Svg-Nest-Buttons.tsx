@@ -101,6 +101,7 @@ class SvgNestButtons extends React.Component {
             let elementsToUndo = [elem];
             while (elementsToUndo.length > 0) {
                 elem = elementsToUndo.pop();
+                if (elem.nodeType !== 1) continue;
                 let undoRecord: {
                     element: any,
                     attrs: any
