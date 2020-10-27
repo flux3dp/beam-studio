@@ -336,42 +336,52 @@ export class TopBar extends React.PureComponent {
                 return false;
             }
         } else if (isTooFastForPath) {
-            if (BeamboxPreference.read('vector_speed_contraint') === false) {
-                if (!AlertConfig.read('skip_path_speed_warning')) {
-                    let message = lang.beambox.popup.too_fast_for_path;
-                    if (LocalStorage.get('default-units') === 'inches') {
-                        message = message.replace(/20mm\/s/g, '0.8in/s');
-                        console.log(message);
-                    }
-                    Alert.popUp({
-                        message,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                        checkBox: {
-                            text: lang.beambox.popup.dont_show_again,
-                            callbacks: () => {
-                                AlertConfig.write('skip_path_speed_warning', true);
-                            }
+            await new Promise((resolve) => {
+                if (BeamboxPreference.read('vector_speed_contraint') === false) {
+                    if (!AlertConfig.read('skip_path_speed_warning')) {
+                        let message = lang.beambox.popup.too_fast_for_path;
+                        if (LocalStorage.get('default-units') === 'inches') {
+                            message = message.replace(/20mm\/s/g, '0.8in/s');
+                            console.log(message);
                         }
-                    });
-                }
-            } else {
-                if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
-                    let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
-                    if (LocalStorage.get('default-units') === 'inches') {
-                        message = message.replace(/20mm\/s/g, '0.8in/s');
-                    }
-                    Alert.popUp({
-                        message,
-                        type: AlertConstants.SHOW_POPUP_WARNING,
-                        checkBox: {
-                            text: lang.beambox.popup.dont_show_again,
+                        Alert.popUp({
+                            message,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                            checkBox: {
+                                text: lang.beambox.popup.dont_show_again,
+                                callbacks: () => {
+                                    AlertConfig.write('skip_path_speed_warning', true);
+                                    resolve();
+                                }
+                            },
                             callbacks: () => {
-                                AlertConfig.write('skip_path_speed_constraint_warning', true);
+                                resolve();
                             }
+                        });
+                    }
+                } else {
+                    if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
+                        let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
+                        if (LocalStorage.get('default-units') === 'inches') {
+                            message = message.replace(/20mm\/s/g, '0.8in/s');
                         }
-                    });
+                        Alert.popUp({
+                            message,
+                            type: AlertConstants.SHOW_POPUP_WARNING,
+                            checkBox: {
+                                text: lang.beambox.popup.dont_show_again,
+                                callbacks: () => {
+                                    AlertConfig.write('skip_path_speed_constraint_warning', true);
+                                    resolve();
+                                }
+                            },
+                            callbacks: () => {
+                                resolve();
+                            }
+                        });
+                    }
                 }
-            }
+            });
         }
         return true;
     }
