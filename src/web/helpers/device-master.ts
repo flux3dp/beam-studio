@@ -161,6 +161,7 @@ class DeviceMaster {
         const uuid = printer.uuid;
         const device: IDeviceConnection = this.getDeviceByUUID(uuid);
         const self = this;
+        console.log('Selecting', printer);
         Progress.openNonstopProgress({
             id: 'select-device',
             message: sprintf(lang.message.connectingMachine, device.info.name),
