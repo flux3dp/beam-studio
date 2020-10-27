@@ -33,10 +33,10 @@ const show = () => {
     const h = Constant.dimension.getHeight();
     const limitXR = Constant.diode.limitX * Constant.dpmm;
     const limitYB = Constant.diode.limitY * Constant.dpmm;
-    const OffsetX = BeamboxPreference.read('diode_offset_x');
-    const OffsetY = BeamboxPreference.read('diode_offset_y');
-    const limitXL = (OffsetX !== undefined ? OffsetX : Constant.diode.defaultOffsetX)* Constant.dpmm;
-    const limitYT = (OffsetY !== undefined ? OffsetY : Constant.diode.defaultOffsetY)* Constant.dpmm;
+    const OffsetX = Math.max(BeamboxPreference.read('diode_offset_x'), 0);
+    const OffsetY = Math.max(BeamboxPreference.read('diode_offset_y'), 0);
+    const limitXL = (OffsetX !== undefined ? OffsetX : Constant.diode.defaultOffsetX) * Constant.dpmm;
+    const limitYT = (OffsetY !== undefined ? OffsetY : Constant.diode.defaultOffsetY) * Constant.dpmm;
     const d = `M${w},${h}L0,${h}L0,0L${w},${0}zM${limitXL},${limitYT}L${w - limitXR},${limitYT}L${w - limitXR},${h - limitYB}L${limitXL},${h - limitYB}z`;
     $(diodeBoundaryPath).attr('d', d);
 };

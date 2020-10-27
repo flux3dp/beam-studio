@@ -364,7 +364,7 @@ class DiodeCalibration extends React.Component {
                         <label>{LANG.dy}</label>
                         <UnitInput
                             type={'number'}
-                            min={-20}
+                            min={-10}
                             max={20}
                             unit="mm"
                             defaultValue={dy}
