@@ -10,7 +10,24 @@ getSVGAsync((globalSVG) => {
 });
 
 let openBottomBoundaryRect, openBottomBoundarySVG;
-const createBoundary = () => {
+
+const checkSvgEdit = () => {
+    return new Promise((resolve) => {
+        if (svgedit) {
+            resolve();
+            return;
+        }
+        const interval = setInterval(() => {
+            if (svgedit) {
+                resolve();
+                clearInterval(interval);
+            }
+        }, 500);
+    });
+}
+
+const createBoundary = async () => {
+    await checkSvgEdit();
     openBottomBoundarySVG = document.createElementNS(svgedit.NS.SVG, 'svg');
     openBottomBoundaryRect = document.createElementNS(svgedit.NS.SVG, 'rect');
     const canvasBackground = svgedit.utilities.getElem('canvasBackground');
@@ -47,9 +64,9 @@ const update = () => {
     }
 };
 
-const show = () => {
+const show = async () => {
     if (!document.getElementById('open-bottom-boundary')) {
-        createBoundary();
+        await createBoundary();
     }
     const x = Constant.dimension.getWidth() - Constant.borderless.safeDistance.X * Constant.dpmm;
     openBottomBoundaryRect.setAttribute('x', x);
