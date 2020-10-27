@@ -165,12 +165,22 @@ const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
 // fetchTaskCode: send svg string calculate taskcode, default output Fcode if shouldOutputGcode === true output gcode
 const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = false) => {
     let isErrorOccur = false;
+    let isCanceled = false;
     SymbolMaker.switchImageSymbolForAll(false);
     Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
     await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
     Progress.popById('convert-text');
     const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
-    Progress.openSteppingProgress({id: 'upload-scene', message: ''});
+    Progress.openSteppingProgress({
+        id: 'upload-scene',
+        message: '',
+        onCancel: async () => {
+            svgeditorParser.interruptCalculation();
+            await FontFuncs.revertTempConvert();
+            SymbolMaker.switchImageSymbolForAll(true);
+            isCanceled = true;
+        },
+    });
     await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
         model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
         engraveDpi: BeamboxPreference.read('engrave_dpi'),
@@ -182,6 +192,7 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
             Progress.update('upload-scene', {message: lang.message.uploading_fcode, percentage: 100});
         },
         onError: (message) => {
+            if (isCanceled) return;
             isErrorOccur = true;
             Progress.popById('upload-scene');
             Alert.popUp({
@@ -196,10 +207,13 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
             });
         },
     });
+    if (isCanceled) {
+        return { fcodeBlob: null };
+    }
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);
     if (isErrorOccur) {
-        return {fcodeBlob: null};
+        return { fcodeBlob: null };
     }
 
     let doesSupportDiodeAndAF = true;
@@ -210,9 +224,11 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
         shouldUseFastGradient = shouldUseFastGradient && vc.meetRequirement('FAST_GRADIENT');
     }
     Progress.popById('upload-scene');
-
-    Progress.openSteppingProgress({id: 'fetch-task', message: ''});
-    const {taskCodeBlob, fileTimeCost} = await new Promise((resolve) => {
+    Progress.openSteppingProgress({id: 'fetch-task', message: '', onCancel: () => {
+        svgeditorParser.interruptCalculation();
+        isCanceled = true;
+    }});
+    const { taskCodeBlob, fileTimeCost } = await new Promise((resolve) => {
         const names = []; //don't know what this is for
         const codeType = shouldOutputGcode ? 'gcode' : 'fcode';
         svgeditorParser.getTaskCode(
@@ -255,6 +271,9 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
         );
     });
     Progress.popById('fetch-task');
+    if (isCanceled || isErrorOccur) {
+        return {};
+    }
     
     if (!shouldOutputGcode) {
         return {

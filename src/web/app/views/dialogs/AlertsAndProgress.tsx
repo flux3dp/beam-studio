@@ -6,6 +6,16 @@ import { AlertProgressContext, AlertProgressContextProvider } from '../../contex
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 let _contextCaller;
+export interface IProgress {
+    id?: string,
+    type?: string,
+    caption?: string,
+    message? : string,
+    onCancel? : Function,
+    percentage? : number | string,
+    timeout?: number,
+}
+
 class Progress extends React.Component {
     constructor(props) {
         super(props);
@@ -36,7 +46,30 @@ class Progress extends React.Component {
         ) : null;
     }
 
-    _renderMessage = (progress) => {
+    _renderCancelButton = () => {
+        const progress: IProgress = this.props.progress;
+        const { onCancel, id } = progress;
+        if (!onCancel) {
+            return null;
+        }
+        const buttons = [{
+            label: 'Cancel',
+            className: classNames('btn-default'),
+            onClick: () => {
+                const { popById } = this.context;
+                popById(id);
+                onCancel();
+            },
+        }];
+        return (
+            <div className={'button-container'}>
+                <ButtonGroup buttons={buttons}/>
+            </div>
+        );
+
+    }
+
+    _renderMessage = (progress: IProgress) => {
         let content;
         if (progress.type === ProgressConstants.NONSTOP) {
             content = <div className={classNames('spinner-roller spinner-roller-reverse')}/>
@@ -67,6 +100,7 @@ class Progress extends React.Component {
                 <div className={classNames('modal-alert', 'progress')}>
                     {this._renderCaption(progress.caption)}
                     {this._renderMessage(progress)}
+                    {this._renderCancelButton()}
                 </div>
             </Modal>
         );

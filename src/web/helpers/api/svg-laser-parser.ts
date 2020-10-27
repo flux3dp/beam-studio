@@ -733,6 +733,17 @@ export default function(opts) {
             return $deferred.promise();
         },
 
+        interruptCalculation: () => {
+            ws.send('interrupt');
+            events.onMessage = function(data) {
+                switch (data.status) {
+                    case 'ok':
+                        console.log('calculation interrupted');
+                        break;
+                }
+            };
+        },
+
         params: setParams(ws, events),
         computePreviewImageSize: computePreviewImageSize
     };
