@@ -340,7 +340,8 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
         if (!imageSymbol) {
             const image = svgdoc.createElementNS(NS.SVG, 'image');
             imageSymbol = svgdoc.createElementNS(NS.SVG, 'symbol') as unknown as SVGSymbolElement;
-            svgedit.utilities.findDefs().appendChild(imageSymbol);
+            const defs = svgedit.utilities.findDefs();
+            defs.appendChild(imageSymbol);
             imageSymbol.appendChild(image);
             image.setAttribute('x', String(bb.x));
             image.setAttribute('y', String(bb.y));
@@ -376,10 +377,20 @@ const reRenderImageSymbol = async (useElement: SVGUseElement) => {
     const currentSymbol = document.querySelector(href);
     if (currentSymbol && currentSymbol.tagName === 'symbol') {
         const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
+        const imageSymbolId = currentSymbol.getAttribute('data-image-symbol');
         if (origSymbolId) {
             const origSymbol = document.getElementById(origSymbolId) as unknown as SVGSymbolElement;
             if (origSymbol && origSymbol.tagName === 'symbol') {
                 await makeImageSymbol(origSymbol, scale, currentSymbol);
+            }
+        } else if (imageSymbolId) {
+            let imageSymbol = document.getElementById(imageSymbolId) as unknown as SVGSymbolElement;
+            if (imageSymbol && imageSymbol.tagName === 'symbol') {
+                await makeImageSymbol(currentSymbol, scale, imageSymbol);
+                useElement.setAttribute('xlink:href', `#${imageSymbolId}`);
+            } else {
+                let imageSymbol = await makeImageSymbol(currentSymbol);
+                useElement.setAttribute('xlink:href', `#${imageSymbol.id}`);
             }
         }
     }
