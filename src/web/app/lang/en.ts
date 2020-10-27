@@ -52,7 +52,7 @@ export default {
         RESOURCE_BUSY: '[RB] Please restart  the machine, or try again'
     },
     device_selection: {
-        no_beambox: '#801 No podemos encontrar tu máquina en la red.\nPor favor, sigue el <a target="_blank" href="https://tupport.flux3dp.com/hc/en-us/articles/360001683556">guide</a> para solucionar el problema de conexión.',
+        no_beambox: '#801 We can\'t find your machine on the network.\nKindly follow the <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guide</a> to troubleshoot the connection problem.',
     },
     update: {
         release_note: 'Release Note:',
