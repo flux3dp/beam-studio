@@ -351,7 +351,9 @@ const funcs =  {
 
     exportAsBVG: async function() {
         svgCanvas.clearSelection();
+        SymbolMaker.switchImageSymbolForAll(false);
         const output = svgCanvas.getSvgString();
+        SymbolMaker.switchImageSymbolForAll(true);
         const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
         const langFile = i18n.lang.topmenu.file;
         let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
@@ -422,9 +424,11 @@ const funcs =  {
 
     exportAsImage: async (type) => {
         svgCanvas.clearSelection();
+        SymbolMaker.switchImageSymbolForAll(false);
         const output = svgCanvas.getSvgString();
+        SymbolMaker.switchImageSymbolForAll(true);
         const langFile = i18n.lang.topmenu.file;
-        Progress.openNonstopProgress({id: 'export_image', message: langFile.converting});
+        Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
         const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
         let image = await svgCanvas.svgStringToImage(type, output);
         image = image.replace(/^data:image\/\w+;base64,/, "");
