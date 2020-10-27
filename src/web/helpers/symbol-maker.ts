@@ -235,6 +235,9 @@ const makeSymbol = (elem, attrs, batchCmd, defs, type) => {
 };
 
 const getStrokeWidth = (imageRatio, scale) => {
+    if (!scale) {
+        return 1;
+    }
     let strokeWidth = 0.8 * imageRatio / scale;
     const zoomRatio = svgCanvas.getZoom();
     strokeWidth /= zoomRatio;
@@ -374,7 +377,7 @@ const reRenderImageSymbol = async (useElement: SVGUseElement) => {
     if (currentSymbol && currentSymbol.tagName === 'symbol') {
         const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
         if (origSymbolId) {
-            const origSymbol = $(`#${origSymbolId}`)[0] as unknown as SVGSymbolElement;
+            const origSymbol = document.getElementById(origSymbolId) as unknown as SVGSymbolElement;
             if (origSymbol && origSymbol.tagName === 'symbol') {
                 await makeImageSymbol(origSymbol, scale, currentSymbol);
             }
