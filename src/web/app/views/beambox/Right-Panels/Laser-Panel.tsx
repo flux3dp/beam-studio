@@ -145,7 +145,8 @@ class LaserPanel extends React.PureComponent {
     }
 
     exportLaserConfigs = async () => {
-        const targetFilePath = await ElectronDialogs.saveFileDialog(LANG.export_config, '', [
+        const isLinux = process.platform === 'linux';
+        const targetFilePath = await ElectronDialogs.saveFileDialog(LANG.export_config, isLinux ? '.json' : '', [
             {extensionName: 'JSON', extensions: ['json']}
         ], true);
         if (targetFilePath) {
