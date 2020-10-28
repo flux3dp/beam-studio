@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10.12]
+        node-version: [12.16]
         os: [macOS-latest]
 
     steps:
@@ -105,7 +105,7 @@ jobs:
           find ./backend -name "*.so" | while read f ; do
           codesign --force --verbose -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" $f; done
 
-          chmod -R 777 node_modules/font-manager
+          chmod -R 777 node_modules/font-scanner
 
           yarn dist --publish always
         env:

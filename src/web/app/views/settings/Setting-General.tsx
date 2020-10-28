@@ -14,7 +14,7 @@ import { IFont } from '../../../interfaces/IFont';
 import { IDeviceInfo } from '../../../interfaces/IDevice';
 
 const React = requireNode('react');
-const FontManager = requireNode('font-manager');
+const FontScanner = requireNode('font-scanner');
 
 const Controls = props => {
     const style = { width: 'calc(100% / 10 * 3 - 10px)' };
@@ -238,7 +238,7 @@ class SettingGeneral extends React.Component{
             }
         });
         const onSelectFont = (family) => {
-            const fonts = FontManager.findFontsSync({ family });
+            const fonts = FontScanner.findFontsSync({ family });
             const newDefaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
             const config = Config();
             config.write('default-font', {
@@ -248,7 +248,7 @@ class SettingGeneral extends React.Component{
             });
             this.setState(this.state);
         }
-        const fonts = FontManager.findFontsSync({family: defaultFont.family});
+        const fonts = FontScanner.findFontsSync({family: defaultFont.family});
         const fontStyleOptions = fonts.map((font) => {
             return {
                 value: font.postscriptName,
@@ -257,7 +257,7 @@ class SettingGeneral extends React.Component{
             }
         });
         const onSelectFontStyle = (postscriptName) => {
-            const newDefaultFont = FontManager.findFontSync({ postscriptName });
+            const newDefaultFont = FontScanner.findFontSync({ postscriptName });
             const config = Config();
             config.write('default-font', {
                 family: newDefaultFont.family,

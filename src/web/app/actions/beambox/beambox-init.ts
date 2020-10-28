@@ -133,13 +133,13 @@ const displayGuides = () => {
 const initDefaultFont = () => {
     const lang = navigator.language;
     const os = process.platform;
-    const FontManager = requireNode('font-manager');
+    const FontScanner = requireNode('font-scanner');
     const config = Config();
     let defaultFontFamily = 'Arial'
     if (FontConstants[lang] && FontConstants[lang][os]) {
         defaultFontFamily = FontConstants[lang][os];
     }
-    const fonts = FontManager.findFontsSync({ family: defaultFontFamily });
+    const fonts = FontScanner.findFontsSync({ family: defaultFontFamily });
     if (fonts.length > 0) {
         const defaultFont: IFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
         config.write('default-font', {

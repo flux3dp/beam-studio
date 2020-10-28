@@ -23,7 +23,7 @@ const electron = window['electron'];
 const ipc = electron.ipc;
 const events = electron.events;
 const LANG = i18n.lang.beambox.object_panels;
-const FontManager = requireNode('font-manager');
+const FontScanner = requireNode('font-scanner');
 
 let tempPaths = [];
 
@@ -112,10 +112,10 @@ Config().write('font-name-map', fontNameMapObj);
 
 const getFontOfPostscriptName = memoize((postscriptName) => {
     if (process.platform === 'darwin') {
-        const font = FontManager.findFontSync({ postscriptName });
+        const font = FontScanner.findFontSync({ postscriptName });
         return font;
     } else {
-        const allFonts = FontManager.getAvailableFontsSync();
+        const allFonts = FontScanner.getAvailableFontsSync();
         const fit = allFonts.filter((f) => f.postscriptName === postscriptName);
         console.log(fit);
         if (fit.length > 0) {
@@ -176,7 +176,7 @@ const substitutedFont = function($textElement){
     const originPostscriptName = originFont.postscriptName;
     let unSupportedChar = [];
     const fontList = Array.from(text).map(char => {
-        let sub = FontManager.substituteFontSync(originPostscriptName, char);
+        let sub = FontScanner.substituteFontSync(originPostscriptName, char);
         if (sub.postscriptName !== originPostscriptName) unSupportedChar.push(char);
         return sub;
     });
@@ -191,7 +191,7 @@ const substitutedFont = function($textElement){
         for (let i = 0; i < fontList.length; ++i) {
             let allFit = true;
             for (let j = 0; j < text.length; ++j) {
-                const foundfont = FontManager.substituteFontSync(fontList[i].postscriptName, text[j]);
+                const foundfont = FontScanner.substituteFontSync(fontList[i].postscriptName, text[j]);
                 if (fontList[i].postscriptName !== foundfont.postscriptName) {
                     allFit = false;
                     break;
