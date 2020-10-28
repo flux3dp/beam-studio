@@ -129,16 +129,18 @@ class LaserPanel extends React.PureComponent {
             }
             const newPreset = defaultLaserOptions.filter((option) => defaultLaserConfigsInUse[option] === undefined);
             newPreset.forEach((preset) => {
-                const {speed, power, repeat} = this._getDefaultParameters(preset);
-                customized.push({
-                    name: LANG.dropdown[unit][preset],
-                    speed,
-                    power,
-                    repeat,
-                    isDefault: true,
-                    key: preset
-                });
-                defaultLaserConfigsInUse[preset] = true;
+                if (defaultLaserOptions.includes(preset)) {
+                    const {speed, power, repeat} = this._getDefaultParameters(preset);
+                    customized.push({
+                        name: LANG.dropdown[unit][preset],
+                        speed,
+                        power,
+                        repeat,
+                        isDefault: true,
+                        key: preset
+                    });
+                    defaultLaserConfigsInUse[preset] = true;
+                }
             });
             LocalStorage.set('customizedLaserConfigs', customized);
             LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
@@ -566,6 +568,9 @@ class LaserPanel extends React.PureComponent {
             fbb1p: 'BEAMBOX_PRO',
         }
         const modelName = modelMap[model] || 'BEAMO';
+        if (!RightPanelConstants[modelName][para_name]) {
+
+        }
         speed = RightPanelConstants[modelName][para_name].speed;
         power = RightPanelConstants[modelName][para_name].power;
         repeat = RightPanelConstants[modelName][para_name].repeat || 1;
