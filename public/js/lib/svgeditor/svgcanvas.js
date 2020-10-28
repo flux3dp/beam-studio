@@ -37,6 +37,7 @@ define([
     'app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/views/beambox/Top-Bar/contexts/Top-Bar-Hints-Controller',
     'app/views/beambox/Top-Bar/Top-Bar-Hints',
+    'app/views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller',
     'app/views/tutorials/Tutorial-Controller',
     'app/constants/tutorial-constants',
     'app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
@@ -64,6 +65,7 @@ define([
     TopBarController,
     TopBarHintsController,
     TopBarHints,
+    TimeEstimationButtonController,
     TutorialController,
     TutorialConstants,
     ZoomBlockController,
@@ -91,6 +93,7 @@ define([
     TopBarController = TopBarController.default;
     TopBarHintsController = TopBarHintsController.default;
     TopBarHints = __importStar(TopBarHints);
+    TimeEstimationButtonController = TimeEstimationButtonController.default;
     TutorialController = __importStar(TutorialController);
     TutorialConstants = TutorialConstants.default;
     ZoomBlockController = ZoomBlockController.default;
@@ -8849,9 +8852,12 @@ define([
         };
 
         // Function: set
-        this.setHasUnsavedChange = (hasUnsaveChanged) => {
+        this.setHasUnsavedChange = (hasUnsaveChanged, shouldClearEstTime=true) => {
             canvas.changed = hasUnsaveChanged;
             TopBarController.setHasUnsavedChange(hasUnsaveChanged);
+            if (shouldClearEstTime) {
+                TimeEstimationButtonController.clearEstimatedTime();
+            }
         }
 
         this.getHasUnsaveChanged = () => {

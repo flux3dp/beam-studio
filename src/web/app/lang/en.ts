@@ -324,6 +324,10 @@ export default {
         zoom_block: {
             fit_to_window: 'Fit to Window',
         },
+        time_est_button: {
+            calculate: 'Calculate',
+            estimate_time: 'Estimated Time:',
+        },
         left_panel: {
             unpreviewable_area: 'Blind Area',
             diode_blind_area: 'Hybrid Laser Add-On Blind Area',

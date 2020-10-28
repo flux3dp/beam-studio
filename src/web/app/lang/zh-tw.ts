@@ -324,6 +324,10 @@ export default {
         zoom_block: {
             fit_to_window: '配合視窗尺寸',
         },
+        time_est_button: {
+            calculate: '計算時間',
+            estimate_time: '預計所需時間：',
+        },
         left_panel: {
             unpreviewable_area: '非相機預覽範圍',
             diode_blind_area: '非雕刻範圍',

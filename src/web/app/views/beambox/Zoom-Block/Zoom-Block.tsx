@@ -170,7 +170,7 @@ export class ZoomBlock extends React.Component {
             </div>
         );
     }
-}
+};
 
 ZoomBlock.contextType = ZoomBlockContext;
 
@@ -178,4 +178,4 @@ export class ZoomBlockContextHelper {
     static get context(): ZoomBlockContextProvider {
         return _contextCaller;
     }
-}
+};

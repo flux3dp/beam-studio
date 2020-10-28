@@ -1,0 +1,26 @@
+.time-est-btn-container {
+    position: absolute;
+    z-index: 1;
+    bottom: 10px;
+    right: $sidePanelWidth;
+    margin-right: 5px;
+    &.not-mac {
+        right: $winSidePanelWidth;
+    }
+    .time-est-btn {
+        cursor: pointer;
+        height: 32px;
+        line-height: 32px;
+        padding: 0 16px;
+        border-radius: 16px;
+        font-size: 12px;
+        text-align: center;
+        color: white;
+        background-color: #0099cc;
+    }
+    .time-est-result {
+        font-size: 14px;
+        color: #333333;
+        text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+    }
+}

@@ -324,6 +324,10 @@ export default {
         zoom_block: {
             fit_to_window: 'ウィンドウに合わせる',
         },
+        time_est_button: {
+            calculate: '時間を計算',
+            estimate_time: '推定所要時間：',
+        },
         left_panel: {
             unpreviewable_area: 'ブラインドエリア',
             diode_blind_area: 'ハイブリッドアドオンのブラインドエリア',

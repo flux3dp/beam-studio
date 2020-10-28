@@ -6,6 +6,7 @@ import { TopBar } from '../views/beambox/Top-Bar/Top-Bar';
 import { TopBarContextProvider } from '../views/beambox/Top-Bar/contexts/Top-Bar-Context';
 import { ZoomBlock } from '../views/beambox/Zoom-Block/Zoom-Block';
 import { ZoomBlockContextProvider } from '../views/beambox/Zoom-Block/contexts/Zoom-Block-Context';
+import { TimeEstimationButton } from '../views/beambox/Time-Estimation-Button/Time-Estimation-Button';
 import { SVGEditor } from './svg-editor';
 import { AlertsAndProgress } from '../views/dialogs/AlertsAndProgress';
 import { Dialog } from '../views/dialogs/Dialog';
@@ -50,6 +51,7 @@ class Beambox extends React.Component {
                         <ZoomBlockContextProvider>
                             <ZoomBlock />
                         </ZoomBlockContextProvider>
+                        <TimeEstimationButton />
                         <SVGEditor />
                         <div id='tool-panels-placeholder' />
                         <div id='image-trace-panel-placeholder' />

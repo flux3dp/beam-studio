@@ -321,12 +321,12 @@ const funcs =  {
                     }
                     console.log('saved');
                 });
-                svgCanvas.setHasUnsavedChange(false);
+                svgCanvas.setHasUnsavedChange(false, false);
                 return true;
             } else if (svgCanvas.currentFilePath.endsWith('.beam')) {
                 const ImageSource = await svgCanvas.getImageSource();
                 await BeamFileHelper.saveBeam(svgCanvas.currentFilePath, output, ImageSource);
-                svgCanvas.setHasUnsavedChange(false);
+                svgCanvas.setHasUnsavedChange(false, false);
                 return true;
             }
         }
@@ -343,6 +343,7 @@ const funcs =  {
             svgCanvas.currentFilePath = currentFilePath;
             await BeamFileHelper.saveBeam(currentFilePath, output, ImageSource);
             this.setCurrentFileName(currentFilePath);
+            svgCanvas.setHasUnsavedChange(false, false);
             return true;
         } else {
             return false;
@@ -359,6 +360,7 @@ const funcs =  {
         let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
         if (currentFilePath) {
             this.setCurrentFileName(currentFilePath);
+            svgCanvas.setHasUnsavedChange(false, false);
             return true;
         } else {
             return false;
@@ -377,7 +379,6 @@ const funcs =  {
         svgCanvas.setLatestImportFileName(currentFileName);
         svgCanvas.filePath = filePath;
         svgCanvas.updateRecentFiles(filePath);
-        svgCanvas.setHasUnsavedChange(false);
     },
 
     toggleUnsavedChangedDialog: async function () {

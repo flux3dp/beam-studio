@@ -340,6 +340,14 @@ export default {
         return gcodeBlob;
     },
 
+    estimateTime: async function () {
+        const { fcodeBlob, fileTimeCost } = await fetchTaskCode();
+        if (!fcodeBlob) {
+            return;
+        }
+        return fileTimeCost;
+    },
+
     prepareFileWrappedFromSvgStringAndThumbnail: async () => {
         await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
         const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();

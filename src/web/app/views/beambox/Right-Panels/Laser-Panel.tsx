@@ -16,6 +16,7 @@ import { DataType, getLayerConfig, getLayersConfig, writeData, CUSTOM_PRESET_CON
 import { getLayerElementByName } from '../../../../helpers/layer-helper';
 import Alert from '../../../contexts/AlertCaller';
 import AlertConstants from '../../../constants/alert-constants';
+import { clearEstimatedTime } from '../../../views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller'
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
@@ -219,8 +220,8 @@ class LaserPanel extends React.PureComponent {
     };
 
     _handleSpeedChange = (val) => {
-
         this.setState({ speed: val, configName: CUSTOM_PRESET_CONSTANT });
+        clearEstimatedTime();
         this.props.selectedLayers.forEach((layerName: string) => {
             writeData(layerName, DataType.speed, val);
             writeData(layerName, DataType.configName, CUSTOM_PRESET_CONSTANT);
@@ -237,6 +238,7 @@ class LaserPanel extends React.PureComponent {
 
     _handleRepeatChange = (val) => {
         this.setState({ repeat: val, configName: CUSTOM_PRESET_CONSTANT });
+        clearEstimatedTime();
         this.props.selectedLayers.forEach((layerName: string) => {
             writeData(layerName, DataType.repeat, val);
             writeData(layerName, DataType.configName, CUSTOM_PRESET_CONSTANT);

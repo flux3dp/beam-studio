@@ -324,6 +324,10 @@ export default {
         zoom_block: {
             fit_to_window: 'Ajustar a la ventana',
         },
+        time_est_button: {
+            calculate: 'Calcular',
+            estimate_time: 'Tiempo estimado necesario:',
+        },
         left_panel: {
             unpreviewable_area: 'Área ciega',
             diode_blind_area: 'Área ciega de adición de láser híbrido',
