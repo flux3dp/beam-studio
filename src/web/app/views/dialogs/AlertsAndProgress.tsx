@@ -2,9 +2,11 @@ import ProgressConstants from '../../constants/progress-constants';
 import Modal from '../../widgets/Modal';
 import ButtonGroup from '../../widgets/Button-Group';
 import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/AlertProgressContext';
+import * as i18n from '../../../helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
+const LANG = i18n.lang;
 let _contextCaller;
 export interface IProgress {
     id?: string,
@@ -53,7 +55,7 @@ class Progress extends React.Component {
             return null;
         }
         const buttons = [{
-            label: 'Cancel',
+            label: LANG.alert.cancel,
             className: classNames('btn-default'),
             onClick: () => {
                 const { popById } = this.context;

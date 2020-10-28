@@ -196,6 +196,15 @@
                     transition: width 0.3s;
                 }
             }
+            .button-container {
+                .btn-h-group {
+                    padding: 0;
+                }
+                .btn-default {
+                    height: 28px;
+                    line-height: 24px;
+                }
+            }
         }
     }
 
