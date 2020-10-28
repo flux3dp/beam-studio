@@ -450,6 +450,17 @@ export class LayerPanel extends React.Component {
         const items = [];
         const drawing = svgCanvas.getCurrentDrawing();
         const currentLayerName = drawing.getCurrentLayerName();
+
+        const isAnyLayerMissing = drawing.all_layers.some((layer) => {
+            if (!layer.group_.parentNode) {
+                return true
+            }
+            return false;
+        });
+        if (isAnyLayerMissing) {
+            drawing.identifyLayers();
+        }
+
         const allLayerNames: string[] = drawing.all_layers.map((layer) => layer.name_);
 
         if (draggingDestIndex === allLayerNames.length) {
