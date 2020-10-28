@@ -1,6 +1,6 @@
 import ProgressConstants from '../constants/progress-constants';
 import { AlertsAndProgressContextHelper, IProgress } from '../views/dialogs/AlertsAndProgress';
-export default window['Progress'] = {
+export default {
     openNonstopProgress: (args: IProgress) => {
         if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
