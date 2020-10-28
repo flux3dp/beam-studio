@@ -664,7 +664,7 @@ class LaserPanel extends React.PureComponent {
             <div className='layer-param-buttons'>
                 <div className='left'>
                     <div className='icon-button' title={LANG.dropdown.import} onClick={() => this.importLaserConfig()}>
-                        <img src={'img/right-panel/icon-open.svg'}/>
+                        <img src={'img/right-panel/icon-import.svg'}/>
                     </div>
                     <div className='icon-button' title={LANG.dropdown.export} onClick={() => this.exportLaserConfigs()}>
                         <img src={'img/right-panel/icon-export.svg'}/>

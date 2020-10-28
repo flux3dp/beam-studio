@@ -1294,11 +1294,10 @@
                     }
                     .right {
                         display: flex;
-                        align-items: flex-end;
                     }
                 }
                 .icon-button {
-                    width: 20px;
+                    width: 18px;
                     opacity: 0.5;
                     &:not(:first-child) {
                         margin-left: 10px;
@@ -1339,9 +1338,9 @@
             }
             .add-preset-btn {
                 cursor: pointer;
-                width: 16px;
-                height: 16px;
-                margin: 0 0 0 3px;
+                width: 14px;
+                height: 14px;
+                margin: 0 0 0 4px;
                 opacity: 0.5;
                 &:hover:not(.disabled) {
                     opacity: 1;
@@ -1353,16 +1352,16 @@
                 .bar {
                     position: absolute;
                     width: 2px;
-                    height: 16px;
+                    height: 14px;
                     border-radius: 1px;
-                    border: 2px solid #000000;
+                    border: 1px solid #000000;
                     background-color: #000000;
                 }
                 .bar1 {
                     transform: translateX(6px);
                 }
                 .bar2 {
-                    transform: translateX(16px) rotate(90deg) translateX(6px);
+                    transform: translateX(14px) rotate(90deg) translateX(6px);
                 }
             }
             .panel {
