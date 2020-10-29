@@ -140,6 +140,8 @@ class LaserPanel extends React.PureComponent {
                         key: preset
                     });
                     defaultLaserConfigsInUse[preset] = true;
+                } else {
+                    delete defaultLaserConfigsInUse[option];
                 }
             });
             LocalStorage.set('customizedLaserConfigs', customized);
