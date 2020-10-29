@@ -4,6 +4,7 @@ import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
 import sprintf from '../../../helpers/sprintf';
+import VersionChecker from '../../../helpers/version-checker';
 import * as i18n from '../../../helpers/i18n';
 import Constant from './constant';
 import BeamboxPreference from './beambox-preference';
@@ -18,6 +19,7 @@ class PreviewModeController {
     storedPrinter: any;
     isPreviewModeOn: boolean;
     isPreviewBlocked: boolean;
+    isLineCheckEnabled: boolean;
     cameraOffset: any;
     lastPosition: number[];
     errorCallback: () => void;
@@ -27,6 +29,7 @@ class PreviewModeController {
         this.storedPrinter = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
+        this.isLineCheckEnabled = true;
         this.cameraOffset = null;
         this.lastPosition = [0, 0]; // in mm
         this.errorCallback = function(){};
@@ -58,7 +61,13 @@ class PreviewModeController {
             let res = await DeviceMaster.enterRawMode();
             res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
             res = await DeviceMaster.rawHome();
-            res = await DeviceMaster.rawStartLineCheckMode();
+            const vc = VersionChecker(selectedPrinter.version);
+            if (vc.meetRequirement('MAINTAIN_WITH_LINECHECK')) {
+                res = await DeviceMaster.rawStartLineCheckMode();
+                this.isLineCheckEnabled = true;
+            } else {
+                this.isLineCheckEnabled = false;
+            }
             res = await DeviceMaster.rawSetFan(false);
             res = await DeviceMaster.rawSetAirPump(false);
             await DeviceMaster.connectCamera(selectedPrinter);
@@ -73,7 +82,9 @@ class PreviewModeController {
                 DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
-            DeviceMaster.rawEndLineCheckMode();
+            if (this.isLineCheckEnabled) {
+                DeviceMaster.rawEndLineCheckMode();
+            }
             DeviceMaster.endRawMode();
             throw error;
         } finally {
@@ -90,7 +101,9 @@ class PreviewModeController {
         await this._reset();
         const res = await DeviceMaster.select(storedPrinter);
         if (res.success) {
-            await DeviceMaster.rawEndLineCheckMode();
+            if (this.isLineCheckEnabled) {
+                await DeviceMaster.rawEndLineCheckMode();
+            }
             await DeviceMaster.endRawMode();
             if (this.originalSpeed !== 1) {
                 await DeviceMaster.setLaserSpeed(this.originalSpeed);
@@ -214,7 +227,9 @@ class PreviewModeController {
     async _retrieveCameraOffset() {
         // cannot getDeviceSetting during maintainMode. So we force to end it.
         try {
-            await DeviceMaster.rawEndLineCheckMode();
+            if (this.isLineCheckEnabled) {
+                await DeviceMaster.rawEndLineCheckMode();
+            }
             await DeviceMaster.endRawMode();
         } catch (error) {
             if ( (error.status === 'error') && (error.error && error.error[0] === 'OPERATION_ERROR') ) {

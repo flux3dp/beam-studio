@@ -1,5 +1,6 @@
 
 const requirement = {
+    MAINTAIN_WITH_LINECHECK     : '3.2.6',
     RELOCATE_ORIGIN             : '3.2.2',
     FAST_GRADIENT               : '3.0.1',
     TEMP_I2C_CMD                : '3.0.1',
