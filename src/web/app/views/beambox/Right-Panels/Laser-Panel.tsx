@@ -569,7 +569,8 @@ class LaserPanel extends React.PureComponent {
         }
         const modelName = modelMap[model] || 'BEAMO';
         if (!RightPanelConstants[modelName][para_name]) {
-
+            console.error(`Unable to get default preset key: ${para_name}`);
+            return {speed: 20, power: 15, repeat: 1}
         }
         speed = RightPanelConstants[modelName][para_name].speed;
         power = RightPanelConstants[modelName][para_name].power;

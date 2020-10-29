@@ -35,25 +35,20 @@ class LaserManageModal extends React.Component {
     _getDefaultParameters = (para_name) => {
         const model = BeamboxPreference.read('workarea') || BeamboxPreference.read('model');
         let speed, power, repeat, zStep;
-        switch(model) {
-            case 'fbm1':
-                speed = RightPanelConstants.BEAMO[para_name].speed;
-                power = RightPanelConstants.BEAMO[para_name].power;
-                repeat = RightPanelConstants.BEAMO[para_name].repeat || 1;
-                zStep = RightPanelConstants.BEAMO[para_name].zStep || 0;
-                break;
-            case 'fbb1b':
-                speed = RightPanelConstants.BEAMBOX[para_name].speed;
-                power = RightPanelConstants.BEAMBOX[para_name].power;
-                repeat = RightPanelConstants.BEAMBOX[para_name].repeat || 1;
-                zStep = RightPanelConstants.BEAMBOX[para_name].zStep || 0;
-                break;
-            case 'fbb1p':
-                speed = RightPanelConstants.BEAMBOX_PRO[para_name].speed;
-                power = RightPanelConstants.BEAMBOX_PRO[para_name].power;
-                repeat = RightPanelConstants.BEAMBOX_PRO[para_name].repeat || 1;
-                zStep = RightPanelConstants.BEAMBOX_PRO[para_name].zStep || 0;
-                break;
+        const modelMap = {
+            fbm1: 'BEAMO',
+            fbb1b: 'BEAMBOX',
+            fbb1p: 'BEAMBOX_PRO',
+        }
+        const modelName = modelMap[model] || 'BEAMO';
+        if (!RightPanelConstants[modelName][para_name]) {
+            console.error(`Unable to get default preset key: ${para_name}`);
+            return {speed: 20, power: 15, repeat: 1}
+        } else {
+            speed = RightPanelConstants[modelName][para_name].speed;
+            power = RightPanelConstants[modelName][para_name].power;
+            repeat = RightPanelConstants[modelName][para_name].repeat || 1;
+            zStep = RightPanelConstants[modelName][para_name].zStep || 0;
         }
         return {speed, power, repeat, zStep};
     }
