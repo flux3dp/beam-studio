@@ -358,6 +358,8 @@ export class TopBar extends React.PureComponent {
                                 resolve();
                             }
                         });
+                    } else {
+                        resolve();
                     }
                 } else {
                     if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
@@ -379,6 +381,8 @@ export class TopBar extends React.PureComponent {
                                 resolve();
                             }
                         });
+                    } else {
+                        resolve();
                     }
                 }
             });
