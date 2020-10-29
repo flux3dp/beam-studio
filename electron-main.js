@@ -420,39 +420,37 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
             { name: allFiles, extensions: ['*'] }
         ]
     }
+    const filePath = dialog.showSaveDialogSync(options)
+    if (!filePath) {
+        event.returnValue = false;
+        return;
+    }
 
-    dialog.showSaveDialog(options, function (filePath) {
-        if (!filePath) {
+    switch (typeof(file)) {
+        case 'string':
+            fs.writeFile(filePath, file, function(err) {
+                if (err) {
+                    dialog.showErrorBox('Error', err);
+                    event.returnValue = false;
+                    return;
+                }
+            });
+            break;
+        case 'object':
+            fs.writeFileSync(filePath, file, function(err) {
+                if(err) {
+                    dialog.showErrorBox('Error', err);
+                    event.returnValue = false;
+                    return;
+                }
+            });
+            break;
+        default:
             event.returnValue = false;
-            return;
-        }
-
-        switch (typeof(file)) {
-            case 'string':
-                fs.writeFile(filePath, file, function(err) {
-                    if (err) {
-                        dialog.showErrorBox('Error', err);
-                        event.returnValue = false;
-                        return;
-                    }
-                });
-                break;
-            case 'object':
-                fs.writeFileSync(filePath, file, function(err) {
-                    if(err) {
-                        dialog.showErrorBox('Error', err);
-                        event.returnValue = false;
-                        return;
-                    }
-                });
-                break;
-            default:
-                event.returnValue = false;
-                dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
-                break;
-        }
-        event.returnValue = filePath;
-    })
+            dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
+            break;
+    }
+    event.returnValue = filePath;
 })
 
 ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily, fontSize, fontStyle, letterSpacing, key}) => {
