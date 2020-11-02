@@ -135,7 +135,7 @@ const initDefaultFont = () => {
     const os = process.platform;
     const FontScanner = requireNode('font-scanner');
     const config = Config();
-    let defaultFontFamily = 'Arial'
+    let defaultFontFamily = os === 'linux' ? 'Ubuntu' : 'Arial';
     if (FontConstants[lang] && FontConstants[lang][os]) {
         defaultFontFamily = FontConstants[lang][os];
     }
