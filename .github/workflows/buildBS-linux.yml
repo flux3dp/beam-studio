@@ -73,11 +73,6 @@ jobs:
           gulp sass
           gulp frontend
 
-          cd ./node_modules/text-to-svg
-          npm install --save-dev
-          gulp build
-          cd ../../
-
           cp -R $HOME/flux_api_swap backend/flux_api
           ./backend/flux_api/flux_api --test --without_pcl 
 
