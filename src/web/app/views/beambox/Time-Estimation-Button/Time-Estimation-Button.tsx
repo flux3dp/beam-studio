@@ -8,6 +8,7 @@ const { createContext } = React;
 const TimeEstimationButtonContext = createContext();
 let _context = null;
 const LANG = i18n.lang.beambox.time_est_button;
+const isMac = process.platform === 'darwin';
 
 interface ITimeEstimationButtonContext {
     estimatedTime: number|null,
@@ -73,7 +74,7 @@ class TimeEstimationButtonComponent extends React.Component {
     render() {
         const { estimatedTime } = this.context as ITimeEstimationButtonContext;
         return (
-            <div className='time-est-btn-container'>
+            <div className={classNames('time-est-btn-container', {'not-mac': !isMac})}>
                 {estimatedTime ? this.renderResult(estimatedTime) : this.renderButton()}
             </div>
         );
