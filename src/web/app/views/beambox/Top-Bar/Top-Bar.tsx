@@ -508,7 +508,7 @@ export class TopBar extends React.PureComponent {
         this.hideDeviceList();
         try {
             const status = await DeviceMaster.select(device);
-            if (status.success) {
+            if (status && status.success) {
                 const res = await checkDeviceStatus(device);
                 if (res) {
                     callback(device);

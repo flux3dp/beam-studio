@@ -119,7 +119,7 @@ class DeviceMaster {
             );
             Alert.popUp({
                 id: 'device-auth-fail',
-                message: `#811 ${message}`,
+                message,
                 type: AlertConstants.SHOW_POPUP_ERROR
             });
             // Display the dialog again
@@ -204,6 +204,8 @@ class DeviceMaster {
                     const authed = await self.showAuthDialog(uuid);
                     if (authed) {
                         return await self.selectDevice(printer);
+                    } else {
+                        return { success: false };
                     }
                 } else {
                     Progress.openNonstopProgress({
@@ -219,7 +221,7 @@ class DeviceMaster {
                             message: lang.message.auth_error,
                             type: AlertConstants.SHOW_POPUP_ERROR
                         });
-                        return;
+                        return { success: false};
                     }
                     return await self.selectDevice(printer);
                 }
