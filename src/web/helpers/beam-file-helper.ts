@@ -74,11 +74,12 @@ const getFilePath = async (title, allFiles, extensionName, extensions, filename)
             { name: allFiles, extensions: ['*'] }
         ]
     }
-    return new Promise((resolve) => {
-        dialog.showSaveDialog(options, (filePath) => {
-            resolve(filePath);
-        })
-    });
+
+    const { filePath, canceled } = await dialog.showSaveDialog(options);
+    if (canceled) {
+        return null;
+    }
+    return filePath;
 };
 
 const writeUInt64BEToBuffer = (buffer, value, offset=0) => {
