@@ -174,6 +174,7 @@ class DeviceMaster {
                     const info = await device.control.report();
                     Object.assign(device.info, info);
                 }
+                SocketMaster.setWebSocket(device.control);
                 this.currentDevice = device;
                 Progress.popById('select-device');
                 return { success: true }
