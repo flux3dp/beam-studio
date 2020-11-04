@@ -987,15 +987,18 @@ define([
             rawHome: () => {
                 let d = $.Deferred();
                 let isCmdResent = false;
+                let responseString = '';
                 events.onMessage = (response) => {
-                    if (response) {
-                        console.log('raw homing:\t', response.text);
+                    console.log('raw homing:\t', response.text);
+                    if (response && response.status === 'raw') {
+                        responseString += response.text;
                     }
-                    if (response.status === 'raw' && response.text.startsWith('ok')) {
+                    const resps = responseString.split('\n');
+                    if (resps.some((resp) => resp.startsWith('ok'))) {
                         d.resolve(response);
-                    } else if (response.text.indexOf('ER:RESET') >= 0) {
+                    } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
                         d.reject(response);
-                    } else if (response.text.indexOf('error:') >= 0) {
+                    } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
                         // Resend command for error code
                         const errorCode = parseInt(response.text.substring(6));
                         switch (errorCode) {
