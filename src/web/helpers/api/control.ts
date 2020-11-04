@@ -855,39 +855,25 @@ class Control {
         let isCmdResent = false;
         let responseString = '';
         this.commandCallback.onMessage = (response) => {
-            if (response.status === 'raw') {
+            if (response && response.status === 'raw') {
+                console.log('raw homing:\t', response.text);
                 responseString += response.text;
-                const resps = responseString.split('\n');
-                if (resps.some((resp) => resp.startsWith('ok'))) {
-                    d.resolve(response);
-                } else if (resps.some((resp) => resp.includes('ER:RESET'))) {
-                    d.reject(responseString);
-                } else if (resps.some((resp) => resp.includes('error:'))) {
-                    if (!isCmdResent) {
-                        isCmdResent = true;
-                        setTimeout(() => {
-                            isCmdResent = false;
-                            this.ws.send('raw home');
-                        }, 200);
-                    }
-                }
-                responseString = resps[resps.length - 1] || '';
-            } else if (response.text.indexOf('ER:RESET') >= 0) {
+            }
+            const resps = responseString.split('\n');
+            if (resps.some((resp) => resp.startsWith('ok'))) {
+                d.resolve(response);
+            } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
                 d.reject(response);
-            } else if (response.text.indexOf('error:') >= 0) {
-                // Resend command for error code
-                const errorCode = parseInt(response.text.substring(6));
-                switch (errorCode) {
-                    default:
-                        if (!isCmdResent) {
-                            isCmdResent = true;
-                            setTimeout(() => {
-                                isCmdResent = false;
-                                this.ws.send('raw home');
-                            }, 200);
-                        }
+            } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
+                if (!isCmdResent) {
+                    isCmdResent = true;
+                    setTimeout(() => {
+                        isCmdResent = false;
+                        this.ws.send('raw home');
+                    }, 200);
                 }
             }
+            responseString = resps[resps.length - 1] || '';
         };
         this.commandCallback.onError = (response) => { d.reject(response); };
         this.commandCallback.onFatal = (response) => { d.reject(response); };
