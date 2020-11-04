@@ -1854,6 +1854,7 @@
                 height: 15px;
             }
             #ruler_x {
+                pointer-events: initial;
                 top: 0px;
                 left: 15px;
                 right: 0px;
@@ -1861,10 +1862,12 @@
                 border-bottom: 1px solid;
                 border-left: 1px solid #777;
                 canvas {
+                    pointer-events: none;
                     margin-left: -16px;
                 }
             }
             #ruler_y {
+                pointer-events: initial;
                 top: 15px;
                 bottom: 0px;
                 left: 0px;
@@ -1872,6 +1875,7 @@
                 border-right: 1px solid;
                 border-top: 1px solid #777;
                 canvas {
+                    pointer-events: none;
                     margin-top: -17px;
                 }
 
