@@ -2,7 +2,34 @@ const React = requireNode('react');
 const { createContext } = React;
 export const TopBarContext = createContext();
 
+export interface ITopBarContext {
+    updateTopBar: () => void,
+    setElement: (elem: Element|null) => void,
+    setFileName: (fileName: string) => void,
+    setHasUnsavedChange: (hasUnsavedChange: boolean) => void,
+    setTopBarPreviewMode: (topBarPreviewMode: boolean) => void,
+    getTopBarPreviewMode: () => boolean,
+    setShouldStartPreviewController: (shouldStartPreviewController: boolean) => void,
+    isPreviewMode: boolean,
+    fileName: string|null,
+    selectedElem: Element|null,
+    hasUnsavedChange: boolean,
+    shouldStartPreviewController: boolean,
+}
+
 export class TopBarContextProvider extends React.Component {
+    private props;
+    private state: {
+        fileName: string|null,
+        selectedElem: Element|null,
+        hasUnsavedChange: boolean,
+        isDrawing: boolean,
+        isDrawn: boolean,
+        shouldStartPreviewController: boolean,
+    };
+    private isPreviewMode: boolean;
+    private setState: (newState: any) => {};
+
     constructor(props) {
         super(props);
         this.state = {
@@ -10,7 +37,8 @@ export class TopBarContextProvider extends React.Component {
             selectedElem: null,
             hasUnsavedChange: false,
             isDrawing: false,
-            isDrawn: false
+            isDrawn: false,
+            shouldStartPreviewController: false
         }
     }
 

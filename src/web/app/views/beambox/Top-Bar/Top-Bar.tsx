@@ -18,7 +18,7 @@ import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-b
 import DialogCaller from '../../../contexts/DialogCaller';
 import Modal from '../../../widgets/Modal';
 import LeftPanel from '../Left-Panels/Left-Panel';
-import { TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context';
+import { ITopBarContext, TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context';
 import { TopBarHints } from './Top-Bar-Hints';
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
@@ -51,6 +51,20 @@ const isNotMac = process.platform !== 'darwin';
 let _contextCaller;
 
 export class TopBar extends React.PureComponent {
+    private deviceList: IDeviceInfo[];
+    private state: {
+        isPreviewing?: boolean,
+        hasDiscoverdMachine?: boolean,
+        shouldShowDeviceList?: boolean,
+        deviceListType?: string|null,
+        deviceListDir?: string,
+        selectDeviceCallback?: (device?: IDeviceInfo) => void,
+    };
+    private setState: (newState: any) => void;
+    private context: ITopBarContext;
+    private discover: any;
+    private topBarClassName: string;
+
     constructor() {
         super();
         this.deviceList = [];
@@ -70,6 +84,7 @@ export class TopBar extends React.PureComponent {
             'top-bar',
             (deviceList) => {
                 const { hasDiscoverdMachine, shouldShowDeviceList } = this.state;
+                deviceList = deviceList.filter((device) => device.serial !== 'XXXXXXXXXX');
                 this.deviceList = deviceList;
                 if ((deviceList.length > 0) !== hasDiscoverdMachine) {
                     this.setState({hasDiscoverdMachine: deviceList.length > 0});
