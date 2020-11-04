@@ -125,7 +125,7 @@ export class TopBar extends React.PureComponent {
                         <div className="bars bar2 shadow"></div>
                         <div className="bars bar1"></div>
                     </div>
-                : null}
+                    : null}
             </div>
         );
     }
@@ -157,7 +157,9 @@ export class TopBar extends React.PureComponent {
     }
 
     showCameraPreviewDeviceList = () => {
-        this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)});
+        if (!PreviewModeController.isPreviewMode()) {
+            this.showDeviceList('camera', (device) => {this.startPreviewModeController(device)});
+        }
     }
 
     startPreviewModeController = async (device: IDeviceInfo) => {
