@@ -853,9 +853,25 @@ class Control {
     rawHome() {
         let d = $.Deferred();
         let isCmdResent = false;
+        let responseString = '';
         this.commandCallback.onMessage = (response) => {
-            if (response.status === 'raw' && response.text.startsWith('ok')) {
-                d.resolve(response);
+            if (response.status === 'raw') {
+                responseString += response.text;
+                const resps = responseString.split('\n');
+                if (resps.some((resp) => resp.startsWith('ok'))) {
+                    d.resolve(response);
+                } else if (resps.some((resp) => resp.includes('ER:RESET'))) {
+                    d.reject(responseString);
+                } else if (resps.some((resp) => resp.includes('error:'))) {
+                    if (!isCmdResent) {
+                        isCmdResent = true;
+                        setTimeout(() => {
+                            isCmdResent = false;
+                            this.ws.send('raw home');
+                        }, 200);
+                    }
+                }
+                responseString = resps[resps.length - 1] || '';
             } else if (response.text.indexOf('ER:RESET') >= 0) {
                 d.reject(response);
             } else if (response.text.indexOf('error:') >= 0) {
@@ -889,15 +905,15 @@ class Control {
                 console.log('raw line check:\t', response.text);
                 responseString += response.text;
             }
-            let resps = responseString.split('\n');
-            
+            const resps = responseString.split('\n');
             const i = resps.findIndex((r) => r === 'CTRL LINECHECK_ENABLED');
+            if (i < 0) responseString = resps[resps.length - 1] || '';
             if (i >= 0 && resps[i+1].startsWith('ok')) {
                 this.isLineCheckMode = true;
                 this.currentLineNumber = 1;
                 d.resolve();
             }
-            if (response.text.indexOf('ER:RESET') >= 0) {
+            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
                 d.reject(response);
             } else if (response.text.indexOf('error:') >= 0) {
                 // Resend command for error code
@@ -930,13 +946,14 @@ class Control {
             if (response && response.status === 'raw') {
                 responseString += response.text;
             }
-            let resps = responseString.split('\n');
+            const resps = responseString.split('\n');
             const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
+            if (i < 0) responseString = resps[resps.length - 1] || '';
             if (i >= 0) {
                 this.isLineCheckMode = false;
                 d.resolve();
             }
-            if (response.text.indexOf('ER:RESET') >= 0) {
+            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
                 d.reject(response);
             } else if (response.text.indexOf('error:') >= 0) {
                 // Resend command for error code
