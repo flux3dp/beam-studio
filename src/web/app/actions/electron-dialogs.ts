@@ -5,7 +5,7 @@ const electronRemote = requireNode('electron').remote;
 const { dialog } = electronRemote;
 
 export default{
-    saveFileDialog: (title: string, filename: string, filters: IFileFilter[], isAllfileAvailable?: boolean) => {
+    saveFileDialog: async (title: string, filename: string, filters: IFileFilter[], isAllfileAvailable?: boolean) => {
         const isMac = (process.platform === 'darwin');
         const langFile = i18n.lang.topmenu.file;
         filters = filters.map((filter) => {
@@ -20,11 +20,11 @@ export default{
             title,
             filters
         };
-        return new Promise((resolve) => {
-            dialog.showSaveDialog(options, (filePath) => {
-                resolve(filePath);
-            })
-        });
+        const { filePath, canceled } = await dialog.showSaveDialog(options);
+        if (canceled) {
+            return null;
+        }
+        return filePath;
     },
     showOpenDialog: async (option) => {
         if (!option) {
