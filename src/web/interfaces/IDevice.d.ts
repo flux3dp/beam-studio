@@ -13,7 +13,8 @@ export interface IDeviceInfo {
     serial: string,
     source: string,
     name: string,
-    addr: string
+    addr: string,
+    st_prog? : number,
 }
 
 export interface IDeviceConnection {
