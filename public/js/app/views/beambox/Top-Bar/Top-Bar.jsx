@@ -84,7 +84,7 @@ define([
                 'top-bar',
                 (machines) => {
                     const { hasDiscoverdMachine, shouldShowDeviceList } = this.state;
-                    const deviceList = DeviceList(machines);
+                    const deviceList = DeviceList(machines).filter((device) => device.serial !== 'XXXXXXXXXX');
                     this.deviceList = deviceList;
                     if ((deviceList.length > 0) !== hasDiscoverdMachine) {
                         this.setState({hasDiscoverdMachine: deviceList.length > 0});
