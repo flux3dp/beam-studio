@@ -2622,8 +2622,12 @@ define([
                                 }
                                 selectorManager.requestSelector(selected).showGrips(true);
 
-                                // This shouldn't be necessary as it was done on mouseDown...
-                                //							call('selected', [selected]);
+                                const targetLayer = svgCanvas.getObjectLayer(selected);
+                                const currentLayer = getCurrentDrawing().getCurrentLayer();
+                                if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+                                    svgCanvas.setCurrentLayer(targetLayer.title);
+                                    LayerPanelController.setSelectedLayers([targetLayer.title]);
+                                }
                             }
                             // always recalculate dimensions to strip off stray identity transforms
                             recalculateAllSelectedDimensions();
@@ -2693,15 +2697,6 @@ define([
                         if (selectedElements.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
-                        }
-
-                        const mouseTarget = getMouseTarget(evt);
-                        const currentLayer = getCurrentDrawing().getCurrentLayer();
-                        const targetLayer = svgCanvas.getObjectLayer(mouseTarget);
-                        if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-                            svgCanvas.setCurrentLayer(targetLayer.title);
-                            LayerPanelController.setSelectedLayers([targetLayer.title]);
-                            selectOnly([mouseTarget], true);
                         }
 
                         return;
