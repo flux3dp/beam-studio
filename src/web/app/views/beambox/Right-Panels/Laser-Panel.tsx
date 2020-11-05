@@ -45,7 +45,14 @@ class LaserPanel extends React.PureComponent {
         super(props);
         this.unit = LocalStorage.get('default-units') || 'mm';
         this.initDefaultConfig();
-        this.state = {};
+        this.state = {
+            speed: 3,
+            power: 1,
+            repeat: 1,
+            height: -3,
+            zStep: 0,
+            isDiode: false,
+        };
     }
 
     componentDidMount() {
@@ -187,7 +194,7 @@ class LaserPanel extends React.PureComponent {
 
         this.setState({
             speed:      layerData.speed,
-            strength:   layerData.power,
+            power:      layerData.power,
             repeat:     layerData.repeat,
             height:     layerData.height,
             zStep:      layerData.zStep,
