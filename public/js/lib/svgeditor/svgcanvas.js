@@ -1183,7 +1183,7 @@ define([
 
             selectedElements.sort(function (a, b) {
                 if (a && b && a.compareDocumentPosition) {
-                    return 3 - (b.compareDocumentPosition(a) & 6);
+                    return (b.compareDocumentPosition(a) & 6) - 3;
                 }
                 if (a == null) {
                     return 1;
@@ -1252,7 +1252,7 @@ define([
         // Clears the selection, then adds all elements in the current layer to the selection.
         this.selectAllInCurrentLayer = function () {
             var current_layer = getCurrentDrawing().getCurrentLayer();
-            if (current_layer) {
+            if (current_layer && current_layer.getAttribute('data-lock') !== 'true') {
                 current_mode = 'select';
                 $('.tool-btn').removeClass('active');
                 $('#left-Cursor').addClass('active');
@@ -1269,6 +1269,31 @@ define([
                 }
             }
         };
+
+        /**
+         * Select All element in canvas except locked layer
+         * @returns {null}
+         */
+        this.selectAll = () => {
+            clearSelection();
+            const drawing = getCurrentDrawing();
+            const allLayers = drawing.all_layers;
+            const elemsToSelect = [];
+            for (let i = allLayers.length - 1; i >= 0; i--) {
+                const layerElement = allLayers[i].group_;
+                if (layerElement && layerElement.parentNode && layerElement.getAttribute('data-lock') !== 'true') {
+                    const elemsToAdd = Array.from(layerElement.childNodes).filter((node) => !['title', 'filter'].includes(node.tagName));
+                    elemsToSelect.push(...elemsToAdd);
+                }
+            }
+            if (elemsToSelect.length > 0) {
+                selectOnly(elemsToSelect, false);
+                if (elemsToSelect.length > 1) {
+                    svgCanvas.tempGroupSelectedElements();
+                }
+                window.updateContextPanel();
+            }
+        }
 
         // Function: getMouseTarget
         // Gets the desired element from a mouse event
@@ -1307,6 +1332,9 @@ define([
             for (let i=0; i < intersectList.length; i++) {
                 let pointInStroke = false;
                 const elem = intersectList[i];
+                if (elem === mouse_target) {
+                    break;
+                }
                 if (!elem.isPointInStroke || typeof elem.isPointInStroke !== 'function') {
                     continue;
                 }
@@ -1328,7 +1356,7 @@ define([
                 } else {
                     elem.removeAttribute('stroke-width');
                 }
-                if (pointInStroke || (elem === mouse_target)) {
+                if (pointInStroke) {
                     break;
                 }
             }

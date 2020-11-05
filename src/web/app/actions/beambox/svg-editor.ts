@@ -5273,7 +5273,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         Shortcuts.on(['fnkey', 'a'], (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            svgCanvas.selectAllInCurrentLayer();
+                            svgCanvas.selectAll();
                         });
                         const moveUnit = LocalStorage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
                         Shortcuts.on(['up'], (e) => {
