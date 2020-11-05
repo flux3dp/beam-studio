@@ -65,7 +65,7 @@ class DropDownControl extends React.Component{
                 <div className="label pull-left">{this.props.label}</div>
                 <div className="control">
                     <div className={className}>
-                        <select id={this.props.id} onChange={this._handleChange} value={this.props.value} defaultValue={this.props.value}>
+                        <select id={this.props.id} onChange={this._handleChange} value={this.props.value}>
                             {_options}
                         </select>
                     </div>
