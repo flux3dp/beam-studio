@@ -150,7 +150,7 @@ define([
                         }
                     }
                 }
-                const newPreset = defaultLaserOptions.filter((option) => defaultLaserConfigsInUse[option] === undefined);
+                const newPreset = defaultLaserOptions.slice(1).filter((option) => defaultLaserConfigsInUse[option] === undefined);
                 newPreset.forEach((preset) => {
                     const {speed, power, repeat} = this._getDefaultParameters(preset);
                     customized.push({
