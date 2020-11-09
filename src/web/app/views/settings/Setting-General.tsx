@@ -306,6 +306,19 @@ class SettingGeneral extends React.Component{
             }
         ];
 
+        const unionAfterTraceOptions = [
+            {
+                value: 'true',
+                label: lang.settings.single_object,
+                selected: this._getBeamboxPreferenceEditingValue('union_after_trace') !== false
+            },
+            {
+                value: 'false',
+                label: lang.settings.grouped_objects,
+                selected: this._getBeamboxPreferenceEditingValue('union_after_trace') === false
+            }
+        ];
+
         const fastGradientOptions = [
             {
                 value: 'false',
@@ -613,6 +626,14 @@ class SettingGeneral extends React.Component{
                         className='font3'
                         options={continuousDrawingOptions}
                         onChange={e => this._updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
+                    />
+                </Controls>
+
+                <Controls label={lang.settings.trace_output}>
+                    <SelectView
+                        className='font3'
+                        options={unionAfterTraceOptions}
+                        onChange={e => this._updateBeamboxPreferenceChange('union_after_trace', e.target.value)}
                     />
                 </Controls>
 

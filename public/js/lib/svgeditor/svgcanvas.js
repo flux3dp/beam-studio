@@ -48,6 +48,7 @@ define([
     'app/contexts/ProgressCaller',
     'helpers/api/config',
     'helpers/beam-file-helper',
+    'helpers/bezier-fit-curve',
     'helpers/image-data',
     'helpers/layer-helper',
     'helpers/local-storage',
@@ -76,6 +77,7 @@ define([
     Progress,
     Config,
     BeamFileHelper,
+    BezierFitCurve,
     ImageData,
     LayerHelper,
     LocalStorage,
@@ -104,6 +106,7 @@ define([
     Progress = Progress.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
+    BezierFitCurve = __importStar(BezierFitCurve);
     ImageData = ImageData.default;
     LayerHelper = __importStar(LayerHelper);
     LocalStorage = LocalStorage.default;
@@ -9049,9 +9052,127 @@ define([
             if (pastedElements.length > 0) {
                 call('changed', pastedElements);
             }
-        }
+        };
 
-        // === Title Bar -> Edit ===
+        /**
+         * Boolean Operate elements
+         * @param {string} mode one of ['intersect', 'union', 'diff', 'xor']
+         * @param {boolean} isSubCmd whether this operation is subcmd
+         */
+        this.booleanOperationSelectedElements = function(mode, isSubCmd=false) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+            let len = selectedElements.length;
+            for (let i = 0; i < selectedElements.length; ++i) {
+                if (!selectedElements[i]) {
+                    len = i;
+                    break;
+                }
+            }
+            if (len < 2) {
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.select_at_least_two,
+                });
+                return;
+            }
+            if (len > 2 && mode === 'diff') {
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.more_than_two_object,
+                });
+                return;
+            }
+            let batchCmd = new svgedit.history.BatchCommand(`${mode} Elements`);
+            // clipper needs integer input so scale up path with a big const.
+            const scale = 100;
+            let solution_paths = [];
+            const modemap = {'intersect': 0, 'union': 1, 'diff': 2, 'xor': 3};
+            const clipType = modemap[mode];
+            const subject_fillType = 1;
+            const clip_fillType = 1;
+            let succeeded = true;
+            for (let i = len - 1; i >= 0; --i) {
+                let clipper = new ClipperLib.Clipper();
+                const elem =selectedElements[i];
+                if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
+                    tagNameMap = {
+                        'g': LANG.tag.g,
+                        'use': LANG.tag.use,
+                        'image': LANG.tag.image,
+                        'text': LANG.tag.text
+                    };
+                    Alert.popUp({
+                        id: 'Boolean Operate',
+                        type: AlertConstants.SHOW_POP_ERROR,
+                        message: `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`,
+                    });
+                    return;
+                }
+                const dpath = svgedit.utilities.getPathDFromElement(elem);
+                const bbox = svgedit.utilities.getBBox(elem);
+                let rotation = {
+                    angle: svgedit.utilities.getRotationAngle(elem),
+                    cx: bbox.x + bbox.width / 2,
+                    cy: bbox.y + bbox.height / 2
+                };
+                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+                if (i === len - 1) {
+                    solution_paths = paths;
+                } else {
+                    clipper.AddPaths(solution_paths, ClipperLib.PolyType.ptSubject, true);
+                    clipper.AddPaths(paths, ClipperLib.PolyType.ptClip, true);
+                    succeeded = clipper.Execute(clipType, solution_paths, subject_fillType, clip_fillType);
+                }
+                if (!succeeded) {
+                    break;
+                }
+            }
+
+            if (!succeeded) {
+                console.log('Clipper not succeeded');
+                return;
+            }
+            let d = '';
+            for (let i = 0; i < solution_paths.length; ++i) {
+                d += 'M';
+                d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                d += ' Z';
+            }
+            const base = selectedElements[len-1];
+            const fill = $(base).attr('fill');
+            const fill_opacity = $(base).attr('fill-opacity');
+            const element = addSvgElementFromJson({
+                element: 'path',
+                curStyles: false,
+                attr: {
+                    id: getNextId(),
+                    d: d,
+                    stroke: '#000',
+                    fill: fill,
+                    'fill-opacity': fill_opacity,
+                    opacity: cur_shape.opacity
+                }
+            });
+            if (this.isUsingLayerColor) {
+                this.updateElementColor(element);
+            }
+
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(element));
+            let cmd = this.deleteSelectedElements();
+            batchCmd.addSubCommand(cmd);
+            canvas.undoMgr.undoStackPointer -= 1;
+            canvas.undoMgr.undoStack.pop();
+            if (!isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+            this.selectOnly([element], true);
+            return batchCmd;
+        }
 
         // Function: offsetElements
         // Create offset of elements
@@ -9069,7 +9190,6 @@ define([
             if (dir === 0) {
                 dist *= -1
             };
-            let newElem;
             let isContainNotSupportTag = false;
             let co = new ClipperLib.ClipperOffset(2 , 0.25);
             elems.forEach(elem => {
@@ -9153,7 +9273,7 @@ define([
                 d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
                 d += ' Z'
             }
-            newElem = addSvgElementFromJson({
+            const newElem = addSvgElementFromJson({
                 element: 'path',
                 curStyles: false,
                 attr: {
@@ -9171,7 +9291,7 @@ define([
 
             selectOnly([newElem], true);
             addCommandToHistory(batchCmd);
-        }
+        };
 
         this.decomposePath = (elems) => {
             if (tempGroup) {
@@ -9242,11 +9362,13 @@ define([
                 selectOnly(allNewPaths, false);
                 let g = this.tempGroupSelectedElements();
             }
-        }
+        };
 
-        // Function: imageToSVG
-        // tracing an image file, convert it to svg object
-        // using ImageTracer https://github.com/jankovicsandras/imagetracerjs
+        /**
+         * tracing an image element, convert it to svg object
+         * using ImageTracer https://github.com/jankovicsandras/imagetracerjs
+         * @param {SVGImageElement} img img to trace
+        */
         this.imageToSVG = async function (img) {
             if (img == null) {
                 img = selectedElements[0];
@@ -9285,57 +9407,72 @@ define([
                     }
                 );
             });
-            ImageTracer.imageToSVG(imgUrl, svgstr => {
-                const id = getNextId();
-                let g = addSvgElementFromJson({
-                    'element': 'g',
-                    'attr': {
-                        'id': id
-                    }
+            let svgStr = await new Promise((resolve) => {
+                ImageTracer.imageToSVG(imgUrl, svgstr => {
+                    resolve(svgstr);
                 });
-                svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
-                ImageTracer.appendSVGString(svgstr, id);
-                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
-                if (this.isUsingLayerColor) {
-                    this.updateElementColor(g);
+            });
+            const id = getNextId();
+            let g = addSvgElementFromJson({
+                'element': 'g',
+                'attr': {
+                    'id': id
                 }
-                const imgBBox = img.getBBox();
-                const angle = svgedit.utilities.getRotationAngle(img);
-                let cmd = this.deleteSelectedElements();
-                batchCmd.addSubCommand(cmd);
-                this.selectOnly([g], true);
-                let gBBox = g.getBBox();
-                if (imgBBox.width !== gBBox.width) {
-                    this.setSvgElemSize('width', imgBBox.width);
+            });
+            svgStr = svgStr.replace(/<\/?svg[^>]*>/g, '');
+            ImageTracer.appendSVGString(svgStr, id);
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+            const imgBBox = img.getBBox();
+            const angle = svgedit.utilities.getRotationAngle(img);
+            let cmd = this.deleteSelectedElements();
+            batchCmd.addSubCommand(cmd);
+            this.selectOnly([g], true);
+            let gBBox = g.getBBox();
+            if (imgBBox.width !== gBBox.width) {
+                this.setSvgElemSize('width', imgBBox.width);
+            }
+            if (imgBBox.height !== gBBox.height) {
+                this.setSvgElemSize('height', imgBBox.height);
+            }
+            gBBox = g.getBBox();
+            dx = (imgBBox.x + 0.5 * imgBBox.width) - (gBBox.x + 0.5 * gBBox.width);
+            dy = (imgBBox.y + 0.5 * imgBBox.height) - (gBBox.y + 0.5 * gBBox.height);
+            this.moveElements([dx], [dy], [g], false);
+            this.setRotationAngle(angle, true, g);
+            for (let i = 0; i < g.childNodes.length; i++) {
+                let child = g.childNodes[i];
+                if ($(child).attr('opacity') === 0) {
+                    $(child).remove();
+                    i--;
+                } else {
+                    child.removeAttribute('opacity');
+                    $(child).attr('id', getNextId());
+                    $(child).attr('vector-effect', "non-scaling-stroke");
+                    child.addEventListener('mouseover', this.handleGenerateSensorArea);
+                    child.addEventListener('mouseleave', this.handleGenerateSensorArea);
                 }
-                if (imgBBox.height !== gBBox.height) {
-                    this.setSvgElemSize('height', imgBBox.height);
-                }
-                gBBox = g.getBBox();
-                dx = (imgBBox.x + 0.5  * imgBBox.width) - (gBBox.x + 0.5  * gBBox.width);
-                dy = (imgBBox.y + 0.5  * imgBBox.height) - (gBBox.y + 0.5  * gBBox.height);
-                this.moveElements([dx], [dy], [g], false);
-                this.setRotationAngle(angle, true, g);
-                for (let i = 0; i < g.childNodes.length; i++) {
-                    let child = g.childNodes[i];
-                    if ($(child).attr('opacity') === 0) {
-                        $(child).remove();
-                        i--;
-                    } else {
-                        child.removeAttribute('opacity');
-                        $(child).attr('id', getNextId());
-                        $(child).attr('vector-effect', "non-scaling-stroke");
-                        child.addEventListener('mouseover', this.handleGenerateSensorArea);
-                        child.addEventListener('mouseleave', this.handleGenerateSensorArea);
-                        // $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+            }
+            if (this.isUsingLayerColor) {
+                this.updateElementColor(g);
+            }
+            if (BeamboxPreference.read('union_after_trace') === false) {
+                selectorManager.requestSelector(g).resize();
+            } else {
+                let res = this.ungroupSelectedElement(true);
+                if (res) {
+                    if (res.batchCmd && !res.batchCmd.isEmpty()) {
+                        batchCmd.addSubCommand(res.batchCmd);
+                    }
+                    res = this.booleanOperationSelectedElements('union', true);
+                    if (res && !res.isEmpty()) {
+                        batchCmd.addSubCommand(res);
                     }
                 }
-                selectorManager.requestSelector(g).resize();
-                
-                addCommandToHistory(batchCmd);
-                Progress.popById('vectorize-image');
-            });
-        }
+            }
+            
+            addCommandToHistory(batchCmd);
+            Progress.popById('vectorize-image');
+        };
 
         this.disassembleUse2Group = async function(elems = null) {
             if (!elems) {
@@ -10657,119 +10794,6 @@ define([
                 j = j+1;
             }
         };
-
-        this.booleanOperationSelectedElements = function(mode) {
-            if (tempGroup) {
-                let children = this.ungroupTempGroup();
-                this.selectOnly(children, false);
-            }
-            let len = selectedElements.length;
-            for (let i = 0; i < selectedElements.length; ++i) {
-                if (!selectedElements[i]) {
-                    len = i;
-                    break;
-                }
-            }
-            if (len < 2) {
-                Alert.popUp({
-                    id: 'Boolean Operate',
-                    type: AlertConstants.SHOW_POP_ERROR,
-                    message: LANG.popup.select_at_least_two,
-                });
-                return;
-            }
-            if (len > 2 && mode === 'diff') {
-                Alert.popUp({
-                    id: 'Boolean Operate',
-                    type: AlertConstants.SHOW_POP_ERROR,
-                    message: LANG.popup.more_than_two_object,
-                });
-                return;
-            }
-            let batchCmd = new svgedit.history.BatchCommand(`${mode} Elements`);
-            // clipper needs integer input so scale up path with a big const.
-            const scale = 100;
-            let solution_paths = [];
-            const modemap = {'intersect': 0, 'union': 1, 'diff': 2, 'xor': 3};
-            const clipType = modemap[mode];
-            const subject_fillType = 1;
-            const clip_fillType = 1;
-            let succeeded = true;
-            for (let i = len - 1; i >= 0; --i) {
-                let clipper = new ClipperLib.Clipper();
-                const elem =selectedElements[i];
-                if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
-                    tagNameMap = {
-                        'g': LANG.tag.g,
-                        'use': LANG.tag.use,
-                        'image': LANG.tag.image,
-                        'text': LANG.tag.text
-                    };
-                    Alert.popUp({
-                        id: 'Boolean Operate',
-                        type: AlertConstants.SHOW_POP_ERROR,
-                        message: `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`,
-                    });
-                    return;
-                }
-                const dpath = svgedit.utilities.getPathDFromElement(elem);
-                const bbox = svgedit.utilities.getBBox(elem);
-                let rotation = {
-                    angle: svgedit.utilities.getRotationAngle(elem),
-                    cx: bbox.x + bbox.width / 2,
-                    cy: bbox.y + bbox.height / 2
-                };
-                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
-                if (i === len - 1) {
-                    solution_paths = paths;
-                } else {
-                    clipper.AddPaths(solution_paths, ClipperLib.PolyType.ptSubject, true);
-                    clipper.AddPaths(paths, ClipperLib.PolyType.ptClip, true);
-                    succeeded = clipper.Execute(clipType, solution_paths, subject_fillType, clip_fillType);
-                }
-                if (!succeeded) {
-                    break;
-                }
-            }
-
-            if (succeeded) {
-                let d = '';
-                for (let i = 0; i < solution_paths.length; ++i) {
-                    d += 'M';
-                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                    d += ' Z'
-                }
-                const base = selectedElements[len-1];
-                const fill = $(base).attr('fill');
-                const fill_opacity = $(base).attr('fill-opacity');
-                element = addSvgElementFromJson({
-                    element: 'path',
-                    curStyles: false,
-                    attr: {
-                        id: getNextId(),
-                        d: d,
-                        stroke: '#000',
-                        fill: fill,
-                        'fill-opacity': fill_opacity,
-                        opacity: cur_shape.opacity
-                    }
-                });
-                if (this.isUsingLayerColor) {
-                    this.updateElementColor(element);
-                }
-            } else {
-                console.log('Clipper not succeeded');
-                return;
-            }
-            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(element));
-            let cmd = this.deleteSelectedElements();
-            batchCmd.addSubCommand(cmd);
-            canvas.undoMgr.undoStackPointer -= 1;
-            canvas.undoMgr.undoStack.pop();
-            addCommandToHistory(batchCmd);
-            this.selectOnly([element], true);
-            //console.log(canvas.undoMgr);
-        }
 
         this.flipSelectedElements = async function (horizon=1, vertical=1) {
             let len = selectedElements.length;
