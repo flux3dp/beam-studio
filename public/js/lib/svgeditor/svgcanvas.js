@@ -446,10 +446,16 @@ define([
                         if (cmdType === InsertElementCommand.type()) {
                             if (isApply) {
                                 restoreRefElems(cmd.elem);
+                                if (cmd.elem.id === 'svgcontent') {
+                                    svgcontent = cmd.elem;
+                                }
                             }
                         } else {
                             if (!isApply) {
                                 restoreRefElems(cmd.elem);
+                                if (cmd.elem.id === 'svgcontent') {
+                                    svgcontent = cmd.elem;
+                                }
                             }
                         }
                         if (cmd.elem.tagName === 'use') {
