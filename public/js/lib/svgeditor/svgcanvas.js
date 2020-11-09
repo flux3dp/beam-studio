@@ -9181,6 +9181,7 @@ define([
                     opacity: cur_shape.opacity
                 }
             });
+            pathActions.fixEnd(element);
             if (this.isUsingLayerColor) {
                 this.updateElementColor(element);
             }
@@ -9336,6 +9337,7 @@ define([
                     opacity: cur_shape.opacity
                 }
             });
+            pathActions.fixEnd(newElem);
             batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(newElem));
             if (this.isUsingLayerColor) {
                 this.updateElementColor(newElem);
