@@ -243,6 +243,7 @@ export default {
         trace_output: 'ベクトル化/トレース画像出力',
         single_object: '単一のオブジェクト',
         grouped_objects: 'グループ化されたオブジェクト',
+        simplify_clipper_path: '計算されたパスを最適化',
         mask: 'ワークエリアのクリッピング',
         text_path_calc_optimization: 'パス計算の最適化',
         font_substitute: 'サポートされていない文字を置き換える',
@@ -312,7 +313,8 @@ export default {
             save_unsave_changed: '未保存の変更を保存しますか？',
             dxf_bounding_box_size_over: '図面サイズがワークエリア外です。図面をCADソフトウェアの原点に近づけるか、単位が正しく設定されていることを確認してください。',
             progress: {
-                uploading: 'Uploading'
+                uploading: 'アップロード中',
+                calculating: '計算中',
             },
             backend_connect_failed_ask_to_upload: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
             pdf2svg: {

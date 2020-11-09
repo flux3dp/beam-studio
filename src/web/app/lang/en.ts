@@ -243,6 +243,7 @@ export default {
         trace_output: 'Image Trace Output',
         single_object: 'Single Object',
         grouped_objects: 'Grouped Objects',
+        simplify_clipper_path: 'Optimize the Calculated Path',
         mask: 'Workarea Clipping',
         text_path_calc_optimization: 'Path Calculation Optimization',
         font_substitute: 'Substitute Unsupported Characters',
@@ -312,7 +313,8 @@ export default {
             save_unsave_changed: 'Do you want to save unsaved changes?',
             dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD softwate, or make sure that the unit is set correctly.',
             progress: {
-                uploading: 'Uploading'
+                uploading: 'Uploading',
+                calculating: 'Calculating',
             },
             backend_connect_failed_ask_to_upload: '#802 Errors keeps occuring when trying to connect to the backend. Do you want to upload your bug report log?',
             pdf2svg: {

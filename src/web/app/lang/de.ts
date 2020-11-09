@@ -243,6 +243,7 @@ export default {
         trace_output: 'Bildverfolgungsausgabe',
         single_object: 'Einzelobjekt',
         grouped_objects: 'Gruppierte Objekte',
+        simplify_clipper_path: 'Optimieren Sie den berechneten Pfad',
         mask: 'Arbeitsbereich-Ausschnitt',
         text_path_calc_optimization: 'Optimierung der Pfadberechnung',
         font_substitute: 'Ersetzen Sie nicht unterstützte Zeichen',
@@ -312,7 +313,8 @@ export default {
             save_unsave_changed: 'Nicht gespeicherte Änderungen speichern?',
             dxf_bounding_box_size_over: 'Die Zeichnungsgröße ist außerhalb des Arbeitsbereichs. Bewege bitte deine Zeichnung näher an den Ursprung in Ihrer CAD-Software oder stelle sicher, dass das Gerät richtig eingestellt ist.',
             progress: {
-                uploading: 'Hochladen'
+                uploading: 'Hochladen',
+                calculating: 'Berechnen',
             },
             backend_connect_failed_ask_to_upload: '#802 Beim Versuch, eine Verbindung zum Server herzustellen, treten immer wieder Fehler auf. Möchtest du Ihr Fehlerberichtsprotokoll hochladen?',
             pdf2svg: {

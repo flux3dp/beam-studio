@@ -9139,9 +9139,26 @@ define([
             }
             let d = '';
             for (let i = 0; i < solution_paths.length; ++i) {
-                d += 'M';
-                d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                d += ' Z';
+                if (!BeamboxPreference.read('simplify_clipper_path')) {
+                    d += 'M';
+                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                    d += ' Z';
+                } else {
+                    d += 'M';
+                    const points = solution_paths[i].map(p => {
+                        return { x: Math.floor(100 *(p.X / scale)) / 100, y: Math.floor(100 *(p.Y / scale)) / 100 } ;
+                    });
+                    const segs = BezierFitCurve.fitPath(points);
+                    for (let j = 0; j < segs.length; j++) {
+                        const seg = segs[j];
+                        if (j === 0) {
+                            d += `${seg.points[0].x},${seg.points[0].y}`;
+                        }
+                        const pointsString = seg.points.slice(1).map((p) => `${p.x},${p.y}`).join(' ');
+                        d += `${seg.type}${pointsString}`;
+                    }
+                    d += 'Z';
+                }
             }
             const base = selectedElements[len-1];
             const fill = $(base).attr('fill');
@@ -9174,10 +9191,21 @@ define([
             return batchCmd;
         }
 
-        // Function: offsetElements
-        // Create offset of elements
-        // dir: direction 0: inward 1: outward; dist: offset distance; cornerType: cornerType; elem: target, selected if not passed;
-        this.offsetElements = (dir, dist, cornerType, elems) => {
+        /** Function: offsetElements
+         * Create offset of elements
+         * @param {number} dir direction 0: inward 1: outward;
+         * @param {number} dist offset distance;
+         * @param {string} cornerType 'round' or 'sharp';
+         * @param {SVGElement} elem target, selected if not passed;
+         */
+        this.offsetElements = async (dir, dist, cornerType, elems) => {
+            Progress.openNonstopProgress({
+                id: 'offset-path',
+                message: LANG.popup.progress.calculating,
+            });
+            await new Promise((resolve) => {
+                setTimeout(() => resolve(), 100);
+            });
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9243,6 +9271,7 @@ define([
             } else {
                 solution_paths = solution_paths.slice(1);
             }
+            Progress.popById('offset-path');
             if (solution_paths.length === 0 || !solution_paths[0]) {
                 if (isContainNotSupportTag) {
                     Alert.popUp({
@@ -9269,9 +9298,26 @@ define([
             }
             let d = '';
             for (let i = 0; i < solution_paths.length; ++i) {
-                d += 'M';
-                d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                d += ' Z'
+                if (!BeamboxPreference.read('simplify_clipper_path')) {
+                    d += 'M';
+                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                    d += ' Z';
+                } else {
+                    d += 'M';
+                    const points = solution_paths[i].map(p => {
+                        return { x: Math.floor(100 *(p.X / scale)) / 100, y: Math.floor(100 *(p.Y / scale)) / 100 } ;
+                    });
+                    const segs = BezierFitCurve.fitPath(points);
+                    for (let j = 0; j < segs.length; j++) {
+                        const seg = segs[j];
+                        if (j === 0) {
+                            d += `${seg.points[0].x},${seg.points[0].y}`;
+                        }
+                        const pointsString = seg.points.slice(1).map((p) => `${p.x},${p.y}`).join(' ');
+                        d += `${seg.type}${pointsString}`;
+                    }
+                    d += 'Z';
+                }
             }
             const newElem = addSvgElementFromJson({
                 element: 'path',
@@ -9316,7 +9362,6 @@ define([
                     'stroke-opacity': $(elem).attr('stroke-opacity') || '1',
                     'fill-opacity': $(elem).attr('fill-opacity') || '0',
                 }
-                //console.log(attrs);
                 const dAbs = svgedit.utilities.convertPath(elem);
                 // Make sure all pathseg is abs
                 const segList = elem.pathSegList._parsePath(dAbs);

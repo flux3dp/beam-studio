@@ -243,6 +243,7 @@ export default {
         trace_output: '向量化及影像描图输出',
         single_object: '单一物件',
         grouped_objects: '多个物件群组',
+        simplify_clipper_path: '路径计算优化',
         mask: '工作范围剪裁',
         text_path_calc_optimization: '路径计算优化',
         font_substitute: '自动替换字体',
@@ -312,7 +313,8 @@ export default {
             save_unsave_changed: '请问是否要储存未储存的变更，否则变更将会遗失？',
             dxf_bounding_box_size_over: '图像超出工作范围，请在 CAD 软体中将图像放置于原点附近，或确定图档单位是否正确设定。',
             progress: {
-                uploading: '上传中'
+                uploading: '上传中',
+                calculating: '计算中',
             },
             backend_connect_failed_ask_to_upload: '#802 连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
             pdf2svg: {

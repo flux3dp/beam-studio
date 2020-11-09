@@ -243,6 +243,7 @@ export default {
         trace_output: 'Salida de Trazado / Imagen de rastro',
         single_object: 'Objeto único',
         grouped_objects: 'Objetos agrupados',
+        simplify_clipper_path: 'Optimizar la trayectoria calculada',
         mask: 'Recorte del área de trabajo',
         text_path_calc_optimization: 'Optimización del cálculo de la trayectoria',
         font_substitute: 'sustituir los caracteres no compatibles',
@@ -312,7 +313,8 @@ export default {
             save_unsave_changed: '¿Quieres guardar los cambios no guardados?',
             dxf_bounding_box_size_over: 'El tamaño del dibujo está fuera del área de trabajo. Por favor, acerca tu dibujo al origen en tu software de CAD, o asegúrate de que la unidad esté ajustada correctamente.',
             progress: {
-                uploading: 'Cargando'
+                uploading: 'Cargando',
+                calculating: 'Calculando',
             },
             backend_connect_failed_ask_to_upload: '#802 Los errores siguen ocurriendo cuando se intenta conectar con el backend. ¿Quieres tubir tu registro de informe de errores?',
             pdf2svg: {

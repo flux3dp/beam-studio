@@ -319,6 +319,19 @@ class SettingGeneral extends React.Component{
             }
         ];
 
+        const simplifyClipperPath = [
+            {
+                value: 'true',
+                label: lang.settings.on,
+                selected: this._getBeamboxPreferenceEditingValue('simplify_clipper_path')
+            },
+            {
+                value: 'false',
+                label: lang.settings.off,
+                selected: !this._getBeamboxPreferenceEditingValue('simplify_clipper_path')
+            }
+        ];
+
         const fastGradientOptions = [
             {
                 value: 'false',
@@ -578,7 +591,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={defaultBeamboxModelOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('model', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('model', e.target.value)}
                     />
                 </Controls>
 
@@ -587,7 +600,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={guideSelectionOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('show_guides', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('show_guides', e.target.value)}
                     />
                 </Controls>
                 <Controls label={lang.settings.guides_origin}>
@@ -617,7 +630,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={imageDownsamplingOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
                     />
                 </Controls>
 
@@ -625,7 +638,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={continuousDrawingOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
                     />
                 </Controls>
 
@@ -633,7 +646,15 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={unionAfterTraceOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('union_after_trace', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('union_after_trace', e.target.value)}
+                    />
+                </Controls>
+
+                <Controls label={lang.settings.simplify_clipper_path}>
+                    <SelectView
+                        className='font3'
+                        options={simplifyClipperPath}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('simplify_clipper_path', e.target.value)}
                     />
                 </Controls>
 
@@ -643,7 +664,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={fastGradientOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('fast_gradient', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('fast_gradient', e.target.value)}
                     />
                 </Controls>
 
@@ -653,7 +674,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={vectorSpeedConstraintOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('vector_speed_contraint', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('vector_speed_contraint', e.target.value)}
                     />
                 </Controls>
 
@@ -688,7 +709,7 @@ class SettingGeneral extends React.Component{
                             <SelectView
                                 className='font3'
                                 options={precutSwitchOptions}
-                                onChange={e => this._updateBeamboxPreferenceChange('blade_precut', e.target.value)}
+                                onChange={(e) => this._updateBeamboxPreferenceChange('blade_precut', e.target.value)}
                             />
                         </Controls>
 
@@ -724,7 +745,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={maskOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('enable_mask', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('enable_mask', e.target.value)}
                     />
                 </Controls>
 
@@ -735,7 +756,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={textToPathOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
                     />
                 </Controls>
 
@@ -744,7 +765,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={fontSubstituteOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('font-substitute', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('font-substitute', e.target.value)}
                     />
                 </Controls>
 
@@ -755,7 +776,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={borderlessModeOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('default-borderless', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('default-borderless', e.target.value)}
                     />
                 </Controls>
 
@@ -764,7 +785,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={autofocusModuleOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
                     />
                 </Controls>
 
@@ -773,7 +794,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={diodeModuleOptions}
-                        onChange={e => this._updateBeamboxPreferenceChange('default-diode', e.target.value)}
+                        onChange={(e) => this._updateBeamboxPreferenceChange('default-diode', e.target.value)}
                     />
                 </Controls>
 
