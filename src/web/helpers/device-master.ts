@@ -561,6 +561,15 @@ class DeviceMaster {
         return SocketMaster.addTask('rawSetAirPump', on);
     }
 
+    rawLooseMotor() {
+        const vc = VersionChecker(this.currentDevice.info.version);
+        if (vc.meetRequirement('B34_LOOSE_MOTOR')) {
+            return SocketMaster.addTask('rawLooseMotorB34');
+        } else {
+            return SocketMaster.addTask('rawLooseMotorB12');
+        }
+    }
+
     enterRawMode() {
         return SocketMaster.addTask('enterRawMode');
     }

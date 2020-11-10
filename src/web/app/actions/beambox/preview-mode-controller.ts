@@ -104,6 +104,7 @@ class PreviewModeController {
             if (this.isLineCheckEnabled) {
                 await DeviceMaster.rawEndLineCheckMode();
             }
+            await DeviceMaster.rawLooseMotor();
             await DeviceMaster.endRawMode();
             if (this.originalSpeed !== 1) {
                 await DeviceMaster.setLaserSpeed(this.originalSpeed);
@@ -251,7 +252,6 @@ class PreviewModeController {
             scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
             scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
         };
-        console.log(`Got ${configName}`, this.cameraOffset);
         if ((this.cameraOffset.x === 0) && (this.cameraOffset.y === 0)) {
             this.cameraOffset = {
                 x: Constant.camera.offsetX_ideal,
@@ -261,6 +261,7 @@ class PreviewModeController {
                 scaleRatioY: Constant.camera.scaleRatio_ideal,
             };
         }
+        console.log(`Got ${configName}`, this.cameraOffset);
     }
 
     _getCameraOffset() {

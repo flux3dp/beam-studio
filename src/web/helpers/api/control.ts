@@ -860,7 +860,7 @@ class Control {
                 responseString += response.text;
             }
             const resps = responseString.split('\n');
-            if (resps.some((resp) => resp.startsWith('ok'))) {
+            if (resps.some((resp) => resp.includes('ok'))) {
                 d.resolve(response);
             } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
                 d.reject(response);
@@ -981,7 +981,7 @@ class Control {
         }
     }
 
-    rawSetAirPump(on) {
+    rawSetAirPump(on: boolean) {
         const command = on ? 'B3' : 'B4';
         if (!this.isLineCheckMode) {
             return this.useDefaultResponse(command);
@@ -990,7 +990,7 @@ class Control {
         }
     }
 
-    rawSetFan(on) {
+    rawSetFan(on: boolean) {
         const command = on ? 'B5' : 'B6';
         if (!this.isLineCheckMode) {
             return this.useDefaultResponse(command);
@@ -999,9 +999,31 @@ class Control {
         }
     }
 
-    rawSetRotary (on) {
-        const command = on ? 'R1\n' : 'R0\n';
+    rawSetRotary (on: boolean) {
+        const command = on ? 'R1' : 'R0';
         return this.useDefaultResponse(command);
+    }
+
+    async rawLooseMotorB12 () {
+        await this.useDefaultResponse('$1=0');
+        const command = 'B12';
+        if (!this.isLineCheckMode) {
+            await this.useDefaultResponse(command);
+        } else {
+            await this.rawLineCheckCommand(command);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        const res = await this.useDefaultResponse('$1=255');
+        return res;
+    }
+
+    rawLooseMotorB34 () {
+        const command = 'B34';
+        if (!this.isLineCheckMode) {
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
     }
 
     enterRawMode() {

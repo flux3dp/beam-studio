@@ -57,20 +57,35 @@ function SocketMaster() {
             clearTimeout(t);
         }
 
-        _ws[fnName](...task.args).then((result) => {
-            processing = false;
-            task.d.resolve(result);
-            doNext();
-        }).progress((result) => {
-            clearTimeout(t);
-            task.d.notify(result);
-        }).fail((result) => {
-            processing = false;
-            task.d.reject(result);
-            doNext();
-        }).always(() => {
-            clearTimeout(t);
-        });
+        const promise = _ws[fnName](...task.args);
+        if (promise.progress) {
+            promise.then((result) => {
+                processing = false;
+                task.d.resolve(result);
+                doNext();
+            }).progress((result) => {
+                clearTimeout(t);
+                task.d.notify(result);
+            }).fail((result) => {
+                processing = false;
+                task.d.reject(result);
+                doNext();
+            }).always(() => {
+                clearTimeout(t);
+            });
+        } else {
+            promise.then((result) => {
+                processing = false;
+                task.d.resolve(result);
+                doNext();
+                clearTimeout(t);
+            }).catch((result) => {
+                processing = false;
+                task.d.reject(result);
+                doNext();
+                clearTimeout(t);
+            });
+        }
     };
 
     const doNext = () => {

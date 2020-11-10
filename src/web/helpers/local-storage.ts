@@ -1,6 +1,6 @@
 const Store = requireNode('electron-store');
 let store = new Store();
-
+window['store'] = store;
 function get(name: string): any {
     name = name || '';
 
