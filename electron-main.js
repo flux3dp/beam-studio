@@ -191,6 +191,7 @@ function createWindow () {
             preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
             nodeIntegration: true
         },
+        trafficLightPosition: { x: 12, y: 25 },
         vibrancy: 'light'});
 
     const store = new Store();
