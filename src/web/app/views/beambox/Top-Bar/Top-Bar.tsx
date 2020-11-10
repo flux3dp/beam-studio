@@ -163,7 +163,7 @@ export class TopBar extends React.PureComponent {
     }
 
     startPreviewModeController = async (device: IDeviceInfo) => {
-        const { setTopBarPreviewMode } = this.context;
+        const { setTopBarPreviewMode, startPreivewCallback, setStartPreviewCallback } = this.context;
         const workarea = window['workarea'];
         if (['fbm1', 'fbb1b', 'fbb1p'].includes(device.model) && device.model !== BeamboxPreference.read('workarea')) {
             const res = await new Promise((resolve) => {
@@ -235,6 +235,10 @@ export class TopBar extends React.PureComponent {
                 $(workarea).css('cursor', 'auto');
             });
             $(workarea).css('cursor', 'url(img/camera-cursor.svg), cell');
+            if (startPreivewCallback) {
+                startPreivewCallback();
+                setStartPreviewCallback(null);
+            }
         } catch (error) {
             console.error(error);
             if (error.message && error.message.startsWith('Camera WS')) {
@@ -458,6 +462,14 @@ export class TopBar extends React.PureComponent {
         }
     }
 
+    resetStartPreviewCallback = () => {
+        const { startPreivewCallback, setStartPreviewCallback, updateTopBar } = this.context;
+        if (startPreivewCallback) {
+            setStartPreviewCallback(null);
+            updateTopBar();
+        }
+    }
+
     hideDeviceList = () => {
         this.setState({
             shouldShowDeviceList: false,
@@ -510,7 +522,10 @@ export class TopBar extends React.PureComponent {
         let list = (0 < options.length) ? options : (<div key="spinner-roller" className="spinner-roller spinner-roller-reverse" />);
         const menuClass = classNames('menu', deviceListType);
         return (
-            <Modal onClose={() => this.hideDeviceList()}>
+            <Modal onClose={() => {
+                this.resetStartPreviewCallback();
+                this.hideDeviceList();
+            }}>
                 <div className={menuClass}>
                     <div className={classNames('arrow', {'arrow-left': deviceListType === 'camera', 'arrow-right': deviceListType === 'export'})} />
                     <div className="device-list">

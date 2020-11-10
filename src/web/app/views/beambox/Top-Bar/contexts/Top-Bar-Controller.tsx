@@ -7,7 +7,7 @@ const updateTopBar = () => {
     } else {
         TopBarContextHelper.context.updateTopBar();
     }
-}
+};
 
 const setElement = (elem) => {
     if (!TopBarContextHelper.context) {
@@ -15,7 +15,7 @@ const setElement = (elem) => {
     } else {
         TopBarContextHelper.context.setElement(elem);
     }
-}
+};
 
 const setFileName = (fileName) => {
     if (!TopBarContextHelper.context) {
@@ -23,7 +23,7 @@ const setFileName = (fileName) => {
     } else {
         TopBarContextHelper.context.setFileName(fileName);
     }
-}
+};
 
 const setHasUnsavedChange = (hasUnsavedChange) => {
     if (!TopBarContextHelper.context) {
@@ -31,7 +31,7 @@ const setHasUnsavedChange = (hasUnsavedChange) => {
     } else {
         TopBarContextHelper.context.setHasUnsavedChange(hasUnsavedChange);
     }
-}
+};
 
 const setTopBarPreviewMode = (isPreviewMode) => {
     if (!TopBarContextHelper.context) {
@@ -39,7 +39,7 @@ const setTopBarPreviewMode = (isPreviewMode) => {
     } else {
         TopBarContextHelper.context.setTopBarPreviewMode(isPreviewMode);
     }
-}
+};
 
 const getTopBarPreviewMode = () => {
     if (!TopBarContextHelper.context) {
@@ -48,7 +48,7 @@ const getTopBarPreviewMode = () => {
     } else {
         return TopBarContextHelper.context.getTopBarPreviewMode();
     }
-}
+};
 
 const setShouldStartPreviewController = (shouldStartPreviewController) => {
     if (!TopBarContextHelper.context) {
@@ -56,7 +56,15 @@ const setShouldStartPreviewController = (shouldStartPreviewController) => {
     } else {
         TopBarContextHelper.context.setShouldStartPreviewController(shouldStartPreviewController);
     }
-}
+};
+
+const setStartPreviewCallback = (callback?: Function|null) => {
+    if (!TopBarContextHelper.context) {
+        console.log('TopBar is not mounted now.');
+    } else {
+        TopBarContextHelper.context.setStartPreviewCallback(callback);
+    }
+};
 
 export default {
     updateTopBar,
@@ -66,4 +74,5 @@ export default {
     setTopBarPreviewMode,
     getTopBarPreviewMode,
     setShouldStartPreviewController,
+    setStartPreviewCallback,
 };

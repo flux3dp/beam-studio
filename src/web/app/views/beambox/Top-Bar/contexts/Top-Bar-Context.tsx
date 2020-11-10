@@ -10,11 +10,13 @@ export interface ITopBarContext {
     setTopBarPreviewMode: (topBarPreviewMode: boolean) => void,
     getTopBarPreviewMode: () => boolean,
     setShouldStartPreviewController: (shouldStartPreviewController: boolean) => void,
+    setStartPreviewCallback: (callback?: Function|null) => void,
     isPreviewMode: boolean,
     fileName: string|null,
     selectedElem: Element|null,
     hasUnsavedChange: boolean,
     shouldStartPreviewController: boolean,
+    startPreivewCallback: Function|null,
 }
 
 export class TopBarContextProvider extends React.Component {
@@ -28,6 +30,7 @@ export class TopBarContextProvider extends React.Component {
         shouldStartPreviewController: boolean,
     };
     private isPreviewMode: boolean;
+    private startPreivewCallback: Function|null;
     private setState: (newState: any) => {};
 
     constructor(props) {
@@ -38,35 +41,36 @@ export class TopBarContextProvider extends React.Component {
             hasUnsavedChange: false,
             isDrawing: false,
             isDrawn: false,
-            shouldStartPreviewController: false
+            shouldStartPreviewController: false,
         }
+        this.startPreivewCallback = null;
     }
 
     updateTopBar = () => {
         this.setState(this.state);
     }
 
-    setHasUnsavedChange = (hasUnsavedChange) => {
-        this.setState({hasUnsavedChange});
+    setHasUnsavedChange = (hasUnsavedChange: boolean) => {
+        this.setState({ hasUnsavedChange });
     }
 
-    setElement = (elem) => {
-        this.setState({selectedElem: elem});
+    setElement = (elem: Element|null) => {
+        this.setState({ selectedElem: elem });
     }
 
-    setFileName = (fileName) => {
-        this.setState({fileName});
+    setFileName = (fileName: string) => {
+        this.setState({ fileName });
     }
 
-    setPreviewModeIsDrawing = (isDrawing) => {
-        this.setState({isDrawing})
+    setPreviewModeIsDrawing = (isDrawing: boolean) => {
+        this.setState({ isDrawing })
     }
 
-    setPreviewModeIsDrawn = (isDrawn) => {
-        this.setState({isDrawn})
+    setPreviewModeIsDrawn = (isDrawn: boolean) => {
+        this.setState({ isDrawn })
     }
 
-    setTopBarPreviewMode = (isPreviewMode) => {
+    setTopBarPreviewMode = (isPreviewMode: boolean) => {
         this.isPreviewMode = isPreviewMode;
     }
 
@@ -74,8 +78,16 @@ export class TopBarContextProvider extends React.Component {
         return this.isPreviewMode;
     }
 
-    setShouldStartPreviewController = (shouldStartPreviewController) => {
-        this.setState({shouldStartPreviewController});
+    setShouldStartPreviewController = (shouldStartPreviewController: boolean) => {
+        this.setState({ shouldStartPreviewController });
+    }
+
+    setStartPreviewCallback = (callback?: Function|null) => {
+        if (callback) {
+            this.startPreivewCallback = callback;
+        } else {
+            this.startPreivewCallback = null;
+        }
     }
 
     render() {
@@ -87,7 +99,9 @@ export class TopBarContextProvider extends React.Component {
             setTopBarPreviewMode,
             getTopBarPreviewMode,
             setShouldStartPreviewController,
+            setStartPreviewCallback,
             isPreviewMode,
+            startPreivewCallback,
         } = this;
         const {
             fileName,
@@ -104,7 +118,9 @@ export class TopBarContextProvider extends React.Component {
                 setTopBarPreviewMode,
                 getTopBarPreviewMode,
                 setShouldStartPreviewController,
+                setStartPreviewCallback,
                 isPreviewMode,
+                startPreivewCallback,
                 fileName,
                 selectedElem,
                 hasUnsavedChange,
@@ -116,4 +132,4 @@ export class TopBarContextProvider extends React.Component {
     }
 };
 
-export default {TopBarContextProvider, TopBarContext};
+export default { TopBarContextProvider, TopBarContext };

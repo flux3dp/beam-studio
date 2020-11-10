@@ -647,8 +647,6 @@ define([
             // Map of deleted reference elements
             removedElements = {},
 
-            justClearSelection = false,
-
             // Rotary Mode
             rotaryMode = BeamboxPreference.read('rotary_mode');
 
@@ -1624,9 +1622,6 @@ define([
                         if (right_click) {
                             started = false;
                         }
-                        if ($('#selectorGroup0').css('display') === 'inline') {
-                            justClearSelection = true;
-                        }
                         const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouse_target);
                         const isElemTempGroup = mouse_target.getAttribute('data-tempgroup') === 'true';
                         let layerSelectable = false;
@@ -1675,8 +1670,7 @@ define([
                             if (PreviewModeController.isPreviewMode()) {
                                 current_mode = 'preview';
                             } else if (TopBarController.getTopBarPreviewMode()) {
-                                started = false;
-                                TopBarController.setShouldStartPreviewController(true);
+                                current_mode = 'pre_preview';
                             } else {
                                 current_mode = 'multiselect';
                             }
@@ -2119,6 +2113,7 @@ define([
                             }
                         }
                         break;
+                    case 'pre_preview':
                     case 'preview':
                         real_x *= current_zoom;
                         real_y *= current_zoom;
@@ -2544,14 +2539,40 @@ define([
 
                 selectedElements = selectedElements.filter((e) => e !== null);
                 switch (current_mode) {
+                    case 'pre_preview':
+                        console.log('pre_preview');
+                        if (rubberBox != null) {
+                            rubberBox.setAttribute('display', 'none');
+                            curBBoxes = [];
+                        };
+                        current_mode = 'select';
+                        TopBarController.setStartPreviewCallback(() => {
+                            BeamboxActions.startDrawingPreviewBlob();
+                            if (PreviewModeController.isPreviewMode()) {
+                                if (start_x === real_x && start_y === real_y) {
+                                    PreviewModeController.preview(real_x, real_y, true, () => {
+                                        TopBarController.updateTopBar();
+                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                            TutorialController.handleNextStep();
+                                        }
+                                    });
+                                } else {
+                                    PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
+                                        TopBarController.updateTopBar();
+                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                            TutorialController.handleNextStep();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        TopBarController.setShouldStartPreviewController(true);
+                        break;
                     case 'preview':
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
                         };
-                        if (justClearSelection) {
-                            justClearSelection = false;
-                        } 
                         BeamboxActions.startDrawingPreviewBlob();
                         if (PreviewModeController.isPreviewMode()) {
                             if (start_x === real_x && start_y === real_y) {
@@ -2571,9 +2592,6 @@ define([
                             }
                         }
                         current_mode = 'select';
-                        $('.tool-btn').removeClass('active');
-                        $('#left-Cursor').addClass('active');
-                        $('#left-Shoot').addClass('active');
                         // intentionally fall-through to select here
                     case 'resize':
                     case 'multiselect':
