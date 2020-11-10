@@ -2540,7 +2540,6 @@ define([
                 selectedElements = selectedElements.filter((e) => e !== null);
                 switch (current_mode) {
                     case 'pre_preview':
-                        console.log('pre_preview');
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
@@ -2567,7 +2566,7 @@ define([
                             }
                         });
                         TopBarController.setShouldStartPreviewController(true);
-                        break;
+                        return;
                     case 'preview':
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
