@@ -1,13 +1,9 @@
 import $ from 'jquery';
-import DefaultMachine from '../../../actions/default-machine';
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
 import Alert from '../../../contexts/AlertCaller';
 import AlertConstants from '../../../constants/alert-constants';
 import { ConnectionError } from '../../../constants/connection-constants';
-import DeviceConstants from '../../../constants/device-constants';
 import Progress from '../../../contexts/ProgressCaller';
-import ProgressActions from '../../../actions/progress-actions';
-import ProgressConstants from '../../../constants/progress-constants';
 import BeamboxActions from '../../../actions/beambox';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import ExportFuncs from '../../../actions/beambox/export-funcs';
@@ -26,7 +22,6 @@ import { IDeviceInfo } from '../../../../interfaces/IDevice';
 import AlertConfig from '../../../../helpers/api/alert-config';
 import Discover from '../../../../helpers/api/discover';
 import checkDeviceStatus from '../../../../helpers/check-device-status';
-import DeviceList from '../../../../helpers/device-list';
 import DeviceMaster from '../../../../helpers/device-master';
 import LocalStorage from '../../../../helpers/local-storage';
 import sprintf from '../../../../helpers/sprintf';
@@ -34,7 +29,6 @@ import SymbolMaker from '../../../../helpers/symbol-maker';
 import VersionChecker from '../../../../helpers/version-checker';
 import * as i18n from '../../../../helpers/i18n';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
-import AlertCaller from '../../../contexts/AlertCaller';
 import { Model } from 'backbone';
 let svgCanvas;
 let svgEditor;
@@ -119,13 +113,6 @@ export class TopBar extends React.PureComponent {
                     <img src="img/top-bar/icon-camera.svg" draggable={false}/>
                 </div>
                 {isPreviewing ? <div className="title" onClick={() => this.showCameraPreviewDeviceList()}>{previewText}</div> : null}
-                {isPreviewing ?
-                    <div className='cross-wrapper' onClick={this.endPreviewMode}>
-                        <div className="bars bar1 shadow"></div>
-                        <div className="bars bar2 shadow"></div>
-                        <div className="bars bar1"></div>
-                    </div>
-                    : null}
             </div>
         );
     }
