@@ -114,6 +114,7 @@ interface ISVGEditor {
     putLocale(lang: string | number | string[], good_langs: any[])
     randomizeIds: () => void
     readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>
+    readImage: (file: any, scale?: number, offset?: any) => Promise<unknown>,
     replaceBitmap: any
     runCallbacks: () => void
     savePreferences: () => void
@@ -265,6 +266,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             putLocale: (lang: string | number | string[], good_langs: any[]) => {},
             randomizeIds: () => {},
             readSVG: async (blob: any, type: any, layerName: any) => {},
+            readImage: async (file: any, scale?: number, offset?: any) => {},
             replaceBitmap: null,
             runCallbacks: () => {},
             savePreferences: () => {},
@@ -5700,6 +5702,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         reader.readAsArrayBuffer(file);
                     });
                 }
+                editor.readImage = readImage;
                 const replaceBitmap = async (file, imageElem) => {
                     Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
                     return new Promise((resolve, reject) => {

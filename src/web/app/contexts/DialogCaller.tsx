@@ -8,6 +8,7 @@ import CameraCalibration from '../views/beambox/Camera-Calibration'
 import DiodeCalibration from '../views/beambox/Diode-Calibration'
 import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel'
 import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel';
+import NounProjectPanel from '../views/beambox/Noun-Project-Panel';
 import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel';
 import LayerColorConfigPanel from '../views/beambox/Layer-Color-Config';
 import SvgNestButtons from '../views/beambox/Svg-Nest-Buttons';
@@ -107,9 +108,15 @@ export default {
         addDialogComponent('network-test',
             <NetworkTestingPanel
                 ip={ip}
-                onClose={() => {
-                    popDialogById('network-test')
-                }}
+                onClose={() => popDialogById('network-test')}
+            />
+        );
+    },
+    showNounProjectPanel: () => {
+        if (isIdExist('noun-project')) return;
+        addDialogComponent('noun-project',
+            <NounProjectPanel
+                onClose={() => popDialogById('noun-project')}
             />
         );
     },
