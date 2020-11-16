@@ -988,6 +988,7 @@ define([
                 let d = $.Deferred();
                 let isCmdResent = false;
                 let responseString = '';
+                let retryTimes = 0;
                 events.onMessage = (response) => {
                     console.log('raw homing:\t', response.text);
                     if (response && response.status === 'raw') {
@@ -996,9 +997,16 @@ define([
                     const resps = responseString.split('\n');
                     if (resps.some((resp) => resp.startsWith('ok'))) {
                         d.resolve(response);
-                    } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
-                        d.reject(response);
-                    } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
+                    } else if (
+                        response.text.indexOf('ER:RESET') >= 0 ||
+                        resps.some((resp) => resp.includes('ER:RESET')) ||
+                        response.text.indexOf('error:') >= 0 ||
+                        resps.some((resp) => resp.includes('error:'))
+                    ) {
+                        if (retryTimes >= 5) {
+                            d.reject(response);
+                            return;
+                        }
                         // Resend command for error code
                         const errorCode = parseInt(response.text.substring(6));
                         switch (errorCode) {
@@ -1008,6 +1016,7 @@ define([
                                     setTimeout(() => {
                                         isCmdResent = false;
                                         ws.send('raw home');
+                                        retryTimes += 1;
                                     }, 200);
                                 }
                         }
