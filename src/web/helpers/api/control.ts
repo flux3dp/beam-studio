@@ -863,21 +863,15 @@ class Control {
             const resps = responseString.split('\n');
             if (resps.some((resp) => resp.includes('ok'))) {
                 d.resolve(response);
-            } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
+            } else if (
+                response.text.indexOf('ER:RESET') >= 0 ||
+                resps.some((resp) => resp.includes('ER:RESET')) ||
+                response.text.indexOf('error:') >= 0 ||
+                resps.some((resp) => resp.includes('error:'))
+            ) {
                 if (retryTimes > 5) {
                     d.reject(response);
-                }
-                if (!isCmdResent) {
-                    isCmdResent = true;
-                    setTimeout(() => {
-                        isCmdResent = false;
-                        this.ws.send('raw home');
-                        retryTimes += 1
-                    }, 200);
-                }
-            } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
-                if (retryTimes > 5) {
-                    d.reject(response);
+                    return;
                 }
                 if (!isCmdResent) {
                     isCmdResent = true;
@@ -901,6 +895,7 @@ class Control {
         let isCmdResent = false;
         let responseString = '';
         const command = '$@';
+        let retryTimes = 0;
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
                 console.log('raw line check:\t', response.text);
@@ -914,9 +909,11 @@ class Control {
                 this.currentLineNumber = 1;
                 d.resolve();
             }
-            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
-                d.reject(response);
-            } else if (response.text.indexOf('error:') >= 0) {
+            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {
+                if (retryTimes >= 5) {
+                    d.reject(response);
+                    return;
+                }
                 // Resend command for error code
                 const errorCode = parseInt(response.text.substring(6));
                 switch (errorCode) {
@@ -927,6 +924,7 @@ class Control {
                                 isCmdResent = false;
                                 responseString = '';
                                 this.ws.send(command);
+                                retryTimes += 1;
                             }, 200);
                         }
                 }
@@ -943,6 +941,7 @@ class Control {
         let isCmdResent = false;
         let responseString = '';
         const command = 'M172';
+        let retryTimes = 0;
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
                 responseString += response.text;
@@ -954,10 +953,11 @@ class Control {
                 this.isLineCheckMode = false;
                 d.resolve();
             }
-            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
-                d.reject(response);
-            } else if (response.text.indexOf('error:') >= 0) {
-                // Resend command for error code
+            if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {
+                if (retryTimes >= 5) {
+                    d.reject(response);
+                    return;
+                }
                 const errorCode = parseInt(response.text.substring(6));
                 switch (errorCode) {
                     default:
@@ -967,6 +967,7 @@ class Control {
                                 isCmdResent = false;
                                 responseString = '';
                                 this.ws.send(command);
+                                retryTimes += 1;
                             }, 200);
                         }
                 }
