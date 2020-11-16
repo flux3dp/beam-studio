@@ -1,5 +1,5 @@
 import Modal from '../../widgets/Modal';
-import { DialogContext, DialogContextProvider } from '../../contexts/DialogContext';
+import { DialogContext, DialogContextProvider } from '../../contexts/Dialog-Context';
 
 const React = requireNode('react');
 let _contextCaller;

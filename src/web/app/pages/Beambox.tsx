@@ -10,8 +10,8 @@ import { TimeEstimationButton } from '../views/beambox/Time-Estimation-Button/Ti
 import { SVGEditor } from './svg-editor';
 import { AlertsAndProgress } from '../views/dialogs/AlertsAndProgress';
 import { Dialog } from '../views/dialogs/Dialog';
-import { AlertProgressContextProvider } from '../contexts/AlertProgressContext';
-import { DialogContextProvider } from '../contexts/DialogContext';
+import { AlertProgressContextProvider } from '../contexts/Alert-Progress-Context';
+import { DialogContextProvider } from '../contexts/Dialog-Context';
 
 const electron = window['electron'];
 const React = requireNode('react');

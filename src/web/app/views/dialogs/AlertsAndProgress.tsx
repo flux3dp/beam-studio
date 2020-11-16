@@ -1,7 +1,7 @@
 import ProgressConstants from '../../constants/progress-constants';
 import Modal from '../../widgets/Modal';
 import ButtonGroup from '../../widgets/Button-Group';
-import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/AlertProgressContext';
+import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/Alert-Progress-Context';
 import * as i18n from '../../../helpers/i18n';
 
 const React = requireNode('react');
