@@ -1288,7 +1288,7 @@ define([
             const elemsToSelect = [];
             for (let i = allLayers.length - 1; i >= 0; i--) {
                 const layerElement = allLayers[i].group_;
-                if (layerElement && layerElement.parentNode && layerElement.getAttribute('data-lock') !== 'true') {
+                if (layerElement && layerElement.parentNode && layerElement.getAttribute('data-lock') !== 'true' && layerElement.getAttribute('display') !== 'none') {
                     const elemsToAdd = Array.from(layerElement.childNodes).filter((node) => !['title', 'filter'].includes(node.tagName));
                     elemsToSelect.push(...elemsToAdd);
                 }
