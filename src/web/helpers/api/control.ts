@@ -854,6 +854,7 @@ class Control {
         let d = $.Deferred();
         let isCmdResent = false;
         let responseString = '';
+        let retryTimes = 0;
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
                 console.log('raw homing:\t', response.text);
@@ -863,13 +864,27 @@ class Control {
             if (resps.some((resp) => resp.includes('ok'))) {
                 d.resolve(response);
             } else if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET'))) {
-                d.reject(response);
-            } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
+                if (retryTimes > 5) {
+                    d.reject(response);
+                }
                 if (!isCmdResent) {
                     isCmdResent = true;
                     setTimeout(() => {
                         isCmdResent = false;
                         this.ws.send('raw home');
+                        retryTimes += 1
+                    }, 200);
+                }
+            } else if (response.text.indexOf('error:') >= 0 || resps.some((resp) => resp.includes('error:'))) {
+                if (retryTimes > 5) {
+                    d.reject(response);
+                }
+                if (!isCmdResent) {
+                    isCmdResent = true;
+                    setTimeout(() => {
+                        isCmdResent = false;
+                        this.ws.send('raw home');
+                        retryTimes += 1
                     }, 200);
                 }
             }
