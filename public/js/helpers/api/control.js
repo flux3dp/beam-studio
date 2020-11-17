@@ -987,38 +987,40 @@ define([
             rawHome: () => {
                 let d = $.Deferred();
                 let isCmdResent = false;
+                let didErrorOccur = false;
                 let responseString = '';
                 let retryTimes = 0;
                 events.onMessage = (response) => {
-                    console.log('raw homing:\t', response.text);
+                    console.log('raw homing:\t', responseString);
                     if (response && response.status === 'raw') {
                         responseString += response.text;
                     }
                     const resps = responseString.split('\n');
-                    if (resps.some((resp) => resp.startsWith('ok'))) {
+                    if (resps.some((resp) => resp.startsWith('ok')) && !didErrorOccur) {
                         d.resolve(response);
                     } else if (
                         response.text.indexOf('ER:RESET') >= 0 ||
-                        resps.some((resp) => resp.includes('ER:RESET')) ||
+                        response.text.indexOf('DEBUG: RESET') >= 0 ||
                         response.text.indexOf('error:') >= 0 ||
+                        resps.some((resp) => resp.includes('ER:RESET')) ||
+                        resps.some((resp) => resp.includes('DEBUG: RESET')) ||
                         resps.some((resp) => resp.includes('error:'))
                     ) {
+                        didErrorOccur = true;
                         if (retryTimes >= 5) {
-                            d.reject(response);
+                            d.reject(response.text);
                             return;
                         }
-                        // Resend command for error code
-                        const errorCode = parseInt(response.text.substring(6));
-                        switch (errorCode) {
-                            default:
-                                if (!isCmdResent) {
-                                    isCmdResent = true;
-                                    setTimeout(() => {
-                                        isCmdResent = false;
-                                        ws.send('raw home');
-                                        retryTimes += 1;
-                                    }, 200);
-                                }
+                        if (!isCmdResent) {
+                            isCmdResent = true;
+                            setTimeout(() => {
+                                isCmdResent = false;
+                                didErrorOccur = false;
+                                responseString = '';
+                                retryTimes += 1;
+                                ws.send('raw home');
+                                console.log('Raw home resent', retryTimes);
+                            }, 1000);
                         }
                     }
                 };
