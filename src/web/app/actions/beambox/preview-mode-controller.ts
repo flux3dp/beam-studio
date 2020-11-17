@@ -82,10 +82,12 @@ class PreviewModeController {
                 DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
-            if (this.isLineCheckEnabled) {
-                DeviceMaster.rawEndLineCheckMode();
-            }
+            // This may cause device master broken after homing failed, need to find out why
+            // if (this.isLineCheckEnabled) {
+            //     DeviceMaster.rawEndLineCheckMode();
+            // }
             DeviceMaster.endRawMode();
+            DeviceMaster.kick();
             throw error;
         } finally {
             Progress.popById('start-preview-mode');
@@ -110,6 +112,7 @@ class PreviewModeController {
                 await DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
+            DeviceMaster.kick();
         }
     }
 
@@ -274,7 +277,7 @@ class PreviewModeController {
         this.isPreviewBlocked = false;
         this.cameraOffset = null;
         this.lastPosition = [0, 0];
-        await DeviceMaster.disconnectCamera();
+        DeviceMaster.disconnectCamera();
     }
 
     _constrainPreviewXY(x, y) {

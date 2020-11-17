@@ -852,23 +852,27 @@ class Control {
 
     rawHome() {
         let d = $.Deferred();
+        let didErrorOccur = false;
         let isCmdResent = false;
         let responseString = '';
         let retryTimes = 0;
         this.commandCallback.onMessage = (response) => {
             if (response && response.status === 'raw') {
-                console.log('raw homing:\t', response.text);
                 responseString += response.text;
+                console.log('raw homing:\t', responseString);
             }
             const resps = responseString.split('\n');
-            if (resps.some((resp) => resp.includes('ok'))) {
+            if (resps.some((resp) => resp.includes('ok')) && !didErrorOccur) {
                 d.resolve(response);
             } else if (
                 response.text.indexOf('ER:RESET') >= 0 ||
-                resps.some((resp) => resp.includes('ER:RESET')) ||
+                response.text.indexOf('DEBUG: RESET') >= 0 ||
                 response.text.indexOf('error:') >= 0 ||
+                resps.some((resp) => resp.includes('ER:RESET')) ||
+                resps.some((resp) => resp.includes('DEBUG: RESET')) ||
                 resps.some((resp) => resp.includes('error:'))
             ) {
+                didErrorOccur = true;
                 if (retryTimes > 5) {
                     d.reject(response);
                     return;
@@ -876,10 +880,12 @@ class Control {
                 if (!isCmdResent) {
                     isCmdResent = true;
                     setTimeout(() => {
+                        didErrorOccur = false;
                         isCmdResent = false;
-                        this.ws.send('raw home');
+                        responseString = '';
                         retryTimes += 1
-                    }, 200);
+                        this.ws.send('raw home');
+                    }, 1000);
                 }
             }
             responseString = resps[resps.length - 1] || '';
@@ -914,19 +920,14 @@ class Control {
                     d.reject(response);
                     return;
                 }
-                // Resend command for error code
-                const errorCode = parseInt(response.text.substring(6));
-                switch (errorCode) {
-                    default:
-                        if (!isCmdResent) {
-                            isCmdResent = true;
-                            setTimeout(() => {
-                                isCmdResent = false;
-                                responseString = '';
-                                this.ws.send(command);
-                                retryTimes += 1;
-                            }, 200);
-                        }
+                if (!isCmdResent) {
+                    isCmdResent = true;
+                    setTimeout(() => {
+                        isCmdResent = false;
+                        responseString = '';
+                        this.ws.send(command);
+                        retryTimes += 1;
+                    }, 200);
                 }
             }
         };
@@ -958,18 +959,14 @@ class Control {
                     d.reject(response);
                     return;
                 }
-                const errorCode = parseInt(response.text.substring(6));
-                switch (errorCode) {
-                    default:
-                        if (!isCmdResent) {
-                            isCmdResent = true;
-                            setTimeout(() => {
-                                isCmdResent = false;
-                                responseString = '';
-                                this.ws.send(command);
-                                retryTimes += 1;
-                            }, 200);
-                        }
+                if (!isCmdResent) {
+                    isCmdResent = true;
+                    setTimeout(() => {
+                        isCmdResent = false;
+                        responseString = '';
+                        this.ws.send(command);
+                        retryTimes += 1;
+                    }, 200);
                 }
             }
         };
