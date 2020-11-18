@@ -57,9 +57,7 @@ export default {
         if (isIdExist('about-bs')) return;
         addDialogComponent('about-bs',
             <AboutBeamStudio
-                onClose={() => {
-                    popDialogById('about-bs')
-                }}
+                onClose={() => popDialogById('about-bs')}
             />
         );
     },
@@ -71,9 +69,7 @@ export default {
                     device={device}
                     model={'beamo'}
                     borderless={isBorderless}
-                    onClose={() => {
-                        popDialogById('camera-cali')
-                    }}
+                    onClose={() => popDialogById('camera-cali')}
                 />
             </Modal>
         );
@@ -85,9 +81,7 @@ export default {
                 <DiodeCalibration
                     device={device}
                     model={'beamo'}
-                    onClose={() => {
-                        popDialogById('diode-cali')
-                    }}
+                    onClose={() => popDialogById('diode-cali')}
                 />
             </Modal>
         );
@@ -140,9 +134,7 @@ export default {
                 mode={mode}
                 element={element}
                 src={src}
-                unmount={() => {
-                    popDialogById('photo-edit')
-                }}
+                unmount={() => popDialogById('photo-edit')}
             />
         );
     },
@@ -150,9 +142,7 @@ export default {
         if (isIdExist('layer-color-config')) return;
         addDialogComponent('layer-color-config',
             <LayerColorConfigPanel
-                onClose={() => {
-                    popDialogById('layer-color-config')
-                }}
+                onClose={() => popDialogById('layer-color-config')}
             />
         );
     },
@@ -160,9 +150,7 @@ export default {
         if (isIdExist('svg-nest')) return;
         addDialogComponent('svg-nest',
             <SvgNestButtons
-                onClose={() => {
-                    popDialogById('svg-nest')
-                }}
+                onClose={() => popDialogById('svg-nest')}
             />
         );
     },
@@ -185,9 +173,7 @@ export default {
         addDialogComponent(id,
             <Prompt
                 {...args}
-                onClose={() => {
-                    popDialogById(id);
-                }}
+                onClose={() => popDialogById(id)}
             />
         );
     },
@@ -200,15 +186,9 @@ export default {
                     caption={args.caption}
                     message={args.message}
                     confirmValue={args.confirmValue}
-                    onConfirmed={() => {
-                        resolve(true);
-                    }}
-                    onCanceled={() => {
-                        resolve(false);
-                    }}
-                    onClose={() => {
-                        popDialogById(id);
-                    }}
+                    onConfirmed={() => resolve(true)}
+                    onCanceled={() => resolve(false)}
+                    onClose={() => popDialogById(id)}
                 />
             );
         })
