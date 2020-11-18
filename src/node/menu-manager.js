@@ -31,29 +31,29 @@ function _buildOSXAppMenu(callback) {
 
 function _buildFileMenu(fnKey, callback) {
     let menuItems = [
-        { 'id': 'OPEN', label: r.open || 'Open', click: callback, 'accelerator': `${fnKey}+O` },
-        { 'id': 'RECENT', label: r.recent || 'Open Recent', submenu: []},
-        //{ 'id': 'TASK_INTERPRETER', label: 'Task Interpreter', click: callback},
+        { id: 'OPEN', label: r.open || 'Open', click: callback, 'accelerator': `${fnKey}+O` },
+        { id: 'RECENT', label: r.recent || 'Open Recent', submenu: []},
+        //{ id: 'TASK_INTERPRETER', label: 'Task Interpreter', click: callback},
         { type: 'separator' },
-        { 'id': 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` },
-        { 'id': 'SAVE_AS', label: r.save_as, click: callback, 'accelerator': `Shift+${fnKey}+S` },
+        { id: 'SAVE_SCENE', label: r.save_scene || 'Save Scene', click: callback, 'accelerator': `${fnKey}+S` },
+        { id: 'SAVE_AS', label: r.save_as, click: callback, 'accelerator': `Shift+${fnKey}+S` },
         { type: 'separator' },
-        { 'id': 'SAMPLES', label: r.samples || 'Examples', submenu: [
-            { 'id': 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
-            { 'id': 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave, click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old, click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut, click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut, click: callback },
-            { 'id': 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line, click: callback },
+        { id: 'SAMPLES', label: r.samples || 'Examples', submenu: [
+            { id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
+            { id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
+            { id: 'IMPORT_MATERIAL_TESTING_ENGRAVE', label: r.import_material_testing_engrave, click: callback },
+            { id: 'IMPORT_MATERIAL_TESTING_OLD', label: r.import_material_testing_old, click: callback },
+            { id: 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut, click: callback },
+            { id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut, click: callback },
+            { id: 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line, click: callback },
         ]},
         { type: 'separator' },
-        { 'id': 'EXPORT_TO', label: r.export_to || 'Export to', submenu: [
-            { 'id': 'EXPORT_BVG', label: 'BVG', click: callback},
-            { 'id': 'EXPORT_SVG', label: r.export_SVG, click: callback},
-            { 'id': 'EXPORT_PNG', label: 'PNG', click: callback},
-            { 'id': 'EXPORT_JPG', label: 'JPG', click: callback},
-            { 'id': 'EXPORT_FLUX_TASK', label: r.export_flux_task, click: callback, 'accelerator': `${fnKey}+E` }
+        { id: 'EXPORT_TO', label: r.export_to || 'Export to', submenu: [
+            { id: 'EXPORT_BVG', label: 'BVG', click: callback},
+            { id: 'EXPORT_SVG', label: r.export_SVG, click: callback},
+            { id: 'EXPORT_PNG', label: 'PNG', click: callback},
+            { id: 'EXPORT_JPG', label: 'JPG', click: callback},
+            { id: 'EXPORT_FLUX_TASK', label: r.export_flux_task, click: callback, 'accelerator': `${fnKey}+E` }
         ]}
     ];
 
@@ -83,45 +83,45 @@ function buildMenu(callback) {
         id: '_edit',
         label: r.edit,
         submenu: [
-            { 'id': 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
-            { 'id': 'REDO', label: r.redo || 'Redo', click: callback, 'accelerator': `${fnKey}+Shift+Z`},
+            { id: 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
+            { id: 'REDO', label: r.redo || 'Redo', click: callback, 'accelerator': `${fnKey}+Shift+Z`},
             { type:'separator'},
-            { 'id': 'CUT', label: r.cut, click: callback, 'accelerator': `${fnKey}+X`},
-            { 'id': 'COPY', label: r.copy, click: callback, 'accelerator': `${fnKey}+C`},
-            { 'id': 'PASTE', label: r.paste, click: callback, 'accelerator': `${fnKey}+V`},
-            { 'id': 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
+            { id: 'CUT', label: r.cut, click: callback, 'accelerator': `${fnKey}+X`},
+            { id: 'COPY', label: r.copy, click: callback, 'accelerator': `${fnKey}+C`},
+            { id: 'PASTE', label: r.paste, click: callback, 'accelerator': `${fnKey}+V`},
+            { id: 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { type:'separator'},
-            { 'id': 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
-            { 'id': 'UNGROUP', label: r.ungroup || 'Ungroup', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+G` },
+            { id: 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
+            { id: 'UNGROUP', label: r.ungroup || 'Ungroup', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+G` },
             { type:'separator'},
-            { 'id': 'PATH', label: r.path, enabled: false, submenu: [
-                { 'id': 'OFFSET', label: r.offset || 'Offset', click: callback},
-                { 'id': 'DECOMPOSE_PATH', label: r.decompose_path, enabled: false, click: callback},
+            { id: 'PATH', label: r.path, enabled: false, submenu: [
+                { id: 'OFFSET', label: r.offset || 'Offset', click: callback},
+                { id: 'DECOMPOSE_PATH', label: r.decompose_path, enabled: false, click: callback},
             ]},
-            { 'id': 'PHOTO_EDIT', label: r.photo_edit || 'Edit Photo', enabled: false, submenu: [
-                { 'id': 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
-                { 'id': 'IMAGE_CROP', label: r.image_crop, click: callback },
-                { 'id': 'IMAGE_INVERT', label: r.image_invert, click: callback },
-                { 'id': 'IMAGE_STAMP', label: r.image_stamp, click: callback },
-                { 'id': 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
-                { 'id': 'IMAGE_CURVE', label: r.image_curve, click: callback },
+            { id: 'PHOTO_EDIT', label: r.photo_edit || 'Edit Photo', enabled: false, submenu: [
+                { id: 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
+                { id: 'IMAGE_CROP', label: r.image_crop, click: callback },
+                { id: 'IMAGE_INVERT', label: r.image_invert, click: callback },
+                { id: 'IMAGE_STAMP', label: r.image_stamp, click: callback },
+                { id: 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
+                { id: 'IMAGE_CURVE', label: r.image_curve, click: callback },
             ]},
-            { 'id': 'SVG_EDIT', label: r.svg_edit || 'Edit Photo', enabled: false, submenu: [
-                { 'id': 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', click: callback },
+            { id: 'SVG_EDIT', label: r.svg_edit || 'Edit Photo', enabled: false, submenu: [
+                { id: 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', click: callback },
             ]},
-            { 'id': 'LAYER', label: r.layer_setting, submenu: [
-                { 'id': 'LAYER_COLOR_CONFIG', label: r.layer_color_config || 'Color Configuration', click: callback }
-            ]},
-            { type:'separator'},
-            { 'id': 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type:'checkbox'},
-            { type:'separator'},
-            { 'id': 'OPTIMIZATION', label: r.optimization, submenu: [
-                { 'id': 'SVG_NEST', label: r.arrangement_optimization, click: callback }
+            { id: 'LAYER', label: r.layer_setting, submenu: [
+                { id: 'LAYER_COLOR_CONFIG', label: r.layer_color_config || 'Color Configuration', click: callback }
             ]},
             { type:'separator'},
-            { 'id': 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback},
+            { id: 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type:'checkbox'},
+            { type:'separator'},
+            { id: 'OPTIMIZATION', label: r.optimization, submenu: [
+                { id: 'SVG_NEST', label: r.arrangement_optimization, click: callback }
+            ]},
+            { type:'separator'},
+            { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback},
             { type: 'separator' },
-            { 'id': 'CLEAR_SCENE', label: r.clear_scene || 'Clear Scene', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+X` },
+            { id: 'CLEAR_SCENE', label: r.clear_scene || 'Clear Scene', enabled: false, click: callback, 'accelerator': `${fnKey}+Shift+X` },
         ]
     });
 
@@ -130,14 +130,14 @@ function buildMenu(callback) {
         label: r.view,
         submenu: [
             // On menu 'cmd shift =' will be displayed as 'cmd +'
-            { 'id': 'ZOOM_IN', label: r.zoom_in || 'Zoom In', click: callback, 'accelerator': `${fnKey}+Shift+=`},
-            { 'id': 'ZOOM_OUT', label: r.zoom_out || 'Zoom Out', click: callback, 'accelerator': `${fnKey}+-`},
-            { 'id': 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback},
-            { 'id': 'ZOOM_WITH_WINDOW', label: r.zoom_with_window || 'Zoom With Window', click: callback, type:'checkbox'},
+            { id: 'ZOOM_IN', label: r.zoom_in || 'Zoom In', click: callback, 'accelerator': `${fnKey}+Shift+=`},
+            { id: 'ZOOM_OUT', label: r.zoom_out || 'Zoom Out', click: callback, 'accelerator': `${fnKey}+-`},
+            { id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback},
+            { id: 'ZOOM_WITH_WINDOW', label: r.zoom_with_window || 'Zoom With Window', click: callback, type:'checkbox'},
             { type:'separator'},
-            { 'id': 'SHOW_GRIDS', label: r.show_grids || 'Show Grids', click: callback, type:'checkbox', checked: true },
-            { 'id': 'SHOW_RULERS', label: r.show_rulers, click: callback, type:'checkbox' },
-            { 'id': 'SHOW_LAYER_COLOR', label: r.show_layer_color || 'Show Layer Color', click: callback, type:'checkbox'}
+            { id: 'SHOW_GRIDS', label: r.show_grids || 'Show Grids', click: callback, type:'checkbox', checked: true },
+            { id: 'SHOW_RULERS', label: r.show_rulers, click: callback, type:'checkbox' },
+            { id: 'SHOW_LAYER_COLOR', label: r.show_layer_color || 'Show Layer Color', click: callback, type:'checkbox'}
         ]
     });
 
@@ -145,7 +145,7 @@ function buildMenu(callback) {
         id: '_machines',
         label: r.machines || 'Machines',
         submenu: [
-            { 'id': 'ADD_NEW_MACHINE', label: r.add_new_machine || 'Add New Machine', 'accelerator': `${fnKey}+N`, click: callback},
+            { id: 'ADD_NEW_MACHINE', label: r.add_new_machine || 'Add New Machine', 'accelerator': `${fnKey}+N`, click: callback},
             { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
             {type: 'separator'}
         ]
