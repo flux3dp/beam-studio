@@ -329,7 +329,7 @@ define([
                 styleText = styleText.replace(/stroke-width: 1px !important;/g, `stroke-width: ${strokeWidth}px !important;`);
                 styleNode.textContent = styleText;
             });
-            tempUse.setAttribute('transform', `scale(${imageRatio})`);
+            tempUse.setAttribute('transform', `translate(${0.5 * strokeWidth}, ${0.5 * strokeWidth}), scale(${imageRatio})`);
 
             const svgString = new XMLSerializer().serializeToString(tempSvg);
             const svgBlob = await sendTaskToWorker({type: 'svgStringToBlob', svgString});
@@ -345,8 +345,8 @@ define([
                 imageSymbol.appendChild(image);
                 image.setAttribute('x', bb.x);
                 image.setAttribute('y', bb.y);
-                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
-                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
+                image.setAttribute('width', bb.width);
+                image.setAttribute('height', bb.height);
                 image.setAttribute('href', imageUrl);
                 imageSymbol.setAttribute('overflow', 'visible');
                 imageSymbol.setAttribute('id', `${symbol.id}_image`);
@@ -356,8 +356,8 @@ define([
                 const image = imageSymbol.firstChild;
                 const oldImageUrl = image.getAttribute('href');
                 URL.revokeObjectURL(oldImageUrl);
-                image.setAttribute('width', bb.width + (strokeWidth / imageRatio));
-                image.setAttribute('height', bb.height + (strokeWidth / imageRatio));
+                image.setAttribute('width', bb.width);
+                image.setAttribute('height', bb.height);
                 image.setAttribute('href', imageUrl);
             }
             resolve(imageSymbol);
