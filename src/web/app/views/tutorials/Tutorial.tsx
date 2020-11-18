@@ -129,17 +129,18 @@ class TutorialComponent extends React.Component {
             <DialogBox
                 {...dialogBoxStyles}
                 onClose={() => this.props.endTutorial()}
-            >
-                <div className="tutorial-dialog">
-                    {`${currentStep + 1}/${dialogStylesAndContents.length}\n`}
-                    {text}
-                    {subElement}
-                    { hasNextButton ? 
-                    <div className="next-button" onClick={() => handleNextStep()}>
-                        {LANG.next}
-                    </div> : null}
-                </div>
-            </DialogBox>
+                content={
+                    <div className="tutorial-dialog">
+                        {`${currentStep + 1}/${dialogStylesAndContents.length}\n`}
+                        {text}
+                        {subElement}
+                        { hasNextButton ?
+                        <div className="next-button" onClick={() => handleNextStep()}>
+                            {LANG.next}
+                        </div> : null}
+                    </div>
+                }
+            />
         );
     }
 
@@ -161,12 +162,14 @@ class TutorialComponent extends React.Component {
             return null;
         }
         const { holePosition, holeSize } = dialogStylesAndContents[currentStep];
+        const tutorialDialog = this.renderTutorialDialog();
+        const hintCircle = this.renderHintCircle();
         if (!holePosition) {
             return (
                 <Modal className={{'no-background': true}}>
                     <div className="tutorial-container">
-                        {this.renderTutorialDialog()}
-                        {this.renderHintCircle()}
+                        {tutorialDialog}
+                        {hintCircle}
                     </div>
                 </Modal>
             );
@@ -177,11 +180,10 @@ class TutorialComponent extends React.Component {
                 holeSize={holeSize}
             >
                 <div className="tutorial-container">
-                    {this.renderTutorialDialog()}
-                    {this.renderHintCircle()}
+                    {tutorialDialog}
+                    {hintCircle}
                 </div>
             </ModalWithHole>
-            
         );
     }
 };
@@ -214,9 +216,9 @@ export class Tutorial extends React.Component {
 }
 
 class ContextHelper {
-    static get _contextCaller() {
+    static get context() {
         return _contextCaller;
     }
 }
 
-export const TutorialContextCaller = ContextHelper._contextCaller;
+export const TutorialContextCaller = ContextHelper;

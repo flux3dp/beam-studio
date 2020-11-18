@@ -87,12 +87,12 @@ export default {
             },
             {
                 dialogBoxStyles: {
-                    position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 110},
+                    position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 140},
                     arrowDirection:'right'
                 },
-                holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
+                holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 125},
                 holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
-                hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
+                hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 121, width: Constant.rightPanelWidth - 12, height: 40},
                 text: LANG.newUser.set_preset_wood_engraving,
                 nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_ENGRAVING
             },
@@ -140,12 +140,12 @@ export default {
             },
             {
                 dialogBoxStyles: {
-                    position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 110},
+                    position: {right: Constant.rightPanelWidth - 2, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 140},
                     arrowDirection:'right'
                 },
-                holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 95},
+                holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 125},
                 holeSize: {width: Constant.rightPanelWidth - 22, height: 30},
-                hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 91, width: Constant.rightPanelWidth - 12, height: 40},
+                hintCircle: {right: 5, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 121, width: Constant.rightPanelWidth - 12, height: 40},
                 text: LANG.newUser.set_preset_wood_cut,
                 nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_CUTTING
             },

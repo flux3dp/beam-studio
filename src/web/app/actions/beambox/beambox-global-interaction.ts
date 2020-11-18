@@ -91,6 +91,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                     });
                 });
             },
+            'START_UI_INTRO': () => Tutorials.startInterfaceTutorial(() => {}),
             'ZOOM_IN': () => svgEditor.zoomIn(),
             'ZOOM_OUT': () => svgEditor.zoomOut(),
             'FITS_TO_WINDOW': () => svgEditor.resetView(),

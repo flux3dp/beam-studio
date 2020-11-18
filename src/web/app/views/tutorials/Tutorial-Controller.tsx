@@ -3,18 +3,19 @@ import { Tutorial, TutorialContextCaller } from './Tutorial';
 const React = requireNode('react');
 
 export const handleNextStep = () => {
-    if (!TutorialContextCaller) {
+    if (!TutorialContextCaller.context) {
         //console.log('Tutorial is not mounted now.');
     } else {
-        TutorialContextCaller.handleNextStep();
+        TutorialContextCaller.context.handleNextStep();
     }
 };
 
 export const getNextStepRequirement = () => {
-    if (!TutorialContextCaller) {
+    console.log(TutorialContextCaller.context);
+    if (!TutorialContextCaller.context) {
         //console.log('Tutorial is not mounted now.');
         return null;
     } else {
-        return TutorialContextCaller.getNextStepRequirement();
+        return TutorialContextCaller.context.getNextStepRequirement();
     }
 }
