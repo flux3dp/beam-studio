@@ -6359,9 +6359,6 @@ define([
                     }
                 }
 
-                const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
-                setHref(use_el, '#' + imageSymbol.id);
-
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(use_el));
 
                 return use_el;
@@ -6435,13 +6432,19 @@ define([
 
             const use_elements = (await Promise.all(symbols.map(async (symbol) => await appendUseElement(symbol, _type, layerName)))).filter((elem) => elem);
             use_elements.forEach(elem => {
-                if (this.isUsingLayerColor) {
-                    this.updateElementColor(elem);
-                }
                 $(use_elements).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
             });
 
-            use_elements.map(element => setDataXform(element, _type === 'image-trace'));
+            use_elements.forEach(element => setDataXform(element, _type === 'image-trace'));
+            await Promise.all(use_elements.map(async(element) => {
+                const ref_id = this.getHref(element);
+                const symbol = document.querySelector(ref_id);
+                const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
+                setHref(element, '#' + imageSymbol.id);
+                if (this.isUsingLayerColor) {
+                    this.updateElementColor(element);
+                }
+            }));
 
             removeDefaultLayerIfEmpty();
 

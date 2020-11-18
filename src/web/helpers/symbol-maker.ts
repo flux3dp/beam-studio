@@ -263,6 +263,36 @@ const sendTaskToWorker = async (data) => {
 
 let requestId = 0;
 
+// For debug, same as svgToImgUrlByShadowWindow
+const svgToImgUrl = async (data) => {
+    return new Promise<string>((resolve) => {
+        const {svgUrl, imgWidth: width, imgHeight: height, bb, imageRatio, id, strokeWidth} = data;
+        console.log(data);
+        const img = new Image(width + parseInt(strokeWidth), height + parseInt(strokeWidth));
+        img.onload = async () => {
+            const imgCanvas = document.createElement('canvas');
+            imgCanvas.width = img.width;
+            imgCanvas.height = img.height;
+            const ctx = imgCanvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            const outCanvas =  document.createElement('canvas');
+            outCanvas.width = Math.max(1, width);
+            outCanvas.height = Math.max(1, height);
+            const outCtx = outCanvas.getContext('2d');
+            outCtx.imageSmoothingEnabled = false;
+            outCtx.filter = 'brightness(0%)'
+            outCtx.drawImage(imgCanvas, 0, 0, outCanvas.width, outCanvas.height);
+            const imageBase64 = outCanvas.toDataURL('image/png');
+            const res = await fetch(imageBase64);
+            const imageBlob = await res.blob();
+            const imageUrl = URL.createObjectURL(imageBlob);
+            resolve(imageUrl);
+        }
+        img.src = svgUrl;
+    });
+}
+
 const svgToImgUrlByShadowWindow = async (data) => {
     return new Promise<string>((resolve, reject) => {
         data.id = requestId;
@@ -313,10 +343,10 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
             bb = JSON.parse(bbText);
         }
         const bbObject = {x: bb.x, y: bb.y, width: bb.width, height: bb.height};
-        tempSymbol.setAttribute('x', '' + -bbObject.x);
-        tempSymbol.setAttribute('y', '' + -bbObject.y);
         const imageRatio = calculateImageRatio(bb);
         const strokeWidth = getStrokeWidth(imageRatio, scale);
+        tempSymbol.setAttribute('x', `${-bbObject.x}`);
+        tempSymbol.setAttribute('y', `${-bbObject.y}`);
         const descendants = Array.from(tempSymbol.querySelectorAll('*'));
         descendants.forEach((d) => {
             d.setAttribute('stroke-width', `${strokeWidth}px`);
@@ -328,7 +358,7 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
             styleText = styleText.replace(/stroke-width: 1px !important;/g, `stroke-width: ${strokeWidth}px !important;`);
             styleNode.textContent = styleText;
         });
-        tempUse.setAttribute('transform', `scale(${imageRatio})`);
+        tempUse.setAttribute('transform', `translate(${0.5 * strokeWidth}, ${0.5 * strokeWidth}) scale(${imageRatio})`);
 
         const svgString = new XMLSerializer().serializeToString(tempSvg);
         const svgBlob = await sendTaskToWorker({type: 'svgStringToBlob', svgString});
@@ -345,8 +375,8 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
             imageSymbol.appendChild(image);
             image.setAttribute('x', String(bb.x));
             image.setAttribute('y', String(bb.y));
-            image.setAttribute('width', String(bb.width + (strokeWidth / imageRatio)));
-            image.setAttribute('height', String(bb.height + (strokeWidth / imageRatio)));
+            image.setAttribute('width', String(bb.width));
+            image.setAttribute('height', String(bb.height));
             image.setAttribute('href', imageUrl);
             imageSymbol.setAttribute('overflow', 'visible');
             imageSymbol.setAttribute('id', `${symbol.id}_image`);
@@ -356,8 +386,8 @@ const makeImageSymbol = async (symbol: SVGSymbolElement, scale: number = 1, imag
             const image = imageSymbol.firstChild as SVGElement;
             const oldImageUrl = image.getAttribute('href');
             URL.revokeObjectURL(oldImageUrl);
-            image.setAttribute('width', String(bb.width + (strokeWidth / imageRatio)));
-            image.setAttribute('height', String(bb.height + (strokeWidth / imageRatio)));
+            image.setAttribute('width', String(bb.width));
+            image.setAttribute('height', String(bb.height));
             image.setAttribute('href', imageUrl);
         }
         resolve(imageSymbol);

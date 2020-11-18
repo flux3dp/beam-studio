@@ -19,7 +19,7 @@ const main = async () => {
             outCanvas.height = Math.max(1, height);
             const outCtx = outCanvas.getContext('2d');
             outCtx.imageSmoothingEnabled = false;
-            outCtx.filter = 'brightness(0%)'
+            outCtx.filter = 'brightness(0%)';
             outCtx.drawImage(imgCanvas, 0, 0, outCanvas.width, outCanvas.height);
             const imageBase64 = outCanvas.toDataURL('image/png');
             const res = await fetch(imageBase64);
@@ -28,7 +28,6 @@ const main = async () => {
             ipc.send('SVG_URL_TO_IMG_URL_DONE', {imageUrl, id});
         }
         img.src = url;
-        console.log('start load');
     });
 };
 
