@@ -11,7 +11,6 @@ export const handleNextStep = () => {
 };
 
 export const getNextStepRequirement = () => {
-    console.log(TutorialContextCaller.context);
     if (!TutorialContextCaller.context) {
         //console.log('Tutorial is not mounted now.');
         return null;
