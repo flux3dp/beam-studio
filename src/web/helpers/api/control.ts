@@ -776,10 +776,6 @@ class Control {
         return d.promise();
     }
 
-    getHeadInfo() {
-        return this.useDefaultResponse('maintain headinfo');
-    }
-
     getDeviceSetting (name) {
         return this.useDefaultResponse(`config get ${name}`);
     }
@@ -1056,22 +1052,6 @@ class Control {
     endRawMode() {
         this.mode = '';
         return this.useDefaultResponse('task quit');
-    }
-
-    startToolheadOperation() {
-        return this.useDefaultResponse('play toolhead operation');
-    }
-
-    endToolheadOperation() {
-        return this.useDefaultResponse('play toolhead standby');
-    }
-
-    endLoadingDuringPause() {
-        return this.useDefaultResponse('play press_button');
-    }
-
-    setHeadTemperatureDuringPause(temperature) {
-        return this.useDefaultResponse(`play toolhead heater 0 ${temperature}`);
     }
 
     /**

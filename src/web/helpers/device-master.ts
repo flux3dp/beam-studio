@@ -509,30 +509,6 @@ class DeviceMaster {
         return SocketMaster.addTask('downloadFile', `${path}/${fileName}`);
     }
 
-    startToolheadOperation() {
-        return SocketMaster.addTask('startToolheadOperation');
-    }
-
-    endToolheadOperation() {
-        return SocketMaster.addTask('endToolheadOperation');
-    }
-
-    endLoadingDuringPause() {
-        return SocketMaster.addTask('endLoadingDuringPause');
-    }
-
-    detectHead() {
-        let d = $.Deferred();
-
-        SocketMaster.addTask('getHeadInfo@maintain').then((response) => {
-            response.module ? d.resolve() : d.reject(response);
-        }).fail(() => {
-            d.reject();
-        });
-
-        return d.promise();
-    }
-
     rawHome() {
         return SocketMaster.addTask('rawHome');
     }
@@ -720,10 +696,6 @@ class DeviceMaster {
 
     updateToolhead(file) {
         return SocketMaster.addTask('toolheadUpdate', file);
-    }
-
-    headInfo() {
-        return SocketMaster.addTask('getHeadInfo@maintain');
     }
 
     closeConnection() {
@@ -932,10 +904,6 @@ class DeviceMaster {
 
     downloadErrorLog() {
         return this.currentDevice.control.downloadErrorLog();
-    }
-
-    getHeadStatus() {
-        return SocketMaster.addTask('getHeadStatus');
     }
 
     getDeviceBySerial(serial: string, callback) {
