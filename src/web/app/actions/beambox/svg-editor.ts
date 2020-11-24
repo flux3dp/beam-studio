@@ -3995,7 +3995,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                                             'data-shading': true,
                                                             'data-ratiofixed': true,
                                                             origImage: blobSrc,
-                                                            'xlink:href': result.canvas.toDataURL()
+                                                            'xlink:href': result.pngBase64,
                                                         }
                                                     });
                                                     svgCanvas.updateElementColor(newImage);
@@ -5674,7 +5674,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                             is_svg: false
                                         },
                                         onComplete: function (result) {
-                                            svgCanvas.setHref(newImage, result.canvas.toDataURL());
+                                            svgCanvas.setHref(newImage, result.pngBase64);
                                         }
                                     }
                                 );
@@ -5740,7 +5740,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                                 batchCmd.addSubCommand(cmd);
                                             }
                                             svgCanvas.undoMgr.beginUndoableChange('xlink:href', [imageElem]);
-                                            imageElem.setAttribute('xlink:href', result.canvas.toDataURL());
+                                            imageElem.setAttribute('xlink:href', result.pngBase64);
                                             cmd = svgCanvas.undoMgr.finishUndoableChange();
                                             if (!cmd.isEmpty()) {
                                                 batchCmd.addSubCommand(cmd);

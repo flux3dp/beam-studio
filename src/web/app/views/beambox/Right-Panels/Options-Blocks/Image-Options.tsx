@@ -33,7 +33,7 @@ class ImageOptions extends React.Component {
                     is_svg: false
                 },
                 onComplete: function(result) {
-                    $(elem).attr('xlink:href', result.canvas.toDataURL('image/png'));
+                    $(elem).attr('xlink:href', result.pngBase64);
                 }
             }
         );

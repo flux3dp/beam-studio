@@ -9475,7 +9475,7 @@ define([
                             is_svg: false
                         },
                         onComplete: function(result) {
-                            resolve(result.canvas.toDataURL('image/png'));
+                            resolve(result.pngBase64);
                         }
                     }
                 );

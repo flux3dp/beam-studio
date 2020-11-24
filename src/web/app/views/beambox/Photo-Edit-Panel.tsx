@@ -175,7 +175,7 @@ class PhotoEditPanel extends React.Component {
                 },
                 isFullResolution: true,
                 onComplete: function (result) {
-                    self._handleSetAttribute('xlink:href', result.canvas.toDataURL());
+                    self._handleSetAttribute('xlink:href', result.pngBase64);
                     svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
                     svgCanvas.selectOnly([elem], true);
 
@@ -286,7 +286,7 @@ class PhotoEditPanel extends React.Component {
                         URL.revokeObjectURL(this.state.grayScaleUrl);
                     }
                     this.setState({
-                        grayScaleUrl: result.canvas.toDataURL('image/png'),
+                        grayScaleUrl: result.pngBase64,
                         isGrayScale: true
                     });
                 }

@@ -85,7 +85,7 @@ class ImageTracePanel extends React.Component {
                                 is_svg: false
                             },
                             onComplete: (result) => {
-                                grayscaleCroppedImg = result.canvas.toDataURL('image/png');
+                                grayscaleCroppedImg = result.pngBase64;
                                 this.setState({ currentStep : STEP_TUNE })
                             }
                         }
@@ -199,7 +199,7 @@ class ImageTracePanel extends React.Component {
                         if (grayscaleCroppedImg) {
                             URL.revokeObjectURL(grayscaleCroppedImg);
                         }
-                        grayscaleCroppedImg = result.canvas.toDataURL('image/png');
+                        grayscaleCroppedImg = result.pngBase64;
                         this.next();
                     }
                 }
@@ -233,7 +233,7 @@ class ImageTracePanel extends React.Component {
                             if (grayscaleCroppedImg) {
                                 URL.revokeObjectURL(grayscaleCroppedImg);
                             }
-                            grayscaleCroppedImg = result.canvas.toDataURL('image/png');
+                            grayscaleCroppedImg = result.pngBase64;
                             this.setState({ threshold: value });
                         }
                     }

@@ -157,7 +157,7 @@ const funcs =  {
                         is_svg: false
                     },
                     onComplete: function (result) {
-                        svgCanvas.setHref(newImage, result.canvas.toDataURL());
+                        svgCanvas.setHref(newImage, result.pngBase64);
                     }
                 }
             );

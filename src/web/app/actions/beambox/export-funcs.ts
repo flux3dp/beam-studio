@@ -83,8 +83,8 @@ const fetchThumbnail = async () => {
     });
 };
 
-const updateImageResolution = () => {
-    return new Promise((resolve) => {
+const updateImageResolution = (isFullResolution: boolean = true) => {
+    return new Promise<void>((resolve) => {
         if (BeamboxPreference.read('image_downsampling') === false) {
             resolve();
         }
@@ -104,9 +104,9 @@ const updateImageResolution = () => {
                                 threshold: parseInt($(img).attr('data-threshold')),
                                 is_svg: false
                             },
-                            isFullResolution: true,
+                            isFullResolution: isFullResolution,
                             onComplete: function (result) {
-                                $(img).attr('xlink:href', result.canvas.toDataURL());
+                                $(img).attr('xlink:href', result.pngBase64);
                                 done += 1;
                                 if (done === numImgs) {
                                     resolve();
@@ -132,7 +132,7 @@ const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
     const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
     svgedit.utilities.moveDefsOutfromSvgContent();
     Progress.openNonstopProgress({'id': 'retreive-image-data', message: lang.beambox.bottom_right_panel.retreive_image_data});
-    await updateImageResolution();
+    await updateImageResolution(true);
     Progress.popById('retreive-image-data');
     const svgString = svgCanvas.getSvgString();
     const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
@@ -155,7 +155,7 @@ const prepareFileWrappedFromSvgStringAndThumbnail = async () => {
         };
         reader.readAsArrayBuffer(blob);
     });
-
+    await updateImageResolution(false);
     return {
         uploadFile: uploadFile,
         thumbnailBlobURL: thumbnailBlobURL

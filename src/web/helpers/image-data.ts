@@ -7,6 +7,7 @@ import { getSVGAsync } from './svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
+const MAX_IMAGE_PIXEL = 1e8;
 
 export default function(source, opts) {
     opts.onComplete = opts.onComplete || function() {};
@@ -25,7 +26,7 @@ export default function(source, opts) {
                 imageData;
             const fetchedData = await fetch(img.src);
             const response = await fetchedData.blob();
-            const arrayBuffer = await new Response(response).arrayBuffer(); 
+            const arrayBuffer = await new Response(response).arrayBuffer();
             const rotationFlag = svgEditor.getExifRotationFlag(arrayBuffer);
 
             //DownSampling
@@ -36,6 +37,12 @@ export default function(source, opts) {
                     size.width = Math.round(size.width * downRatio);
                     size.height = Math.round(size.height * downRatio);
                 }
+            }
+            if (size.width * size.height > MAX_IMAGE_PIXEL) {
+                const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
+                size.width = Math.floor(size.width * downRatio);
+                size.height = Math.floor(size.height * downRatio);
+                console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
             }
             let w = size.width, h = size.height;
             let rotation = 0;
@@ -97,13 +104,15 @@ export default function(source, opts) {
             imageData.data.set(imageBinary);
 
             ctx.putImageData(imageData, 0, 0);
+            const pngBase64 = canvas.toDataURL('image/png');
 
-            opts.onComplete({
-                canvas: canvas,
-                size: size,
+            await opts.onComplete({
+                canvas,
+                size,
                 data: imageData,
-                imageBinary: imageBinary,
-                blob: new Blob([imageData.data], { type: opts.type })
+                imageBinary,
+                blob: new Blob([imageData.data], { type: opts.type }),
+                pngBase64,
             });
 
             canvas = null;
