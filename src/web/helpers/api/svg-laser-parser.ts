@@ -19,6 +19,9 @@ let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
+const fs = requireNode('fs');
+const path = requireNode('path');
+
 // Because the preview image size is 640x640
 var MAXWIDTH = 640;
 
@@ -493,10 +496,11 @@ export default function(opts) {
             events.onError = function(data) {
                 alert(data);
             };
-            function getBasename(path) {
+            function getBasename(path?: string) {
+                if (!path) return '';
                 const pathMatch = path.match(/(.+)[\/\\].+/);
                 if (pathMatch[1]) return pathMatch[1];
-                return "";
+                return '';
             }
             var reader = new FileReader();
             reader.onloadend = function (e) {
@@ -505,8 +509,6 @@ export default function(opts) {
                 let allImageValid = true;
                 let hasPath = false;
                 if (matchImages) {
-                    const fs = requireNode('fs');
-                    const path = requireNode('path');
                     const basename = getBasename(file.path);
                     for (let i = 0; i < matchImages.length; i++) {
                         let hrefMatch = matchImages[i].match(/xlink:href="[^"]+"/);
