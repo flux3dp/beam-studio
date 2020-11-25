@@ -504,9 +504,10 @@ define([
                     alert(data);
                 };
                 function getBasename(path) {
+                    if (!path) return '';
                     const pathMatch = path.match(/(.+)[\/\\].+/);
                     if (pathMatch[1]) return pathMatch[1];
-                    return "";
+                    return '';
                 }
                 var reader = new FileReader();
                 reader.onloadend = function (e) {
