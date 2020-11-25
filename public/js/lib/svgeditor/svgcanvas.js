@@ -6377,6 +6377,10 @@ define([
 
         let randomColors = ['#333333','#3F51B5','#F44336','#FFC107','#8BC34A','#2196F3','#009688','#FF9800','#CDDC39','#00BCD4','#FFEB3B','#E91E63','#673AB7','#03A9F4','#9C27B0','#607D8B','#9E9E9E'];
 
+        const resetRandomColors = () => {
+            randomColors = ['#333333','#3F51B5','#F44336','#FFC107','#8BC34A','#2196F3','#009688','#FF9800','#CDDC39','#00BCD4','#FFEB3B','#E91E63','#673AB7','#03A9F4','#9C27B0','#607D8B','#9E9E9E'];
+        };
+
         var getRandomLayerColor = canvas.getRandomLayerColor = function () {
             if (randomColors.length === 0) {
                 return '#333';
@@ -6812,6 +6816,8 @@ define([
 
             // create new document
             canvas.current_drawing_ = new svgedit.draw.Drawing(svgcontent);
+
+            resetRandomColors();
 
             // create empty first layer
             canvas.createLayer(LANG.right_panel.layer_panel.layer1);

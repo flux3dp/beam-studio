@@ -3983,7 +3983,6 @@ define([
             };
 
             var clickClear = function() {
-                var dims = curConfig.dimensions;
                 Alert.popUp({
                     id: 'clear-scene',
                     message: uiStrings.notification.QwantToClear,
@@ -3991,7 +3990,6 @@ define([
                     onYes: () => {
                         setSelectMode();
                         svgCanvas.clear();
-                        svgCanvas.setResolution(dims[0], dims[1]);
                         updateCanvas(true);
                         unzoom();
                         LayerPanelController.updateLayerPanel();
