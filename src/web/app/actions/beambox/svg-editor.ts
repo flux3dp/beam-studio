@@ -4114,7 +4114,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var clickClear = function() {
-                var dims = curConfig.dimensions;
                 Alert.popUp({
                     id: 'clear-scene',
                     message: uiStrings.notification.QwantToClear,
@@ -4122,8 +4121,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     onYes: () => {
                         setSelectMode();
                         svgCanvas.clear();
-                        svgCanvas.setResolution(dims[0], dims[1]);
-                        // TODO: confirm if the code is intend as this
                         updateCanvas({
                             autoCenter: true
                         });
