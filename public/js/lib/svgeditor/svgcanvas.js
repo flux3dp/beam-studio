@@ -10613,7 +10613,7 @@ define([
                 dy /= current_zoom;
             }
             undoable = (undoable == null) ? true : undoable;
-            var batchCmd = new svgedit.history.BatchCommand('position');
+            const batchCmd = new svgedit.history.BatchCommand('position');
             var i = elems.length;
             while (i--) {
                 var selected = elems[i];
@@ -10680,16 +10680,11 @@ define([
             };
         };
 
-        this.distHori = function () {
+        this.distHori = function (isSubCmd) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            const centerXs = [];
-            let minX = Number.MAX_VALUE,
-                maxX = Number.MIN_VALUE;
-            let indexMax = -1,
-                indexMin = -1;
 
             const realSelectedElements = selectedElements.filter(e => e);
             const len = realSelectedElements.length;
@@ -10699,56 +10694,44 @@ define([
                 return;
             }
 
-            for (let i = 0; i < len; i=i+1) {
-                const elem = realSelectedElements[i];
+            const batchCmd = new svgedit.history.BatchCommand('Dist Hori');
 
-                let centerX = this.getCenter(elem).x;
-                centerXs[i] = centerX;
-                if (centerX < minX) {
-                    minX = centerX;
-                    indexMin = i;
-                }
-                if (centerX > maxX) {
-                    maxX = centerX;
-                    indexMax = i;
-                }
-            }
+            realSelectedElements.sort((a, b) => {
+                const xa = this.getCenter(a).x;
+                const xb = this.getCenter(b).x;
+                return xa - xb;
+            });
+            const minX = this.getCenter(realSelectedElements[0]).x;
+            const maxX = this.getCenter(realSelectedElements[len - 1]).x;
 
-            if (indexMin === indexMax || maxX === minX) {
+            if (maxX === minX) {
                 this.tempGroupSelectedElements();
                 return;
             }
 
-            const dx = (maxX - minX) /(len-1);
+            const dx = (maxX - minX) / (len - 1);
 
-            let j = 1;
-
-            for (let i = indexMin + 1; i< len + indexMin ; i=i+1) {
-                if ( (i === indexMax) || (i-len) === indexMax ) {
-                    continue;
+            for (let i = 1; i < len - 1; i++) {
+                const x = this.getCenter(realSelectedElements[i]).x;
+                let cmd = this.moveElements([minX + dx * i - x], [0], [realSelectedElements[i]], false);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
                 }
-                if (i < len) {
-                    this.moveElements([(minX + dx*j) - centerXs[i]], [0], [realSelectedElements[i]]);
-                    selectorManager.requestSelector(realSelectedElements[i]).resize();
-                } else {
-                    this.moveElements([(minX + dx*j) - centerXs[i-len]], [0], [realSelectedElements[i-len]]);
-                    selectorManager.requestSelector(realSelectedElements[i-len]).resize();
-                }
-                j = j+1;
             }
+
+            if (!batchCmd.isEmpty() && !isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+
             this.tempGroupSelectedElements();
+            return batchCmd;
         };
 
-        this.distVert = function () {
+        this.distVert = function (isSubCmd) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            const centerYs = [];
-            let minY = Number.MAX_VALUE,
-                maxY = Number.MIN_VALUE;
-            let indexMax = -1,
-                indexMin = -1;
 
             const realSelectedElements = selectedElements.filter(e => e);
             const len = realSelectedElements.length;
@@ -10758,44 +10741,37 @@ define([
                 return;
             }
 
-            for (let i = 0; i < len; i=i+1) {
-                const elem = realSelectedElements[i];
+            const batchCmd = new svgedit.history.BatchCommand('Dist Verti');
 
-                let centerY = this.getCenter(elem).y;
-                centerYs[i] = centerY;
-                if (centerY < minY) {
-                    minY = centerY;
-                    indexMin = i;
-                }
-                if (centerY > maxY) {
-                    maxY = centerY;
-                    indexMax = i;
-                }
-            }
+            realSelectedElements.sort((a, b) => {
+                const ya = this.getCenter(a).y;
+                const yb = this.getCenter(b).y;
+                return ya - yb;
+            });
+            const minY = this.getCenter(realSelectedElements[0]).y;
+            const maxY = this.getCenter(realSelectedElements[len - 1]).y;
 
-            if (indexMin === indexMax || maxY === minY) {
+            if (maxY === minY) {
                 this.tempGroupSelectedElements();
                 return;
             }
 
-            const dy = (maxY - minY) /(len-1);
+            const dy = (maxY - minY) / (len - 1);
 
-            let j = 1;
-
-            for (let i = indexMin + 1; i< len + indexMin ; i=i+1) {
-                if ( (i === indexMax) || (i-len) === indexMax ) {
-                    continue;
+            for (let i = 1; i < len - 1; i++) {
+                const y = this.getCenter(realSelectedElements[i]).y;
+                let cmd = this.moveElements([0], [minY + dy * i - y], [realSelectedElements[i]], false);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
                 }
-                if (i < len) {
-                    this.moveElements([0], [(minY + dy*j) - centerYs[i]], [realSelectedElements[i]]);
-                    selectorManager.requestSelector(realSelectedElements[i]).resize();
-                } else {
-                    this.moveElements([0], [(minY + dy*j) - centerYs[i-len]], [realSelectedElements[i-len]]);
-                    selectorManager.requestSelector(realSelectedElements[i-len]).resize();
-                }
-                j = j+1;
             }
+
+            if (!batchCmd.isEmpty() && !isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+
             this.tempGroupSelectedElements();
+            return batchCmd;
         };
 
         this.distEven = function () {
