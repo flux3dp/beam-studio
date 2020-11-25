@@ -38,7 +38,7 @@ class PreviewModeController {
     //main functions
 
     async start(selectedPrinter, errCallback) {
-        await this._reset();
+        await this.reset();
 
         const res = await DeviceMaster.select(selectedPrinter);
         if (!res.success) {
@@ -51,7 +51,7 @@ class PreviewModeController {
                 message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name),
                 timeout: 30000,
             });
-            await this._retrieveCameraOffset();
+            await this.retrieveCameraOffset();
             const laserSpeed = await DeviceMaster.getLaserSpeed();
 
             if (Number(laserSpeed.value) !== 1) {
@@ -100,7 +100,7 @@ class PreviewModeController {
         PreviewModeBackgroundDrawer.clearBoundary();
         PreviewModeBackgroundDrawer.end();
         const storedPrinter = this.storedPrinter;
-        await this._reset();
+        await this.reset();
         const res = await DeviceMaster.select(storedPrinter);
         if (res.success) {
             if (this.isLineCheckEnabled) {
@@ -122,13 +122,13 @@ class PreviewModeController {
         }
         this.isDrawing = true;
         this.isPreviewBlocked = true;
-        const constrainedXY = this._constrainPreviewXY(x, y);
+        const constrainedXY = this.constrainPreviewXY(x, y);
         x = constrainedXY.x;
         y = constrainedXY.y;
 
         $('#workarea').css('cursor', 'wait');
         try {
-            const imgUrl = await this._getPhotoAfterMove(x, y);
+            const imgUrl = await this.getPhotoAfterMove(x, y);
             const p = PreviewModeBackgroundDrawer.draw(imgUrl, x, y, last, callback);
 
             $('#workarea').css('cursor', 'url(img/camera-cursor.svg), cell');
@@ -175,10 +175,10 @@ class PreviewModeController {
                 const b = Math.max(y1, y2) - size/2;
 
                 return {
-                    left: this._constrainPreviewXY(l, 0).x,
-                    right: this._constrainPreviewXY(r, 0).x,
-                    top: this._constrainPreviewXY(0, t).y,
-                    bottom: this._constrainPreviewXY(0, b).y
+                    left: this.constrainPreviewXY(l, 0).x,
+                    right: this.constrainPreviewXY(r, 0).x,
+                    top: this.constrainPreviewXY(0, t).y,
+                    bottom: this.constrainPreviewXY(0, b).y
                 };
             })();
 
@@ -215,7 +215,7 @@ class PreviewModeController {
 
     // x, y in mm
     takePictureAfterMoveTo(movementX, movementY) {
-        return this._getPhotoAfterMoveTo(movementX, movementY);
+        return this.getPhotoAfterMoveTo(movementX, movementY);
     }
 
     isPreviewMode() {
@@ -228,16 +228,30 @@ class PreviewModeController {
 
     //helper functions
 
-    async _retrieveCameraOffset() {
-        // cannot getDeviceSetting during maintainMode. So we force to end it.
+    async retrieveCameraOffset() {
+        // End linecheck mode if needed
         try {
             if (this.isLineCheckEnabled) {
                 await DeviceMaster.rawEndLineCheckMode();
             }
+        } catch (error) {
+            if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
+                // Not in raw mode, unknown command M172
+                console.log('Not in raw mode.');
+            } else {
+                console.log('Unable to end line check mode', error);
+            }
+        }
+        // cannot getDeviceSetting during RawMode. So we force to end it.
+        try {
             await DeviceMaster.endRawMode();
         } catch (error) {
-            if ( (error.status === 'error') && (error.error && error.error[0] === 'OPERATION_ERROR') ) {
+            if (error.status === 'error' && (error.error && error.error[0] === 'OPERATION_ERROR')) {
                 // do nothing.
+                console.log('Not in raw mode right now');
+            } else if (error.status === 'error' && error.error === 'TIMEOUT') {
+                console.log('Timeout has occur when end raw mode, reconnecting');
+                await DeviceMaster.reconnect();
             } else {
                 console.log(error);
             }
@@ -271,7 +285,7 @@ class PreviewModeController {
         return this.cameraOffset;
     }
 
-    async _reset() {
+    async reset() {
         this.storedPrinter = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
@@ -280,7 +294,7 @@ class PreviewModeController {
         DeviceMaster.disconnectCamera();
     }
 
-    _constrainPreviewXY(x, y) {
+    constrainPreviewXY(x, y) {
         const isDiodeEnabled = BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'));
         const isBorderlessEnabled = BeamboxPreference.read('borderless');
         let maxWidth = Constant.dimension.getWidth();
@@ -303,15 +317,15 @@ class PreviewModeController {
     }
 
     //x, y in pixel
-    _getPhotoAfterMove(x, y) {
+    getPhotoAfterMove(x, y) {
         const movementX = x / Constant.dpmm - this._getCameraOffset().x;
         const movementY = y / Constant.dpmm - this._getCameraOffset().y;
 
-        return this._getPhotoAfterMoveTo(movementX, movementY);
+        return this.getPhotoAfterMoveTo(movementX, movementY);
     }
 
     //movementX, movementY in mm
-    async _getPhotoAfterMoveTo(movementX, movementY) {
+    async getPhotoAfterMoveTo(movementX, movementY) {
         let feedrate = Math.min(Constant.camera.movementSpeed.x, Constant.camera.movementSpeed.y);
         const movement = {
             f: feedrate,
@@ -339,15 +353,15 @@ class PreviewModeController {
         if (moveRes) {
             console.log('Preview raw move respond: ', moveRes.text);
         }
-        await this._waitUntilEstimatedMovementTime(movementX, movementY);
+        await this.waitUntilEstimatedMovementTime(movementX, movementY);
 
-        const imgUrl = await this._getPhotoFromMachine();
+        const imgUrl = await this.getPhotoFromMachine();
 
         return imgUrl;
     }
 
     //movementX, movementY in mm
-    async _waitUntilEstimatedMovementTime(movementX, movementY) {
+    async waitUntilEstimatedMovementTime(movementX, movementY) {
         let feedrate = Math.min(Constant.camera.movementSpeed.x, Constant.camera.movementSpeed.y);
 
         if (BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'))) {
@@ -370,8 +384,8 @@ class PreviewModeController {
         await new Promise((resolve, reject) => { setTimeout(() => resolve(), timeToWait)});
     }
 
-    //just fot _getPhotoAfterMoveTo()
-    async _getPhotoFromMachine() {
+    //just for getPhotoAfterMoveTo()
+    async getPhotoFromMachine() {
         const imgBlob = await DeviceMaster.takeOnePicture();
         const imgUrl = URL.createObjectURL(imgBlob);
         return imgUrl;

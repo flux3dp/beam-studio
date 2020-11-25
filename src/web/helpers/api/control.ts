@@ -171,6 +171,7 @@ class Control {
                         clearTimeout(timeoutTimer);
                         if (!dedicated) {
                             this.createDedicatedWs(this.fileInfoWsId);
+                            this.isConnected = true;
                         }
                         // TODO: add interface to connected data
                         resolve(data);
@@ -1038,10 +1039,12 @@ class Control {
     enterRawMode() {
         let d = $.Deferred();
 
-        this.commandCallback.onMessage = (response) => { setTimeout(() => {
-            this.mode = 'raw';
-            d.resolve(response);
-        }, 3000); };
+        this.commandCallback.onMessage = (response) => {
+            setTimeout(() => {
+                this.mode = 'raw';
+                d.resolve(response);
+            }, 3000);
+        };
         this.commandCallback.onError = (response) => { d.reject(response); };
         this.commandCallback.onFatal = (response) => { d.reject(response); };
 
