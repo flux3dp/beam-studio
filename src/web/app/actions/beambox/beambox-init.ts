@@ -429,7 +429,12 @@ const initMenuBarEvents = () => {
             };
 
             _action['LOG_PLAYER'] = (device) => {
-                getLog(device, 'fluxplayerd.log');
+                const vc = VersionChecker(device.version);
+                if (vc.meetRequirement('NEW_PLAYER')) {
+                    getLog(device, 'playerd.log');
+                } else {
+                    getLog(device, 'fluxplayerd.log');
+                }
             };
 
             _action['LOG_ROBOT'] = (device) => {
