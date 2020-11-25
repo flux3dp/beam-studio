@@ -1345,6 +1345,15 @@ define([
                 if (!elem.isPointInStroke || typeof elem.isPointInStroke !== 'function') {
                     continue;
                 }
+
+                const layer = svgCanvas.getObjectLayer(elem);
+                if (layer && layer.elem) {
+                    const layerElement = layer.elem;
+                    if (layerElement.getAttribute('display') === 'none' || layerElement.getAttribute('data-lock') === 'true') {
+                        continue;
+                    }
+                }
+
                 const tlist = svgedit.transformlist.getTransformList(elem);
                 const tm = svgedit.math.transformListToTransform(tlist).matrix.inverse();
                 const x = tm.a * pt.x + tm.c * pt.y + tm.e;
