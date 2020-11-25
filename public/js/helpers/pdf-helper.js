@@ -50,7 +50,7 @@ define([
             try {
                 let filePath = file.path;
                 if (process.platform === 'win32') {
-                    await exec(`cp "${file.path}" "${win32TempFile}"`);
+                    fs.copyFileSync(file.path, win32TempFile);
                     filePath = win32TempFile;
                 }
                 const {stdout, stderr} = await execFile(pdf2svgPath, [filePath, outPath]);
