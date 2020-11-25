@@ -1048,21 +1048,16 @@ define([
                         currentLineNumber = 1;
                         d.resolve();
                     }
-                    if (response.text.indexOf('ER:RESET') >= 0) {
+                    if (responseString.indexOf('ER:RESET') >= 0) {
                         d.reject(response);
-                    } else if (response.text.indexOf('error:') >= 0) {
-                        // Resend command for error code
-                        const errorCode = parseInt(response.text.substring(6));
-                        switch (errorCode) {
-                            default:
-                                if (!isCmdResent) {
-                                    isCmdResent = true;
-                                    setTimeout(() => {
-                                        isCmdResent = false;
-                                        responseString = '';
-                                        ws.send(command);
-                                    }, 200);
-                                }
+                    } else if (responseString.indexOf('error:') >= 0) {
+                        if (!isCmdResent) {
+                            isCmdResent = true;
+                            setTimeout(() => {
+                                isCmdResent = false;
+                                responseString = '';
+                                ws.send(command);
+                            }, 200);
                         }
                     }
                 };
@@ -1087,21 +1082,16 @@ define([
                         isLineCheckMode = false;
                         d.resolve();
                     }
-                    if (response.text.indexOf('ER:RESET') >= 0) {
+                    if (responseString.indexOf('ER:RESET') >= 0) {
                         d.reject(response);
-                    } else if (response.text.indexOf('error:') >= 0) {
-                        // Resend command for error code
-                        const errorCode = parseInt(response.text.substring(6));
-                        switch (errorCode) {
-                            default:
-                                if (!isCmdResent) {
-                                    isCmdResent = true;
-                                    setTimeout(() => {
-                                        isCmdResent = false;
-                                        responseString = '';
-                                        ws.send(command);
-                                    }, 200);
-                                }
+                    } else if (responseString.indexOf('error:') >= 0) {
+                        if (!isCmdResent) {
+                            isCmdResent = true;
+                            setTimeout(() => {
+                                isCmdResent = false;
+                                responseString = '';
+                                ws.send(command);
+                            }, 200);
                         }
                     }
                 };

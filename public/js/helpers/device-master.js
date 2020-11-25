@@ -393,6 +393,7 @@ define([
                 d.notify(response);
 
                 if (response.status.toUpperCase() === DeviceConstants.CONNECTED) {
+                    _controllerMap[_selectedDevice.uuid] = _device.controller;
                     d.resolve(DeviceConstants.CONNECTED);
                 }
             },
@@ -1021,7 +1022,7 @@ define([
         });
 
         killSelf().always(() => {
-            selectDevice(_selectedDevice);
+            selectDevice(_selectedDevice, d);
         });
         return d.promise();
     }
@@ -1780,6 +1781,7 @@ define([
             this.rawSetRotary = rawSetRotary;
             this.readyCamera = readyCamera;
             this.reconnect = reconnect;
+            this.reconnectWs = reconnectWs;
             this.registerUsbEvent = registerUsbEvent;
             this.resume = resume;
             this.runBeamboxCameraTest = runBeamboxCameraTest;

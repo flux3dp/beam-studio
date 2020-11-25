@@ -214,13 +214,27 @@ define([
         //helper functions
 
         async _retrieveCameraOffset() {
-            // cannot getDeviceSetting during maintainMode. So we force to end it.
             try {
                 await DeviceMaster.rawEndLineCheckMode();
+            } catch (error) {
+                if ((error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND')) {
+                    // Unknown command M172
+                    console.log('Raw end line check mode failed: Not in raw mode.');
+                } else {
+                    console.log(error);
+                }
+            }
+
+            // cannot getDeviceSetting during rawMode. So we force to end it.
+            try {
                 await DeviceMaster.endRawMode();
             } catch (error) {
                 if ( (error.status === 'error') && (error.error && error.error[0] === 'OPERATION_ERROR') ) {
+                    console.log('End Raw Mode Failed: not in raw mode.');
                     // do nothing.
+                } else if (error.status === 'error' && error.error === 'TIMEOUT') {
+                    console.log('Time out when ending raw mode, reconnect');
+                    await DeviceMaster.reconnectWs();
                 } else {
                     console.log(error);
                 }
