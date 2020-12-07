@@ -93,7 +93,7 @@ beamboxStore = Object.assign(EventEmitter.prototype, {
             beamboxStore.emit(actionType, payload);
         }
         else {
-            throw new console.error('unknown method');
+            throw console.error('unknown method');
         }
     })
 
