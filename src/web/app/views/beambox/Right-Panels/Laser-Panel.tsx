@@ -191,7 +191,9 @@ class LaserPanel extends React.PureComponent {
         this.initDefaultConfig();
         this.updatePresetLayerConfig();
         const layerData = FnWrapper.getCurrentLayerData();
-
+        if ((this.state.speed !== layerData.speed) || (this.state.repeat !== layerData.repeat)) {
+            clearEstimatedTime();
+        }
         this.setState({
             speed:      layerData.speed,
             power:      layerData.power,
@@ -340,7 +342,7 @@ class LaserPanel extends React.PureComponent {
         this.setState({ modal: '' });
     }
 
-    _handleParameterTypeChanged = (id, value) => {
+    handleParameterTypeChanged = (id, value) => {
         if (value === PARAMETERS_CONSTANT) {
             this.setState({ original: value });
             return;
@@ -361,16 +363,16 @@ class LaserPanel extends React.PureComponent {
             });
         } else {
             const customizedConfigs = (LocalStorage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
-            const {
-                speed,
-                power,
-                repeat,
-                zStep,
-                isDefault,
-                key
-            } = customizedConfigs;
-
             if (customizedConfigs) {
+                const {
+                    speed,
+                    power,
+                    repeat,
+                    zStep,
+                    isDefault,
+                    key
+                } = customizedConfigs;
+                clearEstimatedTime();
                 this.setState({
                     original: value,
                     speed,
@@ -792,7 +794,7 @@ class LaserPanel extends React.PureComponent {
                         <DropdownControl
                             id='laser-config-dropdown'
                             value={this._getDefaultLaserOptions()}
-                            onChange={this._handleParameterTypeChanged}
+                            onChange={this.handleParameterTypeChanged}
                             options={dropdownOptions}
                             hiddenOptions={hiddenOptions}
                         />
