@@ -160,29 +160,28 @@ const initMenuBarEvents = () => {
             const res = await DeviceMaster.select(printer);
             if (res.success) {
                 Progress.openSteppingProgress({id: 'get_log', message: 'downloading',});
-                let downloader = DeviceMaster.downloadLog(log);
-                downloader.then(async (file) => {
+                try {
+                    const file = await DeviceMaster.downloadLog(log, async (progress: { completed: number, size: number }) => {
+                        Progress.update('get_log', { message: 'downloading', percentage: progress.completed / progress.size * 100 });
+                    });
                     Progress.popById('get_log');
                     const targetFilePath = await ElectronDialogs.saveFileDialog(log , log, [{extensionName: 'log', extensions: ['log']}]);
-
+    
                     if (targetFilePath) {
                         const fs = requireNode('fs');
                         const arrBuf = await new Response(file[1]).arrayBuffer();
                         const buf = Buffer.from(arrBuf);
                         fs.writeFileSync(targetFilePath, buf);
                     }
-                }).progress((progress: {completed: number, size: number}) => {
-                    Progress.update('get_log', {
-                        message: 'downloading', percentage: progress.completed / progress.size * 100});
-                }).fail((data) => {
+                } catch (errorData) {
                     Progress.popById('get_log');
-                    let msg = data === 'canceled' ?
+                    let msg = errorData === 'canceled' ?
                         LANG.topmenu.device.download_log_canceled : LANG.topmenu.device.download_log_error;
                     Alert.popUp({
                         type: AlertConstants.SHOW_POPUP_INFO,
                         message: msg
                     });
-                });
+                }
             }
         } catch (e) {
             console.error(e);

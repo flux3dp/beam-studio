@@ -28,19 +28,19 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
         const res = await DeviceMaster.select(printer);
         if (res.success) {
             Progress.openSteppingProgress({id: 'update-firmware', message: lang.update.updating + ' (0%)'});
-            doUpdate(file).progress((r) => {
-                r.percentage = Number(r.percentage || 0).toFixed(2);
-                Progress.update('update-firmware', {
-                    message: lang.update.updating + ' (' + r.percentage + '%)',
-                    percentage: r.percentage
+            try {
+                await doUpdate(file, (r) => {
+                    r.percentage = Number(r.percentage || 0).toFixed(2);
+                    Progress.update('update-firmware', {
+                        message: lang.update.updating + ' (' + r.percentage + '%)',
+                        percentage: r.percentage
+                    });
                 });
-            }).always(() => {
-                Progress.popById('update-firmware');
-            }).done(
-                _onFinishUpdate.bind(null, true)
-            ).fail(
-                _onFinishUpdate.bind(null, false)
-            );
+                _onFinishUpdate.bind(null, true);
+            } catch (error) {
+                _onFinishUpdate.bind(null, false);
+            }
+            Progress.popById('update-firmware');
         }
     }
 
@@ -111,37 +111,38 @@ export default function(response, printer, type: string, forceUpdate?: boolean) 
         const res = await DeviceMaster.select(printer);
         if (res.success) {
             Progress.openSteppingProgress({id: 'update-firmware', message: lang.update.updating + ' (0%)'});
-            doUpdate(file).progress((r) => {
-                r.percentage = Number(r.percentage || 0).toFixed(2);
-                Progress.update('update-firmware', {
-                    message: lang.update.updating + ' (' + r.percentage + '%)',
-                    percentage: r.percentage
+            try {
+                await doUpdate(file, (r) => {
+                    r.percentage = Number(r.percentage || 0).toFixed(2);
+                    Progress.update('update-firmware', {
+                        message: lang.update.updating + ' (' + r.percentage + '%)',
+                        percentage: r.percentage
+                    });
                 });
-            }).always(() => {
-                Progress.popById('update-firmware');
-            }).done(
-                _onFinishUpdate.bind(null, true)
-            ).fail(
-                _onFinishUpdate.bind(null, false)
-            );
+                _onFinishUpdate.bind(null, true);
+            } catch (error) {
+                _onFinishUpdate.bind(null, false);
+            }
+            Progress.popById('update-firmware');
         }
     };
 
-    const quitTask = () => {
+    const quitTask = async () => {
         console.log('quitting task');
-        DeviceMaster.quitTask().then(r => {
+        try {
+            const r = await DeviceMaster.quitTask();
             console.log('task quitted?', r);
-            if(r.error) {
+            if (r.error) {
                 setTimeout(() => {
                     quitTask();
                 }, 2000);
-            };
-        }).fail(e => {
+            }
+        } catch (e) {
             console.log('error from quit task', e);
             setTimeout(() => {
                 quitTask();
             }, 2000);
-        });
+        }
     };
 
     if (forceUpdate) {
