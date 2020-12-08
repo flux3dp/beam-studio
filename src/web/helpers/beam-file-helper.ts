@@ -189,7 +189,7 @@ const readHeader = (headerBuf) => {
 }
 
 const readBlocks = async (buf, offset) => {
-    if (offset > buf.length) {
+    if (offset >= buf.length) {
         console.warn('offset exceed buffer length');
         return -1;
     }
