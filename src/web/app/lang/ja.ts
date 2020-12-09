@@ -355,6 +355,7 @@ export default {
                 array: '配列',
                 preview: 'カメラプレビュー',
                 trace: 'トレース画像',
+                end_preview: 'プレビューを終了',
                 clear_preview: 'プレビューをクリア'
             },
         },

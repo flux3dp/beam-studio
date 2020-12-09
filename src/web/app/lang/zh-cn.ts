@@ -355,6 +355,7 @@ export default {
                 array: '阵列',
                 preview: '相机预览',
                 trace: '影像描图',
+                end_preview: '结束预览',
                 clear_preview: '清除预览'
             },
         },

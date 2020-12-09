@@ -9,14 +9,15 @@
     }
     .time-est-btn {
         cursor: pointer;
-        height: 32px;
-        line-height: 32px;
-        padding: 0 16px;
-        border-radius: 16px;
-        font-size: 12px;
-        text-align: center;
-        color: white;
-        background-color: #0099cc;
+        width: 36px;
+        height: 36px;
+        padding: 7px 8px 9px 8px;
+        border-radius: 18px;
+        background-color: #999999;
+        img {
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
     }
     .time-est-result {
         font-size: 14px;

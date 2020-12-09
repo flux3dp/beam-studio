@@ -330,7 +330,7 @@ export default {
             fit_to_window: 'Fit to Window',
         },
         time_est_button: {
-            calculate: 'Calculate',
+            calculate: 'Estimate time',
             estimate_time: 'Estimated Time:',
         },
         left_panel: {
@@ -355,6 +355,7 @@ export default {
                 array: 'Array',
                 preview: 'Camera Preview',
                 trace: 'Trace Image',
+                end_preview: 'End Preview',
                 clear_preview: 'Clear Preview'
             },
         },

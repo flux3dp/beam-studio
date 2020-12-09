@@ -355,6 +355,7 @@ export default {
                 array: '陣列',
                 preview: '相機預覽',
                 trace: '影像描圖',
+                end_preview: '結束預覽',
                 clear_preview: '清除預覽'
             },
         },
