@@ -240,8 +240,9 @@ class DeviceMaster {
             try {
                 // Check device.control is still connected
                 if (device.control.getMode() !== 'raw') {
-                    const info = await device.control.report();
-                    Object.assign(device.info, info);
+                    const controlSocket = device.control;
+                    const info = await controlSocket.addTask(controlSocket.report);
+                    Object.assign(device.info, info.device_status);
                 }
                 this.currentDevice = device;
                 Progress.popById('select-device');

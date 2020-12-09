@@ -951,7 +951,7 @@ class Monitor extends React.Component{
 Monitor.propTypes = {
     lang: PropTypes.object,
     selectedDevice: PropTypes.object,
-    fCode: PropTypes.object,
+    fCode: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     slicingStatus: PropTypes.object,
     previewUrl: PropTypes.string,
     opener: PropTypes.string,
