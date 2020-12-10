@@ -44,7 +44,7 @@ const LANG = i18n.lang.topbar;
 const isNotMac = process.platform !== 'darwin';
 let _contextCaller;
 
-export class TopBar extends React.PureComponent {
+export class TopBar extends React.Component {
     private deviceList: IDeviceInfo[];
     private state: {
         isPreviewing?: boolean,
