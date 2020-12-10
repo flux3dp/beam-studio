@@ -1,8 +1,9 @@
 import PreviewModeBackgroundDrawer from './preview-mode-background-drawer';
 import DeviceMaster from '../../../helpers/device-master';
 import Alert from '../../contexts/AlertCaller';
-import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
+import AlertConstants from '../../constants/alert-constants';
+import ErrorConstants from '../../constants/error-constants';
 import sprintf from '../../../helpers/sprintf';
 import VersionChecker from '../../../helpers/version-checker';
 import * as i18n from '../../../helpers/i18n';
@@ -10,8 +11,7 @@ import Constant from './constant';
 import BeamboxPreference from './beambox-preference';
 import BeamboxActions from '../beambox';
 
-const Rxjs = requireNode('rxjs');
-const { concatMap, filter, map, switchMap, take, timeout, timer } = requireNode('rxjs/operators');
+const LANG = i18n.lang;
 
 class PreviewModeController {
     isDrawing: boolean;
@@ -48,28 +48,37 @@ class PreviewModeController {
         try {
             Progress.openNonstopProgress({
                 id: 'start-preview-mode',
-                message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name),
+                message: sprintf(LANG.message.connectingMachine, selectedPrinter.name),
                 timeout: 30000,
             });
             await this.retrieveCameraOffset();
+
+            Progress.update('start-preview-mode', { message: LANG.message.gettingLaserSpeed });
             const laserSpeed = await DeviceMaster.getLaserSpeed();
 
             if (Number(laserSpeed.value) !== 1) {
                 this.originalSpeed = Number(laserSpeed.value);
+                Progress.update('start-preview-mode', { message: LANG.message.settingLaserSpeed });
                 await DeviceMaster.setLaserSpeed(1);
             }
-            let res = await DeviceMaster.enterRawMode();
-            res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
-            res = await DeviceMaster.rawHome();
+            Progress.update('start-preview-mode', { message: LANG.message.enteringRawMode });
+            await DeviceMaster.enterRawMode();
+            Progress.update('start-preview-mode', { message: LANG.message.exitingRotaryMode });
+            await DeviceMaster.rawSetRotary(false);
+            Progress.update('start-preview-mode', { message: LANG.message.homing });
+            await DeviceMaster.rawHome();
             const vc = VersionChecker(selectedPrinter.version);
             if (vc.meetRequirement('MAINTAIN_WITH_LINECHECK')) {
-                res = await DeviceMaster.rawStartLineCheckMode();
+                await DeviceMaster.rawStartLineCheckMode();
                 this.isLineCheckEnabled = true;
             } else {
                 this.isLineCheckEnabled = false;
             }
-            res = await DeviceMaster.rawSetFan(false);
-            res = await DeviceMaster.rawSetAirPump(false);
+            Progress.update('start-preview-mode', { message: LANG.message.turningOffFan });
+            await DeviceMaster.rawSetFan(false);
+            Progress.update('start-preview-mode', { message: LANG.message.turningOffAirPump });
+            await DeviceMaster.rawSetAirPump(false);
+            Progress.update('start-preview-mode', { message: LANG.message.connectingCamera });
             await DeviceMaster.connectCamera(selectedPrinter);
             PreviewModeBackgroundDrawer.start(this.cameraOffset);
             PreviewModeBackgroundDrawer.drawBoundary();
@@ -232,10 +241,13 @@ class PreviewModeController {
         // End linecheck mode if needed
         try {
             if (this.isLineCheckEnabled) {
+                Progress.update('start-preview-mode', { message: LANG.message.endingLineCheckMode });
                 await DeviceMaster.rawEndLineCheckMode();
             }
         } catch (error) {
-            if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
+            if (error.message === ErrorConstants.CONTROL_SOCKET_MODE_ERROR) {
+                console.log('Not in raw mode.');
+            } else if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
                 // Not in raw mode, unknown command M172
                 console.log('Not in raw mode.');
             } else {
@@ -244,6 +256,7 @@ class PreviewModeController {
         }
         // cannot getDeviceSetting during RawMode. So we force to end it.
         try {
+            Progress.update('start-preview-mode', { message: LANG.message.endingRawMode });
             await DeviceMaster.endRawMode();
         } catch (error) {
             if (error.status === 'error' && (error.error && error.error[0] === 'OPERATION_ERROR')) {
@@ -259,6 +272,8 @@ class PreviewModeController {
         const borderless = BeamboxPreference.read('borderless') || false;
         const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
         const configName = (supportOpenBottom && borderless) ? 'camera_offset_borderless' : 'camera_offset';
+
+        Progress.update('start-preview-mode', { message: LANG.message.retrievingCameraOffset });
         const resp = await DeviceMaster.getDeviceSetting(configName);
         console.log(`Reading ${configName}\nResp = ${resp.value}`);
         resp.value = ` ${resp.value}`;

@@ -1,6 +1,7 @@
 import * as i18n from '../i18n';
 import Websocket from '../websocket';
 import rsaKey from '../rsa-key';
+import ErrorConstants from '../../app/constants/error-constants';
 
 // console.warn('Remember to use correct EventEmitter');
 // import EventEmitter from 'events';
@@ -703,12 +704,17 @@ class Control extends EventEmitter {
     };
 
     rawHome = () => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         return new Promise((resolve, reject) => {
             let didErrorOccur = false;
             let isCmdResent = false;
             let responseString = '';
             let retryTimes = 0;
+            let timeoutTimer: null | NodeJS.Timeout;
             this.on(EVENT_COMMAND_MESSAGE, (response) => {
+                clearTimeout(timeoutTimer);
                 if (response && response.status === 'raw') {
                     responseString += response.text;
                     console.log('raw homing:\t', responseString);
@@ -717,6 +723,7 @@ class Control extends EventEmitter {
                 if (resps.some((resp) => resp.includes('ok')) && !didErrorOccur) {
                     this.removeCommandListeners();
                     resolve(response);
+                    return;
                 } else if (
                     response.text.indexOf('ER:RESET') >= 0 ||
                     response.text.indexOf('DEBUG: RESET') >= 0 ||
@@ -738,25 +745,35 @@ class Control extends EventEmitter {
                             isCmdResent = false;
                             responseString = '';
                             retryTimes += 1
+                            timeoutTimer = this.setTimeoutTimer(reject, 10000);
                             this.ws.send('raw home');
                         }, 1000);
                     }
+                } else {
+                    timeoutTimer = this.setTimeoutTimer(reject, 10000);
                 }
                 responseString = resps[resps.length - 1] || '';
             });
-            this.setDefaultErrorResponse(reject);
-            this.setDefaultFatalResponse(reject);
+            this.setDefaultErrorResponse(reject, timeoutTimer);
+            this.setDefaultFatalResponse(reject, timeoutTimer);
+
+            timeoutTimer = this.setTimeoutTimer(reject, 10000);
             this.ws.send('raw home');
         });
     }
 
     rawStartLineCheckMode = () => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         return new Promise((resolve, reject) => {
             let isCmdResent = false;
             let responseString = '';
             const command = '$@';
             let retryTimes = 0;
+            let timeoutTimer: null | NodeJS.Timeout;
             this.on(EVENT_COMMAND_MESSAGE, (response) => {
+                clearTimeout(timeoutTimer);
                 if (response && response.status === 'raw') {
                     console.log('raw line check:\t', response.text);
                     responseString += response.text;
@@ -764,11 +781,12 @@ class Control extends EventEmitter {
                 const resps = responseString.split('\n');
                 const i = resps.findIndex((r) => r === 'CTRL LINECHECK_ENABLED');
                 if (i < 0) responseString = resps[resps.length - 1] || '';
-                if (i >= 0 && resps[i+1].startsWith('ok')) {
+                if (i >= 0) {
                     this.isLineCheckMode = true;
                     this.currentLineNumber = 1;
                     this.removeCommandListeners();
                     resolve();
+                    return;
                 }
                 if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {
                     if (retryTimes >= 5) {
@@ -781,36 +799,47 @@ class Control extends EventEmitter {
                         setTimeout(() => {
                             isCmdResent = false;
                             responseString = '';
+                            timeoutTimer = this.setTimeoutTimer(reject, 10000);
                             this.ws.send(command);
                             retryTimes += 1;
                         }, 200);
                     }
+                } else {
+                    timeoutTimer = this.setTimeoutTimer(reject, 10000);
                 }
             });
-            this.setDefaultErrorResponse(reject);
-            this.setDefaultFatalResponse(reject);
+            this.setDefaultErrorResponse(reject, timeoutTimer);
+            this.setDefaultFatalResponse(reject, timeoutTimer);
+
+            timeoutTimer = this.setTimeoutTimer(reject, 10000);
             this.ws.send(command);
         });
     }
 
     rawEndLineCheckMode = () => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         return new Promise((resolve, reject) => {
             let isCmdResent = false;
             let responseString = '';
             const command = 'M172';
             let retryTimes = 0;
+            let timeoutTimer: null | NodeJS.Timeout;
             this.on(EVENT_COMMAND_MESSAGE, (response) => {
+                clearTimeout(timeoutTimer);
                 if (response && response.status === 'raw') {
-                    console.log('raw line check:\t', response.text);
+                    console.log('raw end line check:\t', response.text);
                     responseString += response.text;
                 }
                 const resps = responseString.split('\n');
                 const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
                 if (i < 0) responseString = resps[resps.length - 1] || '';
-                if (i >= 0 && resps[i+1].startsWith('ok')) {
+                if (i >= 0) {
                     this.isLineCheckMode = false;
                     this.removeCommandListeners();
                     resolve();
+                    return;
                 }
                 if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {
                     if (retryTimes >= 5) {
@@ -827,15 +856,22 @@ class Control extends EventEmitter {
                             retryTimes += 1;
                         }, 200);
                     }
+                } else {
+                    timeoutTimer = this.setTimeoutTimer(reject, 10000);
                 }
             });
-            this.setDefaultErrorResponse(reject);
-            this.setDefaultFatalResponse(reject);
+            this.setDefaultErrorResponse(reject, timeoutTimer);
+            this.setDefaultFatalResponse(reject, timeoutTimer);
+            timeoutTimer = this.setTimeoutTimer(reject, 10000);
+
             this.ws.send(command);
         });
     }
 
     rawMove = (args: any) => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         let command = 'G1';
         args.f = args.f || '6000';
         command += 'F' + args.f;
@@ -854,6 +890,9 @@ class Control extends EventEmitter {
     }
 
     rawSetAirPump = (on: boolean) => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         const command = on ? 'B3' : 'B4';
         if (!this.isLineCheckMode) {
             return this.useWaitAnyResponse(command);
@@ -863,6 +902,9 @@ class Control extends EventEmitter {
     }
 
     rawSetFan = (on: boolean) => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         const command = on ? 'B5' : 'B6';
         if (!this.isLineCheckMode) {
             return this.useWaitAnyResponse(command);
@@ -872,6 +914,9 @@ class Control extends EventEmitter {
     }
 
     rawSetRotary = (on: boolean) => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         const command = on ? 'R1' : 'R0';
         if (!this.isLineCheckMode) {
             return this.useWaitAnyResponse(command);
@@ -881,6 +926,9 @@ class Control extends EventEmitter {
     }
 
     rawLooseMotorB12 = async () => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         await this.useWaitAnyResponse('$1=0');
         const command = 'B12';
         if (!this.isLineCheckMode) {
@@ -894,6 +942,9 @@ class Control extends EventEmitter {
     }
 
     rawLooseMotorB34 = () => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
         const command = 'B34';
         if (!this.isLineCheckMode) {
             return this.useWaitAnyResponse(command);

@@ -1,5 +1,7 @@
+import { IProgress } from 'app/views/dialogs/AlertsAndProgress';
 import * as i18n from '../../helpers/i18n';
 import AlertConstants from '../constants/alert-constants';
+import ProgressConstants from '../constants/progress-constants';
 
 const React = requireNode('react');
 const { createContext } = React;
@@ -68,7 +70,7 @@ export class AlertProgressContextProvider extends React.Component {
         }
     }
 
-    updateProgress = (id, args={}) => {
+    updateProgress = (id, args: IProgress = {}) => {
         const { alertProgressStack } = this.state;
         const targetObjects = alertProgressStack.filter((alertOrProgress) => {
             return alertOrProgress.isProgrss && alertOrProgress.id === id
@@ -77,6 +79,9 @@ export class AlertProgressContextProvider extends React.Component {
             return;
         }
         const targetObject = targetObjects[targetObjects.length - 1];
+        if (targetObject.type === ProgressConstants.NONSTOP && !args.caption && args.message) {
+            args.caption = args.message;
+        }
         Object.assign(targetObject, args);
         this.setState({alertProgressStack});
     }

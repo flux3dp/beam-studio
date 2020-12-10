@@ -347,7 +347,13 @@ class DeviceMaster {
 
     closeConnection(uuid: string) {
         const device: IDeviceConnection = this.getDeviceByUUID(uuid);
-        device.control.connection.close();
+        if (device.control) {
+            try {
+                device.control.connection.close();
+            } catch (e) {
+                console.error('Error when close control connection', e);
+            }
+        }
         device.control = null;
     }
 
