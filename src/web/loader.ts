@@ -5,6 +5,7 @@ import { Tutorial } from 'app/views/tutorials/Tutorial';
 import { RightPanel } from 'app/views/beambox/Right-Panels/Right-Panel';
 import OptionsPanel from 'app/views/beambox/Right-Panels/Options-Panel';
 import { LayerPanel } from 'app/views/beambox/Right-Panels/Layer-Panel';
+import { TimeEstimationButton } from 'app/views/beambox/Time-Estimation-Button/Time-Estimation-Button';
 import grayScale from 'helpers/grayscale';
 
 console.log("TSLoader", {
@@ -15,5 +16,6 @@ console.log("TSLoader", {
     RightPanel,
     OptionsPanel,
     LayerPanel,
+    TimeEstimationButton,
     grayScale,
 });
