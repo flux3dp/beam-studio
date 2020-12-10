@@ -4,7 +4,6 @@ import { LayerPanelContextProvider } from './contexts/LayerPanelContext'
 import { ObjectPanel } from './Object-Panel'
 import PathEditPanel from './Path-Edit-Panel';
 import { LayerPanel } from './Layer-Panel';
-import LaserPanel from './Laser-Panel';
 import * as TutorialController from '../../tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
 import * as i18n from '../../../../helpers/i18n';
@@ -17,6 +16,23 @@ let _contextCaller;
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 const LANG = i18n.lang.beambox.right_panel;
+
+const isWin = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
+let isMacOSBeforeMojave = false;
+try {
+    if (process.platform === 'darwin') {
+        const osVersion = /Mac OS X ([\.\_\d]+)/.exec(navigator.userAgent)[1];
+        if (osVersion) {
+            const version = osVersion.split('_').map((v) => parseInt(v));
+            if (version[0] < 10 || (version[0] === 10 && version[1] <= 13)) {
+                isMacOSBeforeMojave = true;
+            }
+        }
+    }
+} catch (error) {
+    console.error('Error when parsing macos version.', error);
+}
 
 export class RightPanel extends React.Component {
     constructor() {
@@ -134,8 +150,6 @@ export class RightPanel extends React.Component {
     render() {
         const { mode, selectedElement } = this.context;
         const { selectedTab } = this.state;
-        const isWin = process.platform === 'win32';
-        const isLinux = process.platform === 'linux';
         let content;
         if (selectedTab === 'layers') {
             content = this.renderLayerAndLaserPanel();
@@ -152,7 +166,7 @@ export class RightPanel extends React.Component {
         }
         return (
             <div id="right-panel">
-                <div id="sidepanels" className={classNames({win: isWin, linux: isLinux})}>
+                <div id="sidepanels" className={classNames({win: isWin, linux: isLinux, 'mac-hide-scrollbar': isMacOSBeforeMojave})}>
                     {this.renderTabs()}
                     <ObjectPanelContextProvider>
                         {content}
