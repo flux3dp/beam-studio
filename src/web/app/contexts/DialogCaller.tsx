@@ -1,12 +1,13 @@
-import Modal from '../widgets/Modal'
-import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog'
-import Prompt from '../views/dialogs/Prompt'
-import ConfirmPrompt from '../views/dialogs/Confirm-Prompt'
-import { Tutorial } from '../views/tutorials/Tutorial'
-import AboutBeamStudio from '../views/beambox/About-Beam-Studio'
-import CameraCalibration from '../views/beambox/Camera-Calibration'
-import DiodeCalibration from '../views/beambox/Diode-Calibration'
-import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel'
+import Modal from '../widgets/Modal';
+import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog';
+import Prompt from '../views/dialogs/Prompt';
+import ConfirmPrompt from '../views/dialogs/Confirm-Prompt';
+import { Tutorial } from '../views/tutorials/Tutorial';
+import { ITutorial } from '../../interfaces/ITutorial';
+import AboutBeamStudio from '../views/beambox/About-Beam-Studio';
+import CameraCalibration from '../views/beambox/Camera-Calibration';
+import DiodeCalibration from '../views/beambox/Diode-Calibration';
+import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel';
 import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel';
 import NounProjectPanel from '../views/beambox/Noun-Project-Panel';
 import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel';
@@ -154,9 +155,10 @@ export default {
             />
         );
     },
-    showTutorial: (tutorial, callback) => {
+    showTutorial: (tutorial: ITutorial, callback) => {
         const { id } = tutorial;
         if (isIdExist(id)) return;
+        svgCanvas.clearSelection();
         addDialogComponent(id,
             <Tutorial
                 {...tutorial}

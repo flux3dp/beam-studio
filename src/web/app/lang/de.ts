@@ -330,7 +330,7 @@ export default {
             fit_to_window: 'An Fenster anpassen',
         },
         time_est_button: {
-            calculate: 'Berechnung',
+            calculate: 'Zeit berechnen',
             estimate_time: 'Geschätzte benötigte Zeit:',
         },
         left_panel: {
@@ -355,6 +355,7 @@ export default {
                 array: 'Anordnung',
                 preview: 'Kameravorschau',
                 trace: 'Bild verfolgen',
+                end_preview: 'Vorschau beenden',
                 clear_preview: 'Vorschau löschen'
             },
         },

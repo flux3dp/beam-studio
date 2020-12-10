@@ -56,8 +56,8 @@ class TimeEstimationButtonComponent extends React.Component {
 
     renderButton() {
         return (
-            <div className='time-est-btn' onClick={() => this.calculateEstimatedTime()}>
-                {LANG.calculate}
+            <div className='time-est-btn' title={LANG.calculate} onClick={() => this.calculateEstimatedTime()}>
+                <img src={`img/icon-stopwatch.svg`} draggable="false"/>
             </div>
         )
     }

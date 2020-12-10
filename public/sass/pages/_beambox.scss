@@ -591,6 +591,11 @@
             &.linux {
                 width: $winSidePanelWidth;
             }
+            &.mac-hide-scrollbar {
+                &::-webkit-scrollbar {
+                    width: 0;
+                }
+            }
             &:hover {
                 opacity: 1;
                 z-index: 4;
