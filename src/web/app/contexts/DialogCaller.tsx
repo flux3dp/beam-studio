@@ -157,6 +157,7 @@ export default {
     showTutorial: (tutorial, callback) => {
         const { id } = tutorial;
         if (isIdExist(id)) return;
+        svgCanvas.clearSelection();
         addDialogComponent(id,
             <Tutorial
                 {...tutorial}
