@@ -3,7 +3,7 @@ import Modal from '../../widgets/Modal';
 import ModalWithHole from '../../widgets/Modal-With-Hole';
 import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
-import TutorialConstants from '../../constants/tutorial-constants';
+import { TutorialCallbacks } from '../../../interfaces/ITutorial';
 import * as i18n from '../../../helpers/i18n';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas;
@@ -27,13 +27,11 @@ class TutorialContextProvider extends React.Component {
         this.clearDefaultRect();
     }
 
-    handleCallback = (callbackId) => {
-        switch(callbackId) {
-            case TutorialConstants.callbackConstants.SELECT_DEFAULT_RECT:
-                this.selectDefaultRect();
-                break;
-            default:
-                break;
+    handleCallback = (callbackId: TutorialCallbacks) => {
+        if (callbackId === TutorialCallbacks.SELECT_DEFAULT_RECT) {
+            this.selectDefaultRect();
+        } else {
+            console.log('Unknown callback id', callbackId);
         }
     }
 
