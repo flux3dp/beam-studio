@@ -110,12 +110,12 @@ class Control extends EventEmitter {
                         //     this.createDedicatedWs(this.fileInfoWsId);
                         //     this.isConnected = true;
                         // }
+                        this.isConnected = true;
                         console.log('Control WS Connected', data);
                         this.emit('connected', data);
                         resolve(newSocket);
                         break;
                     default:
-                        this.isConnected = true;
                         this.emit('message', data);
                         this.emit(EVENT_COMMAND_MESSAGE, data);
                         break;

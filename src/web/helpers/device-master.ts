@@ -14,27 +14,8 @@ import InputLightBoxConstants from '../app/constants/input-lightbox-constants';
 import Camera from './api/camera';
 import DeviceErrorHandler from './device-error-handler';
 import VersionChecker from './version-checker';
+import { IDeviceInfo, IDeviceConnection } from '../interfaces/IDevice';
 
-interface IDeviceInfo {
-    st_id: number
-    error_label: never
-    uuid: string,
-    model: string,
-    version: string,
-    password: boolean
-    plaintext_password: string,
-    serial: string,
-    source: string,
-    name: string,
-    addr: string
-}
-interface IDeviceConnection {
-    info: IDeviceInfo,
-    control: Control,
-    errors: string[],
-    camera: Camera,
-    cameraNeedsFlip: boolean,
-}
 const lang = i18n.lang;
 
 class DeviceMaster {
@@ -678,6 +659,7 @@ class DeviceMaster {
         }
     }
 
+    // Get, Set functions 
     getLaserPower() {
         const controlSocket = this.currentDevice.control;
         return controlSocket.addTask(controlSocket.getLaserPower);
@@ -771,7 +753,6 @@ class DeviceMaster {
         return controlSocket.addTask(controlSocket.deviceInfo);
     }
 
-    // get functions
     async getReport() {
         const controlSocket = this.currentDevice.control;
         const result = await controlSocket.addTask(controlSocket.report);
@@ -788,6 +769,7 @@ class DeviceMaster {
         return controlSocket.addTask(controlSocket.getPreview);
     }
 
+    // update functions
     updateFirmware = (file: File, onProgress: (...args: any[]) => void) => {
         const controlSocket = this.currentDevice.control;
         if (onProgress) {

@@ -91,10 +91,9 @@ class PreviewModeController {
                 DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
-            // This may cause device master broken after homing failed, need to find out why
-            // if (this.isLineCheckEnabled) {
-            //     DeviceMaster.rawEndLineCheckMode();
-            // }
+            if (this.isLineCheckEnabled) {
+                DeviceMaster.rawEndLineCheckMode();
+            }
             DeviceMaster.endRawMode();
             DeviceMaster.kick();
             throw error;
@@ -154,7 +153,7 @@ class PreviewModeController {
                 console.log(error);
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: error.message,
+                    message: error.message || error.text,
                 });
             }
             $('#workarea').css('cursor', 'auto');

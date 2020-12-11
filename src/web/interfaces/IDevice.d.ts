@@ -21,5 +21,6 @@ export interface IDeviceConnection {
     info: IDeviceInfo,
     control: Control,
     errors: string[]
-    camera: Camera
+    camera: Camera,
+    cameraNeedsFlip: boolean,
 }
