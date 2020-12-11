@@ -8758,7 +8758,7 @@ define([
         // history stack. Remembers removed elements on the clipboard
 
         // TODO: Combine similar code with deleteSelectedElements
-        this.cutSelectedElements = function () {
+        this.cutSelectedElements = async function () {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -8768,6 +8768,7 @@ define([
             var len = selectedElements.length;
             var selectedCopy = []; //selectedElements is being deleted
             var layerDict = {}, layerCount = 0;
+            let clipBoardText = 'BS Cut: ';
 
             for (i = 0; i < len && selectedElements[i]; ++i) {
                 var selected = selectedElements[i],
@@ -8775,6 +8776,7 @@ define([
 
                 var layerName = $(selected.parentNode).find('title').text();
                 selected.setAttribute("data-origin-layer", layerName);
+                clipBoardText += $(selected).attr('id') + ', ';
                 if (!layerDict[layerName]) {
                     layerDict[layerName] = true;
                     layerCount++;
@@ -8799,6 +8801,12 @@ define([
                 for(i = 0; i < selectedCopy.length; i++) {
                     selectedCopy[i].removeAttribute("data-origin-layer");
                 }
+            }
+            try {
+                await navigator.clipboard.writeText(clipBoardText);
+                console.log('Write to clipboard was successful!', clipBoardText);
+            } catch (err) {
+                console.error('Async: Could not copy text: ', err);
             }
 
             if (!batchCmd.isEmpty()) {
@@ -8841,7 +8849,7 @@ define([
             }
             try {
                 await navigator.clipboard.writeText(clipBoardText);
-                console.log('Copying to clipboard was successful!', clipBoardText);
+                console.log('Write to clipboard was successful!', clipBoardText);
             } catch (err) {
                 console.error('Async: Could not copy text: ', err);
             }
