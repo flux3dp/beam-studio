@@ -79,7 +79,7 @@ class PreviewModeController {
             Progress.update('start-preview-mode', { message: LANG.message.turningOffAirPump });
             await DeviceMaster.rawSetAirPump(false);
             Progress.update('start-preview-mode', { message: LANG.message.connectingCamera });
-            await DeviceMaster.connectCamera(selectedPrinter);
+            await DeviceMaster.connectCamera();
             PreviewModeBackgroundDrawer.start(this.cameraOffset);
             PreviewModeBackgroundDrawer.drawBoundary();
 
@@ -112,6 +112,9 @@ class PreviewModeController {
         await this.reset();
         const res = await DeviceMaster.select(storedPrinter);
         if (res.success) {
+            if (DeviceMaster.currentControlMode !== 'raw') {
+                await DeviceMaster.enterRawMode();
+            }
             if (this.isLineCheckEnabled) {
                 await DeviceMaster.rawEndLineCheckMode();
             }
@@ -246,10 +249,9 @@ class PreviewModeController {
             }
         } catch (error) {
             if (error.message === ErrorConstants.CONTROL_SOCKET_MODE_ERROR) {
-                console.log('Not in raw mode.');
+                // Device control is not in raw mode
             } else if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
-                // Not in raw mode, unknown command M172
-                console.log('Not in raw mode.');
+                // Ghost control socket is not in raw mode, unknown command M172
             } else {
                 console.log('Unable to end line check mode', error);
             }

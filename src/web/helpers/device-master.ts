@@ -31,8 +31,9 @@ interface IDeviceInfo {
 interface IDeviceConnection {
     info: IDeviceInfo,
     control: Control,
-    errors: string[]
-    camera: Camera
+    errors: string[],
+    camera: Camera,
+    cameraNeedsFlip: boolean,
 }
 const lang = i18n.lang;
 
@@ -125,6 +126,13 @@ class DeviceMaster {
         return this._currentDevice;
     }
 
+    get currentControlMode() {
+        if (this.currentDevice && this.currentDevice.control) {
+            return this.currentDevice.control.getMode();
+        }
+        return null;
+    }
+
     private getDeviceByUUID(uuid: string): IDeviceConnection | null {
         if (!this.deviceConnections.get(uuid)) {
             this.deviceConnections.set(uuid, {
@@ -133,7 +141,8 @@ class DeviceMaster {
                 } as IDeviceInfo,
                 control: null,
                 errors: null,
-                camera: null
+                camera: null,
+                cameraNeedsFlip: null,
             })
         }
         let matchedInfo = this.discoveredDevices.filter(d => d.uuid == uuid);
@@ -734,9 +743,17 @@ class DeviceMaster {
         return;
     }
 
-    getDeviceSetting(name: string) {
-        const controlSocket = this.currentDevice.control;
-        return controlSocket.addTask(controlSocket.getDeviceSetting, name);
+    async getDeviceSetting(name: string) {
+        const currentDevice = this.currentDevice;
+        const controlSocket = currentDevice.control;
+        const res = await controlSocket.addTask(controlSocket.getDeviceSetting, name);
+
+        if (currentDevice.cameraNeedsFlip === null && ['camera_offset', 'camera_offset_borderless'].includes(name)) {
+            if (res.status === 'ok' && !currentDevice.info.model.includes('delta-')) {
+                this.checkCameraNeedFlip(res.value);
+            }
+        }
+        return res;
     }
 
     setDeviceSetting(name: string, value: string) {
@@ -788,18 +805,27 @@ class DeviceMaster {
     }
 
     // Camera functions
-    async connectCamera(device: IDeviceInfo, shouldCrop: boolean = true) {
-        const deviceConn = this.getDeviceByUUID(device.uuid);
-        deviceConn.camera = new Camera(shouldCrop);
-        await deviceConn.camera.createWs(device);
+    checkCameraNeedFlip(cameraOffset: string) {
+        const currentDevice = this.currentDevice;
+        currentDevice.cameraNeedsFlip = !!(Number((/F:\s?(\-?\d+\.?\d+)/.exec(cameraOffset) || ['',''])[1]));
+        return currentDevice.cameraNeedsFlip;
+    } 
+
+    async connectCamera(shouldCrop: boolean = true) {
+        const currentDevice = this.currentDevice;
+        if (currentDevice.cameraNeedsFlip === null && currentDevice.control && currentDevice.control.getMode() === '') {
+            await this.getDeviceSetting('camera_offset');
+        }
+        currentDevice.camera = new Camera(shouldCrop, currentDevice.cameraNeedsFlip);
+        await currentDevice.camera.createWs(currentDevice.info);
     }
 
     async takeOnePicture() {
         return await this.currentDevice.camera.oneShot();
     }
 
-    async streamCamera(device, shouldCrop=true) {
-        await this.connectCamera(device, shouldCrop);
+    async streamCamera(shouldCrop=true) {
+        await this.connectCamera(shouldCrop);
 
         // return an instance of RxJS Observable.
         return this.currentDevice.camera.getLiveStreamSource();

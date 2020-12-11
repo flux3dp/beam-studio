@@ -13,7 +13,7 @@ const EVENT_COMMAND_FATAL = 'command-fatal';
 const EVENT_COMMAND_PROGRESS = 'command-progress';
 
 const MAX_TASK_QUEUE = 30;
-const CONNECTION_TIMEOUT = 12 * 1000;
+const CONNECTION_TIMEOUT = 30 * 1000;
 const CONNECITON_TIMEOUT_ERROR = {
     'status': 'error',
     'error': 'TIMEOUT',
