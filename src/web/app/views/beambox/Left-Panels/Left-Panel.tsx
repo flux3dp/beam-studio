@@ -129,14 +129,14 @@ class LeftPanel extends React.Component {
         if (!isPreviewing) {
             return (
                 <div className={this.leftPanelClass}>
-                    {this._renderToolButton('cursor','Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
-                    {this._renderToolButton('photo','Photo', LANG.label.photo + ' (I)', FnWrapper.importImage)}
-                    {this._renderToolButton('text','Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
-                    {this._renderToolButton('rect','Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
-                    {this._renderToolButton('oval','Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
-                    {this._renderToolButton('polygon','Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
-                    {this._renderToolButton('line','Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
-                    {this._renderToolButton('draw','Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
+                    {this._renderToolButton('cursor', 'Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
+                    {this._renderToolButton('photo', 'Photo', LANG.label.photo + ' (I)', FnWrapper.importImage)}
+                    {this._renderToolButton('text', 'Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
+                    {this._renderToolButton('rect', 'Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
+                    {this._renderToolButton('oval', 'Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
+                    {this._renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
+                    {this._renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
+                    {this._renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
                 </div>
             );
         } else {
@@ -144,6 +144,7 @@ class LeftPanel extends React.Component {
             const isDrawn = !PreviewModeBackgroundDrawer.isClean();
             return (
                 <div className={this.leftPanelClass}>
+                    {this._renderToolButton('back', 'Exit-Preview', LANG.label.end_preview, this.props.endPreviewMode)}
                     {this._renderToolButton('shoot', 'Shoot', LANG.label.preview, () => {
                         if (!PreviewModeController.isPreviewMode()) {
                             this.props.setShouldStartPreviewController(true)
