@@ -157,17 +157,17 @@ class Monitor extends React.Component{
     _preFetchInfo = () => {
         let { Monitor } = store.getState();
 
-        const go = (result) => {
+        const go = async (result) => {
             if(!result.done) {
-                result.value.then(() => {
+                try {
+                    await result.value;
                     go(s.next());
-                })
-                .fail(error => {
+                } catch (error) {
                     console.log('monitor', error);
                     if(error.status === 'fatal') {
                         DeviceMaster.reconnect();
                     }
-                });
+                }
             }
         };
 
@@ -188,23 +188,17 @@ class Monitor extends React.Component{
         go(s.next());
     }
 
-    _getPreviewInfo = () => {
-        let d = $.Deferred();
-        DeviceMaster.getPreviewInfo().then((info) => {
-            console.log('Device Master upload preview info', info);
-            store.dispatch(DeviceActionCreator.updateJobInfo(info));
-            d.resolve();
-        });
-        return d.promise();
+    _getPreviewInfo = async () => {
+        const info = await DeviceMaster.getPreviewInfo();
+        console.log('Device Master upload preview info', info);
+        store.dispatch(DeviceActionCreator.updateJobInfo(info));
+        return;
     }
 
-    _getInitialStatus = () => {
-        let d = $.Deferred();
-        DeviceMaster.getReport().then((result) => {
-            store.dispatch(DeviceActionCreator.updateDeviceStatus(result));
-            d.resolve();
-        });
-        return d.promise();
+    _getInitialStatus = async () => {
+        const result = await DeviceMaster.getReport();
+        store.dispatch(DeviceActionCreator.updateDeviceStatus(result));
+        return;
     }
 
     _hasFCode = () => {
@@ -219,15 +213,14 @@ class Monitor extends React.Component{
         this._retrieveFolderContent(store.getState().Monitor.currentPath);
     }
 
-    _existFileInDirectory = (path, fileName) => {
-        let d = $.Deferred();
+    _existFileInDirectory = async (path, fileName) => {
         fileName = fileName.replace('.gcode', '.fc');
-        DeviceMaster.fileInfo(path, fileName).then(() => {
-            d.resolve(true);
-        }).fail(() => {
-            d.resolve(false);
-        });
-        return d.promise();
+        try {
+            await DeviceMaster.fileInfo(path, fileName);
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 
     _doFileUpload = (file) => {
@@ -235,7 +228,7 @@ class Monitor extends React.Component{
 
         store.dispatch(MonitorActionCreator.setUploadProgress(0));
         reader.readAsArrayBuffer(file);
-        reader.onload = () => {
+        reader.onload = async () => {
             let fileInfo = file.name.split('.'),
                 ext = fileInfo[fileInfo.length - 1],
                 type,
@@ -254,15 +247,13 @@ class Monitor extends React.Component{
                 let { Monitor } = store.getState();
                 let blob = new Blob([reader.result], type);
 
-                DeviceMaster.uploadToDirectory(blob, Monitor.currentPath, file.name).then(() => {
-                    store.dispatch(MonitorActionCreator.setUploadProgress(''));
-                    this._refreshDirectory();
-                }).progress((progress: IProgress) => {
+                await DeviceMaster.uploadToDirectory(blob, Monitor.currentPath, file.name, (progress: IProgress) => {
                     let p = Math.floor(progress.step / progress.total * 100);
                     store.dispatch(MonitorActionCreator.setUploadProgress(p));
-                }).fail((error) => {
-                    // TODO: show upload error
                 });
+
+                store.dispatch(MonitorActionCreator.setUploadProgress(''));
+                this._refreshDirectory();
             }
             else {
                 AlertActions.showPopupInfo('', lang.monitor.extensionNotSupported);
@@ -339,15 +330,11 @@ class Monitor extends React.Component{
         AlertActions.showPopupYesNo('DELETE_FILE', lang.monitor.confirmFileDelete);
     }
 
-    _dispatchFolderContent = (path) => {
-        let d = $.Deferred();
+    _dispatchFolderContent = async (path: string) => {
         this._stopCamera();
-
-        this._retrieveFolderContent(path).then((content) => {
-            store.dispatch(MonitorActionCreator.changePath(path, content));
-            return d.resolve();
-        });
-        return d.promise();
+        const content = await this._retrieveFolderContent(path);
+        store.dispatch(MonitorActionCreator.changePath(path, content));
+        return;
     }
 
     _handleFolderclick = (event) => {
@@ -478,15 +465,13 @@ class Monitor extends React.Component{
         }
     }
 
-    _handleDownload = () => {
-        const downloadProgressDisplay = (p) => {
-            store.dispatch(MonitorActionCreator.setDownloadProgress(p));
-        };
+    _handleDownload = async () => {
         let { Monitor } = store.getState();
-
-        DeviceMaster.downloadFile(Monitor.currentPath, Monitor.selectedItem.name).then(async (file) => {
+        try {
+            const file = await DeviceMaster.downloadFile(Monitor.currentPath, Monitor.selectedItem.name, (p) => {
+                store.dispatch(MonitorActionCreator.setDownloadProgress(p));
+            });
             store.dispatch(MonitorActionCreator.setDownloadProgress({size:'', left:''}));
-
             const targetFilePath = await ElectronDialogs.saveFileDialog(Monitor.selectedItem.name , Monitor.selectedItem.name, [], true);
             if (targetFilePath) {
                 const fs = requireNode('fs');
@@ -494,11 +479,9 @@ class Monitor extends React.Component{
                 const buf = Buffer.from(arrBuf);
                 fs.writeFileSync(targetFilePath, buf);
             }
-        }).progress((p) => {
-            downloadProgressDisplay(p);
-        }).fail((error) => {
-            // TODO: show download error
-        });
+        } catch (error) {
+            console.error('Error when downloading file', error);
+        }
     }
 
     _handleToggleCamera = () => {
@@ -591,23 +574,19 @@ class Monitor extends React.Component{
 
             if(fCode) {
                 this._stopReport();
-                DeviceMaster.go(fCode)
-                .then(() => {
+                try {
+                    await DeviceMaster.go(fCode, (progress: IProgress) => {
+                        let p = Math.floor(progress.step / progress.total * 100);
+                        store.dispatch(MonitorActionCreator.setUploadProgress(p));
+                    });
                     this._startReport();
                     store.dispatch(MonitorActionCreator.setUploadProgress(''));
-                })
-                .progress((progress: IProgress) => {
-                    let p = Math.floor(progress.step / progress.total * 100);
-                    store.dispatch(MonitorActionCreator.setUploadProgress(p));
-                })
-                .fail((error: {error: string[]}) => {
-                    // TODO: figuire out what error is
-                    // reset status
+                } catch (error) {
                     store.dispatch(MonitorActionCreator.setUploadProgress(''));
                     store.dispatch(MonitorActionCreator.changeMode(mode.PREVIEW));
                     this._startReport();
                     AlertActions.showPopupError('', lang.message.unable_to_start + error.error.join('_'));
-                });
+                }
             }
             else {
                 let executeGo = () => {
@@ -649,7 +628,7 @@ class Monitor extends React.Component{
         DeviceMaster.pause();
     }
 
-    _handleStop = () => {
+    _handleStop = async () => {
         if(statusId < 0) {
             AlertActions.showPopupYesNo('KICK', lang.monitor.forceStop);
         }
@@ -658,34 +637,29 @@ class Monitor extends React.Component{
             if(this._isAbortedOrCompleted()) {
                 //DeviceMaster.quit();
                 store.dispatch(MonitorActionCreator.showWait());
-            }
-            else if(this._isPaused()) {
+            } else if(this._isPaused()) {
                 DeviceMaster.stop();
-            }
-            else {
-                let p: any = $.Deferred();
-                if(Device.status.st_id < 0) {
-                    if(confirm(lang.monitor.forceStop)) {
-                        p = DeviceMaster.kick();
-                    }
-                    else {
-                        p.resolve();
-                    }
-                }
-                else {
-                    p = DeviceMaster.stop();
-                }
-                p.always(() => {
-                    let mode = Monitor.selectedFileInfo.length > 0 ? GlobalConstants.FILE_PREVIEW : GlobalConstants.PREVIEW;
+            } else {
+                try {
                     if(Device.status.st_id < 0) {
-                        mode = GlobalConstants.FILE;
-                        this._dispatchFolderContent('');
+                        if(confirm(lang.monitor.forceStop)) {
+                            await DeviceMaster.kick();
+                        }
+                    } else {
+                        await DeviceMaster.stop();
                     }
-                    else if(Monitor.mode === GlobalConstants.CAMERA) {
-                        mode = GlobalConstants.CAMERA;
-                    }
-                    store.dispatch(MonitorActionCreator.changeMode(mode));
-                });
+                } catch (error) {
+                    console.error('Error when stopping task', error);
+                }
+
+                let mode = Monitor.selectedFileInfo.length > 0 ? GlobalConstants.FILE_PREVIEW : GlobalConstants.PREVIEW;
+                if(Device.status.st_id < 0) {
+                    mode = GlobalConstants.FILE;
+                    this._dispatchFolderContent('');
+                } else if(Monitor.mode === GlobalConstants.CAMERA) {
+                    mode = GlobalConstants.CAMERA;
+                }
+                store.dispatch(MonitorActionCreator.changeMode(mode));
             }
         }
     }
@@ -698,10 +672,13 @@ class Monitor extends React.Component{
     }
 
     _startReport = () => {
-        this.reporter = setInterval(() => {
+        this.reporter = setInterval(async () => {
             // if(window.stopReport === true) { return; }
-            DeviceMaster.getReport().fail((error) => {
-
+            try {
+                const result = await DeviceMaster.getReport();
+                store.dispatch(DeviceActionCreator.updateDeviceStatus(result));
+                this._processReport(result);
+            } catch (error) {
                 //Maybe we should handle SUBSYSTEM_ERROR rather than doing this. 2018/1/12
                 //It was said that SUBSYSTEM_ERROR will not appear anymore 2018/1/13
                 //so the following 2 lines can be deleted
@@ -711,10 +688,7 @@ class Monitor extends React.Component{
                     clearInterval(this.reporter);
                     this._processReport(error);
                 }
-            }).then((result) => {
-                store.dispatch(DeviceActionCreator.updateDeviceStatus(result));
-                this._processReport(result);
-            });
+            }
         }, refreshTime);
     }
 
@@ -889,35 +863,29 @@ class Monitor extends React.Component{
         this._retrieveFileInfo(start, end, handleCallback);
     }
 
-    _retrieveFileInfo = (index, end, callback, filesArray: any[] = []) => {
+    _retrieveFileInfo = async (index, end, callback, filesArray: any[] = []) => {
         if(index < end) {
             if(currentDirectoryContent.files.length === 0) { return; }
-            DeviceMaster.fileInfo(
-                currentDirectoryContent.path,
-                currentDirectoryContent.files[index][0]
-            ).then((r) => {
-                r.error ? filesArray.push(currentDirectoryContent.files[index]) : filesArray.push(r);
+            try {
+                const res = await DeviceMaster.fileInfo(currentDirectoryContent.path, currentDirectoryContent.files[index][0]);
+                res.error ? filesArray.push(currentDirectoryContent.files[index]) : filesArray.push(res);
                 this._retrieveFileInfo(index + 1, end, callback, filesArray);
-            }).fail((error) => {
-                // TODO: display file info error
-            });
+            } catch (error) {
+                console.error('Error when retrieve file info', error);
+            }
         }
         else {
             callback(filesArray);
         }
     }
 
-    _checkUSBFolderExistance = () => {
-        let d = $.Deferred();
-        DeviceMaster.ls('USB').then(() => {
+    _checkUSBFolderExistance = async () => {
+        try {
+            await DeviceMaster.ls('USB');
             store.dispatch(DeviceActionCreator.updateUsbFolderExistance(true));
-            d.resolve();
-        }).fail(() => {
+        } catch (error) {
             store.dispatch(DeviceActionCreator.updateUsbFolderExistance(false));
-            d.resolve();
-        });
-
-        return d.promise();
+        }
     }
 
     _findObjectContainsProperty = (infoArray, propertyName) => {
@@ -983,7 +951,7 @@ class Monitor extends React.Component{
 Monitor.propTypes = {
     lang: PropTypes.object,
     selectedDevice: PropTypes.object,
-    fCode: PropTypes.object,
+    fCode: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     slicingStatus: PropTypes.object,
     previewUrl: PropTypes.string,
     opener: PropTypes.string,

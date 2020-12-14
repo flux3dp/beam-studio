@@ -1,8 +1,9 @@
 import PreviewModeBackgroundDrawer from './preview-mode-background-drawer';
 import DeviceMaster from '../../../helpers/device-master';
 import Alert from '../../contexts/AlertCaller';
-import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
+import AlertConstants from '../../constants/alert-constants';
+import ErrorConstants from '../../constants/error-constants';
 import sprintf from '../../../helpers/sprintf';
 import VersionChecker from '../../../helpers/version-checker';
 import * as i18n from '../../../helpers/i18n';
@@ -10,13 +11,12 @@ import Constant from './constant';
 import BeamboxPreference from './beambox-preference';
 import BeamboxActions from '../beambox';
 
-const Rxjs = requireNode('rxjs');
-const { concatMap, filter, map, switchMap, take, timeout, timer } = requireNode('rxjs/operators');
+const LANG = i18n.lang;
 
 class PreviewModeController {
     isDrawing: boolean;
     originalSpeed: number;
-    storedPrinter: any;
+    storedDevice: any;
     isPreviewModeOn: boolean;
     isPreviewBlocked: boolean;
     isLineCheckEnabled: boolean;
@@ -26,7 +26,7 @@ class PreviewModeController {
     constructor() {
         this.isDrawing = false;
         this.originalSpeed = 1;
-        this.storedPrinter = null;
+        this.storedDevice = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
         this.isLineCheckEnabled = true;
@@ -37,10 +37,10 @@ class PreviewModeController {
 
     //main functions
 
-    async start(selectedPrinter, errCallback) {
+    async start(selectedDeivce, errCallback) {
         await this.reset();
 
-        const res = await DeviceMaster.select(selectedPrinter);
+        const res = await DeviceMaster.select(selectedDeivce);
         if (!res.success) {
             return;
         }
@@ -48,33 +48,44 @@ class PreviewModeController {
         try {
             Progress.openNonstopProgress({
                 id: 'start-preview-mode',
-                message: sprintf(i18n.lang.message.connectingMachine, selectedPrinter.name),
+                message: sprintf(LANG.message.connectingMachine, selectedDeivce.name),
                 timeout: 30000,
             });
             await this.retrieveCameraOffset();
+
+            Progress.update('start-preview-mode', { message: LANG.message.gettingLaserSpeed });
             const laserSpeed = await DeviceMaster.getLaserSpeed();
 
             if (Number(laserSpeed.value) !== 1) {
                 this.originalSpeed = Number(laserSpeed.value);
+                Progress.update('start-preview-mode', { message: LANG.message.settingLaserSpeed });
                 await DeviceMaster.setLaserSpeed(1);
             }
-            let res = await DeviceMaster.enterRawMode();
-            res = await DeviceMaster.rawSetRotary(false); // Disable Rotary
-            res = await DeviceMaster.rawHome();
-            const vc = VersionChecker(selectedPrinter.version);
+            Progress.update('start-preview-mode', { message: LANG.message.enteringRawMode });
+            await DeviceMaster.enterRawMode();
+            Progress.update('start-preview-mode', { message: LANG.message.exitingRotaryMode });
+            await DeviceMaster.rawSetRotary(false);
+            Progress.update('start-preview-mode', { message: LANG.message.homing });
+            await DeviceMaster.rawHome();
+            const vc = VersionChecker(selectedDeivce.version);
             if (vc.meetRequirement('MAINTAIN_WITH_LINECHECK')) {
-                res = await DeviceMaster.rawStartLineCheckMode();
+                await DeviceMaster.rawStartLineCheckMode();
                 this.isLineCheckEnabled = true;
             } else {
                 this.isLineCheckEnabled = false;
             }
-            res = await DeviceMaster.rawSetFan(false);
-            res = await DeviceMaster.rawSetAirPump(false);
-            await DeviceMaster.connectCamera(selectedPrinter);
+            Progress.update('start-preview-mode', { message: LANG.message.turningOffFan });
+            await DeviceMaster.rawSetFan(false);
+            Progress.update('start-preview-mode', { message: LANG.message.turningOffAirPump });
+            await DeviceMaster.rawSetAirPump(false);
+            Progress.update('start-preview-mode', { message: LANG.message.connectingCamera });
+            await DeviceMaster.connectCamera();
             PreviewModeBackgroundDrawer.start(this.cameraOffset);
             PreviewModeBackgroundDrawer.drawBoundary();
 
-            this.storedPrinter = selectedPrinter;
+
+            this.storedDevice = selectedDeivce;
+            DeviceMaster.setDeviceControlReconnectOnClose(selectedDeivce);
             this.errorCallback = errCallback;
             this.isPreviewModeOn = true;
         } catch (error) {
@@ -82,10 +93,9 @@ class PreviewModeController {
                 DeviceMaster.setLaserSpeed(this.originalSpeed);
                 this.originalSpeed = 1;
             }
-            // This may cause device master broken after homing failed, need to find out why
-            // if (this.isLineCheckEnabled) {
-            //     DeviceMaster.rawEndLineCheckMode();
-            // }
+            if (this.isLineCheckEnabled) {
+                DeviceMaster.rawEndLineCheckMode();
+            }
             DeviceMaster.endRawMode();
             DeviceMaster.kick();
             throw error;
@@ -99,10 +109,14 @@ class PreviewModeController {
         this.isPreviewModeOn = false;
         PreviewModeBackgroundDrawer.clearBoundary();
         PreviewModeBackgroundDrawer.end();
-        const storedPrinter = this.storedPrinter;
+        const storedDevice = this.storedDevice;
         await this.reset();
-        const res = await DeviceMaster.select(storedPrinter);
+        DeviceMaster.setDeviceControlDefaultCloseListener(storedDevice);
+        const res = await DeviceMaster.select(storedDevice);
         if (res.success) {
+            if (DeviceMaster.currentControlMode !== 'raw') {
+                await DeviceMaster.enterRawMode();
+            }
             if (this.isLineCheckEnabled) {
                 await DeviceMaster.rawEndLineCheckMode();
             }
@@ -142,7 +156,7 @@ class PreviewModeController {
                 console.log(error);
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_ERROR,
-                    message: error.message,
+                    message: error.message || error.text,
                 });
             }
             $('#workarea').css('cursor', 'auto');
@@ -232,18 +246,21 @@ class PreviewModeController {
         // End linecheck mode if needed
         try {
             if (this.isLineCheckEnabled) {
+                Progress.update('start-preview-mode', { message: LANG.message.endingLineCheckMode });
                 await DeviceMaster.rawEndLineCheckMode();
             }
         } catch (error) {
-            if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
-                // Not in raw mode, unknown command M172
-                console.log('Not in raw mode.');
+            if (error.message === ErrorConstants.CONTROL_SOCKET_MODE_ERROR) {
+                // Device control is not in raw mode
+            } else if ( (error.status === 'error') && (error.error && error.error[0] === 'L_UNKNOWN_COMMAND') ) {
+                // Ghost control socket is not in raw mode, unknown command M172
             } else {
                 console.log('Unable to end line check mode', error);
             }
         }
         // cannot getDeviceSetting during RawMode. So we force to end it.
         try {
+            Progress.update('start-preview-mode', { message: LANG.message.endingRawMode });
             await DeviceMaster.endRawMode();
         } catch (error) {
             if (error.status === 'error' && (error.error && error.error[0] === 'OPERATION_ERROR')) {
@@ -259,6 +276,8 @@ class PreviewModeController {
         const borderless = BeamboxPreference.read('borderless') || false;
         const supportOpenBottom = Constant.addonsSupportList.openBottom.includes(BeamboxPreference.read('workarea'));
         const configName = (supportOpenBottom && borderless) ? 'camera_offset_borderless' : 'camera_offset';
+
+        Progress.update('start-preview-mode', { message: LANG.message.retrievingCameraOffset });
         const resp = await DeviceMaster.getDeviceSetting(configName);
         console.log(`Reading ${configName}\nResp = ${resp.value}`);
         resp.value = ` ${resp.value}`;
@@ -286,7 +305,7 @@ class PreviewModeController {
     }
 
     async reset() {
-        this.storedPrinter = null;
+        this.storedDevice = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
         this.cameraOffset = null;
@@ -345,7 +364,7 @@ class PreviewModeController {
         }
         movement.f = feedrate// firmware will used limited x, y speed still
 
-        const selectRes = await DeviceMaster.select(this.storedPrinter);
+        const selectRes = await DeviceMaster.select(this.storedDevice);
         if (!selectRes.success) {
             return;
         }

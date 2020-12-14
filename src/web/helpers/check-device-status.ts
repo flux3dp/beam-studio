@@ -78,7 +78,7 @@ export default async function(printer, allowPause?: boolean, forceAbort?: boolea
         case DeviceConstants.status.COMPLETED:
         case DeviceConstants.status.ABORTED:
             // quit
-            const res = await DeviceMaster.selectDevice(printer);
+            const res = await DeviceMaster.select(printer);
             if (res.success) {
                 await DeviceMaster.quit();
                 deferred.resolve('ok');

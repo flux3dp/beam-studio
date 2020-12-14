@@ -75,7 +75,7 @@ class InputLightBox extends React.Component{
 
         buttons.push({
             label: this.props.confirmText || lang.alert.confirm,
-            className: classNames({
+            className: classNames('primary', {
                 'btn-default': true,
                 'btn-disabled': false === this.state.allowSubmit
             }),

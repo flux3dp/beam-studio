@@ -61,6 +61,7 @@ class UpdateDialog extends React.Component{
                 dataAttrs: {
                     'ga-event': 'install-new-' + this.props.type.toLowerCase()
                 },
+                className: 'btn-default primary',
                 onClick: () => {this._onInstall()}
             };
 

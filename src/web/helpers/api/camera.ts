@@ -11,10 +11,10 @@ import * as i18n from '../i18n';
 const Rxjs = requireNode('rxjs');
 const { concatMap, filter, map, switchMap, take, timeout } = requireNode('rxjs/operators');
 
-const TIMEOUT = 15000;
+const TIMEOUT = 30000;
 const LANG = i18n.lang;
 class Camera {
-    cameraNeedFlip: any;
+    cameraNeedFlip: boolean = null;
     shouldCrop: boolean;
     private _device: {
         uuid: string | null,
@@ -25,8 +25,7 @@ class Camera {
     private _ws: any;
     private _wsSubject: any;
     private _source: any;
-    constructor(shouldCrop=true) {
-        this.cameraNeedFlip = undefined;
+    constructor(shouldCrop: boolean = true, cameraNeedFlip: boolean = null) {
         this.shouldCrop = shouldCrop;
         this._device = {
             uuid: null,
@@ -34,6 +33,9 @@ class Camera {
             model: null,
             version: null
         };
+        if (cameraNeedFlip !== null) {
+            this.cameraNeedFlip = cameraNeedFlip;
+        }
         this._ws = null;
         this._wsSubject = new Rxjs.Subject();
         this._source = this._wsSubject
@@ -80,12 +82,13 @@ class Camera {
             .toPromise();
 
         // check whether the camera need flip
-        if (device && device['model'].indexOf('delta-') < 0) {
+        if (this.cameraNeedFlip === null && device && device['model'].indexOf('delta-') < 0) {
             this.cameraNeedFlip = !!(Number((/F:\s?(\-?\d+\.?\d+)/.exec(await this._getCameraOffset()) || ['',''])[1]));
         }
     }
 
     async _getCameraOffset() {
+        console.warn('Another control socket created in camera.ts, this may take time.');
         const tempWsSubject = new Rxjs.Subject();
         const tempWs = Websocket({
             method: (this._device.source === 'h2h') ? `control/usb/${parseInt(this._device.uuid)}` : `control/${this._device.uuid}`,

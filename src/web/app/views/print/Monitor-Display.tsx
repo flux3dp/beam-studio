@@ -254,8 +254,7 @@ class MonitorDisplay extends React.Component{
 
     _streamCameraRelocate = () => {
         if(!this.cameraStream) {
-            let { selectedDevice } = this.props;
-            DeviceMaster.streamCamera(selectedDevice, false).then(
+            DeviceMaster.streamCamera(false).then(
                 stream => {
                     this.cameraStream = stream;
                     this.cameraStream.subscribe(this._processImage);

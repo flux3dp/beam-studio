@@ -1,5 +1,6 @@
 
 const requirement = {
+    NEW_PLAYER                  : '3.3.0',
     B34_LOOSE_MOTOR             : '3.3.0',
     MAINTAIN_WITH_LINECHECK     : '3.2.6',
     RELOCATE_ORIGIN             : '3.2.2',
