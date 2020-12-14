@@ -1,7 +1,11 @@
 import BeamboxPreference from '../actions/beambox/beambox-preference';
 import Constant from '../actions/beambox/constant';
 import * as i18n from '../../helpers/i18n';
-import { ITutorial, TutorialCallbacks } from '../../interfaces/ITutorial';
+import { ITutorial } from '../../interfaces/ITutorial';
+
+export enum TutorialCallbacks {
+    SELECT_DEFAULT_RECT = 'SELECT_DEFAULT_RECT',
+}
 
 const React = requireNode('react');
 const electron = requireNode('electron');
@@ -21,9 +25,6 @@ const nextStepRequirements = {
     PREVIEW_PLATFORM: 'PREVIEW_PLATFORM',
     SEND_FILE: 'SEND_FILE',
 };
-const callbackConstants = {
-    SELECT_DEFAULT_RECT: 'SELECT_DEFAULT_RECT'
-}
 
 const isMac = process.platform === 'darwin';
 
@@ -314,7 +315,6 @@ const INTERFACE_TUTORIAL: ITutorial = {
 };
 
 export default {
-    callbackConstants,
     ...nextStepRequirements,
     NEW_USER_TUTORIAL,
     INTERFACE_TUTORIAL,

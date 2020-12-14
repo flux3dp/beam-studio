@@ -3,7 +3,7 @@ import Modal from '../../widgets/Modal';
 import ModalWithHole from '../../widgets/Modal-With-Hole';
 import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
-import { TutorialCallbacks } from '../../../interfaces/ITutorial';
+import { TutorialCallbacks } from '../../constants/tutorial-constants';
 import * as i18n from '../../../helpers/i18n';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 let svgCanvas;
