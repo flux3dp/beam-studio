@@ -135,12 +135,56 @@ class DeviceMaster {
 
     private async createDeviceControlSocket(uuid: string) {
         const controlSocket = new Control(uuid);
-        controlSocket.on('close', (response: any) => {
-            console.log(`Control of ${uuid} closed:`, response);
-            this.closeConnection(uuid);
-        });
         await controlSocket.connect();
         return controlSocket;
+    }
+
+    setDeviceControlDefaultCloseListener(deviceInfo: IDeviceInfo) {
+        const uuid = deviceInfo.uuid;
+        const device = this.deviceConnections.get(uuid);
+        if (!device || !device.control) {
+            console.warn(`Control socket of ${uuid} does not exist`);
+            return;
+        }
+        const controlSocket = device.control;
+        controlSocket.removeAllListeners('close');
+        controlSocket.on('close', (response: CloseEvent) => {
+            this.closeConnection(uuid);
+        });
+    }
+
+    setDeviceControlReconnectOnClose(deviceInfo: IDeviceInfo) {
+        const uuid = deviceInfo.uuid;
+        const device = this.deviceConnections.get(uuid);
+        if (!device || !device.control) {
+            console.warn(`Control socket of ${uuid} does not exist`);
+            return;
+        }
+        const controlSocket = device.control;
+        controlSocket.removeAllListeners('close');
+        controlSocket.on('close', async (response: CloseEvent) => {
+            console.log(`Reconnecting ${uuid}`);
+            const mode = controlSocket.getMode();
+            const isLineCheckMode = controlSocket.isLineCheckMode;
+            const lineNumber = controlSocket.lineNumber;
+            const res = await this.selectDevice(deviceInfo);
+            if (res && res.success) {
+                if (mode === 'maintain') {
+                    await this.enterMaintainMode();
+                } else if (mode === 'raw') {
+                    await this.enterRawMode();
+                    device.control.isLineCheckMode = isLineCheckMode;
+                    device.control.lineNumber = lineNumber;
+                }
+                if (device.camera !== null) {
+                    await this.connectCamera();
+                }
+                this.setDeviceControlReconnectOnClose(deviceInfo);
+            } else {
+                console.error('Error when reconnect to device', res.error);
+                this.closeConnection(uuid);
+            }
+        });
     }
 
     async showAuthDialog(uuid: string): Promise<boolean> { // return authed or not
@@ -205,21 +249,21 @@ class DeviceMaster {
         });
     }
 
-    async select(printer: IDeviceInfo): Promise<SelectionResult> {
+    async select(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
         // Alias for selectDevice
-        return await this.selectDevice(printer);
+        return this.selectDevice(deviceInfo);
     }
 
-    async selectDevice(printer: IDeviceInfo): Promise<SelectionResult> {
+    async selectDevice(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
         // Match the device from the newest received device list
-        if (!printer) {
+        if (!deviceInfo) {
             return { success: false };
         }
 
-        const uuid = printer.uuid;
+        const uuid = deviceInfo.uuid;
         const device: IDeviceConnection = this.getDeviceByUUID(uuid);
         const self = this;
-        console.log('Selecting', printer);
+        console.log('Selecting', deviceInfo);
         Progress.openNonstopProgress({
             id: 'select-device',
             message: sprintf(lang.message.connectingMachine, device.info.name),
@@ -228,7 +272,7 @@ class DeviceMaster {
 
         if (device.control && device.control.isConnected) {
             try {
-                // Check device.control is still connected
+                // Update device status
                 if (device.control.getMode() !== 'raw') {
                     const controlSocket = device.control;
                     const info = await controlSocket.addTask(controlSocket.report);
@@ -245,6 +289,7 @@ class DeviceMaster {
         try {
             const controlSocket = await this.createDeviceControlSocket(uuid);
             device.control = controlSocket;
+            this.setDeviceControlDefaultCloseListener(deviceInfo);
             this.currentDevice = device;
             console.log("Connected to " + uuid);
             Progress.popById('select-device');
@@ -261,7 +306,7 @@ class DeviceMaster {
                 if (device.info.password) {
                     const authed = await self.showAuthDialog(uuid);
                     if (authed) {
-                        return await self.selectDevice(printer);
+                        return await self.selectDevice(deviceInfo);
                     }
                     return { success: false };
                 } else {
@@ -280,7 +325,7 @@ class DeviceMaster {
                         });
                         return { success: false};
                     }
-                    return await self.selectDevice(printer);
+                    return await self.selectDevice(deviceInfo);
                 }
             } else {
                 let errCaption = '';

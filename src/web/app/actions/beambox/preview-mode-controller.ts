@@ -16,7 +16,7 @@ const LANG = i18n.lang;
 class PreviewModeController {
     isDrawing: boolean;
     originalSpeed: number;
-    storedPrinter: any;
+    storedDevice: any;
     isPreviewModeOn: boolean;
     isPreviewBlocked: boolean;
     isLineCheckEnabled: boolean;
@@ -26,7 +26,7 @@ class PreviewModeController {
     constructor() {
         this.isDrawing = false;
         this.originalSpeed = 1;
-        this.storedPrinter = null;
+        this.storedDevice = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
         this.isLineCheckEnabled = true;
@@ -37,10 +37,10 @@ class PreviewModeController {
 
     //main functions
 
-    async start(selectedPrinter, errCallback) {
+    async start(selectedDeivce, errCallback) {
         await this.reset();
 
-        const res = await DeviceMaster.select(selectedPrinter);
+        const res = await DeviceMaster.select(selectedDeivce);
         if (!res.success) {
             return;
         }
@@ -48,7 +48,7 @@ class PreviewModeController {
         try {
             Progress.openNonstopProgress({
                 id: 'start-preview-mode',
-                message: sprintf(LANG.message.connectingMachine, selectedPrinter.name),
+                message: sprintf(LANG.message.connectingMachine, selectedDeivce.name),
                 timeout: 30000,
             });
             await this.retrieveCameraOffset();
@@ -67,7 +67,7 @@ class PreviewModeController {
             await DeviceMaster.rawSetRotary(false);
             Progress.update('start-preview-mode', { message: LANG.message.homing });
             await DeviceMaster.rawHome();
-            const vc = VersionChecker(selectedPrinter.version);
+            const vc = VersionChecker(selectedDeivce.version);
             if (vc.meetRequirement('MAINTAIN_WITH_LINECHECK')) {
                 await DeviceMaster.rawStartLineCheckMode();
                 this.isLineCheckEnabled = true;
@@ -83,7 +83,9 @@ class PreviewModeController {
             PreviewModeBackgroundDrawer.start(this.cameraOffset);
             PreviewModeBackgroundDrawer.drawBoundary();
 
-            this.storedPrinter = selectedPrinter;
+
+            this.storedDevice = selectedDeivce;
+            DeviceMaster.setDeviceControlReconnectOnClose(selectedDeivce);
             this.errorCallback = errCallback;
             this.isPreviewModeOn = true;
         } catch (error) {
@@ -107,9 +109,10 @@ class PreviewModeController {
         this.isPreviewModeOn = false;
         PreviewModeBackgroundDrawer.clearBoundary();
         PreviewModeBackgroundDrawer.end();
-        const storedPrinter = this.storedPrinter;
+        const storedDevice = this.storedDevice;
         await this.reset();
-        const res = await DeviceMaster.select(storedPrinter);
+        DeviceMaster.setDeviceControlDefaultCloseListener(storedDevice);
+        const res = await DeviceMaster.select(storedDevice);
         if (res.success) {
             if (DeviceMaster.currentControlMode !== 'raw') {
                 await DeviceMaster.enterRawMode();
@@ -302,7 +305,7 @@ class PreviewModeController {
     }
 
     async reset() {
-        this.storedPrinter = null;
+        this.storedDevice = null;
         this.isPreviewModeOn = false;
         this.isPreviewBlocked = false;
         this.cameraOffset = null;
@@ -361,7 +364,7 @@ class PreviewModeController {
         }
         movement.f = feedrate// firmware will used limited x, y speed still
 
-        const selectRes = await DeviceMaster.select(this.storedPrinter);
+        const selectRes = await DeviceMaster.select(this.storedDevice);
         if (!selectRes.success) {
             return;
         }

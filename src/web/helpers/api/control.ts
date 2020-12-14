@@ -30,8 +30,8 @@ class Control extends EventEmitter {
     private dedicatedWs: any[] = [];
     private fileInfoWsId: number = 0;
     private mode: string = ''; // null, maintain or raw
-    private currentLineNumber: number = 0;
-    private isLineCheckMode: boolean = false;
+    private _lineNumber: number = 0;
+    private _isLineCheckMode: boolean = false;
     protected uuid: string;
 
     constructor(uuid: string) {
@@ -48,6 +48,22 @@ class Control extends EventEmitter {
 
     getMode() {
         return this.mode;
+    }
+
+    get isLineCheckMode() {
+        return this._isLineCheckMode;
+    }
+
+    set isLineCheckMode(lineCheckMode: boolean) {
+        this._isLineCheckMode = lineCheckMode;
+    }
+
+    get lineNumber() {
+        return this._lineNumber;
+    }
+
+    set lineNumber(lineNumber) {
+        this._lineNumber = lineNumber;
     }
 
     addTask(taskFunction: Function, ...args: any[]): Promise<any> {
@@ -135,10 +151,10 @@ class Control extends EventEmitter {
                     this.emit('fatal', response);
                     this.emit(EVENT_COMMAND_FATAL, response);
                 },
-                onClose: (response: any) => {
+                onClose: (response: CloseEvent) => {
                     clearTimeout(timeoutTimer);
                     reject(response);
-                    console.log('Control WebSocket Closed');
+                    console.log(`Control of ${uuid} closed:`, response);
                     this.isConnected = false;
                     this.emit('close', response);
                 },
@@ -245,13 +261,13 @@ class Control extends EventEmitter {
                 if (timeoutTimer) clearTimeout(timeoutTimer);
                 if (response && response.status === 'raw') {
                     console.log(response.text);
-                    if (response.text.startsWith(`LN${this.currentLineNumber}`) || response.text.startsWith(`L${this.currentLineNumber}`)) {
-                        this.currentLineNumber += 1;
+                    if (response.text.startsWith(`LN${this._lineNumber}`) || response.text.startsWith(`L${this._lineNumber}`)) {
+                        this._lineNumber += 1;
                         this.removeCommandListeners();
                         resolve();
                     } else if (response.text.startsWith('ERL')) {
                         const correctLineNumber = Number(response.text.substring(3).split(' ')[0]);
-                        this.currentLineNumber = correctLineNumber;
+                        this._lineNumber = correctLineNumber;
                         let cmd = this.buildLineCheckCommand(command);
                         console.log(cmd);
                         timeoutTimer = this.setTimeoutTimer(reject, timeout);
@@ -280,7 +296,7 @@ class Control extends EventEmitter {
     }
 
     buildLineCheckCommand(command: string) {
-        command = `N${this.currentLineNumber}${command}`;
+        command = `N${this._lineNumber}${command}`;
         let crc = 0;
         for (let i = 0; i < command.length; i++) {
             if (command[i] != ' ') {
@@ -782,8 +798,8 @@ class Control extends EventEmitter {
                 const i = resps.findIndex((r) => r === 'CTRL LINECHECK_ENABLED');
                 if (i < 0) responseString = resps[resps.length - 1] || '';
                 if (i >= 0) {
-                    this.isLineCheckMode = true;
-                    this.currentLineNumber = 1;
+                    this._isLineCheckMode = true;
+                    this._lineNumber = 1;
                     this.removeCommandListeners();
                     resolve();
                     return;
@@ -836,7 +852,7 @@ class Control extends EventEmitter {
                 const i = resps.findIndex((r) => r === 'CTRL LINECHECK_DISABLED');
                 if (i < 0) responseString = resps[resps.length - 1] || '';
                 if (i >= 0) {
-                    this.isLineCheckMode = false;
+                    this._isLineCheckMode = false;
                     this.removeCommandListeners();
                     resolve();
                     return;
@@ -881,7 +897,7 @@ class Control extends EventEmitter {
         if (typeof args.y !== 'undefined') {
             command += 'Y' + Math.round(args.y * 1000) / 1000;
         };
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             console.log('raw move command:', command);
             return this.useWaitAnyResponse(command);
         } else {
@@ -894,7 +910,7 @@ class Control extends EventEmitter {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
         }
         const command = on ? 'B3' : 'B4';
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             return this.useWaitAnyResponse(command);
         } else {
             return this.useRawLineCheckCommand(command);
@@ -906,7 +922,7 @@ class Control extends EventEmitter {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
         }
         const command = on ? 'B5' : 'B6';
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             return this.useWaitAnyResponse(command);
         } else {
             return this.useRawLineCheckCommand(command);
@@ -918,7 +934,7 @@ class Control extends EventEmitter {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
         }
         const command = on ? 'R1' : 'R0';
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             return this.useWaitAnyResponse(command);
         } else {
             return this.useRawLineCheckCommand(command);
@@ -931,7 +947,7 @@ class Control extends EventEmitter {
         }
         await this.useWaitAnyResponse('$1=0');
         const command = 'B12';
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             await this.useWaitAnyResponse(command);
         } else {
             await this.useRawLineCheckCommand(command);
@@ -946,7 +962,7 @@ class Control extends EventEmitter {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
         }
         const command = 'B34';
-        if (!this.isLineCheckMode) {
+        if (!this._isLineCheckMode) {
             return this.useWaitAnyResponse(command);
         } else {
             return this.useRawLineCheckCommand(command);
