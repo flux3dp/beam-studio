@@ -26,60 +26,92 @@
 // 12) path.js
 // 13) coords.js
 // 14) recalculate.js
-
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
     'app/contexts/AlertCaller',
     'app/constants/alert-constants',
-    'jsx!app/actions/beambox/Laser-Panel-Controller',
     'app/actions/beambox/preview-mode-controller',
-    'jsx!app/views/beambox/Right-Panels/contexts/LayerPanelController',
-    'jsx!app/views/beambox/Right-Panels/contexts/ObjectPanelController',
-    'jsx!views/beambox/Top-Bar/contexts/Top-Bar-Controller',
+    'app/views/beambox/Right-Panels/contexts/LayerPanelController',
+    'app/views/beambox/Right-Panels/contexts/ObjectPanelController',
+    'app/views/beambox/Top-Bar/contexts/Top-Bar-Controller',
     'app/views/beambox/Top-Bar/contexts/Top-Bar-Hints-Controller',
-    'jsx!views/beambox/Top-Bar/Top-Bar-Hints',
-    'jsx!views/tutorials/Tutorial-Controller',
-    'jsx!constants/tutorial-constants',
-    'jsx!app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
+    'app/views/beambox/Top-Bar/Top-Bar-Hints',
+    'app/views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller',
+    'app/views/tutorials/Tutorial-Controller',
+    'app/constants/tutorial-constants',
+    'app/views/beambox/Zoom-Block/contexts/Zoom-Block-Controller',
     'app/actions/beambox',
     'app/actions/beambox/constant',
+    'app/actions/beambox/open-bottom-boundary-drawer',
+    'app/actions/beambox/svgeditor-function-wrapper',
     'app/contexts/ProgressCaller',
-    'app/actions/topbar',
     'helpers/api/config',
     'helpers/beam-file-helper',
+    'helpers/bezier-fit-curve',
     'helpers/image-data',
+    'helpers/layer-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
     'helpers/symbol-maker',
-    'lib/svgeditor/imagetracer'
+    'imagetracer'
 ], function (
     i18n,
     BeamboxPreference,
     Alert,
     AlertConstants,
-    LaserPanelController,
     PreviewModeController,
     LayerPanelController,
     ObjectPanelController,
     TopBarController,
     TopBarHintsController,
     TopBarHints,
+    TimeEstimationButtonController,
     TutorialController,
     TutorialConstants,
     ZoomBlockController,
     BeamboxActions,
     Constant,
+    OpenBottomBoundaryDrawer,
+    FnWrapper,
     Progress,
-    TopbarActions,
     Config,
     BeamFileHelper,
+    BezierFitCurve,
     ImageData,
+    LayerHelper,
     LocalStorage,
     shortcuts,
     SymbolMaker,
     ImageTracer
 ) {
+    i18n = __importStar(i18n);
+    BeamboxPreference = BeamboxPreference.default;
+    Alert = Alert.default;
+    AlertConstants = AlertConstants.default;
+    PreviewModeController = PreviewModeController.default;
+    LayerPanelController = LayerPanelController.default;
+    ObjectPanelController = ObjectPanelController.default;
+    TopBarController = TopBarController.default;
+    TopBarHintsController = TopBarHintsController.default;
+    TopBarHints = __importStar(TopBarHints);
+    TimeEstimationButtonController = TimeEstimationButtonController.default;
+    TutorialController = __importStar(TutorialController);
+    TutorialConstants = TutorialConstants.default;
+    ZoomBlockController = ZoomBlockController.default;
+    BeamboxActions = BeamboxActions.default;
+    Constant = Constant.default;
+    OpenBottomBoundaryDrawer = OpenBottomBoundaryDrawer.default;
+    FnWrapper = FnWrapper.default;
+    Progress = Progress.default;
+    Config = Config.default;
+    BeamFileHelper = BeamFileHelper.default;
+    BezierFitCurve = __importStar(BezierFitCurve);
+    ImageData = ImageData.default;
+    LayerHelper = __importStar(LayerHelper);
+    LocalStorage = LocalStorage.default;
+    shortcuts = shortcuts.default;
+    SymbolMaker = SymbolMaker.default;
     const LANG = i18n.lang.beambox;
     // Class: SvgCanvas
     // The main SvgCanvas class that manages all SVG-related functions
@@ -404,23 +436,26 @@ define([
                         }
                         elems.forEach((elem) => {
                             if (elem.classList.contains('layer')) {
-                                LayerPanelController.updateLayerPanel();
+                                LayerPanelController.setSelectedLayers([]);
                             } else {
                                 canvas.updateElementColor(elem);
                             }
                         });
                     } else if (cmdType === InsertElementCommand.type() ||
                         cmdType === RemoveElementCommand.type()) {
-                        if (cmd.parent === svgcontent) {
-                            canvas.identifyLayers();
-                        }
                         if (cmdType === InsertElementCommand.type()) {
                             if (isApply) {
                                 restoreRefElems(cmd.elem);
+                                if (cmd.elem.id === 'svgcontent') {
+                                    svgcontent = cmd.elem;
+                                }
                             }
                         } else {
                             if (!isApply) {
                                 restoreRefElems(cmd.elem);
+                                if (cmd.elem.id === 'svgcontent') {
+                                    svgcontent = cmd.elem;
+                                }
                             }
                         }
                         if (cmd.elem.tagName === 'use') {
@@ -449,6 +484,11 @@ define([
                         //		parent.insertBefore(elem, sib);
                         //	}
                         //}
+                    } else if (cmdType === BatchCommand.type()) {
+                        if (['Delete Layer(s)', 'Clone Layer(s)', 'Merge Layer', 'Merge Layer(s)'].includes(cmd.text)) {
+                            canvas.identifyLayers();
+                            LayerPanelController.setSelectedLayers([]);
+                        }
                     }
                 }
             }
@@ -607,8 +647,6 @@ define([
             // Map of deleted reference elements
             removedElements = {},
 
-            justClearSelection = false,
-
             // Rotary Mode
             rotaryMode = BeamboxPreference.read('rotary_mode');
 
@@ -618,9 +656,9 @@ define([
             cur_text.font_postscriptName = defaultFont.postscriptName;
         }
 
-        const { Menu, MenuItem } = require('electron').remote;
-        this.isUseLayerColor = BeamboxPreference.read('use_layer_color');
-        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUseLayerColor;
+        const { Menu, MenuItem } = requireNode('electron').remote;
+        this.isUsingLayerColor = BeamboxPreference.read('use_layer_color');
+        Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_LAYER_COLOR')[0].checked = this.isUsingLayerColor;
         this.isBorderlessMode = BeamboxPreference.read('borderless');
         // Clipboard for cut, copy&pasted elements
         canvas.clipBoard = [];
@@ -806,15 +844,30 @@ define([
             if (!parent) {
                 parent = $(svgcontent).children(); // Prevent layers from being included
             }
-            var contentElems = [];
-            $(parent).children().each(function (i, elem) {
-                if (elem.getBBox) {
-                    contentElems.push({
-                        'elem': elem,
-                        'bbox': getStrokedBBox([elem])
-                    });
+            const contentElems = [];
+            for (let i = 0; i < parent.length; i++) {
+                const childNodes = parent[i].childNodes;
+                if (childNodes) {
+                    for (let j = 0; j < childNodes.length; j++) {
+                        const elem = childNodes[j];
+                        if (elem.getBBox) {
+                            let bbox;
+                            if (elem.tagName === 'use') {
+                                bbox = canvas.getSvgRealLocation(elem);
+                            } else {
+                                bbox = canvas.calculateTransformedBBox(elem);
+                            }
+                            const angle = svgedit.utilities.getRotationAngle(elem);
+                            bbox = canvas.calculateRotatedBBox(bbox, angle);
+                            contentElems.push({
+                                elem,
+                                bbox,
+                            });
+                            
+                        }
+                    }
                 }
-            });
+            }
             return contentElems.reverse();
         };
 
@@ -1060,12 +1113,12 @@ define([
                     selectedElements[i] = null;
                 }
                 //		selectedBBoxes[0] = null;
+
+                selectedElements = [];
+                if (!noCall) {
+                    call('selected', selectedElements);
+                }
             }
-            selectedElements = [];
-            if (!noCall) {
-                call('selected', selectedElements);
-            }
-            TopbarActions.updateTopMenu();
         };
 
         // TODO: do we need to worry about selectedBBoxes here?
@@ -1137,7 +1190,7 @@ define([
 
             selectedElements.sort(function (a, b) {
                 if (a && b && a.compareDocumentPosition) {
-                    return 3 - (b.compareDocumentPosition(a) & 6);
+                    return (b.compareDocumentPosition(a) & 6) - 3;
                 }
                 if (a == null) {
                     return 1;
@@ -1148,7 +1201,6 @@ define([
             while (selectedElements[0] == null) {
                 selectedElements.shift(0);
             }
-            TopbarActions.updateTopMenu();
             LayerPanelController.updateLayerPanel();
         };
 
@@ -1207,7 +1259,7 @@ define([
         // Clears the selection, then adds all elements in the current layer to the selection.
         this.selectAllInCurrentLayer = function () {
             var current_layer = getCurrentDrawing().getCurrentLayer();
-            if (current_layer) {
+            if (current_layer && current_layer.getAttribute('data-lock') !== 'true') {
                 current_mode = 'select';
                 $('.tool-btn').removeClass('active');
                 $('#left-Cursor').addClass('active');
@@ -1224,6 +1276,31 @@ define([
                 }
             }
         };
+
+        /**
+         * Select All element in canvas except locked layer
+         * @returns {null}
+         */
+        this.selectAll = () => {
+            clearSelection();
+            const drawing = getCurrentDrawing();
+            const allLayers = drawing.all_layers;
+            const elemsToSelect = [];
+            for (let i = allLayers.length - 1; i >= 0; i--) {
+                const layerElement = allLayers[i].group_;
+                if (layerElement && layerElement.parentNode && layerElement.getAttribute('data-lock') !== 'true' && layerElement.getAttribute('display') !== 'none') {
+                    const elemsToAdd = Array.from(layerElement.childNodes).filter((node) => !['title', 'filter'].includes(node.tagName));
+                    elemsToSelect.push(...elemsToAdd);
+                }
+            }
+            if (elemsToSelect.length > 0) {
+                selectOnly(elemsToSelect, false);
+                if (elemsToSelect.length > 1) {
+                    svgCanvas.tempGroupSelectedElements();
+                }
+                window.updateContextPanel();
+            }
+        }
 
         // Function: getMouseTarget
         // Gets the desired element from a mouse event
@@ -1257,13 +1334,26 @@ define([
                 height: 100,
             }
             const intersectList = getIntersectionList(selectionRegion).reverse();
+            curBBoxes = [];
             const clickPoint = svgcontent.createSVGPoint();
             for (let i=0; i < intersectList.length; i++) {
                 let pointInStroke = false;
                 const elem = intersectList[i];
+                if (elem === mouse_target) {
+                    break;
+                }
                 if (!elem.isPointInStroke || typeof elem.isPointInStroke !== 'function') {
                     continue;
                 }
+
+                const layer = svgCanvas.getObjectLayer(elem);
+                if (layer && layer.elem) {
+                    const layerElement = layer.elem;
+                    if (layerElement.getAttribute('display') === 'none' || layerElement.getAttribute('data-lock') === 'true') {
+                        continue;
+                    }
+                }
+
                 const tlist = svgedit.transformlist.getTransformList(elem);
                 const tm = svgedit.math.transformListToTransform(tlist).matrix.inverse();
                 const x = tm.a * pt.x + tm.c * pt.y + tm.e;
@@ -1541,9 +1631,6 @@ define([
                         if (right_click) {
                             started = false;
                         }
-                        if ($('#selectorGroup0').css('display') === 'inline') {
-                            justClearSelection = true;
-                        }
                         const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouse_target);
                         const isElemTempGroup = mouse_target.getAttribute('data-tempgroup') === 'true';
                         let layerSelectable = false;
@@ -1584,11 +1671,15 @@ define([
                             }
                         } else if (!right_click) {
                             clearSelection();
+                            const selectedLayers = LayerPanelController.getSelectedLayers();
+                            if (selectedLayers && selectedLayers.length > 1) {
+                                const currentLayerName = getCurrentDrawing().getCurrentLayerName();
+                                if (currentLayerName) LayerPanelController.setSelectedLayers([currentLayerName]);
+                            }
                             if (PreviewModeController.isPreviewMode()) {
                                 current_mode = 'preview';
                             } else if (TopBarController.getTopBarPreviewMode()) {
-                                started = false;
-                                TopBarController.setShouldStartPreviewController(true);
+                                current_mode = 'pre_preview';
                             } else {
                                 current_mode = 'multiselect';
                             }
@@ -1745,7 +1836,7 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newRect);
                         }
                         selectOnly([newRect], true);
@@ -1772,7 +1863,7 @@ define([
                                 style: 'pointer-events:none'
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newLine);
                         }
                         selectOnly([newLine], true);
@@ -1809,7 +1900,7 @@ define([
                                 opacity: cur_shape.opacity / 2
                             }
                         });
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newElli);
                         }
                         selectOnly([newElli], true);
@@ -1835,7 +1926,7 @@ define([
                             }
                         });
                         //					newText.textContent = 'text';
-                        if (canvas.isUseLayerColor) {
+                        if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newText);
                         }
                         break;
@@ -2031,6 +2122,7 @@ define([
                             }
                         }
                         break;
+                    case 'pre_preview':
                     case 'preview':
                         real_x *= current_zoom;
                         real_y *= current_zoom;
@@ -2454,16 +2546,41 @@ define([
                 var attrs, t;
                 const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
 
-                selectedElems = selectedElements.filter((e) => e !== null);
+                selectedElements = selectedElements.filter((e) => e !== null);
                 switch (current_mode) {
+                    case 'pre_preview':
+                        if (rubberBox != null) {
+                            rubberBox.setAttribute('display', 'none');
+                            curBBoxes = [];
+                        };
+                        current_mode = 'select';
+                        TopBarController.setStartPreviewCallback(() => {
+                            BeamboxActions.startDrawingPreviewBlob();
+                            if (PreviewModeController.isPreviewMode()) {
+                                if (start_x === real_x && start_y === real_y) {
+                                    PreviewModeController.preview(real_x, real_y, true, () => {
+                                        TopBarController.updateTopBar();
+                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                            TutorialController.handleNextStep();
+                                        }
+                                    });
+                                } else {
+                                    PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
+                                        TopBarController.updateTopBar();
+                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                                            TutorialController.handleNextStep();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        TopBarController.setShouldStartPreviewController(true);
+                        return;
                     case 'preview':
                         if (rubberBox != null) {
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
                         };
-                        if (justClearSelection) {
-                            justClearSelection = false;
-                        } 
                         BeamboxActions.startDrawingPreviewBlob();
                         if (PreviewModeController.isPreviewMode()) {
                             if (start_x === real_x && start_y === real_y) {
@@ -2483,9 +2600,6 @@ define([
                             }
                         }
                         current_mode = 'select';
-                        $('.tool-btn').removeClass('active');
-                        $('#left-Cursor').addClass('active');
-                        $('#left-Shoot').addClass('active');
                         // intentionally fall-through to select here
                     case 'resize':
                     case 'multiselect':
@@ -2504,7 +2618,6 @@ define([
                                 return true;
                             });
                             selectedElements = intersectedElements;
-                            selectedElems = intersectedElements;
                             call('selected', selectedElements);
                         }
                         if (rubberBox != null) {
@@ -2544,8 +2657,12 @@ define([
                                 }
                                 selectorManager.requestSelector(selected).showGrips(true);
 
-                                // This shouldn't be necessary as it was done on mouseDown...
-                                //							call('selected', [selected]);
+                                const targetLayer = svgCanvas.getObjectLayer(selected);
+                                const currentLayer = getCurrentDrawing().getCurrentLayer();
+                                if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+                                    svgCanvas.setCurrentLayer(targetLayer.title);
+                                    LayerPanelController.setSelectedLayers([targetLayer.title]);
+                                }
                             }
                             // always recalculate dimensions to strip off stray identity transforms
                             recalculateAllSelectedDimensions();
@@ -2590,14 +2707,6 @@ define([
                                         canvas.removeFromSelection([t]);
                                     }
                                 }
-                                const mouse_target = getMouseTarget(evt);
-                                const current_layer = getCurrentDrawing().getCurrentLayer();
-                                const targetLayer = svgCanvas.getObjectLayer(mouse_target);
-                                if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== current_layer) {
-                                    svgCanvas.setCurrentLayer(targetLayer.title);
-                                    LayerPanelController.updateLayerPanel();
-                                    selectOnly([mouse_target], true);
-                                }
                             } // no change in mouse position
 
                             // Remove non-scaling stroke
@@ -2620,7 +2729,7 @@ define([
                             current_mode = 'select';
                         }
 
-                        if (selectedElems.length > 1) {
+                        if (selectedElements.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
                         }
@@ -2793,7 +2902,7 @@ define([
                         break;
                 }
 
-                if (selectedElems.length > 1) {
+                if (selectedElements.length > 1) {
                     svgCanvas.tempGroupSelectedElements();
                     window.updateContextPanel();
                 }
@@ -3842,8 +3951,10 @@ define([
                 if (xAlignLine) xAlignLine.remove();
                 const yAlignLine = document.getElementById('y_align_line');
                 if (yAlignLine) yAlignLine.remove();
-
+                $('#workarea').css('cursor', 'default');
                 if (!drawn_path) {
+                    const pathPointGripContainer = document.getElementById('pathpointgrip_container');
+                    if (pathPointGripContainer) pathPointGripContainer.remove();
                     return;
                 }
 
@@ -3931,7 +4042,7 @@ define([
                                     opacity: cur_shape.opacity / 2
                                 }
                             });
-                            if (canvas.isUseLayerColor) {
+                            if (canvas.isUsingLayerColor) {
                                 canvas.updateElementColor(drawn_path);
                             }
                             // set stretchy line to first point
@@ -5293,7 +5404,7 @@ define([
             if (tempGroup) {
                 this.ungroupTempGroup();
             }
-            this.removeAllTempGroup();
+            this.ungroupAllTempGroup();
             save_options.apply = false;
             return this.svgCanvasToString();
         };
@@ -5325,17 +5436,9 @@ define([
                                 resolve(canvas.toDataURL('image/png'));
                                 break;
                             case 'jpg':
-                                let imgData = ctx.getImageData(0, 0, width, height);
-                                let data = imgData.data;
-                                for(let i = 0; i < data.length; i += 4){
-                                    if(data[i+3] == 0){
-                                        data[i]=255;
-                                        data[i+1]=255;
-                                        data[i+2]=255;
-                                        data[i+3]=255;
-                                    }
-                                }
-                                ctx.putImageData(imgData,0,0);
+                                ctx.globalCompositeOperation = 'destination-over';
+                                ctx.fillStyle = 'white';
+                                ctx.fillRect(0, 0, width, height);
                                 resolve(canvas.toDataURL('image/jpeg', 1.0));
                                 break;
                             default:
@@ -6227,7 +6330,7 @@ define([
                                 }
                             }
                         } else if (type === 'color') {
-                            let layerColorConfig = LocalStorage.get('layer-color-config');
+                            let layerColorConfig = LocalStorage.get('layer-color-config') || {};
                             let index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
                             let laserConst = LANG.right_panel.laser_panel;
                             if (index !== undefined) {
@@ -6264,7 +6367,6 @@ define([
                         }
                     }
                 }
-
 
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(use_el));
 
@@ -6343,12 +6445,12 @@ define([
             });
 
             use_elements.forEach(element => setDataXform(element, _type === 'image-trace'));
-            await Promise.all(use_elements.map(async (element) => {
-                const refId = getHref(element);
-                const symbol = document.querySelector(refId);
+            await Promise.all(use_elements.map(async(element) => {
+                const ref_id = this.getHref(element);
+                const symbol = document.querySelector(ref_id);
                 const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
                 setHref(element, '#' + imageSymbol.id);
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(element);
                 }
             }));
@@ -6377,9 +6479,9 @@ define([
 
         let randomColors = ['#333333','#3F51B5','#F44336','#FFC107','#8BC34A','#2196F3','#009688','#FF9800','#CDDC39','#00BCD4','#FFEB3B','#E91E63','#673AB7','#03A9F4','#9C27B0','#607D8B','#9E9E9E'];
 
-        const resetRandomColors = () => {
+        canvas.resetRandomColors = () => {
             randomColors = ['#333333','#3F51B5','#F44336','#FFC107','#8BC34A','#2196F3','#009688','#FF9800','#CDDC39','#00BCD4','#FFEB3B','#E91E63','#673AB7','#03A9F4','#9C27B0','#607D8B','#9E9E9E'];
-        };
+        }
 
         var getRandomLayerColor = canvas.getRandomLayerColor = function () {
             if (randomColors.length === 0) {
@@ -6510,6 +6612,18 @@ define([
             return false;
         };
 
+        this.sortTempGroupByLayer = () => {
+            if (!tempGroup) return;
+            const drawing = getCurrentDrawing();
+            const allLayerNames = drawing.all_layers.map((layer) => layer.name_);
+            for (let i = 0; i < allLayerNames.length; i++) {
+                const elems = tempGroup.querySelectorAll(`[data-original-layer="${allLayerNames[i]}"]`);
+                for (let j = 0; j < elems.length; j++) {
+                    tempGroup.appendChild(elems[j]);
+                }
+            }
+        }
+
         // Function: setLayerVisibility
         // Sets the visibility of the layer. If the layer name is not valid, this function return
         // false, otherwise it returns true. This is an undo-able action.
@@ -6578,7 +6692,7 @@ define([
                 // TODO: this is pretty brittle!
                 var oldLayer = elem.parentNode;
                 layer.appendChild(elem);
-                if (this.isUseLayerColor) {
+                if (this.isUsingLayerColor) {
                     this.updateElementColor(elem);
                 }
                 batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldLayer));
@@ -6587,23 +6701,6 @@ define([
             addCommandToHistory(batchCmd);
 
             return true;
-        };
-
-        this.lockLayer = function (hrService) {
-            const currentLayer = getCurrentDrawing().getCurrentLayer();
-            currentLayer.setAttribute('data-lock', true);
-            currentLayer.setAttribute('class', 'layer lock');
-            $('.layersel').addClass('lock');
-            getCurrentDrawing().setCurrentLayerPosition(0);
-            clearSelection();
-            leaveContext();
-        };
-
-        this.unlockLayer = function (layer, hrService) {
-            layer.removeAttribute('data-lock');
-            layer.setAttribute('class', 'layer');
-            clearSelection();
-            leaveContext();
         };
 
         this.mergeLayer = function (hrService) {
@@ -6625,23 +6722,13 @@ define([
         };
 
         this.toggleUseLayerColor = () => {
-            this.isUseLayerColor = !(this.isUseLayerColor);
-            BeamboxPreference.write('use_layer_color', this.isUseLayerColor);
-            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_LAYER_COLOR').checked = this.isUseLayerColor;
-            const layers = $('#svgcontent > g.layer').toArray();
+            this.isUsingLayerColor = !(this.isUsingLayerColor);
+            BeamboxPreference.write('use_layer_color', this.isUsingLayerColor);
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_LAYER_COLOR').checked = this.isUsingLayerColor;
+            const layers = Array.from(document.querySelectorAll('g.layer'));
             layers.forEach(layer => {
                 this.updateLayerColor(layer);
             });
-        };
-
-        this.toggleRulers = () => {
-            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
-            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
-            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
-            if (shouldShowRulers) {
-                svgEditor.updateRulers();
-            }
-            BeamboxPreference.write('show_rulers', shouldShowRulers);
         };
 
         let hexToRgb = (hexColorCode) => {
@@ -6657,10 +6744,10 @@ define([
         };
 
         this.updateLayerColorFilter = (layer) => {
-            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(layer).attr('data-color') : '#000';
             const {r, g, b} = hexToRgb(color);
             let filter = Array.from(layer.childNodes).filter((child) => child.tagName === 'filter')[0];
-            if (filter && color !== '#000') {
+            if (filter) {
                 filter.setAttribute('id', `filter${color}`);
                 let colorMatrix = Array.from(filter.childNodes).filter((child) => child.tagName === 'feColorMatrix')[0];
                 if (colorMatrix) {
@@ -6692,13 +6779,19 @@ define([
         }
 
         this.updateLayerColor = function(layer) {
-            const color = this.isUseLayerColor ? $(layer).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(layer).attr('data-color') : '#000';
             this.updateLayerColorFilter(layer);
-            this.setElementsColor(layer.childNodes, color);
+            const elems = Array.from(layer.childNodes);
+            if (tempGroup) {
+                const layerName = LayerHelper.getLayerName(layer);
+                const multiSelectedElems = tempGroup.querySelectorAll(`[data-original-layer="${layerName}"]`);
+                elems.push(...multiSelectedElems);
+            }
+            this.setElementsColor(elems, color);
         };
 
         this.updateElementColor = function(elem) {
-            const color = this.isUseLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
+            const color = this.isUsingLayerColor ? $(this.getObjectLayer(elem).elem).attr('data-color') : '#000';
             this.setElementsColor([elem], color);
         }
 
@@ -6751,6 +6844,16 @@ define([
                 }
             }
         }
+
+        this.toggleRulers = () => {
+            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
+            if (shouldShowRulers) {
+                svgEditor.updateRulers();
+            }
+            BeamboxPreference.write('show_rulers', shouldShowRulers);
+        };
 
         // Function: leaveContext
         // Return from a group context to the regular kind, make any previously
@@ -6817,7 +6920,8 @@ define([
             // create new document
             canvas.current_drawing_ = new svgedit.draw.Drawing(svgcontent);
 
-            resetRandomColors();
+            // Reset Used Layer colors
+            canvas.resetRandomColors();
 
             // create empty first layer
             canvas.createLayer(LANG.right_panel.layer_panel.layer1);
@@ -6920,6 +7024,7 @@ define([
                 borderless = turnOnBorderless;
             }
             BeamboxPreference.write('borderless', borderless);
+            OpenBottomBoundaryDrawer.update();
         };
 
         // Function: setConfig
@@ -7880,7 +7985,7 @@ define([
             var selected = selectedElements[0];
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
-                const color = this.isUseLayerColor ? $(this.getObjectLayer(selected).elem).attr('data-color') : '#000';
+                const color = this.isUsingLayerColor ? $(this.getObjectLayer(selected).elem).attr('data-color') : '#000';
                 changeSelectedAttribute('fill', isFill ? color : '#fff');
                 changeSelectedAttribute('fill-opacity', isFill ? 1 : 0);
                 changeSelectedAttribute('stroke', isFill ? 'none' : color);
@@ -8653,7 +8758,7 @@ define([
         // history stack. Remembers removed elements on the clipboard
 
         // TODO: Combine similar code with deleteSelectedElements
-        this.cutSelectedElements = function () {
+        this.cutSelectedElements = async function () {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -8663,6 +8768,7 @@ define([
             var len = selectedElements.length;
             var selectedCopy = []; //selectedElements is being deleted
             var layerDict = {}, layerCount = 0;
+            let clipBoardText = 'BS Cut: ';
 
             for (i = 0; i < len && selectedElements[i]; ++i) {
                 var selected = selectedElements[i],
@@ -8670,6 +8776,7 @@ define([
 
                 var layerName = $(selected.parentNode).find('title').text();
                 selected.setAttribute("data-origin-layer", layerName);
+                clipBoardText += $(selected).attr('id') + ', ';
                 if (!layerDict[layerName]) {
                     layerDict[layerName] = true;
                     layerCount++;
@@ -8694,6 +8801,12 @@ define([
                 for(i = 0; i < selectedCopy.length; i++) {
                     selectedCopy[i].removeAttribute("data-origin-layer");
                 }
+            }
+            try {
+                await navigator.clipboard.writeText(clipBoardText);
+                console.log('Write to clipboard was successful!', clipBoardText);
+            } catch (err) {
+                console.error('Async: Could not copy text: ', err);
             }
 
             if (!batchCmd.isEmpty()) {
@@ -8736,12 +8849,12 @@ define([
             }
             try {
                 await navigator.clipboard.writeText(clipBoardText);
-                console.log('Copying to clipboard was successful!', clipBoardText);
+                console.log('Write to clipboard was successful!', clipBoardText);
             } catch (err) {
                 console.error('Async: Could not copy text: ', err);
             }
-
             canvas.clipBoard = $.merge([], selectedElements);
+            this.tempGroupSelectedElements();
         };
 
         this.pasteElements = async function (type, x, y) {
@@ -8811,12 +8924,16 @@ define([
 
             addCommandToHistory(batchCmd);
             call('changed', pasted);
+            this.tempGroupSelectedElements();
         };
 
         // Function: set
-        this.setHasUnsavedChange = (hasUnsaveChanged) => {
+        this.setHasUnsavedChange = (hasUnsaveChanged, shouldClearEstTime=true) => {
             canvas.changed = hasUnsaveChanged;
             TopBarController.setHasUnsavedChange(hasUnsaveChanged);
+            if (shouldClearEstTime) {
+                TimeEstimationButtonController.clearEstimatedTime();
+            }
         }
 
         this.getHasUnsaveChanged = () => {
@@ -8843,7 +8960,7 @@ define([
         }
 
         this.loadRecentFile = async (filePath) => {
-            const fs = require('fs');
+            const fs = requireNode('fs');;
             if (fs.existsSync(filePath)) {
                 let fileName;
                 if (process.platform === 'win32') {
@@ -8900,7 +9017,10 @@ define([
                 if (process.platform !== 'win32') {
                     label = filePath.replace(':', '/');
                 }
-                recentMenu.append(new MenuItem({'id': label, label: label, click: () => {this.loadRecentFile(filePath)}}));
+                recentMenu.append(new MenuItem({'id': label, label: label, click: async () => {
+                    const res = await FnWrapper.toggleUnsavedChangedDialog();
+                    if (res) this.loadRecentFile(filePath);
+                }}));
             });
             recentMenu.append(new MenuItem({ type: 'separator' }));
             recentMenu.append(new MenuItem({'id': 'CLEAR_RECENT', label: i18n.lang.topmenu.file.clear_recent, click: () => {this.cleanRecentFiles()}}));
@@ -8982,14 +9102,161 @@ define([
             if (pastedElements.length > 0) {
                 call('changed', pastedElements);
             }
+        };
+
+        /**
+         * Boolean Operate elements
+         * @param {string} mode one of ['intersect', 'union', 'diff', 'xor']
+         * @param {boolean} isSubCmd whether this operation is subcmd
+         */
+        this.booleanOperationSelectedElements = function(mode, isSubCmd=false) {
+            if (tempGroup) {
+                let children = this.ungroupTempGroup();
+                this.selectOnly(children, false);
+            }
+            let len = selectedElements.length;
+            for (let i = 0; i < selectedElements.length; ++i) {
+                if (!selectedElements[i]) {
+                    len = i;
+                    break;
+                }
+            }
+            if (len < 2) {
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.select_at_least_two,
+                });
+                return;
+            }
+            if (len > 2 && mode === 'diff') {
+                Alert.popUp({
+                    id: 'Boolean Operate',
+                    type: AlertConstants.SHOW_POP_ERROR,
+                    message: LANG.popup.more_than_two_object,
+                });
+                return;
+            }
+            let batchCmd = new svgedit.history.BatchCommand(`${mode} Elements`);
+            // clipper needs integer input so scale up path with a big const.
+            const scale = 100;
+            let solution_paths = [];
+            const modemap = {'intersect': 0, 'union': 1, 'diff': 2, 'xor': 3};
+            const clipType = modemap[mode];
+            const subject_fillType = 1;
+            const clip_fillType = 1;
+            let succeeded = true;
+            for (let i = len - 1; i >= 0; --i) {
+                let clipper = new ClipperLib.Clipper();
+                const elem =selectedElements[i];
+                if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
+                    tagNameMap = {
+                        'g': LANG.tag.g,
+                        'use': LANG.tag.use,
+                        'image': LANG.tag.image,
+                        'text': LANG.tag.text
+                    };
+                    Alert.popUp({
+                        id: 'Boolean Operate',
+                        type: AlertConstants.SHOW_POP_ERROR,
+                        message: `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`,
+                    });
+                    return;
+                }
+                const dpath = svgedit.utilities.getPathDFromElement(elem);
+                const bbox = svgedit.utilities.getBBox(elem);
+                let rotation = {
+                    angle: svgedit.utilities.getRotationAngle(elem),
+                    cx: bbox.x + bbox.width / 2,
+                    cy: bbox.y + bbox.height / 2
+                };
+                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
+                if (i === len - 1) {
+                    solution_paths = paths;
+                } else {
+                    clipper.AddPaths(solution_paths, ClipperLib.PolyType.ptSubject, true);
+                    clipper.AddPaths(paths, ClipperLib.PolyType.ptClip, true);
+                    succeeded = clipper.Execute(clipType, solution_paths, subject_fillType, clip_fillType);
+                }
+                if (!succeeded) {
+                    break;
+                }
+            }
+
+            if (!succeeded) {
+                console.log('Clipper not succeeded');
+                return;
+            }
+            let d = '';
+            for (let i = 0; i < solution_paths.length; ++i) {
+                if (!BeamboxPreference.read('simplify_clipper_path')) {
+                    d += 'M';
+                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                    d += ' Z';
+                } else {
+                    d += 'M';
+                    const points = solution_paths[i].map(p => {
+                        return { x: Math.floor(100 *(p.X / scale)) / 100, y: Math.floor(100 *(p.Y / scale)) / 100 } ;
+                    });
+                    const segs = BezierFitCurve.fitPath(points);
+                    for (let j = 0; j < segs.length; j++) {
+                        const seg = segs[j];
+                        if (j === 0) {
+                            d += `${seg.points[0].x},${seg.points[0].y}`;
+                        }
+                        const pointsString = seg.points.slice(1).map((p) => `${p.x},${p.y}`).join(' ');
+                        d += `${seg.type}${pointsString}`;
+                    }
+                    d += 'Z';
+                }
+            }
+            const base = selectedElements[len-1];
+            const fill = $(base).attr('fill');
+            const fill_opacity = $(base).attr('fill-opacity');
+            const element = addSvgElementFromJson({
+                element: 'path',
+                curStyles: false,
+                attr: {
+                    id: getNextId(),
+                    d: d,
+                    stroke: '#000',
+                    fill: fill,
+                    'fill-opacity': fill_opacity,
+                    opacity: cur_shape.opacity
+                }
+            });
+            pathActions.fixEnd(element);
+            if (this.isUsingLayerColor) {
+                this.updateElementColor(element);
+            }
+
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(element));
+            let cmd = this.deleteSelectedElements();
+            batchCmd.addSubCommand(cmd);
+            canvas.undoMgr.undoStackPointer -= 1;
+            canvas.undoMgr.undoStack.pop();
+            if (!isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+            this.selectOnly([element], true);
+            return batchCmd;
         }
 
-        // === Title Bar -> Edit ===
-
-        // Function: offsetElements
-        // Create offset of elements
-        // dir: direction 0: inward 1: outward; dist: offset distance; cornerType: cornerType; elem: target, selected if not passed;
-        this.offsetElements = (dir, dist, cornerType, elems) => {
+        /** Function: offsetElements
+         * Create offset of elements
+         * @param {number} dir direction 0: inward 1: outward;
+         * @param {number} dist offset distance;
+         * @param {string} cornerType 'round' or 'sharp';
+         * @param {SVGElement} elem target, selected if not passed;
+         */
+        this.offsetElements = async (dir, dist, cornerType, elems) => {
+            Progress.openNonstopProgress({
+                id: 'offset-path',
+                message: LANG.popup.progress.calculating,
+            });
+            await new Promise((resolve) => {
+                setTimeout(() => resolve(), 100);
+            });
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9002,7 +9269,6 @@ define([
             if (dir === 0) {
                 dist *= -1
             };
-            let newElem;
             let isContainNotSupportTag = false;
             let co = new ClipperLib.ClipperOffset(2 , 0.25);
             elems.forEach(elem => {
@@ -9056,6 +9322,7 @@ define([
             } else {
                 solution_paths = solution_paths.slice(1);
             }
+            Progress.popById('offset-path');
             if (solution_paths.length === 0 || !solution_paths[0]) {
                 if (isContainNotSupportTag) {
                     Alert.popUp({
@@ -9082,11 +9349,28 @@ define([
             }
             let d = '';
             for (let i = 0; i < solution_paths.length; ++i) {
-                d += 'M';
-                d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                d += ' Z'
+                if (!BeamboxPreference.read('simplify_clipper_path')) {
+                    d += 'M';
+                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
+                    d += ' Z';
+                } else {
+                    d += 'M';
+                    const points = solution_paths[i].map(p => {
+                        return { x: Math.floor(100 *(p.X / scale)) / 100, y: Math.floor(100 *(p.Y / scale)) / 100 } ;
+                    });
+                    const segs = BezierFitCurve.fitPath(points);
+                    for (let j = 0; j < segs.length; j++) {
+                        const seg = segs[j];
+                        if (j === 0) {
+                            d += `${seg.points[0].x},${seg.points[0].y}`;
+                        }
+                        const pointsString = seg.points.slice(1).map((p) => `${p.x},${p.y}`).join(' ');
+                        d += `${seg.type}${pointsString}`;
+                    }
+                    d += 'Z';
+                }
             }
-            newElem = addSvgElementFromJson({
+            const newElem = addSvgElementFromJson({
                 element: 'path',
                 curStyles: false,
                 attr: {
@@ -9097,14 +9381,15 @@ define([
                     opacity: cur_shape.opacity
                 }
             });
+            pathActions.fixEnd(newElem);
             batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(newElem));
-            if (this.isUseLayerColor) {
+            if (this.isUsingLayerColor) {
                 this.updateElementColor(newElem);
             }
 
             selectOnly([newElem], true);
             addCommandToHistory(batchCmd);
-        }
+        };
 
         this.decomposePath = (elems) => {
             if (tempGroup) {
@@ -9129,7 +9414,6 @@ define([
                     'stroke-opacity': $(elem).attr('stroke-opacity') || '1',
                     'fill-opacity': $(elem).attr('fill-opacity') || '0',
                 }
-                //console.log(attrs);
                 const dAbs = svgedit.utilities.convertPath(elem);
                 // Make sure all pathseg is abs
                 const segList = elem.pathSegList._parsePath(dAbs);
@@ -9175,11 +9459,13 @@ define([
                 selectOnly(allNewPaths, false);
                 let g = this.tempGroupSelectedElements();
             }
-        }
+        };
 
-        // Function: imageToSVG
-        // tracing an image file, convert it to svg object
-        // using ImageTracer https://github.com/jankovicsandras/imagetracerjs
+        /**
+         * tracing an image element, convert it to svg object
+         * using ImageTracer https://github.com/jankovicsandras/imagetracerjs
+         * @param {SVGImageElement} img img to trace
+        */
         this.imageToSVG = async function (img) {
             if (img == null) {
                 img = selectedElements[0];
@@ -9213,60 +9499,77 @@ define([
                             is_svg: false
                         },
                         onComplete: function(result) {
-                            resolve(result.canvas.toDataURL('image/png'));
+                            resolve(result.pngBase64);
                         }
                     }
                 );
             });
-            ImageTracer.imageToSVG(imgUrl, svgstr => {
-                const id = getNextId();
-                let g = addSvgElementFromJson({
-                    'element': 'g',
-                    'attr': {
-                        'id': id
-                    }
+            let svgStr = await new Promise((resolve) => {
+                ImageTracer.imageToSVG(imgUrl, svgstr => {
+                    resolve(svgstr);
                 });
-                svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
-                ImageTracer.appendSVGString(svgstr, id);
-                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
-                if (this.isUseLayerColor) {
-                    this.updateElementColor(g);
+            });
+            const id = getNextId();
+            let g = addSvgElementFromJson({
+                'element': 'g',
+                'attr': {
+                    'id': id
                 }
-                const imgBBox = img.getBBox();
-                const angle = svgedit.utilities.getRotationAngle(img);
-                let cmd = this.deleteSelectedElements();
-                batchCmd.addSubCommand(cmd);
-                this.selectOnly([g], true);
-                let gBBox = g.getBBox();
-                if (imgBBox.width !== gBBox.width) {
-                    this.setSvgElemSize('width', imgBBox.width);
+            });
+            svgStr = svgStr.replace(/<\/?svg[^>]*>/g, '');
+            ImageTracer.appendSVGString(svgStr, id);
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+            const imgBBox = img.getBBox();
+            const angle = svgedit.utilities.getRotationAngle(img);
+            let cmd = this.deleteSelectedElements();
+            batchCmd.addSubCommand(cmd);
+            this.selectOnly([g], true);
+            let gBBox = g.getBBox();
+            if (imgBBox.width !== gBBox.width) {
+                this.setSvgElemSize('width', imgBBox.width);
+            }
+            if (imgBBox.height !== gBBox.height) {
+                this.setSvgElemSize('height', imgBBox.height);
+            }
+            gBBox = g.getBBox();
+            dx = (imgBBox.x + 0.5 * imgBBox.width) - (gBBox.x + 0.5 * gBBox.width);
+            dy = (imgBBox.y + 0.5 * imgBBox.height) - (gBBox.y + 0.5 * gBBox.height);
+            this.moveElements([dx], [dy], [g], false);
+            this.setRotationAngle(angle, true, g);
+            for (let i = 0; i < g.childNodes.length; i++) {
+                let child = g.childNodes[i];
+                if ($(child).attr('opacity') === 0) {
+                    $(child).remove();
+                    i--;
+                } else {
+                    child.removeAttribute('opacity');
+                    $(child).attr('id', getNextId());
+                    $(child).attr('vector-effect', "non-scaling-stroke");
+                    child.addEventListener('mouseover', this.handleGenerateSensorArea);
+                    child.addEventListener('mouseleave', this.handleGenerateSensorArea);
                 }
-                if (imgBBox.height !== gBBox.height) {
-                    this.setSvgElemSize('height', imgBBox.height);
-                }
-                gBBox = g.getBBox();
-                dx = (imgBBox.x + 0.5  * imgBBox.width) - (gBBox.x + 0.5  * gBBox.width);
-                dy = (imgBBox.y + 0.5  * imgBBox.height) - (gBBox.y + 0.5  * gBBox.height);
-                this.moveElements([dx], [dy], [g], false);
-                this.setRotationAngle(angle, true, g);
-                for (let i = 0; i < g.childNodes.length; i++) {
-                    let child = g.childNodes[i];
-                    if ($(child).attr('opacity') === 0) {
-                        $(child).remove();
-                        i--;
-                    } else {
-                        $(child).removeAttr('opacity');
-                        $(child).attr('id', getNextId());
-                        $(child).attr('vector-effect', "non-scaling-stroke");
-                        $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+            }
+            if (this.isUsingLayerColor) {
+                this.updateElementColor(g);
+            }
+            if (BeamboxPreference.read('union_after_trace') === false) {
+                selectorManager.requestSelector(g).resize();
+            } else {
+                let res = this.ungroupSelectedElement(true);
+                if (res) {
+                    if (res.batchCmd && !res.batchCmd.isEmpty()) {
+                        batchCmd.addSubCommand(res.batchCmd);
+                    }
+                    res = this.booleanOperationSelectedElements('union', true);
+                    if (res && !res.isEmpty()) {
+                        batchCmd.addSubCommand(res);
                     }
                 }
-                selectorManager.requestSelector(g).resize();
-                
-                addCommandToHistory(batchCmd);
-                Progress.popById('vectorize-image');
-            });
-        }
+            }
+            
+            addCommandToHistory(batchCmd);
+            Progress.popById('vectorize-image');
+        };
 
         this.disassembleUse2Group = async function(elems = null) {
             if (!elems) {
@@ -9304,7 +9607,7 @@ define([
                 const {elem: layer, title: layerTitle} = this.getObjectLayer(elem);
                 svgCanvas.setCurrentLayer(layerTitle);
                 LayerPanelController.updateLayerPanel();
-                const color = this.isUseLayerColor ? $(layer).data('color') : '#333';
+                const color = this.isUsingLayerColor ? $(layer).data('color') : '#333';
                 const drawing = getCurrentDrawing();
 
                 const wireframe = $(elem).data('wireframe');
@@ -9313,7 +9616,7 @@ define([
                 transform = `${transform} ${translate}`;
                 const href = this.getHref(elem);
                 const svg = $(href).toArray()[0];
-                let children = [...Array.from($(svg)[0].childNodes).reverse()];
+                let children = [...Array.from(svg.childNodes).reverse()];
                 let g = addSvgElementFromJson({
                     'element': 'g',
                     'attr': {
@@ -9366,7 +9669,6 @@ define([
                     percentage: 90,
                 });
                 await new Promise((resolve) => {setTimeout(resolve, 50)});
-                let start = Date.now();
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
                 batchCmd.addSubCommand(new svgedit.history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode));
                 elem.parentNode.removeChild(elem);
@@ -9676,7 +9978,7 @@ define([
                 addCommandToHistory(batchCmd);
             }
 
-            if (canvas.isUseLayerColor) {
+            if (canvas.isUsingLayerColor) {
                 canvas.updateElementColor(g);
             }
 
@@ -9944,7 +10246,7 @@ define([
                     const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
                     if (original_layer) {
                         original_layer.appendChild(elem);
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
@@ -9976,23 +10278,35 @@ define([
             if (selectedElements.length <= 1) {
                 return;
             }
-            const type = 'g';
 
-            // create and insert the group element
-            let g = addSvgElementFromJson({
-                'element': type,
-                'attr': {
-                    'id': getNextId(),
-                    'data-tempgroup': true,
-                    'data-ratiofixed': true,
-                }
-            });
-            // Move to direct under svgcontent to avoid group under invisible layer
-            $('#svgcontent')[0].appendChild(g);
+            const hasAlreadyTempGroup = selectedElements[0].getAttribute('data-tempgroup');
+            const type = 'g';
+            let g;
+
+            if (hasAlreadyTempGroup) {
+                g = selectedElements[0];
+            } else {
+                // create and insert the group element
+                g = addSvgElementFromJson({
+                    'element': type,
+                    'attr': {
+                        'id': getNextId(),
+                        'data-tempgroup': true,
+                        'data-ratiofixed': true,
+                    }
+                });
+
+                // Move to direct under svgcontent to avoid group under invisible layer
+                const svgcontent = document.getElementById('svgcontent');
+                svgcontent.appendChild(g);
+            }
 
             // now move all children into the group
             var len = selectedElements.length;
             for (let i = 0; i < len ;i++) {
+                if (hasAlreadyTempGroup && i === 0) {
+                    continue;
+                }
                 var elem = selectedElements[i];
                 if (elem == null) {
                     continue;
@@ -10038,6 +10352,10 @@ define([
                 }
             }
 
+            if (hasAlreadyTempGroup) {
+                tempGroup = null;
+            }
+
             // update selection
             selectOnly([g], true);
             tempGroup = g;
@@ -10045,45 +10363,21 @@ define([
             return g;
         };
 
-        // Function: ungroupTempGroup
-        // Not sure why but sometimes tempgroup would not be removed
-        // Use this function to remove it
-        this.removeAllTempGroup = () => {
-            const allTempGroups = Array.from(svgcontent.childNodes).filter((child) => child.getAttribute('data-tempgroup') === 'true');
-            allTempGroups.forEach((tempGroup) => {
-                this.ungroupTempGroup(tempGroup);
-                console.log(tempGroup);
-                if (tempGroup) {
-                    tempGroup.remove();
-                }
+        this.ungroupAllTempGroup = function() {
+            const allTempGroups = Array.from(document.querySelectorAll('[data-tempgroup="true"]'));
+            allTempGroups.forEach((g) => {
+                this.ungroupTempGroup(g);
             });
-            this.clearSelection();
-        }
+        };
 
         // Function: ungroupTempGroup
         // Unwraps all the elements in a selected group (g) element. This requires
         // significant recalculations to apply group's transforms, etc to its children
         this.ungroupTempGroup = function (elem=null) {
 
-            var g = elem || selectedElements[0];
+            let g = (elem || selectedElements[0]) || tempGroup;
             if (!g) {
                 return;
-            }
-            if ($(g).data('gsvg') || $(g).data('symbol')) {
-                // Is svg, so actually convert to group
-                convertToGroup(g);
-                return;
-            }
-            if (g.tagName === 'use') {
-                // Somehow doesn't have data set, so retrieve
-                var symbol = svgedit.utilities.getElem(getHref(g).substr(1));
-                $(g).data('symbol', symbol).data('ref', symbol);
-                convertToGroup(g);
-                return;
-            }
-            var parents_a = $(g).parents('a');
-            if (parents_a.length) {
-                g = parents_a[0];
             }
 
             // Look for parent "a"
@@ -10095,7 +10389,6 @@ define([
                     batchCmd.addSubCommand(cmd);
                 }
                 var parent = g.parentNode;
-                var anchor = g.nextSibling;
                 var children = new Array(g.childNodes.length);
 
                 var i = 0;
@@ -10118,24 +10411,24 @@ define([
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
                     if (original_layer) {
                         if (elem.getAttribute('data-next-sibling')) {
-                            const nextSiblingId = elem.getAttribute('data-next-sibling');
-                            const nextSibling = original_layer.querySelector(nextSiblingId.replace('#', '\\#'));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
+                            const nextSibling = original_layer.querySelector(`#${nextSiblingId}`);
                             if (nextSibling) {
                                 original_layer.insertBefore(elem, nextSibling);
                             } else {
-                                original_layer.appendChild(elem);
+                                original_layer.appendChild(nextSibling)
                             }
                             elem.removeAttribute('data-next-sibling')
                         } else {
                             original_layer.appendChild(elem);
                         }
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     } else {
                         if (elem.getAttribute('data-next-sibling')) {
-                            const nextSiblingId = elem.getAttribute('data-next-sibling');
-                            const nextSibling = currentLayer.querySelector(nextSiblingId.replace('#', '\\#'));
+                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
+                            const nextSibling = currentLayer.querySelector(`#${nextSiblingId}`);
                             if (nextSibling) {
                                 currentLayer.insertBefore(elem, nextSibling);
                             } else {
@@ -10145,7 +10438,7 @@ define([
                         } else {
                             currentLayer.appendChild(elem);
                         }
-                        if (this.isUseLayerColor) {
+                        if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
                     }
@@ -10156,17 +10449,17 @@ define([
                     addCommandToHistory(batchCmd);
                 }
 
-                tempGroup = false;
+                tempGroup = null;
+                g = parent.removeChild(g);
                 // remove the group from the selection
                 clearSelection();
-                g = parent.removeChild(g);
             }
             return children;
         };
 
         this.getTempGroup = () => {
             return tempGroup;
-        }
+        };
 
         // Function: moveUpSelectedElement
         // Move selected element up in layer
@@ -10290,18 +10583,10 @@ define([
                     let y = 0;
                     // dx and dy could be arrays
                     if (dx.constructor == Array) {
-                        //				if (i==0) {
-                        //					selectedBBoxes[0].x += dx[0];
-                        //					selectedBBoxes[0].y += dy[0];
-                        //				}
                         xform.setTranslate(dx[i], dy[i]);
                         x = dx[i];
-                        y = dx[i];
+                        y = dy[i];
                     } else {
-                        //				if (i==0) {
-                        //					selectedBBoxes[0].x += dx;
-                        //					selectedBBoxes[0].y += dy;
-                        //				}
                         xform.setTranslate(dx, dy);
                         x = dx;
                         y = dy;
@@ -10336,7 +10621,7 @@ define([
                 dy /= current_zoom;
             }
             undoable = (undoable == null) ? true : undoable;
-            var batchCmd = new svgedit.history.BatchCommand('position');
+            const batchCmd = new svgedit.history.BatchCommand('position');
             var i = elems.length;
             while (i--) {
                 var selected = elems[i];
@@ -10373,7 +10658,7 @@ define([
         };
 
         this.getCenter = function(elem) {
-            let centerX,centerY ;
+            let centerX, centerY;
             switch(elem.tagName) {
                 case 'image':
                 case 'rect':
@@ -10391,6 +10676,7 @@ define([
                 case 'polygon':
                 case 'path':
                 case 'use':
+                case 'text':
                     let realLocation = this.getSvgRealLocation(elem);
                     centerX = realLocation.x + realLocation.width/2 ;
                     centerY = realLocation.y + realLocation.height/2 ;
@@ -10402,16 +10688,11 @@ define([
             };
         };
 
-        this.distHori = function () {
+        this.distHori = function (isSubCmd) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            const centerXs = [];
-            let minX = Number.MAX_VALUE,
-                maxX = Number.MIN_VALUE;
-            let indexMax = -1,
-                indexMin = -1;
 
             const realSelectedElements = selectedElements.filter(e => e);
             const len = realSelectedElements.length;
@@ -10421,56 +10702,44 @@ define([
                 return;
             }
 
-            for (let i = 0; i < len; i=i+1) {
-                const elem = realSelectedElements[i];
+            const batchCmd = new svgedit.history.BatchCommand('Dist Hori');
 
-                let centerX = this.getCenter(elem).x;
-                centerXs[i] = centerX;
-                if (centerX < minX) {
-                    minX = centerX;
-                    indexMin = i;
-                }
-                if (centerX > maxX) {
-                    maxX = centerX;
-                    indexMax = i;
-                }
-            }
+            realSelectedElements.sort((a, b) => {
+                const xa = this.getCenter(a).x;
+                const xb = this.getCenter(b).x;
+                return xa - xb;
+            });
+            const minX = this.getCenter(realSelectedElements[0]).x;
+            const maxX = this.getCenter(realSelectedElements[len - 1]).x;
 
-            if (indexMin === indexMax || maxX === minX) {
+            if (maxX === minX) {
                 this.tempGroupSelectedElements();
                 return;
             }
 
-            const dx = (maxX - minX) /(len-1);
+            const dx = (maxX - minX) / (len - 1);
 
-            let j = 1;
-
-            for (let i = indexMin + 1; i< len + indexMin ; i=i+1) {
-                if ( (i === indexMax) || (i-len) === indexMax ) {
-                    continue;
+            for (let i = 1; i < len - 1; i++) {
+                const x = this.getCenter(realSelectedElements[i]).x;
+                let cmd = this.moveElements([minX + dx * i - x], [0], [realSelectedElements[i]], false);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
                 }
-                if (i < len) {
-                    this.moveElements([(minX + dx*j) - centerXs[i]], [0], [realSelectedElements[i]]);
-                    selectorManager.requestSelector(realSelectedElements[i]).resize();
-                } else {
-                    this.moveElements([(minX + dx*j) - centerXs[i-len]], [0], [realSelectedElements[i-len]]);
-                    selectorManager.requestSelector(realSelectedElements[i-len]).resize();
-                }
-                j = j+1;
             }
+
+            if (!batchCmd.isEmpty() && !isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+
             this.tempGroupSelectedElements();
+            return batchCmd;
         };
 
-        this.distVert = function () {
+        this.distVert = function (isSubCmd) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
             }
-            const centerYs = [];
-            let minY = Number.MAX_VALUE,
-                maxY = Number.MIN_VALUE;
-            let indexMax = -1,
-                indexMin = -1;
 
             const realSelectedElements = selectedElements.filter(e => e);
             const len = realSelectedElements.length;
@@ -10480,44 +10749,37 @@ define([
                 return;
             }
 
-            for (let i = 0; i < len; i=i+1) {
-                const elem = realSelectedElements[i];
+            const batchCmd = new svgedit.history.BatchCommand('Dist Verti');
 
-                let centerY = this.getCenter(elem).y;
-                centerYs[i] = centerY;
-                if (centerY < minY) {
-                    minY = centerY;
-                    indexMin = i;
-                }
-                if (centerY > maxY) {
-                    maxY = centerY;
-                    indexMax = i;
-                }
-            }
+            realSelectedElements.sort((a, b) => {
+                const ya = this.getCenter(a).y;
+                const yb = this.getCenter(b).y;
+                return ya - yb;
+            });
+            const minY = this.getCenter(realSelectedElements[0]).y;
+            const maxY = this.getCenter(realSelectedElements[len - 1]).y;
 
-            if (indexMin === indexMax || maxY === minY) {
+            if (maxY === minY) {
                 this.tempGroupSelectedElements();
                 return;
             }
 
-            const dy = (maxY - minY) /(len-1);
+            const dy = (maxY - minY) / (len - 1);
 
-            let j = 1;
-
-            for (let i = indexMin + 1; i< len + indexMin ; i=i+1) {
-                if ( (i === indexMax) || (i-len) === indexMax ) {
-                    continue;
+            for (let i = 1; i < len - 1; i++) {
+                const y = this.getCenter(realSelectedElements[i]).y;
+                let cmd = this.moveElements([0], [minY + dy * i - y], [realSelectedElements[i]], false);
+                if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
                 }
-                if (i < len) {
-                    this.moveElements([0], [(minY + dy*j) - centerYs[i]], [realSelectedElements[i]]);
-                    selectorManager.requestSelector(realSelectedElements[i]).resize();
-                } else {
-                    this.moveElements([0], [(minY + dy*j) - centerYs[i-len]], [realSelectedElements[i-len]]);
-                    selectorManager.requestSelector(realSelectedElements[i-len]).resize();
-                }
-                j = j+1;
             }
+
+            if (!batchCmd.isEmpty() && !isSubCmd) {
+                addCommandToHistory(batchCmd);
+            }
+
             this.tempGroupSelectedElements();
+            return batchCmd;
         };
 
         this.distEven = function () {
@@ -10605,119 +10867,6 @@ define([
                 j = j+1;
             }
         };
-
-        this.booleanOperationSelectedElements = function(mode) {
-            if (tempGroup) {
-                let children = this.ungroupTempGroup();
-                this.selectOnly(children, false);
-            }
-            let len = selectedElements.length;
-            for (let i = 0; i < selectedElements.length; ++i) {
-                if (!selectedElements[i]) {
-                    len = i;
-                    break;
-                }
-            }
-            if (len < 2) {
-                Alert.popUp({
-                    id: 'Boolean Operate',
-                    type: AlertConstants.SHOW_POP_ERROR,
-                    message: LANG.popup.select_at_least_two,
-                });
-                return;
-            }
-            if (len > 2 && mode === 'diff') {
-                Alert.popUp({
-                    id: 'Boolean Operate',
-                    type: AlertConstants.SHOW_POP_ERROR,
-                    message: LANG.popup.more_than_two_object,
-                });
-                return;
-            }
-            let batchCmd = new svgedit.history.BatchCommand(`${mode} Elements`);
-            // clipper needs integer input so scale up path with a big const.
-            const scale = 100;
-            let solution_paths = [];
-            const modemap = {'intersect': 0, 'union': 1, 'diff': 2, 'xor': 3};
-            const clipType = modemap[mode];
-            const subject_fillType = 1;
-            const clip_fillType = 1;
-            let succeeded = true;
-            for (let i = len - 1; i >= 0; --i) {
-                let clipper = new ClipperLib.Clipper();
-                const elem =selectedElements[i];
-                if (!['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName)) {
-                    tagNameMap = {
-                        'g': LANG.tag.g,
-                        'use': LANG.tag.use,
-                        'image': LANG.tag.image,
-                        'text': LANG.tag.text
-                    };
-                    Alert.popUp({
-                        id: 'Boolean Operate',
-                        type: AlertConstants.SHOW_POP_ERROR,
-                        message: `${LANG.popup.not_support_object_type}: ${tagNameMap[elem.tagName]}`,
-                    });
-                    return;
-                }
-                const dpath = svgedit.utilities.getPathDFromElement(elem);
-                const bbox = svgedit.utilities.getBBox(elem);
-                let rotation = {
-                    angle: svgedit.utilities.getRotationAngle(elem),
-                    cx: bbox.x + bbox.width / 2,
-                    cy: bbox.y + bbox.height / 2
-                };
-                const paths = ClipperLib.dPathtoPointPathsAndScale(dpath, rotation, scale);
-                if (i === len - 1) {
-                    solution_paths = paths;
-                } else {
-                    clipper.AddPaths(solution_paths, ClipperLib.PolyType.ptSubject, true);
-                    clipper.AddPaths(paths, ClipperLib.PolyType.ptClip, true);
-                    succeeded = clipper.Execute(clipType, solution_paths, subject_fillType, clip_fillType);
-                }
-                if (!succeeded) {
-                    break;
-                }
-            }
-
-            if (succeeded) {
-                let d = '';
-                for (let i = 0; i < solution_paths.length; ++i) {
-                    d += 'M';
-                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                    d += ' Z'
-                }
-                const base = selectedElements[len-1];
-                const fill = $(base).attr('fill');
-                const fill_opacity = $(base).attr('fill-opacity');
-                element = addSvgElementFromJson({
-                    element: 'path',
-                    curStyles: false,
-                    attr: {
-                        id: getNextId(),
-                        d: d,
-                        stroke: '#000',
-                        fill: fill,
-                        'fill-opacity': fill_opacity,
-                        opacity: cur_shape.opacity
-                    }
-                });
-                if (this.isUseLayerColor) {
-                    this.updateElementColor(element);
-                }
-            } else {
-                console.log('Clipper not succeeded');
-                return;
-            }
-            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(element));
-            let cmd = this.deleteSelectedElements();
-            batchCmd.addSubCommand(cmd);
-            canvas.undoMgr.undoStackPointer -= 1;
-            canvas.undoMgr.undoStack.pop();
-            addCommandToHistory(batchCmd);
-            this.selectOnly([element], true);
-            //console.log(canvas.undoMgr);
-        }
 
         this.flipSelectedElements = async function (horizon=1, vertical=1) {
             let len = selectedElements.length;
@@ -10857,7 +11006,7 @@ define([
             let cmd;
             const origImage = $(image).attr('origImage');
             if (origImage) {
-                const jimp = require('jimp');
+                const jimp = requireNode('jimp');
                 let data = await fetch(origImage);
                 data = await data.blob();
                 data = await new Response(data).arrayBuffer(); 
@@ -11340,7 +11489,7 @@ define([
                 {x: bbox.x + bbox.width, y: bbox.y},
                 {x: bbox.x, y: bbox.y + bbox.height},
                 {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
-            ]
+            ];
             for (let i = tlist.numberOfItems-1; i >= 0; i--) {
                 const t = tlist.getItem(i);
                 if (t.type === 4) {
@@ -11352,10 +11501,7 @@ define([
                     return {x, y};
                 });
             };
-            let minX = points[0].x;
-            let minY = points[0].y;
-            let maxX = points[0].x;
-            let maxY = points[0].y;
+            let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
             points.forEach(p => {
                 minX = Math.min(p.x, minX);
                 maxX = Math.max(p.x, maxX);
@@ -11364,6 +11510,34 @@ define([
             });
             return {x: minX, y:minY, width: maxX - minX, height: maxY - minY};
         };
+
+        this.calculateRotatedBBox = (bbox, angle) => {
+            let points = [
+                {x: bbox.x, y: bbox.y},
+                {x: bbox.x + bbox.width, y: bbox.y},
+                {x: bbox.x, y: bbox.y + bbox.height},
+                {x: bbox.x + bbox.width, y: bbox.y + bbox.height},
+            ];
+
+            const rad = angle * Math.PI / 180;
+            const cx = bbox.x + 0.5 * bbox.width;
+            const cy = bbox.y + 0.5 * bbox.height;
+            points.forEach((p) => {
+                const x = p.x - cx;
+                const y = p.y - cy;
+                p.x = cx + x * Math.cos(rad) - y * Math.sin(rad);
+                p.y = cy + x * Math.sin(rad) + y * Math.cos(rad);
+            });
+            let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
+            points.forEach(p => {
+                minX = Math.min(p.x, minX);
+                maxX = Math.max(p.x, maxX);
+                minY = Math.min(p.y, minY);
+                maxY = Math.max(p.y, maxY);
+            });
+
+            return { x: minX, y:minY, width: maxX - minX, height: maxY - minY };
+        }
 
         String.prototype.format = function () {
             a = this;
@@ -11515,9 +11689,17 @@ define([
         this.toggleGrid = function() {
             const showGrid = !(svgEditor.curConfig.showGrid || false);
             svgEditor.curConfig.showGrid = showGrid;
-            Menu.getApplicationMenu().items.filter(i => i.id === '_view')[0].submenu.items.filter(i => i.id === 'SHOW_GRIDS')[0].checked = showGrid;
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_GRIDS').checked = showGrid;
             const canvasGridDisplay = showGrid ? 'inline' : 'none';
             $('#canvasGrid').attr('style', `display: ${canvasGridDisplay}`);
+        }
+
+        this.toggleRulers = () => {
+            const shouldShowRulers = !BeamboxPreference.read('show_rulers');
+            BeamboxPreference.write('show_rulers', shouldShowRulers);
+            Menu.getApplicationMenu().items.find(i => i.id === '_view').submenu.items.find(i => i.id === 'SHOW_RULERS').checked = shouldShowRulers;
+            document.getElementById('rulers').style.display = shouldShowRulers ? '' : 'none';
+            svgEditor.updateRulers();
         }
 
         this.setRotaryMode = function(val) {

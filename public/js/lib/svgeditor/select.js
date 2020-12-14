@@ -16,11 +16,12 @@
 // 4) math.js
 // 5) svgutils.js
 define([
-	'jsx!app/actions/beambox/Tool-Panels-Controller'
+	'app/actions/beambox/Tool-Panels-Controller'
 ], function(
 	ToolPanelsController
 ){
 'use strict';
+ToolPanelsController = ToolPanelsController.default;
 
 if (!svgedit.select) {
 	svgedit.select = {};

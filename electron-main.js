@@ -1,17 +1,17 @@
 const {app, ipcMain, BrowserWindow, dialog} = require('electron');
-const electronLocalshortcut = require('electron-localshortcut')
+const electronLocalshortcut = require('electron-localshortcut');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
-const BackendManager = require('./src/backend-manager.js');
-const MonitorManager = require('./src/monitor-manager.js');
-const MenuManager = require('./src/menu-manager.js');
-const UpdateManager = require('./src/update-manager.js');
-const UglyNotify = require('./src/ugly-notify.js');
-const events = require('./src/ipc-events');
+const BackendManager = require('./src/node/backend-manager.js');
+const MonitorManager = require('./src/node/monitor-manager.js');
+const MenuManager = require('./src/node/menu-manager.js');
+const UpdateManager = require('./src/node/update-manager.js');
+const UglyNotify = require('./src/node/ugly-notify.js');
+const events = require('./src/node/ipc-events');
 
-const TTC2TTF = require('./src/ttc2ttf.js');
+const TTC2TTF = require('./src/node/ttc2ttf.js');
 
-const FontManager = require('font-manager');
+const FontScanner = require('font-scanner');
 const TextToSVG = require('text-to-svg');
 const path = require('path');
 const url = require('url');
@@ -118,7 +118,7 @@ function onDeviceUpdated(deviceInfo) {
     global.devices[deviceID] = deviceInfo;
 }
 
-require('./src/bootstrap.js');
+require('./src/node/bootstrap.js');
 
 const updateManager = new UpdateManager();
 const backendManager = new BackendManager({
@@ -133,13 +133,18 @@ const backendManager = new BackendManager({
     c: console
 });
 backendManager.start();
+
 //Run monitorexe api
-const monitorManager = new MonitorManager({
-    location: process.env.BACKEND
-});
-//kill process first, in case last time shut down
-monitorManager.killProcSync();
-monitorManager.startProc();
+monitorManager = null;
+if (process.argv.includes('--monitor')) {
+    console.log('Starting Monitor');
+    monitorManager = new MonitorManager({
+        location: process.env.BACKEND
+    });
+    //kill process first, in case last time shut down
+    monitorManager.killProcSync();
+    monitorManager.startProc();
+}
 
 let shadowWindow;
 let shouldCloseShadowWindow = false;
@@ -183,9 +188,10 @@ function createWindow () {
         frame: process.platform === 'win32' ? false : null,
         title: `Beam Studio - ${app.getVersion()}`,
         webPreferences: {
-            preload: path.join(__dirname, 'src', 'main-window-entry.js'),
+            preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
             nodeIntegration: true
         },
+        trafficLightPosition: { x: 12, y: 25 },
         vibrancy: 'light'});
 
     const store = new Store();
@@ -239,7 +245,9 @@ function createWindow () {
             });
             const closeBeamStudio = () => {
                 isCloseConfirmed = true;
-                monitorManager.killProc();
+                if (monitorManager) {
+                    monitorManager.killProc();
+                }
                 backendManager.stop();
                 mainWindow.close();
                 shouldCloseShadowWindow = true;
@@ -261,7 +269,9 @@ function createWindow () {
                 }
             });
         } else {
-            monitorManager.killProc();
+            if (monitorManager) {
+                monitorManager.killProc();
+            }
             backendManager.stop();
             shouldCloseShadowWindow = true;
             try {
@@ -337,7 +347,7 @@ ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
 });
 var fontsListCache = [];
 ipcMain.on(events.GET_AVAILABLE_FONTS , (event, arg) => {
-    const fonts = FontManager.getAvailableFontsSync();
+    const fonts = FontScanner.getAvailableFontsSync();
 	fontsListCache = fonts;
     event.returnValue = fonts;
 });
@@ -355,7 +365,7 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
 });
 
 function findFontsSync(arg) {
-    const availableFonts = FontManager.getAvailableFontsSync();
+    const availableFonts = FontScanner.getAvailableFontsSync();
     const matchFamily = availableFonts.filter(font => font.family === arg.family);
     const match = matchFamily.filter(font => {
         result = true
@@ -371,7 +381,7 @@ function findFontsSync(arg) {
 
 function findFontSync(arg) {
     arg.style = arg.style || 'Regular';
-    const availableFonts = FontManager.getAvailableFontsSync();
+    const availableFonts = FontScanner.getAvailableFontsSync();
     let font = availableFonts[0];
     let match = availableFonts.filter(font => font.family === arg.family);
     font = match[0] || font;
@@ -389,13 +399,13 @@ function findFontSync(arg) {
 };
 
 ipcMain.on(events.FIND_FONTS , (event, arg) => {
-    // FontManager.findFontsSync({ family: 'Arial' });
+    // FontScanner.findFontsSync({ family: 'Arial' });
     const fonts = findFontsSync(arg);
     event.returnValue = fonts;
 });
 
 ipcMain.on(events.FIND_FONT , (event, arg) => {
-    // FontManager.findFontSync({ family: 'Arial', weight: 700 })
+    // FontScanner.findFontSync({ family: 'Arial', weight: 700 })
     const font = findFontSync(arg);
     event.returnValue = font;
 });
@@ -411,39 +421,37 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
             { name: allFiles, extensions: ['*'] }
         ]
     }
+    const filePath = dialog.showSaveDialogSync(options)
+    if (!filePath) {
+        event.returnValue = false;
+        return;
+    }
 
-    dialog.showSaveDialog(options, function (filePath) {
-        if (!filePath) {
+    switch (typeof(file)) {
+        case 'string':
+            fs.writeFile(filePath, file, function(err) {
+                if (err) {
+                    dialog.showErrorBox('Error', err);
+                    event.returnValue = false;
+                    return;
+                }
+            });
+            break;
+        case 'object':
+            fs.writeFileSync(filePath, file, function(err) {
+                if(err) {
+                    dialog.showErrorBox('Error', err);
+                    event.returnValue = false;
+                    return;
+                }
+            });
+            break;
+        default:
             event.returnValue = false;
-            return;
-        }
-
-        switch (typeof(file)) {
-            case 'string':
-                fs.writeFile(filePath, file, function(err) {
-                    if (err) {
-                        dialog.showErrorBox('Error', err);
-                        event.returnValue = false;
-                        return;
-                    }
-                });
-                break;
-            case 'object':
-                fs.writeFileSync(filePath, file, function(err) {
-                    if(err) {
-                        dialog.showErrorBox('Error', err);
-                        event.returnValue = false;
-                        return;
-                    }
-                });
-                break;
-            default:
-                event.returnValue = false;
-                dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
-                break;
-        }
-        event.returnValue = filePath;
-    })
+            dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
+            break;
+    }
+    event.returnValue = filePath;
 })
 
 ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily, fontSize, fontStyle, letterSpacing, key}) => {
@@ -480,7 +488,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         
         const originPostscriptName = originFont.postscriptName;
         const fontList = Array.from(text).map(char =>
-            FontManager.substituteFontSync(originPostscriptName, char)
+            FontScanner.substituteFontSync(originPostscriptName, char)
         );
         let familyList = fontList.map(font => font.family);
         let postscriptList = fontList.map(font => font.postscriptName)
@@ -500,7 +508,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
                     if (fontList[j].postscriptName === postscriptList[i]) {
                         continue;
                     }
-                    const foundfont = FontManager.substituteFontSync(postscriptList[i], text[j]).family;
+                    const foundfont = FontScanner.substituteFontSync(postscriptList[i], text[j]).family;
                     if (familyList[i] !== foundfont) {
                         allFit = false;
                         break;
@@ -539,7 +547,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
     });
     let fontPath = font.path;
 	if (fontFamily.indexOf("華康") >= 0 && (fontPath.toLowerCase().indexOf("arial") > 0 || fontPath.toLowerCase().indexOf("meiryo") > 0)) {
-		// This is a hotfix for 華康系列 fonts, because fontmanager does not support
+		// This is a hotfix for 華康系列 fonts, because fontScanner does not support
 		for (var i in fontsListCache) {
 			const fontInfo = fontsListCache[i];
 			if (fontInfo.family == fontFamily) {

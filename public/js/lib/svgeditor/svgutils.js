@@ -898,7 +898,10 @@ svgedit.utilities.getBBoxWithTransform = function(elem, addSvgElementFromJson, p
 			// TODO: why ellipse and not circle
 			var elemNames = ['ellipse', 'path', 'line', 'polyline', 'polygon'];
 			if (elemNames.indexOf(elem.tagName) >= 0) {
-				bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
+				const isPathTooComplecated = (elem.tagName === 'path' && (!elem.pathSegList || (elem.pathSegList._list.length > 700)));
+				if (!isPathTooComplecated) {
+					bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
+				}
 			} else if (elem.tagName == 'rect') {
 				// Look for radius
 				var rx = elem.getAttribute('rx');

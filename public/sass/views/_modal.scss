@@ -193,7 +193,15 @@
                     display: block;
                     height: 100%;
                     width: 0;
-                    transition: width 0.3s;
+                }
+            }
+            .button-container {
+                .btn-h-group {
+                    padding: 0;
+                }
+                .btn-default {
+                    height: 28px;
+                    line-height: 24px;
                 }
             }
         }
@@ -379,7 +387,7 @@
     .update-wrapper {
         background: #fff;
         padding: 20px;
-        width: 32.2rem;
+        width: 450px;
     }
 
     .caption {
@@ -427,7 +435,7 @@
     }
 }
 
-.modal-change-filament, .modal-camera-calibration {
+.modal-change-filament {
     .guide-image {
         border: 2px solid #000;
         display: block;

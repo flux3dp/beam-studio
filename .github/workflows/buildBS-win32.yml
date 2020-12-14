@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version: [10.12]
+        node-version: [12.16]
         python-version: [3.7]
         arch: [32]
 
@@ -71,12 +71,8 @@ jobs:
           yarn install
 
           gulp sass
-          gulp jsx
+          gulp frontend
 
-          cd ./node_modules/text-to-svg
-          npm install --save-dev
-          gulp build
-          cd ../../
           $env:TMP
           cp -R $env:TMP/flux_api_swap backend/flux_api
           ./backend/flux_api/flux_api --test --without_pcl

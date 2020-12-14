@@ -158,7 +158,7 @@ svgEditor.addExtension('polygon', function (S) {
                         'strokeWidth': 1
                     }
                 });
-                if (svgCanvas.isUseLayerColor) {
+                if (svgCanvas.isUsingLayerColor) {
                     svgCanvas.updateElementColor(newPoly);
                 }
                 svgCanvas.clearSelection();

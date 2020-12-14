@@ -4,15 +4,15 @@ define([
     'helpers/device-master',
     'helpers/api/discover',
     'helpers/api/svg-laser-parser',
-    'app/actions/beambox/bottom-right-funcs',
+    'app/actions/beambox/export-funcs',
 ], function (
     BeamboxPreference,
     DeviceMaster,
     Discover,
     svgLaserParser,
-    BottomRightFuncs,
+    ExportFuncs,
 ) {
-    const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
+    const svgeditorParser = svgLaserParser.default({ type: 'svgeditor' });
     const MACHINE_STATUS = {
         '-10': 'Maintain mode',
         '-2': 'Scanning',
@@ -80,25 +80,25 @@ define([
         }
 
         async selectMachine(machineName) {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 let isSuccessSelected = false;
-                let interval = window.setInterval(() => {
+                let interval = window.setInterval(async () => {
                     let targets = this.machines.filter(m => m.name === machineName);
                     let device = targets[0];
                     this.device = device;
                     if (!device) {
                         return;
                     } else {
-                        DeviceMaster.select(device).done(() => {
+                        const res = await DeviceMaster.select(device);
+                        if (res.success) {
                             this.isWorking = device.st_id === 16;
                             isSuccessSelected = true;
                             window.clearInterval(interval);
                             resolve(true);
-                        })
-                        .fail((error) => {
+                        } else {
                             console.log(`Failed to connect to`, machineName);
-                            this.dispatchEvent(new CustomEvent('ERROR', {detail: {error}}));
-                        });
+                            this.dispatchEvent(new CustomEvent('ERROR', {detail: {error: res.error}}));
+                        }
                         return;
                     }
 
@@ -123,8 +123,8 @@ define([
                     <rect fill="black" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_1" stroke="#333333" height="913.57312" width="713.4571" y="196.98372" x="201.85626"/>
                 </g>
             </svg>`;*/
-            svgEditor.importBvgString(this.bvg);
-            let { uploadFile, thumbnailBlobURL } = await BottomRightFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
+            await svgEditor.importBvgStringAsync(this.bvg);
+            let { uploadFile, thumbnailBlobURL } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
             let r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
                 model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
                 engraveDpi: BeamboxPreference.read('engrave_dpi'),
