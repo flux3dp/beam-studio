@@ -866,6 +866,7 @@ class DeviceMaster {
     }
 
     getDeviceBySerial(serial: string, callback) {
+        console.log(serial, this.discoveredDevices);
         let matchedDevice = this.discoveredDevices.filter(d => d.serial === serial);
 
         if (matchedDevice.length > 0) {
@@ -874,7 +875,7 @@ class DeviceMaster {
         }
 
         if (callback.timeout > 0) {
-            setTimeout(function () {
+            setTimeout(() => {
                 callback.timeout -= 500;
                 this.getDeviceBySerial(name, callback);
             }, 500);

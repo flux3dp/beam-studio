@@ -257,22 +257,36 @@ class Control extends EventEmitter {
     useRawLineCheckCommand(command: string, timeout: number = 30000) {
         return new Promise((resolve, reject) => {
             let timeoutTimer = this.setTimeoutTimer(reject, timeout);
+            let responseString = '';
             this.on(EVENT_COMMAND_MESSAGE, (response) => {
                 if (timeoutTimer) clearTimeout(timeoutTimer);
                 if (response && response.status === 'raw') {
                     console.log(response.text);
-                    if (response.text.startsWith(`LN${this._lineNumber}`) || response.text.startsWith(`L${this._lineNumber}`)) {
+                    responseString += response.text;
+                    let responseStrings = responseString.split('\n');
+                    responseStrings = responseStrings.filter((s, i) => (!s.startsWith('DEBUG:') || i === responseStrings.length - 1));
+                    const isCommandCompleted = responseStrings.some((s) => (s.startsWith(`LN${this._lineNumber} 0`) || s.startsWith(`L${this._lineNumber} 0`)));
+                    const hasERL = responseStrings.some((s) => {
+                        if (s.startsWith('ERL')) {
+                            const correctLineNumber = Number(response.text.substring(3).split(' ')[0]);
+                            this._lineNumber = correctLineNumber;
+                            return true;
+                        }
+                        return false;
+                    });
+                    const hasError = responseStrings.some((s) => s.startsWith('ER'));
+                    console.log(responseStrings);
+                    responseString = responseStrings[responseStrings.length - 1];
+                    if (isCommandCompleted) {
                         this._lineNumber += 1;
                         this.removeCommandListeners();
                         resolve();
-                    } else if (response.text.startsWith('ERL')) {
-                        const correctLineNumber = Number(response.text.substring(3).split(' ')[0]);
-                        this._lineNumber = correctLineNumber;
+                    } else if (hasERL) {
                         let cmd = this.buildLineCheckCommand(command);
                         console.log(cmd);
                         timeoutTimer = this.setTimeoutTimer(reject, timeout);
                         this.ws.send(cmd);
-                    } else if (response.text.startsWith('ER')) {
+                    } else if (hasError) {
                         let cmd = this.buildLineCheckCommand(command);
                         timeoutTimer = this.setTimeoutTimer(reject, timeout);
                         this.ws.send(cmd);
