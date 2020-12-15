@@ -10315,12 +10315,23 @@ define([
                 if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
                     elem = elem.parentNode;
                 }
-                const original_layer = this.getObjectLayer(elem).title;
-                $(elem).attr('data-original-layer', original_layer);
-                if (elem.nextSibling) {
-                    $(elem).attr('data-next-sibling', elem.nextSibling.id);
+                if (elem === tempGroup || elem.getAttribute('data-tempgroup') === 'true') {
+                    while (elem.childNodes.length > 0) {
+                        console.log(elem.childNodes[0]);
+                        g.appendChild(elem.childNodes[0]);
+                    }
+                    elem.remove();
+                } else {
+                    const originalLayer = this.getObjectLayer(elem);
+                    if (originalLayer && originalLayer.title) {
+                        const title = originalLayer.title;
+                        $(elem).attr('data-original-layer', title);
+                        if (elem.nextSibling) {
+                            $(elem).attr('data-next-sibling', elem.nextSibling.id);
+                        }
+                    }
+                    g.appendChild(elem);
                 }
-                g.appendChild(elem);
                 if (['image', 'use'].includes(elem.tagName)) {
                     const imageBorder = svgdoc.createElementNS(NS.SVG, 'rect');
                     if (elem.tagName === 'image') {
@@ -10416,7 +10427,7 @@ define([
                             if (nextSibling) {
                                 original_layer.insertBefore(elem, nextSibling);
                             } else {
-                                original_layer.appendChild(nextSibling)
+                                original_layer.appendChild(elem)
                             }
                             elem.removeAttribute('data-next-sibling')
                         } else {
