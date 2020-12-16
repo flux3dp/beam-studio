@@ -7,7 +7,7 @@ workareaMap.set('fbb1p', [6000, 3750]);
 const workarea = workareaMap.get(BeamboxPreference.read('model'));
 
 export default {
-    dpmm: 10, //seem not to be used by all people QQ
+    dpmm: 10,
     dimension: {
         getWidth: () => {
             let model = BeamboxPreference.read('workarea');

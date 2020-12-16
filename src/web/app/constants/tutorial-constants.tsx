@@ -9,6 +9,8 @@ export enum TutorialCallbacks {
 
 const React = requireNode('react');
 const electron = requireNode('electron');
+const systemPreferences = electron.remote.systemPreferences;
+
 const LANG = i18n.lang.tutorial;
 
 const nextStepRequirements = {
@@ -64,12 +66,12 @@ const NEW_USER_TUTORIAL: ITutorial = {
         },
         {
             dialogBoxStyles: {
-                position: {right: 50 + Constant.rightPanelScrollBarWidth, top: 302},
+                position: {right: 65, top: 302},
                 arrowDirection:'right'
             },
             holePosition: {right: 15, top: 290},
-            holeSize: {width: 30 + Constant.rightPanelScrollBarWidth, height: 20},
-            hintCircle: {right: 9, top: 282, width: 40 + Constant.rightPanelScrollBarWidth, height: 40},
+            holeSize: {width: 55, height: 20},
+            hintCircle: {right: 9, top: 282, width: 55, height: 40},
             text: LANG.newUser.infill,
             nextStepRequirement: nextStepRequirements.INFILL
         },
@@ -97,12 +99,12 @@ const NEW_USER_TUTORIAL: ITutorial = {
         },
         {
             dialogBoxStyles: {
-                position: {right: 40 + Constant.rightPanelScrollBarWidth, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
+                position: {right: 55, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
                 arrowDirection:'right'
             },
-            holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 10},
-            holeSize: {width: 20 + Constant.rightPanelScrollBarWidth, height: 20},
-            hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 9, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
+            holePosition: {right: 15, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 3},
+            holeSize: {width:35, height: 35},
+            hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 2, width: 40, height: 40},
             text: LANG.newUser.add_new_layer,
             nextStepRequirement: nextStepRequirements.ADD_NEW_LAYER
         },
@@ -232,10 +234,10 @@ const INTERFACE_TUTORIAL: ITutorial = {
         },
         {
             dialogBoxStyles: {
-                position: {right: 40 + Constant.rightPanelScrollBarWidth, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
+                position: {right: 55, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 22},
                 arrowDirection:'right'
             },
-            hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 9, width: 25 + Constant.rightPanelScrollBarWidth, height: 25},
+            hintCircle: {right: 14, top: Constant.topBarHeightWithoutTitleBar + Constant.layerListHeight + 2, width: 40, height: 40},
             text: LANG.newInterface.add_new_layer,
         },
         {
@@ -297,10 +299,10 @@ const INTERFACE_TUTORIAL: ITutorial = {
         },
         {
             dialogBoxStyles: {
-                position: {right: Constant.rightPanelScrollBarWidth + 75, top: 230},
+                position: {right: Constant.rightPanelScrollBarWidth + 85, top: 230},
                 arrowDirection:'right'
             },
-            hintCircle: {right: Constant.rightPanelScrollBarWidth + 10, top: 213, width: 57, height: 34},
+            hintCircle: {right: Constant.rightPanelScrollBarWidth + 10, top: 213, width: 67, height: 34},
             text: LANG.newInterface.flip,
         },
         {
