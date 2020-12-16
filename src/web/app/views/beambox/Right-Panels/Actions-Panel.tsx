@@ -68,9 +68,9 @@ class ActionsPanel extends React.Component {
     }
 
     renderButtons = (label: string, onClick: Function, isFullLine?: boolean, isDisabled?: boolean) => {
-        const className = classNames('btn', 'btn-default', {'btn-full': isFullLine, 'btn-half': !isFullLine, 'disabled': isDisabled});
+        const className = classNames('btn', 'btn-default', {'disabled': isDisabled});
         return (
-            <div className="btn-container" onClick={() => {onClick()}} key={label}>
+            <div className={classNames('btn-container', {'full': isFullLine, 'half': !isFullLine})} onClick={() => {onClick()}} key={label}>
                 <button className={className}>{label}</button>
             </div>
         );
