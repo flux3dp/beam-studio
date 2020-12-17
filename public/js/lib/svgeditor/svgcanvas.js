@@ -1563,6 +1563,7 @@ define([
                 var ext_result = null;
 
                 evt.preventDefault();
+                document.activeElement.blur();
 
                 if (right_click) {
                     if (current_mode === 'path') {

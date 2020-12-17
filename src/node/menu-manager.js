@@ -86,9 +86,9 @@ function buildMenu(callback) {
             { id: 'UNDO', label: r.undo || 'Undo', click: callback, 'accelerator': `${fnKey}+Z`},
             { id: 'REDO', label: r.redo || 'Redo', click: callback, 'accelerator': `${fnKey}+Shift+Z`},
             { type:'separator'},
-            { id: 'CUT', label: r.cut, click: callback, 'accelerator': `${fnKey}+X`},
-            { id: 'COPY', label: r.copy, click: callback, 'accelerator': `${fnKey}+C`},
-            { id: 'PASTE', label: r.paste, click: callback, 'accelerator': `${fnKey}+V`},
+            { id: 'CUT', label: r.cut, role: 'cut'},
+            { id: 'COPY', label: r.copy, role: 'copy'},
+            { id: 'PASTE', label: r.paste, role: 'paste'},
             { id: 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { type:'separator'},
             { id: 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
@@ -183,7 +183,7 @@ function buildMenu(callback) {
     helpSubmenu.push(...[
         { type: 'separator' },
         { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
-        { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()} }
+        { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()}, accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J'}
     ]);
     menu.push({
         id: '_help',
