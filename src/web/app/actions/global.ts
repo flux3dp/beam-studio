@@ -71,11 +71,7 @@ var genericLogger = Logger('generic'),
 
         var FN_KEY = process.platform === "darwin" ? "cmd" : "ctrl";
 
-        // shortcuts.on([FN_KEY, 'r'], function() { forceReload(); });
-        shortcuts.on([FN_KEY, 'c'], function() { window.document.execCommand('copy'); });
         shortcuts.on([FN_KEY, 'a'], function() { window.document.execCommand('selectAll'); });
-        shortcuts.on([FN_KEY, 'x'], function() { window.document.execCommand('cut'); });
-        shortcuts.on([FN_KEY, 'v'], function() { window.document.execCommand('paste'); });
         shortcuts.on([FN_KEY, '0'], function() { console.log("Reset View!"); svgEditor.resetView(); });
         shortcuts.on([FN_KEY, 'plus'], function() { console.log("Zoom In"); svgEditor.zoomIn(); });
         shortcuts.on([FN_KEY, 'minus'], function() { console.log("Zoom Out"); svgEditor.zoomOut(); });

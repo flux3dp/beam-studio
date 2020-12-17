@@ -132,7 +132,6 @@ interface ISVGEditor {
     updateRulers: () => void
     updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => void
     triggerGridTool: () => void
-    handlePaste: () => Promise<void>
     triggerOffsetTool: () => void
     loadFromStringAsync(arg0: any)
     importBvgStringAsync: (str: any) => Promise<void>
@@ -149,9 +148,7 @@ interface ISVGEditor {
     clickUndo: () => void
     clickRedo: () => void
     clipboardData: any
-    copySelected: () => void
     isClipboardDataReady: any
-    cutSelected: () => void
     triggerNestTool: () => void
     loadContentAndPrefs: () => void
     tool_scale: number
@@ -284,7 +281,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             updateRulers: () => {},
             updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => {},
             triggerGridTool: () => {},
-            handlePaste: async () => {},
             triggerOffsetTool: () => {},
             loadFromStringAsync: () => {},
             importBvgStringAsync: async (str) => {},
@@ -301,9 +297,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             clickUndo: () => {},
             clickRedo: () => {},
             clipboardData: null,
-            copySelected: () => {},
             isClipboardDataReady: false,
-            cutSelected: () => {},
             triggerNestTool: () => {},
             loadContentAndPrefs: () => {},
             tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
@@ -3903,52 +3897,35 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var cutSelected = function () {
+                // disabled when focusing input element
+                if (document.activeElement.tagName.toLowerCase() === 'input') {
+                    return;
+                }
                 if (selectedElement != null || multiselected) {
                     svgCanvas.cutSelectedElements();
                 }
             };
-            editor.cutSelected = cutSelected;
+            document.addEventListener('cut', cutSelected, false);
 
             var copySelected = function () {
+                // disabled when focusing input element
+                if (document.activeElement.tagName.toLowerCase() === 'input') {
+                    return;
+                }
                 if (selectedElement != null || multiselected) {
                     svgCanvas.copySelectedElements();
                 }
             };
-            editor.copySelected = copySelected;
+            document.addEventListener('copy', copySelected, false);
 
-            // Current Electron version does not support navigator.read so I can't get clipboard data from navigator.
-            // Moreover, update electron will cause font manage module build fail.
-            // In order to get clip board data, I use paste event listener.
-            const waitForClipData = () => {
-                return new Promise((resolve, reject) => {
-                    const interval = setInterval(() => {
-                        if (editor.isClipboardDataReady) {
-                            resolve();
-                            editor.isClipboardDataReady = false;
-                            clearInterval(interval);
-                        }
-                    }, 100);
-                })
-            }
+            // handle paste
+            document.addEventListener('paste', async (e) => {
+                // disabled when focusing input element
+                if (document.activeElement.tagName.toLowerCase() === 'input') {
+                    return;
+                }
 
-            document.addEventListener('paste', async function (e) {
                 const clipboardData = e.clipboardData;
-                editor.clipboardData = {types: clipboardData.types};
-                if (clipboardData.types.includes('Files')) {
-                    editor.clipboardData.files = clipboardData.files;
-                } else if (clipboardData.types.includes('text/html')) {
-                    editor.clipboardData.htmlData = clipboardData.getData('text/html');
-                }
-                editor.isClipboardDataReady = true;
-                if (selectedElement != null && selectedElement.tagName === 'text') {
-                    e.stopPropagation();
-                    e.preventDefault();
-                }
-            }, false);
-
-            const handlePaste = async () => {
-                await waitForClipData();
-                const clipboardData = editor.clipboardData;
                 let importedFromClipboard = false;
                 if (clipboardData) {
                     if (clipboardData.types.includes('Files')) {
@@ -3959,7 +3936,8 @@ const svgEditor = window['svgEditor'] = (function($) {
                             importedFromClipboard = true;
                         }
                     } else if (clipboardData.types.includes('text/html')) {
-                        const matchImgs = clipboardData.htmlData.match(/<img[^>]+>/);
+                        const htmlData = clipboardData.getData('text/html');
+                        const matchImgs = htmlData.match(/<img[^>]+>/);
                         if (matchImgs) {
                             console.log('handle clip board html img');
                             for (let i=0; i < matchImgs.length; i++) {
@@ -4016,8 +3994,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 if (!importedFromClipboard) {
                     pasteInCenter();
                 }
-            };
-            editor.handlePaste = handlePaste;
+            });
 
             var pasteInCenter = function () {
                 var zoom = svgCanvas.getZoom();
