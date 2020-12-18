@@ -23,13 +23,13 @@ const infoMap = {
 
 function checkMachineSeries(model) {
     switch (model) {
+        case 'fbb2b':
         case 'fbb1b':
         case 'fbb1p':
         case 'fbm1':
         case 'darwin-dev':
         case 'laser-b1':
             return 'beambox';
-            break;
         case 'delta-1':
         case 'delta-1p':
             return 'delta';

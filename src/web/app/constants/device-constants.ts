@@ -68,6 +68,10 @@ export default {
     LOAD_FLEXIBLE_FILAMENT   : 'LOADF',
     UNLOAD_FILAMENT : 'UNLOAD',
     WORKAREA_IN_MM  : {
+        'fbb2b': {
+            maxX: 610,
+            maxY: 406,
+        },
         'fbb1p': {
             maxX: 600,
             maxY: 375,

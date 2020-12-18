@@ -310,14 +310,13 @@ export default function(opts) {
                 total_length = 0,
                 blob;
 
-            if (opts.model === 'fbb1p') {
+            if (opts.model === 'fbb2b') {
+                args.push('-bb2');
+            } else if (opts.model === 'fbb1p') {
                 args.push('-pro');
-            }
-
-            if (opts.model === 'fbm1') {
+            } else if (opts.model === 'fbm1') {
                 args.push('-beamo');
             }
-
             if (opts.codeType === 'gcode') {
                 args.push('-gc')
             }

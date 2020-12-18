@@ -4,6 +4,7 @@ const workareaMap = new Map();
 workareaMap.set('fbm1', [3000, 2100]);
 workareaMap.set('fbb1b', [4000, 3750]);
 workareaMap.set('fbb1p', [6000, 3750]);
+workareaMap.set('fbb2b', [6100, 4060]);
 const workarea = workareaMap.get(BeamboxPreference.read('model'));
 
 export default {
@@ -57,6 +58,7 @@ export default {
         }
     },
     allowedWorkarea: {
+        'fbb2b': ['fbb2b', 'fbb1p', 'fbb1b', 'fbm1'],
         'laser-b1': ['fbb1p', 'fbb1b', 'fbm1'],
         'fbb1p': ['fbb1p', 'fbb1b', 'fbm1'],
         'fbb1b': ['fbb1b', 'fbm1'],

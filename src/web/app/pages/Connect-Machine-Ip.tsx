@@ -289,6 +289,7 @@ class ConnectMachine extends React.Component{
             fbm1: 'fbm1',
             fbb1b: 'fbb1b',
             fbb1p: 'fbb1p',
+            fbb2b: 'fbb2b',
         };
         const model = modelMap[device.model] || 'fbb1b';
         BeamboxPreference.write('model', model);

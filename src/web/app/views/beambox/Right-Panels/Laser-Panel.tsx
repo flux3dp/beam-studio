@@ -577,6 +577,7 @@ class LaserPanel extends React.PureComponent {
             fbm1: 'BEAMO',
             fbb1b: 'BEAMBOX',
             fbb1p: 'BEAMBOX_PRO',
+            fbb2b: 'BEAMBOX2',
         }
         const modelName = modelMap[model] || 'BEAMO';
         if (!RightPanelConstants[modelName][para_name]) {

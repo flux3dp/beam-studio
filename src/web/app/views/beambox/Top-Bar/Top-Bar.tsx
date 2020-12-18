@@ -152,7 +152,7 @@ export class TopBar extends React.Component {
     startPreviewModeController = async (device: IDeviceInfo) => {
         const { setTopBarPreviewMode, startPreivewCallback, setStartPreviewCallback } = this.context;
         const workarea = window['workarea'];
-        if (['fbm1', 'fbb1b', 'fbb1p'].includes(device.model) && device.model !== BeamboxPreference.read('workarea')) {
+        if (['fbm1', 'fbb1b', 'fbb1p', 'fbb2b'].includes(device.model) && device.model !== BeamboxPreference.read('workarea')) {
             const res = await new Promise((resolve) => {
                 Alert.popUp({
                     message: sprintf(lang.beambox.popup.change_workarea_before_preview, device.name),

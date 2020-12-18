@@ -177,7 +177,7 @@ class MonitorDisplay extends React.Component{
         let cameraClass = ClassNames(
             'camera-image',
             {'hd': this.state.isHd},
-            {'beambox-camera': (['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this.props.selectedDevice.model))}
+            {'beambox-camera': (['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'fbb2b', 'laser-b1', 'darwin-dev'].includes(this.props.selectedDevice.model))}
         );
         return(
             <img className={cameraClass} />
@@ -265,7 +265,7 @@ class MonitorDisplay extends React.Component{
         let cameraClass = ClassNames(
             'camera-image',
             {'hd': this.state.isHd},
-            {'beambox-camera': (['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'laser-b1', 'darwin-dev'].includes(this.props.selectedDevice.model))}
+            {'beambox-camera': (['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'fbb2b', 'laser-b1', 'darwin-dev'].includes(this.props.selectedDevice.model))}
         );
         return(
             <div className="camera-relocate-container">
