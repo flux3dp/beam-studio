@@ -255,7 +255,7 @@ class Control extends EventEmitter {
     }
 
     useRawLineCheckCommand(command: string, timeout: number = 30000) {
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             let timeoutTimer = this.setTimeoutTimer(reject, timeout);
             let responseString = '';
             this.on(EVENT_COMMAND_MESSAGE, (response) => {
@@ -280,7 +280,7 @@ class Control extends EventEmitter {
                     if (isCommandCompleted) {
                         this._lineNumber += 1;
                         this.removeCommandListeners();
-                        resolve();
+                        resolve(null);
                     } else if (hasERL) {
                         let cmd = this.buildLineCheckCommand(command);
                         console.log(cmd);
@@ -409,7 +409,7 @@ class Control extends EventEmitter {
     };
 
     abort = () => {
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             let retryTime = 0;
             const retryTimeInterval = 2000;
             let timeoutTimer: null | NodeJS.Timeout;
@@ -429,7 +429,7 @@ class Control extends EventEmitter {
                     if (response.cmd === 'play report') {
                         if (response.device_status.st_id === 0) {
                             this.removeCommandListeners();
-                            resolve();
+                            resolve(null);
                             return;
                         } else if (response.device_status.st_id === 64) {
                             this.ws.send('play quit');
@@ -441,7 +441,7 @@ class Control extends EventEmitter {
                     const deviceStatus = response.device_status || {};
                     if (deviceStatus.st_id === 0 || deviceStatus.st_id === 128) {
                         this.removeCommandListeners();
-                        resolve();
+                        resolve(null);
                     } else {
                         retry(response.status !== 'ok');
                     }
@@ -494,7 +494,7 @@ class Control extends EventEmitter {
                     if (response.cmd === 'play report') {
                         if (response.device_status.st_id === 0) {
                             this.removeCommandListeners();
-                            resolve();
+                            resolve(null);
                             return;
                         }
                     }
@@ -504,7 +504,7 @@ class Control extends EventEmitter {
                     const deviceStatus = response.device_status || {};
                     if (deviceStatus.st_id === 0) {
                         this.removeCommandListeners();
-                        resolve();
+                        resolve(null);
                     } else {
                         retry(response.status !== 'ok');
                     }
@@ -815,7 +815,7 @@ class Control extends EventEmitter {
                     this._isLineCheckMode = true;
                     this._lineNumber = 1;
                     this.removeCommandListeners();
-                    resolve();
+                    resolve(null);
                     return;
                 }
                 if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {
@@ -868,7 +868,7 @@ class Control extends EventEmitter {
                 if (i >= 0) {
                     this._isLineCheckMode = false;
                     this.removeCommandListeners();
-                    resolve();
+                    resolve(null);
                     return;
                 }
                 if (response.text.indexOf('ER:RESET') >= 0 || resps.some((resp) => resp.includes('ER:RESET')) || response.text.indexOf('error:') >= 0) {

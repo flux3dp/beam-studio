@@ -1,7 +1,6 @@
 import $ from 'jquery'
 import shortcuts from '../../helpers/shortcuts';
 const React = requireNode('react');
-const ReactDOM = requireNode('react-dom');
 const classNames = requireNode('classnames');
 const PropTypes = requireNode('prop-types');
 
@@ -37,11 +36,6 @@ class View extends React.Component{
         if(this.props.onOpen) {
             this.props.onOpen(this);
         }
-    }
-
-    _onClose = (e) => {
-        ReactDOM.unmountComponentAtNode(View);
-        this.props.onClose(e);
     }
 
     _onEscapeOnBackground = (e) => {
