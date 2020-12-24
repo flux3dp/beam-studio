@@ -3149,6 +3149,7 @@ define([
 
         // Group: Text edit functions
         // Functions relating to editing text elements
+        // TODO: split textAction to an independent file
         textActions = canvas.textActions = (function () {
             var curtext;
             var textinput;
@@ -3163,6 +3164,8 @@ define([
             let lineSpacing = 1;
             let isVertical = false;
             let previousMode = 'select';
+            let valueBeforeEdit = '';
+            let isEditing = false;
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
@@ -3529,6 +3532,43 @@ define([
                 }, 300);
             }
 
+            class ChangeTextCommand {
+                constructor(elem, oldText, newText) {
+                    this.elem = elem;
+                    this.desc = `Change ${elem.id || elem.tagName} from ${oldText} to ${newText}`
+                    this.oldText = oldText;
+                    this.newText = newText;
+                }
+
+                type() { return 'svgcanvas.textAction.ChangeTextCommand'; }
+
+                elements() { return [this.elem]; }
+
+                getText() { return this.desc; }
+
+                apply(handler) {
+                    if (handler) {
+                        handler.handleHistoryEvent(svgedit.history.HistoryEventTypes.BEFORE_APPLY, this);
+                    }
+                    canvas.textActions.renderMultiLineText(this.elem, this.newText, false);
+                    if (handler) {
+                        handler.handleHistoryEvent(svgedit.history.HistoryEventTypes.AFTER_APPLY, this);
+                    }
+                }
+
+                unapply(handler) {
+                    if (handler) {
+                        handler.handleHistoryEvent(svgedit.history.HistoryEventTypes.BEFORE_UNAPPLY, this);
+                    }
+
+                    canvas.textActions.renderMultiLineText(this.elem, this.oldText, false);
+                                
+                    if (handler) {
+                        handler.handleHistoryEvent(svgedit.history.HistoryEventTypes.AFTER_UNAPPLY, this);
+                    }
+                }
+            };
+
             return {
                 select: function (target, x, y) {
                     curtext = target;
@@ -3607,6 +3647,13 @@ define([
                         textinput.selectionStart = textinput.selectionEnd;
                     }
                 },
+                newLine: () => {
+                    let oldSelectionStart = textinput.selectionStart;
+                    textinput.value = textinput.value.substring(0, textinput.selectionStart) + '\x0b' + textinput.value.substring(textinput.selectionEnd);
+                    textinput.selectionStart = oldSelectionStart + 1;
+                    textinput.selectionEnd = oldSelectionStart + 1;
+                    svgCanvas.setTextContent(textinput.value);
+                },
                 copyText: async () => {
                     if (textinput.selectionStart === textinput.selectionEnd) {
                         console.log('No selection');
@@ -3649,7 +3696,9 @@ define([
                     textinput.selectionEnd = textinput.value.length;
                     svgCanvas.setTextContent(textinput.value);
                 },
+                get isEditing() { return isEditing; },
                 toEditMode: function (x, y) {
+                    isEditing = true;
                     allow_dbl = false;
                     const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
                     previousMode = isContinuousDrawing ? current_mode : 'select';
@@ -3658,6 +3707,7 @@ define([
                     // Make selector group accept clicks
                     var sel = selectorManager.requestSelector(curtext).selectorRect;
                     textActions.init();
+                    valueBeforeEdit = textinput.value;
 
                     $(curtext).css('cursor', 'text');
 
@@ -3672,7 +3722,8 @@ define([
                         allow_dbl = true;
                     }, 300);
                 },
-                toSelectMode: function (selectElem) {
+                toSelectMode: function (shouldSelectElem) {
+                    isEditing = false;
                     current_mode = previousMode;
                     clearInterval(blinker);
                     blinker = null;
@@ -3683,10 +3734,10 @@ define([
                         $(cursor).attr('visibility', 'hidden');
                     }
                     $(curtext).css('cursor', 'move');
-                    if (selectElem) {
+
+                    if (shouldSelectElem) {
                         clearSelection();
                         $(curtext).css('cursor', 'move');
-
                         call('selected', [curtext]);
                         addToSelection([curtext], true);
                         svgedit.recalculate.recalculateDimensions(curtext);
@@ -3696,15 +3747,21 @@ define([
                         addToSelection([curtext], true);
                         svgedit.recalculate.recalculateDimensions(curtext);
                     }
+                    const batchCmd = new svgedit.history.BatchCommand('Edit Text');
                     if (curtext && !curtext.textContent.length) {
                         // No content, so delete
-                        canvas.deleteSelectedElements();
+                        const cmd = canvas.deleteSelectedElements(true);
+                        if (valueBeforeEdit && cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
                     }
+                    if (valueBeforeEdit && valueBeforeEdit !== textinput.value) {
+                        const cmd = new ChangeTextCommand(curtext, valueBeforeEdit, textinput.value);
+                        batchCmd.addSubCommand(cmd);
+                        canvas.setHasUnsavedChange(true, true);
+                    }
+                    if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
 
-                    $(textinput).blur();
-
-                    curtext = false;
-
+                    $(textinput).trigger('blur');
+                    curtext = null;
                     //				if (svgedit.browser.supportsEditableText()) {
                     //					curtext.removeAttribute('editable');
                     //				}
@@ -8681,10 +8738,11 @@ define([
             }
         };
 
-        // Function: deleteSelectedElements
-        // Removes all selected elements from the DOM and adds the change to the
-        // history stack
-        this.deleteSelectedElements = function () {
+        /** Function: deleteSelectedElements
+         * Removes all selected elements from the DOM
+         * @param {boolean} isSub whether this operation is a subcmd
+         */
+        this.deleteSelectedElements = function (isSub=false) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -8745,7 +8803,7 @@ define([
                     }
                 }
             }
-            if (!batchCmd.isEmpty()) {
+            if (!batchCmd.isEmpty() && !isSub) {
                 addCommandToHistory(batchCmd);
             }
             call('changed', selectedCopy);
@@ -9232,13 +9290,9 @@ define([
             }
 
             batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(element));
-            let cmd = this.deleteSelectedElements();
-            batchCmd.addSubCommand(cmd);
-            canvas.undoMgr.undoStackPointer -= 1;
-            canvas.undoMgr.undoStack.pop();
-            if (!isSubCmd) {
-                addCommandToHistory(batchCmd);
-            }
+            let cmd = this.deleteSelectedElements(true);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+            if (!isSubCmd) addCommandToHistory(batchCmd);
             this.selectOnly([element], true);
             return batchCmd;
         }
@@ -9522,8 +9576,8 @@ define([
             batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
             const imgBBox = img.getBBox();
             const angle = svgedit.utilities.getRotationAngle(img);
-            let cmd = this.deleteSelectedElements();
-            batchCmd.addSubCommand(cmd);
+            let cmd = this.deleteSelectedElements(true);
+            if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
             this.selectOnly([g], true);
             let gBBox = g.getBBox();
             if (imgBBox.width !== gBBox.width) {

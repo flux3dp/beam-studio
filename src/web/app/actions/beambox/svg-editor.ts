@@ -3321,7 +3321,10 @@ const svgEditor = window['svgEditor'] = (function($) {
                 svgCanvas.setFontFamily(this.value);
             });
 
-            $('#text').bind('keyup input', function (this: HTMLInputElement, evt) {
+            const textInput = document.getElementById('text');
+
+            $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
+                evt.stopPropagation();
                 if (!textBeingEntered && evt.type === 'input') {
                     evt.preventDefault();
                     // Hack: Windows input event will some how block undo event
@@ -3329,48 +3332,47 @@ const svgEditor = window['svgEditor'] = (function($) {
                     clickUndo();
                     return;
                 }
-                evt.stopPropagation();
-                if (evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
-                    let oldSelectionStart = this.selectionStart;
-                    this.value = this.value.substring(0, this.selectionStart) + '\x0b' + this.value.substring(this.selectionEnd);
-                    this.selectionStart = oldSelectionStart + 1;
-                    this.selectionEnd = oldSelectionStart + 1;
-                }
                 svgCanvas.setTextContent(this.value);
             });
-            $('#text').bind('keydown', function(evt) {
+            textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
                 evt.stopPropagation();
-                if (evt.keyCode === KeycodeConstants.KEY_UP) {
+                if (evt.key === 'ArrowUp') {
                     evt.preventDefault();
                     svgCanvas.textActions.onUpKey();
-                } else if (evt.keyCode === KeycodeConstants.KEY_DOWN) {
+                } else if (evt.key === 'ArrowDown') {
                     evt.preventDefault();
                     svgCanvas.textActions.onDownKey();
-                } else if (evt.keyCode === KeycodeConstants.KEY_LEFT) {
+                } else if (evt.key === 'ArrowLeft') {
                     evt.preventDefault();
                     svgCanvas.textActions.onLeftKey();
-                } else if (evt.keyCode === KeycodeConstants.KEY_RIGHT) {
+                } else if (evt.key === 'ArrowRight') {
                     evt.preventDefault();
                     svgCanvas.textActions.onRightKey();
                 }
-                if (!evt.shiftKey && evt.keyCode === KeycodeConstants.KEY_RETURN) {
+                if (!evt.shiftKey && evt.key === 'Enter') {
                     svgCanvas.textActions.toSelectMode(true);
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_C) ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_C)) {
+                } else if (evt.shiftKey && evt.key === 'Enter') {
+                    evt.preventDefault();
+                    svgCanvas.textActions.newLine();
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'c') ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'c')) {
                     evt.preventDefault();
                     svgCanvas.textActions.copyText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_X) ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_X)) {
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'x') ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'x')) {
                     evt.preventDefault();
                     svgCanvas.textActions.cutText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_V) ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_V)) {
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'v') ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'v')) {
                     evt.preventDefault();
                     svgCanvas.textActions.pasteText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.keyCode === KeycodeConstants.KEY_A) ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.keyCode === KeycodeConstants.KEY_A)) {
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'a') ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'a')) {
                     evt.preventDefault();
                     svgCanvas.textActions.selectAll();
+                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'z') ||
+                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'z')) {
+                    evt.preventDefault();
                 }
             });
 
@@ -3901,7 +3903,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 if (document.activeElement.tagName.toLowerCase() === 'input') {
                     return;
                 }
-                if (selectedElement != null || multiselected) {
+                if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.cutSelectedElements();
                 }
             };
@@ -3912,7 +3914,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 if (document.activeElement.tagName.toLowerCase() === 'input') {
                     return;
                 }
-                if (selectedElement != null || multiselected) {
+                if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.copySelectedElements();
                 }
             };
