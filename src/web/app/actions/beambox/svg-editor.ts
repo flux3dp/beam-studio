@@ -3327,7 +3327,10 @@ const svgEditor = window['svgEditor'] = (function($) {
                 svgCanvas.setFontFamily(this.value);
             });
 
-            $('#text').bind('keyup input', function (this: HTMLInputElement, evt) {
+            const textInput = document.getElementById('text');
+
+            $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
+                evt.stopPropagation();
                 if (!textBeingEntered && evt.type === 'input') {
                     evt.preventDefault();
                     // Hack: Windows input event will some how block undo event
@@ -3335,10 +3338,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                     clickUndo();
                     return;
                 }
-                evt.stopPropagation();
                 svgCanvas.setTextContent(this.value);
             });
-            $('#text').on('keydown', function(evt) {
+            textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
                 evt.stopPropagation();
                 if (evt.key === 'ArrowUp') {
                     evt.preventDefault();
@@ -3903,14 +3905,14 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var cutSelected = function () {
-                if (selectedElement != null || multiselected) {
+                if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.cutSelectedElements();
                 }
             };
             editor.cutSelected = cutSelected;
 
             var copySelected = function () {
-                if (selectedElement != null || multiselected) {
+                if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.copySelectedElements();
                 }
             };

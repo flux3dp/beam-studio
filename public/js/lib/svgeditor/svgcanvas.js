@@ -3164,6 +3164,7 @@ define([
             let isVertical = false;
             let previousMode = 'select';
             let valueBeforeEdit = '';
+            let isEditing = false;
 
             function setCursor(index) {
                 var empty = (textinput.value === '');
@@ -3694,7 +3695,9 @@ define([
                     textinput.selectionEnd = textinput.value.length;
                     svgCanvas.setTextContent(textinput.value);
                 },
+                get isEditing() { return isEditing; },
                 toEditMode: function (x, y) {
+                    isEditing = true;
                     allow_dbl = false;
                     const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
                     previousMode = isContinuousDrawing ? current_mode : 'select';
@@ -3719,6 +3722,7 @@ define([
                     }, 300);
                 },
                 toSelectMode: function (shouldSelectElem) {
+                    isEditing = false;
                     current_mode = previousMode;
                     clearInterval(blinker);
                     blinker = null;
