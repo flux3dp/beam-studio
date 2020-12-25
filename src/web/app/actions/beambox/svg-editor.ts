@@ -4888,7 +4888,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     sel: '#tool_rect',
                     fn: clickRect,
                     evt: 'mouseup',
-                    key: ['R', true],
                     parent: '#tools_rect',
                     icon: 'rect'
                 },

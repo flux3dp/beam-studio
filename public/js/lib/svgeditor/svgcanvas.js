@@ -885,7 +885,7 @@ define([
 
         // Set scope for these functions
         var getId, getNextId;
-        var textActions, pathActions;
+        var textActions;
 
         (function (c) {
 
@@ -1557,6 +1557,7 @@ define([
                 if (right_click) {
                     if (current_mode === 'path') {
                         pathActions.finishPath(false);
+                        $('#workarea').css('cursor', 'default');
                         current_mode = 'select';
                         return;
                     }
@@ -2980,9 +2981,7 @@ define([
                         element.setAttribute('opacity', cur_shape.opacity);
                         element.setAttribute('style', 'pointer-events:inherit');
                         cleanupElement(element);
-                        if (current_mode === 'path') {
-                            pathActions.toEditMode(element);
-                        } else if (curConfig.selectNew && !(isContinuousDrawing && current_mode !== 'textedit')) {
+                        if (curConfig.selectNew && !(isContinuousDrawing && current_mode !== 'textedit')) {
                             selectOnly([element], true);
                         }
                         // we create the insert command that is stored on the stack
@@ -3903,12 +3902,12 @@ define([
         // TODO: Migrate all of this code into path.js
         // Group: Path edit functions
         // Functions relating to editing path elements
-        pathActions = canvas.pathActions = (function () {
-
+        let pathActions = canvas.pathActions = (function () {
             var subpath = false;
             var current_path;
             var newPoint, firstCtrl;
             let previousMode = 'select';
+            let modeOnMouseDown = '';
 
             function resetD(p) {
                 p.setAttribute('d', pathActions.convertPath(p));
@@ -4009,7 +4008,6 @@ define([
                 if (xAlignLine) xAlignLine.remove();
                 const yAlignLine = document.getElementById('y_align_line');
                 if (yAlignLine) yAlignLine.remove();
-                $('#workarea').css('cursor', 'default');
                 if (!drawn_path) {
                     const pathPointGripContainer = document.getElementById('pathpointgrip_container');
                     if (pathPointGripContainer) pathPointGripContainer.remove();
@@ -4034,6 +4032,7 @@ define([
                     if (toEditMode) {
                         pathActions.toEditMode(element);
                         call('changed', [element]);
+                        $('#workarea').css('cursor', 'default');
                     } else {
                         const pathPointGripContainer = document.getElementById('pathpointgrip_container');
                         if (pathPointGripContainer) pathPointGripContainer.remove();
@@ -4041,6 +4040,7 @@ define([
                 } else {
                     if (element) element.remove();
                     canvas.setMode(previousMode);
+                    if (previousMode === 'select') $('#workarea').css('cursor', 'default');
                 }
 
                 shortcuts.off(['esc']);
@@ -4049,9 +4049,13 @@ define([
 
             return {
                 mouseDown: function (evt, mouse_target, start_x, start_y) {
-                    //
-                    $('#x_align_line').remove();
-                    $('#y_align_line').remove();
+                    const xAlignLine = document.getElementById('x_align_line');
+                    if (xAlignLine) xAlignLine.remove();
+                    const yAlignLine = document.getElementById('y_align_line');
+                    if (yAlignLine) yAlignLine.remove();
+
+                    modeOnMouseDown = current_mode;
+
                     if (current_mode === 'path') {
                         const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
                         previousMode = isContinuousDrawing ? 'path' : 'select';
@@ -4108,7 +4112,7 @@ define([
                             index = subpath ? svgedit.path.path.segs.length : 0;
                             svgedit.path.addDrawingPoint(index, mouse_x, mouse_y);
                             shortcuts.off(['esc']);
-                            shortcuts.on(['esc'], finishPath);
+                            shortcuts.on(['esc'], () => finishPath(!isContinuousDrawing));
                         } else {
                             // determine if we clicked on an existing point
                             var seglist = drawn_path.pathSegList;
@@ -4171,14 +4175,7 @@ define([
                                     keep = false;
                                     return keep;
                                 }
-                                shortcuts.off(['esc']);
-                                shortcuts.on(['esc'], svgEditor.clickSelect);
-                                $(stretchy).remove();
-
-                                // This will signal to commit the path
-                                element = newpath;
-                                drawn_path = null;
-                                started = false;
+                                finishPath(!isContinuousDrawing);
 
                                 if (subpath) {
                                     if (svgedit.path.path.matrix) {
@@ -4248,62 +4245,59 @@ define([
                             }
                             //					keep = true;
                         }
-
                         return;
-                    }
-
-                    // TODO: Make sure current_path isn't null at this point
-                    if (!svgedit.path.path) {
-                        return;
-                    }
-
-                    svgedit.path.path.storeD();
-
-                    id = evt.target.id;
-                    var pointIndex;
-                    if (id.substr(0, 14) === 'pathpointgrip_') {
-                        // Select this point
-                        pointIndex = svgedit.path.path.selectedPointIndex = parseInt(id.substr(14));
-                        svgedit.path.path.dragging = [start_x, start_y];
-                        let point = svgedit.path.path.nodePoints[pointIndex];
-
-                        // only clear selection if shift is not pressed (otherwise, add
-                        // node to selection)
-                        if (!evt.shiftKey) {
-                            svgedit.path.path.clearSelection();
-                            svgedit.path.path.addPtsToSelection(pointIndex);
-                        } else if (point.isSelected) {
-                            // this should be move 
-                            svgedit.path.path.removePtFromSelection(pointIndex);
-                        } else {
-                            svgedit.path.path.addPtsToSelection(pointIndex);
+                    } else if (current_mode === 'pathedit') {
+                        // TODO: Make sure current_path isn't null at this point
+                        if (!svgedit.path.path) return;
+    
+                        svgedit.path.path.storeD();
+    
+                        id = evt.target.id;
+                        var pointIndex;
+                        if (id.substr(0, 14) === 'pathpointgrip_') {
+                            // Select this point
+                            pointIndex = svgedit.path.path.selectedPointIndex = parseInt(id.substr(14));
+                            svgedit.path.path.dragging = [start_x, start_y];
+                            let point = svgedit.path.path.nodePoints[pointIndex];
+    
+                            // only clear selection if shift is not pressed (otherwise, add
+                            // node to selection)
+                            if (!evt.shiftKey) {
+                                svgedit.path.path.clearSelection();
+                                svgedit.path.path.addPtsToSelection(pointIndex);
+                            } else if (point.isSelected) {
+                                // this should be move 
+                                svgedit.path.path.removePtFromSelection(pointIndex);
+                            } else {
+                                svgedit.path.path.addPtsToSelection(pointIndex);
+                            }
+                            window.updateContextPanel();
+                        } else if (id.indexOf('ctrlpointgrip_') === 0) {
+                            svgedit.path.path.dragging = [start_x, start_y];
+    
+                            var parts = id.split('_')[1].split('c');
+                            svgedit.path.path.selectCtrlPoint(parts[0], parts[1]);
+                            window.updateContextPanel();
                         }
-                        window.updateContextPanel();
-                    } else if (id.indexOf('ctrlpointgrip_') === 0) {
-                        svgedit.path.path.dragging = [start_x, start_y];
-
-                        var parts = id.split('_')[1].split('c');
-                        svgedit.path.path.selectCtrlPoint(parts[0], parts[1]);
-                        window.updateContextPanel();
-                    }
-
-                    // Start selection box
-                    if (!svgedit.path.path.dragging) {
-                        if (rubberBox == null) {
-                            rubberBox = selectorManager.getRubberBandBox();
+    
+                        // Start selection box
+                        if (!svgedit.path.path.dragging) {
+                            if (rubberBox == null) {
+                                rubberBox = selectorManager.getRubberBandBox();
+                            }
+                            svgedit.utilities.assignAttributes(rubberBox, {
+                                'x': start_x * current_zoom,
+                                'y': start_y * current_zoom,
+                                'width': 0,
+                                'height': 0,
+                                'display': 'inline'
+                            }, 100);
                         }
-                        svgedit.utilities.assignAttributes(rubberBox, {
-                            'x': start_x * current_zoom,
-                            'y': start_y * current_zoom,
-                            'width': 0,
-                            'height': 0,
-                            'display': 'inline'
-                        }, 100);
                     }
                 },
                 mouseMove: function (mouse_x, mouse_y) {
                     hasMoved = true;
-                    if (current_mode === 'path') {
+                    if (modeOnMouseDown === 'path') {
                         if (!drawn_path) {
                             return;
                         }
@@ -4429,7 +4423,7 @@ define([
                 },
                 mouseUp: function (evt, element, mouse_x, mouse_y) {
                     // Create mode
-                    if (current_mode === 'path') {
+                    if (modeOnMouseDown === 'path') {
                         newPoint = null;
                         if (!drawn_path) {
                             element = svgedit.utilities.getElem(getId());
@@ -4483,6 +4477,12 @@ define([
                 toSelectMode: function (elem) {
                     var selPath = (elem === svgedit.path.path.elem);
                     current_mode = previousMode;
+                    if (current_mode === 'select') {
+                        $('.tool-btn').removeClass('active');
+                        $('#left-Cursor').addClass('active');
+                    } else if (current_mode === 'path') {
+                        $('#workarea').css('cursor', 'crosshair');
+                    }
                     svgedit.path.path.show(false);
                     svgedit.path.path.saveSegmentControlPointInfo();
                     svgedit.path.path.saveNodeTypeInfo();
@@ -4499,6 +4499,7 @@ define([
                         addToSelection([elem], true);
                     }
                     svgedit.path.path = null;
+                    window.updateContextPanel();
                 },
                 addSubPath: function (on) {
                     if (on) {

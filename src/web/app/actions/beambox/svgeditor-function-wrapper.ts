@@ -266,7 +266,7 @@ const funcs =  {
     },
     insertRectangle: function() {
         if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
-        TutorialController.handleNextStep();
+            TutorialController.handleNextStep();
         }
         $('#tool_rect').mouseup();
         _setCrosshairCursor();
