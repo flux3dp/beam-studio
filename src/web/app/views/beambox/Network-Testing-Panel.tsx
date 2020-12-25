@@ -95,16 +95,17 @@ class NetworkTestingPanel extends React.Component {
             this.session = ping.createSession({
                 retries: 0,
             });
-            // TODO: Infinite Loop?
             this.session.on('error', error => {
                 console.log ("session error: " + error);
                 this._createSession();
             });
         }
         catch (e) {
+            let message = `${LANG.fail_to_start_network_test}\n${e}`;
+            if (process.platform === 'linux') message += '\n' + LANG.linux_permission_hint;
             Alert.popUp({
                 type: AlertConstants.SHOW_POPUP_ERROR,
-                message: `${LANG.fail_to_start_network_test}\n${e}`
+                message,
             });
             throw e;
         }
