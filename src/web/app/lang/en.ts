@@ -660,7 +660,8 @@ export default {
             hint_connect_camera_timeout: 'Timeout occurs when starting camera preview?',
             link_connect_camera_timeout: 'https://support.flux3dp.com/hc/en-us/articles/360001791895',
             cannot_get_local: 'Access to local IP address failed.',
-            fail_to_start_network_test: '#817 Fail to start network testing.'
+            fail_to_start_network_test: '#817 Fail to start network testing.',
+            linux_permission_hint: 'This error usually occurs due to insufficient permissions.\nKindly run "sudo beam-studio --no-sandbox" in terminal to obtain permissions and perform network testing.',
         },
         layer_color_config_panel: {
             layer_color_config: 'Layer Color Configurations',

@@ -660,7 +660,8 @@ export default {
             hint_connect_camera_timeout: 'Zeitüberschreitung beim Starten der Kameravorschau?',
             link_connect_camera_timeout: 'https://support.flux3dp.com/hc/en-us/articles/360001791895',
             cannot_get_local: 'Der Zugriff auf die lokale IP-Adresse ist fehlgeschlagen.',
-            fail_to_start_network_test: '#817 Starte den Netzwerktest nicht.'
+            fail_to_start_network_test: '#817 Starte den Netzwerktest nicht.',
+            linux_permission_hint: 'Dieser Fehler tritt normalerweise aufgrund unzureichender Berechtigungen auf.\nFühren Sie bitte "sudo beam-studio --no-sandbox" im Terminal aus, um Berechtigungen zu erhalten und Netzwerktests durchzuführen.',
         },
         layer_color_config_panel: {
             layer_color_config: 'Ebenenfarbkonfigurationen',

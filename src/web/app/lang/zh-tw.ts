@@ -660,7 +660,8 @@ export default {
             hint_connect_camera_timeout: '啟動相機預覽時超時？',
             link_connect_camera_timeout: 'https://support.flux3dp.com/hc/zh-tw/articles/360001791895',
             cannot_get_local: '無法取得本地 IP 位置',
-            fail_to_start_network_test: '#817 無法開始網路檢測。'
+            fail_to_start_network_test: '#817 無法開始網路檢測。',
+            linux_permission_hint: '此問題通常是因為權限不足而發生，請在終端機以 "sudo beam-studio --no-sandbox" 以獲得權限進行網路檢測。',
         },
         layer_color_config_panel: {
             layer_color_config: '圖層顏色參數設定',

@@ -12,6 +12,7 @@ import { AlertsAndProgress } from '../views/dialogs/AlertsAndProgress';
 import { Dialog } from '../views/dialogs/Dialog';
 import { AlertProgressContextProvider } from '../contexts/Alert-Progress-Context';
 import { DialogContextProvider } from '../contexts/Dialog-Context';
+import svgEditor from '../actions/beambox/svg-editor';
 
 const electron = window['electron'];
 const React = requireNode('react');
@@ -35,6 +36,7 @@ class Beambox extends React.Component {
         ipc.send(events.FRONTEND_READY);
         BeamboxInit.showTutorial();
         BeamboxInit.checkOSVersion();
+        svgEditor.resetView();
     }
     componentWillUnmount() {
         BeamboxGlobalInteraction.detach();
