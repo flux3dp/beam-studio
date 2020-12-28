@@ -11,9 +11,7 @@ const classNames = requireNode('classnames');
 let LANG = i18n.lang.beambox;
 export class SVGEditor extends React.Component {
     componentDidMount(node) {
-        // TODO: need to load svgEditor first!!
         $(svgEditor.init);
-        svgEditor.resetView();
     }
 
     _handleDisableHref(e) {

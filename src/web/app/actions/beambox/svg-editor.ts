@@ -2228,7 +2228,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     autoCenter: false
                 };
                 const data = $.extend({}, defaultZoomData, zoomData);
-                data.zoomLevel = data.zoomLevel || svgCanvas.getZoom() * data.factor;
+                data.zoomLevel = Math.max(data.zoomLevel || svgCanvas.getZoom() * data.factor, 0.01);
 
                 svgCanvas.setZoom(data.zoomLevel);
 
