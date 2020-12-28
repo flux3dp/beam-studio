@@ -69,7 +69,7 @@ gulp.task('frontend', ['frontendSrc'], (cb) => cb());
 gulp.task('babel', function () {
     return gulp.src(['public/js/**/*.js*', '!public/js/require.js', '!public/js/main.js', '!public/js/plugins/**/*.js', '!public/js/lib/**/*.js', '!public/js/helpers/CircularGridHelper.js', '!**/*.json'])
         .pipe(babel({
-            presets: ['es2015', 'react']
+            presets: [['@babel/preset-env', { 'electron': '8.5.5' }], '@babel/preset-react']
         }))
         .pipe(gulp.dest('public/js'));
 });
