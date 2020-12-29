@@ -159,6 +159,7 @@ export class TopBar extends React.Component {
                     buttonType: AlertConstants.YES_NO,
                     onYes: () => {
                         BeamboxPreference.write('workarea', device.model);
+                        BeamboxPreference.write('model', device.model);
                         svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
                         svgEditor.resetView();
                         PreviewModeBackgroundDrawer.updateCanvasSize();
