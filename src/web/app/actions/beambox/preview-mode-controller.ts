@@ -400,7 +400,7 @@ class PreviewModeController {
         timeToWait *= 1.2;
         timeToWait += 100;
         this.lastPosition = [movementX, movementY];
-        await new Promise((resolve, reject) => { setTimeout(() => resolve(), timeToWait)});
+        await new Promise((resolve, reject) => { setTimeout(() => resolve(null), timeToWait)});
     }
 
     //just for getPhotoAfterMoveTo()

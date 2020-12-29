@@ -360,15 +360,15 @@ export class TopBar extends React.Component {
                                 text: lang.beambox.popup.dont_show_again,
                                 callbacks: () => {
                                     AlertConfig.write('skip_path_speed_warning', true);
-                                    resolve();
+                                    resolve(null);
                                 }
                             },
                             callbacks: () => {
-                                resolve();
+                                resolve(null);
                             }
                         });
                     } else {
-                        resolve();
+                        resolve(null);
                     }
                 } else {
                     if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
@@ -383,15 +383,15 @@ export class TopBar extends React.Component {
                                 text: lang.beambox.popup.dont_show_again,
                                 callbacks: () => {
                                     AlertConfig.write('skip_path_speed_constraint_warning', true);
-                                    resolve();
+                                    resolve(null);
                                 }
                             },
                             callbacks: () => {
-                                resolve();
+                                resolve(null);
                             }
                         });
                     } else {
-                        resolve();
+                        resolve(null);
                     }
                 }
             });

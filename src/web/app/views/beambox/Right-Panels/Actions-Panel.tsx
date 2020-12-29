@@ -59,7 +59,7 @@ class ActionsPanel extends React.Component {
                         weight: elem.getAttribute('font-weight'),
                         style: dimensionValues.fontStyle,
                     });
-                    resolve();
+                    resolve(null);
                 }, 50);
             });
         }

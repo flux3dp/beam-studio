@@ -5660,7 +5660,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     svgCanvas.alignSelectedElements('l', 'page');
                                     svgCanvas.alignSelectedElements('t', 'page');
                                 }
-                                resolve();
+                                resolve(null);
                                 updateContextPanel();
                                 Progress.popById('loading_image');
                             };
@@ -5723,7 +5723,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                             svgCanvas.undoMgr.addCommandToHistory(batchCmd);
                                             updateContextPanel();
                                             Progress.popById('loading_image');
-                                            resolve();
+                                            resolve(null);
                                         }
                                     }
                                 );
@@ -6212,7 +6212,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
                                     LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
                                     LayerPanelController.setSelectedLayers(LayerPanelController.getSelectedLayers());
-                                    resolve();
+                                    resolve(null);
                                 };
                                 reader.readAsText(file);
                             });

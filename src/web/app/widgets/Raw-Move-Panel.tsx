@@ -46,7 +46,7 @@ class RawMovePanel extends React.Component {
         const estimatedTime = dist / feedrate * 60; //s
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve();
+                resolve(null);
             }, estimatedTime * 1000);
         })
     }

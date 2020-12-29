@@ -14,12 +14,12 @@ let openBottomBoundaryRect, openBottomBoundarySVG;
 const checkSvgEdit = () => {
     return new Promise((resolve) => {
         if (svgedit) {
-            resolve();
+            resolve(null);
             return;
         }
         const interval = setInterval(() => {
             if (svgedit) {
-                resolve();
+                resolve(null);
                 clearInterval(interval);
             }
         }, 500);

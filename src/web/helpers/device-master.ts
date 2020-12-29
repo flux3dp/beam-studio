@@ -460,7 +460,7 @@ class DeviceMaster {
                     await new Promise((r) => setTimeout(r, 2000));
                     try {
                         await this.quit();
-                        resolve();
+                        resolve(null);
                     } catch (err) {
                         console.error(err);
                         reject('Quit failed');
@@ -476,7 +476,7 @@ class DeviceMaster {
                     // Resolve if the status was running and some how skipped the completed part
                     if (statusChanged) {
                         clearInterval(statusCheckInterval);
-                        resolve();
+                        resolve(null);
                     }
                 } else {
                     statusChanged = true;
@@ -877,7 +877,7 @@ class DeviceMaster {
         if (callback.timeout > 0) {
             setTimeout(() => {
                 callback.timeout -= 500;
-                this.getDeviceBySerial(name, callback);
+                this.getDeviceBySerial(serial, callback);
             }, 500);
         } else {
             callback.onTimeout();
