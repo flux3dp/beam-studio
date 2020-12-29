@@ -2,6 +2,7 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
 import BeamboxActions from '../../actions/beambox';
+import BeamboxPreference from '../../actions/beambox/beambox-preference';
 import Constants from '../../actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '../../actions/beambox/preview-mode-background-drawer';
 import FnWrapper from '../../actions/beambox/svgeditor-function-wrapper';
@@ -15,8 +16,11 @@ import SliderControl from '../../widgets/Slider-Control';
 // @ts-expect-error
 import ImageTracer = require('imagetracer');
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
-let svgCanvas;
-getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas });
+let svgCanvas, svgedit;
+getSVGAsync((globalSVG) => {
+    svgCanvas = globalSVG.Canvas;
+    svgedit = globalSVG.Edit;
+});
 
 const React = requireNode('react');
 const Cropper = requireNode('cropperjs');
@@ -294,8 +298,8 @@ class ImageTracePanel extends React.Component {
             FnWrapper.insertImage(croppedBlobUrl, testingCropData, testingPreCrop, 1, threshold, true);
             //FnWrapper.insertSvg(imageTrace, 'image-trace', testingCropData, testingPreCrop);
         } else {
-            await this._traceImageAndAppend(grayscaleCroppedImg, cropData, preCrop);
             FnWrapper.insertImage(croppedBlobUrl, cropData, preCrop, 1, threshold, true);
+            await this._traceImageAndAppend(grayscaleCroppedImg, cropData, preCrop);
         }
 
         URL.revokeObjectURL(grayscaleCroppedImg);
@@ -316,14 +320,24 @@ class ImageTracePanel extends React.Component {
         return new Promise ((resolve, reject) => {
             ImageTracer.imageToSVG(imgUrl, svgstr => {
                 const id = svgCanvas.getNextId();
+                const batchCmd = new svgedit.history.BatchCommand('Add Image Trace');
                 const g = svgCanvas.addSvgElementFromJson({
                     'element': 'g',
                     'attr': {
                         'id': id
                     }
-                });
+                }) as SVGGElement;
+                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+                svgCanvas.selectOnly([g]);
                 svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
                 ImageTracer.appendSVGString(svgstr, id);
+                const gBBox = g.getBBox();
+                if (cropData.width !== gBBox.width) {
+                    svgCanvas.setSvgElemSize('width', cropData.width);
+                }
+                if (cropData.height !== gBBox.height) {
+                    svgCanvas.setSvgElemSize('height', cropData.height);
+                }
                 let dx = cropData.x + preCrop.offsetX;
                 let dy = cropData.y + preCrop.offsetY;
                 svgCanvas.moveElements([dx], [dy], [g], false);
@@ -339,6 +353,19 @@ class ImageTracePanel extends React.Component {
                         $(child).attr('vector-effect', "non-scaling-stroke");
                     }
                 }
+                if (BeamboxPreference.read('union_after_trace') !== false) {
+                    let res = svgCanvas.ungroupSelectedElement(true);
+                    if (res) {
+                        if (res.batchCmd && !res.batchCmd.isEmpty()) {
+                            batchCmd.addSubCommand(res.batchCmd);
+                        }
+                        res = svgCanvas.booleanOperationSelectedElements('union', true);
+                        if (res && !res.isEmpty()) {
+                            batchCmd.addSubCommand(res);
+                        }
+                    }   
+                }
+                svgCanvas.undoMgr.addCommandToHistory(batchCmd);
                 resolve(true);
             });
         });
