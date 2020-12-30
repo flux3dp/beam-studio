@@ -3338,7 +3338,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                     clickUndo();
                     return;
                 }
-                svgCanvas.setTextContent(this.value);
+
+                if (!evt.shiftKey && evt.key === 'Enter') {
+                    svgCanvas.textActions.toSelectMode(true);
+                } else {
+                    svgCanvas.setTextContent(this.value);
+                }
             });
             textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
                 evt.stopPropagation();
@@ -3355,9 +3360,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     evt.preventDefault();
                     svgCanvas.textActions.onRightKey();
                 }
-                if (!evt.shiftKey && evt.key === 'Enter') {
-                    svgCanvas.textActions.toSelectMode(true);
-                } else if (evt.shiftKey && evt.key === 'Enter') {
+                if (evt.shiftKey && evt.key === 'Enter') {
                     evt.preventDefault();
                     svgCanvas.textActions.newLine();
                 } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'c') ||
