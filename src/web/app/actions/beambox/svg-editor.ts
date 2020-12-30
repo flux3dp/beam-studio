@@ -3322,17 +3322,28 @@ const svgEditor = window['svgEditor'] = (function($) {
             });
 
             const textInput = document.getElementById('text');
+            let wasNewLineAdded = false;
+            const checkFunctionKeyPressed = (evt: KeyboardEvent) => {
+                return (process.platform === 'darwin' && evt.metaKey) || (process.platform !== 'darwin' && evt.ctrlKey);
+            }
 
             $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
                 evt.stopPropagation();
-                if (!textBeingEntered && evt.type === 'input') {
+                if (!svgCanvas.textActions.isEditing && evt.type === 'input') {
                     evt.preventDefault();
                     // Hack: Windows input event will some how block undo event
                     // So do undo when not entering & input event triggered
                     clickUndo();
                     return;
                 }
-                svgCanvas.setTextContent(this.value);
+                if (evt.key === 'Enter' && !wasNewLineAdded) {
+                    svgCanvas.textActions.toSelectMode(true);
+                } else if (svgCanvas.textActions.isEditing) {
+                    svgCanvas.setTextContent(this.value);
+                }
+                if (evt.key !== 'Shift') {
+                    wasNewLineAdded = false;
+                }
             });
             textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
                 evt.stopPropagation();
@@ -3349,30 +3360,25 @@ const svgEditor = window['svgEditor'] = (function($) {
                     evt.preventDefault();
                     svgCanvas.textActions.onRightKey();
                 }
-                if (!evt.shiftKey && evt.key === 'Enter') {
-                    svgCanvas.textActions.toSelectMode(true);
-                } else if (evt.shiftKey && evt.key === 'Enter') {
+                const isFunctionKeyPressed = checkFunctionKeyPressed(evt);
+                if (evt.shiftKey && evt.key === 'Enter') {
                     evt.preventDefault();
                     svgCanvas.textActions.newLine();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'c') ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'c')) {
+                    wasNewLineAdded = true;
+                } else if (isFunctionKeyPressed && evt.key === 'c') {
                     evt.preventDefault();
                     svgCanvas.textActions.copyText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'x') ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'x')) {
+                } else if (isFunctionKeyPressed && evt.key === 'x') {
                     evt.preventDefault();
                     svgCanvas.textActions.cutText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'v') ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'v')) {
+                } else if (isFunctionKeyPressed && evt.key === 'v') {
                     evt.preventDefault();
                     svgCanvas.textActions.pasteText();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'a') ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'a')) {
+                } else if (isFunctionKeyPressed && evt.key === 'a') {
                     evt.preventDefault();
                     svgCanvas.textActions.selectAll();
-                } else if ((process.platform === 'darwin' && evt.metaKey && evt.key === 'z') ||
-                    (process.platform !== 'darwin' && evt.ctrlKey && evt.key === 'z')) {
-                    evt.preventDefault();
+                } else if (isFunctionKeyPressed && evt.key === 'z') {
+                    if (process.platform === 'darwin') evt.preventDefault();
                 }
             });
 
