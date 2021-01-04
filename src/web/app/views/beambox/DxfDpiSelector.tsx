@@ -39,7 +39,7 @@ const DxfDpiSelector = ({defaultDpiValue, onSubmit, onCancel}) => {
         textAlign: 'left'
     };
     return (
-        <div>
+        <div className='dxf-dpi-selector'>
             <div className='caption'>
                 {lang.message.please_enter_dpi}
                 <br/>

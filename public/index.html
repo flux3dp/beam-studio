@@ -14,7 +14,6 @@
             <div class='spinner-roller absolute-center'></div>
         </section>
         <section class='notification'></section>
-        <section id='announcement'></section>
     </div>
 </body>
 <script>
@@ -26,7 +25,7 @@
             body = document.querySelector('body'),
             dev = localStorage['dev'] === 'true',
             getStarted = function (ghostPort) {
-                script.setAttribute('src', 'js/lib/requirejs.min.js');
+                script.setAttribute('src', 'js/lib/require.js');
                 script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
                 body.appendChild(script);
             },

@@ -440,11 +440,11 @@ const initMenuBarEvents = () => {
                 getLog(device, 'fluxrobotd.log');
             };
 
-            _action['SET_AS_DEFAULT'] = (device) => {
-                InitializeMachine.defaultPrinter.clear();
-                InitializeMachine.defaultPrinter.set(device);
-                ipc.send('SET_AS_DEFAULT', device);
-            };
+            // _action['SET_AS_DEFAULT'] = (device) => {
+            //     InitializeMachine.defaultPrinter.clear();
+            //     InitializeMachine.defaultPrinter.set(device);
+            //     ipc.send('SET_AS_DEFAULT', device);
+            // };
 
             _action['BUG_REPORT'] = () => {
                 OutputError.downloadErrorLog();
@@ -478,6 +478,7 @@ const initMenuBarEvents = () => {
     }
 };
 
+console.assert(typeof AlertConfig.read === 'function', 'AlertConfig not not loaded correctly.');
 const showTutorial = () => {
     if (!AlertConfig.read('skip-interface-tutorial')) {
         const LANG = i18n.lang.tutorial;
@@ -518,8 +519,8 @@ const checkOSVersion = () => {
     const LANG = i18n.lang.beambox;
     if (!AlertConfig.read('skip_os_version_warning')) {
         if (process.platform === 'darwin') {
-            const osVersion = /Mac OS X ([\.\_\d]+)/.exec(navigator.userAgent)[1];
-            if (osVersion) {
+            try {
+                const osVersion = /(?<=Mac OS X )[\.\_\d]+/.exec(navigator.userAgent)[0];
                 const version = osVersion.split('_').map((v) => parseInt(v));
                 if (version[0] === 10 && version[1] < 13) {
                     Alert.popUp({
@@ -532,6 +533,9 @@ const checkOSVersion = () => {
                         }
                     });
                 }
+            } catch (e) {
+                console.error('Fail to get MacOS Version');
+                return;
             }
         } else if (process.platform === 'win32') {
             var windowsVersionStrings = [

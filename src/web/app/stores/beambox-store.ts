@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/beambox-dispatcher';
 import Constants from '../constants/beambox-constants';
-const EventEmitter = require('events');
+const EventEmitter = requireNode('events');
 
 var beamboxStore;
 

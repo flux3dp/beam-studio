@@ -23,8 +23,6 @@ TODOS
 1. JSDoc
 */
 import ToolPanelsController from './Tool-Panels-Controller';
-import Announcement from '../../actions/announcement';
-import DxfDpiSelector from '../../views/beambox/DxfDpiSelector';
 import RightPanelController from '../../views/beambox/Right-Panels/contexts/RightPanelController';
 import LayerPanelController from '../../views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -36,6 +34,7 @@ import PreviewModeController from './preview-mode-controller';
 import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
+import DialogCaller from 'app/contexts/DialogCaller';
 import ProgressConstants from '../../constants/progress-constants';
 import KeycodeConstants from '../../constants/keycode-constants';;
 import AwsHelper from '../../../helpers/aws-helper';
@@ -5997,31 +5996,16 @@ const svgEditor = window['svgEditor'] = (function($) {
                         };
                         reader.readAsText(file);
                     });
-                    const unitLength: number = await new Promise((resolve, reject) => {
-                        // I would like to use jsx expression, but I don't know how to make jsx compatible with requirejs's shim and dep feature
-                        Announcement.post(
-                            React.createElement(
-                                DxfDpiSelector,
-                                {
-                                    defaultDpiValue: defaultDpiValue,
-                                    onSubmit: (val: number) => {
-                                        Announcement.unpost('DXF_DPI_SELECTOR');
-                                        resolve(val);
-                                    },
-                                    onCancel: () => {
-                                        Announcement.unpost('DXF_DPI_SELECTOR');
-                                        Progress.popById('loading_image');
-                                        reject();
-                                    }
-                                }
-                            ), 'DXF_DPI_SELECTOR'
-                        );
-                    });
+                    Progress.popById('loading_image');
                     if (!parsed) {
                         alert("DXF Parsing Error");
-                        Progress.popById('loading_image');
                         return;
                     }
+                    const unitLength = await DialogCaller.showDxfDpiSelector(defaultDpiValue);
+                    if (!unitLength) {
+                        return;
+                    }
+                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage });
                     const {outputLayers, svg: resizedSvg, bbox} = Dxf2Svg.toSVG(parsed, unitLength * 10);
                     if (!AlertConfig.read('skip_dxf_oversize_warning') && (bbox.width > Constant.dimension.getWidth() || bbox.height > Constant.dimension.getHeight())) {
                         Alert.popUp({
@@ -6228,7 +6212,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 editor.importLaserConfig = importLaserConfig;
 
                 var importImage = function (e) {
-                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
+                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage });
                     e.stopPropagation();
                     e.preventDefault();
                     $('#workarea').removeAttr('style');

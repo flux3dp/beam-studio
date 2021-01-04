@@ -131,9 +131,9 @@ class SettingGeneral extends React.Component{
         for (let key in this.beamboxPreferenceChanges) {
             BeamboxPreference.write(key, this.beamboxPreferenceChanges[key]);
         }
-        if (this.isDefaultMachineRemoved) {
-            initializeMachine.defaultPrinter.clear();
-        }
+        // if (this.isDefaultMachineRemoved) {
+        //     initializeMachine.defaultPrinter.clear();
+        // }
         location.hash = 'studio/beambox';
         location.reload();
     }
@@ -145,13 +145,12 @@ class SettingGeneral extends React.Component{
     }
 
     render() {
-        let { supported_langs } = this.props;
-        let printer: IDeviceInfo = (this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get()) as IDeviceInfo,
-            default_machine_button,
-            tableStyle = {width: '70%'},
-            pokeIP = Config().read('poke-ip-addr'),
-            lang = this.state.lang,
-            options = [];
+        const { supported_langs } = this.props;
+        // const printer: IDeviceInfo = (this.isDefaultMachineRemoved ? {} : initializeMachine.defaultPrinter.get()) as IDeviceInfo;
+        // let default_machine_button;
+        const pokeIP = Config().read('poke-ip-addr');
+        const lang = this.state.lang;
+        const options = [];
 
         Object.keys(supported_langs).map(l => {
             options.push({
@@ -466,16 +465,16 @@ class SettingGeneral extends React.Component{
             }
         ];
 
-        if (printer.name !== undefined) {
-            default_machine_button = (
-                <a className='font3'
-                    onClick={this._removeDefaultMachine}
-                >
-                    {lang.settings.remove_default_machine_button}
-                </a>);
-        } else {
-            default_machine_button = (<span>{lang.settings.default_machine_button}</span>);
-        }
+        // if (printer.name !== undefined) {
+        //     default_machine_button = (
+        //         <a className='font3'
+        //             onClick={this._removeDefaultMachine}
+        //         >
+        //             {lang.settings.remove_default_machine_button}
+        //         </a>);
+        // } else {
+        //     default_machine_button = (<span>{lang.settings.default_machine_button}</span>);
+        // }
 
         const cameraMovementSpeed = Math.min(BeamboxConstant.camera.movementSpeed.x, BeamboxConstant.camera.movementSpeed.y);
 

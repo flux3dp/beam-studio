@@ -129,8 +129,7 @@ function buildMenu(callback) {
         id: '_view',
         label: r.view,
         submenu: [
-            // On menu 'cmd shift =' will be displayed as 'cmd +'
-            { id: 'ZOOM_IN', label: r.zoom_in || 'Zoom In', click: callback, 'accelerator': process.platform === 'darwin' ? 'CmdOrCtrl+Shift+=' : 'CmdOrCtrl++'},
+            { id: 'ZOOM_IN', label: r.zoom_in || 'Zoom In', click: callback, 'accelerator': process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus' },
             { id: 'ZOOM_OUT', label: r.zoom_out || 'Zoom Out', click: callback, 'accelerator': `${fnKey}+-`},
             { id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback},
             { id: 'ZOOM_WITH_WINDOW', label: r.zoom_with_window || 'Zoom With Window', click: callback, type:'checkbox'},
@@ -276,7 +275,7 @@ function buildDeviceMenu(callback, uuid, data) {
                 { id: 'LOG_PLAYER', label: r.log.player, uuid, serial, source, click: callback },
                 { id: 'LOG_ROBOT', label: r.log.robot, uuid, serial, source, click: callback }
             ]},
-            { id: 'SET_AS_DEFAULT', label: r.set_as_default, uuid, serial, source, click: callback, type:'checkbox'}
+            // { id: 'SET_AS_DEFAULT', label: r.set_as_default, uuid, serial, source, click: callback, type:'checkbox'}
         ];
     }
 
@@ -329,14 +328,14 @@ class MenuManager extends EventEmitter {
             Menu.setApplicationMenu(this._appmenu);
         });
 
-        ipcMain.on(events.SET_AS_DEFAULT, (e, device) => {
-            this._deviceMenu.submenu.items.forEach(item => {
-                if(item.label === device.name) {
-                    item.checked = true;
-                }
-            });
-            Menu.setApplicationMenu(this._appmenu);
-        });
+        // ipcMain.on(events.SET_AS_DEFAULT, (e, device) => {
+        //     this._deviceMenu.submenu.items.forEach(item => {
+        //         if(item.label === device.name) {
+        //             item.checked = true;
+        //         }
+        //     });
+        //     Menu.setApplicationMenu(this._appmenu);
+        // });
 
         ipcMain.on(events.POPUP_MENU, (e, show, options) => {
             this._popup_menu = Menu.buildFromTemplate([
