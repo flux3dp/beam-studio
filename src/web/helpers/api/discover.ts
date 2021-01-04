@@ -3,7 +3,6 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-discover
  */
 import Websocket from '../websocket';
-import initializeMachine from '../../app/actions/initialize-machine';
 import Config from './config';
 import DeviceList from '../device-list';
 import LocalStorage from '../local-storage';
@@ -27,8 +26,6 @@ var ws = ws || Websocket({
     dispatchers = [],
     idList = [],
     _devices = {},
-    existDefaultPrinter = initializeMachine.defaultPrinter.exist(),
-    defaultPrinter = initializeMachine.defaultPrinter.get(),
     sendFoundPrinter = function() {
         discoverLogger.clear().append(_devices);
 
