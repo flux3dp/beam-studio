@@ -1248,16 +1248,22 @@ var requirejs, require, define;
             takeGlobalQueue();
 
             //Make sure any remaining defQueue items get properly processed.
-            while (defQueue.length) {
-                args = defQueue.shift();
-                if (args[0] === null) {
-                    return onError(makeError('mismatch', 'Mismatched anonymous define() module: ' +
-                        args[args.length - 1]));
-                } else {
-                    //args are id, deps, factory. Should be normalized by the
-                    //define() function.
-                    callGetModule(args);
+            try {
+                while (defQueue.length) {
+                    args = defQueue.shift();
+                    if (args[0] === null) {
+                        return onError(makeError('mismatch', 'Mismatched anonymous define() module: ' +
+                            args[args.length - 1]));
+                    } else {
+                        //args are id, deps, factory. Should be normalized by the
+                        //define() function.
+                        callGetModule(args);
+                    }
                 }
+            } catch (error) {
+                console.error(`Error when intakeDefines\n`, error);
+                console.error('Reload in 0.5s');
+                setTimeout(() => location.reload(), 500);
             }
             context.defQueueMap = {};
         }
@@ -1693,7 +1699,13 @@ var requirejs, require, define;
              * @private
              */
             execCb: function (name, callback, args, exports) {
-                return callback.apply(exports, args);
+                try {
+                    return callback.apply(exports, args);
+                } catch (e) {
+                    console.error(`Error when loading ${name}:\n`, e);
+                    console.error('Reload in 0.5s');
+                    setTimeout(() => location.reload(), 500);
+                }
             },
 
             /**

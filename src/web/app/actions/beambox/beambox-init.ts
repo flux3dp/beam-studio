@@ -479,6 +479,7 @@ const initMenuBarEvents = () => {
     }
 };
 
+console.assert(typeof AlertConfig.read === 'function', 'AlertConfig not not loaded correctly.');
 const showTutorial = () => {
     if (!AlertConfig.read('skip-interface-tutorial')) {
         const LANG = i18n.lang.tutorial;
