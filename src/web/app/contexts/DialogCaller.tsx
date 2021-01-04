@@ -8,6 +8,7 @@ import AboutBeamStudio from '../views/beambox/About-Beam-Studio';
 import CameraCalibration from '../views/beambox/Camera-Calibration';
 import DiodeCalibration from '../views/beambox/Diode-Calibration';
 import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel';
+import DxfDpiSelector from '../views/beambox/DxfDpiSelector';
 import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel';
 import NounProjectPanel from '../views/beambox/Noun-Project-Panel';
 import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel';
@@ -97,6 +98,25 @@ export default {
                 />
             </Modal>
         );
+    },
+    showDxfDpiSelector: (defaultDpiValue: number) => {
+        return new Promise<number | null>((resolve, reject) => {
+            addDialogComponent('dxf-dpi-select',
+                <Modal>
+                    <DxfDpiSelector
+                        defaultDpiValue={defaultDpiValue}
+                        onSubmit={(val: number) => {
+                            popDialogById('dxf-dpi-select');
+                            resolve(val);
+                        }}
+                        onCancel={() => {
+                            popDialogById('dxf-dpi-select');
+                            resolve(null);
+                        }}
+                    />
+                </Modal>
+            )
+        });
     },
     showNetworkTestingPanel: (ip?: string) => {
         if (isIdExist('network-test')) return;
