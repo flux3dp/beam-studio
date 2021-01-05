@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/global-dispatcher';
 import GlobalConstants from '../constants/global-constants';
-const EventEmitter = require('events');
+const EventEmitter = requireNode('events');
 
 var GlobalStore;
 
