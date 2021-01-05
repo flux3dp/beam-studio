@@ -2980,14 +2980,15 @@ define([
                         element.setAttribute('opacity', cur_shape.opacity);
                         element.setAttribute('style', 'pointer-events:inherit');
                         cleanupElement(element);
-                        if (curConfig.selectNew && !(isContinuousDrawing && current_mode !== 'textedit')) {
-                            selectOnly([element], true);
-                        }
-                        // we create the insert command that is stored on the stack
-                        // undo means to call cmd.unapply(), redo means to call cmd.apply()
                         addCommandToHistory(new svgedit.history.InsertElementCommand(element));
-
-                        call('changed', [element]);
+                        if (curConfig.selectNew && !isContinuousDrawing) {
+                            if (current_mode === 'textedit') {
+                                selectorManager.requestSelector(element).showGrips(true);
+                            } else {
+                                selectOnly([element], true);
+                                call('changed', [element]);
+                            }
+                        }
                     }, ani_dur * 1000);
                 }
                 if (isContinuousDrawing && current_mode !== 'textedit') {
