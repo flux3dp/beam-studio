@@ -41,7 +41,6 @@ interface IDeviceConnection {
 }
 const lang = i18n.lang;
 
-console.assert(DeviceConstants.STARTING === 'STARTING', 'DeviceConstants not loaded correctly');
 class DeviceMaster {
     private deviceConnections: Map<string, IDeviceConnection>;
     private discoveredDevices: IDeviceInfo[];

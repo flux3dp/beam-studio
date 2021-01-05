@@ -37,9 +37,6 @@ const hiddenOptions = [
     { value: LANG.various_preset, key: LANG.various_preset, label: LANG.various_preset },
 ];
 
-// To avoid DiodeBoundaryDrawer loaded failed
-console.assert(typeof DiodeBoundaryDrawer.show === 'function');
-
 class LaserPanel extends React.PureComponent {
     constructor(props) {
         super(props);
