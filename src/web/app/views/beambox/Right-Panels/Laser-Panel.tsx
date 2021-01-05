@@ -29,16 +29,16 @@ const classNames = requireNode('classnames');
 const PropTypes = requireNode('prop-types');
 
 const LANG = i18n.lang.beambox.right_panel.laser_panel;
-const defaultLaserOptions = [
-    ...RightPanelConstants.laserPresetKeys,
-];
 const PARAMETERS_CONSTANT = 'parameters';
-
+const defaultLaserOptions = [...RightPanelConstants.laserPresetKeys];
 const hiddenOptions = [
     { value: PARAMETERS_CONSTANT, key: LANG.dropdown.parameters, label: LANG.dropdown.parameters},
     { value: LANG.custom_preset, key: LANG.custom_preset, label: LANG.custom_preset },
     { value: LANG.various_preset, key: LANG.various_preset, label: LANG.various_preset },
 ];
+
+// To avoid DiodeBoundaryDrawer loaded failed
+console.assert(typeof DiodeBoundaryDrawer.show === 'function');
 
 class LaserPanel extends React.PureComponent {
     constructor(props) {
