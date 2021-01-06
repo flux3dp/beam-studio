@@ -8,7 +8,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const React = requireNode('react');
-const request = requireNode('request');
 const LANG = i18n.lang;
 
 class NounProjectPanel extends React.Component {
@@ -37,7 +36,9 @@ class NounProjectPanel extends React.Component {
     _getIconsByTerm(term: string, page: number, callback: Function) {
         Progress.openNonstopProgress({ id:'noun-project', message: 'Loading From Noun Project' });
         const offset = 48 * page;
-        console.log(`http://api.thenounproject.com/icons/${term}?offset=${offset}`)
+        console.log(`http://api.thenounproject.com/icons/${term}?offset=${offset}`);
+        // Warning: This module will call define. If declare this at top of file will cause requirejs loading error.
+        const request = requireNode('request');
         request({
             url: encodeURI(`http://api.thenounproject.com/icons/${term}?offset=${offset}`),
             method: 'GET',
