@@ -306,12 +306,12 @@ svgedit.history.ChangeElementCommand.prototype.apply = function(handler) {
 		if (angle) {
 			// TODO: These instances of elem either need to be declared as global
 			//				(which would not be good for conflicts) or declare/use this.elem
-			var bbox = elem.getBBox();
+			var bbox = this.elem.getBBox();
 			var cx = bbox.x + bbox.width/2,
 				cy = bbox.y + bbox.height/2;
 			var rotate = ["rotate(", angle, " ", cx, ",", cy, ")"].join('');
-			if (rotate != elem.getAttribute("transform")) {
-				elem.setAttribute("transform", rotate);
+			if (rotate != this.elem.getAttribute("transform")) {
+				this.elem.setAttribute("transform", rotate);
 			}
 		}
 	}
@@ -356,8 +356,8 @@ svgedit.history.ChangeElementCommand.prototype.unapply = function(handler) {
 			var cx = bbox.x + bbox.width/2,
 				cy = bbox.y + bbox.height/2;
 			var rotate = ["rotate(", angle, " ", cx, ",", cy, ")"].join('');
-			if (rotate != elem.getAttribute("transform")) {
-				elem.setAttribute("transform", rotate);
+			if (rotate != this.elem.getAttribute("transform")) {
+				this.elem.setAttribute("transform", rotate);
 			}
 		}
 	}
