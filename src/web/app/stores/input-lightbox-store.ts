@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/input-lightbox-dispatcher';
 import Constants from '../constants/input-lightbox-constants';
-const EventEmitter = require('events');
+const EventEmitter = requireNode('events');
 
 var namespace = 'InputLightBox',
     Store;

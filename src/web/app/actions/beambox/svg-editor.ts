@@ -35,8 +35,6 @@ import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
 import DialogCaller from 'app/contexts/DialogCaller';
-import ProgressConstants from '../../constants/progress-constants';
-import KeycodeConstants from '../../constants/keycode-constants';;
 import AwsHelper from '../../../helpers/aws-helper';
 import BeamFileHelper from '../../../helpers/beam-file-helper';
 import ImageData from '../../../helpers/image-data';
@@ -1723,6 +1721,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 var i, len;
                 if (selectedElement != null) {
                     switch (selectedElement.tagName) {
+                        case 'text':
                         case 'use':
                         case 'image':
                         case 'foreignObject':
@@ -1990,7 +1989,8 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 const textElem: SVGTextElement = elem;
                                 $('#font_size').val(elem.getAttribute('font-size'));
                                 let multiLineTextContent = Array.from(textElem.childNodes).map(child => child.textContent).join('\x0b');
-                                $('#text').val(multiLineTextContent);
+                                const textInput = document.getElementById('text') as HTMLInputElement;
+                                textInput.value = multiLineTextContent;
                                 if (svgCanvas.addedNew) {
                                     // Timeout needed for IE9
                                     setTimeout(function () {
@@ -2107,9 +2107,10 @@ const svgEditor = window['svgEditor'] = (function($) {
                     // upon creation of a text element the editor is switched into
                     // select mode and this event fires - we need our UI to be in sync
 
-                    if (!is_node) {
-                        updateToolbar();
-                    }
+                    // updateToolbar is for svgeditor, seems not to be used anymore.
+                    // if (!is_node) {
+                    //     updateToolbar();
+                    // }
                 }
                 // Deal with pathedit mode
                 togglePathEditMode(is_node, elems);

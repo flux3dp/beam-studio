@@ -489,6 +489,15 @@ define([
                             canvas.identifyLayers();
                             LayerPanelController.setSelectedLayers([]);
                         }
+
+                        const textElems = elems.filter((elem) => elem.tagName === 'text');
+                        for (let i = 0; i < textElems.length; i++) {
+                            const textElem = textElems[i];
+                            const angle = svgedit.utilities.getRotationAngle(textElem);
+                            canvas.setRotationAngle(0, true, textElem);
+                            canvas.updateMultiLineTextElem(textElem);
+                            canvas.setRotationAngle(angle, true, textElem);
+                        }
                     }
                 }
             }
@@ -1043,6 +1052,8 @@ define([
                 var newTransform = elem.getAttribute('transform');
                 if (oldTransform) {
                     elem.setAttribute('transform', oldTransform);
+                } else {
+                    elem.removeAttribute('transform');
                 }
                 changeSelectedAttribute('transform', newTransform, [elem]);
                 call('changed', [elem]);
@@ -2981,14 +2992,15 @@ define([
                         element.setAttribute('opacity', cur_shape.opacity);
                         element.setAttribute('style', 'pointer-events:inherit');
                         cleanupElement(element);
-                        if (curConfig.selectNew && !(isContinuousDrawing && current_mode !== 'textedit')) {
-                            selectOnly([element], true);
-                        }
-                        // we create the insert command that is stored on the stack
-                        // undo means to call cmd.unapply(), redo means to call cmd.apply()
                         addCommandToHistory(new svgedit.history.InsertElementCommand(element));
-
-                        call('changed', [element]);
+                        if (curConfig.selectNew && !isContinuousDrawing) {
+                            if (current_mode === 'textedit') {
+                                selectorManager.requestSelector(element).showGrips(true);
+                            } else {
+                                selectOnly([element], true);
+                                call('changed', [element]);
+                            }
+                        }
                     }, ani_dur * 1000);
                 }
                 if (isContinuousDrawing && current_mode !== 'textedit') {
@@ -3870,7 +3882,7 @@ define([
                         }
                     }
                 },
-                init: function (textElem) {
+                init: function () {
                     if (!curtext) {
                         return;
                     }
@@ -3898,6 +3910,39 @@ define([
                 }
             };
         })();
+
+        this.updateMultiLineTextElem = (textElem) => {
+            let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
+            const isVertical = this.getTextIsVertical(textElem);
+            const lineSpacing = parseFloat(this.getTextLineSpacing(textElem));
+            const charHeight = parseFloat(this.getFontSize(textElem));
+            const letterSpacing = this.getLetterSpacing();
+            for (let i = 0; i < tspans.length; i++) {
+                if (isVertical) {
+                    let x = [];
+                    let y = [];
+                    const textContent = tspans[i].textContent;
+                    const xPos = $(textElem).attr('x') - i * lineSpacing * charHeight;
+                    let yPos = $(textElem).attr('y');
+                    for (let j = 0; j < textContent.length; j++) {
+                        x.push(xPos.toFixed(2));
+                        y.push(yPos.toFixed(2));
+                        yPos += (1 + letterSpacing) * charHeight;// text spacing
+                    }
+                    $(tspans[i]).attr({
+                        'x': x.join(' '),
+                        'y': y.join(' '),
+                        'vector-effect': 'non-scaling-stroke',
+                    });
+                } else {
+                    $(tspans[i]).attr({
+                        'x': $(textElem).attr('x'),
+                        'y': $(textElem).attr('y') + i * lineSpacing * charHeight,
+                        'vector-effect': 'non-scaling-stroke',
+                    });
+                }
+            }
+        };
 
         // TODO: Migrate all of this code into path.js
         // Group: Path edit functions
@@ -8054,11 +8099,11 @@ define([
             }
         };
 
-        this.getLetterSpacing = function (elem) {
-            var selected = elem || selectedElements[0];
-            if (selected != null && selected.tagName === 'text' &&
+        this.getLetterSpacing = function (textElem) {
+            if (!textElem) textElem = selectedElements[0];
+            if (textElem != null && textElem.tagName === 'text' &&
                 selectedElements[1] == null) {
-                let val = selected.getAttribute('letter-spacing');
+                let val = textElem.getAttribute('letter-spacing');
                 if(val) {
                     if (val.toLowerCase().endsWith('em')) {
                         return parseFloat(val.slice(0, -2));
@@ -8069,7 +8114,6 @@ define([
                 } else {
                     return 0;
                 }
-                return val;
             }
             return false;
         };
@@ -8079,7 +8123,7 @@ define([
             if (selected != null && selected.tagName === 'text' &&
                 selectedElements[1] == null) {
                 changeSelectedAttribute('letter-spacing', val ? (val.toString() + 'em') : '0em');
-                textActions.updateMultiLineTextElem(selectedElements[0]);
+                this.updateMultiLineTextElem(selectedElements[0]);
             }
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
@@ -8144,11 +8188,15 @@ define([
                 textActions.setCursor();
             }
             textActions.setLineSpacing(val);
-            textActions.updateMultiLineTextElem(selectedElements[0]);
+            const elem = selectedElements[0];
+            const angle = svgedit.utilities.getRotationAngle(elem);
+            this.setRotationAngle(0, true, elem);
+            this.updateMultiLineTextElem(selectedElements[0]);
+            this.setRotationAngle(angle, true, elem);
         };
 
-        this.getTextLineSpacing = () => {
-            let textElem = selectedElements[0];
+        this.getTextLineSpacing = (textElem) => {
+            if (!textElem) textElem = selectedElements[0];
             if (textElem != null && textElem.tagName === 'text' &&
                 selectedElements[1] == null) {
                 let val = textElem.getAttribute('data-line-spacing') || '1';
@@ -8167,17 +8215,16 @@ define([
             const elem = selectedElements[0];
             const angle = svgedit.utilities.getRotationAngle(elem);
             this.setRotationAngle(0, true, elem);
-            textActions.updateMultiLineTextElem(elem);
+            this.updateMultiLineTextElem(elem);
             this.setRotationAngle(angle, true, elem);
             window.updateContextPanel();
         }
 
-        this.getTextIsVertical = () => {
-            let textElem = selectedElements[0];
+        this.getTextIsVertical = (textElem) => {
+            if (!textElem) textElem = selectedElements[0];
             if (textElem != null && textElem.tagName === 'text' &&
                 selectedElements[1] == null) {
-                let val = textElem.getAttribute('data-verti') || false;
-                val = val === 'true';
+                let val = textElem.getAttribute('data-verti') === 'true';
                 textActions.setIsVertical(val);
                 return val;
             }
@@ -8202,10 +8249,10 @@ define([
 
         // Function: getFontSize
         // Returns the current font size
-        this.getFontSize = function () {
-            const selected = selectedElements[0];
-            if (selected) {
-                return selected.getAttribute('font-size');
+        this.getFontSize = function (textElem) {
+            if (!textElem) textElem = selectedElements[0];
+            if (textElem) {
+                return textElem.getAttribute('font-size');
             }
             return cur_text.font_size;
         };
@@ -8221,7 +8268,7 @@ define([
             if (!selectedElements[0].textContent) {
                 textActions.setCursor();
             }
-            textActions.updateMultiLineTextElem(selectedElements[0]);
+            this.updateMultiLineTextElem(selectedElements[0]);
         };
 
         // Function: getText
@@ -9020,7 +9067,7 @@ define([
         }
 
         this.loadRecentFile = async (filePath) => {
-            const fs = requireNode('fs');;
+            const fs = requireNode('fs');
             if (fs.existsSync(filePath)) {
                 let fileName;
                 if (process.platform === 'win32') {

@@ -372,7 +372,7 @@ class SettingGeneral extends React.Component{
         const defaultBeamboxModelOptions = [
             {
                 value: 'fbm1',
-                label: 'Beamo',
+                label: 'beamo',
                 selected: this._getBeamboxPreferenceEditingValue('model') === 'fbm1'
             },
             {

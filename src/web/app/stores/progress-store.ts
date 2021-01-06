@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/progress-dispatcher';
 import ProgressConstants from '../constants/progress-constants';
-const EventEmitter = require('events');
+const EventEmitter = requireNode('events');
 
 var Store;
 

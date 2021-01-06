@@ -311,7 +311,7 @@ const funcs =  {
         } else {
             svgCanvas.clearSelection();
             const output = svgCanvas.getSvgString();
-            const fs = requireNode('fs');;
+            const fs = requireNode('fs');
             console.log(svgCanvas.currentFilePath);
             if (svgCanvas.currentFilePath.endsWith('.bvg')) {
                 fs.writeFile(svgCanvas.currentFilePath, output, function(err) {

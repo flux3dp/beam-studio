@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatcher/alert-dispatcher';
 import AlertConstants from '../constants/alert-constants';
-const EventEmitter = require("events");
+const EventEmitter = requireNode('events');
 
 var NOTIFY_EVENT            = 'notify',
     POPUP_EVENT             = 'popup',

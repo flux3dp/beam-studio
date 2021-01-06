@@ -25,7 +25,7 @@
             body = document.querySelector('body'),
             dev = localStorage['dev'] === 'true',
             getStarted = function (ghostPort) {
-                script.setAttribute('src', 'js/lib/require.js');
+                script.setAttribute('src', 'js/lib/requirejs.min.js');
                 script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
                 body.appendChild(script);
             },

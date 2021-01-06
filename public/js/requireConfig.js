@@ -13,7 +13,6 @@ requirejs.config({
         imagetracer: '../lib/svgeditor/imagetracer',
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
-        events: '../lib/events',
         Redux: '../lib/redux.min',
         jqueryGrowl: '../lib/jquery.growl',
         dxf2svg: '../lib/dxf2svg',
@@ -74,7 +73,6 @@ requirejs.config({
         },
         main: {
             deps: [
-                'events',
                 'Redux',
                 'jsHotkeys',
                 'jquerybbq',
@@ -126,9 +124,6 @@ requirejs.config({
         },
         underscore: {
             exports: '_'
-        },
-        events: {
-            exports: 'events'
         },
         Redux: {
             exports: 'Redux'
