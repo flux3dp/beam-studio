@@ -11,7 +11,7 @@ let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 
-const React = requireNode('react');;
+const React = requireNode('react');
 const LANG = i18n.lang.topmenu;
 const SerialPort = requireNode('serialport');
 const LINES_PER_PAGE = 100;

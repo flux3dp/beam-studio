@@ -35,8 +35,6 @@ import Alert from '../../contexts/AlertCaller';
 import AlertConstants from '../../constants/alert-constants';
 import Progress from '../../contexts/ProgressCaller';
 import DialogCaller from 'app/contexts/DialogCaller';
-import ProgressConstants from '../../constants/progress-constants';
-import KeycodeConstants from '../../constants/keycode-constants';;
 import AwsHelper from '../../../helpers/aws-helper';
 import BeamFileHelper from '../../../helpers/beam-file-helper';
 import ImageData from '../../../helpers/image-data';

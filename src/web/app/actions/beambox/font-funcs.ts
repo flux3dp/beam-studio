@@ -209,7 +209,7 @@ const substitutedFont = function($textElement){
         return {
             font: (fontList.filter(font => font.family !== fontFamily))[0],
             unSupportedChar
-        };;
+        };
     }
 };
 

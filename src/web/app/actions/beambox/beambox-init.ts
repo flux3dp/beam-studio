@@ -152,7 +152,7 @@ const initDefaultFont = () => {
 
 const initMenuBarEvents = () => {
     const LANG = i18n.lang;
-    const electron = requireNode('electron');;
+    const electron = requireNode('electron');
     const ipc = electron.ipcRenderer;
 
     const getLog = async function (printer, log: string) {
@@ -479,7 +479,6 @@ const initMenuBarEvents = () => {
     }
 };
 
-console.assert(typeof AlertConfig.read === 'function', 'AlertConfig not not loaded correctly.');
 const showTutorial = () => {
     if (!AlertConfig.read('skip-interface-tutorial')) {
         const LANG = i18n.lang.tutorial;

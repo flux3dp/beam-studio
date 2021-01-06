@@ -9020,7 +9020,7 @@ define([
         }
 
         this.loadRecentFile = async (filePath) => {
-            const fs = requireNode('fs');;
+            const fs = requireNode('fs');
             if (fs.existsSync(filePath)) {
                 let fileName;
                 if (process.platform === 'win32') {
