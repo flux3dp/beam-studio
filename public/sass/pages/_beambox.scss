@@ -1977,7 +1977,7 @@
 .modal-camera-calibration {
 
     .modal-alert {
-        width: 440px;
+        width: 480px;
         /* min-height: 320px; */
         padding: 22px 0 0 0;
     }
@@ -2006,7 +2006,7 @@
         background-size: cover !important;
         background-position: 50% 50% !important;
         overflow: hidden;
-        width: 50%;
+        width: 200px;
         height: 200px;
         margin-bottom: 20px;
         float: left;
@@ -2113,7 +2113,7 @@
             font-weight: bold;
             display: inline-block;
             color: #555;
-            width: 70px;
+            width: 90px;
         }
         .ui-control-unit-input-v2 {
             .unit {
@@ -2124,6 +2124,21 @@
         }
         .control > div {
             margin-right: 0;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            padding: 0 10px 0 0;
+            margin: 10px 0 0 0;
+            .title {
+                color: #555;
+                font-size: 13px;
+            }
+        }
+        input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            margin:  0 5px 0 0;
         }
     }
 
@@ -2146,15 +2161,9 @@
         .btn {
             margin: 0;
             padding: 0 10px;
-            &.btn-alone-right-1 {
-                position: absolute;            
-                width: 80px;
-                right: 19px;
-            }
-            &.btn-alone-right-2 {
-                position: absolute;            
-                width: 80px;
-                right: 110px;
+            &.btn-right {
+                float: right;
+                margin-left: 20px;
             }
             &.pull-right {
                 margin-left: 20px;

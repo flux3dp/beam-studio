@@ -56,7 +56,7 @@ class CameraCalibrationStateMachine extends React.Component {
             currentOffset: {X: 15, Y: 30, R: 0, SX: 1.625, SY: 1.625},
             imgBlobUrl: '',
             showHint: false,
-            shouldShowLastConfig: true
+            shouldShowLastConfig: false,
         };
         this.unit = Config().read('default-units') as string || 'mm';
         this.updateCurrentStep = this.updateCurrentStep.bind(this);
@@ -586,12 +586,10 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
                         isDoOnInput={true}
                     />
                 </div>
-                <button
-                    className={classNames('btn', 'btn-default', 'btn-last-config', {primary: !parent.state.shouldShowLastConfig})}
-                    onClick={() => {parent.toggleShowLastConfig()}}
-                >
-                    {parent.state.shouldShowLastConfig ? LANG.hide_last_config : LANG.show_last_config}
-                </button>
+                <div className='checkbox-container' onClick={() => {parent.toggleShowLastConfig()}}>
+                    <input type="checkbox" checked={parent.state.shouldShowLastConfig} onChange={()=>{}}/>
+                    <div className='title'>{LANG.show_last_config}</div>
+                </div>
             </div>
             {hint_modal}
         </div>
@@ -604,7 +602,7 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
             buttons={
                 [{
                     label: LANG.next,
-                    className: 'btn-default btn-alone-right-1 primary',
+                    className: 'btn-default btn-right primary',
                     onClick: async () => {
                         try {
                             await PreviewModeController.end();
@@ -623,7 +621,7 @@ const StepBeforeAnalyzePicture = ({currentOffset, updateOffsetDataCb, updateImgB
                 },
                 {
                     label: LANG.back,
-                    className: 'btn-default btn-alone-right-2',
+                    className: 'btn-default btn-right',
                     onClick: async () => {
                         await PreviewModeController.end();
                         gotoNextStep(STEP_BEFORE_CUT);

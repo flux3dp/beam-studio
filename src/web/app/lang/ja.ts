@@ -903,7 +903,6 @@ export default {
         x_ratio: 'X比',
         y_ratio: 'Y比',
         show_last_config: '前回の結果を表示',
-        hide_last_config: '前回の結果を非表示',
         taking_picture: '写真撮影中…',
         analyze_result_fail: 'キャプチャした画像を分析することができません。<br/>次のことを確認してください：<br/>1. キャプチャした画像が白い紙で完全に覆われている。<br/>2. プラットフォームは適切にフォーカスされている。',
         drawing_calibration_image: '較正画像の描画中…',

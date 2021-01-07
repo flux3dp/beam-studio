@@ -903,7 +903,6 @@ export default {
         x_ratio: 'X-Verhältnis',
         y_ratio: 'Y-Verhältnis',
         show_last_config: 'Letztes Ergebnis anzeigen',
-        hide_last_config: 'Letztes Ergebnis ausblenden',
         taking_picture: 'Foto machen...',
         analyze_result_fail: 'Konnte das aufgenommene Bild nichtanalysieren. <br/> Bitte stelle Folgendes sicher: <br/>1. Das aufgenommene Bild ist vollständig mit weißem Papier bedeckt.<br/>2. Die Plattform ist richtig fokussiert.',
         drawing_calibration_image: 'Kalibrierungsbild zeichnen ...',

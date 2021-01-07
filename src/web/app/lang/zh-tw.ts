@@ -903,7 +903,6 @@ export default {
         x_ratio: '水平比例',
         y_ratio: '垂直比例',
         show_last_config: '顯示前次校正結果',
-        hide_last_config: '隱藏前次校正結果',
         taking_picture: '擷取圖片中...',
         analyze_result_fail: '校正失敗<br/>請確認:<br/>1. 校正圖片完整畫在 A4 紙上<br/>2. 已旋轉升降平台旋鈕，直到輕觸焦距螺絲，完成對焦',
         drawing_calibration_image: '繪製校正圖片中...',
