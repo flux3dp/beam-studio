@@ -49,6 +49,7 @@ class LaserPanel extends React.PureComponent {
             height: -3,
             zStep: 0,
             isDiode: false,
+            didDocumentSettingsChanged: false,
         };
     }
 
@@ -59,6 +60,13 @@ class LaserPanel extends React.PureComponent {
 
     componentWillUnmount() {
         BeamboxStore.removeUpdateLaserPanelListener(this.updateData);
+    }
+
+    componentDidUpdate() {
+        const { didDocumentSettingsChanged } = this.state;
+        if (didDocumentSettingsChanged) {
+            this.setState({ didDocumentSettingsChanged: false });
+        }
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -198,6 +206,7 @@ class LaserPanel extends React.PureComponent {
             height:     layerData.height,
             zStep:      layerData.zStep,
             isDiode:    parseInt(layerData.isDiode) > 0,
+            didDocumentSettingsChanged: true,
         });
     }
 

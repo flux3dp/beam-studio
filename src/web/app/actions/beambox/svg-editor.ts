@@ -3330,10 +3330,15 @@ const svgEditor = window['svgEditor'] = (function($) {
             $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
                 evt.stopPropagation();
                 if (!svgCanvas.textActions.isEditing && evt.type === 'input') {
+                    // Hack: Windows input event will some how block undo/redo event
+                    // So do undo/redo when not entering & input event triggered
                     evt.preventDefault();
-                    // Hack: Windows input event will some how block undo event
-                    // So do undo when not entering & input event triggered
-                    clickUndo();
+                    const originalEvent = evt.originalEvent as InputEvent;
+                    if (originalEvent.inputType === 'historyUndo') {
+                        clickUndo();
+                    } else if (originalEvent.inputType === 'historyRedo') {
+                        clickRedo();
+                    }
                     return;
                 }
                 if (evt.key === 'Enter' && !wasNewLineAdded) {
