@@ -3780,36 +3780,6 @@ define([
                     textinput = elem;
                     //			$(textinput).blur(hideCursor);
                 },
-                updateMultiLineTextElem: (textElem) => {
-                    let tspans = Array.from(textElem.childNodes).filter((child) => child.tagName === 'tspan');
-                    const charHeight = parseFloat(canvas.getFontSize());
-                    const letterSpacing = canvas.getLetterSpacing();
-                    for (let i = 0; i < tspans.length; i++) {
-                        if (isVertical) {
-                            let x = [];
-                            let y = [];
-                            const textContent = tspans[i].textContent;
-                            const xPos = $(textElem).attr('x') - i * lineSpacing * charHeight;
-                            let yPos = $(textElem).attr('y');
-                            for (let j = 0; j < textContent.length; j++) {
-                                x.push(xPos.toFixed(2));
-                                y.push(yPos.toFixed(2));
-                                yPos += (1 + letterSpacing) * charHeight;// text spacing
-                            }
-                            $(tspans[i]).attr({
-                                'x': x.join(' '),
-                                'y': y.join(' '),
-                                'vector-effect': 'non-scaling-stroke',
-                            });
-                        } else {
-                            $(tspans[i]).attr({
-                                'x': $(textElem).attr('x'),
-                                'y': $(textElem).attr('y') + i * lineSpacing * charHeight,
-                                'vector-effect': 'non-scaling-stroke',
-                            });
-                        }
-                    }
-                },
                 renderMultiLineText: (textElem, val, showGrips) => {
                     let lines = val.split('\x0b');
                     if (!textElem) {
