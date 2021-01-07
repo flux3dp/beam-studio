@@ -4300,21 +4300,22 @@ define([
                         id = evt.target.id;
                         var pointIndex;
                         if (id.substr(0, 14) === 'pathpointgrip_') {
-                            // Select this point
                             pointIndex = svgedit.path.path.selectedPointIndex = parseInt(id.substr(14));
                             svgedit.path.path.dragging = [start_x, start_y];
                             let point = svgedit.path.path.nodePoints[pointIndex];
-    
-                            // only clear selection if shift is not pressed (otherwise, add
-                            // node to selection)
+
                             if (!evt.shiftKey) {
-                                svgedit.path.path.clearSelection();
-                                svgedit.path.path.addPtsToSelection(pointIndex);
-                            } else if (point.isSelected) {
-                                // this should be move 
-                                svgedit.path.path.removePtFromSelection(pointIndex);
+                                // if not selected: select this point only
+                                if (!point.isSelected || svgedit.path.path.selectedControlPoint) {
+                                    svgedit.path.path.clearSelection();
+                                    svgedit.path.path.addPtsToSelection(pointIndex);
+                                }
                             } else {
-                                svgedit.path.path.addPtsToSelection(pointIndex);
+                                if (point.isSelected && !svgedit.path.path.selectedControlPoint) {
+                                    svgedit.path.path.removePtFromSelection(pointIndex);
+                                } else {
+                                    svgedit.path.path.addPtsToSelection(pointIndex);
+                                }
                             }
                             window.updateContextPanel();
                         } else if (id.indexOf('ctrlpointgrip_') === 0) {
@@ -4493,6 +4494,16 @@ define([
 
                         if (hasMoved) {
                             svgedit.path.path.endChanges('Move path point(s)');
+                        } else {
+                            if (!evt.shiftKey) {
+                                id = evt.target.id;
+                                if (id.substr(0, 14) === 'pathpointgrip_') {
+                                    // Select this point if not moved
+                                    pointIndex = svgedit.path.path.selectedPointIndex = parseInt(id.substr(14));
+                                    svgedit.path.path.clearSelection();
+                                    svgedit.path.path.addPtsToSelection(pointIndex);
+                                }
+                            }
                         }
                     } else if (rubberBox && rubberBox.getAttribute('display') !== 'none') {
                         // Done with multi-node-select
