@@ -1330,13 +1330,13 @@ define([
             if (evt == null) {
                 return null;
             }
-            var mouse_target = evt.target;
+            var mouseTarget = evt.target;
 
-            var $target = $(mouse_target);
+            var $target = $(mouseTarget);
 
             // If it's a selection grip, return the grip parent
             if ($target.closest('#selectorParentGroup').length) {
-                // While we could instead have just returned mouse_target,
+                // While we could instead have just returned mouseTarget,
                 // this makes it easier to indentify as being a selector grip
                 return selectorManager.selectorParentGroup;
             }
@@ -1355,7 +1355,7 @@ define([
             for (let i=0; i < intersectList.length; i++) {
                 let pointInStroke = false;
                 const elem = intersectList[i];
-                if (elem === mouse_target) {
+                if (elem === mouseTarget) {
                     break;
                 }
                 if (!elem.isPointInStroke || typeof elem.isPointInStroke !== 'function') {
@@ -1380,7 +1380,7 @@ define([
                 const originalStrokeWidth = elem.getAttribute('stroke-width');
                 elem.setAttribute('stroke-width', 20);
                 if (elem.isPointInStroke(clickPoint)) {
-                    mouse_target = elem;
+                    mouseTarget = elem;
                     pointInStroke = true;
                 }
                 if (originalStrokeWidth) {
@@ -1398,52 +1398,52 @@ define([
             if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
                 let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
                 if (dist < SENSOR_AREA_RADIUS) {
-                    mouse_target = canvas.sensorAreaInfo.elem;
+                    mouseTarget = canvas.sensorAreaInfo.elem;
                 }
             }
 
             // if it was a <use>, Opera and WebKit return the SVGElementInstance
-            if (mouse_target.correspondingUseElement) {
-                mouse_target = mouse_target.correspondingUseElement;
+            if (mouseTarget.correspondingUseElement) {
+                mouseTarget = mouseTarget.correspondingUseElement;
             }
 
             // for foreign content, go up until we find the foreignObject
             // WebKit browsers set the mouse target to the svgcanvas div
-            if ([NS.MATH, NS.HTML].indexOf(mouse_target.namespaceURI) >= 0 &&
-                mouse_target.id !== 'svgcanvas') {
-                while (mouse_target.nodeName !== 'foreignObject') {
-                    mouse_target = mouse_target.parentNode;
-                    if (!mouse_target) {
+            if ([NS.MATH, NS.HTML].indexOf(mouseTarget.namespaceURI) >= 0 &&
+                mouseTarget.id !== 'svgcanvas') {
+                while (mouseTarget.nodeName !== 'foreignObject') {
+                    mouseTarget = mouseTarget.parentNode;
+                    if (!mouseTarget) {
                         return svgroot;
                     }
                 }
             }
 
-            // Get the desired mouse_target with jQuery selector-fu
+            // Get the desired mouseTarget with jQuery selector-fu
             // If it's root-like, select the root
             var current_layer = getCurrentDrawing().getCurrentLayer();
-            if ([svgroot, container, svgcontent, current_layer].indexOf(mouse_target) >= 0) {
+            if ([svgroot, container, svgcontent, current_layer].indexOf(mouseTarget) >= 0) {
                 return svgroot;
             }
 
-            if (!mouse_target) {
+            if (!mouseTarget) {
                 return svgroot;
             }
 
             // // go up until we hit a child of a layer
-            while (mouse_target.parentNode.parentNode.tagName === 'g') {
-            	mouse_target = mouse_target.parentNode;
+            while (mouseTarget.parentNode.parentNode.tagName === 'g') {
+            	mouseTarget = mouseTarget.parentNode;
             }
-            if (mouse_target.parentNode.tagName === 'g' && mouse_target.parentNode.getAttribute('data-tempgroup') === 'true') {
-            	mouse_target = mouse_target.parentNode;
+            if (mouseTarget.parentNode.tagName === 'g' && mouseTarget.parentNode.getAttribute('data-tempgroup') === 'true') {
+            	mouseTarget = mouseTarget.parentNode;
             }
             // Webkit bubbles the mouse event all the way up to the div, so we
-            // set the mouse_target to the svgroot like the other browsers
-            // if (mouse_target.nodeName.toLowerCase() === 'div') {
-            //     mouse_target = svgroot;
+            // set the mouseTarget to the svgroot like the other browsers
+            // if (mouseTarget.nodeName.toLowerCase() === 'div') {
+            //     mouseTarget = svgroot;
             // }
 
-            return mouse_target;
+            return mouseTarget;
         };
 
         // Function: handleGenerateSensorArea
@@ -1556,10 +1556,6 @@ define([
 
                 var right_click = evt.button === 2;
 
-                if (evt.altKey) { // duplicate when dragging
-                    svgCanvas.cloneSelectedElements(0, 0);
-                }
-
                 root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
 
                 var pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm),
@@ -1591,10 +1587,10 @@ define([
                 var x = mouse_x / current_zoom;
                     y = mouse_y / current_zoom;
 
-                let mouse_target = getMouseTarget(evt);
+                let mouseTarget = getMouseTarget(evt);
 
-                if (mouse_target.tagName === 'a' && mouse_target.childNodes.length === 1) {
-                    mouse_target = mouse_target.firstChild;
+                if (mouseTarget.tagName === 'a' && mouseTarget.childNodes.length === 1) {
+                    mouseTarget = mouseTarget.firstChild;
                 }
 
                 // real_x/y ignores grid-snap value
@@ -1611,9 +1607,9 @@ define([
                 }
 
                 // if it is a selector grip, then it must be a single element selected,
-                // set the mouse_target to that and update the mode to rotate/resize
+                // set the mouseTarget to that and update the mode to rotate/resize
 
-                if (mouse_target === selectorManager.selectorParentGroup && selectedElements[0] != null) {
+                if (mouseTarget === selectorManager.selectorParentGroup && selectedElements[0] != null) {
                     var grip = evt.target;
                     var griptype = elData(grip, 'type');
                     // rotating
@@ -1625,10 +1621,10 @@ define([
                         current_mode = 'resize';
                         current_resize_mode = elData(grip, 'dir');
                     }
-                    mouse_target = selectedElements[0];
+                    mouseTarget = selectedElements[0];
                 }
 
-                if (ext_result = runExtensions('checkMouseTarget', { mouseTarget: mouse_target }, true)) {
+                if (ext_result = runExtensions('checkMouseTarget', { mouseTarget: mouseTarget }, true)) {
                     let extensionEvent = false;
                     $.each(ext_result, function (i, r) {
                         started = started || (r && r.started);
@@ -1638,9 +1634,9 @@ define([
                     }
                 }
 
-                startTransform = mouse_target.getAttribute('transform');
+                startTransform = mouseTarget.getAttribute('transform');
                 var i, stroke_w,
-                    tlist = svgedit.transformlist.getTransformList(mouse_target);
+                    tlist = svgedit.transformlist.getTransformList(mouseTarget);
 
                 switch (current_mode) {
                     case 'select':
@@ -1649,33 +1645,33 @@ define([
                         if (right_click) {
                             started = false;
                         }
-                        const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouse_target);
-                        const isElemTempGroup = mouse_target.getAttribute('data-tempgroup') === 'true';
+                        const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouseTarget);
+                        const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
                         let layerSelectable = false;
                         if (mouseTargetObjectLayer && mouseTargetObjectLayer.elem) {
                             if (mouseTargetObjectLayer.elem.getAttribute('display') !== 'none' && !mouseTargetObjectLayer.elem.getAttribute('data-lock')) {
                                 layerSelectable = true;
                             }
                         }
-                        if (mouse_target !== svgroot && (isElemTempGroup || layerSelectable)) {
-                            // if this element is not yet selected, clear selection and select it
-                            if (selectedElements.indexOf(mouse_target) === -1) {
-                                // only clear selection if shift is not pressed (otherwise, add
-                                // element to selection)
+                        if (mouseTarget !== svgroot && (isElemTempGroup || layerSelectable)) {
+                            // Mouse down on element
+
+                            if (!selectedElements.includes(mouseTarget)) {
                                 if (!evt.shiftKey) {
-                                    // No need to do the call here as it will be done on addToSelection
                                     clearSelection(true);
                                 }
-                                addToSelection([mouse_target]);
-                                justSelected = mouse_target;
+                                addToSelection([mouseTarget]);
+                                justSelected = mouseTarget;
                                 pathActions.clear();
                             }
-                            // else if it's a path, go into pathedit mode in mouseup
-
                             if (!right_click) {
-                                // insert a dummy transform so if the element(s) are moved it will have
-                                // a transform to use for its translate
+                                if (evt.altKey) {
+                                    svgCanvas.cloneSelectedElements(0, 0);
+                                }
+
                                 for (i = 0; i < selectedElements.length; ++i) {
+                                    // insert a dummy transform so if the element(s) are moved it will have
+                                    // a transform to use for its translate
                                     if (selectedElements[i] == null) {
                                         continue;
                                     }
@@ -1688,6 +1684,8 @@ define([
                                 }
                             }
                         } else if (!right_click) {
+                            // Mouse down on svg root
+
                             clearSelection();
                             const selectedLayers = LayerPanelController.getSelectedLayers();
                             if (selectedLayers && selectedLayers.length > 1) {
@@ -1742,11 +1740,11 @@ define([
                         $.each(init_bbox, function (key, val) {
                             bb[key] = val / current_zoom;
                         });
-                        init_bbox = (mouse_target.tagName === 'use') ? svgCanvas.getSvgRealLocation(mouse_target) : bb;
+                        init_bbox = (mouseTarget.tagName === 'use') ? svgCanvas.getSvgRealLocation(mouseTarget) : bb;
 
                         // append three dummy transforms to the tlist so that
                         // we can translate,scale,translate in mousemove
-                        var pos = svgedit.utilities.getRotationAngle(mouse_target) ? 1 : 0;
+                        var pos = svgedit.utilities.getRotationAngle(mouseTarget) ? 1 : 0;
 
                         if (svgedit.math.hasMatrixTransform(tlist)) {
                             tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
@@ -1774,12 +1772,12 @@ define([
                                         }, 0);}
                                     };
                                 }
-                                mouse_target.style.vectorEffect = 'non-scaling-stroke';
+                                mouseTarget.style.vectorEffect = 'non-scaling-stroke';
                                 if (isWebkit) {
-                                    delayedStroke(mouse_target);
+                                    delayedStroke(mouseTarget);
                                 }
 
-                                var all = mouse_target.getElementsByTagName('*'),
+                                var all = mouseTarget.getElementsByTagName('*'),
                                     len = all.length;
                                 for (i = 0; i < len; i++) {
                                     all[i].style.vectorEffect = 'non-scaling-stroke';
@@ -1961,13 +1959,13 @@ define([
                             start_x = xMatchPoint ? xMatchPoint.x * current_zoom : start_x;
                             start_y = yMatchPoint ? yMatchPoint.y * current_zoom : start_y;
                         }
-                        pathActions.mouseDown(evt, mouse_target, start_x, start_y);
+                        pathActions.mouseDown(evt, mouseTarget, start_x, start_y);
                         started = true;
                         break;
                     case 'textedit':
                         start_x *= current_zoom;
                         start_y *= current_zoom;
-                        textActions.mouseDown(evt, mouse_target, start_x, start_y);
+                        textActions.mouseDown(evt, mouseTarget, start_x, start_y);
                         started = true;
                         break;
                     case 'rotate':
@@ -3039,21 +3037,21 @@ define([
                     return;
                 }
 
-                var mouse_target = getMouseTarget(evt);
-                var tagName = mouse_target.tagName;
+                var mouseTarget = getMouseTarget(evt);
+                var tagName = mouseTarget.tagName;
 
                 if (tagName === 'text' && !['textedit', 'text'].includes(current_mode)) {
                     var pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm);
-                    textActions.select(mouse_target, pt.x, pt.y);
+                    textActions.select(mouseTarget, pt.x, pt.y);
                 }
 
-                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouse_target)) {
+                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) {
                     // TODO: Allow method of in-group editing without having to do
                     // this (similar to editing rotated paths)
 
                     // Ungroup and regroup
-                    pushGroupProperties(mouse_target);
-                    mouse_target = selectedElements[0];
+                    pushGroupProperties(mouseTarget);
+                    mouseTarget = selectedElements[0];
                     clearSelection(true);
                 }
                 // Reset context
@@ -3063,11 +3061,11 @@ define([
 
                 if ((parent.tagName !== 'g' && parent.tagName !== 'a') ||
                     parent === getCurrentDrawing().getCurrentLayer() ||
-                    mouse_target === selectorManager.selectorParentGroup) {
+                    mouseTarget === selectorManager.selectorParentGroup) {
                     // Escape from in-group edit
                     return;
                 }
-                // setContext(mouse_target);
+                // setContext(mouseTarget);
             };
 
             // prevent links from being followed in the canvas
@@ -3613,7 +3611,7 @@ define([
                     curtext = elem;
                     textActions.toEditMode();
                 },
-                mouseDown: function (evt, mouse_target, start_x, start_y) {
+                mouseDown: function (evt, mouseTarget, start_x, start_y) {
                     var pt = screenToPt(start_x, start_y);
                     console.log('textaction mousedown');
                     // 
@@ -4089,7 +4087,7 @@ define([
             }
 
             return {
-                mouseDown: function (evt, mouse_target, start_x, start_y) {
+                mouseDown: function (evt, mouseTarget, start_x, start_y) {
                     const xAlignLine = document.getElementById('x_align_line');
                     if (xAlignLine) xAlignLine.remove();
                     const yAlignLine = document.getElementById('y_align_line');
@@ -11204,17 +11202,23 @@ define([
             this.clearSelection(true);
             // note that we loop in the reverse way because of the way elements are added
             // to the selectedElements array (top-first)
-            var drawing = getCurrentDrawing();
+            const drawing = getCurrentDrawing();
+            const currentLayer = drawing.getCurrentLayer();
             i = copiedElements.length;
             while (i--) {
+                const elemLayer = this.getObjectLayer(copiedElements[i]);
+                const destLayer = elemLayer ? elemLayer.elem : currentLayer;
+
                 // clone each element and replace it within copiedElements
                 elem = copiedElements[i] = drawing.copyElem(copiedElements[i]);
-                (current_group || drawing.getCurrentLayer()).appendChild(elem);
+                destLayer.appendChild(elem);
                 batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(elem));
             }
 
             if (!batchCmd.isEmpty()) {
-                addToSelection(copiedElements.reverse()); // Need to reverse for correct selection-adding
+                // Need to reverse for correct selection-adding
+                addToSelection(copiedElements.reverse());
+                this.tempGroupSelectedElements();
                 this.moveSelectedElements(x, y, false);
                 addCommandToHistory(batchCmd);
             }
