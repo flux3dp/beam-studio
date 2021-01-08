@@ -2555,9 +2555,26 @@ define([
                 var useUnit = false; // (curConfig.baseUnit !== 'px');
                 started = false;
                 var attrs, t;
+                selectedElements = selectedElements.filter((e) => e !== null);
                 const isContinuousDrawing = BeamboxPreference.read('continuous_drawing');
 
-                selectedElements = selectedElements.filter((e) => e !== null);
+                const doPreview = (start_x, start_y, real_x, real_y) => {
+                    const callback = () => {
+                        TopBarController.updateTopBar();
+                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
+                            TutorialController.handleNextStep();
+                        }
+                    };
+                    BeamboxActions.startDrawingPreviewBlob();
+                    if (PreviewModeController.isPreviewMode()) {
+                        if (start_x === real_x && start_y === real_y) {
+                            PreviewModeController.preview(real_x, real_y, true, () => callback());
+                        } else {
+                            PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => callback());
+                        }
+                    }
+                };
+
                 switch (current_mode) {
                     case 'pre_preview':
                         if (rubberBox != null) {
@@ -2566,24 +2583,7 @@ define([
                         };
                         current_mode = 'select';
                         TopBarController.setStartPreviewCallback(() => {
-                            BeamboxActions.startDrawingPreviewBlob();
-                            if (PreviewModeController.isPreviewMode()) {
-                                if (start_x === real_x && start_y === real_y) {
-                                    PreviewModeController.preview(real_x, real_y, true, () => {
-                                        TopBarController.updateTopBar();
-                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
-                                            TutorialController.handleNextStep();
-                                        }
-                                    });
-                                } else {
-                                    PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
-                                        TopBarController.updateTopBar();
-                                        if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
-                                            TutorialController.handleNextStep();
-                                        }
-                                    });
-                                }
-                            }
+                            doPreview(start_x, start_y, real_x, real_y);
                         });
                         TopBarController.setShouldStartPreviewController(true);
                         return;
@@ -2592,24 +2592,7 @@ define([
                             rubberBox.setAttribute('display', 'none');
                             curBBoxes = [];
                         };
-                        BeamboxActions.startDrawingPreviewBlob();
-                        if (PreviewModeController.isPreviewMode()) {
-                            if (start_x === real_x && start_y === real_y) {
-                                PreviewModeController.preview(real_x, real_y, true, () => {
-                                    TopBarController.updateTopBar();
-                                    if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
-                                        TutorialController.handleNextStep();
-                                    }
-                                });
-                            } else {
-                                PreviewModeController.previewRegion(start_x, start_y, real_x, real_y, () => {
-                                    TopBarController.updateTopBar();
-                                    if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
-                                        TutorialController.handleNextStep();
-                                    }
-                                });
-                            }
-                        }
+                        doPreview(start_x, start_y, real_x, real_y);
                         current_mode = 'select';
                         // intentionally fall-through to select here
                     case 'resize':
