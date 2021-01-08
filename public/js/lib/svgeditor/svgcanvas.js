@@ -1645,65 +1645,16 @@ define([
                         current_resize_mode = 'none';
                         if (right_click) {
                             started = false;
-                        }
-                        const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouseTarget);
-                        const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
-                        let layerSelectable = false;
-                        if (mouseTargetObjectLayer && mouseTargetObjectLayer.elem) {
-                            if (mouseTargetObjectLayer.elem.getAttribute('display') !== 'none' && !mouseTargetObjectLayer.elem.getAttribute('data-lock')) {
-                                layerSelectable = true;
-                            }
-                        }
-                        if (mouseTarget !== svgroot && (isElemTempGroup || layerSelectable)) {
-                            // Mouse down on element
-
-                            if (!selectedElements.includes(mouseTarget)) {
-                                if (!evt.shiftKey) {
-                                    clearSelection(true);
-                                }
-                                addToSelection([mouseTarget]);
-                                justSelected = mouseTarget;
-                                pathActions.clear();
-                            }
-                            if (!right_click) {
-                                if (evt.altKey) {
-                                    const cmd = canvas.cloneSelectedElements(0, 0, true);
-                                    if (cmd && !cmd.isEmpty()) {
-                                        mouseSelectModeCmds.push(cmd);
-                                    }
-                                }
-
-                                for (i = 0; i < selectedElements.length; ++i) {
-                                    // insert a dummy transform so if the element(s) are moved it will have
-                                    // a transform to use for its translate
-                                    if (selectedElements[i] == null) {
-                                        continue;
-                                    }
-                                    var slist = svgedit.transformlist.getTransformList(selectedElements[i]);
-                                    if (slist.numberOfItems) {
-                                        slist.insertItemBefore(svgroot.createSVGTransform(), 0);
-                                    } else {
-                                        slist.appendItem(svgroot.createSVGTransform());
-                                    }
-                                }
-                            }
-                        } else if (!right_click) {
-                            // Mouse down on svg root
-
-                            clearSelection();
+                        } else {
+                            // End layer multiselect
                             const selectedLayers = LayerPanelController.getSelectedLayers();
                             if (selectedLayers && selectedLayers.length > 1) {
                                 const currentLayerName = getCurrentDrawing().getCurrentLayerName();
                                 if (currentLayerName) LayerPanelController.setSelectedLayers([currentLayerName]);
                             }
-                            if (PreviewModeController.isPreviewMode()) {
-                                current_mode = 'preview';
-                            } else if (TopBarController.getTopBarPreviewMode()) {
-                                current_mode = 'pre_preview';
-                            } else {
-                                current_mode = 'multiselect';
-                            }
+                        }
 
+                        const setRubberBoxStart = () => {
                             if (rubberBox == null) {
                                 rubberBox = selectorManager.getRubberBandBox();
                             }
@@ -1717,6 +1668,65 @@ define([
                                 'height': 0,
                                 'display': 'inline'
                             }, 100);
+                        };
+                        
+                        if (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) {
+                            // preview mode
+                            clearSelection();
+                            if (PreviewModeController.isPreviewMode()) {
+                                current_mode = 'preview';
+                            } else {
+                                // i.e. TopBarController.getTopBarPreviewMode()
+                                current_mode = 'pre_preview';
+                            }
+                            setRubberBoxStart();
+                        } else {
+                            const mouseTargetObjectLayer = svgCanvas.getObjectLayer(mouseTarget);
+                            const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
+                            let layerSelectable = false;
+                            if (mouseTargetObjectLayer &&
+                                mouseTargetObjectLayer.elem &&
+                                mouseTargetObjectLayer.elem.getAttribute('display') !== 'none' &&
+                                !mouseTargetObjectLayer.elem.getAttribute('data-lock')) {
+                                layerSelectable = true;
+                            }
+                            if (mouseTarget !== svgroot && (isElemTempGroup || layerSelectable)) {
+                                // Mouse down on element
+                                if (!selectedElements.includes(mouseTarget)) {
+                                    if (!evt.shiftKey) {
+                                        clearSelection(true);
+                                    }
+                                    addToSelection([mouseTarget]);
+                                    justSelected = mouseTarget;
+                                    pathActions.clear();
+                                }
+                                if (!right_click) {
+                                    if (evt.altKey) {
+                                        const cmd = canvas.cloneSelectedElements(0, 0, true);
+                                        if (cmd && !cmd.isEmpty()) {
+                                            mouseSelectModeCmds.push(cmd);
+                                        }
+                                    }
+                                    for (i = 0; i < selectedElements.length; ++i) {
+                                        // insert a dummy transform so if the element(s) are moved it will have
+                                        // a transform to use for its translate
+                                        if (selectedElements[i] == null) {
+                                            continue;
+                                        }
+                                        var slist = svgedit.transformlist.getTransformList(selectedElements[i]);
+                                        if (slist.numberOfItems) {
+                                            slist.insertItemBefore(svgroot.createSVGTransform(), 0);
+                                        } else {
+                                            slist.appendItem(svgroot.createSVGTransform());
+                                        }
+                                    }
+                                }
+                            } else if (!right_click) {
+                                // Mouse down on svg root
+                                clearSelection();
+                                current_mode = 'multiselect';
+                                setRubberBoxStart();
+                            }
                         }
                         break;
                     case 'zoom':
