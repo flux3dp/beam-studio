@@ -1072,7 +1072,7 @@ define([
         // Function: recalculateAllSelectedDimensions
         // Runs recalculateDimensions on the selected elements,
         // adding the changes to a single batch command
-        var recalculateAllSelectedDimensions = this.recalculateAllSelectedDimensions = function () {
+        var recalculateAllSelectedDimensions = this.recalculateAllSelectedDimensions = function (isSubCommand=false) {
             var text = (current_resize_mode === 'none' ? 'position' : 'size');
             var batchCmd = new svgedit.history.BatchCommand(text);
 
@@ -1087,9 +1087,12 @@ define([
             }
 
             if (!batchCmd.isEmpty()) {
-                addCommandToHistory(batchCmd);
+                if (!isSubCommand) {
+                    addCommandToHistory(batchCmd);
+                }
                 call('changed', selectedElements);
             }
+            return batchCmd;
         };
 
 
@@ -1540,6 +1543,8 @@ define([
                     y: spline.y
                 };
             };
+
+            let mouseSelectModeCmds;
             // - when we are in a create mode, the element is added to the canvas
             // but the action is not recorded until mousing up
             // - when we are in select mode, select the element, remember the position
@@ -1548,6 +1553,7 @@ define([
                 if (canvas.spaceKey || evt.button === 1) {
                     return;
                 }
+                mouseSelectModeCmds = [];
 
                 var right_click = evt.button === 2;
 
@@ -1661,7 +1667,10 @@ define([
                             }
                             if (!right_click) {
                                 if (evt.altKey) {
-                                    svgCanvas.cloneSelectedElements(0, 0);
+                                    const cmd = canvas.cloneSelectedElements(0, 0, true);
+                                    if (cmd && !cmd.isEmpty()) {
+                                        mouseSelectModeCmds.push(cmd);
+                                    }
                                 }
 
                                 for (i = 0; i < selectedElements.length; ++i) {
@@ -2659,7 +2668,10 @@ define([
                                 }
                             }
                             // always recalculate dimensions to strip off stray identity transforms
-                            recalculateAllSelectedDimensions();
+                            const cmd = recalculateAllSelectedDimensions(true);
+                            if (cmd && !cmd.isEmpty()) {
+                                mouseSelectModeCmds.push(cmd);
+                            }
                             // if it was being dragged/resized
                             if (real_x !== r_start_x || real_y !== r_start_y) {
                                 var i, len = selectedElements.length;
@@ -2726,6 +2738,16 @@ define([
                         if (selectedElements.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
+                        }
+                        
+                        if (mouseSelectModeCmds.length > 1) {
+                            const batchCmd = new svgedit.history.BatchCommand('Mouse Event');
+                            for (let i = 0; i < mouseSelectModeCmds.length; i++) {
+                                batchCmd.addSubCommand(mouseSelectModeCmds[i]);
+                            }
+                            addCommandToHistory(batchCmd);
+                        } else if (mouseSelectModeCmds.length === 1) {
+                            addCommandToHistory(mouseSelectModeCmds[0]);
                         }
 
                         return;
@@ -11119,7 +11141,7 @@ define([
         // Function: cloneSelectedElements
         // Create deep DOM copies (clones) of all selected elements and move them slightly
         // from their originals
-        this.cloneSelectedElements = function (x, y) {
+        this.cloneSelectedElements = function (x, y, isSubCmd=false) {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -11163,8 +11185,11 @@ define([
                 addToSelection(copiedElements.reverse());
                 this.tempGroupSelectedElements();
                 this.moveSelectedElements(x, y, false);
-                addCommandToHistory(batchCmd);
+                if (!isSubCmd) {
+                    addCommandToHistory(batchCmd);
+                }
             }
+            return batchCmd;
         };
 
         // Function: alignSelectedElements
