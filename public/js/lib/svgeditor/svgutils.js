@@ -1102,11 +1102,13 @@ svgedit.utilities.assignAttributes = function(node, attrs, suspendLength, unitCh
 	}
 };
 
-// Function: cleanupElement
-// Remove unneeded (default) attributes, makes resulting SVG smaller
-//
-// Parameters:
-// element - DOM element to clean up
+const shapeElementsTags = ['circle', 'ellipse', 'line', 'mesh', 'path', 'polygon', 'polyline', 'rect',];
+
+/**
+ * cleanUpElement
+ * Remove unneeded (default) attributes and useless childnodes, makes resulting SVG smaller
+ * @param {Element} element DOM element to clean up
+ */
 svgedit.utilities.cleanupElement = function(element) {
 	var defaults = {
 		'fill-opacity':1,
@@ -1126,6 +1128,12 @@ svgedit.utilities.cleanupElement = function(element) {
 		// Ellipse elements requires rx and ry attributes
 		delete defaults.rx;
 		delete defaults.ry;
+	}
+
+	if (shapeElementsTags.includes(element.tagName)) {
+		while (element.firstChild) {
+			element.firstChild.remove();
+		}
 	}
 
 	var attr;
