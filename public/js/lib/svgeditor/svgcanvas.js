@@ -1212,9 +1212,10 @@ define([
             });
 
             // Make sure first elements are not null
-            while (selectedElements[0] == null) {
-                selectedElements.shift(0);
-            }
+            selectedElements = selectedElements.filter((elem) => elem);
+            // while (selectedElements[0] == null) {
+            //     selectedElements.shift(0);
+            // }
             LayerPanelController.updateLayerPanel();
         };
 
@@ -1316,15 +1317,13 @@ define([
             }
         }
 
-        // Function: getMouseTarget
-        // Gets the desired element from a mouse event
-        //
-        // Parameters:
-        // evt - Event object from the mouse event
-        //
-        // Returns:
-        // DOM element we want
-        var getMouseTarget = this.getMouseTarget = function (evt) {
+        /**
+         * Gets the desired element from a mouse event
+         * @param {MouseEvent} evt Event object from the mouse event
+         * @param {boolean} allowTempGroup (deafult true) allow to return temp group, else return child of temp group
+         * @returns {Element} mouse target element
+         */
+        var getMouseTarget = this.getMouseTarget = function (evt, allowTempGroup=true) {
             if (evt == null) {
                 return null;
             }
@@ -1341,6 +1340,8 @@ define([
 
             const root_sctm = $('#svgcontent')[0].getScreenCTM().inverse();
             let pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm);
+
+            // bbox center at x, y width, hieght 10px
             const selectionRegion = {
                 x: pt.x - 50,
                 y: pt.y - 50,
@@ -1391,12 +1392,14 @@ define([
                 }
             }
 
-            const mouse_x = pt.x * current_zoom;
-            const mouse_y = pt.y * current_zoom;
-            if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
-                let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
-                if (dist < SENSOR_AREA_RADIUS) {
-                    mouseTarget = canvas.sensorAreaInfo.elem;
+            if (mouseTarget === svgroot) {
+                const mouse_x = pt.x * current_zoom;
+                const mouse_y = pt.y * current_zoom;
+                if (canvas.sensorAreaInfo && !PreviewModeController.isPreviewMode()) {
+                    let dist = Math.hypot(canvas.sensorAreaInfo.x - mouse_x, canvas.sensorAreaInfo.y - mouse_y);
+                    if (dist < SENSOR_AREA_RADIUS) {
+                        mouseTarget = canvas.sensorAreaInfo.elem;
+                    }
                 }
             }
 
@@ -1432,7 +1435,7 @@ define([
             while (mouseTarget.parentNode.parentNode.tagName === 'g') {
             	mouseTarget = mouseTarget.parentNode;
             }
-            if (mouseTarget.parentNode.tagName === 'g' && mouseTarget.parentNode.getAttribute('data-tempgroup') === 'true') {
+            if (allowTempGroup && mouseTarget.parentNode.getAttribute('data-tempgroup') === 'true') {
             	mouseTarget = mouseTarget.parentNode;
             }
             // Webkit bubbles the mouse event all the way up to the div, so we
@@ -1697,8 +1700,20 @@ define([
                                         clearSelection(true);
                                     }
                                     addToSelection([mouseTarget]);
+                                    if (selectedElements.length > 1) {
+                                        canvas.tempGroupSelectedElements();
+                                    }
                                     justSelected = mouseTarget;
                                     pathActions.clear();
+                                } else {
+                                    if (evt.shiftKey) {
+                                        if (mouseTarget === tempGroup) {
+                                            const elemToRemove = getMouseTarget(evt, false);
+                                            canvas.removeFromTempGroup(elemToRemove);
+                                        } else {
+                                            clearSelection();
+                                        }
+                                    }
                                 }
                                 if (!right_click) {
                                     if (evt.altKey) {
@@ -10063,8 +10078,8 @@ define([
                     elem = elem.parentNode;
                 }
 
-                const original_layer = this.getObjectLayer(elem).title;
-                $(elem).attr('data-original-layer', original_layer);
+                const originalLayer = this.getObjectLayer(elem).title;
+                elem.setAttribute('data-original-layer', originalLayer);
 
                 var oldNextSibling = elem.nextSibling;
                 var oldParent = elem.parentNode;
@@ -10340,9 +10355,9 @@ define([
                         continue;
                     }
 
-                    const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
-                    if (original_layer) {
-                        original_layer.appendChild(elem);
+                    const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
+                    if (originalLayer) {
+                        originalLayer.appendChild(elem);
                         if (this.isUsingLayerColor) {
                             this.updateElementColor(elem);
                         }
@@ -10414,7 +10429,6 @@ define([
                 }
                 if (elem === tempGroup || elem.getAttribute('data-tempgroup') === 'true') {
                     while (elem.childNodes.length > 0) {
-                        console.log(elem.childNodes[0]);
                         g.appendChild(elem.childNodes[0]);
                     }
                     elem.remove();
@@ -10471,6 +10485,46 @@ define([
             return g;
         };
 
+        /**
+         * remove elemt from temp group
+         * @param {Element} elem element to remove
+         */
+        this.removeFromTempGroup = (elem) => {
+            if (!tempGroup || !tempGroup.contains(elem)) {
+                return;
+            }
+            const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
+            const currentLayer = getCurrentDrawing().getCurrentLayer();
+            const targetLayer = originalLayer || currentLayer;
+            let nextSiblingId = elem.getAttribute('data-next-sibling');
+            if (nextSiblingId) {
+                nextSiblingId = nextSiblingId.replace('#', '\\#');
+                const nextSibling = targetLayer.querySelector(`#${nextSiblingId}`);
+                if (nextSibling) {
+                    targetLayer.insertBefore(elem, nextSibling);
+                } else {
+                    targetLayer.appendChild(elem)
+                }
+                elem.removeAttribute('data-next-sibling')
+            } else {
+                targetLayer.appendChild(elem);
+            }
+            if (this.isUsingLayerColor) {
+                this.updateElementColor(elem);
+            }
+            if (tempGroup.childNodes.length > 1) {
+                selectorManager.requestSelector(tempGroup).resize();
+                window.updateContextPanel();
+            } else if (tempGroup.childNodes.length === 1) {
+                const lastElem = tempGroup.firstChild;
+                this.ungroupTempGroup();
+                this.selectOnly([lastElem], true);
+            } else {
+                console.warn('Removing last child from temp group. This should not happen, should find out why');
+                this.ungroupTempGroup();
+            }
+        };
+
         this.ungroupAllTempGroup = function() {
             const allTempGroups = Array.from(document.querySelectorAll('[data-tempgroup="true"]'));
             allTempGroups.forEach((g) => {
@@ -10515,40 +10569,24 @@ define([
                         oldParent.removeChild(elem);
                         continue;
                     }
-                    const original_layer = getCurrentDrawing().getLayerByName($(elem).attr('data-original-layer'));
+                    const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
                     const currentLayer = getCurrentDrawing().getCurrentLayer();
-                    if (original_layer) {
-                        if (elem.getAttribute('data-next-sibling')) {
-                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
-                            const nextSibling = original_layer.querySelector(`#${nextSiblingId}`);
-                            if (nextSibling) {
-                                original_layer.insertBefore(elem, nextSibling);
-                            } else {
-                                original_layer.appendChild(elem)
-                            }
-                            elem.removeAttribute('data-next-sibling')
+                    const targetLayer = originalLayer || currentLayer;
+                    let nextSiblingId = elem.getAttribute('data-next-sibling');
+                    if (nextSiblingId) {
+                        nextSiblingId = nextSiblingId.replace('#', '\\#');
+                        const nextSibling = targetLayer.querySelector(`#${nextSiblingId}`);
+                        if (nextSibling) {
+                            targetLayer.insertBefore(elem, nextSibling);
                         } else {
-                            original_layer.appendChild(elem);
+                            targetLayer.appendChild(elem)
                         }
-                        if (this.isUsingLayerColor) {
-                            this.updateElementColor(elem);
-                        }
+                        elem.removeAttribute('data-next-sibling')
                     } else {
-                        if (elem.getAttribute('data-next-sibling')) {
-                            const nextSiblingId = elem.getAttribute('data-next-sibling').replace('#', '\\#');
-                            const nextSibling = currentLayer.querySelector(`#${nextSiblingId}`);
-                            if (nextSibling) {
-                                currentLayer.insertBefore(elem, nextSibling);
-                            } else {
-                                currentLayer.appendChild(elem);
-                            }
-                            elem.removeAttribute('data-next-sibling')
-                        } else {
-                            currentLayer.appendChild(elem);
-                        }
-                        if (this.isUsingLayerColor) {
-                            this.updateElementColor(elem);
-                        }
+                        targetLayer.appendChild(elem);
+                    }
+                    if (this.isUsingLayerColor) {
+                        this.updateElementColor(elem);
                     }
                     children[i++] = elem;
                 }
