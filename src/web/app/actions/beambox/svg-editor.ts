@@ -27,6 +27,7 @@ import RightPanelController from '../../views/beambox/Right-Panels/contexts/Righ
 import LayerPanelController from '../../views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/ObjectPanelController';
 import TopBarController from '../../views/beambox/Top-Bar/contexts/Top-Bar-Controller';
+import { NounProjectPanelController } from '../../views/beambox/Noun-Project-Panel';
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
 import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
@@ -48,6 +49,7 @@ import AlertConfig from '../../../helpers/api/alert-config';
 import Config from '../../../helpers/api/config';
 import SvgLaserParser from '../../../helpers/api/svg-laser-parser';
 import { IFont } from '../../../interfaces/IFont';
+import { IIcon } from '../../../interfaces/INoun-Project'
 import { IStorage } from '../../../interfaces/IStorage';
 
 // @ts-expect-error
@@ -5614,7 +5616,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
 
                 const readImage = (file, scale = 1, offset = null) => {
-                    return new Promise((resolve, reject) => {
+                    return new Promise<void>((resolve, reject) => {
                         var defaultX = 0, defaultY = 0;
                         if (offset) {
                             defaultX = offset[0];
@@ -5691,7 +5693,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 editor.readImage = readImage;
                 const replaceBitmap = async (file, imageElem) => {
                     Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
-                    return new Promise((resolve, reject) => {
+                    return new Promise<void>((resolve, reject) => {
                         const reader = new FileReader();
                         reader.onloadend = async function (e) {
                             let rotationFlag = getExifRotationFlag(e.target.result as string);
@@ -5837,32 +5839,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 editor.readSVG = readSVG;
                 const importSvg = async (file, skipVersionWarning=false, supportByLayer=true) => {
-                    const checkSvgfileSupportByLayer = async (file) => {
-                        return new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onloadend = function (e) {
-                                const svgString = e.target.result as string;
-                                const matchAI = svgString.match(/<!-- Generator: Adobe Illustrator/);
-                                if (matchAI) {
-                                    resolve(true);
-                                    return;
-                                }
-                                const matchInkscape = svgString.match(/inkscape:version/);
-                                if (matchInkscape) {
-                                    resolve(true);
-                                    return;
-                                }
-                                const matchCoralDraw = svgString.match(/<!-- Creator: CorelDRAW/);
-                                if (matchCoralDraw) {
-                                    resolve(true);
-                                    return;
-                                }
-                                resolve(false);
-                            }
-                            reader.readAsText(file);
-
-                        });
-                    }
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file, skipVersionWarning);
                         if (result !== 'ok') {
@@ -5947,7 +5923,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         callbacks.splice(0, 1);
                     }
                     Alert.popUp({
-                        id: 'confirm_mouse_input_device',
+                        id: 'select-import-method',
                         message: LANG.popup.select_import_method,
                         buttonLabels: buttonLabels,
                         callbacks: callbacks,
@@ -6188,7 +6164,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         buttonType: AlertConstants.CONFIRM_CANCEL,
                         message: LANG.right_panel.laser_panel.sure_to_load_config,
                         onConfirm: async () => {
-                            await new Promise(resolve => {
+                            await new Promise<void>(resolve => {
                                 const reader = new FileReader();
                                 reader.onloadend = (evt) => {
                                     const configString = evt.target.result as string;
@@ -6223,6 +6199,13 @@ const svgEditor = window['svgEditor'] = (function($) {
                     e.preventDefault();
                     $('#workarea').removeAttr('style');
                     $('#main_menu').hide();
+                    console.log(e.dataTransfer, e.dataTransfer.types);
+                    if (e.dataTransfer && e.dataTransfer.types.includes('text/noun-project-icon')) {
+                        const nounProjectIcon = JSON.parse(e.dataTransfer.getData('text/noun-project-icon')) as IIcon;
+                        NounProjectPanelController.emit('insertIcon', nounProjectIcon);
+                        return;
+                    }
+                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
                     const file = (e.type === 'drop') ? e.dataTransfer.files[0] : this.files[0];
                     if (!file) {
                         Progress.popById('loading_image');
@@ -6232,6 +6215,19 @@ const svgEditor = window['svgEditor'] = (function($) {
                     // let file input import same file again.
                     // Beacause function 'importImage' is triggered by onChange event, so we remove the value to ensure onChange event fire
                     $(this).attr('value', '');
+                };
+
+                const importIconFromNounProject = async (icon: IIcon) => {
+                    console.log(icon);
+                    if (icon.icon_url) {
+                        const response = await fetch(icon.icon_url);
+                        const blob = await response.blob();
+                        importSvg(blob);
+                    } else {
+                        const response = await fetch(icon.preview_url);
+                        const blob = await response.blob();
+                        readImage(blob);
+                    }
                 };
 
                 const handleFile = (file) => {
