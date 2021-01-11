@@ -69,6 +69,10 @@ const workareaOptions = [
     {label: 'Beambox Pro', value: 'fbb1p'},
 ]
 
+if (window['FLUX'].dev) {
+    workareaOptions.push({ label: 'Beambox2', value: 'fbb2b' });
+}
+
 export default class DocumentPanel extends React.PureComponent {
     constructor() {
         super();

@@ -31,7 +31,7 @@ const nextStepRequirements = {
 const isMac = process.platform === 'darwin';
 
 const adjustFocusLinkClick = () => {
-    // TODO: Check logic
+    // TODO: Add adjust focus link for Beambox2
     const model = BeamboxPreference.read('model') || 'fbb1b';
     if (['fbm1'].includes(model)) {
         electron.remote.shell.openExternal(LANG.links.adjust_focus_bm);
