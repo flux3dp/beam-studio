@@ -1,5 +1,6 @@
 import * as i18n from '../../../helpers/i18n';
 import ElectronUpdater from '../../../helpers/electron-updater';
+import FileExportHelper from '../../../helpers/file-export-helper';
 import GlobalInteraction from '../global-interaction';
 import BeamboxActions from '../beambox';
 import BeamboxPreference from './beambox-preference';
@@ -17,7 +18,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
     constructor() {
         super();
         const loadExampleFile = async (path: string) => {
-            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            const res = await FileExportHelper.toggleUnsavedChangedDialog();
             if (!res) return; 
             var oReq = new XMLHttpRequest();
             oReq.open('GET', path, true);
@@ -51,12 +52,12 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'IMPORT_MATERIAL_TESTING_ENGRAVE': () => {loadExampleFile('examples/mat_test_engrave.bvg')},
             'IMPORT_MATERIAL_TESTING_LINE': () => {loadExampleFile('examples/mat_test_line.bvg')},
             'IMPORT_HELLO_BEAMBOX': () => {loadExampleFile('examples/hello-beambox.bvg')},
-            'SAVE_SCENE': () => FnWrapper.saveFile(),
-            'SAVE_AS': () => FnWrapper.saveAsFile(),
-            'EXPORT_BVG': () => FnWrapper.exportAsBVG(),
-            'EXPORT_SVG': () => FnWrapper.exportAsSVG(),
-            'EXPORT_PNG': () => FnWrapper.exportAsImage('png'),
-            'EXPORT_JPG': () => FnWrapper.exportAsImage('jpg'),
+            'SAVE_SCENE': () => FileExportHelper.saveFile(),
+            'SAVE_AS': () => FileExportHelper.saveAsFile(),
+            'EXPORT_BVG': () => FileExportHelper.exportAsBVG(),
+            'EXPORT_SVG': () => FileExportHelper.exportAsSVG(),
+            'EXPORT_PNG': () => FileExportHelper.exportAsImage('png'),
+            'EXPORT_JPG': () => FileExportHelper.exportAsImage('jpg'),
             'EXPORT_FLUX_TASK': () => ExportFuncs.exportFcode(),
             'UNDO': () => svgEditor.clickUndo(),
             'REDO': () => svgEditor.clickRedo(),

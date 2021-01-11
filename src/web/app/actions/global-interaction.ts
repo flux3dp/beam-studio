@@ -1,4 +1,4 @@
-import FnWrapper from './beambox/svgeditor-function-wrapper';
+import FileExportHelper from '../../helpers/file-export-helper';
 
 let MENU_ITEMS = ["IMPORT", "EXPORT_FLUX_TASK", "SAVE_SCENE",
                     "UNDO", "DUPLICATE", 'PHOTO_EDIT', 'DOCUMENT_SETTING', "CLEAR_SCENE",
@@ -15,11 +15,11 @@ if (electron) {
 
     defaultAction = {
         PREFERENCE: async () => {
-            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            const res = await FileExportHelper.toggleUnsavedChangedDialog();
             if (res) location.hash = '#studio/settings';
         },
         ADD_NEW_MACHINE: async () => {
-            const res = await FnWrapper.toggleUnsavedChangedDialog();
+            const res = await FileExportHelper.toggleUnsavedChangedDialog();
             if (res) location.hash = '#initialize/connect/select-connection-type';
         },
         RELOAD_APP: () => {
@@ -38,7 +38,7 @@ if (electron) {
 
     ipc.on('WINDOW_CLOSE', async (event, e) => {
         const ipc = electron.ipc;
-        const res = await FnWrapper.toggleUnsavedChangedDialog();
+        const res = await FileExportHelper.toggleUnsavedChangedDialog();
         if (res) ipc.send('CLOSE_REPLY', true);
     });
 }

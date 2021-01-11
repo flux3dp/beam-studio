@@ -48,7 +48,7 @@ let _align = function(types) {
     svgCanvas.tempGroupSelectedElements();
 };
 
-const funcs =  {
+const funcs = {
     clearSelection: function() {
         svgCanvas.clearSelection();
     },
@@ -212,18 +212,6 @@ const funcs =  {
     ungroupSelected: function() {
         svgCanvas.ungroupSelectedElement();
     },
-    booleanUnion: function() {
-        svgCanvas.booleanOperationSelectedElements('union');
-    },
-    booleanDifference: function() {
-        svgCanvas.booleanOperationSelectedElements('diff');
-    },
-    booleanIntersect: function() {
-        svgCanvas.booleanOperationSelectedElements('intersect');
-    },
-    booleanXor: function() {
-        svgCanvas.booleanOperationSelectedElements('xor');
-    },
 
     //align toolbox
     alignLeft: function() {
@@ -303,145 +291,6 @@ const funcs =  {
 
     enterPreviewMode: function() {
         svgCanvas.setMode('preview');
-    },
-    saveFile: async function() {
-        if (!svgCanvas.currentFilePath) {
-            const result = await this.saveAsFile();
-            return result;
-        } else {
-            svgCanvas.clearSelection();
-            const output = svgCanvas.getSvgString();
-            const fs = requireNode('fs');
-            console.log(svgCanvas.currentFilePath);
-            if (svgCanvas.currentFilePath.endsWith('.bvg')) {
-                fs.writeFile(svgCanvas.currentFilePath, output, function(err) {
-                    if (err) {
-                        console.log('Save Err', err);
-                        return;
-                    }
-                    console.log('saved');
-                });
-                svgCanvas.setHasUnsavedChange(false, false);
-                return true;
-            } else if (svgCanvas.currentFilePath.endsWith('.beam')) {
-                const ImageSource = await svgCanvas.getImageSource();
-                await BeamFileHelper.saveBeam(svgCanvas.currentFilePath, output, ImageSource);
-                svgCanvas.setHasUnsavedChange(false, false);
-                return true;
-            }
-        }
-    },
-
-    saveAsFile: async function() {
-        svgCanvas.clearSelection();
-        const output = svgCanvas.getSvgString();
-        const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-        const langFile = i18n.lang.topmenu.file;
-        const ImageSource = await svgCanvas.getImageSource();
-        const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.bvg_files, ['beam'], defaultFileName);
-        if (currentFilePath) {
-            svgCanvas.currentFilePath = currentFilePath;
-            await BeamFileHelper.saveBeam(currentFilePath, output, ImageSource);
-            this.setCurrentFileName(currentFilePath);
-            svgCanvas.setHasUnsavedChange(false, false);
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    exportAsBVG: async function() {
-        svgCanvas.clearSelection();
-        SymbolMaker.switchImageSymbolForAll(false);
-        const output = svgCanvas.getSvgString();
-        SymbolMaker.switchImageSymbolForAll(true);
-        const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-        const langFile = i18n.lang.topmenu.file;
-        let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
-        if (currentFilePath) {
-            this.setCurrentFileName(currentFilePath);
-            svgCanvas.setHasUnsavedChange(false, false);
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    setCurrentFileName: (filePath) => {
-        let currentFileName;
-        if (process.platform === 'win32') {
-            currentFileName = filePath.split('\\');
-        } else {
-            currentFileName = filePath.split('/');
-        }
-        currentFileName = currentFileName[currentFileName.length -1];
-        currentFileName = currentFileName.slice(0, currentFileName.lastIndexOf('.')).replace(':', "/");
-        svgCanvas.setLatestImportFileName(currentFileName);
-        svgCanvas.filePath = filePath;
-        svgCanvas.updateRecentFiles(filePath);
-    },
-
-    toggleUnsavedChangedDialog: async function () {
-        return new Promise((resolve) => {
-            electron.ipc.send('SAVE_DIALOG_POPPED');
-            if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
-                resolve(true);
-            } else {
-                Alert.popById('unsaved_change_dialog');
-                Alert.popUp({
-                    id: 'unsaved_change_dialog',
-                    message: LANG.popup.save_unsave_changed,
-                    buttonLabels: [i18n.lang.alert.save, i18n.lang.alert.dont_save, i18n.lang.alert.cancel],
-                    callbacks: [
-                        async () => {
-                            if (await this.saveFile()) {
-                                resolve(true);
-                            }
-                        },
-                        () => {
-                            resolve(true);
-                        },
-                        () => {
-                            resolve(false);
-                        },
-                    ],
-                    primaryButtonIndex: 0
-                });
-            }
-        });
-    },
-
-    exportAsSVG: function() {
-        svgCanvas.clearSelection();
-        $('g.layer').removeAttr('clip-path');
-        SymbolMaker.switchImageSymbolForAll(false);
-        const output = svgCanvas.getSvgString();
-        $('g.layer').attr('clip-path', 'url(#scene_mask)');
-        SymbolMaker.switchImageSymbolForAll(true);
-        const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-        const langFile = i18n.lang.topmenu.file;
-        electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
-    },
-
-    exportAsImage: async (type) => {
-        svgCanvas.clearSelection();
-        SymbolMaker.switchImageSymbolForAll(false);
-        const output = svgCanvas.getSvgString();
-        SymbolMaker.switchImageSymbolForAll(true);
-        const langFile = i18n.lang.topmenu.file;
-        Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
-        const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-        let image = await svgCanvas.svgStringToImage(type, output);
-        image = image.replace(/^data:image\/\w+;base64,/, "");
-        const buf = Buffer.from(image, 'base64');
-        Progress.popById('export_image');
-        switch (type) {
-            case 'png':
-                electron.ipc.sendSync('save-dialog', langFile.save_png, langFile.all_files, langFile.png_files, ['png'], defaultFileName, buf, localStorage.getItem('lang'));
-                break;
-            case 'jpg':
-                electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
-        }
     },
 
     //top panel

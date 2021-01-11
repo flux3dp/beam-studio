@@ -4,7 +4,7 @@ import sprintf from './sprintf';
 import Alert from '../app/contexts/AlertCaller';
 import AlertConstants from '../app/constants/alert-constants';
 import Progress from '../app/contexts/ProgressCaller';
-import FnWrapper from '../app/actions/beambox/svgeditor-function-wrapper';
+import FileExportHelper from './file-export-helper';
 
 const electron = window["electron"];
 const LANG = i18n.lang.update.software;
@@ -64,7 +64,7 @@ const checkForUpdate = (isAutoCheck) => {
                             message: msg,
                             caption: LANG.check_update,
                             onYes: async () => {
-                                const res = await FnWrapper.toggleUnsavedChangedDialog();
+                                const res = await FileExportHelper.toggleUnsavedChangedDialog();
                                 if (res) ipc.send(events.QUIT_AND_INSTALL);
                             }
                         });
@@ -122,7 +122,7 @@ const switchVersion = () => {
                             message: msg,
                             caption: LANG.switch_version,
                             onYes: async () => {
-                                const res = await FnWrapper.toggleUnsavedChangedDialog();
+                                const res = await FileExportHelper.toggleUnsavedChangedDialog();
                                 if (res) ipc.send(events.QUIT_AND_INSTALL);
                             }
                         });

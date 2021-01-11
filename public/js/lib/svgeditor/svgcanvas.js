@@ -44,11 +44,11 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/beambox/open-bottom-boundary-drawer',
-    'app/actions/beambox/svgeditor-function-wrapper',
     'app/contexts/ProgressCaller',
     'helpers/api/config',
     'helpers/beam-file-helper',
     'helpers/bezier-fit-curve',
+    'helpers/file-export-helper',
     'helpers/image-data',
     'helpers/layer-helper',
     'helpers/local-storage',
@@ -73,11 +73,11 @@ define([
     BeamboxActions,
     Constant,
     OpenBottomBoundaryDrawer,
-    FnWrapper,
     Progress,
     Config,
     BeamFileHelper,
     BezierFitCurve,
+    FileExportHelper,
     ImageData,
     LayerHelper,
     LocalStorage,
@@ -102,11 +102,11 @@ define([
     BeamboxActions = BeamboxActions.default;
     Constant = Constant.default;
     OpenBottomBoundaryDrawer = OpenBottomBoundaryDrawer.default;
-    FnWrapper = FnWrapper.default;
     Progress = Progress.default;
     Config = Config.default;
     BeamFileHelper = BeamFileHelper.default;
     BezierFitCurve = __importStar(BezierFitCurve);
+    FileExportHelper = FileExportHelper.default;
     ImageData = ImageData.default;
     LayerHelper = __importStar(LayerHelper);
     LocalStorage = LocalStorage.default;
@@ -9134,7 +9134,7 @@ define([
                     label = filePath.replace(':', '/');
                 }
                 recentMenu.append(new MenuItem({'id': label, label: label, click: async () => {
-                    const res = await FnWrapper.toggleUnsavedChangedDialog();
+                    const res = await FileExportHelper.toggleUnsavedChangedDialog();
                     if (res) this.loadRecentFile(filePath);
                 }}));
             });
