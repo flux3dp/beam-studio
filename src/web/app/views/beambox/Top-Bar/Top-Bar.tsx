@@ -356,7 +356,7 @@ export class TopBar extends React.Component {
                         Alert.popUp({
                             message,
                             type: AlertConstants.SHOW_POPUP_WARNING,
-                            checkBox: {
+                            checkbox: {
                                 text: lang.beambox.popup.dont_show_again,
                                 callbacks: () => {
                                     AlertConfig.write('skip_path_speed_warning', true);
@@ -379,7 +379,7 @@ export class TopBar extends React.Component {
                         Alert.popUp({
                             message,
                             type: AlertConstants.SHOW_POPUP_WARNING,
-                            checkBox: {
+                            checkbox: {
                                 text: lang.beambox.popup.dont_show_again,
                                 callbacks: () => {
                                     AlertConfig.write('skip_path_speed_constraint_warning', true);

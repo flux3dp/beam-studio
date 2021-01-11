@@ -1,7 +1,8 @@
 import { AlertsAndProgress, AlertsAndProgressContextHelper }  from '../views/dialogs/AlertsAndProgress';
+import { IAlert } from '../../interfaces/IAlert';
 
 export default {
-    popUp: (args) => {
+    popUp: (args: IAlert) => {
         if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
         } else {

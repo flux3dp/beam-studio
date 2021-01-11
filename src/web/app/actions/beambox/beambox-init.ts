@@ -526,7 +526,7 @@ const checkOSVersion = () => {
                         id: 'os_version_warning',
                         message: sprintf(i18n.lang.message.unsupport_osx_version, osVersion),
                         type: AlertConstants.SHOW_POPUP_WARNING,
-                        checkBox: {
+                        checkbox: {
                             text: LANG.popup.dont_show_again,
                             callbacks: () => {AlertConfig.write('skip_os_version_warning', true)}
                         }
@@ -568,7 +568,7 @@ const checkOSVersion = () => {
                     id: 'os_version_warning',
                     message: sprintf(i18n.lang.message.unsupport_win_version, osVersion),
                     type: AlertConstants.SHOW_POPUP_WARNING,
-                    checkBox: {
+                    checkbox: {
                         text: LANG.popup.dont_show_again,
                         callbacks: () => {AlertConfig.write('skip_os_version_warning', true)}
                     }

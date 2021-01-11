@@ -549,7 +549,7 @@ export default function(opts) {
                             Alert.popUp({
                                 type: AlertConstants.SHOW_POPUP_WARNING,
                                 message: LANG.svg_1_1_waring,
-                                checkBox: {
+                                checkbox: {
                                     text: LANG.dont_show_again,
                                     callbacks: () => {AlertConfig.write('skip_svg_version_warning', true)}
                                 }
@@ -562,7 +562,7 @@ export default function(opts) {
                         Alert.popUp({
                             type: AlertConstants.SHOW_POPUP_WARNING,
                             message: LANG.svg_image_path_waring,
-                            checkBox: {
+                            checkbox: {
                                 text: LANG.dont_show_again,
                                 callbacks: () => {AlertConfig.write('skip_image_path_warning', true)}
                             }

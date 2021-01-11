@@ -130,14 +130,14 @@ class Alert extends React.Component {
                     <pre className="message">{alert.message}</pre>
     }
 
-    _renderCheckbox = (checkBoxText) => {
+    _renderCheckbox = (checkboxText) => {
         let _handleCheckboxClick = () => {
             this.setState({checkboxChecked: !this.state.checkboxChecked});
         };
 
         return (
             <div className="modal-checkbox">
-                <input type="checkbox" onClick={_handleCheckboxClick}></input>{checkBoxText}
+                <input type="checkbox" onClick={_handleCheckboxClick}></input>{checkboxText}
             </div>
         );
     }
@@ -159,23 +159,23 @@ class Alert extends React.Component {
         let buttons = alert.buttons.map((b, i) => {
             const newButton = {...b};
             const buttonCallback = b.onClick;
-            if (!checkboxChecked || !alert.checkBoxText || !alert.checkBoxCallbacks)  {
+            if (!checkboxChecked || !alert.checkboxText || !alert.checkboxCallbacks)  {
                 newButton.onClick = () => {
                     popFromStack();
                     buttonCallback();
                 }
             } else {
                 // Need to reset checkbox state after callback
-                if (typeof alert.checkBoxCallbacks === 'function') {
+                if (typeof alert.checkboxCallbacks === 'function') {
                     newButton.onClick = () => {
                         popFromStack();
-                        alert.checkBoxCallbacks();
+                        alert.checkboxCallbacks();
                         this.setState({checkboxChecked: false});
                     }
-                } else if (alert.checkBoxCallbacks.length > i){
+                } else if (alert.checkboxCallbacks.length > i){
                     newButton.onClick = () => {
                         popFromStack();
-                        alert.checkBoxCallbacks[i]();
+                        alert.checkboxCallbacks[i]();
                         this.setState({checkboxChecked: false});
                     }
                 } else {
@@ -189,7 +189,7 @@ class Alert extends React.Component {
             return newButton;
         });
 
-        let checkBox = alert.checkBoxText ? this._renderCheckbox(alert.checkBoxText) : null;
+        let checkbox = alert.checkboxText ? this._renderCheckbox(alert.checkboxText) : null;
 
         return (
             <Modal>
@@ -197,7 +197,7 @@ class Alert extends React.Component {
                     {this._renderCaption(alert.caption)}
                     {this._renderMessage(alert)}
                     {this._renderChildren(alert.children)}
-                    {checkBox}
+                    {checkbox}
                     <ButtonGroup buttons={buttons}/>
                 </div>
             </Modal>

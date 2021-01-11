@@ -460,7 +460,7 @@ const tempConvertTextToPathAmoungSvgcontent = async () => {
                     type: AlertConstants.SHOW_POPUP_WARNING,
                     message: LANG.text_to_path.check_thumbnail_warning,
                     callbacks: () => resolve(null),
-                    checkBox: {
+                    checkbox: {
                         text: i18n.lang.beambox.popup.dont_show_again,
                         callbacks: () => {
                             AlertConfig.write('skip_check_thumbnail_warning', true);

@@ -106,7 +106,7 @@ interface ISVGEditor {
     curPrefs: ISVGPref
     disableUI: (featList: any) => void
     getExifRotationFlag: any
-    importSvg: (file: any, skipVersionWarning?: boolean) => Promise<void>
+    importSvg: (file: any, args: {skipVersionWarning?: boolean, skipByLayer?: boolean}) => Promise<void>
     init: () => void
     loadFromDataURI: (str: any) => void
     loadFromURL: (url: any, opts?: any) => void
@@ -255,7 +255,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             curPrefs: null,
             disableUI: (featList: any) => {},
             getExifRotationFlag: null,
-            importSvg: async (file: any, skipVersionWarning?: boolean) => {},
+            importSvg: async (file: any, args: {skipVersionWarning?: boolean, skipByLayer?: boolean}={}) => {},
             init: () => {},
             loadFromDataURI: (str: any) => {},
             loadFromURL: (url: any, opts: any) => {},
@@ -5838,9 +5838,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                     });
                 }
                 editor.readSVG = readSVG;
-                const importSvg = async (file, skipVersionWarning=false, supportByLayer=true) => {
+                const importSvg = async (file, args: { skipVersionWarning?: boolean, skipByLayer?: boolean, isFromNounProject?: boolean } = {}) => {
                     async function importAs(type) {
-                        const result = await svgWebSocket.uploadPlainSVG(file, skipVersionWarning);
+                        const result = await svgWebSocket.uploadPlainSVG(file, args.skipVersionWarning);
                         if (result !== 'ok') {
                             Progress.popById('loading_image');
                             switch (result) {
@@ -5911,6 +5911,12 @@ const svgEditor = window['svgEditor'] = (function($) {
                         }
                         Progress.popById('loading_image');
                         newElements = newElements.filter((elem) => elem);
+                        if (args.isFromNounProject) {
+                            for (let i = 0; i < newElements.length; i++) {
+                                const elem = newElements[i];
+                                elem.setAttribute('data-noun-project', '1');
+                            }
+                        }
                         svgCanvas.selectOnly(newElements);
                         if (newElements.length > 1) {
                             svgCanvas.tempGroupSelectedElements();
@@ -5918,7 +5924,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     }
                     const buttonLabels = [LANG.popup.layer_by_layer, LANG.popup.layer_by_color, LANG.popup.nolayer];
                     const callbacks = [() => importAs('layer'), () => importAs('color'), () => importAs('nolayer')];
-                    if (!supportByLayer) {
+                    if (args.skipByLayer) {
                         buttonLabels.splice(0, 1);
                         callbacks.splice(0, 1);
                     }
@@ -5946,7 +5952,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                             id: 'skip_dxf_version_warning',
                                             message: LANG.popup.dxf_version_waring,
                                             type: AlertConstants.SHOW_POPUP_WARNING,
-                                            checkBox: {
+                                            checkbox: {
                                                 text: LANG.popup.dont_show_again,
                                                 callbacks: () => {AlertConfig.write('skip_dxf_version_warning', true)}
                                             }
@@ -5994,7 +6000,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             id: 'dxf_size_over_workarea',
                             message: LANG.popup.dxf_bounding_box_size_over,
                             type: AlertConstants.SHOW_POPUP_WARNING,
-                            checkBox: {
+                            checkbox: {
                                 text: LANG.popup.dont_show_again,
                                 callbacks: () => {AlertConfig.write('skip_dxf_oversize_warning', true)}
                             }
@@ -6199,13 +6205,11 @@ const svgEditor = window['svgEditor'] = (function($) {
                     e.preventDefault();
                     $('#workarea').removeAttr('style');
                     $('#main_menu').hide();
-                    console.log(e.dataTransfer, e.dataTransfer.types);
                     if (e.dataTransfer && e.dataTransfer.types.includes('text/noun-project-icon')) {
                         const nounProjectIcon = JSON.parse(e.dataTransfer.getData('text/noun-project-icon')) as IIcon;
                         NounProjectPanelController.emit('insertIcon', nounProjectIcon);
                         return;
                     }
-                    Progress.openNonstopProgress({id: 'loading_image', caption: uiStrings.notification.loadingImage,});
                     const file = (e.type === 'drop') ? e.dataTransfer.files[0] : this.files[0];
                     if (!file) {
                         Progress.popById('loading_image');

@@ -57,7 +57,10 @@ const pdf2svg = async (file) => {
                 const blob = await resp.blob();
                 blob['name'] = file.name + '.svg';
                 blob['lastModifiedDate'] = file.lastModifiedDate;
-                svgEditor.importSvg(blob, true, false);
+                svgEditor.importSvg(blob, {
+                    skipVersionWarning: true,
+                    skipByLayer: true,
+                });
             } else {
                 throw stderr;
             }
@@ -93,7 +96,10 @@ const pdf2svg = async (file) => {
                 const blob = await resp.blob();
                 blob['name'] = file.name + '.svg';
                 blob['lastModifiedDate'] = file.lastModifiedDate;
-                svgEditor.importSvg(blob, true, false);
+                svgEditor.importSvg(blob, {
+                    skipVersionWarning: true,
+                    skipByLayer: true,
+                });
             } else {
                 throw stderr;
             }
