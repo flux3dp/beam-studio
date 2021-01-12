@@ -835,8 +835,8 @@ export default {
         },
         device_is_used: 'The machine is being used, do you want to abort current task?',
         monitor_too_old: {
-            caption: 'El firmware está desactualizado',
-            content: '#814 Por favor, instala el último firmware con <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">esta guía</a>.'
+            caption: 'Firmware Outdated',
+            content: '#814 Please install the latest firmware with <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">this guide</a>.'
         },
         unknown_error: '#821 The application has encountered an unknown error, please use Help > Menu > Bug Report.',
         unknown_device: '#826 Cannot connect to the machine, please make sure USB is attached to the machine',
