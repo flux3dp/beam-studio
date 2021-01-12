@@ -690,6 +690,12 @@ export default {
             mm: 'mm'
         }
     },
+    noun_project_panel: {
+        export_svg_title: '無法匯出 SVG',
+        export_svg_warning: '專案中含有 Noun Project 之圖檔，無提供輸出 SVG 檔之服務。',
+        export_svg_warning_link: 'https://duckduckgo.com/', 
+        learn_more: '更多資訊',
+    },
     select_printer: {
         auth_failure: '#811 認證失敗',
         unable_to_connect: '#810 無法與機器建立穩定連線'

@@ -690,6 +690,12 @@ export default {
             mm: 'mm'
         }
     },
+    noun_project_panel: {
+        export_svg_title: 'No se puede exportar SVG',
+        export_svg_warning: 'Este proyecto contiene iconos importados de Noun Project, por lo que el servicio de salida de archivos SVG no es compatible.',
+        export_svg_warning_link: 'https://duckduckgo.com/', 
+        learn_more: 'Aprende más',
+    },
     select_printer: {
         auth_failure: '#811 Fallo de autenticación',
         unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina'

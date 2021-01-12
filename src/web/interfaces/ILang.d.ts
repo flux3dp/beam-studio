@@ -688,6 +688,12 @@ export interface ILang {
             mm: string,
         }
     },
+    noun_project_panel: {
+        export_svg_title: string,
+        export_svg_warning: string,
+        export_svg_warning_link: string, 
+        learn_more: string,
+    },
     select_printer: {
         auth_failure: string,
         unable_to_connect: string,

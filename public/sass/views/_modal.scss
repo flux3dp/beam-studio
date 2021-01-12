@@ -146,6 +146,12 @@
 
         .alert-children {
             width: 100%;
+            .hyper-link {
+                cursor: pointer;
+                color: #1199cc;
+                text-decoration: underline;
+            }
+            margin: 0 0 20px 0;
         }
 
         .btn {

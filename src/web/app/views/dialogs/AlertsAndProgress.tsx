@@ -142,7 +142,7 @@ class Alert extends React.Component {
         );
     }
 
-    _renderChildren = (children) => {
+    _renderChildren = (children: Element) => {
         if (!children) {
             return null;
         }

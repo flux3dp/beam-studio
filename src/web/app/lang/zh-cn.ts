@@ -690,6 +690,12 @@ export default {
             mm: 'mm'
         }
     },
+    noun_project_panel: {
+        export_svg_title: '无法汇出 SVG',
+        export_svg_warning: '专案中含有 Noun Project 之图档，无提供输出 SVG 档之服务。',
+        export_svg_warning_link: 'https://duckduckgo.com/', 
+        learn_more: '更多资讯',
+    },
     select_printer: {
         auth_failure: '#811 认证失败',
         unable_to_connect: '#810 无法与机器创建稳定连接'

@@ -415,7 +415,9 @@ class NounProjectPanel extends React.Component {
                 const response = await fetch(icon.icon_url);
                 console.log(response);
                 const blob = await response.blob();
-                svgEditor.importSvg(blob);
+                svgEditor.importSvg(blob, {
+                    isFromNounProject: true,
+                });
             } else {
                 const response = await fetch(icon.preview_url);
                 const blob = await response.blob();

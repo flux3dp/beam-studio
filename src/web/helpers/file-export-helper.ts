@@ -11,7 +11,7 @@ getSVGAsync((globalSVG) => {
 });
 
 const electron = window['electron'];
-const LANG = i18n.lang.beambox;
+const LANG = i18n.lang;
 
 const setCurrentFileName = (filePath) => {
     let currentFileName;
@@ -31,7 +31,7 @@ const saveAsFile = async () => {
     svgCanvas.clearSelection();
     const output = svgCanvas.getSvgString();
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-    const langFile = i18n.lang.topmenu.file;
+    const langFile = LANG.topmenu.file;
     const ImageSource = await svgCanvas.getImageSource();
     const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.bvg_files, ['beam'], defaultFileName);
     if (currentFilePath) {
@@ -79,7 +79,7 @@ const exportAsBVG = async () => {
     const output = svgCanvas.getSvgString();
     SymbolMaker.switchImageSymbolForAll(true);
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-    const langFile = i18n.lang.topmenu.file;
+    const langFile = LANG.topmenu.file;
     let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
     if (currentFilePath) {
         setCurrentFileName(currentFilePath);
@@ -91,7 +91,9 @@ const exportAsBVG = async () => {
 };
 
 const exportAsSVG = () => {
-    checkExportAsSVG();
+    if (!checkExportAsSVG()) {
+        return;
+    }
     svgCanvas.clearSelection();
     $('g.layer').removeAttr('clip-path');
     SymbolMaker.switchImageSymbolForAll(false);
@@ -99,7 +101,7 @@ const exportAsSVG = () => {
     $('g.layer').attr('clip-path', 'url(#scene_mask)');
     SymbolMaker.switchImageSymbolForAll(true);
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
-    const langFile = i18n.lang.topmenu.file;
+    const langFile = LANG.topmenu.file;
     electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
 };
 
@@ -109,8 +111,14 @@ const checkExportAsSVG = () => {
     console.log(useElements);
     for (let i = 0; i < useElements.length; i++) {
         const elem = useElements[i];
-        if (elem.getAttribute('data-noun-projecct') === '1') {
+        if (elem.getAttribute('data-noun-project') === '1') {
             console.log('Contains noun project');
+            Alert.popUp({
+                id: 'export-noun-project-svg',
+                caption: LANG.noun_project_panel.export_svg_title,
+                message: LANG.noun_project_panel.export_svg_warning,
+                children: Alert.renderHyperLink(LANG.noun_project_panel.learn_more, LANG.noun_project_panel.export_svg_warning_link),
+            });
             return false;
         }
     }
@@ -122,7 +130,7 @@ const exportAsImage = async (type) => {
     SymbolMaker.switchImageSymbolForAll(false);
     const output = svgCanvas.getSvgString();
     SymbolMaker.switchImageSymbolForAll(true);
-    const langFile = i18n.lang.topmenu.file;
+    const langFile = LANG.topmenu.file;
     Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
     let image = await svgCanvas.svgStringToImage(type, output);
@@ -147,8 +155,8 @@ const toggleUnsavedChangedDialog = async () => {
             Alert.popById('unsaved_change_dialog');
             Alert.popUp({
                 id: 'unsaved_change_dialog',
-                message: i18n.lang.beambox.popup.save_unsave_changed,
-                buttonLabels: [i18n.lang.alert.save, i18n.lang.alert.dont_save, i18n.lang.alert.cancel],
+                message: LANG.beambox.popup.save_unsave_changed,
+                buttonLabels: [LANG.alert.save, LANG.alert.dont_save, LANG.alert.cancel],
                 callbacks: [
                     async () => {
                         if (await saveFile()) {
