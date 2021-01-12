@@ -283,6 +283,19 @@ export default {
             image: '画像',
             text: 'テキスト'
         },
+        context_menu: {
+            cut: '切り取り',
+            copy: 'コピー',
+            paste: '貼り付け',
+            paste_in_place: '所定の位置に貼り付け',
+            delete: '削除',
+            group: 'グループ化',
+            ungroup: 'グループ化解除',
+            move_front: '最前に持ってくる',
+            move_up: '前に持ってくる',
+            move_down: '後に送る',
+            move_back: '最後に送る',
+        },
         popup: {
             select_import_method: '積層スタイルを選択：',
             touchpad: 'タッチパッド',

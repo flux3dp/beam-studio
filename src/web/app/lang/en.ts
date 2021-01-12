@@ -283,6 +283,19 @@ export default {
             image: 'Image',
             text: 'Text'
         },
+        context_menu: {
+            cut: 'Cut',
+            copy: 'Copy',
+            paste: 'Paste',
+            paste_in_place: 'Paste in Place',
+            delete: 'Delete',
+            group: 'Group',
+            ungroup: 'Ungroup',
+            move_front: 'Bring to Front',
+            move_up: 'Bring Forward',
+            move_down: 'Send Backward',
+            move_back: 'Send to Back',
+        },
         popup: {
             select_import_method: 'Select layering style:',
             touchpad: 'TouchPad',

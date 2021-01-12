@@ -283,6 +283,19 @@ export default {
             image: 'Imagen',
             text: 'Texto'
         },
+        context_menu: {
+            cut: 'Cortar',
+            copy: 'Copiar',
+            paste: 'Pegar',
+            paste_in_place: 'Pegar en su lugar',
+            delete: 'Eliminar',
+            group: 'Grupo',
+            ungroup: 'Desagrupar',
+            move_front: 'Traer al frente',
+            move_up: 'Adelantar',
+            move_down: 'Enviar atrás',
+            move_back: 'Enviar al fondo',
+        },
         popup: {
             select_import_method: 'Selecciona el estilo de capas:',
             touchpad: 'TouchPad',

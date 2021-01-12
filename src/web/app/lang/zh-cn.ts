@@ -283,6 +283,19 @@ export default {
             image: '图片',
             text: '文字'
         },
+        context_menu: {
+            cut: '剪切',
+            copy: '复制',
+            paste: '粘贴',
+            paste_in_place: '粘贴到原位置',
+            delete: '删除',
+            group: '组合',
+            ungroup: '取消组合元素',
+            move_front: '移至顶部',
+            move_up: '向上移动',
+            move_down: '向下移动',
+            move_back: '移至底部',
+        },
         popup: {
             select_import_method: '选择分层方式:',
             touchpad: '触摸板',

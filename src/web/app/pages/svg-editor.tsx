@@ -1056,6 +1056,9 @@ export class SVGEditor extends React.Component {
                                 <span id="svginfo_lang">Language:</span>
                                 {}
                                 <select id="lang_select" defaultValue="en">
+                                    <option id="lang_de" value="de">
+                                        Deutsche
+                                    </option>
                                     <option id="lang_en" value="en">
                                         English
                                     </option>
@@ -1171,49 +1174,37 @@ export class SVGEditor extends React.Component {
                 </div>
                 <ul id="cmenu_canvas" className="contextMenu">
                     <li>
-                        <a href="#cut" onClick={this._handleDisableHref}>Cut</a>
+                        <a href="#cut" onClick={this._handleDisableHref}>{LANG.context_menu.cut}</a>
                     </li>
                     <li>
-                        <a href="#copy" onClick={this._handleDisableHref}>Copy</a>
+                        <a href="#copy" onClick={this._handleDisableHref}>{LANG.context_menu.copy}</a>
                     </li>
                     <li>
-                        <a href="#paste" onClick={this._handleDisableHref}>Paste</a>
+                        <a href="#paste" onClick={this._handleDisableHref}>{LANG.context_menu.paste}</a>
                     </li>
                     <li>
-                        <a href="#paste_in_place" onClick={this._handleDisableHref}>Paste in Place</a>
+                        <a href="#paste_in_place" onClick={this._handleDisableHref}>{LANG.context_menu.paste_in_place}</a>
                     </li>
                     <li className="separator">
-                        <a href="#delete" onClick={this._handleDisableHref}>Delete</a>
+                        <a href="#delete" onClick={this._handleDisableHref}>{LANG.context_menu.delete}</a>
                     </li>
                     <li className="separator">
-                        <a href="#group" onClick={this._handleDisableHref}>
-                            Group
-                        </a>
+                        <a href="#group" onClick={this._handleDisableHref}>{LANG.context_menu.group}</a>
                     </li>
                     <li>
-                        <a href="#ungroup" onClick={this._handleDisableHref}>
-                            Ungroup
-                        </a>
+                        <a href="#ungroup" onClick={this._handleDisableHref}>{LANG.context_menu.ungroup}</a>
                     </li>
                     <li className="separator">
-                        <a href="#move_front" onClick={this._handleDisableHref}>
-                            Bring to Front
-                        </a>
+                        <a href="#move_front" onClick={this._handleDisableHref}>{LANG.context_menu.move_front}</a>
                     </li>
                     <li>
-                        <a href="#move_up" onClick={this._handleDisableHref}>
-                            Bring Forward
-                        </a>
+                        <a href="#move_up" onClick={this._handleDisableHref}>{LANG.context_menu.move_up}</a>
                     </li>
                     <li>
-                        <a href="#move_down" onClick={this._handleDisableHref}>
-                            Send Backward
-                        </a>
+                        <a href="#move_down" onClick={this._handleDisableHref}>{LANG.context_menu.move_down}</a>
                     </li>
                     <li>
-                        <a href="#move_back" onClick={this._handleDisableHref}>
-                            Send to Back
-                        </a>
+                        <a href="#move_back" onClick={this._handleDisableHref}>{LANG.context_menu.move_back}</a>
                     </li>
                 </ul>
             </div>

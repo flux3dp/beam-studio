@@ -156,16 +156,6 @@ var svgEditor = (function($, editor) {'use strict';
 		
 		// Context menus
 		var opts = {};
-		$.each(['cut','copy','paste', 'paste_in_place', 'delete', 'group', 'ungroup', 'move_front', 'move_up', 'move_down', 'move_back'], function() {
-			opts['#cmenu_canvas a[href="#' + this + '"]'] = tools[this];
-		});
-
-		$.each(['dupe', 'lock', 'merge_down', 'merge_all'], function() {
-			opts['#cmenu_layers a[href="#' + this + '"]'] = layers[this];
-		});
-
-		opts['#cmenu_layers a[href="#delete"]'] = layers.del;
-		
 		setStrings('content', opts);
 		
 		setStrings('title', {

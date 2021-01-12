@@ -272,7 +272,7 @@ export default {
             modules: 'Zusatz-Module',
         },
         notification_on: 'Auf',
-        notification_off: 'aus',
+        notification_off: 'an',
         update_latest: 'Neueste',
         update_beta: 'Beta',
     },
@@ -282,6 +282,19 @@ export default {
             use: 'SVG importieren',
             image: 'Bild',
             text: 'Text'
+        },
+        context_menu: {
+            cut: 'Ausschneiden',
+            copy: 'Kopieren',
+            paste: 'Einfügen',
+            paste_in_place: 'Bei Originalposition einfügen',
+            delete: 'Löschen',
+            group: 'Gruppieren',
+            ungroup: 'Gruppierung aufheben',
+            move_front: 'Nach ganz oben verschieben',
+            move_up: 'Hochschieben',
+            move_down: 'Herunterschieben',
+            move_back: 'Nach ganz unten verschieben',
         },
         popup: {
             select_import_method: 'Wählen Sie den Layering-Stil:',
