@@ -992,7 +992,7 @@ export default {
         },
         links: {
             adjust_focus_bm: 'https://flux3dp.zendesk.com/hc/zh-tw/articles/360001684196',
-            adjust_focus_bb: ' https://support.flux3dp.com/hc/zh-tw/articles/360001683675',
+            adjust_focus_bb: 'https://support.flux3dp.com/hc/zh-tw/articles/360001683675',
         },
         tutorial_complete: '介紹完畢，開始創作吧！',
     },
