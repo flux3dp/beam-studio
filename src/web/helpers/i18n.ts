@@ -6,6 +6,7 @@ import LangEs from '../app/lang/es';
 import LangJa from '../app/lang/ja';
 import LangZHTW from '../app/lang/zh-tw';
 import LangZHCN from '../app/lang/zh-cn';
+import { ILang } from 'interfaces/ILang';
 
 const ACTIVE_LANG = 'active-lang',
     langCache = {
@@ -84,7 +85,7 @@ export function get(key, args) {
 };
 
 class LangCacheHelper {
-    static get lang() {
+    static get lang(): ILang {
         return langCache[activeLang];
     };
 } 

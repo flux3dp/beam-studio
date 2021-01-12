@@ -3866,7 +3866,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         Alert.popUp({
                             id: 'Offset not support',
                             message: LANG.tool_panels._offset.not_support_message,
-                            caption: LANG.left_panel.label.offset
+                            caption: LANG.tool_panels.offset,
                         });
                         return;
                     }
@@ -3879,7 +3879,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     Alert.popUp({
                         id: 'select first',
                         message: LANG.popup.select_first,
-                        caption: LANG.left_panel.label.offset
+                        caption: LANG.tool_panels.offset,
                     });
                 }
             }

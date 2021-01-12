@@ -1,3 +1,5 @@
+import { ILang } from 'interfaces/ILang';
+
 export default {
     general: {
         wait: '处理中，请稍待'
@@ -696,7 +698,7 @@ export default {
         pause: '暂停',
         paused: '已暂停',
         pausing: '正在暂停',
-        selectPrinter: '选择成型机',
+        select_printer: '选择成型机',
         retry: '重试',
         status: '状态',
         busy: '忙碌中',
@@ -996,4 +998,4 @@ export default {
         },
         tutorial_complete: '介绍完毕，开始创作吧！',
     },
-};
+} as ILang;

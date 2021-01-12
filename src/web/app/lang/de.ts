@@ -1,3 +1,5 @@
+import { ILang } from 'interfaces/ILang';
+
 export default {
     general: {
         wait: 'Verarbeite .. Bitte warten'
@@ -996,4 +998,4 @@ export default {
         },
         tutorial_complete: 'Das ist alles für das Tutorial. Jetzt ist es Zeit zu erstellen!',
     },
-};
+} as ILang;

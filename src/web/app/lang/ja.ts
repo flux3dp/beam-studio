@@ -1,3 +1,5 @@
+import { ILang } from 'interfaces/ILang';
+
 export default {
     general: {
         wait: '処理中です、お待ちください'
@@ -497,8 +499,8 @@ export default {
                 zoom: 'ズーム',
                 group: 'グループ化',
                 ungroup: 'グループ化解除',
-                halign: '水平配置',
-                valign: '垂直配置',
+                hdist: '水平配置',
+                vdist: '垂直配置',
                 left_align: '左に整列',
                 center_align: '中央に整列',
                 right_align: '右に整列',
@@ -996,4 +998,4 @@ export default {
         },
         tutorial_complete: '紹介が終わりました、作っていきましょう！',
     },
-};
+} as ILang;
