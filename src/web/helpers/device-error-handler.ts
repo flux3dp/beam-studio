@@ -60,6 +60,9 @@ const self = {
             }
         }
 
+        if (typeof errorOutput === 'object') {
+            errorOutput = JSON.stringify(errorOutput);
+        }
 
         return errorOutput || '';
     },
