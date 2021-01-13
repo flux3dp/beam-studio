@@ -1952,6 +1952,7 @@ define([
                         break;
                     case 'text':
                         started = true;
+                        const isMac = process.platform === 'darwin';
                         var newText = addSvgElementFromJson({
                             element: 'text',
                             curStyles: true,
@@ -1963,14 +1964,14 @@ define([
                                 'fill-opacity': cur_text.fill_opacity,
                                 'stroke-width': 2,
                                 'font-size': cur_text.font_size,
-                                'font-family': cur_text.font_family,
+                                'font-family': isMac ? cur_text.font_postscriptName : cur_text.font_family,
                                 'font-postscript': cur_text.font_postscriptName,
                                 'text-anchor': cur_text.text_anchor,
                                 'xml:space': 'preserve',
                                 opacity: cur_shape.opacity
                             }
                         });
-                        //					newText.textContent = 'text';
+                        if (isMac) newText.setAttribute('data-font-family', cur_text.font_family);
                         if (canvas.isUsingLayerColor) {
                             canvas.updateElementColor(newText);
                         }
@@ -2680,7 +2681,11 @@ define([
 
                                 if (selected.tagName === 'text') {
                                     cur_text.font_size = selected.getAttribute('font-size');
-                                    cur_text.font_family = selected.getAttribute('font-family');
+                                    if (process.platform === 'mac') {
+                                        cur_text.font_family = selected.getAttribute('data-font-family');
+                                    } else {
+                                        cur_text.font_family = selected.getAttribute('font-family');
+                                    }
                                     cur_text.font_postscriptName = selected.getAttribute('font-postscript');
                                 }
                                 selectorManager.requestSelector(selected).showGrips(true);
@@ -8139,8 +8144,11 @@ define([
             }
         };
 
-        // Function: getFontFamily
-        // Returns the current font family
+        /**
+         * Returns the current font family
+         * @param {Element | null} elem
+         * @returns {string} the font family of element
+         */
         this.getFontFamily = function (elem) {
             const selected = elem || selectedElements[0];
             if (selected) {
@@ -8149,14 +8157,14 @@ define([
             return cur_text.font_family;
         };
 
-        // Function: setFontFamily
-        // Set the new font family
-        //
-        // Parameters:
-        // val - String with the new font family
+        /**
+         * Set the new font family, in macOS value will be postscript to make text correctly rendered
+         * @param {string} val New font family
+         * @param {boolean} isSubCmd Whether this operation is a sub command or a sole command
+         */
         this.setFontFamily = function (val, isSubCmd) {
             let cmd = null;
-            cur_text.font_family = val;
+            if (process.platform !== 'darwin') cur_text.font_family = val;
             if (isSubCmd) {
                 canvas.undoMgr.beginUndoableChange('font-family', selectedElements);
                 changeSelectedAttributeNoUndo('font-family', val, selectedElements);
@@ -8169,6 +8177,42 @@ define([
             }
             return cmd;
         };
+
+        /**
+         * Returns the font family data of element
+         * @param {Element | null} elem 
+         * @returns {string} the font family data of element
+         */
+        this.getFontFamilyData = (elem) => {
+            const selected = elem || selectedElements[0];
+            if (selected) {
+                if (!selected.getAttribute('data-font-family')) {
+                    return this.getFontFamily(elem);
+                }
+                return selected.getAttribute('data-font-family');
+            }
+            return cur_text.font_family;
+        };
+
+        /**
+         * Set the data font family (Used for MacOS only)
+         * In MacOS font-family would be set same as font-postscript to make sure text would be rendered correctly.
+         * So addition attribution is needed to record it's font family data.
+         * @param {string} val New font family
+         * @param {boolean} isSubCmd Whether this operation is a sub command or a sole command
+         */
+        this.setFontFamilyData = (val, isSubCmd) => {
+            let cmd = null;
+            cur_text.font_family = val;
+            if (isSubCmd) {
+                canvas.undoMgr.beginUndoableChange('data-font-family', selectedElements);
+                changeSelectedAttributeNoUndo('data-font-family', val, selectedElements);
+                cmd = canvas.undoMgr.finishUndoableChange();
+            } else {
+                changeSelectedAttribute('data-font-family', val);
+            }
+            return cmd;
+        }
 
         this.getFontPostscriptName = function (elem) {
             const selected = elem || selectedElements[0];

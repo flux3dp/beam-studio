@@ -11,6 +11,7 @@ const classNames = requireNode('classnames');
 const ReactSelect = requireNode('react-select');
 const Select = ReactSelect.default;
 const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
+const isMac = process.platform === 'darwin';
 
 class TextOptions extends React.Component {
     constructor(props) {
@@ -41,7 +42,7 @@ class TextOptions extends React.Component {
                 elem.setAttribute('font-weight', font.weight ? font.weight : 'normal');
             }
         } else {
-            const family = svgCanvas.getFontFamily(elem);
+            const family = isMac ? svgCanvas.getFontFamilyData(elem) : svgCanvas.getFontFamily(elem);
             const weight = svgCanvas.getFontWeight(elem);
             const italic = svgCanvas.getItalic(elem);
             font = FontFuncs.requestFontByFamilyAndStyle({family, weight, italic});
@@ -50,9 +51,7 @@ class TextOptions extends React.Component {
         const sanitizedDefaultFontFamily = (() => {
             // use these font if postscriptName cannot find in user PC
             const fontFamilyFallback = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', FontFuncs.availableFontFamilies[0]];
-            const sanitizedFontFamily = [font.family, ...fontFamilyFallback].find(
-                f => FontFuncs.availableFontFamilies.includes(f)
-            );
+            const sanitizedFontFamily = [font.family, ...fontFamilyFallback].find(f => FontFuncs.availableFontFamilies.includes(f));
             return sanitizedFontFamily;
         })();
 
@@ -86,8 +85,15 @@ class TextOptions extends React.Component {
         batchCmd.addSubCommand(cmd);
         cmd = svgCanvas.setFontWeight(newFont.weight, true);
         batchCmd.addSubCommand(cmd);
-        cmd = svgCanvas.setFontFamily(newFamily, true);
-        batchCmd.addSubCommand(cmd);
+        if (isMac) {
+            cmd = svgCanvas.setFontFamily(newFont.postscriptName, true);
+            batchCmd.addSubCommand(cmd);
+            cmd = svgCanvas.setFontFamilyData(newFamily, true);
+            batchCmd.addSubCommand(cmd);
+        } else {
+            cmd = svgCanvas.setFontFamily(newFamily, true);
+            batchCmd.addSubCommand(cmd);
+        }
         svgCanvas.undoMgr.addCommandToHistory(batchCmd);
         const newStyle = newFont.style;
         updateDimensionValues({fontStyle: newStyle});
@@ -170,6 +176,10 @@ class TextOptions extends React.Component {
         const batchCmd = new svgedit.history.BatchCommand('Change Font Style');
         let cmd = svgCanvas.setFontPostscriptName(font.postscriptName, true);
         batchCmd.addSubCommand(cmd);
+        if (isMac) {
+            cmd = svgCanvas.setFontFamily(font.postscriptName, true);
+            batchCmd.addSubCommand(cmd);
+        }
         cmd = svgCanvas.setItalic(font.italic, true);
         batchCmd.addSubCommand(cmd);
         cmd = svgCanvas.setFontWeight(font.weight, true);
