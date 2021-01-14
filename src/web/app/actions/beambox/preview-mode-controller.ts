@@ -406,6 +406,9 @@ class PreviewModeController {
     //just for getPhotoAfterMoveTo()
     async getPhotoFromMachine() {
         const imgBlob = await DeviceMaster.takeOnePicture();
+        if (!imgBlob) {
+            throw new Error(LANG.message.camera_ws_closed_unexpectly);
+        }
         const imgUrl = URL.createObjectURL(imgBlob);
         return imgUrl;
     }

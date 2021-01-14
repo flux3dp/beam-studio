@@ -873,7 +873,8 @@ export default {
         unable_to_find_machine: '無法連接到機器 ',
         disconnected: '連線不穩，請確認機器連線狀況並稍後再試一次',
         unable_to_start: '#830 無法開始工作，如果持續發生，請附上錯誤回報，與我們聯絡:\n',
-        camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。'
+        camera_fail_to_transmit_image: '相機傳輸照片異常，請將 Beambox 重新開機。如果問題持續發生，請與我們聯絡。',
+        camera_ws_closed_unexpectly: '#845 與機器相機的連線無預期的中斷。',
     },
     machine_status: {
         '-10': '動作模式',

@@ -873,7 +873,8 @@ export default {
         unable_to_find_machine: 'Maschine konnte nicht gefunden werden',
         disconnected: 'Verbindung instabil, Bitte überprüfe die Geräteverbindung und versuche es später erneut',
         unable_to_start: '#830 Die Aufgabe konnte nicht gestartet werden. Bitte versuchen Sie es erneut. Wenn dies erneut geschieht, kontaktieren Sie uns bitte mit einem Fehlerbericht:\n',
-        camera_fail_to_transmit_image: 'Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starte Ihre Beambox neu oder kontaktieren Sie uns.'
+        camera_fail_to_transmit_image: 'Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starte Ihre Beambox neu oder kontaktieren Sie uns.',
+        camera_ws_closed_unexpectly: '#845 Die Verbindung zur Maschinenkamera wurde unerwartet geschlossen.',
     },
     machine_status: {
         '-10': 'Modus beibehalten',

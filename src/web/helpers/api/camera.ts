@@ -12,7 +12,10 @@ const Rxjs = requireNode('rxjs');
 const { concatMap, filter, map, switchMap, take, timeout } = requireNode('rxjs/operators');
 
 const TIMEOUT = 30000;
+const MIN_IMAGE_ALLOWABLE_SIZE = 10000;
+const SMALL_IMAGE_RETRY_TIMES = 30;
 const LANG = i18n.lang;
+
 class Camera {
     cameraNeedFlip: boolean = null;
     shouldCrop: boolean;
@@ -25,6 +28,7 @@ class Camera {
     private _ws: any;
     private _wsSubject: any;
     private _source: any;
+    private requireFrameRetry: number;
     constructor(shouldCrop: boolean = true, cameraNeedFlip: boolean = null) {
         this.shouldCrop = shouldCrop;
         this._device = {
@@ -37,17 +41,25 @@ class Camera {
             this.cameraNeedFlip = cameraNeedFlip;
         }
         this._ws = null;
+        this.requireFrameRetry = 0;
         this._wsSubject = new Rxjs.Subject();
         this._source = this._wsSubject
             .asObservable()
             .pipe(filter(x => x instanceof Blob))
-            .pipe(switchMap(blob => {
-                if (blob.size < 30) {
-                    // if stream return extremely small blob (i.e. when camera hardware connection fail)
-                    return Rxjs.throwError(new Error(LANG.message.camera_fail_to_transmit_image));
-                } else {
-                    return Rxjs.of(blob);
+            .pipe(filter((blob: Blob) => {
+                // if stream return extremely small blob (i.e. when camera hardware connection fail)
+                if (blob.size >= MIN_IMAGE_ALLOWABLE_SIZE) {
+                    this.requireFrameRetry = 0;
+                    return true;
                 }
+                // TODO: Add camera cable alert
+                console.log('Blob size:', blob.size, 'too small.\nRetry time:', this.requireFrameRetry);
+                if (this.requireFrameRetry < SMALL_IMAGE_RETRY_TIMES) {
+                    setTimeout(() => this._ws.send('require_frame'), 500);
+                    this.requireFrameRetry += 1;
+                    return false;
+                }
+                throw new Error(LANG.message.camera_fail_to_transmit_image);
             }))
             .pipe(map(blob => this.preprocessImage(blob)))
             .pipe(concatMap(p => Rxjs.from(p)));
@@ -88,7 +100,7 @@ class Camera {
     }
 
     async _getCameraOffset() {
-        console.warn('Another control socket created in camera.ts, this may take time.');
+        console.warn('This is additional control socket created in camera.ts, this may take unnecessary time.');
         const tempWsSubject = new Rxjs.Subject();
         const tempWs = Websocket({
             method: (this._device.source === 'h2h') ? `control/usb/${parseInt(this._device.uuid)}` : `control/${this._device.uuid}`,
@@ -114,6 +126,12 @@ class Camera {
     }
 
     async oneShot() {
+        if (this._wsSubject.isStopped) {
+            if (this._wsSubject.hasError) {
+                console.error(this._wsSubject.thrownError);
+            }
+            throw new Error(LANG.message.camera_ws_closed_unexpectly);
+        }
         this._ws.send('require_frame');
         return await this._source
             .pipe(take(1))
