@@ -102,7 +102,7 @@ gulp.task('sass:watch', function () {
 });
 
 gulp.task('ts:watch', function () {
-    return gulp.watch(['./src/**/*.ts', './src/**/*.tsx'], ['frontend']);
+    return gulp.watch(['./src/**/*.ts', './src/**/*.tsx', './src/web/tsconfig.json'], ['frontend']);
 });
 
 gulp.task('webserver', ['sass:watch'], function () {

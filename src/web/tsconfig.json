@@ -14,7 +14,6 @@
       "suppressImplicitAnyIndexErrors": true,
       "baseUrl": ".",
       "paths": {
-        "react-proptypes": ["./public/js/lib/react/react-proptypes"] 
       }
     },
     "exclude": [
