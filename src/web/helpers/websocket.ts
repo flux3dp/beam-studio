@@ -52,7 +52,7 @@ export default function(options) {
             onOpen: defaultCallback
         },
         received_data = [],
-        trimMessage = function(message) {
+        trimMessage = function(message: string) {
             message = message.replace(/\"/g, '');
 
             if (150 < message.length) {
@@ -117,15 +117,21 @@ export default function(options) {
             };
 
             _ws.onmessage = function(result) {
-                var data = (true === isJson(result.data) ? JSON.parse(result.data) : result.data),
-                    message = trimMessage(['<', result.data].join(' ')),
-                    errorStr = '',
-                    skipError = false;
+                let data = (true === isJson(result.data) ? JSON.parse(result.data) : result.data); 
+                let errorStr = '';
+                let skipError = false;
+                if (!(result.data instanceof Blob)) {
+                    let message = trimMessage(['<', result.data].join(' '));
+                    wsLog.log.push(message);
+                } else {
+                    // Blob, not stringifiable
+                    let message = trimMessage(`< Blob, size: ${result.data.size}`);
+                    wsLog.log.push(message);
+                }
 
                 while(wsLog.log.length >= logLimit) {
                     wsLog.log.shift();
                 }
-                wsLog.log.push(message);
 
                 if ('string' === typeof data) {
                     data = data.replace(/\\/g, '\\\\');
@@ -133,66 +139,64 @@ export default function(options) {
                     data = data.replace(/\r?\n|\r/g, ' ');
                 }
 
-                data = (true === isJson(data) ? JSON.parse(data) : data);
-
                 while(received_data.length >= logLimit) {
                     received_data.shift();
                 }
                 received_data.push(data);
 
                 switch (data.status) {
-                case 'error':
-                    errorStr = data instanceof Object ? data.error : '';
-                    skipError = false;
+                    case 'error':
+                        errorStr = data instanceof Object ? data.error : '';
+                        skipError = false;
 
-                    if (data instanceof Object && data.error instanceof Array) {
-                        errorStr = data.error.join('_');
-                    }
+                        if (data instanceof Object && data.error instanceof Array) {
+                            errorStr = data.error.join('_');
+                        }
 
-                    if (errorStr === 'NOT_EXIST_BAD_NODE') { skipError = true; }
+                        if (errorStr === 'NOT_EXIST_BAD_NODE') { skipError = true; }
 
-                    if (window['FLUX'].allowTracking && !skipError) {
-                        // window.Raven.captureException(data);
-                        console.error("WS_ERROR", errorStr);
-                    }
-                    socketOptions.onError(data);
-                    break;
-                case 'fatal':
-                    errorStr = data instanceof Object ? data.error : '';
-                    skipError = false;
+                        if (window['FLUX'].allowTracking && !skipError) {
+                            // window.Raven.captureException(data);
+                            console.error("WS_ERROR", errorStr);
+                        }
+                        socketOptions.onError(data);
+                        break;
+                    case 'fatal':
+                        errorStr = data instanceof Object ? data.error : '';
+                        skipError = false;
 
-                    if (data instanceof Object && data.error instanceof Array) {
-                        errorStr = data.error.join('_');
-                    }
+                        if (data instanceof Object && data.error instanceof Array) {
+                            errorStr = data.error.join('_');
+                        }
 
-                    if (errorStr === 'AUTH_ERROR') { skipError = true; }
+                        if (errorStr === 'AUTH_ERROR') { skipError = true; }
 
-                    // if identify error, reconnect again
-                    if (errorStr === 'REMOTE_IDENTIFY_ERROR') {
-                        setTimeout(() => {
-                            ws = createWebSocket(options);
-                        }, 1000);
-                        return;
-                    }
+                        // if identify error, reconnect again
+                        if (errorStr === 'REMOTE_IDENTIFY_ERROR') {
+                            setTimeout(() => {
+                                ws = createWebSocket(options);
+                            }, 1000);
+                            return;
+                        }
 
-                    if (window['FLUX'].allowTracking && !skipError) {
-                        // window.Raven.captureException(data);
-                        console.error("WS_FATAL", errorStr);
-                    }
+                        if (window['FLUX'].allowTracking && !skipError) {
+                            // window.Raven.captureException(data);
+                            console.error("WS_FATAL", errorStr);
+                        }
 
-                    socketOptions.onFatal(data);
-                    break;
-                // ignore below status
-                case 'pong':
-                    break;
-                case 'debug':
-                    if(socketOptions.onDebug){
-                        socketOptions.onDebug(data);
-                    }
-                    break;
-                default:
-                    socketOptions.onMessage(data);
-                    break;
+                        socketOptions.onFatal(data);
+                        break;
+                    // ignore below status
+                    case 'pong':
+                        break;
+                    case 'debug':
+                        if(socketOptions.onDebug){
+                            socketOptions.onDebug(data);
+                        }
+                        break;
+                    default:
+                        socketOptions.onMessage(data);
+                        break;
                 }
 
                 hadConnected = true;
@@ -309,8 +313,7 @@ export default function(options) {
                 if ('boolean' === typeof reconnect) {
                     socketOptions.autoReconnect = reconnect;
                 }
-
-                if (null !== ws) {
+                if (null !== ws && ws.readyState !== readyState.CLOSED) {
                     ws.close();
                 }
             },
