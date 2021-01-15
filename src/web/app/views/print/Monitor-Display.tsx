@@ -282,11 +282,11 @@ class MonitorDisplay extends React.Component{
         );
     }
 
-    _processImage = (imageBlob)  => {
+    _processImage = ({ imgBlob, }: { imgBlob: Blob })  => {
         let targetDevice = this.props.selectedDevice;
         if (targetDevice) {
             if (!hdChecked[targetDevice.serial]) {
-                getImageSize(URL.createObjectURL(imageBlob), (size) => {
+                getImageSize(URL.createObjectURL(imgBlob), (size) => {
                     console.log('image size', size);
                     if (size[0] > 720) {
                         hdChecked[targetDevice.serial] = 2;
@@ -298,8 +298,8 @@ class MonitorDisplay extends React.Component{
 
             this.setState({ isHd: hdChecked[targetDevice.serial] !== 1 });
         }
-        previewBlob = imageBlob;
-        $('.camera-image').attr('src', URL.createObjectURL(imageBlob));
+        previewBlob = imgBlob;
+        $('.camera-image').attr('src', URL.createObjectURL(imgBlob));
     }
 
     _getJobType = () => {

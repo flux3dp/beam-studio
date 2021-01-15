@@ -13,7 +13,8 @@ const { concatMap, filter, map, switchMap, take, timeout } = requireNode('rxjs/o
 
 const TIMEOUT = 30000;
 const MIN_IMAGE_ALLOWABLE_SIZE = 10000;
-const SMALL_IMAGE_RETRY_TIMES = 30;
+const IMAGE_TRANSMISSION_FAIL_THRESHOLD = 40;
+const CAMERA_CABLE_ALERT_THRESHOLD = 20;
 const LANG = i18n.lang;
 
 class Camera {
@@ -29,6 +30,7 @@ class Camera {
     private _wsSubject: any;
     private _source: any;
     private requireFrameRetry: number;
+    private needCameraCableAlert: boolean;
     constructor(shouldCrop: boolean = true, cameraNeedFlip: boolean = null) {
         this.shouldCrop = shouldCrop;
         this._device = {
@@ -42,6 +44,7 @@ class Camera {
         }
         this._ws = null;
         this.requireFrameRetry = 0;
+        this.needCameraCableAlert = false;
         this._wsSubject = new Rxjs.Subject();
         this._source = this._wsSubject
             .asObservable()
@@ -49,19 +52,24 @@ class Camera {
             .pipe(filter((blob: Blob) => {
                 // if stream return extremely small blob (i.e. when camera hardware connection fail)
                 if (blob.size >= MIN_IMAGE_ALLOWABLE_SIZE) {
+                    this.needCameraCableAlert = this.requireFrameRetry >= CAMERA_CABLE_ALERT_THRESHOLD;
                     this.requireFrameRetry = 0;
                     return true;
                 }
                 // TODO: Add camera cable alert
                 console.log('Blob size:', blob.size, 'too small.\nRetry time:', this.requireFrameRetry);
-                if (this.requireFrameRetry < SMALL_IMAGE_RETRY_TIMES) {
+                if (this.requireFrameRetry < IMAGE_TRANSMISSION_FAIL_THRESHOLD) {
                     setTimeout(() => this._ws.send('require_frame'), 500);
                     this.requireFrameRetry += 1;
                     return false;
                 }
-                throw new Error(LANG.message.camera_fail_to_transmit_image);
+                throw new Error(LANG.message.camera.fail_to_transmit_image);
             }))
-            .pipe(map(blob => this.preprocessImage(blob)))
+            .pipe(map(async (blob: Blob) => {
+                const imgBlob = await this.preprocessImage(blob);
+                const { needCameraCableAlert } = this;
+                return { imgBlob, needCameraCableAlert };
+            }))
             .pipe(concatMap(p => Rxjs.from(p)));
     }
 
@@ -130,7 +138,7 @@ class Camera {
             if (this._wsSubject.hasError) {
                 console.error(this._wsSubject.thrownError);
             }
-            throw new Error(LANG.message.camera_ws_closed_unexpectly);
+            throw new Error(LANG.message.camera.ws_closed_unexpectly);
         }
         this._ws.send('require_frame');
         return await this._source
@@ -149,7 +157,7 @@ class Camera {
         this._ws.close(false);
     }
 
-    async preprocessImage(blob) {
+    async preprocessImage(blob: Blob) {
         // load blob and flip if necessary
         const imageLoadBlob = async () => {
             const img = new Image();
@@ -178,7 +186,7 @@ class Camera {
             canvas.width = 640;
             canvas.height = 280;
             canvas.getContext('2d').drawImage(img, 0, -40, 640, 360); // resize
-            const preprocessedBlob = await new Promise(resolve => canvas.toBlob(b => resolve(b)));
+            const preprocessedBlob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b)));
             return preprocessedBlob;
         };
 
@@ -190,13 +198,13 @@ class Camera {
             canvas.width = 640;
             canvas.height = 280;
             canvas.getContext('2d').drawImage(img, 0, -100, 640, 480); // crop top and bottom
-            const preprocessedBlob = await new Promise(resolve => canvas.toBlob(b => resolve(b)));
+            const preprocessedBlob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b)));
             return preprocessedBlob;
         };
 
         const loadAndFlipImage = async () => {
             const canvas = await imageLoadBlob();
-            const preprocessedBlob = await new Promise(resolve => canvas.toBlob(b => resolve(b)));
+            const preprocessedBlob = await new Promise<Blob>(resolve => canvas.toBlob(b => resolve(b)));
             return preprocessedBlob;
         }
 

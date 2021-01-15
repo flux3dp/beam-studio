@@ -873,8 +873,13 @@ export default {
         unable_to_find_machine: 'マシンを見つけることができません',
         disconnected: '接続が不安定です。デバイスの接続を確認して、後で再試行してください',
         unable_to_start: '#830 タスクを開始することができません。これが再び起きた場合は、バグレポートでご連絡ください：\n',
-        camera_fail_to_transmit_image: '画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。',
-        camera_ws_closed_unexpectly: '#845 マシンカメラへの接続が予期せず閉じられました。',
+        camera: {
+            camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
+            fail_to_transmit_image: '画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。',
+            ws_closed_unexpectly: '#844 マシンカメラへの接続が予期せず閉じられました。',
+            continue_preview: '継続する',
+            abort_preview: '中止する',
+        },
     },
     machine_status: {
         '-10': '維持モード',

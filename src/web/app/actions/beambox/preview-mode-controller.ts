@@ -1,12 +1,13 @@
 import PreviewModeBackgroundDrawer from './preview-mode-background-drawer';
-import DeviceMaster from '../../../helpers/device-master';
+import DeviceMaster from 'helpers/device-master';
 import Alert from '../../contexts/AlertCaller';
+import AlertConfig from 'helpers/api/alert-config';
 import Progress from '../../contexts/ProgressCaller';
 import AlertConstants from '../../constants/alert-constants';
 import ErrorConstants from '../../constants/error-constants';
-import sprintf from '../../../helpers/sprintf';
-import VersionChecker from '../../../helpers/version-checker';
-import * as i18n from '../../../helpers/i18n';
+import sprintf from 'helpers/sprintf';
+import VersionChecker from 'helpers/version-checker';
+import * as i18n from 'helpers/i18n';
 import Constant from './constant';
 import BeamboxPreference from './beambox-preference';
 import BeamboxActions from '../beambox';
@@ -111,22 +112,24 @@ class PreviewModeController {
         PreviewModeBackgroundDrawer.end();
         const storedDevice = this.storedDevice;
         await this.reset();
-        DeviceMaster.setDeviceControlDefaultCloseListener(storedDevice);
-        const res = await DeviceMaster.select(storedDevice);
-        if (res.success) {
-            if (DeviceMaster.currentControlMode !== 'raw') {
-                await DeviceMaster.enterRawMode();
+        if (storedDevice) {
+            DeviceMaster.setDeviceControlDefaultCloseListener(storedDevice);
+            const res = await DeviceMaster.select(storedDevice);
+            if (res.success) {
+                if (DeviceMaster.currentControlMode !== 'raw') {
+                    await DeviceMaster.enterRawMode();
+                }
+                if (this.isLineCheckEnabled) {
+                    await DeviceMaster.rawEndLineCheckMode();
+                }
+                await DeviceMaster.rawLooseMotor();
+                await DeviceMaster.endRawMode();
+                if (this.originalSpeed !== 1) {
+                    await DeviceMaster.setLaserSpeed(this.originalSpeed);
+                    this.originalSpeed = 1;
+                }
+                DeviceMaster.kick();
             }
-            if (this.isLineCheckEnabled) {
-                await DeviceMaster.rawEndLineCheckMode();
-            }
-            await DeviceMaster.rawLooseMotor();
-            await DeviceMaster.endRawMode();
-            if (this.originalSpeed !== 1) {
-                await DeviceMaster.setLaserSpeed(this.originalSpeed);
-                this.originalSpeed = 1;
-            }
-            DeviceMaster.kick();
         }
     }
 
@@ -405,9 +408,31 @@ class PreviewModeController {
 
     //just for getPhotoAfterMoveTo()
     async getPhotoFromMachine() {
-        const imgBlob = await DeviceMaster.takeOnePicture();
+        const { imgBlob, needCameraCableAlert } = await DeviceMaster.takeOnePicture();
         if (!imgBlob) {
-            throw new Error(LANG.message.camera_ws_closed_unexpectly);
+            throw new Error(LANG.message.camera.ws_closed_unexpectly);
+        } else if (needCameraCableAlert && !AlertConfig.read('skip_camera_cable_alert')) {
+            const shouldContinue = await new Promise<boolean>((resolve) => {
+                Alert.popUp({
+                    id: 'camera_cable_alert',
+                    message: LANG.message.camera.camera_cable_unstable,
+                    type: AlertConstants.SHOW_POPUP_WARNING,
+                    checkbox: {
+                        text: LANG.beambox.popup.dont_show_again,
+                        callbacks: () => AlertConfig.write('skip_camera_cable_alert', true),
+                    },
+                    buttonLabels: [LANG.message.camera.abort_preview, LANG.message.camera.continue_preview],
+                    callbacks: [
+                        () => resolve(false),
+                        () => resolve(true),
+                    ],
+                    primaryButtonIndex: 1,
+                });
+            });
+            if (!shouldContinue) {
+                this.end();
+                return;
+            }
         }
         const imgUrl = URL.createObjectURL(imgBlob);
         return imgUrl;

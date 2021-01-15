@@ -871,8 +871,13 @@ export interface ILang {
         unable_to_find_machine: string,
         disconnected: string,
         unable_to_start: string,
-        camera_fail_to_transmit_image: string,
-        camera_ws_closed_unexpectly: string,
+        camera: {
+            camera_cable_unstable: string,
+            fail_to_transmit_image: string,
+            ws_closed_unexpectly: string,
+            continue_preview: string,
+            abort_preview: string,
+        },
     },
     machine_status: {
         '-10': string,
