@@ -4,6 +4,7 @@ import ButtonGroup from '../../widgets/Button-Group';
 import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/Alert-Progress-Context';
 import * as i18n from '../../../helpers/i18n';
 
+const electron = requireNode('electron');
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 const LANG = i18n.lang;
@@ -42,13 +43,13 @@ class Progress extends React.Component {
         clearTimeout(this.closeTimeout);
     }
 
-    _renderCaption = (caption) => {
+    renderCaption = (caption: string) => {
         return caption ? (
             <div className="caption">{caption}</div>
         ) : null;
     }
 
-    _renderCancelButton = () => {
+    renderCancelButton = () => {
         const progress: IProgress = this.props.progress;
         const { onCancel, id } = progress;
         if (!onCancel) {
@@ -71,7 +72,7 @@ class Progress extends React.Component {
 
     }
 
-    _renderMessage = (progress: IProgress) => {
+    renderMessage = (progress: IProgress) => {
         let content;
         if (progress.type === ProgressConstants.NONSTOP) {
             content = <div className={classNames('spinner-roller spinner-roller-reverse')}/>
@@ -100,9 +101,9 @@ class Progress extends React.Component {
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'progress')}>
-                    {this._renderCaption(progress.caption)}
-                    {this._renderMessage(progress)}
-                    {this._renderCancelButton()}
+                    {this.renderCaption(progress.caption)}
+                    {this.renderMessage(progress)}
+                    {this.renderCancelButton()}
                 </div>
             </Modal>
         );
@@ -116,21 +117,37 @@ class Alert extends React.Component {
         this.state = {
             checkboxChecked: false
         }
+        this.messageRef = React.createRef();
     }
 
-    _renderCaption = (caption) => {
+    componentDidMount() {
+        const message = this.messageRef.current as Element;
+        if (message) {
+            const aElements = message.querySelectorAll('a');
+            for (let i = 0; i < aElements.length; i++) {
+                const a = aElements[i];
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    electron.remote.shell.openExternal(a.getAttribute('href'));
+                })
+            }
+        }
+    }
+
+    renderCaption = (caption) => {
         return caption ? (
             <h2 className="caption">{caption}</h2>
         ) : null;
     }
 
-    _renderMessage = (alert) => {
+    renderMessage = (alert) => {
+        if (!alert) return null;
         return typeof alert.message === 'string' ?
-                    <pre className="message" dangerouslySetInnerHTML={{__html: alert.message}}></pre> :
-                    <pre className="message">{alert.message}</pre>
+                    <pre className="message" dangerouslySetInnerHTML={{__html: alert.message}} ref={this.messageRef}></pre> :
+                    <pre className="message" ref={this.messageRef}>{alert.message}</pre>
     }
 
-    _renderCheckbox = (checkboxText) => {
+    renderCheckbox = (checkboxText) => {
         let _handleCheckboxClick = () => {
             this.setState({checkboxChecked: !this.state.checkboxChecked});
         };
@@ -142,7 +159,7 @@ class Alert extends React.Component {
         );
     }
 
-    _renderChildren = (children: Element) => {
+    renderChildren = (children: Element) => {
         if (!children) {
             return null;
         }
@@ -168,12 +185,17 @@ class Alert extends React.Component {
                 // Need to reset checkbox state after callback
                 if (typeof alert.checkboxCallbacks === 'function') {
                     newButton.onClick = () => {
+                        // If only one checkbox callback passed, run checkbox callback after
+                        // runing button callback
                         popFromStack();
+                        buttonCallback();
                         alert.checkboxCallbacks();
                         this.setState({checkboxChecked: false});
                     }
                 } else if (alert.checkboxCallbacks.length > i){
                     newButton.onClick = () => {
+                        // If more than one checkbox callbacks passed,
+                        // replace original checkbox callbacks.
                         popFromStack();
                         alert.checkboxCallbacks[i]();
                         this.setState({checkboxChecked: false});
@@ -189,14 +211,14 @@ class Alert extends React.Component {
             return newButton;
         });
 
-        let checkbox = alert.checkboxText ? this._renderCheckbox(alert.checkboxText) : null;
+        let checkbox = alert.checkboxText ? this.renderCheckbox(alert.checkboxText) : null;
 
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
-                    {this._renderCaption(alert.caption)}
-                    {this._renderMessage(alert)}
-                    {this._renderChildren(alert.children)}
+                    {this.renderCaption(alert.caption)}
+                    {this.renderMessage(alert)}
+                    {this.renderChildren(alert.children)}
                     {checkbox}
                     <ButtonGroup buttons={buttons}/>
                 </div>
