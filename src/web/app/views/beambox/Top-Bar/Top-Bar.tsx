@@ -79,6 +79,7 @@ export class TopBar extends React.Component {
             (deviceList) => {
                 const { hasDiscoverdMachine, shouldShowDeviceList } = this.state;
                 deviceList = deviceList.filter((device) => device.serial !== 'XXXXXXXXXX');
+                deviceList.sort((deviceA, deviceB) => deviceA.name.localeCompare(deviceB.name));
                 this.deviceList = deviceList;
                 if ((deviceList.length > 0) !== hasDiscoverdMachine) {
                     this.setState({hasDiscoverdMachine: deviceList.length > 0});
