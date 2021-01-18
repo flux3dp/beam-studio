@@ -64,6 +64,7 @@ export interface ILang {
                 caption: string,
                 message: string,
                 still_update: string,
+                cant_get_latest: string,
             },
             confirm: string,
             upload_file: string,

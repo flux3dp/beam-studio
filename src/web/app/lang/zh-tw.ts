@@ -65,7 +65,8 @@ export default {
             latest_firmware: {
                 caption: '韌體更新',
                 message: '韌體已經是最新版本',
-                still_update: '檔案更新'
+                still_update: '檔案更新',
+                cant_get_latest: '無法取得最新版本韌體資訊。',
             },
             confirm: '上傳',
             upload_file: '韌體上傳',

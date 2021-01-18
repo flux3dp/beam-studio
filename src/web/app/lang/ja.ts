@@ -65,7 +65,8 @@ export default {
             latest_firmware: {
                 caption: 'マシンのファームウェアアップデート',
                 message: 'あなたは最新のマシンファームウェアを使用しています',
-                still_update: 'アップデート'
+                still_update: 'アップデート',
+                cant_get_latest: '最新のファームウェアの情報を取得できません。',
             },
             confirm: 'アップロード',
             upload_file: 'ファームウェアのアップロード（*.bin / *.fxfw）',

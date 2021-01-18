@@ -65,7 +65,8 @@ export default {
             latest_firmware: {
                 caption: 'Machine firmware Update',
                 message: 'You have the latest Machine firmware',
-                still_update: 'UPDATE'
+                still_update: 'UPDATE',
+                cant_get_latest: 'Unable to get information of the latest firmware.',
             },
             confirm: 'UPLOAD',
             upload_file: 'Firmware upload (*.bin / *.fxfw)',

@@ -215,8 +215,12 @@ const initMenuBarEvents = () => {
                     }
 
                 })
-                    .fail(function (response) {
-                        firmwareUpdater(response, currentPrinter, type);
+                    .fail(function () {
+                        Alert.popUp({
+                            id: 'cant-get-latest-firmware',
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            message: LANG.update.firmware.latest_firmware.cant_get_latest,
+                        });
                     });
             },
             checkStatus = function () {

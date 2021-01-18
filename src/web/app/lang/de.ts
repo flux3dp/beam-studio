@@ -65,7 +65,8 @@ export default {
             latest_firmware: {
                 caption: 'Maschinenfirmware-Update',
                 message: 'Du hast die neueste Maschinenfirmware',
-                still_update: 'AKTUALISIEREN'
+                still_update: 'AKTUALISIEREN',
+                cant_get_latest: 'Informationen zur neuesten Firmware können nicht abgerufen werden.',
             },
             confirm: 'HOCHLADEN',
             upload_file: 'Firmware-Upload (* .bin / * .fxfw)',

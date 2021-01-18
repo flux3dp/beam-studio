@@ -65,7 +65,8 @@ export default {
             latest_firmware: {
                 caption: '固件更新',
                 message: '固件已经是最新版本',
-                still_update: '文件更新'
+                still_update: '文件更新',
+                cant_get_latest: '无法取得最新版本固件资讯。',
             },
             confirm: '上传',
             upload_file: '固件上传',
