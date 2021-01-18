@@ -875,7 +875,7 @@ export default {
         unable_to_start: '#830 Die Aufgabe konnte nicht gestartet werden. Bitte versuchen Sie es erneut. Wenn dies erneut geschieht, kontaktieren Sie uns bitte mit einem Fehlerbericht:\n',
         camera: {
             camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',
-            fail_to_transmit_image: 'Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starte Ihre Beambox neu oder kontaktieren Sie uns.',
+            fail_to_transmit_image: '#845 Bei der Bildübertragung ist ein Fehler aufgetreten. Bitte starte Ihre Beambox neu oder kontaktieren Sie uns.',
             ws_closed_unexpectly: '#844 Die Verbindung zur Maschinenkamera wurde unerwartet geschlossen.',
             continue_preview: 'Fortsetzen',
             abort_preview: 'Abbrechen',

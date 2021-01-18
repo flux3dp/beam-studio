@@ -875,7 +875,7 @@ export default {
         unable_to_start: '#830 タスクを開始することができません。これが再び起きた場合は、バグレポートでご連絡ください：\n',
         camera: {
             camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
-            fail_to_transmit_image: '画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。',
+            fail_to_transmit_image: '#845 画像の送信に不具合が発生しました。Beamboxを再起動するか、ご連絡ください。',
             ws_closed_unexpectly: '#844 マシンカメラへの接続が予期せず閉じられました。',
             continue_preview: '継続する',
             abort_preview: '中止する',

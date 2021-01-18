@@ -875,7 +875,7 @@ export default {
         unable_to_start: '#830 Incapaz de comenzar la tarea. Por favor, inténtalo otra vez. Si esto sucede de nuevo, por favor contáctanos con el informe de errores:\n',
         camera: {
             camera_cable_unstable: 'Se detecta que la cámara está transfiriendo fotos de manera inestable. La vista previa aún se puede realizar normalmente, pero puede existir el problema de que la vista previa sea lenta o se agote el tiempo de espera.',
-            fail_to_transmit_image: 'Algo salió mal en la transmisión de imágenes. Por favor, intenta reiniciar tu Beambox o contacta con nosotros.',
+            fail_to_transmit_image: '#845 Algo salió mal en la transmisión de imágenes. Por favor, intenta reiniciar tu Beambox o contacta con nosotros.',
             ws_closed_unexpectly: '#844 La conexión a la cámara de la máquina se ha cerrado inesperadamente.',
             continue_preview: 'Continuar',
             abort_preview: 'Abortar',

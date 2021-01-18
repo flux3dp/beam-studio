@@ -875,7 +875,7 @@ export default {
         unable_to_start: '#830 无法开始工作，如果持续发生，请附上错误回报，与我们联系:\n',
         camera: {
             camera_cable_unstable: '侦测到相机传输照片时不稳定，仍能正常进行相机预览，但可能会有预览速度较慢或超时的问题。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',
-            fail_to_transmit_image: '相机传输照片异常，请将 Beambox 重新开机。如果问题持续发生，请与我们联系。',
+            fail_to_transmit_image: '#845 相机传输照片异常，请将 Beambox 重新开机。如果问题持续发生，请与我们联系。',
             ws_closed_unexpectly: '#844 与机器相机的连线无预期的中断。',
             continue_preview: '继续预览',
             abort_preview: '中断预览',
