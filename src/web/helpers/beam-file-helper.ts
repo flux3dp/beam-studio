@@ -241,7 +241,7 @@ const readImageSource = (buf, offset, end) => {
 }
 
 const readBeam = async (file) => {
-    let fetchedData = await fetch(typeof file === 'string' ? file : file.path);
+    let fetchedData = await fetch((typeof file === 'string' ? file : file.path).replace('#', '%23'));
     const respData = await fetchedData.blob();
     let data = await new Response(respData).arrayBuffer();
     const buf = Buffer.from(data);
