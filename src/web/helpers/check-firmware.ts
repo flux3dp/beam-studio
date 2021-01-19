@@ -69,14 +69,24 @@ export default function(printer, type) {
         data: request_data
     })
         .done(function(response) {
-            response.needUpdate =  versionCompare(printer.version, response.latest_version );
-            console.log('response.needUpdate: ', response.needUpdate);
-            response.latestVersion = response.latest_version;
-            response.changelog_en = response.changelog_en.replace(/[\r]/g, '<br/>');
-            response.changelog_zh = response.changelog_zh.replace(/[\r]/g, '<br/>');
-            response.downloadUrl = info['downloadUrl'].replace('[version]', response.latest_version);
-
-            deferred.resolve(response);
+            console.log(response);
+            try {
+                response.needUpdate =  versionCompare(printer.version, response.latest_version );
+                console.log('response.needUpdate: ', response.needUpdate);
+                response.latestVersion = response.latest_version;
+                if (response.changelog_en) {
+                    response.changelog_en = response.changelog_en.replace(/[\r]/g, '<br/>');
+                }
+                if (response.changelog_zh) {
+                    response.changelog_zh = response.changelog_zh.replace(/[\r]/g, '<br/>');
+                }
+                response.downloadUrl = info['downloadUrl'].replace('[version]', response.latest_version);
+                deferred.resolve(response);
+            } catch {
+                deferred.resolve({
+                    needUpdate: false,
+                });
+            }
         })
         .fail(function() {
             deferred.reject({
