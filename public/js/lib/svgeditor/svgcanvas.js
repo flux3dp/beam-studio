@@ -9124,7 +9124,12 @@ define([
 
         this.updateRecentMenu();
 
-        this.gridArraySelectedElement = (gridDistanceXY, arrayNumberXY) => {
+        /**
+         * Create grid array of selected element
+         * @param {{dx: number, dy: number}} interval 
+         * @param {{row: number, column: number}} arraySize 
+         */
+        this.gridArraySelectedElement = (interval, arraySize) => {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9134,24 +9139,18 @@ define([
             if (originElements.length == 0) {
                 return;
             }
-            let pastedElements = [];
-            let dx = [];
-            let dy = [];
-            let batchCmd = new svgedit.history.BatchCommand('Grid elements');
-            var drawing = getCurrentDrawing();
-            let elementCount = 0;
+            const newElements = [];
+            const dx = [];
+            const dy = [];
+            const batchCmd = new svgedit.history.BatchCommand('Grid elements');
+            const drawing = getCurrentDrawing();
             for (let i = 0; i < originElements.length; ++i) {
                 const elem = originElements[i];
                 if (!elem) {
                     break;
                 }
-                for (let j = 0; j < arrayNumberXY.column; ++j) {
-                    for (let k = 0; k < arrayNumberXY.row; ++k) {
-
-                        dx[elementCount] = j * gridDistanceXY.dx;
-                        dy[elementCount] = k * gridDistanceXY.dy;
-                        elementCount += 1;
-
+                for (let j = 0; j < arraySize.column; ++j) {
+                    for (let k = 0; k < arraySize.row; ++k) {
                         if (j == 0 && k == 0) continue;
                         const copy = drawing.copyElem(elem);
                         if (!svgedit.utilities.getElem(elem.id)) {
@@ -9162,12 +9161,13 @@ define([
                         layer.appendChild(copy);
                         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
                         restoreRefElems(copy);
-                        pastedElements.push(copy);
+                        dx.push(j * interval.dx);
+                        dy.push(k * interval.dy);
+                        newElements.push(copy);
                     }
                 }
             }
-            addToSelection(pastedElements);
-            const cmd = canvas.moveSelectedElements(dx, dy, false);
+            const cmd = canvas.moveElements(dx, dy, newElements, false);
             if (cmd) {
                 batchCmd.addSubCommand(cmd);
             }
@@ -9175,8 +9175,8 @@ define([
             canvas.undoMgr.undoStackPointer -= 1;
             canvas.undoMgr.undoStack.pop();
             addCommandToHistory(batchCmd);
-            if (pastedElements.length > 0) {
-                call('changed', pastedElements);
+            if (newElements.length > 0) {
+                call('changed', newElements);
             }
         };
 
@@ -10698,6 +10698,13 @@ define([
             }
         };
 
+        /**
+         * move given elements
+         * @param {number[] | number} dx
+         * @param {number[] | number} dy
+         * @param {Element[]} elems
+         * @param {undoable} boolean whether this operation is undoable, return cmd if false
+         */
         this.moveElements = function (dx, dy, elems, undoable) {
             if (dx.constructor != Array) {
                 dx /= current_zoom;
