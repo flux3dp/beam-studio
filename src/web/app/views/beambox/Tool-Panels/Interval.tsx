@@ -59,7 +59,7 @@ class Interval extends React.Component{
                         {LANG.array_interval}
                         <span className="value">{this.getValueCaption()}</span>
                     </p>
-                    <label className="accordion-body">
+                    <label className="accordion-body" onClick={(e: MouseEvent) => e.preventDefault()}>
                         <div className="control">
                             <span className="text-center header">{LANG.dx}</span>
                             <UnitInput

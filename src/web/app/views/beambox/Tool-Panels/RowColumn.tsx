@@ -54,7 +54,7 @@ class RowColumn extends React.Component{
                         {LANG.array_dimension}
                         <span className="value">{this.getValueCaption()}</span>
                     </p>
-                    <label className="accordion-body">
+                    <label className="accordion-body" onClick={(e: MouseEvent) => e.preventDefault()}>
                         <div className="control">
                             <span className="text-center header">{LANG.columns}</span>
                             <UnitInput
