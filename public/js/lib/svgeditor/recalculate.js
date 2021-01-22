@@ -776,28 +776,26 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     else if (N == 1 && tlist.getItem(0).type == 1 && !angle) {
       // Remap all point-based elements
       m = svgedit.math.transformListToTransform(tlist).matrix;
-      switch (selected.tagName) {
-        case 'line':
+      if (['line', 'polyline', 'polygon', 'path'].includes(selected.tagName)) {
+        if (selected.tagName === 'line') {
           changes = $(selected).attr(['x1', 'y1', 'x2', 'y2']);
-        case 'polyline':
-        case 'polygon':
+        } else if (selected.tagName === 'path') {
+          changes.d = selected.getAttribute('d');
+        } else {
+          // polyline or polygon
           changes.points = selected.getAttribute('points');
           if (changes.points) {
-            var list = selected.points;
-            var len = list.numberOfItems;
+            const list = selected.points;
+            const len = list.numberOfItems;
             changes.points = new Array(len);
             for (var i = 0; i < len; ++i) {
               var pt = list.getItem(i);
               changes.points[i] = {x:pt.x, y:pt.y};
             }
           }
-        case 'path':
-          changes.d = selected.getAttribute('d');
-          operation = 1;
-          tlist.clear();
-          break;
-        default:
-          break;
+        }
+        operation = 1;
+        tlist.clear();
       }
     }
     // if it was a rotation, put the rotate back and return without a command
