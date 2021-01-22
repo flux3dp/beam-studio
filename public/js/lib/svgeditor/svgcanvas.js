@@ -3009,6 +3009,12 @@ define([
                 startTransform = null;
             };
 
+            const mouseEnter = (evt) => {
+                if (started && (evt.buttons & 1) === 0) {
+                    mouseUp(evt);
+                }
+            }
+
             var dblClick = function (evt) {
                 var evt_target = evt.target;
                 var parent = evt_target.parentNode;
@@ -3057,8 +3063,12 @@ define([
 
             // Added mouseup to the container here.
             // TODO(codedread): Figure out why after the Closure compiler, the window mouseup is ignored.
-            $(container).mousedown(mouseDown).mousemove(mouseMove).click(handleLinkInCanvas).dblclick(dblClick).mouseup(mouseUp);
-            //	$(window).mouseup(mouseUp);
+            container.addEventListener('mousedown', mouseDown);
+            container.addEventListener('mousemove', mouseMove);
+            container.addEventListener('mouseup', mouseUp);
+            container.addEventListener('mouseenter', mouseEnter);
+            container.addEventListener('click', handleLinkInCanvas);
+            container.addEventListener('dblclick', dblClick);
 
             //TODO(rafaelcastrocouto): User preference for shift key and zoom factor
 
