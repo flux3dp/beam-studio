@@ -20,17 +20,6 @@ getSVGAsync((globalSVG) => {
 const LANG = i18n.lang.beambox;
 const electron = window['electron'];
 
-let _mm2pixel = function(mm_input) {
-    const dpmm = Constant.dpmm;
-
-    return mm_input*dpmm;
-};
-
-let _update_attr_changer = function(name, val) {
-    $('#'+name).val(val);
-    $('#'+name).change();
-};
-
 let _setCrosshairCursor = function() {
     $('#workarea').css('cursor', 'crosshair');
     $('#svg_editor g').css('cursor', 'crosshair');
@@ -444,114 +433,10 @@ const funcs =  {
         }
     },
 
-    //top panel
-    update_image_width: function(val) {
-        _update_attr_changer('image_width', _mm2pixel(val));
-    },
-    update_image_height: function(val) {
-        _update_attr_changer('image_height', _mm2pixel(val));
-    },
-    update_rect_width: function(val) {
-        _update_attr_changer('rect_width', _mm2pixel(val));
-    },
-    update_rect_height: function(val) {
-        _update_attr_changer('rect_height', _mm2pixel(val));
-    },
-    update_angle: function(val) {
-        _update_attr_changer('angle', val);
-    },
-    update_selected_x: function(val) {
-        _update_attr_changer('selected_x', _mm2pixel(val));
-    },
-    update_selected_y: function(val) {
-        _update_attr_changer('selected_y', _mm2pixel(val));
-    },
-    update_ellipse_cx: function(val) {
-        _update_attr_changer('ellipse_cx', _mm2pixel(val));
-    },
-    update_rect_rx: function(val) {
-        _update_attr_changer('rect_rx', _mm2pixel(val));
-    },
-    update_ellipse_cy: function(val) {
-        _update_attr_changer('ellipse_cy', _mm2pixel(val));
-    },
-    update_ellipse_rx: function(val) {
-        _update_attr_changer('ellipse_rx', _mm2pixel(val));
-    },
-    update_ellipse_ry: function(val) {
-        _update_attr_changer('ellipse_ry', _mm2pixel(val));
-    },
-    update_line_x1: function(val) {
-        _update_attr_changer('line_x1', _mm2pixel(val));
-    },
-    update_line_y1: function(val) {
-        _update_attr_changer('line_y1', _mm2pixel(val));
-    },
-    update_line_x2: function(val) {
-        _update_attr_changer('line_x2', _mm2pixel(val));
-    },
-    update_line_y2: function(val) {
-        _update_attr_changer('line_y2', _mm2pixel(val));
-    },
-    update_font_family: function(val) {
-        _update_attr_changer('font_family', val);
-    },
-    update_font_size: function(val) {
-        _update_attr_changer('font_size', val);
-    },
-    update_font_italic: function(val) {
-        svgCanvas.setItalic(val);
-        window['updateContextPanel']();
-    },
-    update_font_weight: function(val) {
-        svgCanvas.setFontWeight(val);
-        window['updateContextPanel']();
-    },
-    update_letter_spacing: function(val) {
-        svgCanvas.setLetterSpacing(val);
-        window['updateContextPanel']();
-    },
-    update_font_is_fill: function(val) {
-        svgCanvas.setFontIsFill(val);
-        window['updateContextPanel']();
-    },
-    write_image_data_shading: function(elem, val) {
-        elem.attr('data-shading', val);
-    },
-    write_image_data_threshold: function(elem, val) {
-        elem.attr('data-threshold', val);
-    },
-
     // others
-    reset_select_mode: function() {
-        // simulate user click on empty area of canvas.
-        svgCanvas.textActions.clear();
-        svgCanvas.setMode('select');
-        $(window['svgroot']).trigger({
-            type: 'mousedown',
-            pageX: 0,
-            pageY: 0
-        } as JQuery.Event);
-        $(window['svgroot']).trigger({
-            type: 'mouseup',
-            pageX: 0,
-            pageY: 0
-        } as JQuery.Event);
-    },
-
     getLatestImportFileName: function() {
         return svgCanvas.getLatestImportFileName();
     },
-
-    resetObjectPanel: function() {
-        const elem = svgCanvas.getSelectedElems()[0];
-        $(elem).trigger({
-            type: 'mousedown'
-        } as JQuery.Event);
-        $(elem).trigger({
-            type: 'mouseup'
-        } as JQuery.Event);
-    }
 };
 
 export default funcs;
