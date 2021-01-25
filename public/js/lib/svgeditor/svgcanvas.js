@@ -1869,7 +1869,6 @@ define([
                                 'stroke-dasharray': cur_shape.stroke_dasharray,
                                 'stroke-linejoin': cur_shape.stroke_linejoin,
                                 'stroke-linecap': cur_shape.stroke_linecap,
-                                'stroke-opacity': cur_shape.stroke_opacity,
                                 fill: 'none',
                                 opacity: cur_shape.opacity / 2,
                                 style: 'pointer-events:none'
@@ -2652,14 +2651,22 @@ define([
                                     case 'foreignObject':
                                         break;
                                     default:
-                                        cur_properties.fill = selected.getAttribute('fill');
-                                        cur_properties.fill_opacity = selected.getAttribute('fill-opacity');
-                                        cur_properties.stroke = selected.getAttribute('stroke');
-                                        cur_properties.stroke_opacity = selected.getAttribute('stroke-opacity');
-                                        cur_properties.stroke_width = selected.getAttribute('stroke-width');
-                                        cur_properties.stroke_dasharray = selected.getAttribute('stroke-dasharray');
-                                        cur_properties.stroke_linejoin = selected.getAttribute('stroke-linejoin');
-                                        cur_properties.stroke_linecap = selected.getAttribute('stroke-linecap');
+                                        let val = selected.getAttribute('fill');
+                                        if (val !== null) cur_properties.fill = val;
+                                        val = selected.getAttribute('fill-opacity');
+                                        if (val !== null) cur_properties.fill_opacity = val;
+                                        val = selected.getAttribute('stroke');
+                                        if (val !== null) cur_properties.stroke = val;
+                                        val = selected.getAttribute('stroke-opacity');
+                                        if (val !== null) cur_properties.stroke_opacity = val;
+                                        val = selected.getAttribute('stroke-width');
+                                        if (val !== null) cur_properties.stroke_width = val;
+                                        val = selected.getAttribute('stroke-dasharray');
+                                        if (val !== null) cur_properties.stroke_dasharray = val;
+                                        val = selected.getAttribute('stroke-linejoin');
+                                        if (val !== null) cur_properties.stroke_linejoin = val;
+                                        val = selected.getAttribute('stroke-linecap');
+                                        if (val !== null) cur_properties.stroke_linecap = val;
                                 }
 
                                 if (selected.tagName === 'text') {
