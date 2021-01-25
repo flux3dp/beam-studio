@@ -9297,8 +9297,8 @@ define([
                 }
             }
             const base = selectedElements[len-1];
-            const fill = $(base).attr('fill');
-            const fill_opacity = $(base).attr('fill-opacity');
+            const fill = base.getAttribute('fill');
+            const fill_opacity = base.getAttribute('fill-opacity');
             const element = addSvgElementFromJson({
                 element: 'path',
                 curStyles: false,
@@ -9459,8 +9459,8 @@ define([
                     id: getNextId(),
                     d: d,
                     stroke: '#000',
+                    fill: 'none',
                     'fill-opacity': 0,
-                    opacity: cur_shape.opacity
                 }
             });
             pathActions.fixEnd(newElem);
