@@ -48,7 +48,10 @@ class ActionsPanel extends React.Component {
         Progress.openNonstopProgress({id: 'convert-font', message: LANG.wait_for_parsing_font});
         const bbox = svgCanvas.calculateTransformedBBox(elem);
         const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
-
+        if (svgCanvas.textActions.isEditing) {
+            svgCanvas.textActions.toSelectMode();
+        }
+        svgCanvas.clearSelection();
         if (convertByFluxsvg) {
             await FontFuncs.convertTextToPathFluxsvg($(elem), bbox);
         } else {
@@ -63,7 +66,6 @@ class ActionsPanel extends React.Component {
                 }, 50);
             });
         }
-        FnWrapper.reset_select_mode();
         Progress.popById('convert-font');
     }
 

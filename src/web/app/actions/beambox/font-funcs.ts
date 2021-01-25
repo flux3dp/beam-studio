@@ -258,8 +258,6 @@ const setTextPostscriptnameIfNeeded = ($textElement) => {
 
 const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: boolean) => {
     if (!$textElement.text()) {
-        svgCanvas.clearSelection();
-        $textElement.remove();
         return;
     }
     Progress.openNonstopProgress({id: 'parsing-font', message: LANG.wait_for_parsing_font});
@@ -442,7 +440,6 @@ const tempConvertTextToPathAmoungSvgcontent = async () => {
         console.warn('font is not supported in web browser');
         return;
     }
-    //FnWrapper.reset_select_mode();
     const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
     let isSomeUnsupported = false;
     if (convertByFluxsvg) {
