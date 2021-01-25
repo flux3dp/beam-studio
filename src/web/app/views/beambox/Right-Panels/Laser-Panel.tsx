@@ -183,9 +183,10 @@ class LaserPanel extends React.PureComponent {
                 { name: 'JSON', extensions: ['json', 'JSON']},
             ]
         };
-        const res = await ElectronDialogs.showOpenDialog(dialogOptions);
-        if (res) {
-            const filePath = res[0];
+
+        const { canceled, filePaths } = await ElectronDialogs.showOpenDialog(dialogOptions);
+        if (!canceled && filePaths) {
+            const filePath = filePaths[0];
             const file = await fetch(filePath);
             const fileBlob = await file.blob();
             svgEditor.importLaserConfig(fileBlob);

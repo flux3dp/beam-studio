@@ -1,13 +1,15 @@
 import Modal from '../widgets/Modal';
-import * as i18n from '../../helpers/i18n';
+import i18n from '../../helpers/i18n';
+
 const React = requireNode('react');
 
-const lang = i18n.lang.initialize;
+let lang;
 
 export default function () {
     return class ConnectEthernet extends React.Component{
         constructor(props) {
             super(props);
+            lang = i18n.lang.initialize;
             this.state = {
                 showCollapse: false,
             };

@@ -1,12 +1,11 @@
 import Modal from '../widgets/Modal';
+import InputLightBox from '../widgets/Input-Lightbox';
 import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog';
 import Prompt from '../views/dialogs/Prompt';
 import ConfirmPrompt from '../views/dialogs/Confirm-Prompt';
 import { Tutorial } from '../views/tutorials/Tutorial';
 import { ITutorial } from '../../interfaces/ITutorial';
 import AboutBeamStudio from '../views/beambox/About-Beam-Studio';
-import CameraCalibration from '../views/beambox/Camera-Calibration';
-import DiodeCalibration from '../views/beambox/Diode-Calibration';
 import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel';
 import DxfDpiSelector from '../views/beambox/DxfDpiSelector';
 import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel';
@@ -23,8 +22,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const React = requireNode('react');
-const electronRemote = requireNode('electron').remote;
-const { dialog } = electronRemote;
 const addDialogComponent = (id: string, component) => {
     if (!DialogContextHelper.context) {
         console.log('Dialog context not loaded Yet');
@@ -54,6 +51,7 @@ let promptIndex = 0;
 
 export default {
     addDialogComponent,
+    isIdExist,
     popDialogById,
     showAboutBeamStudio: () => {
         if (isIdExist('about-bs')) return;
@@ -61,31 +59,6 @@ export default {
             <AboutBeamStudio
                 onClose={() => popDialogById('about-bs')}
             />
-        );
-    },
-    showCameraCalibration: (device, isBorderless: boolean) => {
-        if (isIdExist('camera-cali')) return;
-        addDialogComponent('camera-cali',
-            <Modal>
-                <CameraCalibration
-                    device={device}
-                    model={'beamo'}
-                    borderless={isBorderless}
-                    onClose={() => popDialogById('camera-cali')}
-                />
-            </Modal>
-        );
-    },
-    showDiodeCalibration: (device) => {
-        if (isIdExist('diode-cali')) return;
-        addDialogComponent('diode-cali',
-            <Modal>
-                <DiodeCalibration
-                    device={device}
-                    model={'beamo'}
-                    onClose={() => popDialogById('diode-cali')}
-                />
-            </Modal>
         );
     },
     showDocumentSettings: () => {
@@ -215,4 +188,24 @@ export default {
             );
         })
     },
+    showInputLightbox: (id: string, args) => {
+        addDialogComponent(id,
+            <InputLightBox
+                isOpen={true}
+                caption={args.caption}
+                type={args.type || 'TEXT_INPUT'}
+                inputHeader={args.inputHeader}
+                defaultValue={args.defaultValue}
+                confirmText={args.confirmText}
+                maxLength={args.maxLength}
+                onSubmit={(value) => {
+                    args.onSubmit(value);
+                }}
+                onClose={(from: string) => {
+                    popDialogById(id);
+                    if (from !== 'submit') args.onCancel();
+                }}
+            />
+        );
+    }
 }

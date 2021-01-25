@@ -1,22 +1,23 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
-import * as i18n from '../../../helpers/i18n';
 import BeamboxPreference from '../../actions/beambox/beambox-preference';
-import Modal from '../../widgets/Modal';
-import AlertDialog from '../../widgets/AlertDialog';
-import UnitInput from '../../widgets/Unit-Input-v2';
-import DeviceMaster from '../../../helpers/device-master';
-import VersionChecker from '../../../helpers/version-checker';
-import Alert from '../../contexts/AlertCaller';
-import AlertConstants from '../../constants/alert-constants';
-import CheckDeviceStatus from '../../../helpers/check-device-status';
-import Progress from '../../contexts/ProgressCaller';
-import PreviewModeController from '../../actions/beambox/preview-mode-controller';
-import CameraCalibration from '../../../helpers/api/camera-calibration';
-import Config from '../../../helpers/api/config';
 import Constant from '../../actions/beambox/constant';
-import DeviceErrorHandler from '../../../helpers/device-error-handler';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+import PreviewModeController from '../../actions/beambox/preview-mode-controller';
+import AlertConstants from '../../constants/alert-constants';
+import Alert from '../../contexts/AlertCaller';
+import Dialog from '../../contexts/DialogCaller';
+import Progress from '../../contexts/ProgressCaller';
+import AlertDialog from '../../widgets/AlertDialog';
+import Modal from '../../widgets/Modal';
+import UnitInput from '../../widgets/Unit-Input-v2';
+import Config from 'helpers/api/config';
+import CameraCalibration from 'helpers/api/camera-calibration';
+import CheckDeviceStatus from 'helpers/check-device-status';
+import DeviceErrorHandler from 'helpers/device-error-handler';
+import DeviceMaster from 'helpers/device-master';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
+import VersionChecker from 'helpers/version-checker';
 let svgCanvas;
 getSVGAsync((globalSVG) => {
     svgCanvas = globalSVG.Canvas;
@@ -41,7 +42,7 @@ let cameraPosition = {
 };
 const calibratedMachineUUIDs = [];
 
-class CameraCalibrationStateMachine extends React.Component {
+class CameraCalibrationComponent extends React.Component {
     private props: any
     private state: any
     private setState: (newState) => void
@@ -714,4 +715,19 @@ const StepFinish = ({parent, onClose}) => (
     />
 );
 
-export default CameraCalibrationStateMachine;
+export default CameraCalibrationComponent;
+
+// Not putting this in DialogCaller to avoid circular import because DeviceMaster imports DialogCaller
+export const showCameraCalibration = (device, isBorderless: boolean) => {
+    if (Dialog.isIdExist('camera-cali')) return;
+    Dialog.addDialogComponent('camera-cali',
+        <Modal>
+            <CameraCalibrationComponent
+                device={device}
+                model={'beamo'}
+                borderless={isBorderless}
+                onClose={() => Dialog.popDialogById('camera-cali')}
+            />
+        </Modal>
+    );
+};

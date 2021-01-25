@@ -1,17 +1,19 @@
 import Modal from '../widgets/Modal';
 import LocalStorage from '../../helpers/local-storage';
-import * as i18n from '../../helpers/i18n';
+import i18n from '../../helpers/i18n';
 
 const React = requireNode('react');
-const lang = i18n.lang.initialize;
+
+let lang;
 
 class SelectConnectionType extends React.Component{
     constructor(props) {
         super(props);
+        lang = i18n.lang.initialize;
         this.state = {};
     }
 
-    onClick = (method) => {
+    onClick = (method: string) => {
         switch (method) {
             case 'wi-fi':
                 location.hash = '#initialize/connect/connect-wi-fi';

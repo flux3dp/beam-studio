@@ -4,20 +4,21 @@ import keyCodeConstants from '../constants/keycode-constants';
 import Discover from '../../helpers/api/discover';
 import DeviceMaster from '../../helpers/device-master';
 import LocalStorage from '../../helpers/local-storage';
-import * as i18n from '../../helpers/i18n';
+import i18n from '../../helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 const dns = requireNode('dns');
 const ping = requireNode('net-ping');
 
-const lang = i18n.lang.initialize;
+let lang;
 const TIMEOUT = 20;
 const ipRex = /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
 
 class ConnectMachine extends React.Component{
     constructor(props: object) {
         super(props);
+        lang = i18n.lang.initialize;
         this.state = {
             rpiIp: null,
             machineIp: null,

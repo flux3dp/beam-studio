@@ -1902,7 +1902,6 @@ define([
                                 'stroke-dasharray': cur_shape.stroke_dasharray,
                                 'stroke-linejoin': cur_shape.stroke_linejoin,
                                 'stroke-linecap': cur_shape.stroke_linecap,
-                                'stroke-opacity': cur_shape.stroke_opacity,
                                 fill: 'none',
                                 opacity: cur_shape.opacity / 2,
                                 style: 'pointer-events:none'
@@ -2669,14 +2668,22 @@ define([
                                     case 'foreignObject':
                                         break;
                                     default:
-                                        cur_properties.fill = selected.getAttribute('fill');
-                                        cur_properties.fill_opacity = selected.getAttribute('fill-opacity');
-                                        cur_properties.stroke = selected.getAttribute('stroke');
-                                        cur_properties.stroke_opacity = selected.getAttribute('stroke-opacity');
-                                        cur_properties.stroke_width = selected.getAttribute('stroke-width');
-                                        cur_properties.stroke_dasharray = selected.getAttribute('stroke-dasharray');
-                                        cur_properties.stroke_linejoin = selected.getAttribute('stroke-linejoin');
-                                        cur_properties.stroke_linecap = selected.getAttribute('stroke-linecap');
+                                        let val = selected.getAttribute('fill');
+                                        if (val !== null) cur_properties.fill = val;
+                                        val = selected.getAttribute('fill-opacity');
+                                        if (val !== null) cur_properties.fill_opacity = val;
+                                        val = selected.getAttribute('stroke');
+                                        if (val !== null) cur_properties.stroke = val;
+                                        val = selected.getAttribute('stroke-opacity');
+                                        if (val !== null) cur_properties.stroke_opacity = val;
+                                        val = selected.getAttribute('stroke-width');
+                                        if (val !== null) cur_properties.stroke_width = val;
+                                        val = selected.getAttribute('stroke-dasharray');
+                                        if (val !== null) cur_properties.stroke_dasharray = val;
+                                        val = selected.getAttribute('stroke-linejoin');
+                                        if (val !== null) cur_properties.stroke_linejoin = val;
+                                        val = selected.getAttribute('stroke-linecap');
+                                        if (val !== null) cur_properties.stroke_linecap = val;
                                 }
 
                                 if (selected.tagName === 'text') {
@@ -3043,6 +3050,12 @@ define([
                 startTransform = null;
             };
 
+            const mouseEnter = (evt) => {
+                if (started && (evt.buttons & 1) === 0) {
+                    mouseUp(evt);
+                }
+            }
+
             var dblClick = function (evt) {
                 var evt_target = evt.target;
                 var parent = evt_target.parentNode;
@@ -3091,8 +3104,12 @@ define([
 
             // Added mouseup to the container here.
             // TODO(codedread): Figure out why after the Closure compiler, the window mouseup is ignored.
-            $(container).mousedown(mouseDown).mousemove(mouseMove).click(handleLinkInCanvas).dblclick(dblClick).mouseup(mouseUp);
-            //	$(window).mouseup(mouseUp);
+            container.addEventListener('mousedown', mouseDown);
+            container.addEventListener('mousemove', mouseMove);
+            container.addEventListener('mouseup', mouseUp);
+            container.addEventListener('mouseenter', mouseEnter);
+            container.addEventListener('click', handleLinkInCanvas);
+            container.addEventListener('dblclick', dblClick);
 
             //TODO(rafaelcastrocouto): User preference for shift key and zoom factor
 
@@ -9208,7 +9225,12 @@ define([
 
         this.updateRecentMenu();
 
-        this.gridArraySelectedElement = (gridDistanceXY, arrayNumberXY) => {
+        /**
+         * Create grid array of selected element
+         * @param {{dx: number, dy: number}} interval 
+         * @param {{row: number, column: number}} arraySize 
+         */
+        this.gridArraySelectedElement = (interval, arraySize) => {
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
@@ -9218,24 +9240,18 @@ define([
             if (originElements.length == 0) {
                 return;
             }
-            let pastedElements = [];
-            let dx = [];
-            let dy = [];
-            let batchCmd = new svgedit.history.BatchCommand('Grid elements');
-            var drawing = getCurrentDrawing();
-            let elementCount = 0;
+            const newElements = [];
+            const dx = [];
+            const dy = [];
+            const batchCmd = new svgedit.history.BatchCommand('Grid elements');
+            const drawing = getCurrentDrawing();
             for (let i = 0; i < originElements.length; ++i) {
                 const elem = originElements[i];
                 if (!elem) {
                     break;
                 }
-                for (let j = 0; j < arrayNumberXY.column; ++j) {
-                    for (let k = 0; k < arrayNumberXY.row; ++k) {
-
-                        dx[elementCount] = j * gridDistanceXY.dx;
-                        dy[elementCount] = k * gridDistanceXY.dy;
-                        elementCount += 1;
-
+                for (let j = 0; j < arraySize.column; ++j) {
+                    for (let k = 0; k < arraySize.row; ++k) {
                         if (j == 0 && k == 0) continue;
                         const copy = drawing.copyElem(elem);
                         if (!svgedit.utilities.getElem(elem.id)) {
@@ -9246,12 +9262,13 @@ define([
                         layer.appendChild(copy);
                         batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
                         restoreRefElems(copy);
-                        pastedElements.push(copy);
+                        dx.push(j * interval.dx);
+                        dy.push(k * interval.dy);
+                        newElements.push(copy);
                     }
                 }
             }
-            addToSelection(pastedElements);
-            const cmd = canvas.moveSelectedElements(dx, dy, false);
+            const cmd = canvas.moveElements(dx, dy, newElements, false);
             if (cmd) {
                 batchCmd.addSubCommand(cmd);
             }
@@ -9259,8 +9276,8 @@ define([
             canvas.undoMgr.undoStackPointer -= 1;
             canvas.undoMgr.undoStack.pop();
             addCommandToHistory(batchCmd);
-            if (pastedElements.length > 0) {
-                call('changed', pastedElements);
+            if (newElements.length > 0) {
+                call('changed', newElements);
             }
         };
 
@@ -9371,8 +9388,8 @@ define([
                 }
             }
             const base = selectedElements[len-1];
-            const fill = $(base).attr('fill');
-            const fill_opacity = $(base).attr('fill-opacity');
+            const fill = base.getAttribute('fill');
+            const fill_opacity = base.getAttribute('fill-opacity');
             const element = addSvgElementFromJson({
                 element: 'path',
                 curStyles: false,
@@ -9533,8 +9550,8 @@ define([
                     id: getNextId(),
                     d: d,
                     stroke: '#000',
+                    fill: 'none',
                     'fill-opacity': 0,
-                    opacity: cur_shape.opacity
                 }
             });
             pathActions.fixEnd(newElem);
@@ -10805,6 +10822,13 @@ define([
             }
         };
 
+        /**
+         * move given elements
+         * @param {number[] | number} dx
+         * @param {number[] | number} dy
+         * @param {Element[]} elems
+         * @param {undoable} boolean whether this operation is undoable, return cmd if false
+         */
         this.moveElements = function (dx, dy, elems, undoable) {
             if (dx.constructor != Array) {
                 dx /= current_zoom;

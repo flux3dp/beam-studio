@@ -1,33 +1,34 @@
 import $ from 'jquery';
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
+import ImageTracePanelController from './Image-Trace-Panel-Controller';
+import ToolPanelsController from './Tool-Panels-Controller';
 import Tutorials from './tutorials';
 import ElectronDialogs from '../electron-dialogs';
-import InitializeMachine from '../initialize-machine';
 import GlobalActions from '../global-actions';
-import GlobalConstants from '../../constants/global-constants';
-import Alert from '../../contexts/AlertCaller';
+import { showCameraCalibration } from '../../views/beambox/Camera-Calibration';
+import { showDiodeCalibration } from '../../views/beambox/Diode-Calibration';
 import AlertConstants from '../../constants/alert-constants';
-import AlertStore from '../../stores/alert-store';
-import DialogCaller from '../../contexts/DialogCaller';
-import Progress from '../../contexts/ProgressCaller';
 import DeviceConstants from '../../constants/device-constants';
 import FontConstants from '../../constants/font-constants';
-import ToolPanelsController from './Tool-Panels-Controller';
-import ImageTracePanelController from './Image-Trace-Panel-Controller';
-import AlertConfig from '../../../helpers/api/alert-config';
-import Config from '../../../helpers/api/config';
-import checkDeviceStatus from '../../../helpers/check-device-status';
-import checkFirmware from '../../../helpers/check-firmware';
-import DeviceMaster from '../../../helpers/device-master';
-import firmwareUpdater from '../../../helpers/firmware-updater';
-import OutputError from '../../../helpers/output-error';
-import sprintf from '../../../helpers/sprintf';
-import VersionChecker from '../../../helpers/version-checker';
-import LocalStorage from '../../../helpers/local-storage';
-import * as i18n from '../../../helpers/i18n';
-import { IFont } from '../../../interfaces/IFont';
-import { getSVGEdit } from '../../../helpers/svg-editor-helper';
+import GlobalConstants from '../../constants/global-constants';
+import Alert from '../../contexts/AlertCaller';
+import Progress from '../../contexts/ProgressCaller';
+import DialogCaller from '../../contexts/DialogCaller';
+import AlertStore from '../../stores/alert-store';
+import AlertConfig from 'helpers/api/alert-config';
+import Config from 'helpers/api/config';
+import checkDeviceStatus from 'helpers/check-device-status';
+import checkFirmware from 'helpers/check-firmware';
+import DeviceMaster from 'helpers/device-master';
+import firmwareUpdater from 'helpers/firmware-updater';
+import OutputError from 'helpers/output-error';
+import sprintf from 'helpers/sprintf';
+import VersionChecker from 'helpers/version-checker';
+import LocalStorage from 'helpers/local-storage';
+import * as i18n from 'helpers/i18n';
+import { IFont } from 'interfaces/IFont';
+import { getSVGEdit } from 'helpers/svg-editor-helper';
 
 const init = () => {
     ToolPanelsController.init('tool-panels-placeholder');
@@ -308,11 +309,9 @@ const initMenuBarEvents = () => {
                     if (!deviceStatus) {
                         return;
                     }
-                    Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                     const res = await DeviceMaster.select(device);
-                    Progress.popById('connect');
                     if (res.success) {
-                        DialogCaller.showCameraCalibration(device, isBorderless);
+                        showCameraCalibration(device, isBorderless);
                     }
                 } catch (e) {
                     Progress.popById('connect');
@@ -365,11 +364,9 @@ const initMenuBarEvents = () => {
                 const diodeAvailable = vc.meetRequirement('DIODE_AND_AUTOFOCUS');
                 if (diodeAvailable) {
                     try {
-                        Progress.openNonstopProgress({id: 'connect', caption: lang.message.connecting});
                         const res = await DeviceMaster.select(device);
-                        Progress.popById('connect');
                         if (res.success) {
-                            DialogCaller.showDiodeCalibration(device);
+                            showDiodeCalibration(device);
                         }
                     } catch (e) {
                         Progress.popById('connect');

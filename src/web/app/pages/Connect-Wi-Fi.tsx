@@ -1,13 +1,15 @@
 import Modal from '../widgets/Modal';
-import * as i18n from '../../helpers/i18n';
+import i18n from '../../helpers/i18n';
+
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 
-const lang = i18n.lang.initialize;
+let lang;
 
 class ConnectWiFi extends React.Component{
     constructor(props) {
         super(props);
+        lang = i18n.lang.initialize;
         this.state = {
             showCollapse1: false,
             showCollapse2: false

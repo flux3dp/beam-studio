@@ -34,9 +34,9 @@ class ActionsPanel extends React.Component {
                 },
             ]
         }
-        let selectedPath = await dialog.showOpenDialog(option);
-        if (selectedPath && selectedPath.length > 0) {
-            const filePath = selectedPath[0];
+        let { canceled, filePaths } = await dialog.showOpenDialog(option);
+        if (!canceled && filePaths && filePaths.length > 0) {
+            const filePath = filePaths[0];
             const resp = await fetch(filePath);
             const respBlob = await resp.blob();
             svgEditor.replaceBitmap(respBlob, elem);
@@ -48,7 +48,10 @@ class ActionsPanel extends React.Component {
         Progress.openNonstopProgress({id: 'convert-font', message: LANG.wait_for_parsing_font});
         const bbox = svgCanvas.calculateTransformedBBox(elem);
         const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
-
+        if (svgCanvas.textActions.isEditing) {
+            svgCanvas.textActions.toSelectMode();
+        }
+        svgCanvas.clearSelection();
         if (convertByFluxsvg) {
             await FontFuncs.convertTextToPathFluxsvg($(elem), bbox);
         } else {
@@ -63,7 +66,6 @@ class ActionsPanel extends React.Component {
                 }, 50);
             });
         }
-        FnWrapper.reset_select_mode();
         Progress.popById('convert-font');
     }
 
