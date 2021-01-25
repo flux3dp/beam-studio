@@ -5,7 +5,6 @@ import AlertStore from '../stores/alert-store';
 import AlertConstants from '../constants/alert-constants';
 import ProgressStore from '../stores/progress-store';
 import ProgressConstants from '../constants/progress-constants';
-import InputLightboxStore from '../stores/input-lightbox-store';
 import Progress from '../widgets/Progress';
 import InputLightbox from '../widgets/Input-Lightbox';
 import NotificationModal from '../widgets/Notification-Modal';
@@ -145,7 +144,6 @@ export default function(args) {
             ProgressStore.onOpened(this._handleProgress)
                 .onUpdating(this._handleProgress)
                 .onClosed(this._handleProgressFinish);
-            InputLightboxStore.onInputLightBoxOpened(this._handleInputLightBoxOpen);
 
             GlobalStore.onShowMonitor(this._handleOpenMonitor);
             GlobalStore.onCloseAllView(this._handleCloseAllView);
@@ -184,9 +182,6 @@ export default function(args) {
                 removeUpdatingListener(this._handleProgress).
                 removeClosedListener(this._handleProgressFinish);
 
-            // input lightbox
-            InputLightboxStore.removeOpenedListener(this._handleInputLightBoxOpen);
-
             GlobalStore.removeShowMoniotorListener(this._handleOpenMonitor);
             GlobalStore.removeCloseMonitorListener(this._handlecloseMonitor);
             GlobalStore.removeCloseAllViewListener(this._handleCloseAllView);
@@ -215,44 +210,6 @@ export default function(args) {
             }
         }
 
-        _showChangeFilament = (payload) => {
-            if (false === this.state.changeFilament.open) {
-                this.setState({
-                    changeFilament: {
-                        open: true,
-                        device: payload.device,
-                        src: payload.src
-                    }
-                });
-            }
-        }
-
-        _showCameraCalibration = (payload) => {
-            this.setState({
-                cameraCalibration: {
-                    open: true,
-                    device: payload.device,
-                    borderless: payload.borderless
-                }
-            });
-        }
-
-        _hideChangeFilament = () => {
-            this.setState({
-                changeFilament: {
-                    open: false
-                }
-            });
-        }
-
-        _closeHeadTemperature = () => {
-            this.setState({
-                headTemperature: {
-                    show: false
-                }
-            });
-        }
-
         _showUpdate = (payload) => {
             var currentVersion = (
                     'software' === payload.type ?
@@ -277,17 +234,6 @@ export default function(args) {
                     onInstall: payload.onInstall
                 }
             });
-        }
-
-        _showHeadTemperature = (payload) => {
-            if(this.state.headTemperature.show === false) {
-                this.setState({
-                    headTemperature: {
-                        show: true,
-                        device: payload.device
-                    }
-                });
-            }
         }
 
         _handleUpdateClose = () => {

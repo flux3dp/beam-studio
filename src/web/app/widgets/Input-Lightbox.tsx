@@ -4,7 +4,6 @@ import Modal from './Modal';
 import AlertDialog from './AlertDialog';
 
 const React = requireNode('react');
-const ReactDOM = requireNode('react-dom');
 const classNames = requireNode('classnames');
 const PropTypes = requireNode('prop-types');
 
@@ -24,32 +23,32 @@ class InputLightBox extends React.Component{
     }
 
     // button actions
-    _onClose = (e, reactid, from) => {
+    onClose = (e, from: string) => {
         e.preventDefault();
-        this.props.onClose.apply(null, [e, reactid, from]);
+        this.props.onClose(from);
     }
 
-    _onCancel = (e, reactid) => {
+    onCancel = (e, reactid) => {
         e.preventDefault();
-        this._onClose.apply(null, [e, reactid, 'cancel']);
+        this.onClose(e, 'cancel');
     }
 
-    _onSubmit = (e, reactid) => {
+    onSubmit = (e, reactid) => {
         e.preventDefault();
 
         var returnValue,
             result;
 
         if (Constants.TYPE_FILE === this.props.type) {
-            returnValue = ReactDOM.findDOMNode(this.refs.inputField).files;
+            returnValue = this.refs.inputField.files;
         }
         else {
-            returnValue = ReactDOM.findDOMNode(this.refs.inputField).value;
+            returnValue = this.refs.inputField.value;
         }
 
         result = this.props.onSubmit(returnValue, e);
 
-        this._onClose.apply(null, [e, reactid, 'submit']);
+        this.onClose(e, 'submit');
     }
 
     _inputKeyUp = (e) => {
@@ -70,19 +69,19 @@ class InputLightBox extends React.Component{
             dataAttrs: {
                 'ga-event': 'cancel'
             },
-            onClick: this._onCancel
+            onClick: this.onCancel
         });
 
         buttons.push({
             label: this.props.confirmText || lang.alert.confirm,
-            className: classNames({
+            className: classNames('primary', {
                 'btn-default': true,
-                'btn-disabled': false === this.state.allowSubmit
+                'btn-disabled': false === this.state.allowSubmit,
             }),
             dataAttrs: {
                 'ga-event': 'confirm'
             },
-            onClick: this._onSubmit
+            onClick: this.onSubmit
         });
 
         return buttons;
@@ -131,7 +130,7 @@ class InputLightBox extends React.Component{
             buttons = this._getButtons(lang),
             message = this._getMessage(),
             content = (
-                <form className="form" onSubmit={this._onSubmit}>
+                <form className="form" onSubmit={this.onSubmit}>
                     <AlertDialog
                         lang={lang}
                         caption={this.props.caption}

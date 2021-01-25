@@ -1,19 +1,21 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
-import Config from '../../../helpers/api/config';
-import * as i18n from '../../../helpers/i18n';
 import BeamboxPreference from '../../actions/beambox/beambox-preference';
-import AlertDialog from '../../widgets/AlertDialog';
-import UnitInput from '../../widgets/Unit-Input-v2';
-import DeviceMaster from '../../../helpers/device-master';
-import VersionChecker from '../../../helpers/version-checker';
-import CheckDeviceStatus from '../../../helpers/check-device-status';
-import DeviceErrorHandler from '../../../helpers/device-error-handler';
-import Alert from '../../contexts/AlertCaller';
-import AlertConstants from '../../constants/alert-constants';
-import Progress from '../../contexts/ProgressCaller';
-import PreviewModeController from '../../actions/beambox/preview-mode-controller';
 import Constant from '../../actions/beambox/constant';
+import PreviewModeController from '../../actions/beambox/preview-mode-controller';
+import AlertConstants from '../../constants/alert-constants';
+import Alert from '../../contexts/AlertCaller';
+import Dialog from '../../contexts/DialogCaller';
+import Progress from '../../contexts/ProgressCaller';
+import AlertDialog from '../../widgets/AlertDialog';
+import Modal from '../../widgets/Modal';
+import UnitInput from '../../widgets/Unit-Input-v2';
+import Config from 'helpers/api/config';
+import CheckDeviceStatus from 'helpers/check-device-status';
+import DeviceErrorHandler from 'helpers/device-error-handler';
+import * as i18n from 'helpers/i18n';
+import DeviceMaster from 'helpers/device-master';
+import VersionChecker from 'helpers/version-checker';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
@@ -489,3 +491,17 @@ class DiodeCalibration extends React.Component {
 };
 
 export default DiodeCalibration;
+
+// Not putting this in DialogCaller to avoid circular import because DeviceMaster imports DialogCaller
+export const showDiodeCalibration = (device) => {
+    if (Dialog.isIdExist('diode-cali')) return;
+    Dialog.addDialogComponent('diode-cali',
+        <Modal>
+            <DiodeCalibration
+                device={device}
+                model={'beamo'}
+                onClose={() => Dialog.popDialogById('diode-cali')}
+            />
+        </Modal>
+    );
+};
