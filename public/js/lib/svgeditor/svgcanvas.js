@@ -10401,7 +10401,7 @@ define([
                     continue;
                 }
 
-                if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
+                if (elem.parentNode && elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
                     elem = elem.parentNode;
                 }
                 if (elem === tempGroup || elem.getAttribute('data-tempgroup') === 'true') {
