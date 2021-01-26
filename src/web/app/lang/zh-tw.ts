@@ -376,7 +376,7 @@ export default {
                     newName: '新圖層名稱',
                     enterUniqueLayerName: '請輸入一個不重複的名稱',
                     enterNewLayerName: '請輸入新圖層的名稱',
-                    layerHasThatName: '圖層本來就是這個名稱（抱怨）',
+                    layerHasThatName: '圖層本來就是這個名稱',
                     QmoveElemsToLayer: '要搬移所選取的物件到\'%s\'層嗎?',
                 },
                 layers: {
