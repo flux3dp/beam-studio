@@ -343,7 +343,8 @@ export class TopBar extends React.PureComponent {
             if (!confirmed) {
                 return false;
             }
-        } else if (isTooFastForPath) {
+        }
+        if (isTooFastForPath) {
             await new Promise((resolve) => {
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
                     if (!AlertConfig.read('skip_path_speed_warning')) {
