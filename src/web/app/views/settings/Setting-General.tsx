@@ -237,7 +237,7 @@ class SettingGeneral extends React.Component{
             }
         });
         const onSelectFont = (family) => {
-            const fonts = FontScanner.findFontsSync({ family });
+            const fonts = FontFuncs.requestFontsOfTheFontFamily(family);
             const newDefaultFont = fonts.filter((font) => font.style === 'Regular')[0] || fonts[0];
             const config = Config();
             config.write('default-font', {
@@ -247,7 +247,7 @@ class SettingGeneral extends React.Component{
             });
             this.setState(this.state);
         }
-        const fonts = FontScanner.findFontsSync({family: defaultFont.family});
+        const fonts = FontFuncs.requestFontsOfTheFontFamily(defaultFont.family);
         const fontStyleOptions = fonts.map((font) => {
             return {
                 value: font.postscriptName,
@@ -256,7 +256,7 @@ class SettingGeneral extends React.Component{
             }
         });
         const onSelectFontStyle = (postscriptName) => {
-            const newDefaultFont = FontScanner.findFontSync({ postscriptName });
+            const newDefaultFont = FontFuncs.getFontOfPostscriptName(postscriptName);
             const config = Config();
             config.write('default-font', {
                 family: newDefaultFont.family,
