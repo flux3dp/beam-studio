@@ -141,10 +141,16 @@ export class LayerPanel extends React.Component {
                 if (!newName) {
                     return;
                 }
-                if (oldName === newName || svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+                if (oldName === newName) {
                     Alert.popUp({
                         id: 'old_layer_name',
                         message: LANG.notification.layerHasThatName,
+                    });
+                    return;
+                } else if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+                    Alert.popUp({
+                        id: 'dupli_layer_name',
+                        message: LANG.notification.enterUniqueLayerName,
                     });
                     return;
                 }

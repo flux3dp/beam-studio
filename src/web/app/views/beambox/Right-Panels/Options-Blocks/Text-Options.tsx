@@ -120,6 +120,8 @@ class TextOptions extends React.Component {
 
             }
             const isOnlyOneOption = options.length === 1;
+            let label = FontFuncs.fontNameMap.get(fontFamily);
+            if (typeof label !== 'string') label = fontFamily;
             return (
                 <div className="option-block">
                     <div className="label">{LANG.font_family}</div>
@@ -141,11 +143,15 @@ class TextOptions extends React.Component {
             );
         } else {
             const options = FontFuncs.availableFontFamilies.map(
-                option => (
-                    <option value={option} key={option} style={{fontFamily: option}}>
-                        {FontFuncs.fontNameMap.get(option)}
-                    </option>
-                )
+                (option) => {
+                    const fontName = FontFuncs.fontNameMap.get(option);
+                    const label = typeof fontName === 'string' ? fontName : option;
+                    return (
+                        <option value={option} key={option} style={{fontFamily: option}}>
+                            {label}
+                        </option>
+                    );
+                }
             );
             const isOnlyOneOption = options.length === 1;
             return (

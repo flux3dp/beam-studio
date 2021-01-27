@@ -74,7 +74,10 @@ const availableFontFamilies = (function requestAvailableFontFamilies() {
                 try {
                     let fontInfo = fontkit.openSync(font.path);
                     if (fontInfo.fonts && fontInfo.fonts[0]) {
-                        fontInfo = fontInfo.fonts.find((f) => f.familyName === font.family) || fontInfo.fonts[0];
+                        fontInfo = fontInfo.fonts.find((f) => {
+                            if (f.familyName === font.family) return true;
+                            if (f.name.records.fontFamily[navigator.language] === font.family) return true;
+                        }) || fontInfo.fonts[0];
                     }
                     if (fontInfo) {
                         const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find((key) => key !== 'en');
@@ -84,7 +87,12 @@ const availableFontFamilies = (function requestAvailableFontFamilies() {
                     console.warn(`Error when get font name of ${font.family}:`, err);
                 }
             }
-            fontNameMap.set(font.family, fontName);
+
+            if (typeof fontName === 'string') {
+                fontNameMap.set(font.family, fontName);
+            } else {
+                fontNameMap.set(font.family, font.family);
+            }
         }
     });
 

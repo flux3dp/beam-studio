@@ -919,6 +919,18 @@ class Control extends EventEmitter {
         }
     }
 
+    rawSetWaterPump = (on: boolean) => {
+        if (this.mode !== 'raw') {
+            throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+        }
+        const command = on ? 'B1' : 'B2';
+        if (!this.isLineCheckMode) {
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
+    }
+
     rawSetAirPump = (on: boolean) => {
         if (this.mode !== 'raw') {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);

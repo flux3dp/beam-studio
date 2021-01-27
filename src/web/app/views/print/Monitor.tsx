@@ -528,6 +528,7 @@ class Monitor extends React.Component{
         }
         else {
             this._addHistory();
+            Progress.popById('prepare-relocate');
             Progress.openNonstopProgress({
                 id: 'prepare-relocate',
                 message: lang.monitor.prepareRelocate,

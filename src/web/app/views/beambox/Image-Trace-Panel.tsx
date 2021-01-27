@@ -42,6 +42,9 @@ let grayscaleCroppedImg = null;
 
 const TestImg = 'img/hehe.png';
 
+const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth;
+const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 60;
+
 class ImageTracePanel extends React.Component {
     constructor(props) {
         super(props);
@@ -388,24 +391,18 @@ class ImageTracePanel extends React.Component {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         const coordinates = PreviewModeBackgroundDrawer.getCoordinates();
-        const sourceWidth = (coordinates.maxX - coordinates.minX) + 465.17;
-        const sourceHeight = (coordinates.maxY - coordinates.minY) + 465.17;
-        const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth;
-        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 80;
+        const sourceWidth = coordinates.maxX - coordinates.minX;
+        const sourceHeight = coordinates.maxY - coordinates.minY;
         const ratio = Math.min(maxAllowableHieght / sourceHeight, maxAllowableWidth / sourceWidth);
         const destWidth = sourceWidth * ratio;
         const destHeight = sourceHeight * ratio;
-        const containerStyle = (sourceWidth / maxAllowableWidth > sourceHeight / maxAllowableHieght) ?
-            {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
 
         this.setState({
             preCrop: {
                 offsetX: coordinates.minX,
                 offsetY: coordinates.minY,
             },
-            cropperStyle: containerStyle,
         });
-
         cropper = new Cropper(
             imageObj,
             {
@@ -418,14 +415,21 @@ class ImageTracePanel extends React.Component {
     }
 
     _renderCropperModal() {
+        const coordinates = PreviewModeBackgroundDrawer.getCoordinates();
+        const sourceWidth = coordinates.maxX - coordinates.minX;
+        const sourceHeight = coordinates.maxY - coordinates.minY;
+        const containerStyle = (sourceWidth / maxAllowableWidth > sourceHeight / maxAllowableHieght) ?
+            {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
+
         return (
             <Modal>
                 <div className='cropper-panel'>
-                    <div className='main-content' style={this.state.cropperStyle}>
+                    <div className='main-content' style={{width: maxAllowableWidth, height: maxAllowableHieght}}>
                         <img
                             id= 'previewForCropper'
                             onLoad={()=> this._renderCropper()}
                             src={this.state.croppedCameraCanvasBlobUrl}
+                            style={containerStyle}
                         />
                     </div>
                     <div className='footer'>
@@ -487,8 +491,6 @@ class ImageTracePanel extends React.Component {
         const sourceHeight = (coordinates.maxY - coordinates.minY) + 465.17 ;
         const destX = 0;
         const destY = 0;
-        const destWidth = (coordinates.maxX - coordinates.minX)/6.286 + 74;
-        const destHeight = (coordinates.maxY - coordinates.minY)/6.286 + 74;
 
         canvas.width = sourceWidth;
         canvas.height = sourceHeight;
@@ -519,10 +521,16 @@ class ImageTracePanel extends React.Component {
         } = this.state;
         const footer = this._renderImageTraceFooter();
         const it = ((currentStep === STEP_APPLY) && (imageTrace!=='')) ? this._getImageTraceDom() : null;
-        const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth ;
-        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 60;
-        const containerStyle = (TESTING_IT || (cropData.width / maxAllowableWidth > cropData.height / maxAllowableHieght)) ? 
-            {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
+        let containerStyle: {width?: string, height?: string};
+
+        if (TESTING_IT) {
+            containerStyle = {width: `${maxAllowableWidth}px`};
+        } else {
+            const containerMaxWidth = maxAllowableWidth - 200;
+            const containerMaxHeight = maxAllowableHieght - 80;
+            containerStyle = (cropData.width / containerMaxWidth > cropData.height / containerMaxHeight) ? 
+            {width: `${containerMaxWidth}px`} : {height: `${containerMaxHeight}px`};
+        }
 
         return (
             <Modal>

@@ -4175,7 +4175,7 @@ define([
                             // set stretchy line to first point
                             stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                             index = subpath ? svgedit.path.path.segs.length : 0;
-                            svgedit.path.addDrawingPoint(index, mouse_x, mouse_y);
+                            svgedit.path.addDrawingPoint(index, mouse_x, mouse_y, x, y);
                             shortcuts.off(['esc']);
                             shortcuts.on(['esc'], () => finishPath(!isContinuousDrawing));
                         } else {
@@ -4297,16 +4297,13 @@ define([
 
                                 drawn_path.pathSegList.appendItem(newseg);
 
-                                x *= current_zoom;
-                                y *= current_zoom;
-
                                 // set stretchy line to latest point
-                                stretchy.setAttribute('d', ['M', x, y, x, y].join(' '));
+                                stretchy.setAttribute('d', ['M', mouse_x, mouse_y, mouse_x, mouse_y].join(' '));
                                 index = num;
                                 if (subpath) {
                                     index += svgedit.path.path.segs.length;
                                 }
-                                svgedit.path.addDrawingPoint(index, x, y);
+                                svgedit.path.addDrawingPoint(index, mouse_x, mouse_y, x, y);
                             }
                             //					keep = true;
                         }
@@ -4374,15 +4371,6 @@ define([
                             // First point
                             //					if (!index) {return;}
 
-                            // Set control points
-                            var pointGrip1 = svgedit.path.addDrawingCtrlGrip('1c1');
-                            var pointGrip2 = svgedit.path.addDrawingCtrlGrip('0c2');
-
-                            // dragging pointGrip1
-                            pointGrip1.setAttribute('cx', mouse_x);
-                            pointGrip1.setAttribute('cy', mouse_y);
-                            pointGrip1.setAttribute('display', 'inline');
-
                             var pt_x = newPoint[0];
                             var pt_y = newPoint[1];
 
@@ -4393,8 +4381,21 @@ define([
                             var alt_x = (pt_x + (pt_x - cur_x));
                             var alt_y = (pt_y + (pt_y - cur_y));
 
+                            // Set control points
+                            var pointGrip1 = svgedit.path.addDrawingCtrlGrip('1c1');
+                            var pointGrip2 = svgedit.path.addDrawingCtrlGrip('0c2');
+
+                            // dragging pointGrip1
+                            pointGrip1.setAttribute('cx', mouse_x);
+                            pointGrip1.setAttribute('cy', mouse_y);
+                            pointGrip1.setAttribute('data-x', cur_x);
+                            pointGrip1.setAttribute('data-y', cur_y);
+                            pointGrip1.setAttribute('display', 'inline');
+
                             pointGrip2.setAttribute('cx', alt_x * current_zoom);
                             pointGrip2.setAttribute('cy', alt_y * current_zoom);
+                            pointGrip2.setAttribute('data-x', alt_x);
+                            pointGrip2.setAttribute('data-y', alt_y);
                             pointGrip2.setAttribute('display', 'inline');
 
                             var ctrlLine = svgedit.path.getCtrlLine(1);
@@ -4403,6 +4404,10 @@ define([
                                 y1: mouse_y,
                                 x2: alt_x * current_zoom,
                                 y2: alt_y * current_zoom,
+                                'data-x1': cur_x,
+                                'data-y1': cur_y,
+                                'data-x2': alt_x,
+                                'data-y2': alt_y,
                                 display: 'inline'
                             });
 
@@ -4689,9 +4694,27 @@ define([
 
                     reorientGrads(path, m);
                 },
-                zoomChange: function () {
+                zoomChange: function (oldZoom) {
                     if (current_mode === 'pathedit') {
                         svgedit.path.path.update();
+                    } else if (current_mode === 'path') {
+                        if (drawn_path) {
+                            svgedit.path.updateDrawingPoints();
+                            svgedit.path.updateControlLines();
+                            const stretchy = document.getElementById('path_stretch_line');
+                            if (stretchy) {
+                                const seglist = stretchy.pathSegList;
+                                const seg0 = seglist.getItem(0);
+                                const seg1 = seglist.getItem(1);
+                                const zoomRatio = current_zoom / oldZoom;
+                                svgedit.path.replacePathSeg(2, 0, [seg0.x * zoomRatio, seg0.y * zoomRatio], stretchy);
+                                if (seg1.pathSegType === 6) {
+                                    svgedit.path.replacePathSeg(6, 1, [seg1.x * zoomRatio, seg1.y * zoomRatio, seg1.x1 * zoomRatio, seg1.y1 * zoomRatio, seg1.x2 * zoomRatio, seg1.y2 * zoomRatio], stretchy);
+                                } else {
+                                    svgedit.path.replacePathSeg(4, 1, [seg1.x * zoomRatio, seg1.y * zoomRatio], stretchy);
+                                }
+                            }
+                        }
                     }
                 },
                 getNodePoint: function () {
@@ -7420,6 +7443,7 @@ define([
         this.setZoom = function (zoomlevel) {
             var res = getResolution();
             svgcontent.setAttribute('viewBox', '0 0 ' + res.w / zoomlevel + ' ' + res.h / zoomlevel);
+            const oldZoom = current_zoom;
             current_zoom = zoomlevel;
             $.each(selectedElements, function (i, elem) {
                 if (!elem) {
@@ -7427,7 +7451,7 @@ define([
                 }
                 selectorManager.requestSelector(elem).resize();
             });
-            pathActions.zoomChange();
+            pathActions.zoomChange(oldZoom);
             ZoomBlockController.updateZoomBlock();
             runExtensions('zoomChanged', zoomlevel);
         };
@@ -8803,7 +8827,12 @@ define([
                             if (!elem.parentNode) {
                                 return;
                             }
-                            selectorManager.requestSelector(elem).resize();
+
+                            if (selectedElements.includes(elem)) {
+                                selectorManager.requestSelector(elem).resize();
+                            } else {
+                                selectorManager.releaseSelector(elem);
+                            }
                         }, 0);
                     }
                     // if this element was rotated, and we changed the position of this element
@@ -10485,7 +10514,7 @@ define([
                     continue;
                 }
 
-                if (elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
+                if (elem.parentNode && elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
                     elem = elem.parentNode;
                 }
                 if (elem === tempGroup || elem.getAttribute('data-tempgroup') === 'true') {

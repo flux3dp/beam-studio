@@ -51,7 +51,11 @@ class InputLightBox extends React.Component{
         this.onClose(e, 'submit');
     }
 
-    _inputKeyUp = (e) => {
+    handleKeyDown = (e: KeyboardEvent) => {
+        e.stopPropagation();
+    }
+
+    inputKeyUp = (e) => {
         var targetFiles = e.currentTarget.files || {};
         this.setState({
             allowSubmit: (
@@ -113,8 +117,9 @@ class InputLightBox extends React.Component{
                     ref="inputField"
                     defaultValue={this.props.defaultValue}
                     autoFocus={true}
-                    onKeyUp={this._inputKeyUp}
-                    onChange={this._inputKeyUp}
+                    onKeyDown={(e: KeyboardEvent) => this.handleKeyDown(e)}
+                    onKeyUp={this.inputKeyUp}
+                    onChange={this.inputKeyUp}
                     maxLength={this.props.maxLength}
                 />
             </label>

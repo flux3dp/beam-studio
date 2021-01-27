@@ -1,7 +1,8 @@
 import Alert from '../../contexts/AlertCaller';
 import Constant from '../../actions/beambox/constant';
-import * as i18n from '../../../helpers/i18n';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+import Modal from '../../widgets/Modal';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
@@ -216,6 +217,19 @@ class SvgNestButtons extends React.Component {
     }
 
     render() {
+        const { isWorking } = this.state;
+        if (isWorking) {
+            return (
+                <Modal className={{'no-background': true}}>
+                    <div className={`svg-nest-buttons`}>
+                        {this.renderStartButton()}
+                        <div className='svg-nest-button' onClick={() => this._close()}>
+                            <div className={'text'}>{LANG._nest.end}</div>
+                        </div>
+                    </div>
+                </Modal>
+            );
+        }
         return (
             <div className={`svg-nest-buttons`}>
                 {this.renderStartButton()}

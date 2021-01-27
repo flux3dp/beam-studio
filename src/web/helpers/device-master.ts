@@ -684,6 +684,11 @@ class DeviceMaster {
         return controlSocket.addTask(controlSocket.rawSetRotary, on);
     }
 
+    rawSetWaterPump(on: boolean) {
+        const controlSocket = this.currentDevice.control;
+        return controlSocket.addTask(controlSocket.rawSetWaterPump, on);
+    }
+
     rawSetFan(on: boolean) {
         const controlSocket = this.currentDevice.control;
         return controlSocket.addTask(controlSocket.rawSetFan, on);

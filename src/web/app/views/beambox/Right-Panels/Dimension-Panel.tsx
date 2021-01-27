@@ -43,25 +43,6 @@ class DimensionPanel extends React.Component {
         this.handleSizeBlur();
     }
 
-    handleInputFocus = (type) => {
-        const { elem } = this.props;
-        this.focusedInputType = type;
-        switch (type) {
-            case 'x':
-                svgCanvas.undoMgr.beginUndoableChange('x', [elem]);
-            break;
-        }
-    }
-
-    handleInputBlur = (type) => {
-        let cmd = svgCanvas.undoMgr.finishUndoableChange();
-        console.log(cmd);
-        if (cmd && !cmd.isEmpty()) {
-            svgCanvas.undoMgr.addCommandToHistory(cmd);
-        }
-        this.focusedInputType = null;
-    }
-
     handlePositionChange = (type, val) => {
         const { elem, updateDimensionValues } = this.props;
         val *= Constant.dpmm;

@@ -4883,19 +4883,16 @@ const svgEditor = window['svgEditor'] = (function($) {
                     sel: '#tool_select',
                     fn: clickSelect,
                     evt: 'click',
-                    key: ['V', true]
                 },
                 {
                     sel: '#tool_fhpath',
                     fn: clickFHPath,
                     evt: 'click',
-                    key: ['Q', true]
                 },
                 {
                     sel: '#tool_line',
                     fn: clickLine,
                     evt: 'click',
-                    key: ['L', true]
                 },
                 {
                     sel: '#tool_rect',
@@ -4922,7 +4919,6 @@ const svgEditor = window['svgEditor'] = (function($) {
                     sel: '#tool_ellipse',
                     fn: clickEllipse,
                     evt: 'mouseup',
-                    key: ['E', true],
                     parent: '#tools_ellipse',
                     icon: 'ellipse'
                 },
@@ -4945,13 +4941,11 @@ const svgEditor = window['svgEditor'] = (function($) {
                     fn: clickPath,
                     evt: 'mouseup',
                     parent: '#tool_path',
-                    key: ['P', true]
                 },
                 {
                     sel: '#tool_text',
                     fn: clickText,
                     evt: 'click',
-                    key: ['T', true]
                 },
                 {
                     sel: '#tool_grid',

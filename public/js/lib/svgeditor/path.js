@@ -165,7 +165,7 @@ svgedit.path.getGripContainer = function() {
 	return c;
 };
 
-svgedit.path.addDrawingPoint = function(index, x, y) {
+svgedit.path.addDrawingPoint = function(index, x, y, canvasX, canvasY) {
 	// create the container of all the point grips
 	var pointGripContainer = svgedit.path.getGripContainer();
 
@@ -191,6 +191,8 @@ svgedit.path.addDrawingPoint = function(index, x, y) {
 		svgedit.utilities.assignAttributes(pointGrip, {
 			'cx': x,
 			'cy': y,
+			'data-x': canvasX,
+			'data-y': canvasY,
 			'display': 'inline'
 		});
 	}
@@ -215,6 +217,34 @@ svgedit.path.addDrawingCtrlGrip = function(id) {
 	});
 	svgedit.path.getGripContainer().appendChild(pointGrip);
 	return pointGrip;
+};
+
+svgedit.path.updateDrawingPoints = () => {
+	const pointGripContainer = svgedit.path.getGripContainer();
+	const points = pointGripContainer.querySelectorAll('circle');
+	for (let i = 0; i < points.length; i++) {
+		const point = points[i];
+		const x = Number(point.getAttribute('data-x')) * editorContext_.getCurrentZoom();
+		const y = Number(point.getAttribute('data-y')) * editorContext_.getCurrentZoom();
+		point.setAttribute('cx', x);
+		point.setAttribute('cy', y);
+	}
+};
+
+svgedit.path.updateControlLines = () => {
+	const pointGripContainer = svgedit.path.getGripContainer();
+	const lines = pointGripContainer.querySelectorAll('line');
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+		const x1 = Number(line.getAttribute('data-x1')) * editorContext_.getCurrentZoom();
+		const y1 = Number(line.getAttribute('data-y1')) * editorContext_.getCurrentZoom();
+		const x2 = Number(line.getAttribute('data-x2')) * editorContext_.getCurrentZoom();
+		const y2 = Number(line.getAttribute('data-y2')) * editorContext_.getCurrentZoom();
+		line.setAttribute('x1', x1);
+		line.setAttribute('y1', y1);
+		line.setAttribute('x2', x2);
+		line.setAttribute('y2', y2);
+	}
 };
 
 svgedit.path.getCtrlLine = function(id) {
