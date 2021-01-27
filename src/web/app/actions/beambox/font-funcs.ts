@@ -84,7 +84,12 @@ const availableFontFamilies = (function requestAvailableFontFamilies() {
                     console.warn(`Error when get font name of ${font.family}:`, err);
                 }
             }
-            fontNameMap.set(font.family, fontName);
+
+            if (typeof fontName === 'string') {
+                fontNameMap.set(font.family, fontName);
+            } else {
+                fontNameMap.set(font.family, font.family);
+            }
         }
     });
 
