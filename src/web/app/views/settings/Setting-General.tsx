@@ -230,9 +230,11 @@ class SettingGeneral extends React.Component{
             style: 'Regular'
         };
         const fontOptions = FontFuncs.availableFontFamilies.map((family) => {
+            const fontName = FontFuncs.fontNameMap.get(family);
+            const label = typeof fontName === 'string' ? fontName : family;
             return {
                 value: family,
-                label: family,
+                label: label,
                 selected: family === defaultFont.family
             }
         });
