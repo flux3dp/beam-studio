@@ -526,6 +526,10 @@ class DeviceMaster {
         return SocketMaster.addTask('rawSetRotary', on);
     }
 
+    rawSetWaterPump(on: boolean) {
+        return SocketMaster.addTask('rawSetWaterPump', on);
+    }
+
     rawSetFan(on) {
         return SocketMaster.addTask('rawSetFan', on);
     }

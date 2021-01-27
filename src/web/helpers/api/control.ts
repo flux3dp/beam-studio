@@ -991,6 +991,15 @@ class Control {
         }
     }
 
+    rawSetWaterPump(on: boolean) {
+        const command = on ? 'B1' : 'B2';
+        if (!this.isLineCheckMode) {
+            return this.useDefaultResponse(command);
+        } else {
+            return this.rawLineCheckCommand(command);
+        }
+    }
+
     rawSetAirPump(on: boolean) {
         const command = on ? 'B3' : 'B4';
         if (!this.isLineCheckMode) {

@@ -68,6 +68,7 @@ class PreviewModeController {
             } else {
                 this.isLineCheckEnabled = false;
             }
+            res = await DeviceMaster.rawSetWaterPump(false);
             res = await DeviceMaster.rawSetFan(false);
             res = await DeviceMaster.rawSetAirPump(false);
             await DeviceMaster.connectCamera(selectedPrinter);
