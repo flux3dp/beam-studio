@@ -8744,7 +8744,12 @@ define([
                             if (!elem.parentNode) {
                                 return;
                             }
-                            selectorManager.requestSelector(elem).resize();
+
+                            if (selectedElements.includes(elem)) {
+                                selectorManager.requestSelector(elem).resize();
+                            } else {
+                                selectorManager.releaseSelector(elem);
+                            }
                         }, 0);
                     }
                     // if this element was rotated, and we changed the position of this element
