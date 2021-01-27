@@ -241,6 +241,7 @@ class PhotoEditPanel extends React.Component {
             {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
         const footer = this._renderPhotoEditFooter();
         const onImgLoad = () => {
+            console.log(this.props.mode, this.state.isCropping);
             if (this.props.mode === 'crop' && !this.state.isCropping) {
                 this._handleStartCrop();
             }
@@ -359,6 +360,7 @@ class PhotoEditPanel extends React.Component {
 
     // CROP
     _handleStartCrop = () => {
+        console.log('start crop')
         if (this.state.isCropping) {
             return;
         }
@@ -379,10 +381,13 @@ class PhotoEditPanel extends React.Component {
     async _handleCrop(complete=false) {
         const image = document.getElementById('original-image') as HTMLImageElement;
         const cropData = cropper.getData();
-        const x = Math.max(0, cropData.x);
-        const y = Math.max(0, cropData.y);
-        const w = Math.min(image.naturalWidth - x, cropData.width);
-        const h = Math.min(image.naturalHeight - y, cropData.height);
+        const x = Math.max(0, Math.round(cropData.x));
+        const y = Math.max(0, Math.round(cropData.y));
+        const w = Math.min(image.naturalWidth - x, Math.round(cropData.width));
+        const h = Math.min(image.naturalHeight - y, Math.round(cropData.height));
+        if (x === 0 && y === 0 && w === image.naturalWidth && h === image.naturalHeight && !complete) {
+            return;
+        }
 
         let imgBlobUrl = this.state.src;
         Progress.openNonstopProgress({
@@ -416,7 +421,6 @@ class PhotoEditPanel extends React.Component {
                     let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
                 }
             });
-            
         } catch(e) {
             console.error(e);
             Progress.popById('photo-edit-processing');
