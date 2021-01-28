@@ -3060,7 +3060,7 @@ define([
                     // Escape from in-group edit
                     return;
                 }
-                setContext(mouse_target);
+                // setContext(mouse_target);
             };
 
             // prevent links from being followed in the canvas
@@ -5535,12 +5535,7 @@ define([
                     canvas.width = width;
                     canvas.height = height;
                     let ctx = canvas.getContext('2d');
-
-                    let svgBlob = new Blob([svgString], {
-                        type: "image/svg+xml;charset=utf-8"
-                    });
-                    const svgUrl = URL.createObjectURL(svgBlob);
-                    
+                    const svgUrl = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgString);
                     let img = new Image();
                     img.onload = function () {
                         ctx.drawImage(this, 0, 0);
