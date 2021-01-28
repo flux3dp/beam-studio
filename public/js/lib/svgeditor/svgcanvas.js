@@ -9514,7 +9514,7 @@ define([
             let batchCmd = new svgedit.history.BatchCommand('Decompose Image');
             elems = elems || selectedElements;
             elems.forEach(elem => {
-                if (elem.tagName != 'path') {
+                if (!elem || elem.tagName != 'path') {
                     return;
                 }
                 let newPaths = [];
