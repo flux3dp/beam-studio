@@ -3004,8 +3004,10 @@ define([
                             if (current_mode === 'textedit') {
                                 selectorManager.requestSelector(element).showGrips(true);
                             } else {
-                                selectOnly([element], true);
-                                call('changed', [element]);
+                                if (element.parentNode) {
+                                    selectOnly([element], true);
+                                    call('changed', [element]);
+                                }
                             }
                         }
                     }, ani_dur * 1000);
@@ -3608,7 +3610,8 @@ define([
                 },
                 mouseDown: function (evt, mouse_target, start_x, start_y) {
                     var pt = screenToPt(start_x, start_y);
-
+                    console.log('textaction mousedown');
+                    // 
                     textinput.focus();
                     setCursorFromPoint(pt.x, pt.y);
                     last_x = start_x;
