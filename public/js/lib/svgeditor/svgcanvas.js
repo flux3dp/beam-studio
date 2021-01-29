@@ -497,6 +497,11 @@ define([
                             canvas.setRotationAngle(0, true, textElem);
                             canvas.updateMultiLineTextElem(textElem);
                             canvas.setRotationAngle(angle, true, textElem);
+                            if (textElem.getAttribute('stroke-width') === '2') {
+                                textElem.setAttribute('stroke-width', 2.01);
+                            } else {
+                                textElem.setAttribute('stroke-width', 2);
+                            }
                         }
                     }
                 }
