@@ -599,7 +599,8 @@ export default {
             wait_for_parsing_font: 'Fuente de análisis... Por favor, espera un segundo.',
             text_to_path: {
                 font_substitute_pop: 'Texto: "%s" contiene debajo de los caracteres que no son soportados por la fuente actual: "%s".\n%s\n¿Te gustaría usar "%s" como sustituto?',
-                check_thumbnail_warning: 'Algunos textos fueron cambiados a otras fuentes cuando se analizan los textos en las rutas y algunos caracteres no se convierten normalmente.\nPor favor, comprueba otra vez la imagen de vista previa antes de enviar la tarea.'
+                check_thumbnail_warning: 'Algunos textos fueron cambiados a otras fuentes cuando se analizan los textos en las rutas y algunos caracteres no se convierten normalmente.\nPor favor, comprueba otra vez la imagen de vista previa antes de enviar la tarea.',
+                error_when_parsing_text: 'Error al convertir texto a ruta:\n%s',
             },
             lock_desc: 'Preservar la relación entre anchura y altura (SHIFT)'
         },

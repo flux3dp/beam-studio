@@ -599,7 +599,8 @@ export default {
             wait_for_parsing_font: '解析字体中...',
             text_to_path: {
                 font_substitute_pop: '文字:『%s』中含有当前字体:『%s』不支援的字元: %s，\n将替换成以下字体:『%s』。',
-                check_thumbnail_warning: '转换文字时出现字体不支援的情形，请在送出工作前，再次检查预览图确认文字是否如预期转换。'
+                check_thumbnail_warning: '转换文字时出现字体不支援的情形，请在送出工作前，再次检查预览图确认文字是否如预期转换。',
+                error_when_parsing_text: '将文本转换为路径时出错：\n%s',
             },
             lock_desc: '缩放时固定比例 (SHIFT)'
         },
