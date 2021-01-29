@@ -558,7 +558,7 @@ export default {
             brightness: '輝度',
             contrast: 'コントラスト',
             threshold: 'しきい値',
-            okay: '分かりました',
+            okay: 'OK',
             tuning: 'パラメーター'
         },
         photo_edit_panel: {
@@ -573,7 +573,7 @@ export default {
             start: '開始',
             processing: '処理中',
             invert: '色を反転',
-            okay: '分かりました',
+            okay: 'OK',
             phote_edit: '写真編集'
         },
         document_panel: {
