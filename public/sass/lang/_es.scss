@@ -1,0 +1,19 @@
+.es {
+    &.beambox-studio {
+        .tool-panels {
+            .tool-block {
+                width: 250px;
+                .btn-h-group {
+                    .btn {
+                        padding: 0 12px;
+                    }
+                }
+            }
+            .tool-panel {
+                .controls {
+                    width: 250px;
+                }
+            }
+        }
+    }
+}

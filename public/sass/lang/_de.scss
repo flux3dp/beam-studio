@@ -1,0 +1,14 @@
+.de {
+    &.beambox-studio {
+        .tool-panels {
+            .tool-block {
+                width: 300px;
+            }
+            .tool-panel {
+                .controls {
+                    width: 300px;
+                }
+            }
+        }
+    }
+}

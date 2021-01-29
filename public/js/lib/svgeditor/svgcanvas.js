@@ -497,6 +497,11 @@ define([
                             canvas.setRotationAngle(0, true, textElem);
                             canvas.updateMultiLineTextElem(textElem);
                             canvas.setRotationAngle(angle, true, textElem);
+                            if (textElem.getAttribute('stroke-width') === '2') {
+                                textElem.setAttribute('stroke-width', 2.01);
+                            } else {
+                                textElem.setAttribute('stroke-width', 2);
+                            }
                         }
                     }
                 }
@@ -3037,8 +3042,10 @@ define([
                             if (current_mode === 'textedit') {
                                 selectorManager.requestSelector(element).showGrips(true);
                             } else {
-                                selectOnly([element], true);
-                                call('changed', [element]);
+                                if (element.parentNode) {
+                                    selectOnly([element], true);
+                                    call('changed', [element]);
+                                }
                             }
                         }
                     }, ani_dur * 1000);
@@ -3093,7 +3100,7 @@ define([
                     // Escape from in-group edit
                     return;
                 }
-                setContext(mouseTarget);
+                // setContext(mouseTarget);
             };
 
             // prevent links from being followed in the canvas
@@ -3641,7 +3648,8 @@ define([
                 },
                 mouseDown: function (evt, mouseTarget, start_x, start_y) {
                     var pt = screenToPt(start_x, start_y);
-
+                    console.log('textaction mousedown');
+                    // 
                     textinput.focus();
                     setCursorFromPoint(pt.x, pt.y);
                     last_x = start_x;
@@ -3849,7 +3857,7 @@ define([
                             if (tspans[i]) {
                                 tspan = tspans[i];
                             } else {
-                                tspan = document.createElementNS(window.svgedit.NS.SVG, 'tspan');
+                                tspan = document.createElementNS(NS.SVG, 'tspan');
                                 textElem.appendChild(tspan);
                             }
                             tspan.textContent = lines[i];
@@ -3962,6 +3970,7 @@ define([
                     });
                 }
             }
+            svgedit.recalculate.recalculateDimensions(textElem);
         };
 
         // TODO: Migrate all of this code into path.js
@@ -5579,12 +5588,7 @@ define([
                     canvas.width = width;
                     canvas.height = height;
                     let ctx = canvas.getContext('2d');
-
-                    let svgBlob = new Blob([svgString], {
-                        type: "image/svg+xml;charset=utf-8"
-                    });
-                    const svgUrl = URL.createObjectURL(svgBlob);
-                    
+                    const svgUrl = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(svgString);
                     let img = new Image();
                     img.onload = function () {
                         ctx.drawImage(this, 0, 0);
@@ -9395,12 +9399,8 @@ define([
             }
             let d = '';
             for (let i = 0; i < solution_paths.length; ++i) {
-                if (!BeamboxPreference.read('simplify_clipper_path')) {
-                    d += 'M';
-                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
-                    d += ' Z';
-                } else {
-                    d += 'M';
+                d += 'M';
+                if (BeamboxPreference.read('simplify_clipper_path')) {
                     const points = solution_paths[i].map(p => {
                         return { x: Math.floor(100 *(p.X / scale)) / 100, y: Math.floor(100 *(p.Y / scale)) / 100 } ;
                     });
@@ -9413,8 +9413,10 @@ define([
                         const pointsString = seg.points.slice(1).map((p) => `${p.x},${p.y}`).join(' ');
                         d += `${seg.type}${pointsString}`;
                     }
-                    d += 'Z';
+                } else {
+                    d += solution_paths[i].map(x => `${x.X / scale},${x.Y / scale}`).join(' L');
                 }
+                d += ' Z';
             }
             const base = selectedElements[len-1];
             const fill = base.getAttribute('fill');
@@ -9602,7 +9604,7 @@ define([
             let batchCmd = new svgedit.history.BatchCommand('Decompose Image');
             elems = elems || selectedElements;
             elems.forEach(elem => {
-                if (elem.tagName != 'path') {
+                if (!elem || elem.tagName != 'path') {
                     return;
                 }
                 let newPaths = [];
@@ -9688,6 +9690,8 @@ define([
                 id: 'vectorize-image',
                 message: LANG.photo_edit_panel.processing,
             });
+            const imgBBox = img.getBBox();
+            const angle = svgedit.utilities.getRotationAngle(img);
             const imgUrl = await new Promise((resolve) => {
                 ImageData(
                     $(img).attr("origImage"),
@@ -9711,21 +9715,31 @@ define([
                     resolve(svgstr);
                 });
             });
-            const id = getNextId();
-            let g = addSvgElementFromJson({
+            svgStr = svgStr.replace(/<\/?svg[^>]*>/g, '');
+            const gId = getNextId();
+            const g = addSvgElementFromJson({
                 'element': 'g',
                 'attr': {
-                    'id': id
+                    'id': gId
                 }
             });
-            svgStr = svgStr.replace(/<\/?svg[^>]*>/g, '');
-            ImageTracer.appendSVGString(svgStr, id);
-            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
-            const imgBBox = img.getBBox();
-            const angle = svgedit.utilities.getRotationAngle(img);
+            ImageTracer.appendSVGString(svgStr, gId);
+
+            const path = addSvgElementFromJson({
+                'element': 'path',
+                'attr': {
+                    'id': getNextId(),
+                    'fill': '#000000',
+                    'stroke-width': 1,
+                    'vector-effect': 'non-scaling-stroke',
+                }
+            });
+            path.addEventListener('mouseover', this.handleGenerateSensorArea);
+            path.addEventListener('mouseleave', this.handleGenerateSensorArea);
+            batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
             let cmd = this.deleteSelectedElements(true);
             if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-            this.selectOnly([g], true);
+            this.selectOnly([g], false);
             let gBBox = g.getBBox();
             if (imgBBox.width !== gBBox.width) {
                 this.setSvgElemSize('width', imgBBox.width);
@@ -9736,39 +9750,23 @@ define([
             gBBox = g.getBBox();
             dx = (imgBBox.x + 0.5 * imgBBox.width) - (gBBox.x + 0.5 * gBBox.width);
             dy = (imgBBox.y + 0.5 * imgBBox.height) - (gBBox.y + 0.5 * gBBox.height);
-            this.moveElements([dx], [dy], [g], false);
-            this.setRotationAngle(angle, true, g);
+            let d = '';
             for (let i = 0; i < g.childNodes.length; i++) {
                 let child = g.childNodes[i];
-                if ($(child).attr('opacity') === 0) {
-                    $(child).remove();
-                    i--;
-                } else {
-                    child.removeAttribute('opacity');
-                    $(child).attr('id', getNextId());
-                    $(child).attr('vector-effect', "non-scaling-stroke");
-                    child.addEventListener('mouseover', this.handleGenerateSensorArea);
-                    child.addEventListener('mouseleave', this.handleGenerateSensorArea);
+                if (child.getAttribute('opacity') !== '0') {
+                    d += child.getAttribute('d');
                 }
+                child.remove();
+                i--;
             }
+            g.remove();
+            path.setAttribute('d', d);
+            this.moveElements([dx], [dy], [path], false);
+            this.setRotationAngle(angle, true, path);
             if (this.isUsingLayerColor) {
-                this.updateElementColor(g);
+                this.updateElementColor(path);
             }
-            if (BeamboxPreference.read('union_after_trace') === false) {
-                selectorManager.requestSelector(g).resize();
-            } else {
-                let res = this.ungroupSelectedElement(true);
-                if (res) {
-                    if (res.batchCmd && !res.batchCmd.isEmpty()) {
-                        batchCmd.addSubCommand(res.batchCmd);
-                    }
-                    res = this.booleanOperationSelectedElements('union', true);
-                    if (res && !res.isEmpty()) {
-                        batchCmd.addSubCommand(res);
-                    }
-                }
-            }
-            
+            this.selectOnly([path], true);
             addCommandToHistory(batchCmd);
             Progress.popById('vectorize-image');
         };

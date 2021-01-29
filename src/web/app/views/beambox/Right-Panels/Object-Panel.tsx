@@ -40,14 +40,24 @@ export class ObjectPanel extends React.Component {
             elems = Array.from(elems[0].childNodes);
         }
 
+        const elementAllowBooleanOperations = (elem: Element) => {
+            if (['rect', 'polygon', 'ellipse'].includes(elem.tagName)) {
+                return true;
+            }
+            if (elem.tagName === 'path') {
+                return svgCanvas.isElemFillable(elem);
+            }
+            return false;
+        }
+
         return {
             'group': (elems && elems.length > 0),
             'ungroup': (elems && elems.length === 1 && ['g'].includes(elems[0].tagName)),
             'dist': (elems && elems.length > 2),
-            'union': (elems && elems.length > 1 && elems.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-            'subtract': (elems && elems.length === 2 && elems.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-            'intersect': (elems && elems.length > 1 && elems.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
-            'difference': (elems && elems.length > 1 && elems.every(elem => ['rect', 'path', 'polygon', 'ellipse', 'line'].includes(elem.tagName))),
+            'union': (elems && elems.length > 1 && elems.every(elem => elementAllowBooleanOperations(elem))),
+            'subtract': (elems && elems.length === 2 && elems.every(elem => elementAllowBooleanOperations(elem))),
+            'intersect': (elems && elems.length > 1 && elems.every(elem => elementAllowBooleanOperations(elem))),
+            'difference': (elems && elems.length > 1 && elems.every(elem => elementAllowBooleanOperations(elem))),
         };
     }
 

@@ -614,6 +614,7 @@ export interface ILang {
             text_to_path: {
                 font_substitute_pop: string,
                 check_thumbnail_warning: string,
+                error_when_parsing_text: string,
             },
             lock_desc: string,
         },

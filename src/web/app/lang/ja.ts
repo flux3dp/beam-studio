@@ -574,7 +574,7 @@ export default {
             brightness: '輝度',
             contrast: 'コントラスト',
             threshold: 'しきい値',
-            okay: '分かりました',
+            okay: 'OK',
             tuning: 'パラメーター'
         },
         photo_edit_panel: {
@@ -589,7 +589,7 @@ export default {
             start: '開始',
             processing: '処理中',
             invert: '色を反転',
-            okay: '分かりました',
+            okay: 'OK',
             phote_edit: '写真編集'
         },
         document_panel: {
@@ -615,7 +615,8 @@ export default {
             wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
             text_to_path: {
                 font_substitute_pop: 'テキスト：「%s」に書体：「%s」サポートできない文字があります.\n%s\n書体「%s」に変更して宜しいですか',
-                check_thumbnail_warning: 'テキストをパスに解析するときに一部の書体が他のフォントに変更され、一部の文字が正常に変換されないことがあります.\nタスクを送信する前に、プレビュー画像をもう一度確認してください。'
+                check_thumbnail_warning: 'テキストをパスに解析するときに一部の書体が他のフォントに変更され、一部の文字が正常に変換されないことがあります.\nタスクを送信する前に、プレビュー画像をもう一度確認してください。',
+                error_when_parsing_text: 'テキストをパスに変換するときにエラーが発生しました：\n%s',
             },
             lock_desc: '幅と高さの比率を保持（SHIFT）'
         },

@@ -303,6 +303,16 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
 
     await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
     const outputs = await svgWebSocket.divideSVG({scale: 1});
+    if (!outputs.res) {
+        console.error('Error when convert text by fluxsvg', outputs.data);
+        Alert.popUp({
+            type: AlertConstants.SHOW_POPUP_ERROR,
+            message: `#846 ${sprintf(LANG.text_to_path.error_when_parsing_text, outputs.data)}`,
+        });
+        Progress.popById('parsing-font');
+        return;
+    }
+
     let {pathD, transform} = await new Promise ((resolve, reject) => {
         let fileReader = new FileReader();
         fileReader.onloadend = function (e) {

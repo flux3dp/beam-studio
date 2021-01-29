@@ -615,7 +615,8 @@ export default {
             wait_for_parsing_font: 'Schriftart analysieren ... Bitte warten.',
             text_to_path: {
                 font_substitute_pop: 'Text: "%s" enthält folgende Zeichen, die von der aktuellen Schriftart nicht unterstützt werden: "%s".\n%s\nMöchtest du "%s" als Ersatz verwenden?',
-                check_thumbnail_warning: 'Einige Texte wurden beim Verwandeln von Texten in Pfade in andere Schriftarten geändert, und einige Zeichen werden möglicherweise nicht normal konvertiert.\nBitte überprüfe das Vorschaubild erneut, bevor du die Aufgabe sendest.'
+                check_thumbnail_warning: 'Einige Texte wurden beim Verwandeln von Texten in Pfade in andere Schriftarten geändert, und einige Zeichen werden möglicherweise nicht normal konvertiert.\nBitte überprüfe das Vorschaubild erneut, bevor du die Aufgabe sendest.',
+                error_when_parsing_text: 'Fehler beim Konvertieren von Text in Pfad:\n%s',
             },
             lock_desc: 'Behalte das Verhältnis von Breite und Höhe bei (UMSCHALTTASTE)'
         },

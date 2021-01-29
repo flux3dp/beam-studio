@@ -42,8 +42,9 @@ let grayscaleCroppedImg = null;
 
 const TestImg = 'img/hehe.png';
 
-const maxAllowableWidth = window.innerWidth - 2 * Constants.sidePanelsWidth;
-const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 60;
+const PANEL_PADDING = 100;
+let maxAllowableWidth: number;
+let maxAllowableHieght: number;
 
 class ImageTracePanel extends React.Component {
     constructor(props) {
@@ -59,6 +60,8 @@ class ImageTracePanel extends React.Component {
             threshold: 128,
             cropperStyle: {},
         };
+        maxAllowableWidth = window.innerWidth - 2 * PANEL_PADDING;
+        maxAllowableHieght = window.innerHeight - 2 * PANEL_PADDING;
     }
 
     componentDidMount() {
@@ -322,18 +325,29 @@ class ImageTracePanel extends React.Component {
     _traceImageAndAppend (imgUrl, cropData, preCrop) {
         return new Promise ((resolve, reject) => {
             ImageTracer.imageToSVG(imgUrl, svgstr => {
-                const id = svgCanvas.getNextId();
+                const gId = svgCanvas.getNextId();
                 const batchCmd = new svgedit.history.BatchCommand('Add Image Trace');
                 const g = svgCanvas.addSvgElementFromJson({
                     'element': 'g',
                     'attr': {
-                        'id': id
+                        'id': gId
                     }
                 }) as SVGGElement;
-                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(g));
+                const path = svgCanvas.addSvgElementFromJson({
+                    'element': 'path',
+                    'attr': {
+                        'id': svgCanvas.getNextId(),
+                        'fill': '#000000',
+                        'stroke-width': 1,
+                        'vector-effect': 'non-scaling-stroke',
+                    }
+                }) as SVGPathElement;
+                path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
+                path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
+                batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
                 svgCanvas.selectOnly([g]);
                 svgstr = svgstr.replace(/<\/?svg[^>]*>/g, '');
-                ImageTracer.appendSVGString(svgstr, id);
+                ImageTracer.appendSVGString(svgstr, gId);
                 const gBBox = g.getBBox();
                 if (cropData.width !== gBBox.width) {
                     svgCanvas.setSvgElemSize('width', cropData.width);
@@ -341,33 +355,21 @@ class ImageTracePanel extends React.Component {
                 if (cropData.height !== gBBox.height) {
                     svgCanvas.setSvgElemSize('height', cropData.height);
                 }
+                let d = '';
+                for (let i = 0; i < g.childNodes.length; i++) {
+                    let child = g.childNodes[i] as Element;
+                    if (child.getAttribute('opacity') !== '0') {
+                        d += child.getAttribute('d');
+                    }
+                    child.remove();
+                    i--;
+                }
+                g.remove();
+                path.setAttribute('d', d);
                 let dx = cropData.x + preCrop.offsetX;
                 let dy = cropData.y + preCrop.offsetY;
-                svgCanvas.moveElements([dx], [dy], [g], false);
-                for (let i = 0; i < g.childNodes.length; i++) {
-                    let child = g.childNodes[i];
-                    if (parseFloat($(child).attr('opacity')) == 0) {
-                        $(child).remove();
-                        i--;
-                    } else {
-                        $(child).removeAttr('opacity');
-                        $(child).attr('fill-opacity', 0);
-                        $(child).attr('id', svgCanvas.getNextId());
-                        $(child).attr('vector-effect', "non-scaling-stroke");
-                    }
-                }
-                if (BeamboxPreference.read('union_after_trace') !== false) {
-                    let res = svgCanvas.ungroupSelectedElement(true);
-                    if (res) {
-                        if (res.batchCmd && !res.batchCmd.isEmpty()) {
-                            batchCmd.addSubCommand(res.batchCmd);
-                        }
-                        res = svgCanvas.booleanOperationSelectedElements('union', true);
-                        if (res && !res.isEmpty()) {
-                            batchCmd.addSubCommand(res);
-                        }
-                    }   
-                }
+                svgCanvas.moveElements([dx], [dy], [path], false);
+                svgCanvas.selectOnly([path], true);
                 svgCanvas.undoMgr.addCommandToHistory(batchCmd);
                 resolve(true);
             });
@@ -526,8 +528,8 @@ class ImageTracePanel extends React.Component {
         if (TESTING_IT) {
             containerStyle = {width: `${maxAllowableWidth}px`};
         } else {
-            const containerMaxWidth = maxAllowableWidth - 200;
-            const containerMaxHeight = maxAllowableHieght - 80;
+            const containerMaxWidth = maxAllowableWidth - 330;
+            const containerMaxHeight = maxAllowableHieght - 40;
             containerStyle = (cropData.width / containerMaxWidth > cropData.height / containerMaxHeight) ? 
             {width: `${containerMaxWidth}px`} : {height: `${containerMaxHeight}px`};
         }
