@@ -3932,6 +3932,7 @@ define([
                     });
                 }
             }
+            svgedit.recalculate.recalculateDimensions(textElem);
         };
 
         // TODO: Migrate all of this code into path.js
