@@ -71,6 +71,15 @@ export class TopBarContextProvider extends React.Component {
     }
 
     setTopBarPreviewMode = (isPreviewMode: boolean) => {
+        const allLayers = document.querySelectorAll('g.layer');
+        for (let i = 0; i < allLayers.length; i++) {
+            const g = allLayers[i] as SVGGElement;
+            if (isPreviewMode) {
+                g.style.pointerEvents = 'none';
+            } else {
+                g.style.pointerEvents = '';
+            }
+        }
         this.isPreviewMode = isPreviewMode;
     }
 
