@@ -17,7 +17,7 @@ beforeAll(async function () {
     return app.start().then (async () => {
         if (process.platform === 'win32') {
             app.browserWindow.focus();
-            app.browserWindow.setAlwaysOnTop(true); 
+            app.browserWindow.setAlwaysOnTop(true);
         }
     });
 });
@@ -51,10 +51,4 @@ test('App Init', async function() {
 });
 
 require('./features/settings/home-lang-test');
-
-module.exports = {
-    get app () {
-        return app;
-    }
-}
 require('./features/editor/editor-tests');

@@ -45,7 +45,7 @@ const restartApp = async () => {
 
     if (process.platform === 'win32') {
         app.browserWindow.focus();
-        app.browserWindow.setAlwaysOnTop(true); 
+        app.browserWindow.setAlwaysOnTop(true);
     }
     return app;
 };
