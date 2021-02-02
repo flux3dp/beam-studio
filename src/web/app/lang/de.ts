@@ -325,6 +325,10 @@ export default {
             vectorize_shading_image: 'Das Vektorisieren von Schattierungsbildern dauert länger und ist anfällig für Rauschen. Bitte schalten Sie die Bildschattierung aus, bevor Sie sie ausführen.',
             change_workarea_before_preview: 'Der Arbeitsbereich von %s stimmt nicht mit dem aktuell festgelegten Arbeitsbereich überein. Möchten Sie den aktuellen Arbeitsbereich wechseln?',
             bug_report: 'Fehlerbericht',
+            sentry: {
+                title: 'Lassen Sie uns Beam Studio gemeinsam verbessern',
+                message: 'Stimmen Sie zu, relevante Informationen automatisch in das Entwicklungsteam hochzuladen, wenn Fehler auftreten?',
+            },
         },
         zoom_block: {
             fit_to_window: 'An Fenster anpassen',

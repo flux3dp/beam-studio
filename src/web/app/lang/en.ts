@@ -325,6 +325,10 @@ export default {
             vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
             change_workarea_before_preview: 'The workarea of %s does not match the currently set workarea. Do you want to switch current workarea?',
             bug_report: 'Bug Report',
+            sentry: {
+                title: 'Let\'s make Beam Studio better together',
+                message: 'Do you agree to automatically upload relevant information to the development team when errors occur?',
+            },
         },
         zoom_block: {
             fit_to_window: 'Fit to Window',

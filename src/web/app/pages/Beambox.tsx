@@ -17,13 +17,16 @@ import * as i18n from 'helpers/i18n';
 const electron = window['electron'];
 const React = requireNode('react');
 const classNames = requireNode('classnames');
+
+BeamboxInit.initSentry();
 BeamboxInit.init();
+
 
 class Beambox extends React.Component {
     constructor(props) {
         super(props);
     }
-    componentDidMount() {
+    async componentDidMount() {
         BeamboxGlobalInteraction.attach();
 
         // need to run after svgedit packages loaded, so place it at componentDidMouont
@@ -34,9 +37,10 @@ class Beambox extends React.Component {
         let ipc = electron.ipc;
         let events = electron.events;
         ipc.send(events.FRONTEND_READY);
+        svgEditor.resetView();
+        await BeamboxInit.askAndInitSentry();
         BeamboxInit.showTutorial();
         BeamboxInit.checkOSVersion();
-        svgEditor.resetView();
     }
     componentWillUnmount() {
         BeamboxGlobalInteraction.detach();

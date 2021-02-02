@@ -325,6 +325,10 @@ export default {
             vectorize_shading_image: 'Las imágenes con gradientes tardan más tiempo en ser trazadas y son propensas al ruido. Por favor, apaga el gradiente de la imagen antes de ejecutarla.',
             change_workarea_before_preview: 'El área de trabajo de %s no coincide con el área de trabajo configurada actualmente. ¿Quiere cambiar el área de trabajo actual?',
             bug_report: 'Informe de error',
+            sentry: {
+                title: 'Hagamos juntos Beam Studio mejor',
+                message: '¿Acepta cargar automáticamente información relevante al equipo de desarrollo cuando se produzcan errores?',
+            },
         },
         zoom_block: {
             fit_to_window: 'Ajustar a la ventana',

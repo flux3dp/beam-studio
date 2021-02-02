@@ -476,6 +476,37 @@ const initMenuBarEvents = () => {
     }
 };
 
+const askAndInitSentry = async () => {
+    if (LocalStorage.get('enable-sentry') === undefined) {
+        await new Promise<void>((resolve) => {
+            const LANG = i18n.lang;
+            Alert.popUp({
+                id: 'ask-sentry',
+                caption: LANG.beambox.popup.sentry.title,
+                message: LANG.beambox.popup.sentry.message,
+                buttonType: AlertConstants.YES_NO,
+                onYes: () => {
+                    LocalStorage.set('enable-sentry', true);
+                    initSentry();
+                    resolve();
+                },
+                onNo: () => {
+                    LocalStorage.set('enable-sentry', false);
+                    resolve();
+                },
+            });
+        });
+    }
+};
+
+const initSentry = async () => {
+    if (LocalStorage.get('enable-sentry')) {
+        const Sentry = window['nodeModules']['@sentry/electron'];
+        console.log(Sentry);
+        Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
+    }
+};
+
 const showTutorial = () => {
     if (!AlertConfig.read('skip-interface-tutorial')) {
         const LANG = i18n.lang.tutorial;
@@ -580,6 +611,8 @@ export default {
     init: init,
     displayGuides: displayGuides,
     initMenuBarEvents: initMenuBarEvents,
+    askAndInitSentry,
+    initSentry,
     showTutorial,
     checkOSVersion,
 };

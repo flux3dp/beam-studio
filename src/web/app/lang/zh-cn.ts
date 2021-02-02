@@ -325,6 +325,10 @@ export default {
             vectorize_shading_image: '渐层影像在向量化时将花费较多时间，且容易有杂点，请将影像渐层关闭后再执行。',
             change_workarea_before_preview: '%s 的工作范围与目前设定的工作范围不相符，是否要切换目前的工作范围？',
             bug_report: '错误回报',
+            sentry: {
+                title: '我们一起让 Beam Studio 变得更好',
+                message: '请问您是否同意在遇到错误时将相关资讯自动上传给开发团队？',
+            },
         },
         zoom_block: {
             fit_to_window: '配合视窗尺寸'

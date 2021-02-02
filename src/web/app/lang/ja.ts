@@ -325,6 +325,10 @@ export default {
             vectorize_shading_image: 'シェーディング画像はベクトル化に時間がかかり、ノイズが発生しやすくなります。実行する前に画像のシェーディングをオフにしてください。',
             change_workarea_before_preview: '%sのワークエリアが、現在設定されているワークエリアと一致しません。現在のワークエリアを切り替えますか？',
             bug_report: 'バグ報告',
+            sentry: {
+                title: '一緒にBeamStudioをもっと良くしましょう',
+                message: 'エラーが発生したときに、関連情報を開発チームに自動的にアップロードすることに同意しますか？',
+            },
         },
         zoom_block: {
             fit_to_window: 'ウィンドウに合わせる',
