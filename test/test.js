@@ -51,7 +51,10 @@ test('App Init', async function() {
     console.log(count);
 });
 
-//require('./features/settings/home-lang-test');
-//require('./features/settings/connect-machine');
-require('./features/editor/editor-tests');
+require('./features/settings/home-lang-test');
 
+module.exports = {
+    get app () {
+        return app;
+    }
+}
