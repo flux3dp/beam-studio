@@ -43,6 +43,7 @@ module.exports = {
 }
 
 test('App Init', async function() {
+    console.log(app.browserWindow);
     let isVisible = await app.browserWindow.isVisible();
     expect(isVisible).toBe(true);
     let count = await app.client.getWindowCount();
