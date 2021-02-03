@@ -324,7 +324,7 @@ function createWindow () {
     ipcMain.on('DEBUG-INSPECT', () => {
         mainWindow.webContents.openDevTools();
     });
-    if(process.defaultApp || DEBUG) {
+    if(!process.argv.includes('--test') && (process.defaultApp || DEBUG)) {
         mainWindow.webContents.openDevTools();
     }
 
@@ -622,8 +622,8 @@ app.on('ready', () => {
     });
 
     if(!mainWindow) {
-        createWindow();
         createShadowWindow();
+        createWindow();
     } else {
         console.log("MainWindow instance", mainWindow);
         mainWindow.focus();

@@ -11,15 +11,16 @@ let app = null;
 beforeAll(async function () {
     app = new Application({
         path: electron,
-        args: [baseDir],
+        args: [baseDir, '--test'],
         webdriverOptions: {
             deprecationWarnings: false,
         }
     });
     return app.start().then (async () => {
-        console.log('app started');
-        // app.browserWindow.focus();
-        // app.browserWindow.setAlwaysOnTop(true); 
+        if (process.platform === 'win32') {
+            app.browserWindow.focus();
+            app.browserWindow.setAlwaysOnTop(true); 
+        }
     });
 });
 
@@ -38,22 +39,22 @@ afterAll(function() {
 });
 
 test('App Init', async function() {
+    console.log(app.browserWindow);
     let isVisible = await app.browserWindow.isVisible();
     expect(isVisible).toBe(true);
     const client = app.client;
     console.log('client', client);
     let count = await app.client.getWindowCount();
 
-    // main window, main window devtool, shadow window, shadow window devtool, ugly noti. window
-    expect(count).toEqual(5);
+    // main window, shadow window, ugly noti. window
+    expect(count).toEqual(3);
     console.log(count);
 });
 
-require('./features/settings/homeLangTest');
+require('./features/settings/home-lang-test');
 
 module.exports = {
     get app () {
-        console.log(app);
         return app;
     }
 }
