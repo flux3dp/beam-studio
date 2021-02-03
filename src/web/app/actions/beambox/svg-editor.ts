@@ -6483,9 +6483,16 @@ const svgEditor = window['svgEditor'] = (function($) {
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
+            const background = document.getElementById('canvasBackground');
+            if (!background) {
+                setTimeout(() => editor.resetView(), 100);
+                return;
+            }
+            const x = parseFloat(background.getAttribute('x'));
+            const y = parseFloat(background.getAttribute('y'));
             const defaultScroll = {
-                x: (parseFloat($('#canvasBackground').attr('x')) - offsetX) / zoomLevel,
-                y: (parseFloat($('#canvasBackground').attr('y')) - offsetY) / zoomLevel
+                x: (x - offsetX) / zoomLevel,
+                y: (y - offsetY) / zoomLevel
             };
             const workArea = document.getElementById('workarea');
             workArea.scrollLeft = defaultScroll.x * zoomLevel;
