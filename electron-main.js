@@ -159,7 +159,9 @@ const createShadowWindow = () => {
                 nodeIntegration: true
             },
         });
-        shadowWindow.webContents.openDevTools();
+        if (!process.argv.includes('--test')) {
+            shadowWindow.webContents.openDevTools();
+        }
         loadShadowWindow();
 
         shadowWindow.on('close', function(e) {
@@ -313,7 +315,7 @@ function createWindow () {
     ipcMain.on('DEBUG-INSPECT', () => {
         mainWindow.webContents.openDevTools();
     });
-    if(process.defaultApp || DEBUG) {
+    if(!process.argv.includes('--test') && (process.defaultApp || DEBUG)) {
         mainWindow.webContents.openDevTools();
     }
 
@@ -575,8 +577,8 @@ app.on('ready', () => {
     });
 
     if(!mainWindow) {
-        createWindow();
         createShadowWindow();
+        createWindow();
     } else {
         console.log("MainWindow instance", mainWindow);
         mainWindow.focus();
