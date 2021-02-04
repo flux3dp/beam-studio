@@ -186,7 +186,7 @@ class SettingGeneral extends React.Component{
             }
         ];
 
-        const GuessingPokeOptions = [
+        const guessingPokeOptions = [
             {
                 value: 0,
                 label: lang.settings.off,
@@ -445,12 +445,25 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.enabled,
-                selected: this._getBeamboxPreferenceEditingValue('default-diode') == true
+                selected: this._getBeamboxPreferenceEditingValue('default-diode') === true
             },
             {
                 value: false,
                 label: lang.settings.disabled,
                 selected: this._getBeamboxPreferenceEditingValue('default-diode') !== true
+            }
+        ];
+
+        const enableSentryOptions = [
+            {
+                value: 0,
+                label: lang.settings.off,
+                selected: this._getConfigEditingValue('enable-sentry') !== 1
+            },
+            {
+                value: 1,
+                label: lang.settings.on,
+                selected: this._getConfigEditingValue('enable-sentry') === 1
             }
         ];
 
@@ -511,7 +524,7 @@ class SettingGeneral extends React.Component{
                 <Controls label={lang.settings.guess_poke}>
                     <SelectView
                         className='font3'
-                        options={GuessingPokeOptions}
+                        options={guessingPokeOptions}
                         onChange={(e) => this._updateConfigChange('guessing_poke', e.target.value)}
                     />
                 </Controls>
@@ -585,7 +598,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.guides}>
                     <SelectView
-                        id='select-lang'
+                        id='set-guide'
                         className='font3'
                         options={guideSelectionOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('show_guides', e.target.value)}
@@ -722,7 +735,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.mask}>
                     <SelectView
-                        id='select-lang'
+                        id='set-mask'
                         className='font3'
                         options={maskOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('enable_mask', e.target.value)}
@@ -733,7 +746,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.text_path_calc_optimization}>
                     <SelectView
-                        id='select-lang'
+                        id='text-optimize'
                         className='font3'
                         options={textToPathOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
@@ -742,7 +755,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.font_substitute}>
                     <SelectView
-                        id='select-lang'
+                        id='font-substitue'
                         className='font3'
                         options={fontSubstituteOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('font-substitute', e.target.value)}
@@ -753,7 +766,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.default_borderless_mode}>
                     <SelectView
-                        id='select-lang'
+                        id='default-open-bottom'
                         className='font3'
                         options={borderlessModeOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('default-borderless', e.target.value)}
@@ -762,7 +775,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.default_enable_autofocus_module}>
                     <SelectView
-                        id='select-lang'
+                        id='default-autofocus'
                         className='font3'
                         options={autofocusModuleOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
@@ -771,7 +784,7 @@ class SettingGeneral extends React.Component{
 
                 <Controls label={lang.settings.default_enable_diode_module}>
                     <SelectView
-                        id='select-lang'
+                        id='default-diode'
                         className='font3'
                         options={diodeModuleOptions}
                         onChange={(e) => this._updateBeamboxPreferenceChange('default-diode', e.target.value)}
@@ -800,6 +813,18 @@ class SettingGeneral extends React.Component{
                         className={{half: true}}
                     />
                 </Controls>
+
+                <div className='subtitle'>{lang.settings.groups.privacy}</div>
+
+                <Controls label={lang.settings.share_with_flux}>
+                    <SelectView
+                        id='set-sentry'
+                        className='font3'
+                        options={enableSentryOptions}
+                        onChange={(e) => this._updateConfigChange('enable-sentry', e.target.value)}
+                    />
+                </Controls>
+
 
                 <a className='font5' onClick={this._resetBS}>
                     <b>{lang.settings.reset_now}</b>

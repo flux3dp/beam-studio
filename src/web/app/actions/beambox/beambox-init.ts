@@ -501,12 +501,12 @@ const askAndInitSentry = async () => {
                 message: LANG.beambox.popup.sentry.message,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
-                    LocalStorage.set('enable-sentry', true);
+                    LocalStorage.set('enable-sentry', 1);
                     initSentry();
                     resolve();
                 },
                 onNo: () => {
-                    LocalStorage.set('enable-sentry', false);
+                    LocalStorage.set('enable-sentry', 0);
                     resolve();
                 },
             });
@@ -516,8 +516,8 @@ const askAndInitSentry = async () => {
 
 const initSentry = async () => {
     if (LocalStorage.get('enable-sentry')) {
+        console.log('Sentry Initiated');
         const Sentry = window['nodeModules']['@sentry/electron'];
-        console.log(Sentry);
         Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
     }
 };
