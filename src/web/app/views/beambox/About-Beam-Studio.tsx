@@ -23,7 +23,7 @@ class AboutBeamStudio extends React.Component {
                     <img src='icon.png'/>
                     <div className='app-name'>{'Beam Studio'}</div>
                     <div className='version'>{`${LANG.version} ${FLUX.version}`}</div>
-                    <div className='copyright'>{'Copyright ⓒ 2019 FLUX Inc.'}</div>
+                    <div className='copyright'>{'Copyright ⓒ 2021 FLUX Inc.'}</div>
                     <button
                         className='btn btn-default'
                         onClick={() => this._close()}
