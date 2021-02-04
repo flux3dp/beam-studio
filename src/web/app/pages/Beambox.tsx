@@ -38,9 +38,7 @@ class Beambox extends React.Component {
         let events = electron.events;
         ipc.send(events.FRONTEND_READY);
         svgEditor.resetView();
-        await BeamboxInit.askAndInitSentry();
-        BeamboxInit.showTutorial();
-        BeamboxInit.checkOSVersion();
+        await BeamboxInit.showStartUpDialogs();
     }
     componentWillUnmount() {
         BeamboxGlobalInteraction.detach();

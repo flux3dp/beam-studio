@@ -3,6 +3,7 @@ import InputLightBox from '../widgets/Input-Lightbox';
 import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog';
 import Prompt from '../views/dialogs/Prompt';
 import ConfirmPrompt from '../views/dialogs/Confirm-Prompt';
+import ChangeLogDialog from 'app/views/dialogs/Change-Log';
 import { Tutorial } from '../views/tutorials/Tutorial';
 import { ITutorial } from '../../interfaces/ITutorial';
 import AboutBeamStudio from '../views/beambox/About-Beam-Studio';
@@ -187,6 +188,18 @@ export default {
                 />
             );
         })
+    },
+    showChangLog: async (args: { callback?: () => void } = {}) => {
+        if (isIdExist('change-log')) return;
+        const { callback } = args;
+        addDialogComponent('change-log',
+            <ChangeLogDialog
+                onClose={() => {
+                    popDialogById('change-log');
+                    if (callback) callback();
+                }}
+            />
+        );
     },
     showInputLightbox: (id: string, args) => {
         addDialogComponent(id,

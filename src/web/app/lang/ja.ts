@@ -693,6 +693,12 @@ export default {
             mm: 'mm'
         }
     },
+    change_logs: {
+        change_log: '変更ログ：',
+        added: '追加：',
+        fixed: '修正：',
+        changed: '変更：',
+    },
     select_printer: {
         auth_failure: '#811 認証失敗',
         unable_to_connect: '#810 マシンとの安定した接続を構築できません'

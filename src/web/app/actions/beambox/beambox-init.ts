@@ -476,6 +476,21 @@ const initMenuBarEvents = () => {
     }
 };
 
+const showStartUpDialogs = async () => {
+    await askAndInitSentry();
+    const isNewUser = LocalStorage.get('new-user');
+    await showTutorial(isNewUser);
+    if (!isNewUser) {
+        const lastInstalledVersion = LocalStorage.get('last-installed-version');
+        if (window['FLUX'].version !== lastInstalledVersion) {
+            await showChangeLog();
+        }
+        LocalStorage.set('last-installed-version', window['FLUX'].version);
+    }
+    checkOSVersion();
+    LocalStorage.removeAt('new-user');
+}
+
 const askAndInitSentry = async () => {
     if (LocalStorage.get('enable-sentry') === undefined) {
         await new Promise<void>((resolve) => {
@@ -507,40 +522,49 @@ const initSentry = async () => {
     }
 };
 
-const showTutorial = () => {
+const showTutorial = (isNewUser: boolean) => {
     if (!AlertConfig.read('skip-interface-tutorial')) {
         const LANG = i18n.lang.tutorial;
-        const isNewUser = LocalStorage.get('new-user');
-        Alert.popUp({
-            id: 'ask-tutorial',
-            caption: LANG.welcome,
-            message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
-            buttonType: AlertConstants.YES_NO,
-            onYes: () => {
-                const tutorialCallback = () => {
-                    LocalStorage.removeAt('new-user');
+        return new Promise<void>((resolve) => {
+            Alert.popUp({
+                id: 'ask-tutorial',
+                caption: LANG.welcome,
+                message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
+                buttonType: AlertConstants.YES_NO,
+                onYes: () => {
+                    const tutorialCallback = () => {
+                        AlertConfig.write('skip-interface-tutorial', true);
+                        Alert.popUp({
+                            message: LANG.tutorial_complete,
+                            callbacks: () => resolve(),
+                        });
+                    }
+                    if (isNewUser) {
+                        Tutorials.startNewUserTutorial(tutorialCallback);
+                    } else {
+                        Tutorials.startInterfaceTutorial(tutorialCallback);
+                    }
+                },
+                onNo: () => {
                     AlertConfig.write('skip-interface-tutorial', true);
-                    Alert.popUp({
-                        message: LANG.tutorial_complete,
-                    });
+                    if (isNewUser) {
+                        Alert.popUp({
+                            message: LANG.skip_tutorial,
+                            callbacks: () => resolve(),
+                        });
+                    } else {
+                        resolve();
+                    }
                 }
-                if (isNewUser) {
-                    Tutorials.startNewUserTutorial(tutorialCallback);
-                } else {
-                    Tutorials.startInterfaceTutorial(tutorialCallback);
-                }
-            },
-            onNo: () => {
-                LocalStorage.removeAt('new-user');
-                AlertConfig.write('skip-interface-tutorial', true);
-                if (isNewUser) {
-                    Alert.popUp({
-                        message: LANG.skip_tutorial,
-                    });
-                }
-            }
+            });
         });
     }
+};
+
+const showChangeLog = () => {
+    return new Promise<void>((resolve) => {
+        DialogCaller.showChangLog({ callback: () => resolve() });
+    });
 };
 
 const checkOSVersion = () => {
@@ -611,7 +635,7 @@ export default {
     init: init,
     displayGuides: displayGuides,
     initMenuBarEvents: initMenuBarEvents,
-    askAndInitSentry,
+    showStartUpDialogs,
     initSentry,
     showTutorial,
     checkOSVersion,

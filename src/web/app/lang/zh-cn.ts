@@ -693,6 +693,12 @@ export default {
             mm: 'mm'
         }
     },
+    change_logs: {
+        change_log: '更改日志：',
+        added: '新增：',
+        fixed: '修正：',
+        changed: '更改：',
+    },
     select_printer: {
         auth_failure: '#811 认证失败',
         unable_to_connect: '#810 无法与机器创建稳定连接'

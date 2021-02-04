@@ -693,6 +693,12 @@ export default {
             mm: 'mm'
         }
     },
+    change_logs: {
+        change_log: 'Change Logs:',
+        added: 'Added:',
+        fixed: 'Fixed:',
+        changed: 'Changed:',
+    },
     select_printer: {
         auth_failure: '#811 Authentication fail',
         unable_to_connect: '#810 Unable to build a stable connection with machine'

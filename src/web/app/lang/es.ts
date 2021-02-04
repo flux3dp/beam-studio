@@ -693,6 +693,12 @@ export default {
             mm: 'mm'
         }
     },
+    change_logs: {
+        change_log: 'Cambiar registros:',
+        added: 'Adicional:',
+        fixed: 'Fija:',
+        changed: 'Cambiada:',
+    },
     select_printer: {
         auth_failure: '#811 Fallo de autenticación',
         unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina'

@@ -693,6 +693,12 @@ export default {
             mm: 'mm'
         }
     },
+    change_logs: {
+        change_log: 'Protokolle ändern:',
+        added: 'Hinzugefügt:',
+        fixed: 'Fest:',
+        changed: 'Geändert:',
+    },
     select_printer: {
         auth_failure: '#811 Authentifizierung fehlgeschlagen',
         unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
