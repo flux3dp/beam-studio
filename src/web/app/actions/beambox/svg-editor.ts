@@ -3916,6 +3916,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.cutSelectedElements();
+                    canv_menu.enableContextMenuItems('#paste,#paste_in_place');
                 }
             };
             document.addEventListener('cut', cutSelected, false);
@@ -3927,6 +3928,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.copySelectedElements();
+                    canv_menu.enableContextMenuItems('#paste,#paste_in_place');
                 }
             };
             document.addEventListener('copy', copySelected, false);
@@ -5549,7 +5551,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             });
 
             $('#cmenu_canvas li').disableContextMenu();
-            canv_menu.enableContextMenuItems('#delete,#cut,#copy');
 
             window.addEventListener('beforeunload', function (e) {
                 // Suppress warning if page is empty
