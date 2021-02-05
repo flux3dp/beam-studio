@@ -3062,14 +3062,14 @@ define([
                     textActions.select(mouseTarget, pt.x, pt.y);
                 }
 
-                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) {
-                    // TODO: Allow method of in-group editing without having to do
-                    // this (similar to editing rotated paths)
+                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) { 
+                    // TODO: Ingroup Edit Mode
 
                     // Ungroup and regroup
-                    pushGroupProperties(mouseTarget);
-                    mouseTarget = selectedElements[0];
-                    clearSelection(true);
+                    // pushGroupProperties(mouseTarget);
+                    // mouseTarget = selectedElements[0];
+                    // clearSelection(true);
+                    return;
                 }
                 // Reset context
                 if (current_group) {
