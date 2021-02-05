@@ -1571,8 +1571,10 @@ define([
 
                 evt.preventDefault();
                 document.activeElement.blur();
-
                 if (right_click) {
+                    if (started) {
+                        return;
+                    }
                     if (current_mode === 'path') {
                         pathActions.finishPath(false);
                         $('#workarea').css('cursor', 'default');
