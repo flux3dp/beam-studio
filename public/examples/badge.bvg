@@ -142,11 +142,9 @@
  <g clip-path="url(#scene_mask)" data-repeat="1" data-strength="60" data-speed="5" data-color="#FE0000" class="layer">
   <title>Cutting</title>
   <use data-wireframe="false" data-xform="x=43.504661560058594 y=43.504661560058594 width=407.7339172363281 height=407.7339172363281 " xlink:href="#svg_1" id="svg_2" y="170.18727" x="144.00462"/>
-  <g id="svg_3"/>
  </g>
  <g clip-path="url(#scene_mask)" data-repeat="1" data-strength="20" data-speed="150" data-color="#000000" class="layer">
   <title>Engraving</title>
   <use data-wireframe="false" data-xform="x=43.504661560058594 y=43.504661560058594 width=407.7339172363281 height=407.7339172363281 " xlink:href="#svg_4" id="svg_5" y="170.18727" x="144.00462"/>
-  <g id="svg_6"/>
  </g>
 </svg>
