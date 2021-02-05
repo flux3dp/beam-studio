@@ -121,7 +121,7 @@ class DeviceMaster {
                 type: AlertConstants.SHOW_POPUP_ERROR
             });
             // Display the dialog again
-            await this.showAuthDialog(device.info.uuid);
+            return await this.showAuthDialog(device.info.uuid);
         }
         return false;
     };
@@ -150,8 +150,7 @@ class DeviceMaster {
         });
     }
 
-    // TODO: Remove deferred.. 
-    async selectDevice(printer: IDeviceInfo, deferred?): Promise<SelectionResult> {
+    async selectDevice(printer: IDeviceInfo): Promise<SelectionResult> {
         // Match the device from the newest received device list
         if (!printer) {
             return { success: false };
