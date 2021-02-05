@@ -114,6 +114,7 @@ class DeviceMaster {
                 lang.select_printer.auth_failure : 
                 lang.select_printer.unable_to_connect     
             );
+            Alert.popById('device-auth-fail');
             Alert.popUp({
                 id: 'device-auth-fail',
                 message,
