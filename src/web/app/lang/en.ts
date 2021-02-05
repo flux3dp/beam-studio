@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: 'Autofocus Default',
         default_enable_diode_module: 'Hybrid Laser Default',
         diode_offset: 'Hybrid Laser Offset',
+        share_with_flux: 'Share with FLUX',
         none: 'None',
         close: 'Close',
         enabled: 'Enabled',
@@ -271,6 +272,7 @@ export default {
             mask: 'Workarea Clipping',
             text_to_path: 'Text',
             modules: 'Add-on',
+            privacy: 'Privacy',
         },
         notification_on: 'On',
         notification_off: 'Off',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
             change_workarea_before_preview: 'The workarea of %s does not match the currently set workarea. Do you want to switch current workarea?',
             bug_report: 'Bug Report',
+            sentry: {
+                title: 'Let\'s make Beam Studio better together',
+                message: 'Do you agree to automatically upload relevant information to the development team when errors occur?',
+            },
         },
         zoom_block: {
             fit_to_window: 'Fit to Window',
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: 'This project contains icons imported from Noun Project, so the service of outputting SVG files is not supported.',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: 'Learn More',
+    },
+    change_logs: {
+        change_log: 'Change Logs:',
+        added: 'Added:',
+        fixed: 'Fixed:',
+        changed: 'Changed:',
     },
     select_printer: {
         auth_failure: '#811 Authentication fail',

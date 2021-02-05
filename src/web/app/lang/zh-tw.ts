@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: '自動對焦預設',
         default_enable_diode_module: '混合雷射預設',
         diode_offset: '混合雷射偏移值',
+        share_with_flux: '與 FLUX 分享',
         none: '無',
         close: '關閉',
         enabled: '啟用',
@@ -271,6 +272,7 @@ export default {
             mask: '工作範圍剪裁',
             text_to_path: '文字',
             modules: '擴充模組',
+            privacy: '隱私權',
         },
         notification_on: '開啟',
         notification_off: '關閉',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: '漸層影像在向量化時將花費較多時間，且容易有雜點，請將影像漸層關閉後再執行。',
             change_workarea_before_preview: '%s 的工作範圍與目前設定的工作範圍不相符，是否要切換目前的工作範圍？',
             bug_report: '錯誤回報',
+            sentry: {
+                title: '我們一起讓 Beam Studio 變得更好',
+                message: '請問您是否同意在遇到錯誤時將相關資訊自動上傳給開發團隊？',
+            },
         },
         zoom_block: {
             fit_to_window: '配合視窗尺寸',
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: '專案中含有 Noun Project 之圖檔，無提供輸出 SVG 檔之服務。',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: '更多資訊',
+    },
+    change_logs: {
+        change_log: '更新日誌：',
+        added: '新增：',
+        fixed: '修正：',
+        changed: '更改：',
     },
     select_printer: {
         auth_failure: '#811 認證失敗',

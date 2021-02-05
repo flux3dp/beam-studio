@@ -1131,7 +1131,6 @@ define([
 
                     selectedElements[i] = null;
                 }
-                //		selectedBBoxes[0] = null;
 
                 selectedElements = [];
                 if (!noCall) {
@@ -1574,8 +1573,10 @@ define([
 
                 evt.preventDefault();
                 document.activeElement.blur();
-
                 if (right_click) {
+                    if (started) {
+                        return;
+                    }
                     if (current_mode === 'path') {
                         pathActions.finishPath(false);
                         $('#workarea').css('cursor', 'default');
@@ -1615,10 +1616,9 @@ define([
                     start_y = svgedit.utilities.snapToGrid(start_y);
                 }
 
-                // if it is a selector grip, then it must be a single element selected,
-                // set the mouseTarget to that and update the mode to rotate/resize
-
                 if (mouseTarget === selectorManager.selectorParentGroup && selectedElements[0] != null) {
+                    // if it is a selector grip, then it must be a single element selected,
+                    // set the mouseTarget to that and update the mode to rotate/resize
                     var grip = evt.target;
                     var griptype = elData(grip, 'type');
                     // rotating
@@ -1631,6 +1631,8 @@ define([
                         current_resize_mode = elData(grip, 'dir');
                     }
                     mouseTarget = selectedElements[0];
+                } else if (canvas.textActions.isEditing) {
+                    current_mode = 'textedit';
                 }
 
                 if (ext_result = runExtensions('checkMouseTarget', { mouseTarget: mouseTarget }, true)) {
@@ -2550,6 +2552,9 @@ define([
                         call('transition', selectedElements);
                         ObjectPanelController.updateDimensionValues({rotation: angle < -180 ? (360 + angle) : angle});
                         ObjectPanelController.updateObjectPanel();
+                        if (svgedit.utilities.getElem('text_cursor')) {
+                            svgCanvas.textActions.init();
+                        }
                         break;
                     default:
                         break;
@@ -3080,14 +3085,14 @@ define([
                     textActions.select(mouseTarget, pt.x, pt.y);
                 }
 
-                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) {
-                    // TODO: Allow method of in-group editing without having to do
-                    // this (similar to editing rotated paths)
+                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) { 
+                    // TODO: Ingroup Edit Mode
 
                     // Ungroup and regroup
-                    pushGroupProperties(mouseTarget);
-                    mouseTarget = selectedElements[0];
-                    clearSelection(true);
+                    // pushGroupProperties(mouseTarget);
+                    // mouseTarget = selectedElements[0];
+                    // clearSelection(true);
+                    return;
                 }
                 // Reset context
                 if (current_group) {
@@ -3453,7 +3458,8 @@ define([
                 //console.log(textbb);
                 if (charpos < 0) {
                     // Out of text range, look at mouse coords
-                    charpos = chardata[0].length - 2;
+                    const totalLength = chardata.reduce((acc, cur) => acc + cur.length, 0);
+                    charpos = totalLength - 1;
                     if (mouse_x <= chardata[0][0].x) {
                         charpos = 0;
                     }
@@ -3488,13 +3494,13 @@ define([
             }
 
             function setEndSelectionFromPoint(x, y, apply) {
-                var i1 = textinput.selectionStart;
-                var i2 = getIndexFromPoint(x, y);
+                let i1 = textinput.selectionStart;
+                let i2 = getIndexFromPoint(x, y);
                 if (i2 === false) {
                     return;
                 }
-                var start = Math.min(i1, i2);
-                var end = Math.max(i1, i2);
+                let start = Math.min(i1, i2);
+                let end = Math.max(i1, i2);
                 setSelection(start, end, !apply);
             }
 
@@ -3649,7 +3655,7 @@ define([
                 mouseDown: function (evt, mouseTarget, start_x, start_y) {
                     var pt = screenToPt(start_x, start_y);
                     console.log('textaction mousedown');
-                    // 
+
                     textinput.focus();
                     setCursorFromPoint(pt.x, pt.y);
                     last_x = start_x;

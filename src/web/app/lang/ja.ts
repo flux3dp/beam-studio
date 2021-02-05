@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: 'オートフォーカス既定',
         default_enable_diode_module: 'ハイブリッドレーザー既定',
         diode_offset: 'ハイブリッドレーザーオフセット',
+        share_with_flux: 'FLUXと共有',
         none: 'なし',
         close: '閉じる',
         enabled: '有効',
@@ -271,6 +272,7 @@ export default {
             mask: 'ワークエリアのクリッピング',
             text_to_path: 'テキスト',
             modules: '拡張機能',
+            privacy: 'プライバシー',
         },
         notification_on: 'オン',
         notification_off: 'オフ',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: 'シェーディング画像はベクトル化に時間がかかり、ノイズが発生しやすくなります。実行する前に画像のシェーディングをオフにしてください。',
             change_workarea_before_preview: '%sのワークエリアが、現在設定されているワークエリアと一致しません。現在のワークエリアを切り替えますか？',
             bug_report: 'バグ報告',
+            sentry: {
+                title: '一緒にBeamStudioをもっと良くしましょう',
+                message: 'エラーが発生したときに、関連情報を開発チームに自動的にアップロードすることに同意しますか？',
+            },
         },
         zoom_block: {
             fit_to_window: 'ウィンドウに合わせる',
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: 'このプロジェクトにはThe Noun Projectからインポートされたアイコンが含まれているため、SVGファイルを出力するサービスはサポートされていません。',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: 'もっと詳しく知る',
+    },
+    change_logs: {
+        change_log: '変更ログ：',
+        added: '追加：',
+        fixed: '修正：',
+        changed: '変更：',
     },
     select_printer: {
         auth_failure: '#811 認証失敗',

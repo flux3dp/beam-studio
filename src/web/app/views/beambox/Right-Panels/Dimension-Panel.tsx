@@ -57,8 +57,10 @@ class DimensionPanel extends React.Component {
         this.setState(this.state);
     }
 
-    handleRotationChange = (val) => {
+    handleRotationChange = (val: number) => {
         const { elem, updateDimensionValues } = this.props;
+        val %= 360;
+        if (val > 180) val -= 360;
         svgCanvas.setRotationAngle(val, false, elem);
         updateDimensionValues({rotation: val});
         this.setState(this.state);

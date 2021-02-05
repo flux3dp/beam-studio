@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: 'Autoenfoque predeterminado',
         default_enable_diode_module: 'Láser híbrido por defecto',
         diode_offset: 'Compensación de láser híbrido',
+        share_with_flux: 'Compartir con FLUX',
         none: 'Ninguno',
         close: 'Cerrar',
         enabled: 'Habilitado',
@@ -271,6 +272,7 @@ export default {
             mask: 'Recorte del área de trabajo',
             text_to_path: 'Texto',
             modules: 'Añadir',
+            privacy: 'Intimidad',
         },
         notification_on: 'Encendido',
         notification_off: 'Apagado',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: 'Las imágenes con gradientes tardan más tiempo en ser trazadas y son propensas al ruido. Por favor, apaga el gradiente de la imagen antes de ejecutarla.',
             change_workarea_before_preview: 'El área de trabajo de %s no coincide con el área de trabajo configurada actualmente. ¿Quiere cambiar el área de trabajo actual?',
             bug_report: 'Informe de error',
+            sentry: {
+                title: 'Hagamos juntos Beam Studio mejor',
+                message: '¿Acepta cargar automáticamente información relevante al equipo de desarrollo cuando se produzcan errores?',
+            },
         },
         zoom_block: {
             fit_to_window: 'Ajustar a la ventana',
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: 'Este proyecto contiene iconos importados de Noun Project, por lo que el servicio de salida de archivos SVG no es compatible.',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: 'Aprende más',
+    },
+    change_logs: {
+        change_log: 'Cambiar registros:',
+        added: 'Adicional:',
+        fixed: 'Fija:',
+        changed: 'Cambiada:',
     },
     select_printer: {
         auth_failure: '#811 Fallo de autenticación',

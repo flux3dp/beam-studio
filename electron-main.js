@@ -18,6 +18,9 @@ const fs = require('fs');
 const os = require('os');
 const exec = require('child_process').exec;
 const Store = require('electron-store');
+const Sentry = require('@sentry/electron');
+
+Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
 
 let mainWindow;
 let menuManager;

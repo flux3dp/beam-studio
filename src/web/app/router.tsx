@@ -13,6 +13,10 @@ import ConnectEthernet from './pages/Connect-Ethernet';
 import ConnectMachineIp from './pages/Connect-Machine-Ip';
 import Settings from './pages/Settings';
 import Beambox from './pages/Beambox';
+import { AlertsAndProgress } from './views/dialogs/AlertsAndProgress';
+import { Dialog } from './views/dialogs/Dialog';
+import { AlertProgressContextProvider } from './contexts/Alert-Progress-Context';
+import { DialogContextProvider } from './contexts/Dialog-Context';
 import NotificationCollection from './views/Notification-Collection';
 const React = requireNode('react');
 const ReactDOM = requireNode('react-dom');
@@ -27,7 +31,16 @@ const _display = function(view: Function, args?, el?) {
     // Shpuldn;t pass props and state using args.
     const elem = view(args);
     const component = React.createElement(elem, args.props);
-    ReactDOM.render(component, el);
+    const wrappedComponent = (
+        <AlertProgressContextProvider>
+            <DialogContextProvider>
+                { component }
+                <Dialog index={0}/>
+                <AlertsAndProgress/>
+            </DialogContextProvider>
+        </AlertProgressContextProvider>
+    );
+    ReactDOM.render(wrappedComponent, el);
 };
 
 export default Backbone.Router.extend({

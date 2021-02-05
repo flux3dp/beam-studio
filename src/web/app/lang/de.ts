@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: 'Standardeinstellung für Autofokusmodul',
         default_enable_diode_module: 'Hybrid Laser Standard',
         diode_offset: 'Hybrid Laser Offset',
+        share_with_flux: 'Mit FLUX teilen',
         none: 'Keiner',
         close: 'Schließen',
         enabled: 'Aktiviert',
@@ -271,6 +272,7 @@ export default {
             mask: 'Arbeitsbereich-Ausschnitt',
             text_to_path: 'Text',
             modules: 'Zusatz-Module',
+            privacy: 'Privatsphäre',
         },
         notification_on: 'Auf',
         notification_off: 'an',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: 'Das Vektorisieren von Schattierungsbildern dauert länger und ist anfällig für Rauschen. Bitte schalten Sie die Bildschattierung aus, bevor Sie sie ausführen.',
             change_workarea_before_preview: 'Der Arbeitsbereich von %s stimmt nicht mit dem aktuell festgelegten Arbeitsbereich überein. Möchten Sie den aktuellen Arbeitsbereich wechseln?',
             bug_report: 'Fehlerbericht',
+            sentry: {
+                title: 'Lassen Sie uns Beam Studio gemeinsam verbessern',
+                message: 'Stimmen Sie zu, relevante Informationen automatisch in das Entwicklungsteam hochzuladen, wenn Fehler auftreten?',
+            },
         },
         zoom_block: {
             fit_to_window: 'An Fenster anpassen',
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: 'Dieses Projekt enthält aus Noun Project importierte Symbole, sodass die Ausgabe von SVG-Dateien nicht unterstützt wird.',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: 'Erfahren Sie mehr',
+    },
+    change_logs: {
+        change_log: 'Protokolle ändern:',
+        added: 'Hinzugefügt:',
+        fixed: 'Fest:',
+        changed: 'Geändert:',
     },
     select_printer: {
         auth_failure: '#811 Authentifizierung fehlgeschlagen',

@@ -358,7 +358,6 @@
 				});
 				
 				GA = new GeneticAlgorithm(adam, containerPolygon, config);
-				// 829
 			}
 			// Generate array of population w/ size = population, randomly rotated, mutate => excahnge 
 			
@@ -415,7 +414,7 @@
 			
 			// only keep cache for one cycle
             nfpCache = newCache;
-			
+   
 			var worker = new PlacementWorker(containerPolygon, placelist.slice(0), ids, rotations, config, nfpCache);
 			
 			var p = new SvgNestParallel(nfpPairs, {
@@ -586,7 +585,7 @@
 						Bc[i].Y *= -1;
 					}
 					var solution = ClipperLib.Clipper.MinkowskiSum(Ac, Bc, true);
-					var clipperNfp;
+					var clipperNfp = [];
 		
 					var largestArea = null;
 					for(i=0; i<solution.length; i++){
@@ -940,7 +939,7 @@
 						Bc[i].Y *= -1;
 					}
 					var solution = ClipperLib.Clipper.MinkowskiSum(Ac, Bc, true);
-					var clipperNfp;
+					var clipperNfp = [];
 		
 					var largestArea = null;
 					for(i=0; i<solution.length; i++){

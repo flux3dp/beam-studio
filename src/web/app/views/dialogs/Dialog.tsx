@@ -4,6 +4,8 @@ import { DialogContext, DialogContextProvider } from '../../contexts/Dialog-Cont
 const React = requireNode('react');
 let _contextCaller;
 
+const ComponentWrapper = (props) => props.children;
+
 export class Dialog extends React.Component {
     constructor(props) {
         super(props);
@@ -13,17 +15,30 @@ export class Dialog extends React.Component {
         _contextCaller = this.context;
     }
 
-    render() {
-        const { index } = this.props;
+    componentWillUnmount() {
+        _contextCaller = null;
+    }
+
+    renderComponents() {
         const { dialogComponents } = this.context;
-        if (index >= dialogComponents.length) {
-            return null;
+        const components = [];
+        for (let i = 0; i < dialogComponents.length; i++) {
+            console.log(dialogComponents[i]);
+            const { component } = dialogComponents[i];
+            components.push(
+                <ComponentWrapper key={i}>
+                    { component }
+                </ComponentWrapper>
+            );
         }
-        const { component } = dialogComponents[index];
+        return components;
+    }
+
+    render() {
+        const components = this.renderComponents();
         return (
             <div className="dialog-container">
-                {component}
-                <Dialog index={index+1}/>
+                {components}
             </div>
         );
     }

@@ -254,6 +254,7 @@ export default {
         default_enable_autofocus_module: '自动对焦预设',
         default_enable_diode_module: '混合雷射预设',
         diode_offset: '混合雷射偏移值',
+        share_with_flux: '与 FLUX 分享',
         none: '无',
         close: '关闭',
         enabled: '启用',
@@ -271,6 +272,7 @@ export default {
             mask: '工作范围剪裁',
             text_to_path: '文本',
             modules: '扩充模组',
+            privacy: '隐私',
         },
         notification_on: '开启',
         notification_off: '关闭',
@@ -341,6 +343,10 @@ export default {
             vectorize_shading_image: '渐层影像在向量化时将花费较多时间，且容易有杂点，请将影像渐层关闭后再执行。',
             change_workarea_before_preview: '%s 的工作范围与目前设定的工作范围不相符，是否要切换目前的工作范围？',
             bug_report: '错误回报',
+            sentry: {
+                title: '我们一起让 Beam Studio 变得更好',
+                message: '请问您是否同意在遇到错误时将相关资讯自动上传给开发团队？',
+            },
         },
         zoom_block: {
             fit_to_window: '配合视窗尺寸'
@@ -710,6 +716,12 @@ export default {
         export_svg_warning: '专案中含有 Noun Project 之图档，无提供输出 SVG 档之服务。',
         export_svg_warning_link: 'https://duckduckgo.com/', 
         learn_more: '更多资讯',
+    },
+    change_logs: {
+        change_log: '更改日志：',
+        added: '新增：',
+        fixed: '修正：',
+        changed: '更改：',
     },
     select_printer: {
         auth_failure: '#811 认证失败',

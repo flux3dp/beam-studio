@@ -3918,6 +3918,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.cutSelectedElements();
+                    canv_menu.enableContextMenuItems('#paste,#paste_in_place');
                 }
             };
             document.addEventListener('cut', cutSelected, false);
@@ -3929,6 +3930,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 }
                 if (!svgCanvas.textActions.isEditing && (selectedElement != null || multiselected)) {
                     svgCanvas.copySelectedElements();
+                    canv_menu.enableContextMenuItems('#paste,#paste_in_place');
                 }
             };
             document.addEventListener('copy', copySelected, false);
@@ -4106,6 +4108,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var clickClear = function() {
+                Alert.popById('clear-scene');
                 Alert.popUp({
                     id: 'clear-scene',
                     message: uiStrings.notification.QwantToClear,
@@ -5550,7 +5553,6 @@ const svgEditor = window['svgEditor'] = (function($) {
             });
 
             $('#cmenu_canvas li').disableContextMenu();
-            canv_menu.enableContextMenuItems('#delete,#cut,#copy');
 
             window.addEventListener('beforeunload', function (e) {
                 // Suppress warning if page is empty
@@ -6483,9 +6485,16 @@ const svgEditor = window['svgEditor'] = (function($) {
             editor.zoomChanged(window, {
                 zoomLevel: zoomLevel
             });
+            const background = document.getElementById('canvasBackground');
+            if (!background) {
+                setTimeout(() => editor.resetView(), 100);
+                return;
+            }
+            const x = parseFloat(background.getAttribute('x'));
+            const y = parseFloat(background.getAttribute('y'));
             const defaultScroll = {
-                x: (parseFloat($('#canvasBackground').attr('x')) - offsetX) / zoomLevel,
-                y: (parseFloat($('#canvasBackground').attr('y')) - offsetY) / zoomLevel
+                x: (x - offsetX) / zoomLevel,
+                y: (y - offsetY) / zoomLevel
             };
             const workArea = document.getElementById('workarea');
             workArea.scrollLeft = defaultScroll.x * zoomLevel;
