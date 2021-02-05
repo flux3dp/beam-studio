@@ -97,6 +97,6 @@ export default {
     setActiveLang,
     get,
     get lang() {
-        return langCache[activeLang];
+        return langCache[activeLang] as ILang;
     }
 };

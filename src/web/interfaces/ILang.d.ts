@@ -252,6 +252,7 @@ export interface ILang {
         default_enable_autofocus_module: string,
         default_enable_diode_module: string,
         diode_offset: string,
+        share_with_flux: string,
         none: string,
         close: string,
         enabled: string,
@@ -269,6 +270,7 @@ export interface ILang {
             mask: string,
             text_to_path: string,
             modules: string,
+            privacy: string,
         },
         notification_on: string,
         notification_off: string,
@@ -339,6 +341,10 @@ export interface ILang {
             vectorize_shading_image: string,
             change_workarea_before_preview: string,
             bug_report: string,
+            sentry: {
+                title: string,
+                message: string,
+            },
         },
         zoom_block: {
             fit_to_window: string,
@@ -708,6 +714,12 @@ export interface ILang {
         export_svg_warning: string,
         export_svg_warning_link: string, 
         learn_more: string,
+    },
+    change_logs: {
+        change_log: string,
+        added: string,
+        fixed: string,
+        changed: string,
     },
     select_printer: {
         auth_failure: string,
