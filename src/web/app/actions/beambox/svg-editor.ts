@@ -4104,6 +4104,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var clickClear = function() {
+                Alert.popById('clear-scene');
                 Alert.popUp({
                     id: 'clear-scene',
                     message: uiStrings.notification.QwantToClear,
