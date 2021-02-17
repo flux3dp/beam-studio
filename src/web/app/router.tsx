@@ -13,7 +13,7 @@ import ConnectEthernet from './pages/Connect-Ethernet';
 import ConnectMachineIp from './pages/Connect-Machine-Ip';
 import Settings from './pages/Settings';
 import Beambox from './pages/Beambox';
-import { AlertsAndProgress } from './views/dialogs/AlertsAndProgress';
+import { AlertsAndProgress } from './views/dialogs/Alerts-And-Progress';
 import { Dialog } from './views/dialogs/Dialog';
 import { AlertProgressContextProvider } from './contexts/Alert-Progress-Context';
 import { DialogContextProvider } from './contexts/Dialog-Context';
