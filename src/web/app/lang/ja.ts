@@ -47,8 +47,8 @@ export default {
     generic_error: {
         UNKNOWN_ERROR: '[UE] Beam Studioを再起動してください',
         OPERATION_ERROR: '[OE] ステータスの競合が発生しました。アクションを再試行してください。',
-        SUBSYSTEM_ERROR: '[SE] マシンを再起動してください',
-        UNKNOWN_COMMAND: '[UC] 「Delta+/Delta ファームウェア」をアップデートしてください',
+        SUBSYSTEM_ERROR: '[SE] マシンファームウェアがタスクを実行しているときにエラーが発生しました。マシンを再起動してください',
+        UNKNOWN_COMMAND: '[UC] 「マシンファームウェア」をアップデートしてください',
         RESOURCE_BUSY: '[RB] マシンを再起動するか、再試行してください'
     },
     device_selection: {
@@ -756,18 +756,19 @@ export default {
         record                              : '記録',
         camera                              : 'カメラ',
         connecting                          : '接続しています。お待ちください…',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 重大なエラー：メインボードがオフラインです。 FLUXサポートにお問い合わせください。',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 重大なエラー：メインボードがオフラインです。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 水槽にご確認ください。',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 続行するにはドアを閉じてください。',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 過熱。数分お待ちください。',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 ボトムカバーオープン。ドアを閉めて続行します。',
         USER_OPERATION_ROTARY_PAUSE         : 'ロータリーモーターに切り替えてください',
         RESOURCE_BUSY                       : 'マシンはビジーです\n実行されていない場合は、マシンを再起動してください',
-        DEVICE_ERROR                        : '何かがうまくいかなかった\nマシンを再起動してください',
-        NO_RESPONSE                         : '何かがうまくいかなかった\nマシンを再起動してください',
+        DEVICE_ERROR                        : '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',
         SUBSYSTEM_ERROR                     : '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。',
-        HARDWARE_FAILURE                    : '何かがうまくいかなかった\nマシンを再起動してください',
-        MAINBOARD_OFFLINE                   : '何かがうまくいかなかった\nマシンを再起動してください',
+        HARDWARE_FAILURE                    : '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',
         processing                          : '処理中',
         savingPreview                       : 'サムネイルの生成中',
         hour                                : 'h',

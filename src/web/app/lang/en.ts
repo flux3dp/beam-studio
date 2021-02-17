@@ -45,9 +45,9 @@ export default {
         no_vcredist: 'Please install Visual C++ Redistributable 2015<br/>That can be downloaded on flux3dp.com',
     },
     generic_error: {
-        UNKNOWN_ERROR: '[UE] Please restart Beam Studio',
+        UNKNOWN_ERROR: '[UE] Unknown error occured. Please restart Beam Studio and the machine.',
         OPERATION_ERROR: '[OE] A status conflict occured, please retry the action.',
-        SUBSYSTEM_ERROR: '[SE] Please restart the machine',
+        SUBSYSTEM_ERROR: '[SE] Error when machine firmware executing the task. Please restart the machine.',
         UNKNOWN_COMMAND: '[UC] Please update the Device Firmware',
         RESOURCE_BUSY: '[RB] Please restart  the machine, or try again'
     },
@@ -756,18 +756,19 @@ export default {
         record                              : 'Record',
         camera                              : 'Camera',
         connecting                          : 'Connecting, please wait...',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Critical Error: Mainboard offline. Please contact FLUX Support.',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Critical Error: Subsystem no response. Please contact FLUX Support.',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Critical Error: Mainboard offline. Please contact FLUX Support.', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Critical Error: Subsystem no response. Please contact FLUX Support.', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 Please check with your water tank.',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 Close the door to continue.',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 Overheated. Please wait for a few minutes.',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 Bottom Opened. Close the bottom to continue.',
         USER_OPERATION_ROTARY_PAUSE         : 'Please switch to the rotary motor',
         RESOURCE_BUSY                       : 'The machine is busy\nIf it is not running, please restart the machine',
-        DEVICE_ERROR                        : 'Something went wrong\nPlease restart the machine',
-        NO_RESPONSE                         : 'Something went wrong\nPlease restart the machine',
+        DEVICE_ERROR                        : 'Something went wrong\nPlease restart the machine', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 Error when connecting to the mainboard.\nPlease restart the machine.',
         SUBSYSTEM_ERROR                     : '#402 Critical Error: Subsystem no response. Please contact FLUX Support.',
-        HARDWARE_FAILURE                    : 'Something went wrong\nPlease restart the machine',
-        MAINBOARD_OFFLINE                   : 'Something went wrong\nPlease restart the machine',
+        HARDWARE_FAILURE                    : 'Something went wrong\nPlease restart the machine', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 Error when connecting to the mainboard.\nPlease restart the machine. ',
         processing                          : 'Processing',
         savingPreview                       : 'Generating thumbnails',
         hour                                : 'h',

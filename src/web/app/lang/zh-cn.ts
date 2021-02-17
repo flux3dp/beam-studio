@@ -47,7 +47,7 @@ export default {
     generic_error: {
         UNKNOWN_ERROR: '[UE] 请重启 Beam Studio',
         OPERATION_ERROR: '[OE] 机器发生状态冲突，请再试一次',
-        SUBSYSTEM_ERROR: '[SE] 请重启机器',
+        SUBSYSTEM_ERROR: '[SE] 固件执行雕刻程序错误，请尝试重新启动机器',
         UNKNOWN_COMMAND: '[UC] 请更新机器固件',
         RESOURCE_BUSY: '[RB] 请重新启动 Delta, 或再试一次'
     },
@@ -756,18 +756,19 @@ export default {
         record                              : 'RECORD',
         camera                              : '相机',
         connecting                          : '连接中，请稍候',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板没有回应。请联系 FLUX 客服。',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系统没有回应。请联系 FLUX 客服。',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 水冷未开，请联系客服 (02) 2651-3171',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 门盖开启，将门盖关上以继续',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 水温过高，请稍后再继续',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 底盖开启，将底盖关上以继续',
         USER_OPERATION_ROTARY_PAUSE         : '请切换旋转轴马达开关',
         RESOURCE_BUSY                       : '机器忙碌中\n如果机器没有在进行动作， 请重新启动机器',
-        DEVICE_ERROR                        : '固件发生错误\n请重新启动机器',
-        NO_RESPONSE                         : '固件发生错误\n请重新启动机器',
+        DEVICE_ERROR                        : '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 连接主板时发生错误\n请重新启动机器。',
         SUBSYSTEM_ERROR                     : '#402 子系统没有回应。请联系 FLUX 客服。',
-        HARDWARE_FAILURE                    : '固件发生错误\n请重新启动机器',
-        MAINBOARD_OFFLINE                   : '固件发生错误\n请重新启动机器',
+        HARDWARE_FAILURE                    : '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 连接主板时发生错误\n请重新启动机器。',
         processing                          : '处理中',
         savingPreview                       : '正在产生预览图',
         hour                                : '小时',

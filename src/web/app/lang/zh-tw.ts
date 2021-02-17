@@ -45,9 +45,9 @@ export default {
         no_vcredist: '請安裝 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
     },
     generic_error: {
-        UNKNOWN_ERROR: '[UE] 請重啟 Beam Studio',
+        UNKNOWN_ERROR: '[UE] 發生未知的錯誤，請重新啟動 Beam Studio 以及機器',
         OPERATION_ERROR: '[OE] 機器發生狀態衝突，請再試一次',
-        SUBSYSTEM_ERROR: '[SE] 請重啟機器',
+        SUBSYSTEM_ERROR: '[SE] 韌體執行雕刻程序錯誤，請嘗試重新啟動機器',
         UNKNOWN_COMMAND: '[UC] 請更新機器韌體',
         RESOURCE_BUSY: '[RB] 請重新啟動 Delta, 或再試一次'
     },
@@ -756,18 +756,19 @@ export default {
         record                              : 'RECORD',
         camera                              : '相機',
         connecting                          : '連線中，請稍候',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板沒有回應。請聯繫 FLUX 客服。',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系統沒有回應。請聯繫 FLUX 客服。',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系統沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 水冷未開，請聯繫客服 (02) 2651-3171',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 門蓋開啟，將門蓋關上以繼續',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 水溫過高，請稍後再繼續',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 底蓋開啟，將底蓋關上以繼續',
         USER_OPERATION_ROTARY_PAUSE         : '請切換旋轉軸馬達開關',
         RESOURCE_BUSY                       : '機器忙碌中\n如果機器沒有在進行動作， 請重新啟動機器',
-        DEVICE_ERROR                        : '韌體發生錯誤\n請重新啟動機器',
-        NO_RESPONSE                         : '韌體發生錯誤\n請重新啟動機器',
+        DEVICE_ERROR                        : '韌體發生錯誤\n請重新啟動機器', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 連接主板時發生錯誤\n請重新啟動機器',
         SUBSYSTEM_ERROR                     : '#402 子系統沒有回應。請聯繫 FLUX 客服。',
-        HARDWARE_FAILURE                    : '韌體發生錯誤\n請重新啟動機器',
-        MAINBOARD_OFFLINE                   : '韌體發生錯誤\n請重新啟動機器',
+        HARDWARE_FAILURE                    : '韌體發生錯誤\n請重新啟動機器', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 連接主板時發生錯誤\n請重新啟動機器',
         processing                          : '處理中',
         savingPreview                       : '正在產生預覽圖',
         hour                                : '小時',
