@@ -111,7 +111,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Escena de Beambox',
+            bvg_files: 'Proyecto de Beambox',
             fcode_files: 'Código FLUX',
             clear_recent: 'Eliminado Recientemente Abierto',
             path_not_exit: 'Esta trayectoria parece no existir en el disco.'

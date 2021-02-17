@@ -111,7 +111,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beambox Scene',
+            bvg_files: 'Beambox Project',
             fcode_files: 'FLUX Code',
             clear_recent: 'Clear Recently Opened',
             path_not_exit: 'This path does not seem to exist anymore on disk.'
