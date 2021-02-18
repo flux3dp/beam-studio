@@ -1,0 +1,34 @@
+.svg-nest-buttons {
+    position: absolute;
+    top: 60px;
+    left: 70px;
+    .svg-nest-button{
+        background: #999;
+        color: white;
+        height: 32px;
+        z-index: 2;
+        border-radius: 20px;
+        float: left;
+        margin-right: 15px;
+        cursor: pointer;
+        &.active {
+            background: #0099cc;
+        }
+        .text {
+            height: 32px;
+            line-height: 32px;
+            font-size: 9pt;
+            text-align: center;
+            padding: 0px 20px;
+            &.with-img {
+                padding-left: 35px;
+            }
+        }
+        img {
+            margin: 8px 0px 0px 10px;
+            height: 16px;
+            filter: brightness(0) invert(100%);
+            float: left;
+        }
+    }
+}
