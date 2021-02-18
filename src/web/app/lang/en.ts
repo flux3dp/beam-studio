@@ -607,6 +607,7 @@ export default {
                 font_substitute_pop: 'Text: "%s" contains below characters which are not supported by current font: "%s".\n%s\nWould you like to use "%s" as substitution?',
                 check_thumbnail_warning: 'Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.\nPlease check preview image again before sending task.',
                 error_when_parsing_text: 'Error when coverting text to path:\n%s',
+                use_current_font: 'Use Current Font',
             },
             lock_desc: 'Preserve the ratio of width and height (SHIFT)'
         },

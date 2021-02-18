@@ -607,6 +607,7 @@ export default {
                 font_substitute_pop: 'テキスト：「%s」に書体：「%s」サポートできない文字があります.\n%s\n書体「%s」に変更して宜しいですか',
                 check_thumbnail_warning: 'テキストをパスに解析するときに一部の書体が他のフォントに変更され、一部の文字が正常に変換されないことがあります.\nタスクを送信する前に、プレビュー画像をもう一度確認してください。',
                 error_when_parsing_text: 'テキストをパスに変換するときにエラーが発生しました：\n%s',
+                use_current_font: '現在のフォントを使用',
             },
             lock_desc: '幅と高さの比率を保持（SHIFT）'
         },
