@@ -42,13 +42,15 @@ class Progress extends React.Component {
         clearTimeout(this.closeTimeout);
     }
 
-    _renderCaption = (caption) => {
-        return caption ? (
-            <div className="caption">{caption}</div>
-        ) : null;
+    renderCaption = (caption) => {
+        if (!caption) return null;
+
+        return (
+            <div className='caption'>{caption}</div>
+        );
     }
 
-    _renderCancelButton = () => {
+    renderCancelButton = () => {
         const progress: IProgress = this.props.progress;
         const { onCancel, id } = progress;
         if (!onCancel) {
@@ -71,7 +73,7 @@ class Progress extends React.Component {
 
     }
 
-    _renderMessage = (progress: IProgress) => {
+    renderMessage = (progress: IProgress) => {
         let content;
         if (progress.type === ProgressConstants.NONSTOP) {
             content = <div className={classNames('spinner-roller spinner-roller-reverse')}/>
@@ -100,9 +102,9 @@ class Progress extends React.Component {
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'progress')}>
-                    {this._renderCaption(progress.caption)}
-                    {this._renderMessage(progress)}
-                    {this._renderCancelButton()}
+                    {this.renderCaption(progress.caption)}
+                    {this.renderMessage(progress)}
+                    {this.renderCancelButton()}
                 </div>
             </Modal>
         );
@@ -118,34 +120,41 @@ class Alert extends React.Component {
         }
     }
 
-    _renderCaption = (caption) => {
-        return caption ? (
-            <h2 className="caption">{caption}</h2>
-        ) : null;
-    }
-
-    _renderMessage = (alert) => {
-        return typeof alert.message === 'string' ?
-                    <pre className="message" dangerouslySetInnerHTML={{__html: alert.message}}></pre> :
-                    <pre className="message">{alert.message}</pre>
-    }
-
-    _renderCheckbox = (checkBoxText) => {
-        let _handleCheckboxClick = () => {
-            this.setState({checkboxChecked: !this.state.checkboxChecked});
-        };
+    renderCaption = (caption: string) => {
+        if (!caption) return null;
 
         return (
-            <div className="modal-checkbox">
-                <input type="checkbox" onClick={_handleCheckboxClick}></input>{checkBoxText}
+            <h2 className='caption'>{caption}</h2>
+        );
+    }
+
+    renderIcon = (iconUrl: string) => {
+        if (!iconUrl) return null;
+
+        return (
+            <img className='icon' src={iconUrl}/>
+        )
+    }
+
+    renderMessage = (message) => {
+        return typeof message === 'string' ?
+            <pre className='message' dangerouslySetInnerHTML={{__html: message}}></pre> :
+            <pre className='message'>{message}</pre>
+    }
+
+    renderCheckbox = (checkBoxText: string) => {
+        if (!checkBoxText) return null;
+
+        return (
+            <div className='modal-checkbox'>
+                <input type='checkbox' onClick={() => {this.setState({checkboxChecked: !this.state.checkboxChecked})}}></input>{checkBoxText}
             </div>
         );
     }
 
-    _renderChildren = (children) => {
-        if (!children) {
-            return null;
-        }
+    renderChildren = (children) => {
+        if (!children) return null;
+
         return (
             <div className='alert-children'>
                 {children}
@@ -189,15 +198,14 @@ class Alert extends React.Component {
             return newButton;
         });
 
-        let checkBox = alert.checkBoxText ? this._renderCheckbox(alert.checkBoxText) : null;
-
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
-                    {this._renderCaption(alert.caption)}
-                    {this._renderMessage(alert)}
-                    {this._renderChildren(alert.children)}
-                    {checkBox}
+                    {this.renderCaption(alert.caption)}
+                    {this.renderIcon(alert.iconUrl)}
+                    {this.renderMessage(alert.message)}
+                    {this.renderChildren(alert.children)}
+                    {this.renderCheckbox(alert.checkBoxText)}
                     <ButtonGroup buttons={buttons}/>
                 </div>
             </Modal>

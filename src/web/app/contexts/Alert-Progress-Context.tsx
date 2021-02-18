@@ -31,7 +31,6 @@ export class AlertProgressContextProvider extends React.Component {
             console.log('alert/progress poped', elem.id);
         }
         this.state.alertProgressStack.push(elem);
-        console.log(this.state.alertProgressStack);
         this.setState(this.state);
     }
 
@@ -82,7 +81,7 @@ export class AlertProgressContextProvider extends React.Component {
     }
 
     popUp = (args) => {
-        let {id, type, message, caption, children} = args;
+        let { type, message, caption } = args;
         message = message || '';
         switch (type) {
             case AlertConstants.SHOW_POPUP_INFO:
@@ -95,15 +94,14 @@ export class AlertProgressContextProvider extends React.Component {
                 caption = caption || LANG.error;
                 break;
         }
-        let {buttons, checkBox} = this.buttonsGenerator(args);
+        let { buttons, checkBox } = this.buttonsGenerator(args);
         let checkBoxText = checkBox ? checkBox.text : null;
         let checkBoxCallbacks = checkBox ? checkBox.callbacks : null;
 
         this.pushToStack({
-            id,
+            ...args,
             caption,
             message,
-            children,
             buttons,
             checkBoxText,
             checkBoxCallbacks
