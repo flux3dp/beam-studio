@@ -331,6 +331,12 @@ export default {
                 title: 'Hagamos juntos Beam Studio mejor',
                 message: '¿Acepta cargar automáticamente información relevante al equipo de desarrollo cuando se produzcan errores?',
             },
+            questionnaire: {
+                caption: 'Ayúdanos a completar el cuestionario',
+                message: 'Ayúdanos a completar el cuestionario para mejorar Beam Studio.',
+                unable_to_get_url: 'No se pudo obtener el enlace al cuestionario a través de Internet. Confirme su conexión a Internet.',
+                no_questionnaire_available: 'No hay ningún cuestionario disponible en este momento.',
+            },
         },
         zoom_block: {
             fit_to_window: 'Ajustar a la ventana',

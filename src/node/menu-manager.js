@@ -168,10 +168,11 @@ function buildMenu(callback) {
     helpSubmenu.push(...[
         { id: 'START_TUTORIAL', label: r.show_start_tutorial, click: callback },
         { id: 'START_UI_INTRO', label: r.show_ui_intro, click: callback },
-        { id: 'HELP_CENTER', label: r.help_center || 'Help Center', click() { shell.openExternal(r.link.help_center); } },
-        { id: 'CONTACT_US', label: r.contact || 'Contact Us', click() { shell.openExternal(r.link.contact_us); } },
+        { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
+        { id: 'HELP_CENTER', label: r.help_center, click() { shell.openExternal(r.link.help_center); } },
+        { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
         { type: 'separator' },
-        { id: 'FORUM', label: r.forum || 'Forum', click() { shell.openExternal(r.link.forum); } },
+        { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
         { type: 'separator' },
         { id: 'UPDATE_BS',  label: r.update, click: callback }
     ]);

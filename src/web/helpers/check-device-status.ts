@@ -113,7 +113,11 @@ export default async function(printer, allowPause?: boolean, forceAbort?: boolea
         default:
             // device busy
             console.log('Device Busy ', printer.st_id);
-            Alert.popUpDeviceBusy('on-select-printer');
+            Alert.popUp({
+                id: 'on-select-printer',
+                caption: lang.message.device_busy.caption,
+                message: lang.message.device_busy.message,
+            });
             break;
     }
 

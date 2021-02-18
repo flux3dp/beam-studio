@@ -331,6 +331,12 @@ export default {
                 title: 'Let\'s make Beam Studio better together',
                 message: 'Do you agree to automatically upload relevant information to the development team when errors occur?',
             },
+            questionnaire: {
+                caption: 'Help Us Fill out the Questionnaire',
+                message: 'Help us fill out the questionnaire to make Beam Studio better.',
+                unable_to_get_url: 'Failed to get the link to the questionnaire via internet. Please confirm your internet connection.',
+                no_questionnaire_available: 'There is no questionnaire available right now.',
+            },
         },
         zoom_block: {
             fit_to_window: 'Fit to Window',

@@ -331,6 +331,12 @@ export default {
                 title: 'Lassen Sie uns Beam Studio gemeinsam verbessern',
                 message: 'Stimmen Sie zu, relevante Informationen automatisch in das Entwicklungsteam hochzuladen, wenn Fehler auftreten?',
             },
+            questionnaire: {
+                caption: 'Helfen Sie uns, den Fragebogen auszufüllen',
+                message: 'Helfen Sie uns, den Fragebogen auszufüllen, um Beam Studio besser zu machen.',
+                unable_to_get_url: 'Fehler beim Abrufen des Links zum Fragebogen über das Internet. Bitte bestätigen Sie Ihre Internetverbindung.',
+                no_questionnaire_available: 'Derzeit ist kein Fragebogen verfügbar.',
+            },
         },
         zoom_block: {
             fit_to_window: 'An Fenster anpassen',

@@ -331,6 +331,12 @@ export default {
                 title: '我們一起讓 Beam Studio 變得更好',
                 message: '請問您是否同意在遇到錯誤時將相關資訊自動上傳給開發團隊？',
             },
+            questionnaire: {
+                caption: '協助我們填寫問券',
+                message: '協助我們填寫問券，讓產品變得更好。',
+                unable_to_get_url: '無法透過網路取得目前最新問卷的連結，請確認您的網路連線狀況。',
+                no_questionnaire_available: '目前沒有可供填寫的問卷。',
+            },
         },
         zoom_block: {
             fit_to_window: '配合視窗尺寸',

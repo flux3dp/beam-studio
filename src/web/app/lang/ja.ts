@@ -331,6 +331,12 @@ export default {
                 title: '一緒にBeamStudioをもっと良くしましょう',
                 message: 'エラーが発生したときに、関連情報を開発チームに自動的にアップロードすることに同意しますか？',
             },
+            questionnaire: {
+                caption: 'アンケートへの記入にご協力ください',
+                message: 'Beam Studioを改善するために、アンケートへの記入にご協力ください。',
+                unable_to_get_url: 'インターネット経由でアンケートへのリンクを取得できませんでした。インターネット接続を確認してください。',
+                no_questionnaire_available: '現在、利用可能なアンケートはありません。',
+            },
         },
         zoom_block: {
             fit_to_window: 'ウィンドウに合わせる',

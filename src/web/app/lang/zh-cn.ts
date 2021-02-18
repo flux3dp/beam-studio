@@ -331,6 +331,12 @@ export default {
                 title: '我们一起让 Beam Studio 变得更好',
                 message: '请问您是否同意在遇到错误时将相关资讯自动上传给开发团队？',
             },
+            questionnaire: {
+                caption: '协助我们填写问卷',
+                message: '协助我们填写问券，让产品变得更好。',
+                unable_to_get_url: '无法透过网路取得目前最新问卷的连结，请确认您的网路连线状况。',
+                no_questionnaire_available: '目前没有可供填写的问卷。',
+            },
         },
         zoom_block: {
             fit_to_window: '配合视窗尺寸'
