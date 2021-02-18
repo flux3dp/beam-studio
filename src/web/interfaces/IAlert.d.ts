@@ -5,6 +5,7 @@ export interface IAlert {
     type?: string,
     message?: string,
     caption?: string,
+    iconUrl?: string,
     children?: Element,
     buttons?: IButton | IButton[],
     buttonType?: string,

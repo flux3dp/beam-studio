@@ -25,6 +25,18 @@ const events = electron.events;
 const LANG = i18n.lang.beambox.object_panels;
 const FontScanner = requireNode('font-scanner');
 
+enum SubstituteResult {
+    DO_SUB = 2,
+    DONT_SUB = 1,
+    CANCEL_OPERATION = 0,
+}
+
+enum ConvertResult {
+    CONTINUE = 2,
+    UNSUPPORT = 1,
+    CANCEL_OPERATION = 0,
+}
+
 let tempPaths = [];
 
 // a simple memoize function that takes in a function
@@ -221,19 +233,17 @@ const substitutedFont = function($textElement){
     }
 };
 
-const showsubstitutedFamilyPopup = ($textElement, newFont, origFont, unSupportedChar) => {
-    return new Promise((resolve, reject) => {
+const showSubstitutedFamilyPopup = ($textElement, newFont, origFont, unSupportedChar) => {
+    return new Promise<SubstituteResult>((resolve, reject) => {
         const message = sprintf(LANG.text_to_path.font_substitute_pop, $textElement.text(), fontNameMap.get(origFont), unSupportedChar.join(', '), fontNameMap.get(newFont));
+        const buttonLabels = [i18n.lang.alert.confirm, LANG.text_to_path.use_current_font, i18n.lang.alert.cancel];
+        const callbacks = [() => resolve(SubstituteResult.DO_SUB), () => resolve(SubstituteResult.DONT_SUB), () => resolve(SubstituteResult.CANCEL_OPERATION)];
         Alert.popUp({
             type: AlertConstants.SHOW_POPUP_WARNING,
             message,
-            buttonType: AlertConstants.CONFIRM_CANCEL,
-            onConfirm: () => {
-                resolve(true);
-            },
-            onCancel: () => {
-                resolve(false);
-            }
+            buttonLabels,
+            callbacks,
+            primaryButtonIndex: 0,
         });
     });
 }
@@ -266,7 +276,7 @@ const setTextPostscriptnameIfNeeded = ($textElement) => {
 
 const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: boolean) => {
     if (!$textElement.text()) {
-        return;
+        return ConvertResult.CONTINUE;
     }
     Progress.openNonstopProgress({id: 'parsing-font', message: LANG.wait_for_parsing_font});
 
@@ -279,14 +289,17 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
         const {font: newFont, unSupportedChar} = substitutedFont($textElement);
         if (newFont.postscriptName !== origFontPostscriptName && unSupportedChar && unSupportedChar.length > 0) {
             isUnsupported = true;
-            const doSub = await showsubstitutedFamilyPopup($textElement, newFont.family, $textElement.attr('font-family'), unSupportedChar);
-            if (doSub) {
+            const doSub = await showSubstitutedFamilyPopup($textElement, newFont.family, $textElement.attr('font-family'), unSupportedChar);
+            if (doSub === SubstituteResult.DO_SUB) {
                 svgCanvas.undoMgr.beginUndoableChange('font-family', Array.from($textElement));
                 $textElement.attr('font-family', newFont.family);
                 batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
                 svgCanvas.undoMgr.beginUndoableChange('font-postscript', Array.from($textElement));
                 $textElement.attr('font-postscript', newFont.postscriptName);
                 batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
+            } else if (doSub === SubstituteResult.CANCEL_OPERATION) {
+                Progress.popById('parsing-font');
+                return ConvertResult.CANCEL_OPERATION;
             }
         }
     }
@@ -310,7 +323,7 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
             message: `#846 ${sprintf(LANG.text_to_path.error_when_parsing_text, outputs.data)}`,
         });
         Progress.popById('parsing-font');
-        return;
+        return ConvertResult.CONTINUE;
     }
 
     let {pathD, transform} = await new Promise ((resolve, reject) => {
@@ -329,7 +342,7 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
         }
     });
     if (!pathD) {
-        return;
+        return ConvertResult.CONTINUE;
     }
 
     const newPathId = svgCanvas.getNextId();
@@ -373,7 +386,7 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
     }
     svgedit.recalculate.recalculateDimensions(path);
     Progress.popById('parsing-font');
-    return isUnsupported;
+    return isUnsupported ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
 }
 
 const requestToConvertTextToPath = async ($textElement, args) => {
@@ -456,21 +469,25 @@ const requestToConvertTextToPath = async ($textElement, args) => {
 const tempConvertTextToPathAmoungSvgcontent = async () => {
     if (!electron) {
         console.warn('font is not supported in web browser');
-        return;
+        return false;
     }
     const convertByFluxsvg = BeamboxPreference.read('TextbyFluxsvg') !== false;
-    let isSomeUnsupported = false;
+    let isAnyFontUnsupported = false;
     if (convertByFluxsvg) {
         const texts = [...$('#svgcontent').find('text').toArray(), ...$('#svg_defs').find('text').toArray()];
         for (let i = 0; i < texts.length; ++i) {
             let el = texts[i];
             let bbox = svgCanvas.calculateTransformedBBox($(el)[0]);
-            let isFontSubstituted = await convertTextToPathFluxsvg($(el), bbox, true);
-            if (isFontSubstituted) {isSomeUnsupported = true}
+            let convertRes = await convertTextToPathFluxsvg($(el), bbox, true);
+            if (convertRes === ConvertResult.CANCEL_OPERATION) {
+                return false;
+            } else if (convertRes === ConvertResult.UNSUPPORT) {
+                isAnyFontUnsupported = true;
+            }
         }
         
-        if (isSomeUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
-            await new Promise((resolve) => {
+        if (isAnyFontUnsupported && !AlertConfig.read('skip_check_thumbnail_warning')) {
+            await new Promise<void>((resolve) => {
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_WARNING,
                     message: LANG.text_to_path.check_thumbnail_warning,
@@ -485,7 +502,7 @@ const tempConvertTextToPathAmoungSvgcontent = async () => {
                 });
             }); 
         }
-        return;
+        return true;
     } else {
         const allPromises = $('#svgcontent')
             .find('text')

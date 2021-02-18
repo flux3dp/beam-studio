@@ -1,5 +1,5 @@
 import ProgressConstants from '../constants/progress-constants';
-import { AlertsAndProgressContextHelper, IProgress } from '../views/dialogs/AlertsAndProgress';
+import { AlertsAndProgressContextHelper, IProgress } from '../views/dialogs/Alerts-And-Progress';
 export default {
     openNonstopProgress: (args: IProgress) => {
         if (!AlertsAndProgressContextHelper.context) {

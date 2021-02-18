@@ -113,6 +113,11 @@
             color: #626262;
         }
 
+        .icon {
+            height: 60px;
+            margin: 0 0 15px 0;
+        }
+
         .message {
             color: #333;
             margin: 0 0 20px 0;
@@ -615,5 +620,14 @@
         line-height: 28px;
         background: #F8F8F8;
 
+    }
+}
+
+.tutorial-container {
+    .hint-circle {
+        position: absolute;
+        border: 2px solid #0091ff;
+        border-radius: 20px;
+        pointer-events: none;
     }
 }

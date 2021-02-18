@@ -1,4 +1,4 @@
-import { IProgress } from 'app/views/dialogs/AlertsAndProgress';
+import { IProgress } from 'app/views/dialogs/Alerts-And-Progress';
 import { IAlert } from 'interfaces/IAlert';
 import * as i18n from '../../helpers/i18n';
 import AlertConstants from '../constants/alert-constants';
@@ -34,7 +34,6 @@ export class AlertProgressContextProvider extends React.Component {
             console.log('alert/progress poped', elem.id);
         }
         this.state.alertProgressStack.push(elem);
-        console.log(this.state.alertProgressStack);
         this.setState(this.state);
     }
 
@@ -88,7 +87,7 @@ export class AlertProgressContextProvider extends React.Component {
     }
 
     popUp = (args: IAlert) => {
-        let {id, type, message, caption, children} = args;
+        let { type, message, caption } = args;
         message = message || '';
         switch (type) {
             case AlertConstants.SHOW_POPUP_INFO:
@@ -101,15 +100,14 @@ export class AlertProgressContextProvider extends React.Component {
                 caption = caption || LANG.error;
                 break;
         }
-        let {buttons, checkbox} = this.buttonsGenerator(args);
+        let { buttons, checkbox } = this.buttonsGenerator(args);
         let checkboxText = checkbox ? checkbox.text : null;
         let checkboxCallbacks = checkbox ? checkbox.callbacks : null;
 
         this.pushToStack({
-            id,
+            ...args,
             caption,
             message,
-            children,
             buttons,
             checkboxText,
             checkboxCallbacks

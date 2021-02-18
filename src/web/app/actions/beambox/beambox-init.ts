@@ -501,6 +501,7 @@ const askAndInitSentry = async () => {
             Alert.popUp({
                 id: 'ask-sentry',
                 caption: LANG.beambox.popup.sentry.title,
+                iconUrl: 'img/beambox/icon-analyze.svg',
                 message: LANG.beambox.popup.sentry.message,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {

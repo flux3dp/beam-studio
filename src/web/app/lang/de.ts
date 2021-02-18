@@ -49,8 +49,8 @@ export default {
     generic_error: {
         UNKNOWN_ERROR: '[UE] Bitte starte Beam Studio neu',
         OPERATION_ERROR: '[OE] Ein Statuskonflikt ist aufgetreten. Bitte wiederholen Sie die Aktion.',
-        SUBSYSTEM_ERROR: '[SE] Bitte starte die Maschine neu',
-        UNKNOWN_COMMAND: '[UC] Bitte aktualisieren Sie die Delta + / Delta-Firmware',
+        SUBSYSTEM_ERROR: '[SE] Fehler beim Ausführen der Aufgabe durch die Maschinenfirmware. Bitte starte die Maschine neu.',
+        UNKNOWN_COMMAND: '[UC] Bitte aktualisieren Sie die Geräte-Firmware',
         RESOURCE_BUSY: '[RB] Bitte starte die Maschine neu oder versuchen Sie es erneut'
     },
     device_selection: {
@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beambox-Datei',
+            bvg_files: 'Beambox-Projekt',
             fcode_files: 'FLUX-Code',
             clear_recent: 'Vor kurzem geöffnet löschen',
             path_not_exit: 'Dieser Pfad scheint auf dem Schreibtisch nicht mehr zu existieren.'
@@ -623,6 +623,7 @@ export default {
                 font_substitute_pop: 'Text: "%s" enthält folgende Zeichen, die von der aktuellen Schriftart nicht unterstützt werden: "%s".\n%s\nMöchtest du "%s" als Ersatz verwenden?',
                 check_thumbnail_warning: 'Einige Texte wurden beim Verwandeln von Texten in Pfade in andere Schriftarten geändert, und einige Zeichen werden möglicherweise nicht normal konvertiert.\nBitte überprüfe das Vorschaubild erneut, bevor du die Aufgabe sendest.',
                 error_when_parsing_text: 'Fehler beim Konvertieren von Text in Pfad:\n%s',
+                use_current_font: 'Aktuelle Schriftart verwenden',
             },
             lock_desc: 'Behalte das Verhältnis von Breite und Höhe bei (UMSCHALTTASTE)'
         },
@@ -778,18 +779,19 @@ export default {
         record                              : 'Aufzeichnung',
         camera                              : 'Kamera',
         connecting                          : 'Verbindung wird hergestellt. Bitte warten...',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Kritischer Fehler: Mainboard offline. Bitte wenden Sie sich an den FLUX Support.',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Kritischer Fehler: Mainboard offline. Bitte wenden Sie sich an den FLUX Support.', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 Bitte erkundigen Sie sich bei Ihrem Wassertank.',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 schliesse die Tür, um fortzufahren.',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 Überhitzt. Bitte warten Sie einige Minuten.',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 Boden offen. Close the door to continue.',
         USER_OPERATION_ROTARY_PAUSE         : 'Bitte wechseln Sie zum Rotationsmotor',
         RESOURCE_BUSY                       : 'Die Maschine ist beschäftigt\nWenn es nicht läuft, starte den Computer neu',
-        DEVICE_ERROR                        : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu',
-        NO_RESPONSE                         : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu',
+        DEVICE_ERROR                        : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',
         SUBSYSTEM_ERROR                     : '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support.',
-        HARDWARE_FAILURE                    : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu',
-        MAINBOARD_OFFLINE                   : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu',
+        HARDWARE_FAILURE                    : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',
         processing                          : 'wird bearbeitet',
         savingPreview                       : 'Beispiele generieren',
         hour                                : 'h',

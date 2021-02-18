@@ -32,7 +32,7 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "jimp": "^0.10.3",
     "jquery": "^1.11.0",
-    "jsencrypt": "^3.0.0-rc.1",
+    "jsencrypt": "3.0.0-rc.1",
     "net-ping": "^1.2.3",
     "node-machine-id": "^1.1.12",
     "prop-types": "^15.7.2",

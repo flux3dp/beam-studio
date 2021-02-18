@@ -49,8 +49,8 @@ export default {
     generic_error: {
         UNKNOWN_ERROR: '[UE] Por favor, reinicia Beam Studio.',
         OPERATION_ERROR: '[OE] Ocurrió un conflicto de estatus, por favor, reintenta la acción.',
-        SUBSYSTEM_ERROR: '[SE] Por favor, reinicia la máquina',
-        UNKNOWN_COMMAND: '[UC] Por favor, actualiza el firmware de Delta+/Delta',
+        SUBSYSTEM_ERROR: '[SE]  Error cuando el firmware de la máquina ejecuta la tarea. Por favor, reinicia la máquina',
+        UNKNOWN_COMMAND: '[UC] Por favor, actualiza el firmware del dispositivo',
         RESOURCE_BUSY: '[RB] Por favor, reinicia la máquina o inténtalo de nuevo.'
     },
     device_selection: {
@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Escena de Beambox',
+            bvg_files: 'Proyecto de Beambox',
             fcode_files: 'Código FLUX',
             clear_recent: 'Eliminado Recientemente Abierto',
             path_not_exit: 'Esta trayectoria parece no existir en el disco.'
@@ -623,6 +623,7 @@ export default {
                 font_substitute_pop: 'Texto: "%s" contiene debajo de los caracteres que no son soportados por la fuente actual: "%s".\n%s\n¿Te gustaría usar "%s" como sustituto?',
                 check_thumbnail_warning: 'Algunos textos fueron cambiados a otras fuentes cuando se analizan los textos en las rutas y algunos caracteres no se convierten normalmente.\nPor favor, comprueba otra vez la imagen de vista previa antes de enviar la tarea.',
                 error_when_parsing_text: 'Error al convertir texto a ruta:\n%s',
+                use_current_font: 'Usar fuente actual',
             },
             lock_desc: 'Preservar la relación entre anchura y altura (SHIFT)'
         },
@@ -778,18 +779,19 @@ export default {
         record                              : 'Grabar',
         camera                              : 'Cámara',
         connecting                          : 'Conectando, por favor espere...',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Error Crítico: Placa principal desconectada. Por favor, contacta con el soporte de FLUX.',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Error crítico: sistema sin respuesta. Por favor contacta al Soporte de FLUX.',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 Error Crítico: Placa principal desconectada. Por favor, contacta con el soporte de FLUX.', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 Error crítico: sistema sin respuesta. Por favor contacta al Soporte de FLUX.', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 Por favor, comprueba tu tanque de agua.',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 Cierra la puerta para continuar.',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 Sobrecalentado. Por favor, espera unos minutos.',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 Tapa Abierta. Cierra la puerta para continuar.',
         USER_OPERATION_ROTARY_PAUSE         : 'Por favor, cambia al motor rotativo',
         RESOURCE_BUSY                       : 'La máquina está ocupada\nSi no está funcionando, por favor reinicia la máquina.',
-        DEVICE_ERROR                        : 'Algo salió mal.\nPor favor, reinicia la máquina',
-        NO_RESPONSE                         : 'Algo salió mal.\nPor favor, reinicia la máquina',
+        DEVICE_ERROR                        : 'Algo salió mal.\nPor favor, reinicia la máquina', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 Error al conectarse a la placa principal.\nPor favor, reinicia la máquina.',
         SUBSYSTEM_ERROR                     : '#402 Error Crítico: sistema sin respuesta. Por favor, contacta con el soporte de FLUX.',
-        HARDWARE_FAILURE                    : 'Algo salió mal.\nPor favor, reinicia la máquina',
-        MAINBOARD_OFFLINE                   : 'Algo salió mal.\nPor favor, reinicia la máquina',
+        HARDWARE_FAILURE                    : 'Algo salió mal.\nPor favor, reinicia la máquina', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 Error al conectarse a la placa principal.\nPor favor, reinicia la máquina.',
         processing                          : 'Procesando',
         savingPreview                       : 'Generando miniaturas',
         hour                                : 'h',

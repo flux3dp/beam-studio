@@ -44,9 +44,11 @@ class Progress extends React.Component {
     }
 
     renderCaption = (caption: string) => {
-        return caption ? (
-            <div className="caption">{caption}</div>
-        ) : null;
+        if (!caption) return null;
+
+        return (
+            <div className='caption'>{caption}</div>
+        );
     }
 
     renderCancelButton = () => {
@@ -134,35 +136,41 @@ class Alert extends React.Component {
         }
     }
 
-    renderCaption = (caption) => {
-        return caption ? (
-            <h2 className="caption">{caption}</h2>
-        ) : null;
-    }
-
-    renderMessage = (alert) => {
-        if (!alert) return null;
-        return typeof alert.message === 'string' ?
-                    <pre className="message" dangerouslySetInnerHTML={{__html: alert.message}} ref={this.messageRef}></pre> :
-                    <pre className="message" ref={this.messageRef}>{alert.message}</pre>
-    }
-
-    renderCheckbox = (checkboxText) => {
-        let _handleCheckboxClick = () => {
-            this.setState({checkboxChecked: !this.state.checkboxChecked});
-        };
+    renderCaption = (caption: string) => {
+        if (!caption) return null;
 
         return (
-            <div className="modal-checkbox">
-                <input type="checkbox" onClick={_handleCheckboxClick}></input>{checkboxText}
+            <h2 className='caption'>{caption}</h2>
+        );
+    }
+
+    renderIcon = (iconUrl: string) => {
+        if (!iconUrl) return null;
+
+        return (
+            <img className='icon' src={iconUrl}/>
+        )
+    }
+
+    renderMessage = (message) => {
+        return typeof message === 'string' ?
+            <pre className='message' dangerouslySetInnerHTML={{__html: message}}></pre> :
+            <pre className='message'>{message}</pre>
+    }
+
+    renderCheckbox = (checkBoxText: string) => {
+        if (!checkBoxText) return null;
+
+        return (
+            <div className='modal-checkbox'>
+                <input type='checkbox' onClick={() => {this.setState({checkboxChecked: !this.state.checkboxChecked})}}></input>{checkBoxText}
             </div>
         );
     }
 
     renderChildren = (children: Element) => {
-        if (!children) {
-            return null;
-        }
+        if (!children) return null;
+
         return (
             <div className='alert-children'>
                 {children}
@@ -211,15 +219,14 @@ class Alert extends React.Component {
             return newButton;
         });
 
-        let checkbox = alert.checkboxText ? this.renderCheckbox(alert.checkboxText) : null;
-
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
                     {this.renderCaption(alert.caption)}
-                    {this.renderMessage(alert)}
+                    {this.renderIcon(alert.iconUrl)}
+                    {this.renderMessage(alert.message)}
                     {this.renderChildren(alert.children)}
-                    {checkbox}
+                    {this.renderCheckbox(alert.checkBoxText)}
                     <ButtonGroup buttons={buttons}/>
                 </div>
             </Modal>

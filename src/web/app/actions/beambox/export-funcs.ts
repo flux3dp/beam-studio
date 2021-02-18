@@ -168,8 +168,12 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
     let isCanceled = false;
     SymbolMaker.switchImageSymbolForAll(false);
     Progress.openNonstopProgress({id: 'convert-text', message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export});
-    await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
+    const res = await FontFuncs.tempConvertTextToPathAmoungSvgcontent();
     Progress.popById('convert-text');
+    if (!res) {
+        SymbolMaker.switchImageSymbolForAll(true);
+        return {};
+    }
     const { uploadFile, thumbnailBlobURL } = await prepareFileWrappedFromSvgStringAndThumbnail();
     Progress.openSteppingProgress({
         id: 'upload-scene',
@@ -208,12 +212,12 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
         },
     });
     if (isCanceled) {
-        return { fcodeBlob: null };
+        return {};
     }
     await FontFuncs.revertTempConvert();
     SymbolMaker.switchImageSymbolForAll(true);
     if (isErrorOccur) {
-        return { fcodeBlob: null };
+        return {};
     }
 
     let doesSupportDiodeAndAF = true;

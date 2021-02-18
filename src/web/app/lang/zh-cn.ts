@@ -49,7 +49,7 @@ export default {
     generic_error: {
         UNKNOWN_ERROR: '[UE] 请重启 Beam Studio',
         OPERATION_ERROR: '[OE] 机器发生状态冲突，请再试一次',
-        SUBSYSTEM_ERROR: '[SE] 请重启机器',
+        SUBSYSTEM_ERROR: '[SE] 固件执行雕刻程序错误，请尝试重新启动机器',
         UNKNOWN_COMMAND: '[UC] 请更新机器固件',
         RESOURCE_BUSY: '[RB] 请重新启动 Delta, 或再试一次'
     },
@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beambox 激光雕刻场景',
+            bvg_files: 'Beambox 专案',
             fcode_files: 'FLUX Code',
             clear_recent: '清除历史纪录',
             path_not_exit: '此路径似乎已不存在于电脑中，请确认是否有更改档案位置。'
@@ -623,6 +623,7 @@ export default {
                 font_substitute_pop: '文字:『%s』中含有当前字体:『%s』不支援的字元: %s，\n将替换成以下字体:『%s』。',
                 check_thumbnail_warning: '转换文字时出现字体不支援的情形，请在送出工作前，再次检查预览图确认文字是否如预期转换。',
                 error_when_parsing_text: '将文本转换为路径时出错：\n%s',
+                use_current_font: '使用当前字体',
             },
             lock_desc: '缩放时固定比例 (SHIFT)'
         },
@@ -778,18 +779,19 @@ export default {
         record                              : 'RECORD',
         camera                              : '相机',
         connecting                          : '连接中，请稍候',
-        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板没有回应。请联系 FLUX 客服。',
-        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系统没有回应。请联系 FLUX 客服。',
+        HARDWARE_ERROR_MAINBOARD_ERROR      : '#401 主板没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
+        HARDWARE_ERROR_SUBSYSTEM_ERROR      : '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
         HARDWARE_ERROR_PUMP_ERROR           : '#900 水冷未开，请联系客服 (02) 2651-3171',
         HARDWARE_ERROR_DOOR_OPENED          : '#901 门盖开启，将门盖关上以继续',
         HARDWARE_ERROR_OVER_TEMPERATURE     : '#902 水温过高，请稍后再继续',
+        HARDWARE_ERROR_BOTTOM_OPENED        : '#903 底盖开启，将底盖关上以继续',
         USER_OPERATION_ROTARY_PAUSE         : '请切换旋转轴马达开关',
         RESOURCE_BUSY                       : '机器忙碌中\n如果机器没有在进行动作， 请重新启动机器',
-        DEVICE_ERROR                        : '机器错误\n请重新启动机器',
-        NO_RESPONSE                         : '机器错误\n请重新启动机器',
+        DEVICE_ERROR                        : '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
+        NO_RESPONSE                         : '#905 连接主板时发生错误\n请重新启动机器。',
         SUBSYSTEM_ERROR                     : '#402 子系统没有回应。请联系 FLUX 客服。',
-        HARDWARE_FAILURE                    : '机器错误\n请重新启动机器',
-        MAINBOARD_OFFLINE                   : '机器错误\n请重新启动机器',
+        HARDWARE_FAILURE                    : '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
+        MAINBOARD_OFFLINE                   : '#905 连接主板时发生错误\n请重新启动机器。',
         processing                          : '处理中',
         savingPreview                       : '正在产生预览图',
         hour                                : '小时',
