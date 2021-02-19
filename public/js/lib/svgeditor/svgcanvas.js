@@ -948,7 +948,6 @@ define([
         // Parameters:
         // newDoc - The SVG DOM document
         this.prepareSvg = function (newDoc) {
-            //console.log(newDoc.documentElement);
             this.sanitizeSvg(newDoc.documentElement);
 
             // convert paths into absolute commands
@@ -5963,6 +5962,7 @@ define([
         this.setSvgString = function (xmlString) {
             try {
                 // convert string into XML document
+                console.log(xmlString);
                 var newDoc = svgedit.utilities.text2xml(xmlString);
 
                 this.prepareSvg(newDoc);
@@ -6622,7 +6622,7 @@ define([
 
         var getRandomLayerColor = canvas.getRandomLayerColor = function () {
             if (randomColors.length === 0) {
-                return '#333';
+                canvas.resetRandomColors();
             }
             return randomColors.shift();
         };
