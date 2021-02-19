@@ -44,6 +44,14 @@
             }
         }
     }
+    .link {
+        cursor: pointer;
+        margin: 5px 0 0 0;
+        font-size: 14px;
+        text-align: right;
+        text-decoration: underline;
+        color: #1199cc;
+    }
     .footer {
         display: flex;
         justify-content: center;

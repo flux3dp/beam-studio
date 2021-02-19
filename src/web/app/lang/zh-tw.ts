@@ -707,6 +707,8 @@ export default {
         added: '新增：',
         fixed: '修正：',
         changed: '更改：',
+        see_older_version: '查看之前版本',
+        help_center_url: 'https://support.flux3dp.com/hc/zh-tw/categories/360000172976',
     },
     select_printer: {
         auth_failure: '#811 認證失敗',

@@ -7,6 +7,7 @@ const LANG = i18n.lang.change_logs;
 
 const CHANGES_TW = {
     added: [
+        'Change Log Dialog'
     ],
     fixed: [
     ],
@@ -16,6 +17,7 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
     added: [
+        'Change Log Dialog'
     ],
     fixed: [
     ],
@@ -89,6 +91,14 @@ class ChangeLogDialog extends React.Component {
                     <div className='title'>{LANG.change_log}</div>
                     <div className='change-log-container'>
                         {changeLogs}
+                    </div>
+                    <div className='link' onClick={
+                        () => {
+                            const electron = requireNode('electron');
+                            electron.remote.shell.openExternal(LANG.help_center_url);
+                        }}
+                    >
+                        {LANG.see_older_version}
                     </div>
                     <div className='footer'>
                         <button

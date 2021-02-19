@@ -115,7 +115,8 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                 }
                 const electron = requireNode('electron');
                 electron.remote.shell.openExternal(url);
-            }
+            },
+            'CHANGE_LOGS': () => DialogCaller.showChangLog(),
         };
     }
     attach() {
