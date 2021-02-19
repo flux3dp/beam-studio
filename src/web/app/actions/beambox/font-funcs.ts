@@ -315,7 +315,7 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
     color = color !== 'none' ? color : $textElement.attr('fill');
 
     await svgWebSocket.uploadPlainTextSVG($textElement, bbox);
-    const outputs = await svgWebSocket.divideSVG({scale: 1});
+    const outputs = await svgWebSocket.divideSVG({ scale: 1, timeout: 15000 });
     if (!outputs.res) {
         console.error('Error when convert text by fluxsvg', outputs.data);
         Alert.popUp({
@@ -326,11 +326,11 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
         return ConvertResult.CONTINUE;
     }
 
-    let {pathD, transform} = await new Promise ((resolve, reject) => {
+    const { pathD, transform } = await new Promise ((resolve, reject) => {
         let fileReader = new FileReader();
         fileReader.onloadend = function (e) {
             const svgString = e.target.result as string;
-            //console.log(svgString);
+            // console.log(svgString);
             const pathD = svgString.match(/(?<= d=")[^"]+/g);
             const transform = svgString.match(/(?<= transform=")[^"]+/g);
             resolve({pathD, transform});
@@ -341,29 +341,42 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
             fileReader.readAsText(outputs.data['strokes']);
         }
     });
-    if (!pathD) {
-        return ConvertResult.CONTINUE;
-    }
 
-    const newPathId = svgCanvas.getNextId();
-    const path = document.createElementNS(svgedit.NS.SVG, 'path');
-    $(path).attr({
-        'id': newPathId,
-        'd': pathD.join(''),
-        //Note: Assuming transform matrix for all d are the same
-        'transform': transform ? transform[0] : '',
-        'fill': isFill ? color : 'none',
-        'fill-opacity': isFill ? 1 : 0,
-        'stroke': color,
-        'stroke-opacity': 1,
-        'stroke-dasharray': 'none',
-        'vector-effect': 'non-scaling-stroke',
-    });
-    $(path).insertAfter($textElement);
-    $(path).mouseover(svgCanvas.handleGenerateSensorArea).mouseleave(svgCanvas.handleGenerateSensorArea);
-    batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
-    // output of fluxsvg will locate at (0,0), so move it.
-    svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
+    if (pathD) {
+        const newPathId = svgCanvas.getNextId();
+        const path = document.createElementNS(svgedit.NS.SVG, 'path');
+        $(path).attr({
+            'id': newPathId,
+            'd': pathD.join(''),
+            //Note: Assuming transform matrix for all d are the same
+            'transform': transform ? transform[0] : '',
+            'fill': isFill ? color : 'none',
+            'fill-opacity': isFill ? 1 : 0,
+            'stroke': color,
+            'stroke-opacity': 1,
+            'stroke-dasharray': 'none',
+            'vector-effect': 'non-scaling-stroke',
+        });
+        $(path).insertAfter($textElement);
+        path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
+        path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
+        batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(path));
+        // output of fluxsvg will locate at (0,0), so move it.
+        svgCanvas.moveElements([bbox.x], [bbox.y], [path], false);
+
+        if (isTempConvert) {
+            $textElement.attr({
+                'font-family': origFontFamily,
+                'font-postscript': origFontPostscriptName,
+                'stroke-width': 2,
+                'display': 'none',
+                'data-path-id': newPathId
+            });
+            tempPaths.push(path);
+        }
+        svgedit.recalculate.recalculateDimensions(path);
+    }
+    
     if (!isTempConvert) {
         let textElem = $textElement[0];
         let parent = textElem.parentNode;
@@ -374,17 +387,7 @@ const convertTextToPathFluxsvg = async ($textElement, bbox, isTempConvert?: bool
         if (!batchCmd.isEmpty()) {
             svgCanvas.undoMgr.addCommandToHistory(batchCmd);
         }
-    } else {
-        $textElement.attr({
-            'font-family': origFontFamily,
-            'font-postscript': origFontPostscriptName,
-            'stroke-width': 2,
-            'display': 'none',
-            'data-path-id': newPathId
-        });
-        tempPaths.push(path);
     }
-    svgedit.recalculate.recalculateDimensions(path);
     Progress.popById('parsing-font');
     return isUnsupported ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;
 }
