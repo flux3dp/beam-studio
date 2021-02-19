@@ -178,7 +178,6 @@
             }
         }
     }
-    .object-panels,
     .tool-panels {
         display: absolute;
         box-shadow: 0px 3px 5px rgba(0,0,0,0.15);
@@ -195,58 +194,10 @@
             transition: all .1s ease;
             z-index: 1;
             will-change: top, left, transform;
-            .accordion-body {
+            .tool-panel-body {
                 overflow: visible;
                 position: relative;
-                .ui.ui-control-unit-input-v2 {
-                    .unit {
-                        font-size: 10px;
-                        margin-left: -30px;
-                    }
-                    input[disabled] {
-                        background-color: #f2f2f2;
-                        cursor: not-allowed;
-                    }
-                }
-                &.with-lock {
-                    display: flex;
-                    >div {
-                        display: inline-block;
-                    }
-                    .lock {
-                        padding-bottom: 7px;
-                        color: #999;
-                        margin-left: 10px;
-                        label {
-                            font-size: 27px;
-                            cursor: pointer;
-                            &:hover {
-                                color: black;
-                            }
-                            i {
-                                margin-left: 5px;
-                                transform: scale(-1, 1);
-                                &.locked {
-                                    color: #444;
-                                }
-                                &.unlocked {
-                                    color: #dddddd;
-                                }
-                            }
-                        }
-                    }
-                    .ui.ui-control-unit-input-v2 {
-                        input {
-                            width: 100px;
-                        }
-                    }
-                }
-                .shading-checkbox {
-                    color: #666;
-                    margin-left: 17px;
-                    font-size: 22px;
-                    cursor: pointer;
-                }
+                transform: scaleY(1);
                 .offset-dist {
                     input {
                         margin: 0;
@@ -258,18 +209,12 @@
                         line-height: 14px;
                     }
                 }
+                &.collapsed {
+                    max-height: 0;
+                }
             }
             .caption {
                 margin: 0;
-            }
-            .accordion {
-                .shading-checkbox {
-                    cursor: pointer;
-                    font-size: 18px;
-                    .partially-filled {
-                        opacity: 0.5;
-                    }
-                }
             }
             .accordion .caption .value {
                 color: #999;
@@ -307,26 +252,22 @@
                     }
                 }
             }
+            .ui.ui-control-unit-input-v2 {
+                .unit {
+                    font-size: 10px;
+                    margin-left: -30px;
+                }
+                input[disabled] {
+                    background-color: #f2f2f2;
+                    cursor: not-allowed;
+                }
+            }
             .caption {
                 @include flexbox();
                 color: $primaryColor;
                 font-size: 12px;
                 line-height: 30px;
                 justify-content: space-between;
-            }
-            &.text-panel {
-                .controls {
-                    padding-bottom: 10px;
-                    .control {
-                        margin-bottom: 0;
-                        .fill-checkbox {
-                            color: #666;
-                            margin-left: 17px;
-                            font-size: 22px;
-                            cursor: pointer;
-                        }
-                    }
-                }
             }
         }
         .tool-block {

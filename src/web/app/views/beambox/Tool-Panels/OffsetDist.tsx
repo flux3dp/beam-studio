@@ -3,6 +3,7 @@ import LocalStorage from '../../../../helpers/local-storage';
 import * as i18n from '../../../../helpers/i18n';
 
 const React = requireNode('react');
+const classNames = requireNode('classnames');
 const LANG = i18n.lang.beambox.tool_panels;
 
 class OffsetDistPanel extends React.Component{
@@ -12,15 +13,16 @@ class OffsetDistPanel extends React.Component{
 
         this.state = {
             distance: props.distance,
+            isCollapsed: false,
         };
     }
 
-    _updateDist(val) {
+    updateDist(val) {
         this.props.onValueChange(val);
         this.setState({ distance: val });
     }
 
-    _getValueCaption() {
+    getValueCaption() {
         const dist = this.state.distance, 
             units = LocalStorage.get('default-units') || 'mm';
         if (units === 'inches') {
@@ -31,27 +33,27 @@ class OffsetDistPanel extends React.Component{
     }
 
     render() {
-
+        const { isCollapsed } = this.state;
         return (
             <div className="tool-panel">
                 <label className="controls accordion">
                     <input type="checkbox" className="accordion-switcher" defaultChecked={true} />
-                    <p className="caption">
+                    <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
                         {LANG._offset.dist}
-                        <span className="value">{this._getValueCaption()}</span>
+                        <span className="value">{this.getValueCaption()}</span>
                     </p>
-                    <label className='accordion-body'>
+                    <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
                         <div>
                             <div className='control offset-dist'>
                                 <UnitInput
                                     min={0}
                                     unit='mm'
                                     defaultValue={this.state.distance}
-                                    getValue={(val) => {this._updateDist(val)}}
+                                    getValue={(val) => {this.updateDist(val)}}
                                 />
                             </div>
                         </div>
-                    </label>
+                    </div>
                 </label>
             </div>
         );

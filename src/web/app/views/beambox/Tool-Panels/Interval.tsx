@@ -5,6 +5,8 @@ import Constant from '../../../actions/beambox/constant';
 
 const React = requireNode('react');
 const PropTypes = requireNode('prop-types');
+const classNames = requireNode('classnames');
+
 const LANG = i18n.lang.beambox.tool_panels;
 
 class Interval extends React.Component{
@@ -14,6 +16,7 @@ class Interval extends React.Component{
             dx: this.props.dx,
             dy: this.props.dy,
             onValueChange: this.props.onValueChange,
+            isCollapsed: false,
         };
     }
     
@@ -25,14 +28,14 @@ class Interval extends React.Component{
         });
     }
 
-    _update_dx_handler = (val) => {
+    updateDxHandler = (val) => {
         this.setState({dx: val});
         let distance = this.state;
         distance.dx = val;
         this.props.onValueChange(distance);
     }
 
-    _update_dy_handler = (val) => {
+    updateDyHandler = (val) => {
         this.setState({dy: val});
         let distance = this.state;
         distance.dy = val;
@@ -51,15 +54,16 @@ class Interval extends React.Component{
     }
 
     render() {
+        const { isCollapsed } = this.state;
         return (
             <div className="tool-panel">
                 <label className="controls accordion">
                     <input type="checkbox" className="accordion-switcher" defaultChecked={true} />
-                    <p className="caption">
+                    <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
                         {LANG.array_interval}
                         <span className="value">{this.getValueCaption()}</span>
                     </p>
-                    <label className="accordion-body" onClick={(e: MouseEvent) => e.preventDefault()}>
+                    <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
                         <div className="control">
                             <span className="text-center header">{LANG.dx}</span>
                             <UnitInput
@@ -67,7 +71,7 @@ class Interval extends React.Component{
                                 max={Constant.dimension.getWidth()/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.dx}
-                                getValue={this._update_dx_handler}
+                                getValue={this.updateDxHandler}
                             />
                         </div>
                         <div className="control">
@@ -77,10 +81,10 @@ class Interval extends React.Component{
                                 max={Constant.dimension.getHeight()/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.dy}
-                                getValue={this._update_dy_handler}
+                                getValue={this.updateDyHandler}
                             />
                         </div>
-                    </label>
+                    </div>
                 </label>
             </div>
         );
