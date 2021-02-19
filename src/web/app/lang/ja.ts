@@ -111,7 +111,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beamboxプロジェクト',
+            beam_project_files: 'Beam Studioプロジェクト',
             fcode_files: 'FLUXコード',
             clear_recent: '最近開いた項目をクリア',
             path_not_exit: 'このパスは、デスク上にもう存在しないようです。'
