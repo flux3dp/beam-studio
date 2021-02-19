@@ -1,8 +1,6 @@
 const electron = require('electron');
 const { Application } = require('spectron');
 const path = require('path');
-
-const { pause, checkExist, checkVisible, updateInput } = require('./util/utils');
 const baseDir = path.join(__dirname, '..');
 
 jest.setTimeout(1000000); // increase to 50000 on low spec laptop
@@ -38,17 +36,18 @@ afterAll(function() {
     }
 });
 
+module.exports = {
+    get app () {
+        return app;
+    },
+}
+
 test('App Init', async function() {
-    console.log(app.browserWindow);
     let isVisible = await app.browserWindow.isVisible();
     expect(isVisible).toBe(true);
-    const client = app.client;
-    console.log('client', client);
     let count = await app.client.getWindowCount();
-
     // main window, shadow window, ugly noti. window
     expect(count).toEqual(3);
-    console.log(count);
 });
 
 require('./features/settings/home-lang-test');
@@ -58,3 +57,4 @@ module.exports = {
         return app;
     }
 }
+require('./features/editor/editor-tests');

@@ -1,17 +1,19 @@
+const application = require('../test');
+
 const pause = async (t) => {
-    const { app } = require('../test');
+    const { app } = application;
     await app.client.pause(t);
 };
 const checkExist = async (tag, time = 10000, reverse = false) => {
-    const { app } = require('../test');
+    const { app } = application;
     await app.client.waitForExist(tag, time, reverse);
 };
 const checkVisible = async (tag, time = 10000, reverse = false) => {
-    const { app } = require('../test');
+    const { app } = application;
     await app.client.waitForVisible(tag, time, reverse);
 };
 const updateInput = async (tag, value) => {
-    const { app } = require('../test');
+    const { app } = application;
     checkVisible(tag, 2500);
     await app.client
         .element(tag)
