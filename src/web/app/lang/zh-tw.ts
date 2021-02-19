@@ -656,7 +656,7 @@ export default {
             empty_ip: '#818 請先輸入目標 IP 位置',
             start: '檢測',
             end: '結束',
-            testing: '網路檢測中...',
+            testing: '網路檢測中...',
             invalid_ip: '#818 錯誤的 IP 位置',
             ip_startswith_169: '#843 目標 IP 開頭為 169.254',
             connection_quality: '連線品質',
