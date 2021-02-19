@@ -6,8 +6,6 @@ import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
-// TODO confim this statement is true
-const selectedElements = window['selectedElements'];
 const React = requireNode('react');
 const LANG = i18n.lang.beambox.tool_panels;
 
@@ -36,7 +34,7 @@ class SvgNestButtons extends React.Component {
             const h = Constant.dimension.getHeight();
             containerPoints = [{x: 0, y: 0}, {x: w, y: 0}, {x: w, y: h}, {x: 0, y: h}];
         }
-        if (!elements) elements = selectedElements;
+
         const elemPoints = [];
         this.undoNestChanges = [];
         this.nestedElements = [...elements];
@@ -179,12 +177,15 @@ class SvgNestButtons extends React.Component {
                 for (let i = 0; i < layerNumber; i++) {
                     const name = drawing.getLayerName(i);
                     const layer = drawing.getLayerByName(name);
-                    if ($(layer).css('display') === 'none') {
+                    if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
                         continue;
                     }
+                    const childNodes = layer.childNodes;
                     const children = $(layer).children();
-                    for (let j = 1; j < children.length; j++) {
-                        elems.push(children[j])
+                    for (let j = 0; j < childNodes.length; j++) {
+                        if (!['title', 'filter'].includes(children[j].nodeName)) {
+                            elems.push(children[j])
+                        }
                     }
                 }
             }
