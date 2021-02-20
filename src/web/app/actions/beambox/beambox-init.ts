@@ -486,11 +486,11 @@ const showStartUpDialogs = async () => {
         if (window['FLUX'].version !== lastInstalledVersion) {
             await showChangeLog();
         }
-        LocalStorage.set('last-installed-version', window['FLUX'].version);
         await showQuestionnaire();
     }
     checkOSVersion();
     LocalStorage.removeAt('new-user');
+    LocalStorage.set('last-installed-version', window['FLUX'].version);
 }
 
 const askAndInitSentry = async () => {
