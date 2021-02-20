@@ -373,7 +373,7 @@ const funcs =  {
     toggleUnsavedChangedDialog: async function () {
         return new Promise((resolve) => {
             electron.ipc.send('SAVE_DIALOG_POPPED');
-            if (!svgCanvas.getHasUnsaveChanged() || location.hash !== '#studio/beambox') {
+            if (location.hash !== '#studio/beambox' || !svgCanvas || !svgCanvas.getHasUnsaveChanged()) {
                 resolve(true);
             } else {
                 Alert.popById('unsaved_change_dialog');
