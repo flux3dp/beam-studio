@@ -1550,6 +1550,25 @@ define([
                 };
             };
 
+            /**
+             * Add transform for resizing operation
+             * @param {Element} element svg element to init transform
+             */
+            const initResizeTransform = (element) => {
+                const tlist = svgedit.transformlist.getTransformList(element);
+                const pos = svgedit.utilities.getRotationAngle(element) ? 1 : 0;
+
+                if (svgedit.math.hasMatrixTransform(tlist)) {
+                    tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
+                    tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
+                    tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
+                } else {
+                    tlist.appendItem(svgroot.createSVGTransform());
+                    tlist.appendItem(svgroot.createSVGTransform());
+                    tlist.appendItem(svgroot.createSVGTransform());
+                }
+            };
+
             let mouseSelectModeCmds;
             // - when we are in a create mode, the element is added to the canvas
             // but the action is not recorded until mousing up
@@ -1779,46 +1798,36 @@ define([
 
                         // append three dummy transforms to the tlist so that
                         // we can translate,scale,translate in mousemove
-                        var pos = svgedit.utilities.getRotationAngle(mouseTarget) ? 1 : 0;
 
-                        if (svgedit.math.hasMatrixTransform(tlist)) {
-                            tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
-                            tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
-                            tlist.insertItemBefore(svgroot.createSVGTransform(), pos);
-                        } else {
-                            tlist.appendItem(svgroot.createSVGTransform());
-                            tlist.appendItem(svgroot.createSVGTransform());
-                            tlist.appendItem(svgroot.createSVGTransform());
+                        initResizeTransform(mouseTarget);
+                        if (svgedit.browser.supportsNonScalingStroke()) {
+                            // Handle crash for newer Chrome and Safari 6 (Mobile and Desktop):
+                            // https://code.google.com/p/svg-edit/issues/detail?id=904
+                            // Chromium issue: https://code.google.com/p/chromium/issues/detail?id=114625
+                            // TODO: Remove this workaround once vendor fixes the issue
+                            var isWebkit = svgedit.browser.isWebkit();
 
-                            if (svgedit.browser.supportsNonScalingStroke()) {
-                                // Handle crash for newer Chrome and Safari 6 (Mobile and Desktop):
-                                // https://code.google.com/p/svg-edit/issues/detail?id=904
-                                // Chromium issue: https://code.google.com/p/chromium/issues/detail?id=114625
-                                // TODO: Remove this workaround once vendor fixes the issue
-                                var isWebkit = svgedit.browser.isWebkit();
+                            if (isWebkit) {
+                                var delayedStroke = function (ele) {
+                                    var _stroke = ele.getAttributeNS(null, 'stroke');
+                                    ele.removeAttributeNS(null, 'stroke');
+                                    // Re-apply stroke after delay. Anything higher than 1 seems to cause flicker
+                                    if (_stroke !== null) {setTimeout(function () {
+                                        ele.setAttributeNS(null, 'stroke', _stroke);
+                                    }, 0);}
+                                };
+                            }
+                            mouseTarget.style.vectorEffect = 'non-scaling-stroke';
+                            if (isWebkit) {
+                                delayedStroke(mouseTarget);
+                            }
 
+                            var all = mouseTarget.getElementsByTagName('*'),
+                                len = all.length;
+                            for (i = 0; i < len; i++) {
+                                all[i].style.vectorEffect = 'non-scaling-stroke';
                                 if (isWebkit) {
-                                    var delayedStroke = function (ele) {
-                                        var _stroke = ele.getAttributeNS(null, 'stroke');
-                                        ele.removeAttributeNS(null, 'stroke');
-                                        // Re-apply stroke after delay. Anything higher than 1 seems to cause flicker
-                                        if (_stroke !== null) {setTimeout(function () {
-                                            ele.setAttributeNS(null, 'stroke', _stroke);
-                                        }, 0);}
-                                    };
-                                }
-                                mouseTarget.style.vectorEffect = 'non-scaling-stroke';
-                                if (isWebkit) {
-                                    delayedStroke(mouseTarget);
-                                }
-
-                                var all = mouseTarget.getElementsByTagName('*'),
-                                    len = all.length;
-                                for (i = 0; i < len; i++) {
-                                    all[i].style.vectorEffect = 'non-scaling-stroke';
-                                    if (isWebkit) {
-                                        delayedStroke(all[i]);
-                                    }
+                                    delayedStroke(all[i]);
                                 }
                             }
                         }
@@ -2205,10 +2214,10 @@ define([
                         tlist = svgedit.transformlist.getTransformList(selected);
                         var hasMatrix = svgedit.math.hasMatrixTransform(tlist);
                         box = hasMatrix ? init_bbox : svgedit.utilities.getBBox(selected);
-                        var left = box.x,
-                            top = box.y,
-                            width = box.width,
-                            height = box.height;
+                        let left = box.x;
+                        let top = box.y;
+                        let width = box.width;
+                        let height = box.height;
                         dx = (x - start_x);
                         dy = (y - start_y);
 
@@ -2289,8 +2298,6 @@ define([
                         }
 
                         //Bounding box calculation
-                        //const oldCx = left + width / 2;
-                        //const oldCy = top + height / 2;
                         switch (selected.tagName) {
                             case 'rect':
                             case 'path':
@@ -2324,7 +2331,17 @@ define([
                                 }
                                 break;
                         }
-                        
+
+                        if (['rect', 'path, ellipse'].includes(selected.tagName)) {
+                            if ((width < 0.01 && Math.abs(width * sx) >= 0.01) || (height < 0.01 && Math.abs(height * sy) >= 0.01)) {
+                                console.log('recal', width, height, width * sx, height * sy);
+                                svgedit.recalculate.recalculateDimensions(selected);
+                                initResizeTransform(selected);
+                                start_x = x;
+                                start_y = y;
+                            }
+                        }
+
                         selectorManager.requestSelector(selected).resize();
                         call('transition', selectedElements);
                         ObjectPanelController.updateObjectPanel();
