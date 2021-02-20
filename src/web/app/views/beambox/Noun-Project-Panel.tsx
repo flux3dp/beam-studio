@@ -117,13 +117,15 @@ class NounProjectPanel extends React.Component {
         const { term } = this.state;
         return (
             <div className='search-panel'>
-                <img className='search-icon' src={`img/left-bar/icon-cursor.svg`} draggable='false'/>
+                <img className='search-icon' src='img/noun-project-panel/icon-search.svg' draggable='false'/>
                 <input type='text' id='search-input' ref={this.searchInput} placeholder='Search for anything'
                     defaultValue={term}
                     onKeyDown={(e: KeyboardEvent) => {this.handleSearchInputKeyDown(e)}}
                 >
                 </input>
-                <div className={classNames('cancel-button', { hide: term === ''})} onClick={() => this.onCancelSearch()}/>
+                <div className={classNames('cancel-button', { hide: term === ''})} onClick={() => this.onCancelSearch()}>
+                    <img src='img/icon-clear.svg'/>
+                </div>
             </div>
         );
     }
@@ -489,7 +491,7 @@ class NounProjectPanel extends React.Component {
                     {highLightedIcon ? highLightedIcon.term : ''}
                 </div>
                 <div className={classNames('info', { disabled: !highLightedIcon })} title={'info'} onClick={(e: MouseEvent) => this.onInfoClick(e)}>
-                    <img className='search-icon' src={`img/left-bar/icon-cursor.svg`} draggable='false'/>
+                    <img className='search-icon' src={`img/icon-info.svg`} draggable='false'/>
                 </div>
             </div>
         );

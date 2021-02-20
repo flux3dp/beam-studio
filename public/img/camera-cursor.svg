@@ -1,2 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg width="16" height="16" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M928 832q0-14-9-23t-23-9q-66 0-113 47t-47 113q0 14 9 23t23 9 23-9 9-23q0-40 28-68t68-28q14 0 23-9t9-23zm224 130q0 106-75 181t-181 75-181-75-75-181 75-181 181-75 181 75 75 181zm-1024 574h1536v-128h-1536v128zm1152-574q0-159-112.5-271.5t-271.5-112.5-271.5 112.5-112.5 271.5 112.5 271.5 271.5 112.5 271.5-112.5 112.5-271.5zm-1024-642h384v-128h-384v128zm-128 192h1536v-256h-828l-64 128h-644v128zm1664-256v1280q0 53-37.5 90.5t-90.5 37.5h-1536q-53 0-90.5-37.5t-37.5-90.5v-1280q0-53 37.5-90.5t90.5-37.5h1536q53 0 90.5 37.5t37.5 90.5z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="21.848" height="17.844" viewBox="0 0 21.848 17.844">
+  <g id="Group_26" data-name="Group 26" transform="translate(-10.735 -13.735)">
+    <g id="Group_12" data-name="Group 12" transform="translate(15.135 18.845)">
+      <path id="Exclusion_2" data-name="Exclusion 2" d="M-779.9-951.332h-15.049a1,1,0,0,1-1-1v-8.735a1,1,0,0,1,1-1h3.137c.429-.725,1.053-1.589,1.589-1.589l1.211,0h.058c1.065,0,1.923-.005,2.623-.005.859,0,1.411,0,1.735.009.62.014,1.33.872,1.816,1.589h2.878a1,1,0,0,1,1,1v8.735A1,1,0,0,1-779.9-951.332Zm-7.524-9.808a4.109,4.109,0,0,0-4.1,4.1,4.11,4.11,0,0,0,4.1,4.1,4.109,4.109,0,0,0,4.1-4.1A4.109,4.109,0,0,0-787.426-961.14Zm6.354-.134a1.2,1.2,0,0,0-1.2,1.2,1.2,1.2,0,0,0,1.2,1.2,1.2,1.2,0,0,0,1.2-1.2A1.2,1.2,0,0,0-781.072-961.274Z" transform="translate(795.951 963.666)" fill="#707070" stroke="#707070" stroke-width="0.8"/>
+      <circle id="Ellipse_14" data-name="Ellipse 14" cx="2.21" cy="2.21" r="2.21" transform="translate(6.315 4.42)" fill="#707070" stroke="#707070" stroke-width="0.8"/>
+      <line id="Line_7" data-name="Line 7" x1="1.894" transform="translate(1.263 0.616)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="0.7"/>
+    </g>
+    <g id="Group_25" data-name="Group 25" transform="translate(11.385 14.385)">
+      <path id="Path_33" data-name="Path 33" d="M743,1064v4.562" transform="translate(-740.719 -1064)" fill="none" stroke="#696969" stroke-linecap="round" stroke-width="1.3"/>
+      <path id="Path_34" data-name="Path 34" d="M735,1072h4.562" transform="translate(-735 -1069.719)" fill="none" stroke="#696969" stroke-linecap="round" stroke-width="1.3"/>
+    </g>
+  </g>
+</svg>

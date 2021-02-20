@@ -1,20 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 48 48" style="enable-background:new 0 0 48 48;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#333333;}
-	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#333333;}
-</style>
-<title>Custom Preset 9 Copy 22</title>
-<g id="Custom-Preset-9-Copy-22">
-	<path id="Shape" class="st0" d="M24.1,15.5c-1.1,0-2.2,0.6-2.7,1.7l-0.6,1.2c-0.5,1-1.5,1.7-2.7,1.7h-6.4c-1.7,0-3,1.4-3,3v19.7
-		c0,1.7,1.3,3,3,3h32.9c1.7,0,3-1.4,3-3V23.1c0-1.7-1.3-3-3-3h-6.4c-1.1,0-2.2-0.6-2.7-1.7l-0.6-1.2c-0.5-1-1.5-1.7-2.7-1.7H24.1z
-		 M28.9,22.8c5.7,0,10.3,4.6,10.3,10.3s-4.6,10.3-10.3,10.3s-10.3-4.6-10.3-10.3S23.2,22.8,28.9,22.8z M42.8,22.8
-		c1.3,0,2.4,1.1,2.4,2.4c0,1.3-1.1,2.4-2.4,2.4s-2.4-1.1-2.4-2.4C40.4,23.9,41.5,22.8,42.8,22.8z M28.9,25.2c-4.4,0-7.9,3.5-7.9,7.9
-		s3.5,7.9,7.9,7.9s7.9-3.5,7.9-7.9S33.2,25.2,28.9,25.2z"/>
-	<path id="Combined-Shape" class="st1" d="M9.4,2.1c0.3,0,0.6,0.3,0.6,0.6v5.5h5.5c0.3,0,0.6,0.3,0.6,0.6v2.4c0,0.3-0.3,0.6-0.6,0.6
-		H10v5.5c0,0.3-0.3,0.6-0.6,0.6H7c-0.3,0-0.6-0.3-0.6-0.6v-5.5H0.9c-0.3,0-0.6-0.3-0.6-0.6V8.8c0-0.3,0.3-0.6,0.6-0.6h5.5V2.8
-		c0-0.3,0.3-0.6,0.6-0.6H9.4z"/>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" width="21.848" height="17.844" viewBox="0 0 21.848 17.844">
+  <g id="Group_26" data-name="Group 26" transform="translate(-10.735 -13.735)">
+    <g id="Group_12" data-name="Group 12" transform="translate(15.135 18.845)">
+      <path id="Exclusion_2" data-name="Exclusion 2" d="M-779.9-951.332h-15.049a1,1,0,0,1-1-1v-8.735a1,1,0,0,1,1-1h3.137c.429-.725,1.053-1.589,1.589-1.589l1.211,0h.058c1.065,0,1.923-.005,2.623-.005.859,0,1.411,0,1.735.009.62.014,1.33.872,1.816,1.589h2.878a1,1,0,0,1,1,1v8.735A1,1,0,0,1-779.9-951.332Zm-7.524-9.808a4.109,4.109,0,0,0-4.1,4.1,4.11,4.11,0,0,0,4.1,4.1,4.109,4.109,0,0,0,4.1-4.1A4.109,4.109,0,0,0-787.426-961.14Zm6.354-.134a1.2,1.2,0,0,0-1.2,1.2,1.2,1.2,0,0,0,1.2,1.2,1.2,1.2,0,0,0,1.2-1.2A1.2,1.2,0,0,0-781.072-961.274Z" transform="translate(795.951 963.666)" fill="#707070" stroke="#707070" stroke-width="0.8"/>
+      <circle id="Ellipse_14" data-name="Ellipse 14" cx="2.21" cy="2.21" r="2.21" transform="translate(6.315 4.42)" fill="#707070" stroke="#707070" stroke-width="0.8"/>
+      <line id="Line_7" data-name="Line 7" x1="1.894" transform="translate(1.263 0.616)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="0.7"/>
+    </g>
+    <g id="Group_25" data-name="Group 25" transform="translate(11.385 14.385)">
+      <path id="Path_33" data-name="Path 33" d="M743,1064v4.562" transform="translate(-740.719 -1064)" fill="none" stroke="#696969" stroke-linecap="round" stroke-width="1.3"/>
+      <path id="Path_34" data-name="Path 34" d="M735,1072h4.562" transform="translate(-735 -1069.719)" fill="none" stroke="#696969" stroke-linecap="round" stroke-width="1.3"/>
+    </g>
+  </g>
 </svg>

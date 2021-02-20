@@ -720,8 +720,7 @@ class LaserPanel extends React.PureComponent {
                     }
                 });
             }}>
-                <div className= "bar bar1"/>
-                <div className= "bar bar2"/>
+                <img src={'img/icon-plus.svg'}/>
             </div>
         );
     }

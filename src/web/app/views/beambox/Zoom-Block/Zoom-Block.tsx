@@ -143,22 +143,21 @@ export class ZoomBlock extends React.Component {
         const ratio = this.calculatCurrentRatio();
         const ratioInPercent = Math.round(ratio * 100);
         return (
-            <div className="zoom-block">
-                <ContextMenuTrigger id="zoom-block-contextmenu" holdToDisplay={-1}>
-                    <div className="zoom-btn zoom-out" onClick={() => this.zoomOut(ratio)}>
-                        <div className="bar bar1"/>
+            <div className='zoom-block'>
+                <ContextMenuTrigger id='zoom-block-contextmenu' holdToDisplay={-1}>
+                    <div className='zoom-btn zoom-out' onClick={() => this.zoomOut(ratio)}>
+                        <img src='img/icon-minus.svg'/>
                     </div>
-                    <ContextMenuTrigger id="zoom-block-contextmenu" holdToDisplay={0}>
-                        <div className="zoom-ratio">
+                    <ContextMenuTrigger id='zoom-block-contextmenu' holdToDisplay={0}>
+                        <div className='zoom-ratio'>
                             {`${ratioInPercent}%`}
                         </div>
                     </ContextMenuTrigger>
-                    <div className="zoom-btn zoom-in" onClick={() => this.zoomIn(ratio)}>
-                        <div className="bar bar1"/>
-                        <div className="bar bar2"/>
+                    <div className='zoom-btn zoom-in' onClick={() => this.zoomIn(ratio)}>
+                        <img src='img/icon-plus.svg'/>
                     </div>
                 </ContextMenuTrigger>
-                <ContextMenu id="zoom-block-contextmenu">
+                <ContextMenu id='zoom-block-contextmenu'>
                     <MenuItem onClick={() => svgEditor.resetView()}>{LANG.fit_to_window}</MenuItem>
                     <MenuItem onClick={() => this.setRatio(25)}>{'25 %'}</MenuItem>
                     <MenuItem onClick={() => this.setRatio(50)}>{'50 %'}</MenuItem>

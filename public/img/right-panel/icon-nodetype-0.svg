@@ -1,8 +1,18 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.5591 59.1701">
-  <title>icon-nodetype-0</title>
-  <circle cx="66.2136" cy="14.2667" r="11.2667" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 6px"/>
-  <circle cx="11.3584" cy="34.3291" r="9.8584" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
-  <circle cx="119.2007" cy="47.8118" r="9.8584" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
-  <line x1="75.7249" y1="20.2881" x2="110.8782" y2="42.543" style="fill: #fff;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 4px"/>
-  <line x1="19.3246" y1="31.4156" x2="55.6406" y2="18.1336" style="fill: #fff;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 4px"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="20.5" height="8.433" viewBox="0 0 20.5 8.433">
+  <g id="Group_31" data-name="Group 31" transform="translate(-13.5 -19)">
+    <line id="Line_8" data-name="Line 8" x2="6.559" y2="2.811" transform="translate(25.681 23.217)" fill="#fff" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+    <line id="Line_9" data-name="Line 9" y1="2.32" x2="6.343" transform="translate(14.375 23.428)" fill="#fff" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+    <g id="Path_57" data-name="Path 57" transform="translate(20.059 19)" fill="#fff">
+      <path d="M 2.990000009536743 5.079999923706055 C 1.837569952011108 5.079999923706055 0.9000000357627869 4.142429828643799 0.9000000357627869 2.990000009536743 C 0.9000000357627869 1.837569952011108 1.837569952011108 0.9000000357627869 2.990000009536743 0.9000000357627869 C 4.142429828643799 0.9000000357627869 5.079999923706055 1.837569952011108 5.079999923706055 2.990000009536743 C 5.079999923706055 4.142429828643799 4.142429828643799 5.079999923706055 2.990000009536743 5.079999923706055 Z" stroke="none"/>
+      <path d="M 2.990000009536743 1.800000190734863 C 2.333830118179321 1.800000190734863 1.800000190734863 2.333830118179321 1.800000190734863 2.990000009536743 C 1.800000190734863 3.646169900894165 2.333830118179321 4.180000305175781 2.990000009536743 4.180000305175781 C 3.646169900894165 4.180000305175781 4.180000305175781 3.646169900894165 4.180000305175781 2.990000009536743 C 4.180000305175781 2.333830118179321 3.646169900894165 1.800000190734863 2.990000009536743 1.800000190734863 M 2.990000009536743 0 C 4.641329765319824 0 5.980000019073486 1.338669776916504 5.980000019073486 2.990000009536743 C 5.980000019073486 4.641329765319824 4.641329765319824 5.980000019073486 2.990000009536743 5.980000019073486 C 1.338669776916504 5.980000019073486 0 4.641329765319824 0 2.990000009536743 C 0 1.338669776916504 1.338669776916504 0 2.990000009536743 0 Z" stroke="none" fill="#5c5c5c"/>
+    </g>
+    <g id="Ellipse_18" data-name="Ellipse 18" transform="translate(13.5 23.685)" fill="#fff" stroke="#969696" stroke-width="1.5">
+      <circle cx="1.874" cy="1.874" r="1.874" stroke="none"/>
+      <circle cx="1.874" cy="1.874" r="1.124" fill="none"/>
+    </g>
+    <g id="Ellipse_19" data-name="Ellipse 19" transform="translate(30 23.433)" fill="#fff" stroke="#969696" stroke-width="1.5">
+      <circle cx="2" cy="2" r="2" stroke="none"/>
+      <circle cx="2" cy="2" r="1.25" fill="none"/>
+    </g>
+  </g>
 </svg>

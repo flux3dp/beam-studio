@@ -30,6 +30,7 @@
             align-items: center;
             .search-icon {
                 height: 32px;
+                padding: 2px;
                 margin-right: 10px;
             }
             #search-input {
@@ -46,11 +47,13 @@
                 width: 28px;
                 height: 28px;
                 margin-left: 10px;
-                background-color: #000000;
-                border-radius: 14px;
                 cursor: pointer;
+                img {
+                    width: 100%;
+                    filter: brightness(0);
+                }
                 &:before, &:after {
-                    content: '';
+                    // content: '';
                     position: absolute;
                     height: 18px;
                     width: 4px;
@@ -135,6 +138,7 @@
                 margin: 0 5px 0 0;
                 img {
                     height: 20px;
+                    padding: 1px;
                     filter: brightness(0) invert(1);
                 }
                 &.disabled {

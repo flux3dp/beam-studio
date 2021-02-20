@@ -1,7 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="13" height="16" viewBox="0 0 13 16">
-    <g fill-rule="evenodd" opacity=".64" transform="matrix(1 0 0 -1 0 15)">
-        <path stroke="#F8F8F8" d="M5.5.498c0-.274.113-.523.295-.704C6.927-.61 7.058-.357 7.207-.21c.18.18.293.429.293.707v13.004c0 .274-.113.523-.295.704-.183.183-.435.294-.705.294-.277 0-.527-.111-.707-.291-.18-.18-.293-.429-.293-.707V.498z"/>
-        <rect width="13" height="4" y="2" rx="1"/>
-        <rect width="9" height="4" x="2" y="8" rx="1"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="18.87" height="22" viewBox="0 0 18.87 22">
+  <g id="Group_53" data-name="Group 53" transform="translate(-14.565 -13)">
+    <path id="Subtraction_2" data-name="Subtraction 2" d="M-1091.129-1201.838h-6.657v-6.29h6.657a1,1,0,0,1,1,1v4.29A1,1,0,0,1-1091.129-1201.838Zm-10.214,0H-1108a1,1,0,0,1-1-1v-4.29a1,1,0,0,1,1-1h6.656v6.289Zm7.069-8.033h-3.512v-6.29h3.512a1,1,0,0,1,1,1v4.29A1,1,0,0,1-1094.275-1209.871Zm-7.069,0h-3.511a1,1,0,0,1-1-1v-4.29a1,1,0,0,1,1-1h3.511v6.289Z" transform="translate(1123.565 1233)" fill="#5c5c5c"/>
+    <path id="Path_48" data-name="Path 48" d="M1,0H1A1,1,0,0,1,2,1V21a1,1,0,0,1-1,1H1a1,1,0,0,1-1-1V1A1,1,0,0,1,1,0Z" transform="translate(23 13)" fill="#a6a6a6"/>
+  </g>
 </svg>

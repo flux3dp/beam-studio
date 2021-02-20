@@ -31,11 +31,8 @@
             text-align: center;
             line-height: 24px;
             filter: brightness(0);
-            img {
-                height: 24px;
-            }
             margin: 13px 6px 13px 7px;
-            height: 36px;
+            height: 30px;
             width: 36px;
             opacity: 0.5;
             &.active {
@@ -814,9 +811,10 @@
                     }
                     .dimension-lock {
                         display: inline-flex;
-                        width: 15px;
-                        padding-left: 4px;
+                        width: 9px;
+                        margin: 0 0 0 4px;
                         img {
+                            width: 9px;
                             opacity: 0.5;
                             &:hover {
                                 opacity: 1;
@@ -824,7 +822,9 @@
                         }
                     }
                     .flip-btn-container {
-                        padding-left: 5px;
+                        display: flex;
+                        justify-content: flex-end;
+                        width: calc(33% - 13px);
                         height: 45px;
                         .tool-btn {
                             width: 23px;
@@ -839,7 +839,7 @@
                                 opacity: 1;
                             }
                             img {
-                                width: 16px;
+                                width: 14px;
                             }
                         }
                     }
@@ -1110,9 +1110,11 @@
                     justify-content: space-between;
                     .left {
                         display: flex;
+                        align-items: center;
                     }
                     .right {
                         display: flex;
+                        align-items: center;
                     }
                 }
                 .icon-button {
@@ -1167,6 +1169,9 @@
                 &.disabled {
                     opacity: 0.3;
                     cursor: default;
+                }
+                img {
+                    filter: brightness(0);
                 }
                 .bar {
                     position: absolute;

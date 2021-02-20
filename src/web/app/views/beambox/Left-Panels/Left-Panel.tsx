@@ -138,7 +138,7 @@ class LeftPanel extends React.Component {
                     {this._renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
                     {this._renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
                     {this._renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
-                    {this._renderToolButton('cursor', 'Icons', 'Open Shape Library', DialogCaller.showNounProjectPanel)}
+                    {this._renderToolButton('np', 'Icons', 'Open Shape Library', DialogCaller.showNounProjectPanel)}
                 </div>
             );
         } else {

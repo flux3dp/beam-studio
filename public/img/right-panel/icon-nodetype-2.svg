@@ -1,9 +1,15 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136.4806 28.6772">
-  <title>icon-nodetype-2</title>
-  <circle cx="68.3664" cy="14.3386" r="11.3386" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 6px"/>
-  <circle cx="11.6735" cy="14.3386" r="10.1735" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
-  <circle cx="125.0593" cy="14.3386" r="9.9213" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
-  <path d="M106.1777,111.7632" transform="translate(-30.8462 -42.3543)" style="fill: #fff;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 4px"/>
-  <line x1="21.847" y1="14.3386" x2="57.0278" y2="14.3386" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
-  <line x1="79.705" y1="14.3386" x2="115.1381" y2="14.3386" style="fill: none;stroke: #1e1e1c;stroke-miterlimit: 10;stroke-width: 3px"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="21.383" height="12.909" viewBox="0 0 21.383 12.909">
+  <g id="Group_32" data-name="Group 32" transform="translate(-12.769 -20.5)">
+    <g id="icon-nodetype-2" transform="translate(13.519 20.5)">
+      <line id="Line_5" data-name="Line 5" x2="5.241" transform="translate(3.031 3.776)" fill="none" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+      <line id="Line_6" data-name="Line 6" x2="5.278" transform="translate(11.649 3.776)" fill="none" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+      <ellipse id="Ellipse_8" data-name="Ellipse 8" cx="1.515" cy="1.515" rx="1.515" ry="1.515" transform="translate(0 2.261)" fill="none" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+      <ellipse id="Ellipse_9" data-name="Ellipse 9" cx="1.478" cy="1.478" rx="1.478" ry="1.478" transform="translate(16.927 2.298)" fill="none" stroke="#969696" stroke-miterlimit="10" stroke-width="1.5"/>
+      <path id="Path_20" data-name="Path 20" d="M106.178,111.763" transform="translate(-95.18 -98.854)" fill="#fff" stroke="#5c5c5c" stroke-miterlimit="10" stroke-width="1.5"/>
+      <g id="Path_57" data-name="Path 57" transform="translate(6.622 0)" fill="#fff">
+        <path d="M 3.319932460784912 5.739862442016602 C 1.98558247089386 5.739862442016602 0.9000024795532227 4.654282569885254 0.9000024795532227 3.319932460784912 C 0.9000024795532227 1.98558247089386 1.98558247089386 0.9000024795532227 3.319932460784912 0.9000024795532227 C 4.654282569885254 0.9000024795532227 5.739862442016602 1.98558247089386 5.739862442016602 3.319932460784912 C 5.739862442016602 4.654282569885254 4.654282569885254 5.739862442016602 3.319932460784912 5.739862442016602 Z" stroke="none"/>
+        <path d="M 3.319932460784912 1.800002574920654 C 2.481842517852783 1.800002574920654 1.800002574920654 2.481842517852783 1.800002574920654 3.319932460784912 C 1.800002574920654 4.158022403717041 2.481842517852783 4.83986234664917 3.319932460784912 4.83986234664917 C 4.158022403717041 4.83986234664917 4.83986234664917 4.158022403717041 4.83986234664917 3.319932460784912 C 4.83986234664917 2.481842517852783 4.158022403717041 1.800002574920654 3.319932460784912 1.800002574920654 M 3.319932460784912 2.384185791015625e-06 C 5.153482437133789 2.384185791015625e-06 6.639862537384033 1.486382484436035 6.639862537384033 3.319932460784912 C 6.639862537384033 5.153482437133789 5.153482437133789 6.639862537384033 3.319932460784912 6.639862537384033 C 1.486382484436035 6.639862537384033 2.384185791015625e-06 5.153482437133789 2.384185791015625e-06 3.319932460784912 C 2.384185791015625e-06 1.486382484436035 1.486382484436035 2.384185791015625e-06 3.319932460784912 2.384185791015625e-06 Z" stroke="none" fill="#5c5c5c"/>
+      </g>
+    </g>
+  </g>
 </svg>

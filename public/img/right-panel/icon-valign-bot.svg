@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15">
-    <g fill-rule="evenodd" opacity=".64" transform="rotate(-90 7.5 6.5)">
-        <path stroke="#F8F8F8" d="M-.5.498c0-.274.113-.523.295-.704C.927-.61 1.058-.357 1.207-.21c.18.18.293.429.293.707v13.004c0 .274-.113.523-.295.704-.183.183-.435.294-.705.294-.277 0-.527-.111-.707-.291-.18-.18-.293-.429-.293-.707V.498z"/>
-        <rect width="12" height="4" x="2" y="2" rx="1"/>
-        <rect width="8" height="4" x="2" y="8" rx="1"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="19.298" viewBox="0 0 22 19.298">
+  <g id="icon-valign-top" transform="translate(0 19.298) rotate(-90)" opacity="0.64">
+    <rect id="Rectangle_16" data-name="Rectangle 16" width="16.298" height="5.766" rx="1" transform="translate(3 3.793)"/>
+    <rect id="Rectangle_17" data-name="Rectangle 17" width="11.532" height="5.766" rx="1" transform="translate(3 12.441)"/>
+    <rect id="Rectangle_52" data-name="Rectangle 52" width="2" height="22" rx="1" transform="translate(0)" fill="#5b5b5b"/>
+  </g>
 </svg>

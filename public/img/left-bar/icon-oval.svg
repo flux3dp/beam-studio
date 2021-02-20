@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.4 (15575) - http://www.bohemiancoding.com/sketch -->
-    <title>icon-oval</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Desktop-HD" sketch:type="MSArtboardGroup" transform="translate(-10.000000, -273.000000)" stroke-width="2" stroke="#333333">
-            <g id="Left-Toolbar" sketch:type="MSLayerGroup" transform="translate(0.000000, 87.000000)">
-                <circle id="icon-oval" sketch:type="MSShapeGroup" cx="25" cy="201" r="14"></circle>
-            </g>
-        </g>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19">
+  <g id="Ellipse_10" data-name="Ellipse 10" fill="none" stroke="#5c5c5c" stroke-width="1.8">
+    <circle cx="9.5" cy="9.5" r="9.5" stroke="none"/>
+    <circle cx="9.5" cy="9.5" r="8.6" fill="none"/>
+  </g>
 </svg>
