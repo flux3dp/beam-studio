@@ -708,7 +708,7 @@ export default {
         fixed: 'Fest:',
         changed: 'Geändert:',
         see_older_version: 'Siehe Ältere Versionen',
-        help_center_url: 'https://support.flux3dp.com/hc/en-us/categories/360000172976',
+        help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 Authentifizierung fehlgeschlagen',

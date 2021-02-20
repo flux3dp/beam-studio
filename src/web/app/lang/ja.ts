@@ -708,7 +708,7 @@ export default {
         fixed: '修正：',
         changed: '変更：',
         see_older_version: '以前のバージョンを見る',
-        help_center_url: 'https://support.flux3dp.com/hc/en-us/categories/360000172976',
+        help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 認証失敗',
