@@ -126,7 +126,7 @@ class ConnectMachine extends React.Component{
             <div className="connection-machine-ip">
                 <div className="image-container">
                     <div className={classNames('hint-circle', 'ip', {wired: this.isWired})}/>
-                    <img className="touch-panel-icon" src={this.isWired ? "img/init-panel/network-panel-wired.png" : "img/init-panel/network-panel-wireless.png"} draggable="false"/>
+                    <img className="touch-panel-icon" src={this.isWired ? "img/init-panel/network-panel-wired.jpg" : "img/init-panel/network-panel-wireless.jpg"} draggable="false"/>
                 </div>
                 <div className="text-container">
                     <div className="title">{lang.connect_machine_ip.enter_ip}</div>

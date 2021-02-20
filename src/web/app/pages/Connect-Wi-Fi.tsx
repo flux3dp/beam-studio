@@ -21,7 +21,7 @@ class ConnectWiFi extends React.Component{
             <div className="connection-wifi">
                 <div className="image-container">
                     <div className="hint-circle"/>
-                    <img className="touch-panel-icon" src="img/init-panel/touch-panel-en.png" draggable="false"/>
+                    <img className="touch-panel-icon" src="img/init-panel/touch-panel-en.jpg" draggable="false"/>
                 </div>
                 <div className="text-container">
                     <div className="title">{lang.connect_wifi.title}</div>

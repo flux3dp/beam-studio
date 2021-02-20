@@ -138,6 +138,8 @@
                 width: 200px;
                 .touch-panel-icon {
                     width: 200px;
+                    box-shadow: 0 7px 15px rgba(0, 0, 0, .2), 0 10px 20px rgba(0, 0, 0, 0.1);
+                    border-radius: 5px;
                 }
                 .hint-circle {
                     position: absolute;
@@ -145,14 +147,14 @@
                     height: 122px;
                     border-radius: 61px;
                     border: 5px solid #0091FF;
-                    margin: 202px 0 0 -4px;
+                    margin: 210px 0 0 -6px;
                     &.ip {
                         width: 160px;
                         height: 20px;
                         border-radius: 10px;
-                        margin: 73px 0 0 0;
+                        margin: 74px 0 0 -10px;
                         &.wired {
-                            margin: 118px 0 0 0;
+                            margin: 122px 0 0 -10px;
                         }
                     }
                     animation: pulse 4s cubic-bezier(0.5, 0, 0.5, 1) alternate infinite;
