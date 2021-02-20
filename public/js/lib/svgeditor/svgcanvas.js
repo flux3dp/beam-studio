@@ -5137,6 +5137,7 @@ define([
                 });
             }
             svgedit.utilities.moveDefsOutfromSvgContent();
+            output = sanitizeXmlString(output);
             console.log(output);
 
             return output;
@@ -5950,6 +5951,14 @@ define([
             }
         };
 
+        const sanitizeXmlString = (xmlString) => {
+            // ref: https://stackoverflow.com/questions/29031792/detect-non-valid-xml-characters-javascript
+            const re = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])+/g;
+            const matchResult = xmlString.match(re);
+            if (!matchResult) return '';
+            return matchResult.join('');
+        }
+
         //
         // Function: setSvgString
         // This function sets the current drawing as the input SVG XML.
@@ -5962,6 +5971,7 @@ define([
         this.setSvgString = function (xmlString) {
             try {
                 // convert string into XML document
+                xmlString = sanitizeXmlString(xmlString);
                 console.log(xmlString);
                 var newDoc = svgedit.utilities.text2xml(xmlString);
 
