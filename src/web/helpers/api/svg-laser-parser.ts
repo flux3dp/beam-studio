@@ -395,7 +395,7 @@ export default function(opts) {
                 currentLength = 0,
                 finalBlobs = {},
                 currentName = '';
-            //set scale when devide svg, default value is 254 / 72
+
             if (opts.scale) {
                 args.push('-s');
                 args.push(String(Math.floor(opts.scale * 100) / 100));
@@ -426,6 +426,12 @@ export default function(opts) {
             };
 
             ws.send(args.join(' '));
+
+            if (opts.timeout && opts.timeout > 0) {
+                setTimeout(() => {
+                    $deferred.resolve({res: false, data: 'timeout'});
+                }, opts.timeout);
+            }
             return $deferred.promise();
         },
         divideSVGbyLayer: function(opts?) {
@@ -441,7 +447,7 @@ export default function(opts) {
                 currentLength = 0,
                 finalBlobs = {},
                 currentName = '';
-            //set scale when devide svg, default value is 254 / 72
+
             if (opts.scale) {
                 args.push('-s');
                 args.push(String(Math.floor(opts.scale * 100) / 100));

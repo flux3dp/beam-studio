@@ -18,13 +18,6 @@ export default {
             AlertsAndProgressContextHelper.context.popById(id);
         }
     },
-    popUpDeviceBusy: (id) => {
-        if (!AlertsAndProgressContextHelper.context) {
-            console.log('Alert context not loaded Yet');
-        } else {
-            AlertsAndProgressContextHelper.context.popUpDeviceBusy(id);
-        }
-    },
     renderHyperLink: (text: string, link: string) => {
         return (
             <div className='hyper-link' onClick={()=>electron.remote.shell.openExternal(link)}>

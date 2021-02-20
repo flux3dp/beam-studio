@@ -1,6 +1,3 @@
-import * as i18n from '../../../helpers/i18n';
-import ElectronUpdater from '../../../helpers/electron-updater';
-import FileExportHelper from '../../../helpers/file-export-helper';
 import GlobalInteraction from '../global-interaction';
 import BeamboxActions from '../beambox';
 import BeamboxPreference from './beambox-preference';
@@ -9,7 +6,11 @@ import FnWrapper from './svgeditor-function-wrapper';
 import Tutorials from './tutorials';
 import Alert from '../../contexts/AlertCaller';
 import DialogCaller from '../../contexts/DialogCaller';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+import checkQuestionnaire from 'helpers/check-questionnaire';
+import ElectronUpdater from 'helpers/electron-updater';
+import FileExportHelper from 'helpers/file-export-helper';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
@@ -84,9 +85,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                 BeamboxPreference.write('continuous_drawing', false);
                 Tutorials.startNewUserTutorial(() => {
                     BeamboxPreference.write('continuous_drawing', continuousDrawing);
-                    Alert.popUp({
-                        message: LANG.tutorial_complete,
-                    });
+                    Alert.popUp({ message: LANG.tutorial_complete, });
                 });
             },
             'START_UI_INTRO': () => Tutorials.startInterfaceTutorial(() => {}),
@@ -100,7 +99,25 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'NETWORK_TESTING': () => DialogCaller.showNetworkTestingPanel(),
             'ABOUT_BEAM_STUDIO': () => DialogCaller.showAboutBeamStudio(),
             'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
-            'UPDATE_BS': () => ElectronUpdater.checkForUpdate()
+            'UPDATE_BS': () => ElectronUpdater.checkForUpdate(),
+            'QUESTIONNAIRE': async () => {
+                const res = await checkQuestionnaire();
+                if (!res) {
+                    Alert.popUp({ message: i18n.lang.beambox.popup.questionnaire.unable_to_get_url });
+                    return;
+                }
+                let url = null;
+                if (res.version > 0 && res.urls) {
+                    url = res.urls[i18n.getActiveLang()] || res.urls.en;
+                }
+                if (!url) {
+                    Alert.popUp({ message: i18n.lang.beambox.popup.questionnaire.no_questionnaire_available });
+                    return;
+                }
+                const electron = requireNode('electron');
+                electron.remote.shell.openExternal(url);
+            },
+            'CHANGE_LOGS': () => DialogCaller.showChangLog(),
         };
     }
     attach() {

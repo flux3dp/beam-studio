@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beambox 专案',
+            beam_project_files: 'Beam Studio 专案',
             fcode_files: 'FLUX Code',
             clear_recent: '清除历史纪录',
             path_not_exit: '此路径似乎已不存在于电脑中，请确认是否有更改档案位置。'
@@ -346,6 +346,12 @@ export default {
             sentry: {
                 title: '我们一起让 Beam Studio 变得更好',
                 message: '请问您是否同意在遇到错误时将相关资讯自动上传给开发团队？',
+            },
+            questionnaire: {
+                caption: '协助我们填写问卷',
+                message: '协助我们填写问券，让产品变得更好。',
+                unable_to_get_url: '无法透过网路取得目前最新问卷的连结，请确认您的网路连线状况。',
+                no_questionnaire_available: '目前没有可供填写的问卷。',
             },
         },
         zoom_block: {
@@ -723,6 +729,8 @@ export default {
         added: '新增：',
         fixed: '修正：',
         changed: '更改：',
+        see_older_version: '查看之前版本',
+        help_center_url: 'https://support.flux3dp.com/hc/zh-tw/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 认证失败',

@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beambox 專案',
+            beam_project_files: 'Beam Studio 專案',
             fcode_files: 'FLUX Code',
             clear_recent: '清除歷史紀錄',
             path_not_exit: '此路徑似乎已不存在於電腦中，請確認是否有更改檔案位置。'
@@ -346,6 +346,12 @@ export default {
             sentry: {
                 title: '我們一起讓 Beam Studio 變得更好',
                 message: '請問您是否同意在遇到錯誤時將相關資訊自動上傳給開發團隊？',
+            },
+            questionnaire: {
+                caption: '協助我們填寫問券',
+                message: '協助我們填寫問券，讓產品變得更好。',
+                unable_to_get_url: '無法透過網路取得目前最新問卷的連結，請確認您的網路連線狀況。',
+                no_questionnaire_available: '目前沒有可供填寫的問卷。',
             },
         },
         zoom_block: {
@@ -666,7 +672,7 @@ export default {
             empty_ip: '#818 請先輸入目標 IP 位置',
             start: '檢測',
             end: '結束',
-            testing: '網路檢測中...',
+            testing: '網路檢測中...',
             invalid_ip: '#818 錯誤的 IP 位置',
             ip_startswith_169: '#843 目標 IP 開頭為 169.254',
             connection_quality: '連線品質',
@@ -723,6 +729,8 @@ export default {
         added: '新增：',
         fixed: '修正：',
         changed: '更改：',
+        see_older_version: '查看之前版本',
+        help_center_url: 'https://support.flux3dp.com/hc/zh-tw/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 認證失敗',

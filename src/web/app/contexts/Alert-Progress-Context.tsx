@@ -246,14 +246,6 @@ export class AlertProgressContextProvider extends React.Component {
         return {buttons, checkbox};
     }
 
-    popUpDeviceBusy= (id) => {
-        this.popUp({
-            id,
-            message: i18n.lang.message.device_busy.message,
-            caption: i18n.lang.message.device_busy.caption
-        })
-    }
-
     render() {
         const { alertProgressStack } = this.state;
         const { 
@@ -264,7 +256,6 @@ export class AlertProgressContextProvider extends React.Component {
             updateProgress,
             popLastProgress,
             pushToStack, 
-            popUpDeviceBusy,
         } = this;
         return (
             <AlertProgressContext.Provider value={{
@@ -276,7 +267,6 @@ export class AlertProgressContextProvider extends React.Component {
                 updateProgress,
                 popLastProgress,
                 pushToStack,
-                popUpDeviceBusy,
             }}>
                 {this.props.children}
             </AlertProgressContext.Provider>

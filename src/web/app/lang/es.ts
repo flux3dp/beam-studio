@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Proyecto de Beambox',
+            beam_project_files: 'Proyecto de Beam Studio',
             fcode_files: 'Código FLUX',
             clear_recent: 'Eliminado Recientemente Abierto',
             path_not_exit: 'Esta trayectoria parece no existir en el disco.'
@@ -346,6 +346,12 @@ export default {
             sentry: {
                 title: 'Hagamos juntos Beam Studio mejor',
                 message: '¿Acepta cargar automáticamente información relevante al equipo de desarrollo cuando se produzcan errores?',
+            },
+            questionnaire: {
+                caption: 'Ayúdanos a completar el cuestionario',
+                message: 'Ayúdanos a completar el cuestionario para mejorar Beam Studio.',
+                unable_to_get_url: 'No se pudo obtener el enlace al cuestionario a través de Internet. Confirme su conexión a Internet.',
+                no_questionnaire_available: 'No hay ningún cuestionario disponible en este momento.',
             },
         },
         zoom_block: {
@@ -723,6 +729,8 @@ export default {
         added: 'Adicional:',
         fixed: 'Fija:',
         changed: 'Cambiada:',
+        see_older_version: 'Ver versiones anteriores',
+        help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 Fallo de autenticación',

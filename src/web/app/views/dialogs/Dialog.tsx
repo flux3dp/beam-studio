@@ -23,7 +23,6 @@ export class Dialog extends React.Component {
         const { dialogComponents } = this.context;
         const components = [];
         for (let i = 0; i < dialogComponents.length; i++) {
-            console.log(dialogComponents[i]);
             const { component } = dialogComponents[i];
             components.push(
                 <ComponentWrapper key={i}>

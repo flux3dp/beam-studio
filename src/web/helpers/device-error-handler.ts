@@ -25,38 +25,12 @@ const self = {
         let errorOutput = '';
 
         if (error.length) {
-            if (error.length === 4) {
-                // for wrong toolhead type;
-                if (error[1] === 'TYPE_ERROR') {
-                    errorOutput = lang.monitor[error.slice(0, 2).join('_')];
-                }
-                if (errorOutput === '') {
-                    errorOutput = (error.length >= 2) ? lang.monitor[error.slice(0, 2).join('_')] : error.join('_');
-                }
-            } else if (error.length === 3) {
-                if (error[1] === 'TYPE_ERROR') {
-                    errorOutput = lang.monitor[error.slice(0, 2).join('_')];
-                }
-                if (errorOutput === '') {
-                    errorOutput = (error.length >= 2) ? lang.monitor[error.slice(0, 2).join('_')] : error.join('_');
-                }
-            } else {
-                if (lang.generic_error[error[0]]) {
-                    return lang.generic_error[error[0]];
-                }
-                errorOutput = lang.monitor[error.slice(0, 2).join('_')];
-                if (errorOutput === '' || typeof errorOutput === 'undefined') {
-                    errorOutput = error.join(' ');
-                }
+            if (lang.generic_error[error[0]]) {
+                return lang.generic_error[error[0]];
             }
-
-            // special case for Pressure sensor failed
-            // ["HARDWARE_ERROR",  "SENSOR_ERROR", "FSR", "X-"]
-            // ["HARDWARE_ERROR",  "SENSOR_ERROR", "FSR", "X-", "Y-"]
-            // ["HARDWARE_ERROR",  "SENSOR_ERROR", "FSR", "X-", "Y-", "Z-"]
-            if(error.slice(0,3).join('_') === 'HARDWARE_ERROR_SENSOR_ERROR_FSR') {
-                errorOutput = lang.monitor[error.slice(0, 3).join('_')];
-                errorOutput = `${errorOutput} ${error.slice(3).join(' ')}`;
+            errorOutput = lang.monitor[error.slice(0, 2).join('_')];
+            if (errorOutput === '' || typeof errorOutput === 'undefined') {
+                errorOutput = error.join(' ');
             }
         }
 

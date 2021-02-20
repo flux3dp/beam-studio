@@ -112,7 +112,7 @@ export interface ILang {
             svg_files: string,
             png_files: string,
             jpg_files: string,
-            bvg_files: string,
+            beam_project_files: string,
             fcode_files: string,
             clear_recent: string,
             path_not_exit: string,
@@ -344,6 +344,12 @@ export interface ILang {
             sentry: {
                 title: string,
                 message: string,
+            },
+            questionnaire: {
+                caption: string,
+                message: string,
+                unable_to_get_url: string,
+                no_questionnaire_available: string,
             },
         },
         zoom_block: {
@@ -721,6 +727,8 @@ export interface ILang {
         added: string,
         fixed: string,
         changed: string,
+        see_older_version: string,
+        help_center_url: string,
     },
     select_printer: {
         auth_failure: string,

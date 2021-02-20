@@ -2,22 +2,24 @@ import SelectView from '../../../widgets/Select';
 import * as i18n from '../../../../helpers/i18n';
 
 const React = requireNode('react');
+const classNames = requireNode('classnames');
 const LANG = i18n.lang.beambox.tool_panels;
 class OffsetCornerPanel extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            cornerType: this.props.cornerType
+            cornerType: this.props.cornerType,
+            isCollapsed: false,
         };
     }
 
-    _updateOffsetCorner(val) {
+    updateOffsetCorner(val) {
         this.props.onValueChange(val);
         this.setState({ cornerType: val });
     }
 
-    _getOffsetCorner() {
+    getOffsetCorner() {
         const typeNameMap = {
             'sharp': LANG._offset.sharp,
             'round': LANG._offset.round
@@ -26,6 +28,7 @@ class OffsetCornerPanel extends React.Component {
     }
 
     render() {
+        const { isCollapsed } = this.state;
         const options = [
             {
                 value: 'sharp',
@@ -42,19 +45,19 @@ class OffsetCornerPanel extends React.Component {
             <div className="tool-panel">
                 <label className="controls accordion">
                     <input type="checkbox" className="accordion-switcher" defaultChecked={true} />
-                    <p className="caption">
+                    <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
                         {LANG._offset.corner_type}
-                        <span className="value">{this._getOffsetCorner()}</span>
+                        <span className="value">{this.getOffsetCorner()}</span>
                     </p>
-                    <label className="accordion-body">
+                    <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
                         <div className="control offset-corner">
                         <SelectView
                             id='select-offset-corner'
                             options={options}
-                            onChange={e => {this._updateOffsetCorner(e.target.value)}}
+                            onChange={e => {this.updateOffsetCorner(e.target.value)}}
                         />
                         </div>
-                    </label>
+                    </div>
                 </label>
             </div>
         );

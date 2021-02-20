@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            bvg_files: 'Beamboxプロジェクト',
+            beam_project_files: 'Beam Studioプロジェクト',
             fcode_files: 'FLUXコード',
             clear_recent: '最近開いた項目をクリア',
             path_not_exit: 'このパスは、デスク上にもう存在しないようです。'
@@ -346,6 +346,12 @@ export default {
             sentry: {
                 title: '一緒にBeamStudioをもっと良くしましょう',
                 message: 'エラーが発生したときに、関連情報を開発チームに自動的にアップロードすることに同意しますか？',
+            },
+            questionnaire: {
+                caption: 'アンケートへの記入にご協力ください',
+                message: 'Beam Studioを改善するために、アンケートへの記入にご協力ください。',
+                unable_to_get_url: 'インターネット経由でアンケートへのリンクを取得できませんでした。インターネット接続を確認してください。',
+                no_questionnaire_available: '現在、利用可能なアンケートはありません。',
             },
         },
         zoom_block: {
@@ -723,6 +729,8 @@ export default {
         added: '追加：',
         fixed: '修正：',
         changed: '変更：',
+        see_older_version: '以前のバージョンを見る',
+        help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_printer: {
         auth_failure: '#811 認証失敗',

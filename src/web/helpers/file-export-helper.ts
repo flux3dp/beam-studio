@@ -33,7 +33,7 @@ const saveAsFile = async () => {
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
     const langFile = LANG.topmenu.file;
     const ImageSource = await svgCanvas.getImageSource();
-    const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.bvg_files, ['beam'], defaultFileName);
+    const currentFilePath = await BeamFileHelper.getFilePath(langFile.save_scene, langFile.all_files, langFile.beam_project_files, ['beam'], defaultFileName);
     if (currentFilePath) {
         svgCanvas.currentFilePath = currentFilePath;
         await BeamFileHelper.saveBeam(currentFilePath, output, ImageSource);
@@ -80,7 +80,7 @@ const exportAsBVG = async () => {
     SymbolMaker.switchImageSymbolForAll(true);
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
     const langFile = LANG.topmenu.file;
-    let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.bvg_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
+    let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.beam_project_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
     if (currentFilePath) {
         setCurrentFileName(currentFilePath);
         svgCanvas.setHasUnsavedChange(false, false);

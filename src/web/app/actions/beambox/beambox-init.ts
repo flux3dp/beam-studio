@@ -20,6 +20,7 @@ import AlertConfig from 'helpers/api/alert-config';
 import Config from 'helpers/api/config';
 import checkDeviceStatus from 'helpers/check-device-status';
 import checkFirmware from 'helpers/check-firmware';
+import checkQuestionnaire from 'helpers/check-questionnaire';
 import DeviceMaster from 'helpers/device-master';
 import firmwareUpdater from 'helpers/firmware-updater';
 import OutputError from 'helpers/output-error';
@@ -489,6 +490,7 @@ const showStartUpDialogs = async () => {
             await showChangeLog();
         }
         LocalStorage.set('last-installed-version', window['FLUX'].version);
+        await showQuestionnaire();
     }
     checkOSVersion();
     LocalStorage.removeAt('new-user');
@@ -568,6 +570,40 @@ const showTutorial = (isNewUser: boolean) => {
 const showChangeLog = () => {
     return new Promise<void>((resolve) => {
         DialogCaller.showChangLog({ callback: () => resolve() });
+    });
+};
+
+const showQuestionnaire = async () => {
+    let lastQuestionnaireVersion = LocalStorage.get('questionnaire-version') || 0;
+    const res = await checkQuestionnaire();
+    console.log(res, lastQuestionnaireVersion);
+
+    if (!res || res.version <= lastQuestionnaireVersion) return;
+
+    let url: string;
+    if (res.urls) {
+        url = res.urls[i18n.getActiveLang()] || res.urls.en;
+    }
+    if (!url) return;
+    
+    LocalStorage.set('questionnaire-version', res.version);
+
+    return new Promise<void>((resolve) => {
+        Alert.popUp({ 
+            id: 'qustionnaire',
+            caption: i18n.lang.beambox.popup.questionnaire.caption,
+            message: i18n.lang.beambox.popup.questionnaire.message,
+            iconUrl: 'img/beambox/icon-questionnaire.svg',
+            buttonType: AlertConstants.YES_NO,
+            onYes: () => {
+                const electron = requireNode('electron');
+                electron.remote.shell.openExternal(url);
+                resolve();
+            },
+            onNo: () => {
+                resolve();
+            }
+        });
     });
 };
 

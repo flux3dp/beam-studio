@@ -136,16 +136,9 @@ export class LayerPanel extends React.Component {
 
         DialogCaller.promptDialog({
             caption: LANG.notification.newName,
-            defaultValue: '',
-            onYes: (newName) => {
-                if (!newName) {
-                    return;
-                }
-                if (oldName === newName) {
-                    Alert.popUp({
-                        id: 'old_layer_name',
-                        message: LANG.notification.layerHasThatName,
-                    });
+            defaultValue: oldName,
+            onYes: (newName: string) => {
+                if (!newName || oldName === newName) {
                     return;
                 } else if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
                     Alert.popUp({
