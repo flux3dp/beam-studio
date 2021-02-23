@@ -50,6 +50,7 @@ define([
     'helpers/beam-file-helper',
     'helpers/bezier-fit-curve',
     'helpers/image-data',
+    'helpers/laser-config-helper',
     'helpers/layer-helper',
     'helpers/local-storage',
     'helpers/shortcuts',
@@ -79,6 +80,7 @@ define([
     BeamFileHelper,
     BezierFitCurve,
     ImageData,
+    LaserConfigHelper,
     LayerHelper,
     LocalStorage,
     shortcuts,
@@ -7072,6 +7074,7 @@ define([
 
             // create empty first layer
             canvas.createLayer(LANG.right_panel.layer_panel.layer1);
+            LaserConfigHelper.initLayerConfig(LANG.right_panel.layer_panel.layer1);
 
             // clear the undo stack
             canvas.undoMgr.resetUndoStack();
