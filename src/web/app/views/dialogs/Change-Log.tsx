@@ -14,6 +14,7 @@ const CHANGES_TW = {
         '新增『使用當前字體』按鈕於文字轉換為路徑時跳出的警告視窗。',
     ],
     fixed: [
+        '修正 第一圖層雷射不出光的問題。',
         '修正 Mac 系統偏好設定總是顯示捲軸狀態下，Beam Stuido 介面右側破版問題。',
         '修正 Beam Studio專案生成雕刻檔時，隨機產生不預期切割線段問題。',
         '修正 『替換影像』功能。',
@@ -68,6 +69,7 @@ const CHANGES_EN = {
         'Added "Use Current Font" button in "Convert to Path" warning dialog.',
     ],
     fixed: [
+        'Fixed the problem that the first layer of objects could not emit laser light.',
         'Fixed right panel layout issue of Beam Studio when the Mac preference "show scroll bars" is set to "always".',
         'Fixed unexpected cutting lines randomly generated when calculating Beam Studio task.',
         'Fixed "Replace with..." function.',
