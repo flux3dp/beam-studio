@@ -32,10 +32,10 @@ import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
 import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
 import PreviewModeController from './preview-mode-controller';
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../alert-caller';
 import AlertConstants from '../../constants/alert-constants';
-import Progress from '../../contexts/ProgressCaller';
-import DialogCaller from 'app/contexts/DialogCaller';
+import Progress from '../progress-caller';
+import Dialog from 'app/actions/dialog-caller';
 import AwsHelper from '../../../helpers/aws-helper';
 import BeamFileHelper from '../../../helpers/beam-file-helper';
 import ImageData from '../../../helpers/image-data';
@@ -5985,7 +5985,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         alert("DXF Parsing Error");
                         return;
                     }
-                    const unitLength = await DialogCaller.showDxfDpiSelector(defaultDpiValue);
+                    const unitLength = await Dialog.showDxfDpiSelector(defaultDpiValue);
                     if (!unitLength) {
                         return;
                     }

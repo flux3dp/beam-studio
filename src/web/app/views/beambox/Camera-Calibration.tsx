@@ -4,9 +4,9 @@ import BeamboxPreference from '../../actions/beambox/beambox-preference';
 import Constant from '../../actions/beambox/constant';
 import PreviewModeController from '../../actions/beambox/preview-mode-controller';
 import AlertConstants from '../../constants/alert-constants';
-import Alert from '../../contexts/AlertCaller';
-import Dialog from '../../contexts/DialogCaller';
-import Progress from '../../contexts/ProgressCaller';
+import Alert from '../../actions/alert-caller';
+import Dialog from '../../actions/dialog-caller';
+import Progress from '../../actions/progress-caller';
 import AlertDialog from '../../widgets/AlertDialog';
 import Modal from '../../widgets/Modal';
 import UnitInput from '../../widgets/Unit-Input-v2';
@@ -717,7 +717,7 @@ const StepFinish = ({parent, onClose}) => (
 
 export default CameraCalibrationComponent;
 
-// Not putting this in DialogCaller to avoid circular import because DeviceMaster imports DialogCaller
+// Not putting this in dialog-caller to avoid circular import because DeviceMaster imports dialog
 export const showCameraCalibration = (device, isBorderless: boolean) => {
     if (Dialog.isIdExist('camera-cali')) return;
     Dialog.addDialogComponent('camera-cali',

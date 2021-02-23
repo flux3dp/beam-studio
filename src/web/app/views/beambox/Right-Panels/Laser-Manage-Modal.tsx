@@ -1,7 +1,7 @@
 import Modal from '../../../widgets/Modal';
 import UnitInput from '../../../widgets/Unit-Input-v2';
-import DialogCaller from '../../../contexts/DialogCaller';
-import Alert from '../../../contexts/AlertCaller';
+import Dialog from '../../../actions/dialog-caller';
+import Alert from '../../../actions/alert-caller';
 import AlertConstants from '../../../constants/alert-constants';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import RightPanelConstants from '../../../constants/right-panel-constants';
@@ -222,7 +222,7 @@ class LaserManageModal extends React.Component {
     }
 
     addConfig = () => {
-        DialogCaller.promptDialog({
+        Dialog.promptDialog({
             caption: LANG.new_config_name,
             defaultValue: '',
             onYes: (newName) => {

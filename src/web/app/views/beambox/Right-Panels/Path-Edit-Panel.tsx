@@ -1,8 +1,4 @@
-import DimensionPanel from '../../../views/beambox/Right-Panels/Dimension-Panel';
 import SegmentedControl from '../../../widgets/Segmented-Control';
-import DialogCaller from '../../../contexts/DialogCaller';
-import Alert from '../../../contexts/AlertCaller';
-import AlertConstants from '../../../constants/alert-constants';
 import * as i18n from '../../../../helpers/i18n';
 import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
 let svgCanvas, svgedit;

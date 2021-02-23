@@ -1,7 +1,7 @@
 import Modal from '../../widgets/Modal';
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../../actions/alert-caller';
 import AlertConstants from '../../constants/alert-constants';
-import Progress from '../../contexts/ProgressCaller';
+import Progress from '../../actions/progress-caller';
 import KeycodeConstants from '../../constants/keycode-constants';
 import Discover from '../../../helpers/api/discover';
 import * as i18n from '../../../helpers/i18n';

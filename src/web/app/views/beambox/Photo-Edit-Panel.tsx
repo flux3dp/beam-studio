@@ -5,7 +5,7 @@ import Constants from '../../actions/beambox/constant'
 import * as i18n from '../../../helpers/i18n';
 import ImageData from '../../../helpers/image-data';
 import JimpHelper from '../../../helpers/JimpHelper';
-import Progress from '../../contexts/ProgressCaller';
+import Progress from '../../actions/progress-caller';
 import Modal from '../../widgets/Modal';
 import ButtonGroup from '../../widgets/Button-Group';
 import CurveControl from '../../widgets/Curve-Control';

@@ -4,9 +4,9 @@
  * binary for mac is built from makefile with dependencies packed by macpack: https://github.com/chearon/macpack
  */
 import * as i18n from './i18n';
-import Alert from '../app/contexts/AlertCaller';
+import Alert from '../app/actions/alert-caller';
 import AlertConstants from '../app/constants/alert-constants';
-import Progress from '../app/contexts/ProgressCaller';
+import Progress from '../app/actions/progress-caller';
 import { getSVGAsync } from './svg-editor-helper';
 let svgCanvas;
 let svgEditor;

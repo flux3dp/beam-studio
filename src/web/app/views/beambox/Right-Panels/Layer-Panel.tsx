@@ -3,8 +3,8 @@ import { initLayerConfig, cloneLayerConfig } from '../../../../helpers/laser-con
 import { sortLayerNamesByPosition, getLayerElementByName, deleteLayers, cloneSelectedLayers, setLayersLock, mergeSelectedLayers, moveLayersToPosition  } from '../../../../helpers/layer-helper';
 import LaserPanel from './Laser-Panel';
 import ColorPickerPanel from '../Color-Picker-Panel';
-import DialogCaller from '../../../contexts/DialogCaller';
-import Alert from '../../../contexts/AlertCaller';
+import Dialog from '../../../actions/dialog-caller';
+import Alert from '../../../actions/alert-caller';
 import AlertConstants from '../../../constants/alert-constants';
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../../constants/tutorial-constants';
@@ -134,7 +134,7 @@ export class LayerPanel extends React.Component {
         const drawing = svgCanvas.getCurrentDrawing();
         const oldName = drawing.getCurrentLayerName();
 
-        DialogCaller.promptDialog({
+        Dialog.promptDialog({
             caption: LANG.notification.newName,
             defaultValue: oldName,
             onYes: (newName: string) => {

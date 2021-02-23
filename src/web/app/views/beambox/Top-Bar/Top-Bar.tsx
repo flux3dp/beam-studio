@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
-import Alert from '../../../contexts/AlertCaller';
+import Alert from '../../../actions/alert-caller';
 import AlertConstants from '../../../constants/alert-constants';
 import { ConnectionError } from '../../../constants/connection-constants';
-import Progress from '../../../contexts/ProgressCaller';
+import Progress from '../../../actions/progress-caller';
 import BeamboxActions from '../../../actions/beambox';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import ExportFuncs from '../../../actions/beambox/export-funcs';
@@ -11,7 +11,7 @@ import Constant from '../../../actions/beambox/constant';
 import OpenBottomBoundaryDrawer from '../../../actions/beambox/open-bottom-boundary-drawer';
 import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
 import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer';
-import DialogCaller from '../../../contexts/DialogCaller';
+import Dialog from '../../../actions/dialog-caller';
 import Modal from '../../../widgets/Modal';
 import LeftPanel from '../Left-Panels/Left-Panel';
 import { ITopBarContext, TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context';
@@ -337,7 +337,7 @@ export class TopBar extends React.Component {
         SymbolMaker.switchImageSymbolForAll(true);
 
         if (isPowerTooHigh) {
-            const confirmed = await DialogCaller.showConfirmPromptDialog({
+            const confirmed = await Dialog.showConfirmPromptDialog({
                 caption: LANG.alerts.power_too_high,
                 message: LANG.alerts.power_too_high_msg,
                 confirmValue: LANG.alerts.power_too_high_confirm,

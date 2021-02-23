@@ -1,7 +1,7 @@
 /**
  * Make symbol elements for <use> element
  */
-import Progress from '../app/contexts/ProgressCaller';
+import Progress from '../app/actions/progress-caller';
 import { getSVGAsync } from './svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });

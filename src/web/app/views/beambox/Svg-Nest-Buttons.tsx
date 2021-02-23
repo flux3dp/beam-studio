@@ -1,4 +1,4 @@
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../../actions/alert-caller';
 import Constant from '../../actions/beambox/constant';
 import Modal from '../../widgets/Modal';
 import * as i18n from 'helpers/i18n';

@@ -6,7 +6,7 @@ import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
 import ElectronDialogs from '../../../actions/electron-dialogs';
 import RightPanelConstants from '../../../constants/right-panel-constants';
 import BeamboxStore from '../../../stores/beambox-store';
-import DialogCaller from '../../../contexts/DialogCaller';
+import Dialog from '../../../actions/dialog-caller';
 import UnitInput from '../../../widgets/Unit-Input-v2';
 import DropdownControl from '../../../widgets/Dropdown-Control';
 import LaserManageModal from './Laser-Manage-Modal';
@@ -14,7 +14,7 @@ import LocalStorage from '../../../../helpers/local-storage';
 import * as i18n from '../../../../helpers/i18n';
 import { DataType, getLayerConfig, getLayersConfig, writeData, CUSTOM_PRESET_CONSTANT } from '../../../../helpers/laser-config-helper';
 import { getLayerElementByName } from '../../../../helpers/layer-helper';
-import Alert from '../../../contexts/AlertCaller';
+import Alert from '../../../actions/alert-caller';
 import AlertConstants from '../../../constants/alert-constants';
 import { clearEstimatedTime } from '../../../views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller'
 import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
@@ -355,7 +355,7 @@ class LaserPanel extends React.PureComponent {
             return;
         }
         if (value === 'save') {
-            DialogCaller.promptDialog({
+            Dialog.promptDialog({
                 caption: LANG.dropdown.save,
                 onYes: (name) => {
                     name = name.trim();
@@ -706,7 +706,7 @@ class LaserPanel extends React.PureComponent {
             <div className={classNames('add-preset-btn', { disabled: isDiabled })} onClick={() => {
                 if (isDiabled) return;
 
-                DialogCaller.promptDialog({
+                Dialog.promptDialog({
                     caption: LANG.dropdown.save,
                     onYes: (name) => {
                         name = name.trim();

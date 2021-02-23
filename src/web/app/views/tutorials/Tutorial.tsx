@@ -1,7 +1,7 @@
 import DialogBox from '../../widgets/Dialog-Box';
 import Modal from '../../widgets/Modal';
 import ModalWithHole from '../../widgets/Modal-With-Hole';
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../../actions/alert-caller';
 import AlertConstants from '../../constants/alert-constants';
 import { TutorialCallbacks } from '../../constants/tutorial-constants';
 import * as i18n from '../../../helpers/i18n';

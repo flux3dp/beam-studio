@@ -1,7 +1,7 @@
 import Modal from '../../widgets/Modal';
 import UnitInput from '../../widgets/Unit-Input-v2';
 import ValidationTextInput from '../../widgets/Validation-Text-Input';
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../../actions/alert-caller';
 import AlertConstants from '../../constants/alert-constants';
 import LocalStorage from '../../../helpers/local-storage';
 import * as i18n from '../../../helpers/i18n';

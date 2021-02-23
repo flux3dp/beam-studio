@@ -1,9 +1,9 @@
 import * as i18n from './i18n';
 import sprintf from './sprintf';
-import Alert from '../app/contexts/AlertCaller';
-import DialogCaller from 'app/contexts/DialogCaller';
+import Alert from '../app/actions/alert-caller';
+import Dialog from 'app/actions/dialog-caller';
 import AlertConstants from '../app/constants/alert-constants';
-import Progress from '../app/contexts/ProgressCaller';
+import Progress from '../app/actions/progress-caller';
 import DeviceConstants from '../app/constants/device-constants';
 import { SelectionResult, ConnectionError } from '../app/constants/connection-constants';
 import Control from './api/control';
@@ -190,7 +190,7 @@ class DeviceMaster {
     async showAuthDialog(uuid: string): Promise<boolean> { // return authed or not
         const device = this.getDeviceByUUID(uuid);
         let authResult = await new Promise<{success:boolean,data:any,password:string}>((resolve, reject) => {
-            DialogCaller.showInputLightbox('auth', {
+            Dialog.showInputLightbox('auth', {
                 caption: sprintf(lang.input_machine_password.require_password, device.info.name),
                 inputHeader: lang.input_machine_password.password,
                 confirmText: lang.input_machine_password.connect,

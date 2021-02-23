@@ -1,8 +1,8 @@
 import * as i18n from '../../../helpers/i18n';
-import Progress from '../../contexts/ProgressCaller';
-import Alert from '../../contexts/AlertCaller';
+import Progress from '../progress-caller';
+import Alert from '../alert-caller';
 import TutorialConstants from '../../constants/tutorial-constants';
-import DialogCaller from '../../contexts/DialogCaller';
+import Dialog from '../dialog-caller';
 import Discover from '../../../helpers/api/discover';
 import DeviceList from '../../../helpers/device-list';
 
@@ -34,7 +34,7 @@ const startNewUserTutorial = async (callback) => {
     const isAnyMachineAvailable = await getMachineForTutorial();
     Progress.popById('tutorial-find-machine');
     if (isAnyMachineAvailable) {
-        DialogCaller.showTutorial(TutorialConstants.NEW_USER_TUTORIAL, callback);
+        Dialog.showTutorial(TutorialConstants.NEW_USER_TUTORIAL, callback);
     } else {
         const buttons = [
             {
@@ -65,7 +65,7 @@ const startNewUserTutorial = async (callback) => {
 };
 
 const startInterfaceTutorial = (callback) => {
-    DialogCaller.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
+    Dialog.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
 }
 
 export default {

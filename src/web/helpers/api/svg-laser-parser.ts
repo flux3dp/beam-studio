@@ -3,9 +3,9 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
 import $ from 'jquery';
-import Alert from '../../app/contexts/AlertCaller';
+import Alert from '../../app/actions/alert-caller';
 import AlertConstants from '../../app/constants/alert-constants';
-import Progress from '../../app/contexts/ProgressCaller';
+import Progress from '../../app/actions/progress-caller';
 import BeamboxPreference from '../../app/actions/beambox/beambox-preference';
 import Websocket from '../websocket';
 import convertToTypedArray from '../convertToTypedArray';

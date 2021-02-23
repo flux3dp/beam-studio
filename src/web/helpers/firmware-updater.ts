@@ -3,13 +3,13 @@
  */
 import * as i18n from './i18n';
 import DeviceMaster from './device-master';
-import Alert from '../app/contexts/AlertCaller';
+import Alert from '../app/actions/alert-caller';
 import AlertConstants from '../app/constants/alert-constants';
 import AlertActions from '../app/actions/alert-actions';
-import Dialog from '../app/contexts/DialogCaller';
-import Progress from '../app/contexts/ProgressCaller';
+import Dialog from '../app/actions/dialog-caller';
+import Progress from '../app/actions/progress-caller';
 import InputLightboxConstants from '../app/constants/input-lightbox-constants';
-    
+
 
 export default function(response, printer, type: string, forceUpdate?: boolean) {
     var lang = i18n.lang,

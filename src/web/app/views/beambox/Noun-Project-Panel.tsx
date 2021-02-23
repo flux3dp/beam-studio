@@ -1,6 +1,6 @@
 import Modal from '../../widgets/Modal';
 import DraggableWindow from '../../widgets/Draggble-Window';
-import Progress from '../../contexts/ProgressCaller';
+import Progress from '../../actions/progress-caller';
 import LocalStorage from '../../../helpers/local-storage';
 import { getSVGAsync } from '../../../helpers/svg-editor-helper';
 import { IData, IIcon } from '../../../interfaces/INoun-Project';

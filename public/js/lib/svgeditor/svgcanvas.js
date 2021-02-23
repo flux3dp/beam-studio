@@ -29,7 +29,7 @@
 define([
     'helpers/i18n',
     'app/actions/beambox/beambox-preference',
-    'app/contexts/AlertCaller',
+    'app/actions/alert-caller',
     'app/constants/alert-constants',
     'app/actions/beambox/preview-mode-controller',
     'app/views/beambox/Right-Panels/contexts/LayerPanelController',
@@ -44,7 +44,7 @@ define([
     'app/actions/beambox',
     'app/actions/beambox/constant',
     'app/actions/beambox/open-bottom-boundary-drawer',
-    'app/contexts/ProgressCaller',
+    'app/actions/progress-caller',
     'helpers/api/config',
     'helpers/beam-file-helper',
     'helpers/bezier-fit-curve',

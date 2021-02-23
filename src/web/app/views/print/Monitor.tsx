@@ -5,7 +5,7 @@ import Constant from '../../actions/beambox/constant';
 import AlertActions from '../../actions/alert-actions';
 import ElectronDialogs from '../../actions/electron-dialogs';
 import AlertStore from '../../stores/alert-store';
-import Progress from '../../contexts/ProgressCaller';
+import Progress from '../../actions/progress-caller';
 import DeviceConstants from '../../constants/device-constants';
 import GlobalActions from '../../actions/global-actions';
 import GlobalConstants from '../../constants/global-constants';

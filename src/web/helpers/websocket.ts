@@ -1,7 +1,7 @@
 import isJson from './is-json';
 import LocalStorage from './local-storage';
 import * as i18n from './i18n';
-import Alert from '../app/contexts/AlertCaller';
+import Alert from '../app/actions/alert-caller';
 import AlertStore from '../app/stores/alert-store';
 import AlertConstants from '../app/constants/alert-constants';
 import outputError from './output-error';

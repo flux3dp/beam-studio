@@ -3,10 +3,6 @@ import InFillBlock from '../../../views/beambox/Right-Panels/Options-Blocks/Infi
 import RectOptions from '../../../views/beambox/Right-Panels/Options-Blocks/Rect-Options';
 import ImageOptions from '../../../views/beambox/Right-Panels/Options-Blocks/Image-Options';
 import TextOptions from '../../../views/beambox/Right-Panels/Options-Blocks/Text-Options';
-import DialogCaller from '../../../contexts/DialogCaller';
-import Alert from '../../../contexts/AlertCaller';
-import AlertConstants from '../../../constants/alert-constants';
-import Constant from '../../../actions/beambox/constant';
 import * as i18n from '../../../../helpers/i18n';
 
 const React = requireNode('react');

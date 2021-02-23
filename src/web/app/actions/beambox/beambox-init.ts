@@ -12,9 +12,9 @@ import AlertConstants from '../../constants/alert-constants';
 import DeviceConstants from '../../constants/device-constants';
 import FontConstants from '../../constants/font-constants';
 import GlobalConstants from '../../constants/global-constants';
-import Alert from '../../contexts/AlertCaller';
-import Progress from '../../contexts/ProgressCaller';
-import DialogCaller from '../../contexts/DialogCaller';
+import Alert from '../alert-caller';
+import Progress from '../progress-caller';
+import Dialog from '../dialog-caller';
 import AlertStore from '../../stores/alert-store';
 import AlertConfig from 'helpers/api/alert-config';
 import Config from 'helpers/api/config';
@@ -297,7 +297,7 @@ const initMenuBarEvents = () => {
                     message: info,
                     buttonLabels: [lang.topmenu.device.network_test, lang.topmenu.ok],
                     callbacks: [
-                        () => {DialogCaller.showNetworkTestingPanel(device.ipaddr)},
+                        () => {Dialog.showNetworkTestingPanel(device.ipaddr)},
                         () => {}
                     ],
                     primaryButtonIndex: 1
@@ -569,7 +569,7 @@ const showTutorial = (isNewUser: boolean) => {
 
 const showChangeLog = () => {
     return new Promise<void>((resolve) => {
-        DialogCaller.showChangLog({ callback: () => resolve() });
+        Dialog.showChangLog({ callback: () => resolve() });
     });
 };
 

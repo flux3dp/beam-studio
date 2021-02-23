@@ -1,7 +1,7 @@
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
 import FontFuncs from '../../../actions/beambox/font-funcs';
-import Progress from '../../../contexts/ProgressCaller';
-import DialogCaller from '../../../contexts/DialogCaller';
+import Progress from '../../../actions/progress-caller';
+import Dialog from '../../../actions/dialog-caller';
 import Constant from '../../../actions/beambox/constant';
 import BeamboxPreference from '../../../actions/beambox/beambox-preference';
 import * as i18n from '../../../../helpers/i18n';
@@ -84,11 +84,11 @@ class ActionsPanel extends React.Component {
         let content = [];
         content.push(this.renderButtons(LANG.replace_with, () => this.replaceImage(), true));
         content.push(this.renderButtons(LANG.trace, () => svgCanvas.imageToSVG(), false, isShading));
-        content.push(this.renderButtons(LANG.grading, () => DialogCaller.showPhotoEditPanel('curve'), false));
-        content.push(this.renderButtons(LANG.sharpen, () => DialogCaller.showPhotoEditPanel('sharpen'), false));
-        content.push(this.renderButtons(LANG.crop, () => DialogCaller.showPhotoEditPanel('crop'), false));
-        content.push(this.renderButtons(LANG.bevel, () => DialogCaller.showPhotoEditPanel('stamp'), false));
-        content.push(this.renderButtons(LANG.invert, () => DialogCaller.showPhotoEditPanel('invert'), false));
+        content.push(this.renderButtons(LANG.grading, () => Dialog.showPhotoEditPanel('curve'), false));
+        content.push(this.renderButtons(LANG.sharpen, () => Dialog.showPhotoEditPanel('sharpen'), false));
+        content.push(this.renderButtons(LANG.crop, () => Dialog.showPhotoEditPanel('crop'), false));
+        content.push(this.renderButtons(LANG.bevel, () => Dialog.showPhotoEditPanel('stamp'), false));
+        content.push(this.renderButtons(LANG.invert, () => Dialog.showPhotoEditPanel('invert'), false));
         content.push(this.renderButtons(LANG.array, () => svgEditor.triggerGridTool(), false));
         return content;
     }

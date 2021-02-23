@@ -3,10 +3,10 @@
  */
 import * as i18n from './i18n';
 import Logger from './logger';
-import Alert from '../app/contexts/AlertCaller';
+import Alert from '../app/actions/alert-caller';
 import AlertConstants from '../app/constants/alert-constants';
 import ElectronDialogs from '../app/actions/electron-dialogs';
-import Progress from '../app/contexts/ProgressCaller';
+import Progress from '../app/actions/progress-caller';
 const Store = requireNode('electron-store');
 const store = new Store();
 

@@ -1,5 +1,5 @@
-import Alert from '../app/contexts/AlertCaller';
-import Progress from '../app/contexts/ProgressCaller';
+import Alert from '../app/actions/alert-caller';
+import Progress from '../app/actions/progress-caller';
 import BeamFileHelper from './beam-file-helper';
 import SymbolMaker from './symbol-maker';
 import * as i18n from './i18n';

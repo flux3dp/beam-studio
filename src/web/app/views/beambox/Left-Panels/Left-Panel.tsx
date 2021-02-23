@@ -1,6 +1,6 @@
 import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Panel-Controller';
 import BeamboxActions from '../../../actions/beambox';
-import DialogCaller from '../../../contexts/DialogCaller';
+import Dialog from '../../../actions/dialog-caller';
 import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
 import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer';
 import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
@@ -138,7 +138,7 @@ class LeftPanel extends React.Component {
                     {this._renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
                     {this._renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
                     {this._renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
-                    {this._renderToolButton('np', 'Icons', 'Open Shape Library', DialogCaller.showNounProjectPanel)}
+                    {this._renderToolButton('np', 'Icons', 'Open Shape Library', Dialog.showNounProjectPanel)}
                 </div>
             );
         } else {

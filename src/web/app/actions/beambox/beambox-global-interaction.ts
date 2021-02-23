@@ -4,8 +4,8 @@ import BeamboxPreference from './beambox-preference';
 import ExportFuncs from './export-funcs';
 import FnWrapper from './svgeditor-function-wrapper';
 import Tutorials from './tutorials';
-import Alert from '../../contexts/AlertCaller';
-import DialogCaller from '../../contexts/DialogCaller';
+import Alert from '../alert-caller';
+import Dialog from '../dialog-caller';
 import checkQuestionnaire from 'helpers/check-questionnaire';
 import ElectronUpdater from 'helpers/electron-updater';
 import FileExportHelper from 'helpers/file-export-helper';
@@ -66,18 +66,18 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'UNGROUP': () => FnWrapper.ungroupSelected(),
             'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
             'OFFSET': () => svgEditor.triggerOffsetTool(),
-            'IMAGE_SHARPEN': () => DialogCaller.showPhotoEditPanel('sharpen'),
-            'IMAGE_CROP': () => DialogCaller.showPhotoEditPanel('crop'),
-            'IMAGE_INVERT': () => DialogCaller.showPhotoEditPanel('invert'),
-            'IMAGE_STAMP': () => DialogCaller.showPhotoEditPanel('stamp'),
+            'IMAGE_SHARPEN': () => Dialog.showPhotoEditPanel('sharpen'),
+            'IMAGE_CROP': () => Dialog.showPhotoEditPanel('crop'),
+            'IMAGE_INVERT': () => Dialog.showPhotoEditPanel('invert'),
+            'IMAGE_STAMP': () => Dialog.showPhotoEditPanel('stamp'),
             'IMAGE_VECTORIZE': () => svgCanvas.imageToSVG(),
-            'IMAGE_CURVE': () => DialogCaller.showPhotoEditPanel('curve'),
+            'IMAGE_CURVE': () => Dialog.showPhotoEditPanel('curve'),
             'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
             'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
             'DECOMPOSE_PATH': () => svgCanvas.decomposePath(),
-            'SVG_NEST': () => DialogCaller.showSvgNestButtons(),
-            'LAYER_COLOR_CONFIG': () => DialogCaller.showLayerColorConfig(),
-            'DOCUMENT_SETTING': () => DialogCaller.showDocumentSettings(),
+            'SVG_NEST': () => Dialog.showSvgNestButtons(),
+            'LAYER_COLOR_CONFIG': () => Dialog.showLayerColorConfig(),
+            'DOCUMENT_SETTING': () => Dialog.showDocumentSettings(),
             'CLEAR_SCENE': () => {window['svgEditorClearScene']()},
             'START_TUTORIAL': () => {
                 const LANG = i18n.lang.tutorial;
@@ -96,8 +96,8 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
             'SHOW_RULERS': () => svgCanvas.toggleRulers(),
             'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
-            'NETWORK_TESTING': () => DialogCaller.showNetworkTestingPanel(),
-            'ABOUT_BEAM_STUDIO': () => DialogCaller.showAboutBeamStudio(),
+            'NETWORK_TESTING': () => Dialog.showNetworkTestingPanel(),
+            'ABOUT_BEAM_STUDIO': () => Dialog.showAboutBeamStudio(),
             'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
             'UPDATE_BS': () => ElectronUpdater.checkForUpdate(),
             'QUESTIONNAIRE': async () => {
@@ -117,7 +117,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                 const electron = requireNode('electron');
                 electron.remote.shell.openExternal(url);
             },
-            'CHANGE_LOGS': () => DialogCaller.showChangLog(),
+            'CHANGE_LOGS': () => Dialog.showChangLog(),
         };
     }
     attach() {

@@ -1,7 +1,4 @@
 import UnitInput from '../../../../widgets/Unit-Input-v2';
-import DialogCaller from '../../../../contexts/DialogCaller';
-import Alert from '../../../../contexts/AlertCaller';
-import AlertConstants from '../../../../constants/alert-constants';
 import Constant from '../../../../actions/beambox/constant';
 import ImageData from '../../../../../helpers/image-data';
 import * as i18n from '../../../../../helpers/i18n';

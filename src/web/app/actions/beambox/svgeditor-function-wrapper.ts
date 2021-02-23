@@ -1,8 +1,8 @@
 import Constant from './constant';
-import Progress from '../../contexts/ProgressCaller';
+import Progress from '../progress-caller';
 import ImageData from '../../../helpers/image-data';
 import BeamFileHelper from '../../../helpers/beam-file-helper';
-import Alert from '../../contexts/AlertCaller';
+import Alert from '../alert-caller';
 import * as TutorialController from '../../views/tutorials/Tutorial-Controller';
 import TutorialConstants from '../../constants/tutorial-constants';
 import SymbolMaker from '../../../helpers/symbol-maker';
