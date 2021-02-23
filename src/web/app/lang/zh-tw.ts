@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            beam_project_files: 'Beam Studio 專案',
+            scene_files: 'Beam Studio 場景',
             fcode_files: 'FLUX Code',
             clear_recent: '清除歷史紀錄',
             path_not_exit: '此路徑似乎已不存在於電腦中，請確認是否有更改檔案位置。'

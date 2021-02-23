@@ -112,7 +112,7 @@ export interface ILang {
             svg_files: string,
             png_files: string,
             jpg_files: string,
-            beam_project_files: string,
+            scene_files: string,
             fcode_files: string,
             clear_recent: string,
             path_not_exit: string,

@@ -114,7 +114,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            beam_project_files: 'Proyecto de Beam Studio',
+            scene_files: 'Escena de Beam Studio',
             fcode_files: 'Código FLUX',
             clear_recent: 'Eliminado Recientemente Abierto',
             path_not_exit: 'Esta trayectoria parece no existir en el disco.'
