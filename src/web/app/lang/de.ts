@@ -111,7 +111,7 @@ export default {
             svg_files: 'SVG',
             png_files: 'PNG',
             jpg_files: 'JPG',
-            beam_project_files: 'Beam-Studio-Projekt',
+            scene_files: 'Beam-Studio-Datei',
             fcode_files: 'FLUX-Code',
             clear_recent: 'Vor kurzem geöffnet löschen',
             path_not_exit: 'Dieser Pfad scheint auf dem Schreibtisch nicht mehr zu existieren.'
