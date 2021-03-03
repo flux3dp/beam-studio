@@ -548,6 +548,10 @@ class Control extends EventEmitter {
         return this.useWaitAnyResponse('play resume');
     };
 
+    restart = () => {
+        return this.useWaitAnyResponse('play restart');
+    };
+
     kick = () => {
         return this.useWaitAnyResponse('kick');
     };

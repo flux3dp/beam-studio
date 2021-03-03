@@ -5,16 +5,17 @@ import ImageTracePanelController from './Image-Trace-Panel-Controller';
 import ToolPanelsController from './Tool-Panels-Controller';
 import Tutorials from './tutorials';
 import ElectronDialogs from '../electron-dialogs';
-import GlobalActions from '../global-actions';
 import { showCameraCalibration } from '../../views/beambox/Camera-Calibration';
 import { showDiodeCalibration } from '../../views/beambox/Diode-Calibration';
 import AlertConstants from '../../constants/alert-constants';
 import DeviceConstants from '../../constants/device-constants';
 import FontConstants from '../../constants/font-constants';
 import GlobalConstants from '../../constants/global-constants';
+import { Mode } from 'app/constants/monitor-constants';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 import Dialog from '../dialog-caller';
+import MonitorController from 'app/actions/monitor-controller';
 import AlertStore from '../../stores/alert-store';
 import AlertConfig from 'helpers/api/alert-config';
 import Config from 'helpers/api/config';
@@ -284,7 +285,7 @@ const initMenuBarEvents = () => {
             _action['DASHBOARD'] = async (device) => {
                 const res = await DeviceMaster.select(device);
                 if (res.success) {
-                    GlobalActions.showMonitor(device, '', '', GlobalConstants.DEVICE_LIST);
+                    MonitorController.showMonitor(device, device.st_id <= 0 ? Mode.FILE : Mode.WORKING);
                 }
             };
 

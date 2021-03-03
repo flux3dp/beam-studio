@@ -18,6 +18,14 @@ export default {
             AlertsAndProgressContextHelper.context.popById(id);
         }
     },
+    checkIdExist: (id: string) => {
+        if (!AlertsAndProgressContextHelper.context) {
+            console.log('Alert context not loaded Yet');
+            return false;
+        } else {
+            return AlertsAndProgressContextHelper.context.checkIdExist(id, false);
+        }
+    },
     renderHyperLink: (text: string, link: string) => {
         return (
             <div className='hyper-link' onClick={()=>electron.remote.shell.openExternal(link)}>

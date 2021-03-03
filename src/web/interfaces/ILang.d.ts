@@ -798,6 +798,7 @@ export interface ILang {
         SUBSYSTEM_ERROR                     : string,
         HARDWARE_FAILURE                    : string,
         MAINBOARD_OFFLINE                   : string,
+        bug_report                          : string,
         processing                          : string,
         savingPreview                       : string,
         hour                                : string,

@@ -85,6 +85,7 @@ let getOutput = () => {
 }
 
 export default {
+    getOutput,
     downloadErrorLog: async () => {
         console.log('Outputing');
 

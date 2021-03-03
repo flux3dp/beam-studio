@@ -1,18 +1,20 @@
-import AwsHelper from '../../../helpers/aws-helper';
-import DeviceMaster from '../../../helpers/device-master';
-import * as i18n from '../../../helpers/i18n';
-import ImageData from '../../../helpers/image-data';
-import SymbolMaker from '../../../helpers/symbol-maker';
-import VersionChecker from '../../../helpers/version-checker';
 import BeamboxPreference from './beambox-preference';
 import Progress from '../progress-caller';
 import FontFuncs from './font-funcs';
 import Alert from '../alert-caller';
-import AlertConstants from '../../constants/alert-constants';
-import svgLaserParser from '../../../helpers/api/svg-laser-parser';
+import MonitorController from '../monitor-controller';
 import Constant from './constant';
 import GlobalActions from '../global-actions';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+import AlertConstants from 'app/constants/alert-constants';
+import { Mode } from 'app/constants/monitor-constants'
+import svgLaserParser from 'helpers/api/svg-laser-parser';
+import AwsHelper from 'helpers/aws-helper';
+import DeviceMaster from 'helpers/device-master';
+import * as i18n from 'helpers/i18n';
+import ImageData from 'helpers/image-data';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
+import SymbolMaker from 'helpers/symbol-maker';
+import VersionChecker from 'helpers/version-checker';
 let svgCanvas;
 let svgedit;
 
@@ -298,7 +300,7 @@ const fetchTaskCode = async (device: any = null, shouldOutputGcode: boolean = fa
 
 export default {
     uploadFcode: async function (device) {
-        const { fcodeBlob, thumbnailBlobURL } = await fetchTaskCode(device);
+        const { fcodeBlob, thumbnailBlobURL, fileTimeCost } = await fetchTaskCode(device);
         if (!fcodeBlob) {
             return;
         }
@@ -307,7 +309,7 @@ export default {
             if (!res) {
                 return;
             }
-            GlobalActions.showMonitor(device, fcodeBlob, thumbnailBlobURL, 'LASER');
+            MonitorController.showMonitor(device, Mode.PREVIEW, { fcodeBlob, taskImageURL: thumbnailBlobURL, taskTime: fileTimeCost });
         } catch(errMsg) {
             console.error(errMsg);
             // TODO: handle err message

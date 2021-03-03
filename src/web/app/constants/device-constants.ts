@@ -110,6 +110,7 @@ export default {
         COMPLETED               : 64,
         COMPLETING              : 66,
         PREPARING               : 68,
-        ABORTED                 : 128
+        ABORTED                 : 128,
+        ABORTING                : 130,
     }
 };

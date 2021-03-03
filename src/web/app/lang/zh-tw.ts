@@ -800,6 +800,7 @@ export default {
         SUBSYSTEM_ERROR                     : '#402 子系統沒有回應。請聯繫 FLUX 客服。',
         HARDWARE_FAILURE                    : '韌體發生錯誤\n請重新啟動機器', // Deprecated in FW 3.3.1
         MAINBOARD_OFFLINE                   : '#905 連接主板時發生錯誤\n請重新啟動機器',
+        bug_report                          : '下載錯誤回報檔案',
         processing                          : '處理中',
         savingPreview                       : '正在產生預覽圖',
         hour                                : '小時',

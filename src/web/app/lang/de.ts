@@ -800,6 +800,7 @@ export default {
         SUBSYSTEM_ERROR                     : '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support.',
         HARDWARE_FAILURE                    : 'Etwas ist schief gelaufen\nBitte starte die Maschine neu', // Deprecated in FW 3.3.1
         MAINBOARD_OFFLINE                   : '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',
+        bug_report                          : 'Fehlerbericht',
         processing                          : 'wird bearbeitet',
         savingPreview                       : 'Beispiele generieren',
         hour                                : 'h',

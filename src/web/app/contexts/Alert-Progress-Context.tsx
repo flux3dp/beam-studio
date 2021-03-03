@@ -22,12 +22,19 @@ export class AlertProgressContextProvider extends React.Component {
     popFromStack = () => {
         this.state.alertProgressStack.pop();
         this.setState(this.state);
-    };
+    }
 
-    popById = (id) => {
-        this.state.alertProgressStack = this.state.alertProgressStack.filter((alert) => {return alert.id !== id});
+    popById = (id: string) => {
+        this.state.alertProgressStack = this.state.alertProgressStack.filter((alertAndProgress) => {return alertAndProgress.id !== id});
         this.setState(this.state);
-    };
+    }
+
+    checkIdExist = (id: string, isProgress: boolean = false) => {
+        const res = this.state.alertProgressStack.filter((alertAndProgress) => {
+            return alertAndProgress.id === id && !!alertAndProgress.isProgress === isProgress;
+        });
+        return res.length > 0;
+    }
 
     pushToStack = (elem) => {
         if (elem.id) {
@@ -251,6 +258,7 @@ export class AlertProgressContextProvider extends React.Component {
         const { 
             popFromStack,
             popById,
+            checkIdExist,
             popUp,
             openProgress,
             updateProgress,
@@ -262,6 +270,7 @@ export class AlertProgressContextProvider extends React.Component {
                 alertProgressStack,
                 popFromStack,
                 popById,
+                checkIdExist,
                 popUp,
                 openProgress,
                 updateProgress,

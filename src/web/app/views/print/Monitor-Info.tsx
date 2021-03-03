@@ -1,6 +1,6 @@
 import GlobalConstants from '../../../app/constants/global-constants';
 import DeviceConstants from '../../../app/constants/device-constants';
-import MonitorStatus from '../../../app/constants/monitor-status';
+import MonitorStatus from '../../../helpers/monitor-status';
 import FormatDuration from '../../../helpers/duration-formatter';
 
 const React = requireNode('react');
@@ -45,7 +45,7 @@ class MonitorInfo extends React.Component{
             Device.status.st_label !== 'LOAD_FILAMENT' &&
             Device.status.st_label !== 'UNLOAD_FILAMENT'
         ) {
-            let { displayStatus } = MonitorStatus[Device.status.st_label]();
+            const displayStatus = MonitorStatus.getDisplayStatus(Device.status.st_label);
             return displayStatus;
         }
         else {

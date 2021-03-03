@@ -24,3 +24,15 @@ export interface IDeviceConnection {
     camera: Camera,
     cameraNeedsFlip: boolean,
 }
+
+export interface IReport {
+    session?: number,
+    st_id: number,
+    st_label: string,
+    error: string[],
+    prog: number,
+    traveled: number,
+    laser_pwr: number,
+    raw_laser: number,
+    Beam_Air: number,
+}

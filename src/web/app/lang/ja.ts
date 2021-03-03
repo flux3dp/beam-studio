@@ -800,6 +800,7 @@ export default {
         SUBSYSTEM_ERROR                     : '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。',
         HARDWARE_FAILURE                    : '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1
         MAINBOARD_OFFLINE                   : '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',
+        bug_report                          : 'バグ報告',
         processing                          : '処理中',
         savingPreview                       : 'サムネイルの生成中',
         hour                                : 'h',

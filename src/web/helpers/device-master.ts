@@ -433,6 +433,11 @@ class DeviceMaster {
         return controlSocket.addTask(controlSocket.abort);
     }
 
+    restart() {
+        const controlSocket = this.currentDevice.control;
+        return controlSocket.addTask(controlSocket.restart);
+    }
+
     quit() {
         const controlSocket = this.currentDevice.control;
         return controlSocket.addTask(controlSocket.quit);
@@ -605,12 +610,26 @@ class DeviceMaster {
         return controlSocket.addTask(controlSocket.downloadFile, `${path}/${fileName}`, onProgress);
     }
 
-    downloadLog(log: string, onProgress: (...args: any[]) => void) {
+    downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}) {
         const controlSocket = this.currentDevice.control;
         if (onProgress) {
             controlSocket.setProgressListen(onProgress);
         }
         return controlSocket.downloadLog(log);
+    }
+
+    async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}) {
+        const res = {};
+        for (let i = 0; i < logs.length; i++) {
+            const log = logs[i];
+            try {
+                const logFile = await this.downloadLog(log, onProgress);
+                res[log] = logFile;
+            } catch (e) {
+                console.error(`Failed to get ${log}`, e);
+            }
+        }
+        return res;
     }
 
     // Maintain mode functions
