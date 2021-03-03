@@ -108,6 +108,9 @@ export class MonitorContextProvider extends React.Component {
                 const report = await DeviceMaster.getReport();
                 this.processReport(report);
             } catch (error) {
+                if (error && error.status === 'raw') {
+                    return;
+                }
                 console.error('Monitor report error:', error);
                 DeviceMaster.reconnect();
                 // this.processReport(error);
@@ -117,6 +120,7 @@ export class MonitorContextProvider extends React.Component {
 
     stopReport() {
         clearInterval(this.reporter);
+        this.reporter = null;
     }
 
     async fetchInitialInfo() {
@@ -132,12 +136,11 @@ export class MonitorContextProvider extends React.Component {
     }
 
     async processReport(report: IReport) {
-        console.log(report); // remove
         const currentReport = this.state.report;
         for (let key in report) {
             const { mode } = this.state;
             if (currentReport[key] === undefined || JSON.stringify(currentReport[key]) !== JSON.stringify(report[key])) {
-                console.log('report changed', key);
+                console.log(key, 'changed');
                 if (report.st_id > 0 && (mode !== Mode.WORKING || key === 'session')) {
                     console.log('to work mode');
                     this.enterWorkingMode();
@@ -323,7 +326,7 @@ export class MonitorContextProvider extends React.Component {
         }
     }
 
-    startCameraRelocate = async () => {
+    startRelocate = async () => {
         const { mode } = this.state;
         if (mode === Mode.CAMERA_RELOCATE) return;
 
@@ -359,15 +362,29 @@ export class MonitorContextProvider extends React.Component {
             id: 'prepare-relocate',
             message: LANG.monitor.prepareRelocate,
         });
-        const cameraOffset = await getCameraOffset();
-        await DeviceMaster.enterRawMode();
-        await DeviceMaster.rawSetRotary(false);
-        await DeviceMaster.rawHome();
+        this.stopReport();
+        try {
+            const cameraOffset = await getCameraOffset();
+            await DeviceMaster.enterRawMode();
+            await DeviceMaster.rawSetRotary(false);
+            await DeviceMaster.rawHome();
+            this.setState({
+                mode: Mode.CAMERA_RELOCATE,
+                cameraOffset,
+                currentPosition: { x: 0, y: 0 }
+            });
+        } catch (error) {
+            console.error('Error when entering relocate mode', error);
+            this.startReport();
+        }
         Progress.popById('prepare-relocate');
-        this.setState({
-            mode: Mode.CAMERA_RELOCATE,
-            cameraOffset,
-            currentPosition: { x: 0, y: 0 }
+    }
+
+    endRelocate = () => {
+        this.setState({ mode: this.modeBeforeRelocate }, () => {
+            if (!this.reporter) {
+                this.startReport();
+            }
         });
     }
 
@@ -397,7 +414,7 @@ export class MonitorContextProvider extends React.Component {
         } else if (mode === Mode.CAMERA) {
             this.toggleCamera();
         } else if (mode === Mode.CAMERA_RELOCATE) {
-            this.setState({ mode: this.modeBeforeRelocate });
+            this.endRelocate();
         }
     }
 
@@ -619,7 +636,8 @@ export class MonitorContextProvider extends React.Component {
         const {
             enterWorkingMode,
             toggleCamera,
-            startCameraRelocate,
+            startRelocate,
+            endRelocate,
             onNavigationBtnClick,
             onHighlightItem,
             onSelectFolder,
@@ -641,7 +659,8 @@ export class MonitorContextProvider extends React.Component {
                 ...this.state,
                 enterWorkingMode,
                 toggleCamera,
-                startCameraRelocate,
+                startRelocate,
+                endRelocate,
                 onNavigationBtnClick,
                 onHighlightItem,
                 onSelectFolder,

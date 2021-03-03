@@ -95,7 +95,7 @@ export default class MonitorControl extends React.PureComponent {
     }
 
     render() {
-        const { mode, currentPath, highlightedItem, report, onDownload, onPlay, onStop, onNavigationBtnClick } = this.context;
+        const { mode, currentPath, highlightedItem, report, onDownload, onPlay, onStop, endRelocate } = this.context;
         let leftButton: Element, midButton: Element, rightButton: Element;
         if (mode === Mode.FILE ) {
             const allowUpload = currentPath.length > 0;
@@ -115,7 +115,7 @@ export default class MonitorControl extends React.PureComponent {
             leftButton = this.renderControlButton(ButtonPosition.LEFT, false, 'btn-stop', LANG.stop);
             midButton = this.renderControlButton(ButtonPosition.CENTER, false, 'btn-go', LANG.go);
         } else if (mode === Mode.CAMERA_RELOCATE) {
-            leftButton = this.renderControlButton(ButtonPosition.LEFT, true, 'btn-cancel', LANG.cancel, onNavigationBtnClick);
+            leftButton = this.renderControlButton(ButtonPosition.LEFT, true, 'btn-cancel', LANG.cancel, endRelocate);
             rightButton = this.renderRelocateButton();
         } 
 

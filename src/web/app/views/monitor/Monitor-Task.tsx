@@ -47,13 +47,13 @@ export default class MonitorTask extends React.PureComponent {
     }
 
     renderRelocateButton() {
-        const { mode, relocateOrigin, startCameraRelocate } = this.context;
+        const { mode, relocateOrigin, startRelocate } = this.context;
         const { device } = this.props;
         const vc = VersionChecker(device.version);
         if ([Mode.PREVIEW, Mode.FILE_PREVIEW].includes(mode) && vc.meetRequirement('RELOCATE_ORIGIN')) {
             return (
                 <div className="btn-relocate-container">
-                    <div className="btn-relocate" onClick={startCameraRelocate}>
+                    <div className="btn-relocate" onClick={startRelocate}>
                         <img src="img/beambox/icon-target.svg"/>
                         {(relocateOrigin.x !== 0 || relocateOrigin.y !== 0) ? 
                             <div className="relocate-origin">{`(${relocateOrigin.x}, ${relocateOrigin.y})`}</div>
