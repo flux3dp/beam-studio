@@ -159,7 +159,7 @@ const createShadowWindow = () => {
                 nodeIntegration: true
             },
         });
-        shadowWindow.webContents.openDevTools();
+        // shadowWindow.webContents.openDevTools();
         loadShadowWindow();
 
         shadowWindow.on('close', function(e) {
