@@ -928,10 +928,10 @@ class Control extends EventEmitter {
             throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
         }
         const command = on ? 'B1' : 'B2';
-        if (!this.isLineCheckMode) {
-            return this.useDefaultResponse(command);
+        if (!this._isLineCheckMode) {
+            return this.useWaitAnyResponse(command);
         } else {
-            return this.rawLineCheckCommand(command);
+            return this.useRawLineCheckCommand(command);
         }
     }
 
