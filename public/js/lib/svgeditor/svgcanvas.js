@@ -5955,10 +5955,22 @@ define([
 
         const sanitizeXmlString = (xmlString) => {
             // ref: https://stackoverflow.com/questions/29031792/detect-non-valid-xml-characters-javascript
+            const res = [];
             const re = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])+/g;
-            const matchResult = xmlString.match(re);
-            if (!matchResult) return '';
-            return matchResult.join('');
+            let i = 0;
+            while (i < xmlString.length) {
+                // Prevent Maximum call stack size exceeded, split xmlString and process
+                let end = Math.min(i + 1000000, xmlString.length);
+                if (end !== xmlString.length && xmlString[end - 1].match(/[\uD800-\uDBFF]/)) {
+                    end -= 1;
+                }
+                const matchResult = xmlString.substring(i, end).match(re);
+                i = end;
+                if (matchResult) {
+                    res.push(...matchResult);
+                }
+            }
+            return res.join('');
         }
 
         //
