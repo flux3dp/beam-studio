@@ -1,5 +1,6 @@
 const {app, ipcMain, BrowserWindow, dialog} = require('electron');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
+app.allowRendererProcessReuse = false;
 
 const BackendManager = require('./src/node/backend-manager.js');
 const MonitorManager = require('./src/node/monitor-manager.js');
@@ -190,6 +191,7 @@ function createWindow () {
         frame: process.platform === 'win32' ? false : null,
         title: `Beam Studio - ${app.getVersion()}`,
         webPreferences: {
+            enableRemoteModule: true,
             preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
             nodeIntegration: true
         },
@@ -567,6 +569,10 @@ if (os.arch() == 'ia32' || os.arch() == 'x32') {
 app.on('ready', () => {
     menuManager = new MenuManager();
     menuManager.on(events.MENU_CLICK, (data) => {
+        data = {
+            id: data.id,
+            serial: data.serial,
+        }
         if(mainWindow) {
             mainWindow.webContents.send(events.MENU_CLICK, data);
         } else {
