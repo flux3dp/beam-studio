@@ -207,7 +207,7 @@ class NounProjectPanel extends React.Component {
             return;
         }
 
-        // Warning: This module will call define. If declare this at top of file will cause requirejs loading error.
+        // Warning: This module will call define. Declaring this at top of file would cause requirejs loading error.
         const request = requireNode('request');
         this.fetchingTerm = term;
         this.fetchedPage = page;
@@ -332,6 +332,7 @@ class NounProjectPanel extends React.Component {
                     {icons}
                     {hasNext ?
                         <div className='loading-placeholder'>
+                            <div className='dot-flashing'/>
                         </div>
                         :
                         null
@@ -409,7 +410,6 @@ class NounProjectPanel extends React.Component {
                 console.log(icon.icon_url);
                 const expireTime = Number(/\?Expires=(\d+)/.exec(icon.icon_url)[1]);
                 if (Date.now() / 1000 > expireTime) {
-                    console.log(expireTime);
                     const updatedIcon = await this.getIconById(icon.id);
                     console.log(updatedIcon);
                     Object.assign(icon, updatedIcon);
