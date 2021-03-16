@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="15.921" height="15.417" viewBox="0 0 15.921 15.417">
-  <path id="Path_81" data-name="Path 81" d="M5111.747,962.973h-13.105a1.008,1.008,0,0,0,0,2.016h5.541l0,11.593a1.008,1.008,0,1,0,2.016,0l0-11.594h5.542a1.008,1.008,0,0,0,0-2.016Z" transform="translate(-5097.234 -962.573)" fill="#494a4a" stroke="#494a4a" stroke-width="0.8"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-icon-text">
+      <rect width="32" height="32"/>
+    </clipPath>
+  </defs>
+  <g id="icon-text" clip-path="url(#clip-icon-text)">
+    <path id="Path_79" data-name="Path 79" d="M715.513,228.136H699.869a1.683,1.683,0,0,0,0,3.365h6.138v13.365a1.682,1.682,0,0,0,3.365,0V231.5h6.14a1.683,1.683,0,0,0,0-3.365Z" transform="translate(-691.691 -221.342)" fill="#5c5c5c"/>
+  </g>
 </svg>

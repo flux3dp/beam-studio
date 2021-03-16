@@ -347,7 +347,7 @@ class DimensionPanel extends React.Component {
             case 'lock':
                 return (
                     <div className='dimension-lock' key={type} onClick={() => this.handleFixRatio()}>
-                        <img src={isRatioFixed ? "img/right-panel/icon-lock.svg" : "img/right-panel/icon-padlock.svg"}/>
+                        <img src={isRatioFixed ? "img/right-panel/icon-lock.svg" : "img/right-panel/icon-unlock.svg"}/>
                     </div>
                 );
             default:
