@@ -720,8 +720,7 @@ export default {
     },
     noun_project_panel: {
         export_svg_title: 'SVG kann nicht exportiert werden',
-        export_svg_warning: 'Dieses Projekt enthält aus Noun Project importierte Symbole, sodass die Ausgabe von SVG-Dateien nicht unterstützt wird.',
-        export_svg_warning_link: 'https://duckduckgo.com/', 
+        export_svg_warning: 'Dieses Projekt enthält Objekte, die durch das Gesetz zum Schutz des geistigen Eigentums geschützt sind. Daher schließt Beam Studio diese Objekte beim Export automatisch aus. Sie können Ihr Projekt weiterhin in Beam-Studio-Datei (.beam-Format) speichern, um alle Daten zu behalten. Möchten Sie noch exportieren?',
         learn_more: 'Erfahren Sie mehr',
     },
     change_logs: {

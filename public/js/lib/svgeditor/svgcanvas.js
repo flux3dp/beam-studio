@@ -9840,13 +9840,15 @@ define([
                 return;
             }
             //Wait for alert close
-            await new Promise((resolve) => {setTimeout(resolve, 20)});
+            await new Promise((resolve) => setTimeout(resolve, 20));
             let batchCmd = new svgedit.history.BatchCommand('Disassemble Use');
             for (let i = 0; i < elems.length; ++i) {
                 elem = elems[i];
                 if (!elem || elem.tagName !== 'use') {
                     continue;
                 }
+
+                const isFromNP = elem.getAttribute('data-np') === '1';
                 const cmd = SymbolMaker.switchImageSymbol(elem, false);
                 if (cmd && !cmd.isEmpty()) {
                     batchCmd.addSubCommand(cmd);
@@ -9892,14 +9894,17 @@ define([
                 for (let j = 0; j < descendants.length; j++) {
                     const child = descendants[j];
                     if (child.tagName !== 'g' && wireframe) {
-                        $(child).attr('stroke', color);
-                        $(child).attr('fill-opacity', 0);
-                        $(child).attr('fill', '#FFF');
+                        child.setAttribute('stroke', color);
+                        child.setAttribute('fill', '#FFF');
+                        child.setAttribute('fill-opacity', 0);
                     }
-                    $(child).removeAttr('stroke-width');
-                    $(child).attr('vector-effect', 'non-scaling-stroke');
-                    $(child).attr('id', getNextId());
-                    $(child).mouseover(this.handleGenerateSensorArea).mouseleave(this.handleGenerateSensorArea);
+                    if (isFromNP) child.setAttribute('data-np', 1);
+                    child.setAttribute('id', getNextId());
+                    child.setAttribute('vector-effect', 'non-scaling-stroke');
+                    child.removeAttribute('stroke-width');
+
+                    child.addEventListener('mouseover', this.handleGenerateSensorArea);
+                    child.addEventListener('mouseleave', this.handleGenerateSensorArea);
                     svgedit.recalculate.recalculateDimensions(child);
                     const progress = Math.round(200 * j / nodeNumbers) / 2;
                     if (progress > currentProgress) {

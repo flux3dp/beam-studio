@@ -720,8 +720,7 @@ export default {
     },
     noun_project_panel: {
         export_svg_title: 'SVGをエクスポートできません',
-        export_svg_warning: 'このプロジェクトにはThe Noun Projectからインポートされたアイコンが含まれているため、SVGファイルを出力するサービスはサポートされていません。',
-        export_svg_warning_link: 'https://duckduckgo.com/', 
+        export_svg_warning: 'このプロジェクトには、知的財産法によって保護されているオブジェクトが含まれています。したがって、Beam Studioは、エクスポート中にこれらのオブジェクトを自動的に除外します。プロジェクトをBeam Studioシーン（.beam形式）内に保存して、すべてのデータを保持することもできます。それでもエクスポートしますか？',
         learn_more: 'もっと詳しく知る',
     },
     change_logs: {

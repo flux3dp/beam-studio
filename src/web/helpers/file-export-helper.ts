@@ -1,5 +1,6 @@
-import Alert from '../app/actions/alert-caller';
-import Progress from '../app/actions/progress-caller';
+import Alert from 'app/actions/alert-caller';
+import Progress from 'app/actions/progress-caller';
+import AlertConstants from 'app/constants/alert-constants';
 import BeamFileHelper from './beam-file-helper';
 import SymbolMaker from './symbol-maker';
 import * as i18n from './i18n';
@@ -13,8 +14,8 @@ getSVGAsync((globalSVG) => {
 const electron = window['electron'];
 const LANG = i18n.lang;
 
-const setCurrentFileName = (filePath) => {
-    let currentFileName;
+const setCurrentFileName = (filePath: string) => {
+    let currentFileName: string | string[];
     if (process.platform === 'win32') {
         currentFileName = filePath.split('\\');
     } else {
@@ -74,10 +75,13 @@ const saveFile = async () => {
 };
 
 const exportAsBVG = async () => {
+    if (!await checkNounProjectElements()) {
+        return;
+    }
     svgCanvas.clearSelection();
-    SymbolMaker.switchImageSymbolForAll(false);
-    const output = svgCanvas.getSvgString();
-    SymbolMaker.switchImageSymbolForAll(true);
+    const output = removeNPElementsWrapper(() => {
+        return switchSymbolWrapper(() => svgCanvas.getSvgString());
+    });
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
     const langFile = LANG.topmenu.file;
     let currentFilePath = electron.ipc.sendSync('save-dialog', langFile.save_scene, langFile.all_files, langFile.scene_files, ['bvg'], defaultFileName, output, localStorage.getItem('lang'));
@@ -90,46 +94,42 @@ const exportAsBVG = async () => {
     }
 };
 
-const exportAsSVG = () => {
-    if (!checkExportAsSVG()) {
+const exportAsSVG = async () => {
+    if (!await checkNounProjectElements()) {
         return;
     }
     svgCanvas.clearSelection();
     $('g.layer').removeAttr('clip-path');
-    SymbolMaker.switchImageSymbolForAll(false);
-    const output = svgCanvas.getSvgString();
+    const output = removeNPElementsWrapper(() => {
+        return switchSymbolWrapper(() => svgCanvas.getSvgString());
+    });
     $('g.layer').attr('clip-path', 'url(#scene_mask)');
-    SymbolMaker.switchImageSymbolForAll(true);
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
     const langFile = LANG.topmenu.file;
     electron.ipc.sendSync('save-dialog', langFile.save_svg, langFile.all_files, langFile.svg_files, ['svg'], defaultFileName, output, localStorage.getItem('lang'));
 };
 
-const checkExportAsSVG = () => {
+const checkNounProjectElements = () => {
     const svgContent = document.getElementById('svgcontent');
-    const useElements = svgContent.querySelectorAll('use');
-    console.log(useElements);
-    for (let i = 0; i < useElements.length; i++) {
-        const elem = useElements[i];
-        if (elem.getAttribute('data-noun-project') === '1') {
-            console.log('Contains noun project');
-            Alert.popUp({
-                id: 'export-noun-project-svg',
-                caption: LANG.noun_project_panel.export_svg_title,
-                message: LANG.noun_project_panel.export_svg_warning,
-                children: Alert.renderHyperLink(LANG.noun_project_panel.learn_more, LANG.noun_project_panel.export_svg_warning_link),
-            });
-            return false;
-        }
+    const npElements = svgContent.querySelectorAll('[data-np="1"]');
+    if (npElements.length === 0) {
+        return true;
     }
-    return true;
+    return new Promise<boolean>((resolve) => {
+        Alert.popUp({
+            id: 'export-noun-project-svg',
+            buttonType: AlertConstants.YES_NO,
+            caption: LANG.noun_project_panel.export_svg_title,
+            message: LANG.noun_project_panel.export_svg_warning,
+            onYes: () => resolve(true),
+            onNo: () => resolve(false),
+        });
+    });
 };
 
 const exportAsImage = async (type) => {
     svgCanvas.clearSelection();
-    SymbolMaker.switchImageSymbolForAll(false);
-    const output = svgCanvas.getSvgString();
-    SymbolMaker.switchImageSymbolForAll(true);
+    const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
     const langFile = LANG.topmenu.file;
     Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
     const defaultFileName = (svgCanvas.getLatestImportFileName() || 'untitled').replace('/', ':');
@@ -144,6 +144,39 @@ const exportAsImage = async (type) => {
         case 'jpg':
             electron.ipc.sendSync('save-dialog', langFile.save_jpg, langFile.all_files, langFile.jpg_files, ['jpg'], defaultFileName, buf, localStorage.getItem('lang'));
     }
+};
+
+const switchSymbolWrapper = (fn: Function) => {
+    SymbolMaker.switchImageSymbolForAll(false);
+    const res = fn();
+    SymbolMaker.switchImageSymbolForAll(true);
+    return res;
+}
+
+const removeNPElementsWrapper = (fn: Function) => {
+    const svgContent = document.getElementById('svgcontent');
+    const npElements = svgContent.querySelectorAll('[data-np="1"]');
+    const removedElements = [] as { elem: Element, parentNode: Element, nextSibling: Element }[];
+    for (let i = 0; i < npElements.length; i++) {
+        const elem = npElements[i];
+        const parentNode = elem.parentNode as Element;
+        if (!parentNode || (parentNode && parentNode.getAttribute('data-np') === '1')) {
+            continue;
+        }
+        const nextSibling = elem.nextSibling as Element;
+        removedElements.push({ elem, parentNode, nextSibling });
+        elem.remove();
+    }
+    const res = fn();
+    for (let i = removedElements.length - 1;  i >= 0; i--) {
+        const { elem, parentNode, nextSibling } = removedElements[i];
+        try {
+            parentNode.insertBefore(elem, nextSibling);
+        } catch (error) {
+            parentNode.appendChild(elem)
+        }
+    }
+    return res;
 };
 
 const toggleUnsavedChangedDialog = async () => {

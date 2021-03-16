@@ -5910,7 +5910,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         if (args.isFromNounProject) {
                             for (let i = 0; i < newElements.length; i++) {
                                 const elem = newElements[i];
-                                elem.setAttribute('data-noun-project', '1');
+                                elem.setAttribute('data-np', '1');
                             }
                         }
                         svgCanvas.selectOnly(newElements);

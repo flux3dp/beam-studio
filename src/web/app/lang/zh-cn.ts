@@ -720,8 +720,7 @@ export default {
     },
     noun_project_panel: {
         export_svg_title: '无法汇出 SVG',
-        export_svg_warning: '专案中含有 Noun Project 之图档，无提供输出 SVG 档之服务。',
-        export_svg_warning_link: 'https://duckduckgo.com/', 
+        export_svg_warning: '专案中含有受知识产权法律的保护的Noun Project 物件，因此汇出时Beam Studio 会自动帮您排除这类型之物件，您仍可以透过储存场景(.beam 档) 的方式保留您的专案，请问是否要继续汇出？',
         learn_more: '更多资讯',
     },
     change_logs: {
