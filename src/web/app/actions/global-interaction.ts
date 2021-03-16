@@ -36,7 +36,7 @@ if (electron) {
         }
     });
 
-    ipc.on('WINDOW_CLOSE', async (event, e) => {
+    ipc.on('WINDOW_CLOSE', async (event) => {
         const ipc = electron.ipc;
         const res = await FileExportHelper.toggleUnsavedChangedDialog();
         if (res) ipc.send('CLOSE_REPLY', true);

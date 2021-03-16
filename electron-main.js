@@ -241,7 +241,7 @@ function createWindow () {
     mainWindow.on('close', function(e) {
         if (isFrontEndReady && !isCloseConfirmed) {
             e.preventDefault(); 
-            mainWindow.webContents.send('WINDOW_CLOSE', e);
+            mainWindow.webContents.send('WINDOW_CLOSE');
             // if save dialog does not pop in 10 seconds, something may goes wrong in frontend, close the app
             let isSaveDialogPopped = false;
             ipcMain.once('SAVE_DIALOG_POPPED', () => {
