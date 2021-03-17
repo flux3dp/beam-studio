@@ -358,11 +358,8 @@
                 }
                 .tab-icon {
                     float: left;
-                    width: 16px;
-                    margin: 0 8px;
-                    &.object {
-                        width: 17px;
-                    }
+                    width: 24px;
+                    margin: 0 4px;
                 }
                 .tab-title {
                     display: none;
@@ -455,18 +452,6 @@
                             margin-left: 10px;
                         }
                     }
-                    .layervis {
-                        display: flex;
-                        align-items: center;
-                        width: 16px;
-                        height: 25px;
-                        text-align: center;
-                        margin: 0 5px;
-                        cursor: pointer;
-                        img {
-                            width: 16px;
-                        }
-                    }
                     .layer {
                         display: flex;
                         flex-direction: column;
@@ -493,9 +478,9 @@
                             height: 5px;
                         }
                         .layername {
-                            width: 150px;
+                            width: 140px;
                             padding: 3px 0px;
-                            margin-left: 10px;
+                            margin-left: 5px;
                             text-align: center;
                             cursor: pointer;
                         }
@@ -517,13 +502,21 @@
                                 filter: brightness(0) invert(1);
                             }
                         }
+                        .layervis {
+                            display: flex;
+                            align-items: center;
+                            width: 24px;
+                            height: 25px;
+                            text-align: center;
+                            margin: 0 0 0 5px;
+                            cursor: pointer;
+                        }
                         .layerlock {
-                            width: 14px;
-                            margin: 0 5px;
+                            width: 24px;
+                            margin: 0 5px 0 0;
                             cursor: pointer;
                             img {
                                 display: none;
-                                height: 13px;
                                 filter: brightness(0%)
                             }
                         }
@@ -752,6 +745,8 @@
                     .left {
                         float: left;
                         padding-left: 12px;
+                        border: solid rgba(0, 0, 0, 0);
+                        border-width: 0 1px 0 0;
                         &.sep {
                             border: solid #e0e0e0;
                             border-width: 0 1px 0 0;
@@ -774,7 +769,7 @@
                             opacity: 1;
                         }
                         img {
-                            width: 16px;
+                            width: 24px;
                         }
                     }
                 }
@@ -801,7 +796,10 @@
                                 align-items: center;
                                 justify-content: flex-start;
                                 img {
-                                    width: 9px;
+                                    width: 10px;
+                                    margin-right: 6px;
+                                    filter: brightness(0);
+                                    opacity: 0.65;
                                 }
                             }
                         }
@@ -811,10 +809,9 @@
                     }
                     .dimension-lock {
                         display: inline-flex;
-                        width: 9px;
+                        width: 16px;
                         margin: 0 0 0 4px;
                         img {
-                            width: 9px;
                             opacity: 0.5;
                             &:hover {
                                 opacity: 1;
@@ -824,10 +821,10 @@
                     .flip-btn-container {
                         display: flex;
                         justify-content: flex-end;
-                        width: calc(33% - 13px);
+                        width: calc(33% - 20px);
                         height: 45px;
                         .tool-btn {
-                            width: 23px;
+                            width: 24px;
                             height: 100%;
                             display: inline-flex;
                             justify-content: center;
@@ -839,7 +836,7 @@
                                 opacity: 1;
                             }
                             img {
-                                width: 14px;
+                                width: 24px;
                             }
                         }
                     }
@@ -1118,7 +1115,8 @@
                     }
                 }
                 .icon-button {
-                    width: 18px;
+                    width: 24px;
+                    height: 24px;
                     opacity: 0.5;
                     &:not(:first-child) {
                         margin-left: 10px;
@@ -1152,6 +1150,8 @@
             }
             .preset-dropdown-containter {
                 display: flex;
+                margin: 0 15px 0 0;
+                justify-content: space-between;
                 align-items: center;
                 .controls {
                     width: calc(100% - 35px);
@@ -1159,9 +1159,8 @@
             }
             .add-preset-btn {
                 cursor: pointer;
-                width: 14px;
-                height: 14px;
-                margin: 0 0 0 4px;
+                width: 24px;
+                height: 24px;
                 opacity: 0.5;
                 &:hover:not(.disabled) {
                     opacity: 1;

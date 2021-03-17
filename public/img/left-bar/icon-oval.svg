@@ -1,6 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19">
-  <g id="Ellipse_10" data-name="Ellipse 10" fill="none" stroke="#5c5c5c" stroke-width="1.8">
-    <circle cx="9.5" cy="9.5" r="9.5" stroke="none"/>
-    <circle cx="9.5" cy="9.5" r="8.6" fill="none"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-icon-oval">
+      <rect width="32" height="32"/>
+    </clipPath>
+  </defs>
+  <g id="icon-oval" clip-path="url(#clip-icon-oval)">
+    <g id="Ellipse_10" data-name="Ellipse 10" transform="translate(-695.944 -218.136)">
+      <circle id="Ellipse_1" data-name="Ellipse 1" cx="10" cy="10" r="10" transform="translate(701.944 224.136)" fill="none" stroke="#494a4a" stroke-width="0.3"/>
+      <path id="Path_81" data-name="Path 81" d="M711.944,244.135a10,10,0,1,1,10-10A10.011,10.011,0,0,1,711.944,244.135Zm0-18.1a8.1,8.1,0,1,0,8.1,8.1A8.113,8.113,0,0,0,711.944,226.033Z" transform="translate(0 0.001)" fill="#494a4a" stroke="#494a4a" stroke-width="0.3"/>
+    </g>
   </g>
 </svg>

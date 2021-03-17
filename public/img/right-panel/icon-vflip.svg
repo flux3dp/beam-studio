@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <path id="icon-hflip" d="M6.524,0a.727.727,0,0,0-.653.459L.052,15a.727.727,0,0,0,.674,1H6.545a.727.727,0,0,0,.727-.727V.727A.73.73,0,0,0,7.052.2.736.736,0,0,0,6.524,0ZM9.447,0a.727.727,0,0,0-.72.727V15.272A.727.727,0,0,0,9.455,16h5.819a.727.727,0,0,0,.674-1L10.129.459A.73.73,0,0,0,9.447,0ZM5.818,4.5V14.545H1.8Z" transform="translate(16 0) rotate(90)" fill="#5b5b5b"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-Icon-vflip">
+      <rect width="24" height="24"/>
+    </clipPath>
+  </defs>
+  <g id="Icon-vflip" clip-path="url(#clip-Icon-vflip)">
+    <path id="icon-hflip" d="M6.116,0A.682.682,0,0,0,5.5.43L.049,14.064A.682.682,0,0,0,.681,15H6.136a.682.682,0,0,0,.682-.682V.682a.684.684,0,0,0-.207-.49A.69.69,0,0,0,6.116,0ZM8.857,0a.682.682,0,0,0-.675.682V14.318A.682.682,0,0,0,8.864,15h5.455a.682.682,0,0,0,.632-.935L9.5.43A.685.685,0,0,0,8.857,0Zm-3.4,4.222v9.414H1.688Z" transform="translate(19.5 4.5) rotate(90)" fill="#5b5b5b"/>
+  </g>
 </svg>

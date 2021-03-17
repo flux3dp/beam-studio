@@ -1,7 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="22" height="19.298" viewBox="0 0 22 19.298">
-  <g id="icon-valign-top" transform="translate(21.756 -0.451) rotate(90)" opacity="0.64">
-    <rect id="Rectangle_16" data-name="Rectangle 16" width="16.298" height="5.766" rx="1" transform="translate(3.451 12.197)"/>
-    <rect id="Rectangle_17" data-name="Rectangle 17" width="11.532" height="5.766" rx="1" transform="translate(3.451 3.548)"/>
-    <rect id="Rectangle_52" data-name="Rectangle 52" width="2" height="22" rx="1" transform="translate(0.451 -0.244)" fill="#5b5b5b"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-icon-valign-top">
+      <rect width="24" height="24"/>
+    </clipPath>
+  </defs>
+  <g id="icon-valign-top" clip-path="url(#clip-icon-valign-top)">
+    <g id="Group_54" data-name="Group 54" transform="translate(4 4.982)">
+      <rect id="Rectangle_16" data-name="Rectangle 16" width="4.193" height="11.853" rx="0.5" transform="translate(2.759 2.182)" fill="#494a4a"/>
+      <rect id="Rectangle_17" data-name="Rectangle 17" width="4.193" height="8.387" rx="0.5" transform="translate(9.048 2.182)" fill="#494a4a"/>
+      <path id="Rectangle_52" data-name="Rectangle 52" d="M3975.99,2403.691h0a.728.728,0,0,0,.727.727h14.546a.727.727,0,0,0,.727-.727h0a.728.728,0,0,0-.727-.728h-14.546A.728.728,0,0,0,3975.99,2403.691Z" transform="translate(-3975.99 -2402.963)" fill="#969595"/>
+    </g>
   </g>
 </svg>
