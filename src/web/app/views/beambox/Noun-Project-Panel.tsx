@@ -1,10 +1,11 @@
-import Modal from '../../widgets/Modal';
-import DraggableWindow from '../../widgets/Draggble-Window';
-import Progress from '../../actions/progress-caller';
-import LocalStorage from '../../../helpers/local-storage';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
-import { IData, IIcon } from '../../../interfaces/INoun-Project';
-import * as i18n from '../../../helpers/i18n';
+import Progress from 'app/actions/progress-caller';
+import { defaultIcons } from 'app/constants/noun-project-constants';
+import Modal from 'app/widgets/Modal';
+import DraggableWindow from 'app/widgets/Draggble-Window';
+import { IData, IIcon } from 'interfaces/INoun-Project';
+import LocalStorage from 'helpers/local-storage';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
+import * as i18n from 'helpers/i18n';
 
 // import EventEmitter from 'events';
 const EventEmitter = requireNode('events');
@@ -141,7 +142,7 @@ class NounProjectPanel extends React.Component {
         let searchingTerm = this.searchInput.current.value;
         const { term, hadErrorWhenSearching } = this.state;
 
-        if (term === searchingTerm && !hadErrorWhenSearching) return;
+        if (!searchingTerm || term === searchingTerm && !hadErrorWhenSearching) return;
 
         if (searchingTerm in searchResultCache) {
             this.getIconsFromCache(searchingTerm);
@@ -299,61 +300,71 @@ class NounProjectPanel extends React.Component {
     }
 
     renderLibraryContent() {
-        const { isSearching, hadErrorWhenSearching, resultIcons, highLightedIndex, hasNext, term } = this.state;
-        let content: HTMLElement;
-        if (resultIcons.length === 0) {
-            let text = '';
+        const { isSearching, hadErrorWhenSearching, resultIcons, hasNext, term } = this.state;
+        if (isSearching) {
+            return this.renderSearchingContent();
+        } else if (term === '') {
+            return this.renderIconList(defaultIcons, false);
+        } else if (resultIcons.length === 0) {
             if (isSearching) {
             } else if (hadErrorWhenSearching) {
-                text = `Error occured when search "${term}", click to retry`; 
-            } else if (term) {
-                text = `We didn't find any icons for "${term}"`;
-            } else {
-                text = 'Try search for something';
+                return this.renderSearchError();
             }
-            content = (
-                <div className='no-icon-results'>
-                    <div onClick={hadErrorWhenSearching ? () => this.handleSearch() : null} className={classNames({'spinner-roller': isSearching})}>
-                        {text}
-                    </div>
-                </div>
-            );
-        } else {
-            let icons = [];
-            console.log(resultIcons);
-            for (let i = 0; i < resultIcons.length; i++) {
-                for (let j = 0; j < Math.min(48, resultIcons[i].length); j++) {
-                    const index = i * 48 + j;
-                    icons.push(this.renderIconCell(index, resultIcons[i][j], highLightedIndex === index));
-                }
-            }
-            content = (
-                <div className='icons-list' onClick={() => this.onHighlight(-1)}>
-                    {icons}
-                    {hasNext ?
-                        <div className='loading-placeholder'>
-                            <div className='dot-flashing'/>
-                        </div>
-                        :
-                        null
-                    }
-                </div>
-            );
+            return this.renderSearchNoResult();
         }
-
-        return content;
+        console.log(resultIcons);
+        const icons = [];
+        resultIcons.forEach((result) => {
+            icons.push(...result.slice(0, 48));
+        });
+        return this.renderIconList(icons, hasNext);
     }
 
     renderHistoryContent() {
-        const { historyIcons, highLightedIndex } = this.state;
-        let icons = [];
-        for (let i = 0; i < historyIcons.length; i++) {
-            const reversedIndex = historyIcons.length - i - 1;
-            icons.push(this.renderIconCell(i, historyIcons[reversedIndex], highLightedIndex === i));
+        const { historyIcons } = this.state;
+        return this.renderIconList([...historyIcons].reverse(), false);
+    }
+
+    renderSearchingContent() {
+        return this.renderNoIconContent('', classNames('spinner-roller'));
+    }
+
+    renderSearchError() {
+        const { term } = this.state;
+        return this.renderNoIconContent(`Error occured when search "${term}", click to retry`, '', () => this.handleSearch());
+    }
+
+    renderSearchNoResult() {
+        const { term } = this.state;
+        return this.renderNoIconContent(`We didn't find any icons for "${term}"`);
+    }
+
+    renderNoIconContent(text: string, className: string = '', onClick: Function = null) {
+        return (
+            <div className='no-icon-results'>
+                <div className={className} onClick={onClick}>
+                    {text}
+                </div>
+            </div>
+        );
+    }
+
+    renderIconList(icons: IIcon[], hasNext: boolean) {
+        const { highLightedIndex } = this.state;
+        const iconCells = [];
+        for (let i = 0; i < icons.length; i++) {
+            iconCells.push(this.renderIconCell(i, icons[i], highLightedIndex === i));
         }
+        let loadingIndicator = hasNext ? (
+            <div className='loading-placeholder'>
+                <div className='dot-flashing'/>
+            </div>
+        ) : null;
+
         return (
             <div className='icons-list' onClick={() => this.onHighlight(-1)}>
-                {icons}
+                {iconCells}
+                {loadingIndicator}
             </div>
         );
     }
@@ -467,13 +478,17 @@ class NounProjectPanel extends React.Component {
     }
 
     getHighlightedIcon() {
-        const { highLightedIndex, resultIcons, historyIcons, currentTab } = this.state;
+        const { highLightedIndex, term, resultIcons, historyIcons, currentTab } = this.state;
         let highLightedIcon: IIcon = null;
         if (highLightedIndex >= 0) {
             if (currentTab === Tabs.LIBRARY) {
-                const page = Math.floor(highLightedIndex / 48);
-                const index = highLightedIndex % 48;
-                highLightedIcon = resultIcons[page][index];
+                if (term === '') {
+                    highLightedIcon = defaultIcons[highLightedIndex];
+                } else {
+                    const page = Math.floor(highLightedIndex / 48);
+                    const index = highLightedIndex % 48;
+                    highLightedIcon = resultIcons[page][index];
+                }
             } else if (currentTab === Tabs.HISTORY) {
                 const reversedIndex = historyIcons.length - highLightedIndex - 1;
                 highLightedIcon = historyIcons[reversedIndex];

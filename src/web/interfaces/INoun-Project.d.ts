@@ -12,6 +12,7 @@ export interface IIcon {
         username: string,
     },
     uploader_id: string,
+    isDefault?: boolean,
 }
 
 export interface IData {
