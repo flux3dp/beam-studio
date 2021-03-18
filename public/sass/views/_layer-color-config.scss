@@ -24,6 +24,9 @@
         border: solid #CCC;
         border-width: 1px 0px;
         color: #666666;
+        &::-webkit-scrollbar {
+            display: none;
+        }
         .config-item{
             height: 36px;
             line-height: 26px;
