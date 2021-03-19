@@ -1,17 +1,18 @@
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
-import i18n from '../../../helpers/i18n';
-import Config from '../../../helpers/api/config';
-import SelectView from '../../widgets/Select';
-import UnitInput from '../../widgets/Unit-Input-v2';
-import AlertActions from '../../actions/alert-actions';
-import LocalStorage from '../../../helpers/local-storage';
-import BeamboxConstant from '../../actions/beambox/constant';
-import BeamboxPreference from '../../actions/beambox/beambox-preference';
-import FontFuncs from '../../actions/beambox/font-funcs';
-import initializeMachine from '../../actions/initialize-machine';
-import { IFont } from '../../../interfaces/IFont';
-import { IDeviceInfo } from '../../../interfaces/IDevice';
+import SelectView from 'app/widgets/Select';
+import UnitInput from 'app/widgets/Unit-Input-v2';
+import alert from 'app/actions/alert-caller';
+import alertConstants from 'app/constants/alert-constants';
+import BeamboxConstant from 'app/actions/beambox/constant';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import FontFuncs from 'app/actions/beambox/font-funcs';
+import initializeMachine from 'app/actions/initialize-machine';
+import Config from 'helpers/api/config';
+import LocalStorage from 'helpers/local-storage';
+import i18n from 'helpers/i18n';
+import { IFont } from 'interfaces/IFont';
+import { IDeviceInfo } from 'interfaces/IDevice';
 
 const React = requireNode('react');
 const FontScanner = requireNode('font-scanner');
@@ -46,29 +47,30 @@ class SettingGeneral extends React.Component{
         this.configChanges = {};
     }
 
-    _checkIPFormat = (e) => {
-        var me = e.currentTarget,
+    checkIPFormat = (e) => {
+        let me = e.currentTarget,
             lang = this.state.lang,
-            originalIP = Config().read('poke-ip-addr'),
+            originalIP = this.getConfigEditingValue('poke-ip-addr'),
             ips = me.value.split(/[,;] ?/),
-            ipv4Pattern = /^\d{1,3}[\.]\d{1,3}[\.]\d{1,3}[\.]\d{1,3}$/g,
-            isCorrectFormat = true;
+            ipv4Pattern = /^\d{1,3}[\.]\d{1,3}[\.]\d{1,3}[\.]\d{1,3}$/;
 
-        ips.forEach((ip) => {
-            if ('' !== ip && typeof ips === 'string' && false === ipv4Pattern.test(ip)) {
+        for (let i = 0; i < ips.length; i++) {
+            const ip = ips[i];
+            if ('' !== ip && typeof ip === 'string' && false === ipv4Pattern.test(ip)) {
                 me.value = originalIP;
-                AlertActions.showPopupError('wrong-ip-error', lang.settings.wrong_ip_format + '\n' + ip);
-                isCorrectFormat = false;
+                alert.popUp({
+                    id: 'wrong-ip-error',
+                    type: alertConstants.SHOW_POPUP_ERROR,
+                    message: lang.settings.wrong_ip_format + '\n' + ip,
+                })
                 return;
             }
-        });
-
-        if(isCorrectFormat) {
-            this.configChanges['poke-ip-addr'] = me.value;
         }
+
+        this.configChanges['poke-ip-addr'] = me.value;
     }
 
-    _changeActiveLang = (e) => {
+    changeActiveLang = (e) => {
         i18n.setActiveLang(e.currentTarget.value);
         this.setState({
             lang: i18n.lang
@@ -76,7 +78,7 @@ class SettingGeneral extends React.Component{
         this.props.onLangChange(e);
     }
 
-    _updateConfigChange = (id, val) => {
+    updateConfigChange = (id, val) => {
         if (!isNaN(Number(val))) {
             val = Number(val);
         }
@@ -84,14 +86,14 @@ class SettingGeneral extends React.Component{
         this.forceUpdate();
     }
 
-    _getConfigEditingValue = (key) => {
+    getConfigEditingValue = (key) => {
         if (key in this.configChanges) {
             return this.configChanges[key];
         }
         return Config().read(key);
     }
 
-    _updateBeamboxPreferenceChange = (item_key, val) => {
+    updateBeamboxPreferenceChange = (item_key, val) => {
         if (val === 'true') {
             val = true;
         } else if (val === 'false') {
@@ -101,21 +103,21 @@ class SettingGeneral extends React.Component{
         this.forceUpdate();
     }
 
-    _getBeamboxPreferenceEditingValue = (key) => {
+    getBeamboxPreferenceEditingValue = (key) => {
         if (key in this.beamboxPreferenceChanges) {
             return this.beamboxPreferenceChanges[key];
         }
         return BeamboxPreference.read(key);
     }
 
-    _removeDefaultMachine = () => {
+    removeDefaultMachine = () => {
         if(confirm(this.state.lang.settings.confirm_remove_default)) {
             this.isDefaultMachineRemoved = true;
             this.forceUpdate();
         }
     }
 
-    _resetBS = () => {
+    resetBS = () => {
         if(confirm(this.state.lang.settings.confirm_reset)) {
             LocalStorage.clearAllExceptIP();
             localStorage.clear();
@@ -124,7 +126,7 @@ class SettingGeneral extends React.Component{
         }
     }
 
-    _handleDone = () => {
+    handleDone = () => {
         for (let key in this.configChanges) {
             Config().write(key, this.configChanges[key]);
         }
@@ -164,12 +166,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 0,
                 label: lang.settings.notification_off,
-                selected: this._getConfigEditingValue('notification') === 0
+                selected: this.getConfigEditingValue('notification') === 0
             },
             {
                 value: 1,
                 label: lang.settings.notification_on,
-                selected: this._getConfigEditingValue('notification') === 1
+                selected: this.getConfigEditingValue('notification') === 1
             }
         ];
 
@@ -177,12 +179,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 0,
                 label: lang.settings.notification_off,
-                selected: this._getConfigEditingValue('auto_check_update') === 0
+                selected: this.getConfigEditingValue('auto_check_update') === 0
             },
             {
                 value: 1,
                 label: lang.settings.notification_on,
-                selected: this._getConfigEditingValue('auto_check_update') !== 0
+                selected: this.getConfigEditingValue('auto_check_update') !== 0
             }
         ];
 
@@ -190,12 +192,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 0,
                 label: lang.settings.off,
-                selected: this._getConfigEditingValue('guessing_poke') === 0
+                selected: this.getConfigEditingValue('guessing_poke') === 0
             },
             {
                 value: 1,
                 label: lang.settings.on,
-                selected: this._getConfigEditingValue('guessing_poke') !== 0
+                selected: this.getConfigEditingValue('guessing_poke') !== 0
             }
         ];
 
@@ -203,12 +205,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 0,
                 label: lang.settings.off,
-                selected: this._getConfigEditingValue('auto_connect') === 0
+                selected: this.getConfigEditingValue('auto_connect') === 0
             },
             {
                 value: 1,
                 label: lang.settings.on,
-                selected: this._getConfigEditingValue('auto_connect') !== 0
+                selected: this.getConfigEditingValue('auto_connect') !== 0
             }
         ];
 
@@ -216,16 +218,16 @@ class SettingGeneral extends React.Component{
             {
                 value: 'mm',
                 label: lang.menu.mm,
-                selected: this._getConfigEditingValue('default-units') === 'mm'
+                selected: this.getConfigEditingValue('default-units') === 'mm'
             },
             {
                 value: 'inches',
                 label: lang.menu.inches,
-                selected: this._getConfigEditingValue('default-units') === 'inches'
+                selected: this.getConfigEditingValue('default-units') === 'inches'
             },
         ];
 
-        const defaultFont: IFont = Config().read('default-font') || {
+        const defaultFont = Config().read('default-font') as IFont || {
             family: 'Arial',
             style: 'Regular'
         };
@@ -272,12 +274,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('show_guides') === false
+                selected: this.getBeamboxPreferenceEditingValue('show_guides') === false
             },
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('show_guides') !== false
+                selected: this.getBeamboxPreferenceEditingValue('show_guides') !== false
             }
         ];
 
@@ -285,12 +287,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 'false',
                 label: lang.settings.high,
-                selected: this._getBeamboxPreferenceEditingValue('image_downsampling') === false
+                selected: this.getBeamboxPreferenceEditingValue('image_downsampling') === false
             },
             {
                 value: 'true',
                 label: lang.settings.low,
-                selected: this._getBeamboxPreferenceEditingValue('image_downsampling') !== false
+                selected: this.getBeamboxPreferenceEditingValue('image_downsampling') !== false
             }
         ];
 
@@ -298,12 +300,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: !this._getBeamboxPreferenceEditingValue('continuous_drawing')
+                selected: !this.getBeamboxPreferenceEditingValue('continuous_drawing')
             },
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('continuous_drawing')
+                selected: this.getBeamboxPreferenceEditingValue('continuous_drawing')
             }
         ];
 
@@ -311,12 +313,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('simplify_clipper_path')
+                selected: this.getBeamboxPreferenceEditingValue('simplify_clipper_path')
             },
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: !this._getBeamboxPreferenceEditingValue('simplify_clipper_path')
+                selected: !this.getBeamboxPreferenceEditingValue('simplify_clipper_path')
             }
         ];
 
@@ -324,12 +326,12 @@ class SettingGeneral extends React.Component{
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('fast_gradient') === false
+                selected: this.getBeamboxPreferenceEditingValue('fast_gradient') === false
             },
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('fast_gradient') !== false
+                selected: this.getBeamboxPreferenceEditingValue('fast_gradient') !== false
             }
         ];
 
@@ -337,24 +339,24 @@ class SettingGeneral extends React.Component{
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('vector_speed_contraint') === false
+                selected: this.getBeamboxPreferenceEditingValue('vector_speed_contraint') === false
             },
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('vector_speed_contraint') !== false
+                selected: this.getBeamboxPreferenceEditingValue('vector_speed_contraint') !== false
             }
         ];
         const precutSwitchOptions = [
             {
                 value: 'false',
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('blade_precut') !== true
+                selected: this.getBeamboxPreferenceEditingValue('blade_precut') !== true
             },
             {
                 value: 'true',
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('blade_precut') === true
+                selected: this.getBeamboxPreferenceEditingValue('blade_precut') === true
             }
         ];
 
@@ -362,17 +364,17 @@ class SettingGeneral extends React.Component{
             {
                 value: 'fbm1',
                 label: 'beamo',
-                selected: this._getBeamboxPreferenceEditingValue('model') === 'fbm1'
+                selected: this.getBeamboxPreferenceEditingValue('model') === 'fbm1'
             },
             {
                 value: 'fbb1b',
                 label: 'Beambox',
-                selected: this._getBeamboxPreferenceEditingValue('model') === 'fbb1b'
+                selected: this.getBeamboxPreferenceEditingValue('model') === 'fbb1b'
             },
             {
                 value: 'fbb1p',
                 label: 'Beambox Pro',
-                selected: this._getBeamboxPreferenceEditingValue('model') === 'fbb1p'
+                selected: this.getBeamboxPreferenceEditingValue('model') === 'fbb1p'
             }
         ];
 
@@ -380,12 +382,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('enable_mask') === true
+                selected: this.getBeamboxPreferenceEditingValue('enable_mask') === true
             },
             {
                 value: false,
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('enable_mask') !== true
+                selected: this.getBeamboxPreferenceEditingValue('enable_mask') !== true
             }
         ];
 
@@ -393,12 +395,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('TextbyFluxsvg') !== false
+                selected: this.getBeamboxPreferenceEditingValue('TextbyFluxsvg') !== false
             },
             {
                 value: false,
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('TextbyFluxsvg') === false
+                selected: this.getBeamboxPreferenceEditingValue('TextbyFluxsvg') === false
             }
         ];
 
@@ -406,12 +408,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('font-substitute') !== false
+                selected: this.getBeamboxPreferenceEditingValue('font-substitute') !== false
             },
             {
                 value: false,
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('font-substitute') === false
+                selected: this.getBeamboxPreferenceEditingValue('font-substitute') === false
             }
         ];
 
@@ -419,12 +421,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.on,
-                selected: this._getBeamboxPreferenceEditingValue('default-borderless') === true
+                selected: this.getBeamboxPreferenceEditingValue('default-borderless') === true
             },
             {
                 value: false,
                 label: lang.settings.off,
-                selected: this._getBeamboxPreferenceEditingValue('default-borderless') !== true
+                selected: this.getBeamboxPreferenceEditingValue('default-borderless') !== true
             }
         ];
 
@@ -432,12 +434,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.enabled,
-                selected: this._getBeamboxPreferenceEditingValue('default-autofocus') === true
+                selected: this.getBeamboxPreferenceEditingValue('default-autofocus') === true
             },
             {
                 value: false,
                 label: lang.settings.disabled,
-                selected: this._getBeamboxPreferenceEditingValue('default-autofocus') !== true
+                selected: this.getBeamboxPreferenceEditingValue('default-autofocus') !== true
             }
         ];
 
@@ -445,12 +447,12 @@ class SettingGeneral extends React.Component{
             {
                 value: true,
                 label: lang.settings.enabled,
-                selected: this._getBeamboxPreferenceEditingValue('default-diode') === true
+                selected: this.getBeamboxPreferenceEditingValue('default-diode') === true
             },
             {
                 value: false,
                 label: lang.settings.disabled,
-                selected: this._getBeamboxPreferenceEditingValue('default-diode') !== true
+                selected: this.getBeamboxPreferenceEditingValue('default-diode') !== true
             }
         ];
 
@@ -458,19 +460,19 @@ class SettingGeneral extends React.Component{
             {
                 value: 0,
                 label: lang.settings.off,
-                selected: this._getConfigEditingValue('enable-sentry') !== 1
+                selected: this.getConfigEditingValue('enable-sentry') !== 1
             },
             {
                 value: 1,
                 label: lang.settings.on,
-                selected: this._getConfigEditingValue('enable-sentry') === 1
+                selected: this.getConfigEditingValue('enable-sentry') === 1
             }
         ];
 
         // if (printer.name !== undefined) {
         //     default_machine_button = (
         //         <a className='font3'
-        //             onClick={this._removeDefaultMachine}
+        //             onClick={this.removeDefaultMachine}
         //         >
         //             {lang.settings.remove_default_machine_button}
         //         </a>);
@@ -489,7 +491,7 @@ class SettingGeneral extends React.Component{
                         id='select-lang'
                         className='font3'
                         options={options}
-                        onChange={this._changeActiveLang}
+                        onChange={this.changeActiveLang}
                     />
                 </Controls>
 
@@ -497,7 +499,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={notificationOptions}
-                        onChange={(e) => this._updateConfigChange('notification', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('notification', e.target.value)}
                     />
                 </Controls>
 
@@ -506,7 +508,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={updateNotificationOptions}
-                        onChange={(e) => this._updateConfigChange('auto_check_update', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('auto_check_update', e.target.value)}
                     />
                 </Controls>
 
@@ -517,7 +519,7 @@ class SettingGeneral extends React.Component{
                         type='text'
                         autoComplete='false'
                         defaultValue={pokeIP}
-                        onBlur={this._checkIPFormat}
+                        onBlur={this.checkIPFormat}
                     />
                 </Controls>
 
@@ -525,7 +527,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={guessingPokeOptions}
-                        onChange={(e) => this._updateConfigChange('guessing_poke', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('guessing_poke', e.target.value)}
                     />
                 </Controls>
 
@@ -533,31 +535,31 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={autoConnectOptions}
-                        onChange={(e) => this._updateConfigChange('auto_connect', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('auto_connect', e.target.value)}
                     />
                 </Controls>
 
                 <div className='subtitle'>{lang.settings.groups.camera}</div>
                 <Controls label={lang.settings.preview_movement_speed}>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
                         min={3}
                         max={300}
-                        decimal={this._getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
-                        defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed') || cameraMovementSpeed) / 60}
-                        getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed', val * 60)}
+                        decimal={this.getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
+                        defaultValue={(this.getBeamboxPreferenceEditingValue('preview_movement_speed') || cameraMovementSpeed) / 60}
+                        getValue={val => this.updateBeamboxPreferenceChange('preview_movement_speed', val * 60)}
                         className={{half: true}}
                     />
                 </Controls>
 
                 <Controls label={lang.settings.preview_movement_speed_hl}>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in/s' : 'mm/s'}
                         min={3}
                         max={300}
-                        decimal={this._getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
-                        defaultValue={(this._getBeamboxPreferenceEditingValue('preview_movement_speed_hl') || (cameraMovementSpeed * 0.6)) / 60}
-                        getValue={val => this._updateBeamboxPreferenceChange('preview_movement_speed_hl', val * 60)}
+                        decimal={this.getConfigEditingValue('default-units') === 'inches' ? 2 : 0}
+                        defaultValue={(this.getBeamboxPreferenceEditingValue('preview_movement_speed_hl') || (cameraMovementSpeed * 0.6)) / 60}
+                        getValue={val => this.updateBeamboxPreferenceChange('preview_movement_speed_hl', val * 60)}
                         className={{half: true}}
                     />
                 </Controls>
@@ -568,7 +570,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={defaultUnitsOptions}
-                        onChange={(e) => this._updateConfigChange('default-units', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('default-units', e.target.value)}
                     />
                 </Controls>
 
@@ -592,7 +594,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={defaultBeamboxModelOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('model', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('model', e.target.value)}
                     />
                 </Controls>
 
@@ -601,27 +603,27 @@ class SettingGeneral extends React.Component{
                         id='set-guide'
                         className='font3'
                         options={guideSelectionOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('show_guides', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('show_guides', e.target.value)}
                     />
                 </Controls>
                 <Controls label={lang.settings.guides_origin}>
                     <span className='font2' style={{marginRight: '10px'}}>X</span>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getWidth()/10}
-                        defaultValue={this._getBeamboxPreferenceEditingValue('guide_x0')}
-                        getValue={val => this._updateBeamboxPreferenceChange('guide_x0', val)}
+                        defaultValue={this.getBeamboxPreferenceEditingValue('guide_x0')}
+                        getValue={val => this.updateBeamboxPreferenceChange('guide_x0', val)}
                         forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getHeight()/10}
-                        defaultValue={this._getBeamboxPreferenceEditingValue('guide_y0')}
-                        getValue={val => this._updateBeamboxPreferenceChange('guide_y0', val)}
+                        defaultValue={this.getBeamboxPreferenceEditingValue('guide_y0')}
+                        getValue={val => this.updateBeamboxPreferenceChange('guide_y0', val)}
                         forceUsePropsUnit={true}
                         className={{half: true}}
                     />
@@ -631,7 +633,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={imageDownsamplingOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('image_downsampling', e.target.value)}
                     />
                 </Controls>
 
@@ -639,7 +641,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={continuousDrawingOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('continuous_drawing', e.target.value)}
                     />
                 </Controls>
 
@@ -647,7 +649,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={simplifyClipperPath}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('simplify_clipper_path', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('simplify_clipper_path', e.target.value)}
                     />
                 </Controls>
 
@@ -657,7 +659,7 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={fastGradientOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('fast_gradient', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('fast_gradient', e.target.value)}
                     />
                 </Controls>
 
@@ -667,17 +669,17 @@ class SettingGeneral extends React.Component{
                     <SelectView
                         className='font3'
                         options={vectorSpeedConstraintOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('vector_speed_contraint', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('vector_speed_contraint', e.target.value)}
                     />
                 </Controls>
 
                 <Controls label={lang.settings.loop_compensation}>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={20}
-                        defaultValue={Number(this._getConfigEditingValue('loop_compensation') || '0') / 10}
-                        getValue={(val) => this._updateConfigChange('loop_compensation', Number(val) * 10)}
+                        defaultValue={Number(this.getConfigEditingValue('loop_compensation') || '0') / 10}
+                        getValue={(val) => this.updateConfigChange('loop_compensation', Number(val) * 10)}
                         forceUsePropsUnit={true}
                         className={{half: true}}
                     />
@@ -687,12 +689,12 @@ class SettingGeneral extends React.Component{
                     <div>
                         <Controls label={lang.settings.blade_radius}>
                             <UnitInput
-                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                                unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={30}
                                 step={0.01}
-                                defaultValue={this._getBeamboxPreferenceEditingValue('blade_radius') || 0}
-                                getValue={val => this._updateBeamboxPreferenceChange('blade_radius', val)}
+                                defaultValue={this.getBeamboxPreferenceEditingValue('blade_radius') || 0}
+                                getValue={val => this.updateBeamboxPreferenceChange('blade_radius', val)}
                                 forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
@@ -702,28 +704,28 @@ class SettingGeneral extends React.Component{
                             <SelectView
                                 className='font3'
                                 options={precutSwitchOptions}
-                                onChange={(e) => this._updateBeamboxPreferenceChange('blade_precut', e.target.value)}
+                                onChange={(e) => this.updateBeamboxPreferenceChange('blade_precut', e.target.value)}
                             />
                         </Controls>
 
                         <Controls label={lang.settings.blade_precut_position}>
                             <span className='font2' style={{marginRight: '10px'}}>X</span>
                             <UnitInput
-                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                                unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={BeamboxConstant.dimension.getWidth()/10}
-                                defaultValue={this._getBeamboxPreferenceEditingValue('precut_x') || 0}
-                                getValue={val => this._updateBeamboxPreferenceChange('precut_x', val)}
+                                defaultValue={this.getBeamboxPreferenceEditingValue('precut_x') || 0}
+                                getValue={val => this.updateBeamboxPreferenceChange('precut_x', val)}
                                 forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
                             <span className='font2' style={{marginRight: '10px'}}>Y</span>
                             <UnitInput
-                                unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                                unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
                                 max={BeamboxConstant.dimension.getHeight()/10}
-                                defaultValue={this._getBeamboxPreferenceEditingValue('precut_y') || 0}
-                                getValue={val => this._updateBeamboxPreferenceChange('precut_y', val)}
+                                defaultValue={this.getBeamboxPreferenceEditingValue('precut_y') || 0}
+                                getValue={val => this.updateBeamboxPreferenceChange('precut_y', val)}
                                 forceUsePropsUnit={true}
                                 className={{half: true}}
                             />
@@ -738,7 +740,7 @@ class SettingGeneral extends React.Component{
                         id='set-mask'
                         className='font3'
                         options={maskOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('enable_mask', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('enable_mask', e.target.value)}
                     />
                 </Controls>
 
@@ -749,7 +751,7 @@ class SettingGeneral extends React.Component{
                         id='text-optimize'
                         className='font3'
                         options={textToPathOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('TextbyFluxsvg', e.target.value)}
                     />
                 </Controls>
 
@@ -758,7 +760,7 @@ class SettingGeneral extends React.Component{
                         id='font-substitue'
                         className='font3'
                         options={fontSubstituteOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('font-substitute', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('font-substitute', e.target.value)}
                     />
                 </Controls>
 
@@ -769,7 +771,7 @@ class SettingGeneral extends React.Component{
                         id='default-open-bottom'
                         className='font3'
                         options={borderlessModeOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('default-borderless', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('default-borderless', e.target.value)}
                     />
                 </Controls>
 
@@ -778,7 +780,7 @@ class SettingGeneral extends React.Component{
                         id='default-autofocus'
                         className='font3'
                         options={autofocusModuleOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('default-autofocus', e.target.value)}
                     />
                 </Controls>
 
@@ -787,28 +789,28 @@ class SettingGeneral extends React.Component{
                         id='default-diode'
                         className='font3'
                         options={diodeModuleOptions}
-                        onChange={(e) => this._updateBeamboxPreferenceChange('default-diode', e.target.value)}
+                        onChange={(e) => this.updateBeamboxPreferenceChange('default-diode', e.target.value)}
                     />
                 </Controls>
 
                 <Controls label={lang.settings.diode_offset}>
                     <span className='font2' style={{marginRight: '10px'}}>X</span>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getWidth()/10}
-                        defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
-                        getValue={val => this._updateBeamboxPreferenceChange('diode_offset_x', val)}
+                        defaultValue={this.getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
+                        getValue={val => this.updateBeamboxPreferenceChange('diode_offset_x', val)}
                         forceUsePropsUnit={true}
                         className={{half: true}}
                     />
                     <span className='font2' style={{marginRight: '10px'}}>Y</span>
                     <UnitInput
-                        unit={this._getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
+                        unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
                         max={BeamboxConstant.dimension.getHeight()/10}
-                        defaultValue={this._getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
-                        getValue={val => this._updateBeamboxPreferenceChange('diode_offset_y', val)}
+                        defaultValue={this.getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
+                        getValue={val => this.updateBeamboxPreferenceChange('diode_offset_y', val)}
                         forceUsePropsUnit={true}
                         className={{half: true}}
                     />
@@ -821,16 +823,16 @@ class SettingGeneral extends React.Component{
                         id='set-sentry'
                         className='font3'
                         options={enableSentryOptions}
-                        onChange={(e) => this._updateConfigChange('enable-sentry', e.target.value)}
+                        onChange={(e) => this.updateConfigChange('enable-sentry', e.target.value)}
                     />
                 </Controls>
 
 
-                <a className='font5' onClick={this._resetBS}>
+                <a className='font5' onClick={this.resetBS}>
                     <b>{lang.settings.reset_now}</b>
                 </a>
                 <div className="clearfix" />
-                <a className="btn btn-done" onClick={this._handleDone}>{lang.settings.done}</a>
+                <a className="btn btn-done" onClick={this.handleDone}>{lang.settings.done}</a>
                 <a className="btn btn-cancel" onClick={this._handleCancel}>{lang.settings.cancel}</a>
             </div>
         );
