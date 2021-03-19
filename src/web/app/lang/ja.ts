@@ -719,6 +719,11 @@ export default {
         }
     },
     noun_project_panel: {
+        shapes: '形',
+        elements: '要素',
+        recent: '最近使用された',
+        search: '搜尋',
+        clear: '消去',
         export_svg_title: 'SVGをエクスポートできません',
         export_svg_warning: 'このプロジェクトには、知的財産法によって保護されているオブジェクトが含まれています。したがって、Beam Studioは、エクスポート中にこれらのオブジェクトを自動的に除外します。プロジェクトをBeam Studioシーン（.beam形式）内に保存して、すべてのデータを保持することもできます。それでもエクスポートしますか？',
         learn_more: 'もっと詳しく知る',

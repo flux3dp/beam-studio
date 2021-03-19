@@ -719,6 +719,11 @@ export default {
         }
     },
     noun_project_panel: {
+        shapes: 'Formen',
+        elements: 'Elemente',
+        recent: 'Kürzlich',
+        search: 'Suche',
+        clear: 'Löschen',
         export_svg_title: 'SVG kann nicht exportiert werden',
         export_svg_warning: 'Dieses Projekt enthält Objekte, die durch das Gesetz zum Schutz des geistigen Eigentums geschützt sind. Daher schließt Beam Studio diese Objekte beim Export automatisch aus. Sie können Ihr Projekt weiterhin in Beam-Studio-Datei (.beam-Format) speichern, um alle Daten zu behalten. Möchten Sie noch exportieren?',
         learn_more: 'Erfahren Sie mehr',

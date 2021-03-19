@@ -719,6 +719,11 @@ export default {
         }
     },
     noun_project_panel: {
+        shapes: '形狀',
+        elements: '元素',
+        recent: '最近使用',
+        search: '搜尋',
+        clear: '清除',
         export_svg_title: '無法匯出 SVG',
         export_svg_warning: '專案中含有受知識產權法律的保護的 Noun Project 物件，因此匯出時 Beam Studio 會自動幫您排除這類型之物件，您仍可以透過儲存場景 (.beam 檔) 的方式保留您的專案，請問是否要繼續匯出？',
         learn_more: '更多資訊',

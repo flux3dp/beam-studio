@@ -717,6 +717,11 @@ export interface ILang {
         }
     },
     noun_project_panel: {
+        shapes: string,
+        elements: string,
+        recent: string,
+        search: string,
+        clear: string,
         export_svg_title: string,
         export_svg_warning: string,
         learn_more: string,

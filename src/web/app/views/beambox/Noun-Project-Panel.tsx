@@ -17,7 +17,7 @@ getSVGAsync((globalSVG) => {
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
-const LANG = i18n.lang;
+const LANG = i18n.lang.noun_project_panel;
 
 const INFO_DIALOG_WIDTH = 250;
 const INFO_DIALOG_HEIGHT = 60;
@@ -99,8 +99,8 @@ class NounProjectPanel extends React.Component {
         }
         return (
             <div className='tabs'>
-                <div className={classNames('tab', { active: currentTab === Tabs.LIBRARY })} onClick={() => changeTab(Tabs.LIBRARY)}>{'Library'}</div>
-                <div className={classNames('tab', { active: currentTab === Tabs.HISTORY })} onClick={() => changeTab(Tabs.HISTORY)}>{'History'}</div>
+                <div className={classNames('tab', { active: currentTab === Tabs.LIBRARY })} onClick={() => changeTab(Tabs.LIBRARY)}>{LANG.elements}</div>
+                <div className={classNames('tab', { active: currentTab === Tabs.HISTORY })} onClick={() => changeTab(Tabs.HISTORY)}>{LANG.recent}</div>
             </div>
         );
     }
@@ -119,13 +119,13 @@ class NounProjectPanel extends React.Component {
         return (
             <div className='search-panel'>
                 <img className='search-icon' src='img/noun-project-panel/icon-search.svg' draggable='false'/>
-                <input type='text' id='search-input' ref={this.searchInput} placeholder='Search for anything'
+                <input type='text' id='search-input' ref={this.searchInput} placeholder={LANG.search}
                     defaultValue={term}
                     onKeyDown={(e: KeyboardEvent) => {this.handleSearchInputKeyDown(e)}}
                 >
                 </input>
                 <div className={classNames('cancel-button', { hide: term === ''})} onClick={() => this.onCancelSearch()}>
-                    <img src='img/icon-clear.svg'/>
+                    <img src='img/icon-clear.svg' title={LANG.clear}/>
                 </div>
             </div>
         );
@@ -276,6 +276,9 @@ class NounProjectPanel extends React.Component {
             hadErrorWhenSearching: false,
             highLightedIndex: -1,
             hasNext: false,
+        }, () => {
+            this.scrollPosition[Tabs.LIBRARY] = 0;
+            this.contentContainer.current.scrollTop = 0;
         });
     }
 
@@ -548,7 +551,7 @@ class NounProjectPanel extends React.Component {
         return (
             <div className={classNames('noun-project-panel-container')}>
                 <DraggableWindow
-                    title='Shape Library'
+                    title={LANG.shapes}
                     containerClass={classNames('noun-project-panel')}
                     defaultPosition={{x: 50, y: 50}}
                     onClose={() => onClose()}

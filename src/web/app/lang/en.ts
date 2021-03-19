@@ -719,6 +719,11 @@ export default {
         }
     },
     noun_project_panel: {
+        shapes: 'Shapes',
+        elements: 'Elements',
+        recent: 'Recent',
+        search: 'Search',
+        clear: 'Clear',
         export_svg_title: 'Unable to Export SVG',
         export_svg_warning: 'This project contains objects that are protected by the intellectual property law. Therefore Beam Studio will automatically exclude these objects during the export. You can still save your project within Beam Studio Scene (.beam format) to keep your all datas. Do you still want to export?',
         learn_more: 'Learn More',
