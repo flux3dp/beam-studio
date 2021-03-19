@@ -154,7 +154,7 @@ class Alert extends React.Component {
 
     renderMessage = (message) => {
         return typeof message === 'string' ?
-            <pre className='message' dangerouslySetInnerHTML={{__html: message}}></pre> :
+            <pre ref={this.messageRef} className='message' dangerouslySetInnerHTML={{__html: message}}></pre> :
             <pre className='message'>{message}</pre>
     }
 
