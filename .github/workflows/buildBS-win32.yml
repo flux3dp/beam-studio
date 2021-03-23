@@ -36,10 +36,9 @@ jobs:
         env:
         # env for windows to install pycrypto; MSVC version may change
           CL: /FI"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Tools\\MSVC\\14.24.28314\\INCLUDE\\stdint.h"
-      - name: Setup vs2015
+      - name: Setup msvs_version config
         run: |
-          npm install --global --production --vs2015 windows-build-tools
-          npm config set msvs_version 2015
+          npm config set msvs_version 2019
           npm config get msvs_version
       # using https://github.com/InVisionApp/private-action-loader for private repo.
       - name: Install Beamify
