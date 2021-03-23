@@ -1,9 +1,9 @@
-import InFillBlock from '../../../../views/beambox/Right-Panels/Options-Blocks/Infill-Block';
-import UnitInput from '../../../../widgets/Unit-Input-v2';
-import Constant from '../../../../actions/beambox/constant';
-import LocalStorage from '../../../../../helpers/local-storage';
-import * as i18n from '../../../../../helpers/i18n';
-import { getSVGAsync } from '../../../../../helpers/svg-editor-helper';
+import InFillBlock from 'app/views/beambox/Right-Panels/Options-Blocks/Infill-Block';
+import UnitInput from 'app/widgets/Unit-Input-v2';
+import Constant from 'app/actions/beambox/constant';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 
 let svgCanvas;
 let svgEditor;
@@ -28,7 +28,7 @@ class RectOptions extends React.Component {
 
     renderRoundCornerBlock() {
         const { dimensionValues } = this.props;
-        const unit = LocalStorage.get('default-units') || 'mm';
+        const unit = storage.get('default-units') || 'mm';
         const isInch = unit === 'inches';
         return (
             <div className="option-block" key="rounded-corner">

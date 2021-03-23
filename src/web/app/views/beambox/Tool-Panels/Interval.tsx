@@ -1,7 +1,7 @@
-import UnitInput from'../../../widgets/Unit-Input-v2';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
-import Constant from '../../../actions/beambox/constant';
+import UnitInput from'app/widgets/Unit-Input-v2';
+import Constant from 'app/actions/beambox/constant';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const PropTypes = requireNode('prop-types');
@@ -45,7 +45,7 @@ class Interval extends React.Component{
     getValueCaption = () => {
         const dx = this.state.dx, 
             dy = this.state.dy,
-            units = LocalStorage.get('default-units') || 'mm';
+            units = storage.get('default-units') || 'mm';
         if (units === 'inches') {
             return `${Number(dx/25.4).toFixed(3)}\", ${Number(dy/25.4).toFixed(3)}\"`;
         } else {

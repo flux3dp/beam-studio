@@ -3,8 +3,8 @@ import UnitInput from '../../widgets/Unit-Input-v2';
 import ValidationTextInput from '../../widgets/Validation-Text-Input';
 import Alert from '../../actions/alert-caller';
 import AlertConstants from '../../constants/alert-constants';
-import LocalStorage from '../../../helpers/local-storage';
-import * as i18n from '../../../helpers/i18n';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const LANG = i18n.lang.beambox.layer_color_config_panel;
@@ -30,7 +30,7 @@ class LayerColorConfigPanel extends React.Component {
     constructor(props) {
         super(props);
         // TODO: make config interface
-        let layerColorConfig = LocalStorage.get('layer-color-config') as unknown as {
+        let layerColorConfig = storage.get('layer-color-config') as unknown as {
             array: any,
             dict: any
         };
@@ -244,7 +244,7 @@ class LayerColorConfigPanel extends React.Component {
     }
 
     _onSave() {
-        LocalStorage.set('layer-color-config', {array: this.layerColorConfig, dict: this.layerColorConfigDict});
+        storage.set('layer-color-config', {array: this.layerColorConfig, dict: this.layerColorConfigDict});
         this._close();
     }
 

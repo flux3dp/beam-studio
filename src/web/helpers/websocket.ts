@@ -1,5 +1,5 @@
 import isJson from './is-json';
-import LocalStorage from './local-storage';
+import storage from './storage-helper';
 import * as i18n from './i18n';
 import Alert from '../app/actions/alert-caller';
 import AlertStore from '../app/stores/alert-store';
@@ -34,7 +34,7 @@ var hadConnected = false,
 //      onOpen        - fired on connection connecting
 export default function(options) {
     var { dev } = window['FLUX'],
-        customHost = LocalStorage.get('host'),
+        customHost = storage.get('host'),
         customPort = localStorage.getItem('port'),
         defaultCallback = function(result) {},
         defaultOptions = {

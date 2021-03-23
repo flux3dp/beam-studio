@@ -2,8 +2,7 @@
  * API config
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-config
  */
-import Websocket from '../websocket';
-import _localStorage from '../local-storage';
+import storage from 'helpers/storage-helper';
 
 export default function() {
     var stardardOptions = function(opts) {
@@ -18,13 +17,13 @@ export default function() {
         write: function(key, value, opts?) {
             opts = stardardOptions(opts);
 
-            _localStorage.set(key, value);
+            storage.set(key, value);
             opts.onFinished();
 
             return this;
         },
         read: function(key, opts?): string | Object {
-            var value = _localStorage.get(key);
+            var value = storage.get(key);
 
             opts = stardardOptions(opts);
 
@@ -41,7 +40,7 @@ export default function() {
         },
 
         remove: function(key) {
-            _localStorage.removeAt(key);
+            storage.removeAt(key);
         }
     };
 

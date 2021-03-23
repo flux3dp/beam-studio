@@ -12,9 +12,9 @@ import convertToTypedArray from '../convertToTypedArray';
 import history from '../data-history';
 import AlertConfig from './alert-config';
 import setParams from './set-params';
-import LocalStorage from '../local-storage';
-import * as i18n from '../i18n';
-import { getSVGAsync } from '../svg-editor-helper';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
@@ -376,7 +376,7 @@ export default function(opts) {
                 }
             };
 
-            let loop_compensation = Number(LocalStorage.get('loop_compensation') || '0');
+            let loop_compensation = Number(storage.get('loop_compensation') || '0');
             if (loop_compensation > 0) {
                 ws.send(['set_params', 'loop_compensation', loop_compensation].join(' '));
             }

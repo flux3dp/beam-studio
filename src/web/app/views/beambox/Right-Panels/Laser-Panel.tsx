@@ -1,26 +1,25 @@
-import $ from 'jquery';
-import BeamboxPreference from '../../../actions/beambox/beambox-preference';
-import Constant from '../../../actions/beambox/constant';
-import DiodeBoundaryDrawer from '../../../actions/beambox/diode-boundary-drawer';
-import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
-import ElectronDialogs from '../../../actions/electron-dialogs';
-import RightPanelConstants from '../../../constants/right-panel-constants';
-import BeamboxStore from '../../../stores/beambox-store';
-import Dialog from '../../../actions/dialog-caller';
-import UnitInput from '../../../widgets/Unit-Input-v2';
-import DropdownControl from '../../../widgets/Dropdown-Control';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import Constant from 'app/actions/beambox/constant';
+import DiodeBoundaryDrawer from 'app/actions/beambox/diode-boundary-drawer';
+import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
+import ElectronDialogs from 'app/actions/electron-dialogs';
+import RightPanelConstants from 'app/constants/right-panel-constants';
+import BeamboxStore from 'app/stores/beambox-store';
+import Dialog from 'app/actions/dialog-caller';
+import UnitInput from 'app/widgets/Unit-Input-v2';
+import DropdownControl from 'app/widgets/Dropdown-Control';
 import LaserManageModal from './Laser-Manage-Modal';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
-import { DataType, getLayerConfig, getLayersConfig, writeData, CUSTOM_PRESET_CONSTANT } from '../../../../helpers/laser-config-helper';
-import { getLayerElementByName } from '../../../../helpers/layer-helper';
-import Alert from '../../../actions/alert-caller';
-import AlertConstants from '../../../constants/alert-constants';
-import { clearEstimatedTime } from '../../../views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller'
-import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
-import TutorialConstants from '../../../constants/tutorial-constants';
-import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
-import sprintf from '../../../../helpers/sprintf'
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
+import { DataType, getLayerConfig, getLayersConfig, writeData, CUSTOM_PRESET_CONSTANT } from 'helpers/laser-config-helper';
+import { getLayerElementByName } from 'helpers/layer-helper';
+import Alert from 'app/actions/alert-caller';
+import AlertConstants from 'app/constants/alert-constants';
+import { clearEstimatedTime } from 'app/views/beambox/Time-Estimation-Button/Time-Estimation-Button-Controller'
+import * as TutorialController from 'app/views/tutorials/Tutorial-Controller';
+import TutorialConstants from 'app/constants/tutorial-constants';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
+import sprintf from 'helpers/sprintf'
 let svgCanvas, svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor });
 
@@ -40,7 +39,7 @@ const hiddenOptions = [
 class LaserPanel extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.unit = LocalStorage.get('default-units') || 'mm';
+        this.unit = storage.get('default-units') || 'mm';
         this.initDefaultConfig();
         this.state = {
             speed: 3,
@@ -100,7 +99,7 @@ class LaserPanel extends React.PureComponent {
 
     initDefaultConfig = () => {
         const unit = this.unit;
-        if (!LocalStorage.get('defaultLaserConfigsInUse') || !LocalStorage.get('customizedLaserConfigs')) {
+        if (!storage.get('defaultLaserConfigsInUse') || !storage.get('customizedLaserConfigs')) {
             const defaultConfigs = defaultLaserOptions.map( e => {
                 const {speed, power, repeat} = this._getDefaultParameters(e);
                 return {
@@ -112,18 +111,18 @@ class LaserPanel extends React.PureComponent {
                     key: e
                 }
             });
-            let customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
+            let customizedLaserConfigs = storage.get('customizedLaserConfigs') || [];
             customizedLaserConfigs = customizedLaserConfigs.filter((config) => !config.isDefault);
             customizedLaserConfigs = defaultConfigs.concat(customizedLaserConfigs);
             const defaultLaserConfigsInUse = {};
             defaultLaserOptions.forEach(e => {
                 defaultLaserConfigsInUse[e] = true;
             });
-            LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-            LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+            storage.set('customizedLaserConfigs', customizedLaserConfigs);
+            storage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
         } else {
-            let customized: any[] = LocalStorage.get('customizedLaserConfigs') as any[] || [];
-            const defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse') || {};
+            let customized: any[] = storage.get('customizedLaserConfigs') as any[] || [];
+            const defaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse') || {};
             for (let i = 0; i < customized.length; i++) {
                 if (customized[i].isDefault) {
                     if (defaultLaserOptions.includes(customized[i].key)) {
@@ -156,8 +155,8 @@ class LaserPanel extends React.PureComponent {
                     delete defaultLaserConfigsInUse[preset];
                 }
             });
-            LocalStorage.set('customizedLaserConfigs', customized);
-            LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+            storage.set('customizedLaserConfigs', customized);
+            storage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
         };
     }
 
@@ -170,8 +169,8 @@ class LaserPanel extends React.PureComponent {
             const fs = requireNode('fs');
             const laserConfig = {} as {customizedLaserConfigs: any, defaultLaserConfigsInUse: any};
 
-            laserConfig.customizedLaserConfigs = LocalStorage.get('customizedLaserConfigs');
-            laserConfig.defaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
+            laserConfig.customizedLaserConfigs = storage.get('customizedLaserConfigs');
+            laserConfig.defaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse');
             fs.writeFileSync(targetFilePath, JSON.stringify(laserConfig));
         }
     }
@@ -212,7 +211,7 @@ class LaserPanel extends React.PureComponent {
     }
 
     updatePresetLayerConfig = () => {
-        const customizedLaserConfigs: any[] = LocalStorage.get('customizedLaserConfigs') as any[] || [];
+        const customizedLaserConfigs: any[] = storage.get('customizedLaserConfigs') as any[] || [];
         const drawing = svgCanvas.getCurrentDrawing();
         const layerCount = drawing.getNumLayers();
         for (let i=0; i < layerCount; i++) {
@@ -297,9 +296,9 @@ class LaserPanel extends React.PureComponent {
     }
 
     _handleSaveConfig = (name: string) => {
-        const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
+        const customizedConfigs = storage.get('customizedLaserConfigs') as any[];
         if (!customizedConfigs || customizedConfigs.length < 1) {
-            LocalStorage.set('customizedLaserConfigs', [{
+            storage.set('customizedLaserConfigs', [{
                 name,
                 speed: this.state.speed,
                 power: this.state.power,
@@ -319,7 +318,7 @@ class LaserPanel extends React.PureComponent {
         } else {
             const index = customizedConfigs.findIndex((e) => e.name === name);
             if (index < 0) {
-                LocalStorage.set('customizedLaserConfigs', customizedConfigs.concat([{
+                storage.set('customizedLaserConfigs', customizedConfigs.concat([{
                     name,
                     speed: this.state.speed,
                     power: this.state.power,
@@ -369,7 +368,7 @@ class LaserPanel extends React.PureComponent {
                 }
             });
         } else {
-            const customizedConfigs = (LocalStorage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
+            const customizedConfigs = (storage.get('customizedLaserConfigs') as any[]).find((e) => e.name === value);
             if (customizedConfigs) {
                 const {
                     speed,
@@ -618,7 +617,7 @@ class LaserPanel extends React.PureComponent {
 
     _getDefaultLaserOptions = () => {
         const { configName, hasMultiSpeed, hasMultiPower, hasMultiRepeat, hasMultiZStep, hasMultiDiode, hasMultiConfigName } = this.state;
-        const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[] || [];
+        const customizedConfigs = storage.get('customizedLaserConfigs') as any[] || [];
         if (hasMultiSpeed || hasMultiPower || hasMultiRepeat || hasMultiZStep || hasMultiDiode || hasMultiConfigName) {
             // multi select
             return LANG.various_preset;
@@ -768,7 +767,7 @@ class LaserPanel extends React.PureComponent {
             DiodeBoundaryDrawer.hide();
         }
 
-        const customizedConfigs = LocalStorage.get('customizedLaserConfigs') as any[];
+        const customizedConfigs = storage.get('customizedLaserConfigs') as any[];
         const customizedOptions = (customizedConfigs || customizedConfigs.length > 0) ? customizedConfigs.map((e) => {
             return {
                 value: e.name,

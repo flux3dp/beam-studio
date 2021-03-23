@@ -1,13 +1,13 @@
-import Modal from '../../../widgets/Modal';
-import UnitInput from '../../../widgets/Unit-Input-v2';
-import Dialog from '../../../actions/dialog-caller';
-import Alert from '../../../actions/alert-caller';
-import AlertConstants from '../../../constants/alert-constants';
-import BeamboxPreference from '../../../actions/beambox/beambox-preference';
-import RightPanelConstants from '../../../constants/right-panel-constants';
-import isObjectEmpty from '../../../../helpers/is-object-empty';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
+import Modal from 'app/widgets/Modal';
+import UnitInput from 'app/widgets/Unit-Input-v2';
+import Dialog from 'app/actions/dialog-caller';
+import Alert from 'app/actions/alert-caller';
+import AlertConstants from 'app/constants/alert-constants';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import RightPanelConstants from 'app/constants/right-panel-constants';
+import isObjectEmpty from 'helpers/is-object-empty';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
@@ -17,9 +17,9 @@ const defaultLaserOptions = RightPanelConstants.laserPresetKeys;
 class LaserManageModal extends React.Component {
     constructor(props) {
         super(props);
-        this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-        this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
-        this.unit = LocalStorage.get('default-units') || 'mm';
+        this.editingCustomizedLaserConfigs = storage.get('customizedLaserConfigs') || [];
+        this.editingDefaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse');
+        this.unit = storage.get('default-units') || 'mm';
         const selectedConfig = this.editingCustomizedLaserConfigs.find((e) => e.name === props.selectedItem);
         this.unsavedChanges = {};
         this.state = {
@@ -293,10 +293,10 @@ class LaserManageModal extends React.Component {
             buttonType: AlertConstants.YES_NO,
             message: LANG.sure_to_reset,
             onYes: () => {
-                LocalStorage.removeAt('defaultLaserConfigsInUse');
+                storage.removeAt('defaultLaserConfigsInUse');
                 this.props.initDefaultConfig();
-                this.editingCustomizedLaserConfigs = LocalStorage.get('customizedLaserConfigs') || [];
-                this.editingDefaultLaserConfigsInUse = LocalStorage.get('defaultLaserConfigsInUse');
+                this.editingCustomizedLaserConfigs = storage.get('customizedLaserConfigs') || [];
+                this.editingDefaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse');
                 this.setState(this.state);
             }
         });
@@ -335,8 +335,8 @@ class LaserManageModal extends React.Component {
             }
         }
         this.unsavedChanges = {};
-        LocalStorage.set('customizedLaserConfigs', this.editingCustomizedLaserConfigs);
-        LocalStorage.set('defaultLaserConfigsInUse', this.editingDefaultLaserConfigsInUse);
+        storage.set('customizedLaserConfigs', this.editingCustomizedLaserConfigs);
+        storage.set('defaultLaserConfigsInUse', this.editingDefaultLaserConfigsInUse);
         this.props.onClose();
     }
 

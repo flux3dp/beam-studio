@@ -2,14 +2,13 @@
  * API discover
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-discover
  */
-import Websocket from '../websocket';
-import Config from './config';
-import DeviceList from '../device-list';
-import LocalStorage from '../local-storage';
-import Logger from '../logger';
-import SmartUpnp from '../smart-upnp';
+import Websocket from 'helpers/websocket';
+import DeviceList from 'helpers/device-list';
+import storage from 'helpers/storage-helper';
+import Logger from 'helpers/logger';
+import SmartUpnp from 'helpers/smart-upnp';
 import CloudApi from './cloud';
-import { IDeviceInfo } from '../../interfaces/IDevice';
+import { IDeviceInfo } from 'interfaces/IDevice';
 
 const dns = requireNode('dns');
 
@@ -43,7 +42,7 @@ var ws = ws || Websocket({
                 device.uuid = device.addr.toString();
             }
 
-            let pokeIPAddr = LocalStorage.get('poke-ip-addr');
+            let pokeIPAddr = storage.get('poke-ip-addr');
 
             if (pokeIPAddr && pokeIPAddr !== '') {
                 const pokeIPAddrArr = pokeIPAddr.split(/[,;] ?/);
@@ -53,10 +52,10 @@ var ws = ws || Websocket({
                         pokeIPAddr = pokeIPAddrArr.slice(pokeIPAddrArr.length - 19, pokeIPAddrArr.length).join();
                     }
 
-                    LocalStorage.set('poke-ip-addr', `${pokeIPAddr}, ${device.ipaddr}`);
+                    storage.set('poke-ip-addr', `${pokeIPAddr}, ${device.ipaddr}`);
                 }
             } else {
-                LocalStorage.set('poke-ip-addr', device.ipaddr);
+                storage.set('poke-ip-addr', device.ipaddr);
             }
 
             _devices[device.uuid] = device;
@@ -97,11 +96,11 @@ var ws = ws || Websocket({
         if (targetIP == null) { return; };
         ws.send(JSON.stringify({ 'cmd' : 'testtcp', 'ipaddr': targetIP }));
     },
-    pokeIPAddr = LocalStorage.get('poke-ip-addr'),
+    pokeIPAddr = storage.get('poke-ip-addr'),
     pokeIPs = (pokeIPAddr ? pokeIPAddr.split(/[,;] ?/) : ['']);
 
 if ('' === pokeIPs[0]) {
-    Config().write('poke-ip-addr', '192.168.1.1');
+    storage.set('poke-ip-addr', '192.168.1.1');
     pokeIPs = ['192.168.1.1'];
 }
 

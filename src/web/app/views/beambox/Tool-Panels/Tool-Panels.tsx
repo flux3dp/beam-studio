@@ -1,7 +1,5 @@
 import $ from 'jquery';
 import Constant from '../../../actions/beambox/constant';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
 import RowColumnPanel from './RowColumn';
 import IntervalPanel from './Interval';
 import OffsetDirPanel from './OffsetDir';
@@ -10,7 +8,9 @@ import OffsetDistPanel from './OffsetDist';
 import NestSpacingPanel from './NestSpacing';
 import NestGAPanel from './NestGA';
 import NestRotationPanel from './NestRotation';
-import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
@@ -230,7 +230,7 @@ class ToolPanel extends React.Component {
     }
 
     render() {
-        const lang = LocalStorage.get('active-lang') || 'en';
+        const lang = storage.get('active-lang') || 'en';
         const positionStyle = this._findPositionStyle();
         const classes = ClassNames('tool-panels', lang);
         return (

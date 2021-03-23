@@ -8,9 +8,7 @@ import ElectronDialogs from '../electron-dialogs';
 import { showCameraCalibration } from '../../views/beambox/Camera-Calibration';
 import { showDiodeCalibration } from '../../views/beambox/Diode-Calibration';
 import AlertConstants from '../../constants/alert-constants';
-import DeviceConstants from '../../constants/device-constants';
 import FontConstants from '../../constants/font-constants';
-import GlobalConstants from '../../constants/global-constants';
 import { Mode } from 'app/constants/monitor-constants';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
@@ -28,7 +26,7 @@ import firmwareUpdater from 'helpers/firmware-updater';
 import OutputError from 'helpers/output-error';
 import sprintf from 'helpers/sprintf';
 import VersionChecker from 'helpers/version-checker';
-import LocalStorage from 'helpers/local-storage';
+import storage from 'helpers/storage-helper';
 import * as i18n from 'helpers/i18n';
 import { IFont } from 'interfaces/IFont';
 import { getSVGEdit } from 'helpers/svg-editor-helper';
@@ -485,22 +483,22 @@ const initMenuBarEvents = () => {
 
 const showStartUpDialogs = async () => {
     await askAndInitSentry();
-    const isNewUser = LocalStorage.get('new-user');
+    const isNewUser = storage.get('new-user');
     await showTutorial(isNewUser);
     if (!isNewUser) {
-        const lastInstalledVersion = LocalStorage.get('last-installed-version');
+        const lastInstalledVersion = storage.get('last-installed-version');
         if (window['FLUX'].version !== lastInstalledVersion) {
             await showChangeLog();
         }
         await showQuestionnaire();
     }
     checkOSVersion();
-    LocalStorage.removeAt('new-user');
-    LocalStorage.set('last-installed-version', window['FLUX'].version);
+    storage.removeAt('new-user');
+    storage.set('last-installed-version', window['FLUX'].version);
 }
 
 const askAndInitSentry = async () => {
-    if (LocalStorage.get('enable-sentry') === undefined) {
+    if (storage.get('enable-sentry') === undefined) {
         await new Promise<void>((resolve) => {
             const LANG = i18n.lang;
             Alert.popUp({
@@ -510,12 +508,12 @@ const askAndInitSentry = async () => {
                 message: LANG.beambox.popup.sentry.message,
                 buttonType: AlertConstants.YES_NO,
                 onYes: () => {
-                    LocalStorage.set('enable-sentry', 1);
+                    storage.set('enable-sentry', 1);
                     initSentry();
                     resolve();
                 },
                 onNo: () => {
-                    LocalStorage.set('enable-sentry', 0);
+                    storage.set('enable-sentry', 0);
                     resolve();
                 },
             });
@@ -524,7 +522,7 @@ const askAndInitSentry = async () => {
 };
 
 const initSentry = async () => {
-    if (LocalStorage.get('enable-sentry')) {
+    if (storage.get('enable-sentry')) {
         console.log('Sentry Initiated');
         const Sentry = window['nodeModules']['@sentry/electron'];
         Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -577,7 +575,7 @@ const showChangeLog = () => {
 };
 
 const showQuestionnaire = async () => {
-    let lastQuestionnaireVersion = LocalStorage.get('questionnaire-version') || 0;
+    let lastQuestionnaireVersion = storage.get('questionnaire-version') || 0;
     const res = await checkQuestionnaire();
     console.log(res, lastQuestionnaireVersion);
 
@@ -589,7 +587,7 @@ const showQuestionnaire = async () => {
     }
     if (!url) return;
     
-    LocalStorage.set('questionnaire-version', res.version);
+    storage.set('questionnaire-version', res.version);
 
     return new Promise<void>((resolve) => {
         Alert.popUp({ 

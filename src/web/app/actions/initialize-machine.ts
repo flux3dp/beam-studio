@@ -1,10 +1,10 @@
 /**
  * initialize machine helper
  */
-import config from '../../helpers/api/config';
-import _localStorage from '../../helpers/local-storage';
+import config from 'helpers/api/config';
+import storage from 'helpers/storage-helper';
 import settings from '../app-settings';
-import { IDeviceInfo } from '../../interfaces/IDevice';
+import { IDeviceInfo } from 'interfaces/IDevice';
 
 var methods = {
     reset: function(callback) {
@@ -44,21 +44,21 @@ var methods = {
     },
     settingPrinter: {
         get: function() {
-            return _localStorage.get('setting-printer');
+            return storage.get('setting-printer');
         },
         set: function(printer) {
-            _localStorage.set('setting-printer', printer);
+            storage.set('setting-printer', printer);
         },
         clear: function() {
-            _localStorage.removeAt('setting-printer');
+            storage.removeAt('setting-printer');
         }
     },
     settedPrinter: {
         get: function(): any[] {
-            return _localStorage.get('printers') as unknown as any[];
+            return storage.get('printers') as unknown as any[];
         },
         set: function(printers) {
-            _localStorage.set('printers', printers);
+            storage.set('printers', printers);
         },
         add: function(printer) {
             var settedPrinters = methods.settedPrinter.get(),
@@ -70,7 +70,7 @@ var methods = {
                 settedPrinters.push(printer);
             }
 
-            _localStorage.set('printers', JSON.stringify(settedPrinters));
+            storage.set('printers', JSON.stringify(settedPrinters));
         },
         removeAt: function(printer) {
             var settedPrinters = methods.settedPrinter.get(),
@@ -85,18 +85,18 @@ var methods = {
             methods.settedPrinter.set(survivalPrinters);
         },
         clear: function() {
-            _localStorage.removeAt('printers');
+            storage.removeAt('printers');
         }
     },
     settingWifi: {
         get: function() {
-            return _localStorage.get('setting-wifi') || {};
+            return storage.get('setting-wifi') || {};
         },
         set: function(wifi) {
-            _localStorage.set('setting-wifi', wifi);
+            storage.set('setting-wifi', wifi);
         },
         clear: function() {
-            _localStorage.removeAt('setting-wifi');
+            storage.removeAt('setting-wifi');
         }
     },
     defaultPrinter: {
@@ -113,7 +113,7 @@ var methods = {
             return defaultDevice;
         },
         clear: function() {
-            _localStorage.removeAt('default-printer');
+            storage.removeAt('default-printer');
         }
     }
 };

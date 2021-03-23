@@ -14,10 +14,10 @@ import GlobalActions from '../actions/global-actions';
 import GlobalStore from '../stores/global-store';
 import Monitor from '../views/print/Monitor';
 import Modal from '../widgets/Modal';
-import LocalStorage from '../../helpers/local-storage';
-import checkFirmware from '../../helpers/check-firmware';
-import firmwareUpdater from '../../helpers/firmware-updater';
-import DeviceMaster from '../../helpers/device-master';
+import storage from 'helpers/storage-helper';
+import checkFirmware from 'helpers/check-firmware';
+import firmwareUpdater from 'helpers/firmware-updater';
+import DeviceMaster from 'helpers/device-master';
 // @ts-expect-error
 import Notifier = require('jqueryGrowl');
 declare global {
@@ -217,7 +217,7 @@ export default function(args) {
                     payload.device.version
                 ),
                 releaseNote = (
-                    'zh-tw' === LocalStorage.get('active-lang') ?
+                    'zh-tw' === storage.get('active-lang') ?
                     payload.updateInfo.changelog_zh :
                     payload.updateInfo.changelog_en
                 );

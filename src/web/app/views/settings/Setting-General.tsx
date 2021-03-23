@@ -7,9 +7,8 @@ import alertConstants from 'app/constants/alert-constants';
 import BeamboxConstant from 'app/actions/beambox/constant';
 import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 import FontFuncs from 'app/actions/beambox/font-funcs';
-import initializeMachine from 'app/actions/initialize-machine';
 import Config from 'helpers/api/config';
-import LocalStorage from 'helpers/local-storage';
+import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
 import { IFont } from 'interfaces/IFont';
 import { IDeviceInfo } from 'interfaces/IDevice';
@@ -119,7 +118,7 @@ class SettingGeneral extends React.Component{
 
     resetBS = () => {
         if(confirm(this.state.lang.settings.confirm_reset)) {
-            LocalStorage.clearAllExceptIP();
+            storage.clearAllExceptIP();
             localStorage.clear();
             location.hash = '#';
             location.reload();

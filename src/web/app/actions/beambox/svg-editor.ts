@@ -36,21 +36,21 @@ import Alert from '../alert-caller';
 import AlertConstants from '../../constants/alert-constants';
 import Progress from '../progress-caller';
 import Dialog from 'app/actions/dialog-caller';
-import AwsHelper from '../../../helpers/aws-helper';
-import BeamFileHelper from '../../../helpers/beam-file-helper';
-import ImageData from '../../../helpers/image-data';
-import LocalStorage from '../../../helpers/local-storage';
-import PdfHelper from '../../../helpers/pdf-helper';
-import Shortcuts from '../../../helpers/shortcuts';
-import SymbolMaker from '../../../helpers/symbol-maker';
-import * as i18n from '../../../helpers/i18n';
+import AwsHelper from 'helpers/aws-helper';
+import BeamFileHelper from 'helpers/beam-file-helper';
+import ImageData from 'helpers/image-data';
+import storage from 'helpers/storage-helper';
+import PdfHelper from 'helpers/pdf-helper';
+import Shortcuts from 'helpers/shortcuts';
+import SymbolMaker from 'helpers/symbol-maker';
+import * as i18n from 'helpers/i18n';
 
-import AlertConfig from '../../../helpers/api/alert-config';
-import Config from '../../../helpers/api/config';
-import SvgLaserParser from '../../../helpers/api/svg-laser-parser';
-import { IFont } from '../../../interfaces/IFont';
-import { IIcon } from '../../../interfaces/INoun-Project'
-import { IStorage } from '../../../interfaces/IStorage';
+import AlertConfig from 'helpers/api/alert-config';
+import Config from 'helpers/api/config';
+import SvgLaserParser from 'helpers/api/svg-laser-parser';
+import { IFont } from 'interfaces/IFont';
+import { IIcon } from 'interfaces/INoun-Project'
+import { IStorage } from 'interfaces/IStorage';
 
 // @ts-expect-error
 import Dxf2Svg = require('dxf2svg');
@@ -275,7 +275,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             setPanning: (active: any) => {},
             setWorkAreaContextMenu: () => {},
             setZoomWithWindow: () => {},
-            storage: LocalStorage,
+            storage: storage,
             toolButtonClick: (button: any, noHiding: any) => { return false },
             updateRulers: () => {},
             updateCanvas: (zoomData?: { autoCenter?: boolean; staticPoint?: { x: number; y: number } }) => {},
@@ -425,7 +425,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                 gridSnapping: false,
                 gridColor: 'rgba(0,0,0,0.18)',
                 baseUnit: 'px',
-                defaultUnit: LocalStorage.get('default-units') || 'mm',
+                defaultUnit: storage.get('default-units') || 'mm',
                 snappingStep: 10,
                 showRulers: true,
                 // URL BEHAVIOR CONFIGURATION
@@ -719,7 +719,7 @@ const svgEditor = window['svgEditor'] = (function($) {
             // Some FF versions throw security errors here when directly accessing
             try {
                 if ('localStorage' in window) { // && onWeb removed so Webkit works locally
-                    editor.storage = LocalStorage;
+                    editor.storage = storage;
                 }
             } catch (err) { console.log(err); }
 
@@ -1413,7 +1413,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     2. 當超過limit時 會畫很多個canvas 因瀏覽器canvas不能畫太長 (大約30000px) 第一個canvas畫不下時就比第二個canvas拿出來繼續畫
                     3. 上述這些canvas根據css margin排列 因某種神秘原因ruler_y的canvas要加上margin-top:-3px
                 */
-                const unit = LocalStorage.get('default-units');
+                const unit = storage.get('default-units');
 
                 function updateRuler(axis: string) {
                     // axis = x or y
@@ -5262,7 +5262,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             e.stopPropagation();
                             svgCanvas.selectAll();
                         });
-                        const moveUnit = LocalStorage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
+                        const moveUnit = storage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
                         Shortcuts.on(['up'], (e) => {
                             e.preventDefault();
                             if (selectedElement) {
@@ -6173,7 +6173,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                     const newConfigs = JSON.parse(configString);
                                     const { customizedLaserConfigs, defaultLaserConfigsInUse } = newConfigs;
                                     const configNames = new Set(customizedLaserConfigs.filter((config) => !config.isDefault).map((config) => config.name));
-                                    let currentConfig = LocalStorage.get('customizedLaserConfigs');
+                                    let currentConfig = storage.get('customizedLaserConfigs');
                                     if (typeof(currentConfig) === 'string') {
                                         currentConfig = JSON.parse(currentConfig);
                                     }
@@ -6183,8 +6183,8 @@ const svgEditor = window['svgEditor'] = (function($) {
                                             customizedLaserConfigs.push(config);
                                         }
                                     }
-                                    LocalStorage.set('customizedLaserConfigs', customizedLaserConfigs);
-                                    LocalStorage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+                                    storage.set('customizedLaserConfigs', customizedLaserConfigs);
+                                    storage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
                                     LayerPanelController.setSelectedLayers(LayerPanelController.getSelectedLayers());
                                     resolve(null);
                                 };

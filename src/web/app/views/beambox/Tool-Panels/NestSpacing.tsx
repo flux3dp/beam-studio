@@ -1,6 +1,6 @@
-import UnitInput from'../../../widgets/Unit-Input-v2';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
+import UnitInput from'app/widgets/Unit-Input-v2';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const LANG = i18n.lang.beambox.tool_panels;
@@ -22,7 +22,7 @@ class NestSpacingPanel extends React.Component{
 
     _getValueCaption() {
         const spacing = this.state.spacing, 
-            units = LocalStorage.get('default-units') || 'mm';
+            units = storage.get('default-units') || 'mm';
         if (units === 'inches') {
             return `${Number(spacing/25.4).toFixed(3)}\"`;
         } else {

@@ -1,10 +1,10 @@
-import UnitInput from '../../../widgets/Unit-Input-v2';
-import Constant from '../../../actions/beambox/constant';
-import KeycodeConstants from '../../../constants/keycode-constants';
-import SymbolMaker from '../../../../helpers/symbol-maker';
-import LocalStorage from '../../../../helpers/local-storage';
-import * as i18n from '../../../../helpers/i18n';
-import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
+import UnitInput from 'app/widgets/Unit-Input-v2';
+import Constant from 'app/actions/beambox/constant';
+import KeycodeConstants from 'app/constants/keycode-constants';
+import SymbolMaker from 'helpers/symbol-maker';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
@@ -35,7 +35,7 @@ class DimensionPanel extends React.Component {
         super(props);
         this.state = {
         };
-        this.unit = LocalStorage.get('default-units') === 'inches' ? 'in' : 'mm';
+        this.unit = storage.get('default-units') === 'inches' ? 'in' : 'mm';
         this.unitInputClass = {'dimension-input': true};
     }
 

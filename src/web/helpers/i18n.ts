@@ -1,4 +1,4 @@
-import localStorage from './local-storage';
+import storage from './storage-helper';
 import AppSettings from '../app/app-settings';
 import LangDe from '../app/lang/de';
 import LangEn from '../app/lang/en';
@@ -19,7 +19,7 @@ const ACTIVE_LANG = 'active-lang',
     };
 
 // TODO: Difference between activeLang and currentLang?
-let activeLang = localStorage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+let activeLang = storage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
 let currentLang;
 
 /**
@@ -30,7 +30,7 @@ let currentLang;
  * @return string
  */
 export function getActiveLang(): string {
-    return localStorage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+    return storage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
 }
 
 /**
@@ -43,7 +43,7 @@ export function getActiveLang(): string {
 export function setActiveLang(lang: string) {
     currentLang = undefined;
     activeLang = lang;
-    localStorage.set(ACTIVE_LANG, lang);
+    storage.set(ACTIVE_LANG, lang);
 
     return this;
 }

@@ -1,5 +1,5 @@
 import keyCodeConstants from '../constants/keycode-constants';
-import LocalStorage from '../../helpers/local-storage';
+import storage from 'helpers/storage-helper';
 
 const ClassNames = requireNode('classnames');
 const React = requireNode('react');
@@ -155,7 +155,7 @@ class UnitInput extends React.Component{
         if (this.props.unit === 'mm') {
             let unit = 'mm';
             if (!this.props.forceUsePropsUnit) {
-                unit = LocalStorage.get('default-units') || 'mm';
+                unit = storage.get('default-units') || 'mm';
             }
             if (unit === 'mm') {
                 return this.props.abbr ? '' : 'mm';

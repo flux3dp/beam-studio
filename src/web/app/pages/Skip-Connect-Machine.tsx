@@ -1,6 +1,6 @@
 import Modal from '../widgets/Modal';
-import LocalStorage from '../../helpers/local-storage';
-import * as i18n from '../../helpers/i18n';
+import storage from 'helpers/storage-helper';
+import * as i18n from 'helpers/i18n';
 const React = requireNode('react');
 
 const lang = i18n.lang;
@@ -9,10 +9,10 @@ export default function () {
     return class SkipConnectMachine extends React.Component{
 
         onStart = () => {
-            if (!LocalStorage.get('printer-is-ready')) {
-                LocalStorage.set('new-user', true);
+            if (!storage.get('printer-is-ready')) {
+                storage.set('new-user', true);
             }
-            LocalStorage.set('printer-is-ready', true);
+            storage.set('printer-is-ready', true);
             location.hash = '#studio/beambox';
             location.reload();
         }

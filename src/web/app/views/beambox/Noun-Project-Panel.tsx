@@ -3,7 +3,7 @@ import { defaultIcons } from 'app/constants/noun-project-constants';
 import Modal from 'app/widgets/Modal';
 import DraggableWindow from 'app/widgets/Draggble-Window';
 import { IData, IIcon } from 'interfaces/INoun-Project';
-import LocalStorage from 'helpers/local-storage';
+import storage from 'helpers/storage-helper';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
 import * as i18n from 'helpers/i18n';
 
@@ -51,7 +51,7 @@ class NounProjectPanel extends React.Component {
     private state: IState;
     constructor(props) {
         super(props);
-        const nounProjectHistory: IIcon[] = LocalStorage.get('noun-project-history') || [];
+        const nounProjectHistory: IIcon[] = storage.get('noun-project-history') || [];
         this.state = {
             currentTab: Tabs.LIBRARY,
             term: '',
@@ -457,7 +457,7 @@ class NounProjectPanel extends React.Component {
         if (historyIcons.length > 50) {
             historyIcons.splice(0, 1);
         }
-        LocalStorage.set('noun-project-history', historyIcons);
+        storage.set('noun-project-history', historyIcons);
 
         this.setState({
             historyIcons,

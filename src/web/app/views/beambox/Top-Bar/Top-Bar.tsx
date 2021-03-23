@@ -1,34 +1,34 @@
 import $ from 'jquery';
-import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
-import Alert from '../../../actions/alert-caller';
-import AlertConstants from '../../../constants/alert-constants';
-import { ConnectionError } from '../../../constants/connection-constants';
-import Progress from '../../../actions/progress-caller';
-import BeamboxActions from '../../../actions/beambox';
-import BeamboxPreference from '../../../actions/beambox/beambox-preference';
-import ExportFuncs from '../../../actions/beambox/export-funcs';
-import Constant from '../../../actions/beambox/constant';
-import OpenBottomBoundaryDrawer from '../../../actions/beambox/open-bottom-boundary-drawer';
-import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
-import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer';
-import Dialog from '../../../actions/dialog-caller';
-import Modal from '../../../widgets/Modal';
+import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
+import Alert from 'app/actions/alert-caller';
+import AlertConstants from 'app/constants/alert-constants';
+import { ConnectionError } from 'app/constants/connection-constants';
+import Progress from 'app/actions/progress-caller';
+import BeamboxActions from 'app/actions/beambox';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import ExportFuncs from 'app/actions/beambox/export-funcs';
+import Constant from 'app/actions/beambox/constant';
+import OpenBottomBoundaryDrawer from 'app/actions/beambox/open-bottom-boundary-drawer';
+import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
+import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
+import Dialog from 'app/actions/dialog-caller';
+import Modal from 'app/widgets/Modal';
 import LeftPanel from '../Left-Panels/Left-Panel';
 import { ITopBarContext, TopBarContext, TopBarContextProvider } from './contexts/Top-Bar-Context';
 import { TopBarHints } from './Top-Bar-Hints';
-import * as TutorialController from '../../../views/tutorials/Tutorial-Controller';
-import TutorialConstants from '../../../constants/tutorial-constants';
-import { IDeviceInfo } from '../../../../interfaces/IDevice';
-import AlertConfig from '../../../../helpers/api/alert-config';
-import Discover from '../../../../helpers/api/discover';
-import checkDeviceStatus from '../../../../helpers/check-device-status';
-import DeviceMaster from '../../../../helpers/device-master';
-import LocalStorage from '../../../../helpers/local-storage';
-import sprintf from '../../../../helpers/sprintf';
-import SymbolMaker from '../../../../helpers/symbol-maker';
-import VersionChecker from '../../../../helpers/version-checker';
-import * as i18n from '../../../../helpers/i18n';
-import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
+import * as TutorialController from 'app/views/tutorials/Tutorial-Controller';
+import TutorialConstants from 'app/constants/tutorial-constants';
+import { IDeviceInfo } from 'interfaces/IDevice';
+import AlertConfig from 'helpers/api/alert-config';
+import Discover from 'helpers/api/discover';
+import checkDeviceStatus from 'helpers/check-device-status';
+import DeviceMaster from 'helpers/device-master';
+import storage from 'helpers/storage-helper';
+import sprintf from 'helpers/sprintf';
+import SymbolMaker from 'helpers/symbol-maker';
+import VersionChecker from 'helpers/version-checker';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 import { Model } from 'backbone';
 let svgCanvas;
 let svgEditor;
@@ -351,7 +351,7 @@ export class TopBar extends React.Component {
                 if (BeamboxPreference.read('vector_speed_contraint') === false) {
                     if (!AlertConfig.read('skip_path_speed_warning')) {
                         let message = lang.beambox.popup.too_fast_for_path;
-                        if (LocalStorage.get('default-units') === 'inches') {
+                        if (storage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                             console.log(message);
                         }
@@ -375,7 +375,7 @@ export class TopBar extends React.Component {
                 } else {
                     if (!AlertConfig.read('skip_path_speed_constraint_warning')) {
                         let message = sprintf(lang.beambox.popup.too_fast_for_path_and_constrain, tooFastLayers.join(', '));
-                        if (LocalStorage.get('default-units') === 'inches') {
+                        if (storage.get('default-units') === 'inches') {
                             message = message.replace(/20mm\/s/g, '0.8in/s');
                         }
                         Alert.popUp({
@@ -435,7 +435,7 @@ export class TopBar extends React.Component {
     showDeviceList = (type, selectDeviceCallback, useDefaultMachine = false) => {
         const { deviceList } = this;
         if (deviceList.length > 0) {
-            if (LocalStorage.get('auto_connect') !== 0 && deviceList.length === 1) {
+            if (storage.get('auto_connect') !== 0 && deviceList.length === 1) {
                 this.handleSelectDevice(deviceList[0], (device) => {selectDeviceCallback(device)});
                 return;
             }

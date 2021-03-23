@@ -1,10 +1,10 @@
 import Modal from '../widgets/Modal';
 import BeamboxPreference from '../actions/beambox/beambox-preference';
 import keyCodeConstants from '../constants/keycode-constants';
-import Discover from '../../helpers/api/discover';
-import DeviceMaster from '../../helpers/device-master';
-import LocalStorage from '../../helpers/local-storage';
-import i18n from '../../helpers/i18n';
+import Discover from 'helpers/api/discover';
+import DeviceMaster from 'helpers/device-master';
+import storage from 'helpers/storage-helper';
+import i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
@@ -295,19 +295,19 @@ class ConnectMachine extends React.Component{
         const model = modelMap[device.model] || 'fbb1b';
         BeamboxPreference.write('model', model);
         BeamboxPreference.write('workarea', model);
-        let pokeIPs = LocalStorage.get('poke-ip-addr');
+        let pokeIPs = storage.get('poke-ip-addr');
         pokeIPs = (pokeIPs ? pokeIPs.split(/[,;] ?/) : []);
         if (!pokeIPs.includes(machineIp)) {
             if (pokeIPs.length > 19) {
                 pokeIPs = pokeIPs.slice(pokeIPs.length - 19, pokeIPs.length);
             }
             pokeIPs.push(machineIp);
-            LocalStorage.set('poke-ip-addr', pokeIPs.join(','));
+            storage.set('poke-ip-addr', pokeIPs.join(','));
         }
-        if (!LocalStorage.get('printer-is-ready')) {
-            LocalStorage.set('new-user', true);
+        if (!storage.get('printer-is-ready')) {
+            storage.set('new-user', true);
         }
-        LocalStorage.set('printer-is-ready', true);
+        storage.set('printer-is-ready', true);
         location.hash = '#studio/beambox';
         location.reload();
     }

@@ -1,6 +1,6 @@
 import Modal from '../widgets/Modal';
-import LocalStorage from '../../helpers/local-storage';
-import i18n from '../../helpers/i18n';
+import storage from 'helpers/storage-helper';
+import i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 
@@ -65,14 +65,14 @@ class SelectConnectionType extends React.Component{
     }
 
     renderButtons = () => {
-        const isNewUser = !LocalStorage.get('printer-is-ready');
+        const isNewUser = !storage.get('printer-is-ready');
         return (
             <div className="btn-page-container">
                 <div className="btn-page primary" onClick={() => {
                     if (isNewUser) {
-                        LocalStorage.set('new-user', true);
+                        storage.set('new-user', true);
                     }
-                    LocalStorage.set('printer-is-ready', true);
+                    storage.set('printer-is-ready', true);
                     location.hash = '#studio/beambox';
                     this.setState({isLoading: true});
                     location.reload();
