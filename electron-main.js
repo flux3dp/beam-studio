@@ -2,15 +2,6 @@ const {app, ipcMain, BrowserWindow, dialog} = require('electron');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.allowRendererProcessReuse = false;
 
-const BackendManager = require('./src/node/backend-manager.js');
-const MonitorManager = require('./src/node/monitor-manager.js');
-const MenuManager = require('./src/node/menu-manager.js');
-const UpdateManager = require('./src/node/update-manager.js');
-const UglyNotify = require('./src/node/ugly-notify.js');
-const events = require('./src/node/ipc-events');
-
-const TTC2TTF = require('./src/node/ttc2ttf.js');
-
 const FontScanner = require('font-scanner');
 const TextToSVG = require('text-to-svg');
 const path = require('path');
@@ -20,6 +11,15 @@ const os = require('os');
 const exec = require('child_process').exec;
 const Store = require('electron-store');
 const Sentry = require('@sentry/electron');
+
+const BackendManager = require('./src/node/backend-manager.js');
+const MonitorManager = require('./src/node/monitor-manager.js');
+const MenuManager = require('./src/node/menu-manager.js');
+const UpdateManager = require('./src/node/update-manager.js');
+const UglyNotify = require('./src/node/ugly-notify.js');
+const events = require('./src/node/ipc-events');
+const TTC2TTF = require('./src/node/ttc2ttf.js');
+const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
 
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
 
@@ -560,18 +560,36 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
 console.log('Running Beam Studio on ', os.arch());
 
+app.setAsDefaultProtocolClient('beam-studio');
 
-if (process.defaultApp && !app.isDefaultProtocolClient('beam-studio')) {
-    app.setAsDefaultProtocolClient('beam-studio');
+const hasLock = app.requestSingleInstanceLock();
+console.log('hasLock', hasLock);
+
+if (process.platform === 'win32' && !hasLock && getDeeplinkUrl(process.argv)) {
+    // if primary instance exists and open from deep link, return
+    app.quit();
+    return;
 }
 
-// macOS deep link handler
-app.on('open-url', (event, url) => {
-    url = new URL(decodeURI(url));
-    console.log(url)
-    if (url.hostname === 'fb-auth') {
-        mainWindow.webContents.send('FB_AUTH_TOKEN', url.hash);
+// win32 deep link handler
+app.on('second-instance', (e, argv) => {
+    e.preventDefault();
+    console.log(argv);
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
     }
+    const url = getDeeplinkUrl(argv);
+    handleDeepLinkUrl(mainWindow, url);
+});
+
+// macOS deep link handler
+app.on('will-finish-launching', () => {v
+    app.on('open-url', (event, url) => {
+        handleDeepLinkUrl(mainWindow, url);
+    });
 });
 
 if (os.arch() == 'ia32' || os.arch() == 'x32') {
