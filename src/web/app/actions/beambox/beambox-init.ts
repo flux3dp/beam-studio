@@ -19,6 +19,7 @@ import MonitorController from 'app/actions/monitor-controller';
 import AlertStore from '../../stores/alert-store';
 import AlertConfig from 'helpers/api/alert-config';
 import Config from 'helpers/api/config';
+import fluxId from 'helpers/api/flux-id';
 import checkDeviceStatus from 'helpers/check-device-status';
 import checkFirmware from 'helpers/check-firmware';
 import checkQuestionnaire from 'helpers/check-questionnaire';
@@ -72,6 +73,7 @@ const init = () => {
         initDefaultFont();
     }
     initMenuBarEvents();
+    fluxId.init();
 };
 
 const displayGuides = () => {
@@ -673,9 +675,9 @@ const checkOSVersion = () => {
 };
 
 export default {
-    init: init,
-    displayGuides: displayGuides,
-    initMenuBarEvents: initMenuBarEvents,
+    init,
+    displayGuides,
+    initMenuBarEvents,
     showStartUpDialogs,
     initSentry,
     showTutorial,

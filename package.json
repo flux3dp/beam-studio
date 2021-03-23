@@ -16,6 +16,7 @@
     "@types/electron": "^1.6.10",
     "@types/html2canvas": "^0.0.35",
     "animate.css": "^4.1.0",
+    "axios": "^0.21.1",
     "browserify": "^16.5.2",
     "bufferpack": "^0.0.6",
     "classnames": "^2.2.6",
@@ -92,6 +93,12 @@
   },
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
+    "protocols": {
+      "name": "beam-studio-protocol",
+      "schemes": [
+        "beam-studio"
+      ]
+    },
     "generateUpdatesFilesForAllChannels": true,
     "afterSign": "./scripts/notarize.js",
     "extraResources": [

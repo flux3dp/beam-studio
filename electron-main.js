@@ -560,6 +560,20 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
 
 console.log('Running Beam Studio on ', os.arch());
 
+
+if (process.defaultApp && !app.isDefaultProtocolClient('beam-studio')) {
+    app.setAsDefaultProtocolClient('beam-studio');
+}
+
+// macOS deep link handler
+app.on('open-url', (event, url) => {
+    url = new URL(decodeURI(url));
+    console.log(url)
+    if (url.hostname === 'fb-auth') {
+        mainWindow.webContents.send('FB_AUTH_TOKEN', url.hash);
+    }
+});
+
 if (os.arch() == 'ia32' || os.arch() == 'x32') {
     app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');
 } else {

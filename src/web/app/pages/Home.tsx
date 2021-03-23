@@ -59,7 +59,7 @@ export default function(args) {
                                 <SelectView id="select-lang" options={options} onChange={this._changeActiveLang}/>
                             </div>
                             <div>
-                                <a href="#initialize/connect/select-connection-type" className="btn btn-action btn-large">{lang.initialize.next}</a>
+                                <a href="#initialize/connect/flux-id-login" className="btn btn-action btn-large">{lang.initialize.next}</a>
                             </div>
                         </div>
                     </div>

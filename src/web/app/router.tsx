@@ -11,6 +11,7 @@ import ConnectWiFi from './pages/Connect-Wi-Fi';
 import ConnectWired from './pages/Connect-Wired';
 import ConnectEthernet from './pages/Connect-Ethernet';
 import ConnectMachineIp from './pages/Connect-Machine-Ip';
+import FluxIdLogin from './pages/FluxIdLogin';
 import Settings from './pages/Settings';
 import Beambox from './pages/Beambox';
 import { AlertsAndProgress } from './views/dialogs/Alerts-And-Progress';
@@ -53,7 +54,7 @@ export default Backbone.Router.extend({
                 [/^.*$/, 'e404', this.e404],
                 // initialize Flux Printer
                 [
-                    /^initialize\/connect\/?(select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip|connect-machine|select|set-printer|set-password|setup-complete)\/?(.*)?/,
+                    /^initialize\/connect\/?(flux-id-login|select-machine-type|select-connection-type|skip-connect-machine|connect-wi-fi|connect-wired|connect-ethernet|connect-machine-ip)\/?(.*)?/,
                     'initial',
                     this.initial
                 ],
@@ -84,6 +85,9 @@ export default Backbone.Router.extend({
 
     initial: function(step, other) {
         switch(step) {
+            case 'flux-id-login':
+                _display(FluxIdLogin);
+                break;
             case 'select-machine-type':
                 _display(
                     SelectMachineType,

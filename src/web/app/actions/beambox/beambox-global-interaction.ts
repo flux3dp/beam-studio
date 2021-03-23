@@ -6,6 +6,8 @@ import FnWrapper from './svgeditor-function-wrapper';
 import Tutorials from './tutorials';
 import Alert from '../alert-caller';
 import Dialog from '../dialog-caller';
+import { showLoginDialog } from 'app/views/FluxIdLogin';
+import { signOut } from 'helpers/api/flux-id';
 import checkQuestionnaire from 'helpers/check-questionnaire';
 import ElectronUpdater from 'helpers/electron-updater';
 import FileExportHelper from 'helpers/file-export-helper';
@@ -99,6 +101,8 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'NETWORK_TESTING': () => Dialog.showNetworkTestingPanel(),
             'ABOUT_BEAM_STUDIO': () => Dialog.showAboutBeamStudio(),
             'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
+            'SIGN_IN': () => showLoginDialog(),
+            'SIGN_OUT': () => signOut(),
             'UPDATE_BS': () => ElectronUpdater.checkForUpdate(),
             'QUESTIONNAIRE': async () => {
                 const res = await checkQuestionnaire();

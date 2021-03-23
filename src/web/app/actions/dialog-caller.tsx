@@ -1,21 +1,21 @@
-import Modal from '../widgets/Modal';
-import InputLightBox from '../widgets/Input-Lightbox';
-import { Dialog, DialogContextHelper } from '../views/dialogs/Dialog';
-import Prompt from '../views/dialogs/Prompt';
-import ConfirmPrompt from '../views/dialogs/Confirm-Prompt';
+import Modal from 'app/widgets/Modal';
+import InputLightBox from 'app/widgets/Input-Lightbox';
 import ChangeLogDialog from 'app/views/dialogs/Change-Log';
-import { Tutorial } from '../views/tutorials/Tutorial';
-import { ITutorial } from '../../interfaces/ITutorial';
-import AboutBeamStudio from '../views/beambox/About-Beam-Studio';
-import DocumentPanel from '../views/beambox/Document-Panels/Document-Panel';
-import DxfDpiSelector from '../views/beambox/DxfDpiSelector';
-import NetworkTestingPanel from '../views/beambox/Network-Testing-Panel';
-import NounProjectPanel from '../views/beambox/Noun-Project-Panel';
-import PhotoEditPanel from '../views/beambox/Photo-Edit-Panel';
-import LayerColorConfigPanel from '../views/beambox/Layer-Color-Config';
-import SvgNestButtons from '../views/beambox/Svg-Nest-Buttons';
-import * as i18n from '../../helpers/i18n';
-import { getSVGAsync } from '../../helpers/svg-editor-helper';
+import ConfirmPrompt from 'app/views/dialogs/Confirm-Prompt';
+import { Dialog, DialogContextHelper } from 'app/views/dialogs/Dialog';
+import Prompt from 'app/views/dialogs/Prompt';
+import AboutBeamStudio from 'app/views/beambox/About-Beam-Studio';
+import DocumentPanel from 'app/views/beambox/Document-Panels/Document-Panel';
+import DxfDpiSelector from 'app/views/beambox/DxfDpiSelector';
+import LayerColorConfigPanel from 'app/views/beambox/Layer-Color-Config';
+import NetworkTestingPanel from 'app/views/beambox/Network-Testing-Panel';
+import NounProjectPanel from 'app/views/beambox/Noun-Project-Panel';
+import PhotoEditPanel from 'app/views/beambox/Photo-Edit-Panel';
+import SvgNestButtons from 'app/views/beambox/Svg-Nest-Buttons';
+import { Tutorial } from 'app/views/tutorials/Tutorial';
+import { ITutorial } from 'interfaces/ITutorial';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -220,5 +220,5 @@ export default {
                 }}
             />
         );
-    }
+    },
 }

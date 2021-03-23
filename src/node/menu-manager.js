@@ -6,6 +6,7 @@ const Store = require('electron-store');
 
 const store = new Store();
 let r = resource['en'];
+let accountInfo = null;
 
 function _buildOSXAppMenu(callback) {
     const currentChannel = app.getVersion().split('-')[1] || 'latest';
@@ -67,6 +68,15 @@ function _buildFileMenu(fnKey, callback) {
         label: r.file,
         submenu: menuItems,
     }
+}
+
+function buildAccountMenuItems(callback, accountInfo) {
+    const signoutLabel = accountInfo ? `${r.sign_out} (${accountInfo.email})` : r.sign_out;
+    return [
+        { id: 'MANAGE_ACCOUNT', label: r.manage_account, click: callback },
+        { id: 'SIGN_IN', label: r.sign_in, click: callback, visible: !accountInfo },
+        { id: 'SIGN_OUT', label: signoutLabel, click: callback, visible: !!accountInfo },
+    ];
 }
 
 function buildMenu(callback) {
@@ -175,8 +185,9 @@ function buildMenu(callback) {
         { type: 'separator' },
         { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
         { type: 'separator' },
-        { id: 'UPDATE_BS',  label: r.update, click: callback }
     ]);
+    helpSubmenu.push(...buildAccountMenuItems(callback, accountInfo));
+    helpSubmenu.push({ id: 'UPDATE_BS',  label: r.update, click: callback })
     if (process.platform !== 'darwin') {
         const currentChannel = app.getVersion().split('-')[1] || 'latest';
         const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
@@ -321,13 +332,9 @@ class MenuManager extends EventEmitter {
             this.toggleMenu(ids, true);
         });
 
-        ipcMain.on(events.UPDATE_ACCOUNT, (e, account) => {
-            const toggleSignIn = (nickname) => {
-                
-            };
-
-            toggleSignIn(account.nickname);
-            Menu.setApplicationMenu(this._appmenu);
+        ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
+            accountInfo = info;
+            this.constructMenu();
         });
 
         // ipcMain.on(events.SET_AS_DEFAULT, (e, device) => {
