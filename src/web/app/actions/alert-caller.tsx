@@ -1,5 +1,6 @@
-import { AlertsAndProgress, AlertsAndProgressContextHelper }  from '../views/dialogs/Alerts-And-Progress';
-import { IAlert } from '../../interfaces/IAlert';
+import alertConstants from 'app/constants/alert-constants';
+import { AlertsAndProgress, AlertsAndProgressContextHelper }  from 'app/views/dialogs/Alerts-And-Progress';
+import { IAlert } from 'interfaces/IAlert';
 const React = requireNode('react');
 const electron = requireNode('electron');
 
@@ -8,6 +9,17 @@ export default {
         if (!AlertsAndProgressContextHelper.context) {
             console.log('Alert context not loaded Yet');
         } else {
+            AlertsAndProgressContextHelper.context.popUp(args);
+        }
+    },
+    popUpError: (args: IAlert) => {
+        if (!AlertsAndProgressContextHelper.context) {
+            console.log('Alert context not loaded Yet');
+        } else {
+            args = {
+                ...args,
+                type: alertConstants.SHOW_POPUP_ERROR,
+            };
             AlertsAndProgressContextHelper.context.popUp(args);
         }
     },
