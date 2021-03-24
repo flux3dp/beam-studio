@@ -61,7 +61,7 @@
     "babel-eslint": "^8.2.1",
     "babel-loader": "^8.1.0",
     "electron": "11.3.0",
-    "electron-builder": "22.3.6",
+    "electron-builder": "22.10.5",
     "electron-publisher-s3": "^19.53.1",
     "electron-rebuild": "2.0.3",
     "eslint": "^4.9.0",
