@@ -586,7 +586,7 @@ app.on('second-instance', (e, argv) => {
 });
 
 // macOS deep link handler
-app.on('will-finish-launching', () => {v
+app.on('will-finish-launching', () => {
     app.on('open-url', (event, url) => {
         handleDeepLinkUrl(mainWindow, url);
     });
