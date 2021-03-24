@@ -52,7 +52,7 @@ define([
     'helpers/image-data',
     'helpers/laser-config-helper',
     'helpers/layer-helper',
-    'helpers/local-storage',
+    'helpers/storage-helper',
     'helpers/shortcuts',
     'helpers/symbol-maker',
     'imagetracer'
@@ -82,7 +82,7 @@ define([
     ImageData,
     LaserConfigHelper,
     LayerHelper,
-    LocalStorage,
+    storage,
     shortcuts,
     SymbolMaker,
     ImageTracer
@@ -111,7 +111,7 @@ define([
     FileExportHelper = FileExportHelper.default;
     ImageData = ImageData.default;
     LayerHelper = __importStar(LayerHelper);
-    LocalStorage = LocalStorage.default;
+    storage = storage.default;
     shortcuts = shortcuts.default;
     SymbolMaker = SymbolMaker.default;
     const LANG = i18n.lang.beambox;
@@ -6539,7 +6539,7 @@ define([
                                 }
                             }
                         } else if (type === 'color') {
-                            let layerColorConfig = LocalStorage.get('layer-color-config') || {};
+                            let layerColorConfig = storage.get('layer-color-config') || {};
                             let index = layerColorConfig.dict ? layerColorConfig.dict[layerName] : undefined;
                             let laserConst = LANG.right_panel.laser_panel;
                             if (index !== undefined) {
@@ -9261,12 +9261,12 @@ define([
         }
 
         this.cleanRecentFiles = () => {
-            LocalStorage.set('recent_files', []);
+            storage.set('recent_files', []);
             this.updateRecentMenu();
         }
 
         this.updateRecentMenu = () => {
-            const recentFiles = LocalStorage.get('recent_files') || [];
+            const recentFiles = storage.get('recent_files') || [];
             let recentMenu = Menu.getApplicationMenu().items.filter(i => i.id === '_file')[0].submenu.items.filter(i => i.id === 'RECENT')[0].submenu;
             recentMenu.items = [];
             recentMenu.clear();
@@ -9289,7 +9289,7 @@ define([
         }
 
         this.updateRecentFiles = (filePath) => {
-            let recentFiles = LocalStorage.get('recent_files') || [];
+            let recentFiles = storage.get('recent_files') || [];
             const i = recentFiles.indexOf(filePath);
             if (i > 0) {
                 recentFiles.splice(i, 1);
@@ -9300,7 +9300,7 @@ define([
                     recentFiles.pop();
                 }
             }
-            LocalStorage.set('recent_files', recentFiles);
+            storage.set('recent_files', recentFiles);
             this.updateRecentMenu();
         }
 
