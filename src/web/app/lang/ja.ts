@@ -718,6 +718,17 @@ export default {
             mm: 'mm'
         }
     },
+    flux_id_login: {
+        connection_fail: '#847 FLUXメンバーサービスへの接続に失敗しました。',
+        login_success: '正常にログインしました。',
+        login: 'ログイン',
+        email: 'Eメール',
+        password: 'パスワード',
+        remember_me: 'ログイン状態を保持する',
+        forget_password: 'パスワードをお忘れですか？',
+        register: '新規登録',
+        offline: 'オフラインモード',
+    },
     noun_project_panel: {
         shapes: '形',
         elements: '要素',

@@ -716,6 +716,17 @@ export interface ILang {
             mm: string,
         }
     },
+    flux_id_login: {
+        login_success: string,
+        connection_fail: string,
+        login: string,
+        email: string,
+        password: string,
+        remember_me: string,
+        forget_password: string,
+        register: string,
+        offline: string,
+    },
     noun_project_panel: {
         shapes: string,
         elements: string,

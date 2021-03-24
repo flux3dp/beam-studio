@@ -718,6 +718,17 @@ export default {
             mm: 'mm'
         }
     },
+    flux_id_login: {
+        connection_fail: '#847 Verbindung zum FLUX-Mitgliederservice fehlgeschlagen.',
+        login_success: 'Erfolgreich angemeldet.',
+        login: 'Einloggen',
+        email: 'Email',
+        password: 'Passwort',
+        remember_me: 'Mich erinnern',
+        forget_password: 'Passwort vergessen?',
+        register: 'Konto erstellen',
+        offline: 'Verwenden Sie den Offline-Modus',
+    },
     noun_project_panel: {
         shapes: 'Formen',
         elements: 'Elemente',

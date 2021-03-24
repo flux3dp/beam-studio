@@ -2,16 +2,33 @@ import alert from 'app/actions/alert-caller';
 import dialog from 'app/actions/dialog-caller';
 import Modal from 'app/widgets/Modal';
 import ShowablePasswordInput from 'app/widgets/Showable-Password-Input';
-import { signIn, externalLinkFBSignIn, signOut } from 'helpers/api/flux-id';
+import { externalLinkFBSignIn, signIn, signOut } from 'helpers/api/flux-id';
+import storage from 'helpers/storage-helper';
+import i18n from 'helpers/i18n';
+
+let LANG = i18n.lang.flux_id_login;
+const updateLang = () => {
+    LANG = i18n.lang.flux_id_login;
+};
 
 const classNames = requireNode('classnames');
 const React = requireNode('react');
-const { useRef, useState } = requireNode('react');
+const { useRef, useEffect, useState } = requireNode('react');
 
 const FluxIdLogin = ({ onClose }) => {
+    updateLang();
+
     const emailInput = useRef(null);
     const passwordInput = useRef(null);
-    const [isRememberMeChecked, setIsRememberMeChecked] = useState(false);
+    const rememberMeCheckbox = useRef(null);
+    const [isRememberMeChecked, setIsRememberMeChecked] = useState(!!storage.get('keep-flux-id-login'));
+
+    useEffect(() => {
+        return () => {
+            const isChecked = rememberMeCheckbox.current.checked;
+            storage.set('keep-flux-id-login', isChecked);
+        };
+    }, []);
 
     const renderOAuthContent = () => {
         return (
@@ -36,21 +53,21 @@ const FluxIdLogin = ({ onClose }) => {
                 <input
                     id='email-input'
                     type='text'
-                    placeholder={'t電子信箱'} 
+                    placeholder={LANG.email} 
                     ref={emailInput}
                     onKeyDown={(e: KeyboardEvent) => e.stopPropagation()}
                 />
                 <ShowablePasswordInput
                     id = {'password-input'}
                     ref={passwordInput}
-                    placeholder={'t密碼'}
+                    placeholder={LANG.password}
                 />
                 <div className='options'>
                     <div className='remember-me' onClick={() => setIsRememberMeChecked(!isRememberMeChecked)}>
-                        <input type='checkbox' checked={isRememberMeChecked} onChange={() => {}}/>
-                        <div>{'t勿忘我'}</div>
+                        <input ref={rememberMeCheckbox} type='checkbox' checked={isRememberMeChecked} onChange={() => {}}/>
+                        <div>{LANG.remember_me}</div>
                     </div>
-                    <div className='forget-password' onClick={() => console.log('ToDo: open forget password page')}>{'t忘記密碼'}</div>
+                    <div className='forget-password' onClick={() => console.log('TODO: open forget password page')}>{LANG.forget_password}</div>
                 </div>
             </div>
         );
@@ -59,9 +76,9 @@ const FluxIdLogin = ({ onClose }) => {
     const renderFooterButtons = () => {
         return (
             <div className='footer'>
-                <div className={classNames('button', 'primary')} onClick={handleLogin}>{'t登入'}</div>
-                <div className={classNames('button')} onClick={() => console.log('ToDo: open regis page')}>{'t註冊新帳號'}</div>
-                <div className='skip' onClick={() => onClose()}>{'t我要離線使用'}</div>
+                <div className={classNames('button', 'primary')} onClick={handleLogin}>{LANG.login}</div>
+                <div className={classNames('button')} onClick={() => console.log('TODO: open regis page')}>{LANG.register}</div>
+                <div className='skip' onClick={() => onClose()}>{LANG.offline}</div>
             </div>
         );
     }
@@ -89,6 +106,7 @@ const FluxIdLogin = ({ onClose }) => {
         }
         if (res.status === 'ok') {
             console.log('Log in succeeded', res);
+            alert.popUp({ message: LANG.login_success });
             onClose();
         }
     };
@@ -96,7 +114,7 @@ const FluxIdLogin = ({ onClose }) => {
     return (
         <Modal>
             <div className='flux-login'>
-                <div className='title'>{'登入'}</div>
+                <div className='title'>{LANG.login}</div>
                 {renderOAuthContent()}
                 {renderSeperator()}
                 {renderLoginInputs()}

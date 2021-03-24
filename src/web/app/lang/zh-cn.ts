@@ -718,6 +718,17 @@ export default {
             mm: 'mm'
         }
     },
+    flux_id_login: {
+        connection_fail: '#847 无法连接至 FLUX 会员中心。',
+        login_success: '登入成功',
+        login: '登入',
+        email: '电子信箱',
+        password: '密码',
+        remember_me: '勿忘我',
+        forget_password: '忘记密码',
+        register: '注册新帐号',
+        offline: '我要离线使用',
+    },
     noun_project_panel: {
         shapes: '形状',
         elements: '元素',
