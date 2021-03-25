@@ -73,7 +73,7 @@ function _buildFileMenu(fnKey, callback) {
 function buildAccountMenuItems(callback, accountInfo) {
     const signoutLabel = accountInfo ? `${r.sign_out} (${accountInfo.email})` : r.sign_out;
     return [
-        { id: 'MANAGE_ACCOUNT', label: r.manage_account, click: callback },
+        { id: 'MANAGE_ACCOUNT', label: r.manage_account, click: callback, enabled: !!accountInfo },
         { id: 'SIGN_IN', label: r.sign_in, click: callback, visible: !accountInfo },
         { id: 'SIGN_OUT', label: signoutLabel, click: callback, visible: !!accountInfo },
     ];

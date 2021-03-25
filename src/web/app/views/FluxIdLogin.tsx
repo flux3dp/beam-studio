@@ -2,7 +2,7 @@ import alert from 'app/actions/alert-caller';
 import dialog from 'app/actions/dialog-caller';
 import Modal from 'app/widgets/Modal';
 import ShowablePasswordInput from 'app/widgets/Showable-Password-Input';
-import { externalLinkFBSignIn, signIn, signOut } from 'helpers/api/flux-id';
+import { externalLinkFBSignIn, externalLinkGoogleSignIn, signIn, signOut } from 'helpers/api/flux-id';
 import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
 
@@ -36,7 +36,7 @@ const FluxIdLogin = ({ onClose }) => {
                 <div className={classNames('button facebook')} onClick={externalLinkFBSignIn}>
                     {'Continue with Facebook'}
                 </div>
-                <div className={classNames('button google')}>
+                <div className={classNames('button google')} onClick={externalLinkGoogleSignIn}>
                     {'Continue with Google'}
                 </div>
             </div>
