@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="18.285" height="18.285" viewBox="0 0 18.285 18.285">
-  <path id="icon-rotate" d="M8.742,0a8.706,8.706,0,0,1,5.8,2.215L16.028.729V5.1H11.656L13.51,3.246a7.277,7.277,0,1,0,2.518,5.5.729.729,0,1,1,1.457,0A8.742,8.742,0,1,1,8.742,0Z" transform="translate(0.4 0.4)" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.8" opacity="0.64"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-icon-rotate">
+      <rect width="24" height="24"/>
+    </clipPath>
+  </defs>
+  <g id="icon-rotate" clip-path="url(#clip-icon-rotate)">
+    <path id="icon-rotate-2" data-name="icon-rotate" stroke="#000" d="M7.354,0a7.323,7.323,0,0,1,4.878,1.863l1.25-1.25V4.29H9.8l1.559-1.559a6.121,6.121,0,1,0,2.118,4.623.613.613,0,1,1,1.226,0A7.354,7.354,0,1,1,7.354,0Z" transform="translate(4.646 4.646)" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.4" opacity="0.64"/>
+  </g>
 </svg>

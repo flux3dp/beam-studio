@@ -407,6 +407,7 @@ export class LayerPanel extends React.Component {
             return (<div id='drag-image' />);
         }
         const isLocked = layer.getAttribute('data-lock') === 'true';
+        const isVis = drawing.getLayerVisibility(draggingLayer);
         const backLayers = [];
         for (let i = selectedLayers.length - 1; i >= 1; i--) {
             backLayers.push(
@@ -425,7 +426,7 @@ export class LayerPanel extends React.Component {
                         </div>
                         <div className='layername' >{draggingLayer}</div>
                         <div className={classNames('layervis', {'layerinvis': !drawing.getLayerVisibility(draggingLayer)})}>
-                            <i className='fa fa-eye'></i>
+                            <img className='vis-icon' src={isVis ? 'img/right-panel/icon-eyeopen.svg' : 'img/right-panel/icon-eyeclose.svg'} />
                         </div>
                         <div className='layerlock'>
                             <img src='img/icon-lock.svg'/>
@@ -519,7 +520,7 @@ export class LayerPanel extends React.Component {
                                 this.unLockLayers(layerName);
                             }
                         }}>
-                            <img src='img/icon-lock.svg'/>
+                            <img src='img/right-panel/icon-layerlock.svg'/>
                         </div>
                     </div>
                     <div className= 'drag-sensor-area'

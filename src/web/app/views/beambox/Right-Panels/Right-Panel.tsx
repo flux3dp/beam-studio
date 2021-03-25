@@ -98,7 +98,7 @@ export class RightPanel extends React.Component {
                 <div
                     className={classNames('tab', 'objects', {disabled: isObjectDisabled, selected: selectedTab === 'objects'})}
                     onClick={() => {if (!isObjectDisabled) this.setState({selectedTab: 'objects'})}}>
-                    <img className="tab-icon object" src="img/right-panel/icon-objects.svg" draggable={false}/>
+                    <img className="tab-icon object" src="img/right-panel/icon-adjust.svg" draggable={false}/>
                     <div className="tab-title">
                         {objectTitle}   
                     </div>

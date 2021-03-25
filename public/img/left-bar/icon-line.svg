@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="18.828" height="18.828" viewBox="0 0 18.828 18.828">
-  <path id="Path_36" data-name="Path 36" d="M847,851l16,16" transform="translate(-845.586 -849.586)" fill="none" stroke="#5c5c5c" stroke-linecap="round" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-icon-line">
+      <rect width="32" height="32"/>
+    </clipPath>
+  </defs>
+  <g id="icon-line" clip-path="url(#clip-icon-line)">
+    <path id="Path_84" data-name="Path 84" d="M719.358,242.552a1,1,0,0,1-.707-.293l-16-16a1,1,0,0,1,1.414-1.414l16,16a1,1,0,0,1-.707,1.707Z" transform="translate(-695.359 -217.552)" fill="#494a4a" stroke="#494a4a" stroke-width="0.2"/>
+  </g>
 </svg>
