@@ -1,4 +1,4 @@
-import { showLoginDialog } from 'app/views/FluxIdLogin';
+import dialog from 'app/actions/dialog-caller';
 
 
 const React = requireNode('react');
@@ -7,7 +7,7 @@ const { useEffect } = requireNode('react');
 // Empty page to show login dialog
 const FluxIdLogin = () => {
     useEffect(() => {
-        showLoginDialog(() => {
+        dialog.showLoginDialog(() => {
             location.hash = '#initialize/connect/select-connection-type';
         });
     }, []);

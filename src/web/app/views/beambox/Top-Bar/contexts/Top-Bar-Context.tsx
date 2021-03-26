@@ -1,3 +1,6 @@
+import { fluxIDEvents } from 'helpers/api/flux-id';
+import { IUser } from 'interfaces/IUser';
+
 const React = requireNode('react');
 const { createContext } = React;
 export const TopBarContext = createContext();
@@ -11,6 +14,7 @@ export interface ITopBarContext {
     getTopBarPreviewMode: () => boolean,
     setShouldStartPreviewController: (shouldStartPreviewController: boolean) => void,
     setStartPreviewCallback: (callback?: Function|null) => void,
+    currentUser: IUser,
     isPreviewMode: boolean,
     fileName: string|null,
     selectedElem: Element|null,
@@ -28,6 +32,7 @@ export class TopBarContextProvider extends React.Component {
         isDrawing: boolean,
         isDrawn: boolean,
         shouldStartPreviewController: boolean,
+        currentUser?: IUser
     };
     private isPreviewMode: boolean;
     private startPreivewCallback: Function|null;
@@ -42,8 +47,17 @@ export class TopBarContextProvider extends React.Component {
             isDrawing: false,
             isDrawn: false,
             shouldStartPreviewController: false,
+            currentUser: null,
         }
         this.startPreivewCallback = null;
+    }
+
+    componentDidMount() {
+        fluxIDEvents.on('update-user', this.setCurrentUser);
+    }
+
+    componentWillUnmount() {
+        fluxIDEvents.removeListener('update-user', this.setCurrentUser);
     }
 
     updateTopBar = () => {
@@ -99,6 +113,10 @@ export class TopBarContextProvider extends React.Component {
         }
     }
 
+    setCurrentUser = (user: IUser) => {
+        this.setState({ currentUser: user });
+    }
+
     render() {
         const {
             updateTopBar,
@@ -109,6 +127,7 @@ export class TopBarContextProvider extends React.Component {
             getTopBarPreviewMode,
             setShouldStartPreviewController,
             setStartPreviewCallback,
+            setCurrentUser,
             isPreviewMode,
             startPreivewCallback,
         } = this;
@@ -117,6 +136,7 @@ export class TopBarContextProvider extends React.Component {
             selectedElem,
             hasUnsavedChange,
             shouldStartPreviewController,
+            currentUser,
         } = this.state;
         return (
             <TopBarContext.Provider value={{
@@ -128,12 +148,14 @@ export class TopBarContextProvider extends React.Component {
                 getTopBarPreviewMode,
                 setShouldStartPreviewController,
                 setStartPreviewCallback,
+                setCurrentUser,
                 isPreviewMode,
                 startPreivewCallback,
                 fileName,
                 selectedElem,
                 hasUnsavedChange,
                 shouldStartPreviewController,
+                currentUser,
             }}>
                 {this.props.children}
             </TopBarContext.Provider>

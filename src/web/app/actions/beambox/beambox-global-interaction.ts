@@ -5,9 +5,9 @@ import ExportFuncs from './export-funcs';
 import FnWrapper from './svgeditor-function-wrapper';
 import Tutorials from './tutorials';
 import Alert from '../alert-caller';
-import Dialog from '../dialog-caller';
-import { showLoginDialog } from 'app/views/FluxIdLogin';
-import { signOut } from 'helpers/api/flux-id';
+import dialog from '../dialog-caller';
+import alertConfig from 'helpers/api/alert-config';
+import { externalLinkMemberDashboard, getCurrentUser, signOut } from 'helpers/api/flux-id';
 import checkQuestionnaire from 'helpers/check-questionnaire';
 import ElectronUpdater from 'helpers/electron-updater';
 import FileExportHelper from 'helpers/file-export-helper';
@@ -68,18 +68,18 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'UNGROUP': () => FnWrapper.ungroupSelected(),
             'DUPLICATE': () => FnWrapper.cloneSelectedElement(),
             'OFFSET': () => svgEditor.triggerOffsetTool(),
-            'IMAGE_SHARPEN': () => Dialog.showPhotoEditPanel('sharpen'),
-            'IMAGE_CROP': () => Dialog.showPhotoEditPanel('crop'),
-            'IMAGE_INVERT': () => Dialog.showPhotoEditPanel('invert'),
-            'IMAGE_STAMP': () => Dialog.showPhotoEditPanel('stamp'),
+            'IMAGE_SHARPEN': () => dialog.showPhotoEditPanel('sharpen'),
+            'IMAGE_CROP': () => dialog.showPhotoEditPanel('crop'),
+            'IMAGE_INVERT': () => dialog.showPhotoEditPanel('invert'),
+            'IMAGE_STAMP': () => dialog.showPhotoEditPanel('stamp'),
             'IMAGE_VECTORIZE': () => svgCanvas.imageToSVG(),
-            'IMAGE_CURVE': () => Dialog.showPhotoEditPanel('curve'),
+            'IMAGE_CURVE': () => dialog.showPhotoEditPanel('curve'),
             'ALIGN_TO_EDGES': () => svgCanvas.toggleBezierPathAlignToEdge(),
             'DISASSEMBLE_USE': () => svgCanvas.disassembleUse2Group(),
             'DECOMPOSE_PATH': () => svgCanvas.decomposePath(),
-            'SVG_NEST': () => Dialog.showSvgNestButtons(),
-            'LAYER_COLOR_CONFIG': () => Dialog.showLayerColorConfig(),
-            'DOCUMENT_SETTING': () => Dialog.showDocumentSettings(),
+            'SVG_NEST': () => dialog.showSvgNestButtons(),
+            'LAYER_COLOR_CONFIG': () => dialog.showLayerColorConfig(),
+            'DOCUMENT_SETTING': () => dialog.showDocumentSettings(),
             'CLEAR_SCENE': () => {window['svgEditorClearScene']()},
             'START_TUTORIAL': () => {
                 const LANG = i18n.lang.tutorial;
@@ -98,10 +98,20 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'SHOW_GRIDS': () => svgCanvas.toggleGrid(),
             'SHOW_RULERS': () => svgCanvas.toggleRulers(),
             'SHOW_LAYER_COLOR': () => svgCanvas.toggleUseLayerColor(),
-            'NETWORK_TESTING': () => Dialog.showNetworkTestingPanel(),
-            'ABOUT_BEAM_STUDIO': () => Dialog.showAboutBeamStudio(),
+            'NETWORK_TESTING': () => dialog.showNetworkTestingPanel(),
+            'ABOUT_BEAM_STUDIO': () => dialog.showAboutBeamStudio(),
             'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
-            'SIGN_IN': () => showLoginDialog(),
+            'MANAGE_ACCOUNT': () => externalLinkMemberDashboard(),
+            'SIGN_IN': () => dialog.showLoginDialog(() => {
+                if (!alertConfig.read('skip-np-dialog-box')) {
+                    if (getCurrentUser()) {
+                        dialog.showDialogBox('login-np', {
+                            position: { left: 52, top: 413 },
+                        }, 't快來試試全新圖型庫');
+                        alertConfig.write('skip-np-dialog-box', true);
+                    }
+                }
+            }),
             'SIGN_OUT': () => signOut(),
             'UPDATE_BS': () => ElectronUpdater.checkForUpdate(),
             'QUESTIONNAIRE': async () => {
@@ -121,7 +131,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                 const electron = requireNode('electron');
                 electron.remote.shell.openExternal(url);
             },
-            'CHANGE_LOGS': () => Dialog.showChangLog(),
+            'CHANGE_LOGS': () => dialog.showChangLog(),
         };
     }
     attach() {

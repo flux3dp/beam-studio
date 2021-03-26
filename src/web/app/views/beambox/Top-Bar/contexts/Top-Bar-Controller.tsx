@@ -1,3 +1,4 @@
+import { IUser } from 'interfaces/IUser';
 import { TopBar, TopBarContextHelper } from '../Top-Bar';
 const React = requireNode('react');
 
@@ -66,6 +67,14 @@ const setStartPreviewCallback = (callback?: Function|null) => {
     }
 };
 
+const setCurrentUser = (user?: IUser) => {
+    if (!TopBarContextHelper.context) {
+        console.log('TopBar is not mounted now.');
+    } else {
+        TopBarContextHelper.context.setCurrentUser(user);
+    }
+}
+
 export default {
     updateTopBar,
     setElement,
@@ -75,4 +84,5 @@ export default {
     getTopBarPreviewMode,
     setShouldStartPreviewController,
     setStartPreviewCallback,
+    setCurrentUser,
 };

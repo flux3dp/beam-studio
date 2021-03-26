@@ -1,5 +1,7 @@
 import Modal from 'app/widgets/Modal';
+import DialogBox from 'app/widgets/Dialog-Box';
 import InputLightBox from 'app/widgets/Input-Lightbox';
+import FluxIdLogin from 'app/views/FluxIdLogin';
 import ChangeLogDialog from 'app/views/dialogs/Change-Log';
 import ConfirmPrompt from 'app/views/dialogs/Confirm-Prompt';
 import { Dialog, DialogContextHelper } from 'app/views/dialogs/Dialog';
@@ -64,7 +66,7 @@ export default {
     },
     showDocumentSettings: () => {
         if (isIdExist('docu-setting')) return;
-        const unmount = () => {popDialogById('docu-setting')};
+        const unmount = () => popDialogById('docu-setting');
         addDialogComponent('docu-setting',
             <Modal>
                 <DocumentPanel
@@ -221,4 +223,26 @@ export default {
             />
         );
     },
+    showLoginDialog: (callback?: () => void) => {
+        if (isIdExist('flux-id-login')) return;
+        addDialogComponent('flux-id-login',
+            <FluxIdLogin
+                onClose={() => {
+                    popDialogById('flux-id-login');
+                    if (callback) callback();
+                }}
+            />
+        );
+    },
+    showDialogBox: (id: string, style, content: string | Element) => {
+        if (isIdExist(id)) return;
+        console.log(style);
+        addDialogComponent(id,
+            <DialogBox
+                {...style}
+                content={content}
+                onClose={() => popDialogById(id)}
+            />
+        );
+    }
 }

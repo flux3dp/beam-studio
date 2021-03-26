@@ -2,7 +2,6 @@ import $ from 'jquery';
 import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
 import Alert from 'app/actions/alert-caller';
 import AlertConstants from 'app/constants/alert-constants';
-import { ConnectionError } from 'app/constants/connection-constants';
 import Progress from 'app/actions/progress-caller';
 import BeamboxActions from 'app/actions/beambox';
 import BeamboxPreference from 'app/actions/beambox/beambox-preference';
@@ -29,7 +28,7 @@ import SymbolMaker from 'helpers/symbol-maker';
 import VersionChecker from 'helpers/version-checker';
 import * as i18n from 'helpers/i18n';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { Model } from 'backbone';
+
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => {
@@ -604,11 +603,12 @@ export class TopBar extends React.Component {
 
     render() {
         const { isPreviewing } = this.state;
-        const { setShouldStartPreviewController } = this.context;
+        const { setShouldStartPreviewController, currentUser } = this.context;
         return (
             <div className="top-bar-left-panel-container">
                 <LeftPanel
                     isPreviewing={isPreviewing}
+                    user={currentUser}
                     setShouldStartPreviewController={setShouldStartPreviewController}
                     endPreviewMode={this.endPreviewMode}
                 />

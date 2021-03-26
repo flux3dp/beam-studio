@@ -1,8 +1,7 @@
 import alert from 'app/actions/alert-caller';
-import dialog from 'app/actions/dialog-caller';
 import Modal from 'app/widgets/Modal';
 import ShowablePasswordInput from 'app/widgets/Showable-Password-Input';
-import { externalLinkFBSignIn, externalLinkGoogleSignIn, signIn, signOut } from 'helpers/api/flux-id';
+import { fluxIDEvents, externalLinkFBSignIn, externalLinkGoogleSignIn, signIn, signOut } from 'helpers/api/flux-id';
 import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
 
@@ -24,7 +23,9 @@ const FluxIdLogin = ({ onClose }) => {
     const [isRememberMeChecked, setIsRememberMeChecked] = useState(!!storage.get('keep-flux-id-login'));
 
     useEffect(() => {
+        fluxIDEvents.on('oauth-logged-in', onClose);
         return () => {
+            fluxIDEvents.removeListener('oauth-logged-in', onClose);
             const isChecked = rememberMeCheckbox.current.checked;
             storage.set('keep-flux-id-login', isChecked);
         };
@@ -96,9 +97,9 @@ const FluxIdLogin = ({ onClose }) => {
         }
         if (res.status === 'error') {
             if (res.info === 'USER_NOT_FOUND') {
-                alert.popUpError({ message: 'Email or password incorrect.' });
+                alert.popUpError({ message: 'tEmail or password incorrect.' });
             } else if (res.info === 'NOT_VERIFIED') {
-                alert.popUpError({ message: 'Account has not verified yet.' });
+                alert.popUpError({ message: 'tAccount has not verified yet.' });
             } else {
                 alert.popUpError({ message: res.message });
             }
@@ -125,16 +126,3 @@ const FluxIdLogin = ({ onClose }) => {
 };
 
 export default FluxIdLogin;
-
-// Avoid circular import
-export const showLoginDialog = (callback?: () => void) => {
-    if (dialog.isIdExist('flux-id-login')) return;
-    dialog.addDialogComponent('flux-id-login',
-        <FluxIdLogin
-            onClose={() => {
-                dialog.popDialogById('flux-id-login');
-                if (callback) callback();
-            }}
-        />
-    );
-}

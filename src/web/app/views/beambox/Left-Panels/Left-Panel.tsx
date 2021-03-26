@@ -1,13 +1,17 @@
-import ImageTracePanelController from '../../../actions/beambox/Image-Trace-Panel-Controller';
-import BeamboxActions from '../../../actions/beambox';
-import Dialog from '../../../actions/dialog-caller';
-import FnWrapper from '../../../actions/beambox/svgeditor-function-wrapper';
-import PreviewModeBackgroundDrawer from '../../../actions/beambox/preview-mode-background-drawer';
-import PreviewModeController from '../../../actions/beambox/preview-mode-controller';
-import InterProcessApi from '../../../../helpers/api/inter-process';
-import shortcuts from '../../../../helpers/shortcuts';
-import * as i18n from '../../../../helpers/i18n';
-import { getSVGAsync } from '../../../../helpers/svg-editor-helper';
+import ImageTracePanelController from 'app/actions/beambox/Image-Trace-Panel-Controller';
+import BeamboxActions from 'app/actions/beambox';
+import alert from 'app/actions/alert-caller';
+import dialog from 'app/actions/dialog-caller';
+import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
+import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
+import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
+import alertConstants from 'app/constants/alert-constants';
+import alertConfig from 'helpers/api/alert-config';
+import InterProcessApi from 'helpers/api/inter-process';
+import { getCurrentUser } from 'helpers/api/flux-id';
+import shortcuts from 'helpers/shortcuts';
+import * as i18n from 'helpers/i18n';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 let svgCanvas;
 let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
@@ -104,7 +108,7 @@ class LeftPanel extends React.Component {
         $('#left-Cursor').addClass('active');
     }
 
-    _renderToolButton(iconName: string, id?, label?: string, onClick?, className?, disabled?: boolean) {
+    renderToolButton(iconName: string, id?, label?: string, onClick?, className?, disabled?: boolean) {
         const cx = classNames('tool-btn', className, {disabled});
         const { isPreviewing } = this.props;
         const setActiveAndOnClick = () => {
@@ -124,21 +128,44 @@ class LeftPanel extends React.Component {
         );
     }
 
+    renderNpButton() {
+        const { user } = this.props;
+        if (user) {
+            return this.renderToolButton('np', 'Icons', 'Open Shape Library', dialog.showNounProjectPanel);
+        } else {
+            return this.renderToolButton('np', 'Icons', 'Open Shape Library', () => {
+                alert.popUp({
+                    message: 't登入 FLUX 會員後即可以啟用此功能，\n若還沒有註冊的使用者，我們誠摯地邀請您成為 FLUX 會員\n請問您是否要登入？',
+                    buttonType: alertConstants.YES_NO,
+                    onYes: () => dialog.showLoginDialog(() => {
+                        if (!alertConfig.read('skip-np-dialog-box')) {
+                            if (getCurrentUser()) {
+                                dialog.showDialogBox('login-np', {
+                                    position: { left: 52, top: 413 },
+                                }, 't快來試試全新圖型庫');
+                                alertConfig.write('skip-np-dialog-box', true);
+                            }
+                        }
+                    }),
+                });
+            });
+        }
+    }
+
     render() {
         const { isPreviewing } = this.props;
-
         if (!isPreviewing) {
             return (
                 <div className={this.leftPanelClass}>
-                    {this._renderToolButton('cursor', 'Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
-                    {this._renderToolButton('photo', 'Photo', LANG.label.photo + ' (I)', FnWrapper.importImage)}
-                    {this._renderToolButton('text', 'Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
-                    {this._renderToolButton('rect', 'Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
-                    {this._renderToolButton('oval', 'Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
-                    {this._renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
-                    {this._renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
-                    {this._renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
-                    {this._renderToolButton('np', 'Icons', 'Open Shape Library', Dialog.showNounProjectPanel)}
+                    {this.renderToolButton('cursor', 'Cursor', LANG.label.cursor + ' (V)', FnWrapper.useSelectTool, 'active')}
+                    {this.renderToolButton('photo', 'Photo', LANG.label.photo + ' (I)', FnWrapper.importImage)}
+                    {this.renderToolButton('text', 'Text', LANG.label.text + ' (T)', FnWrapper.insertText)}
+                    {this.renderToolButton('rect', 'Rectangle', LANG.label.rect + ' (M)', FnWrapper.insertRectangle)}
+                    {this.renderToolButton('oval', 'Ellipse', LANG.label.oval + ' (L)', FnWrapper.insertEllipse)}
+                    {this.renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
+                    {this.renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
+                    {this.renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
+                    {this.renderNpButton()}
                 </div>
             );
         } else {
@@ -146,14 +173,14 @@ class LeftPanel extends React.Component {
             const isDrawn = !PreviewModeBackgroundDrawer.isClean();
             return (
                 <div className={this.leftPanelClass}>
-                    {this._renderToolButton('back', 'Exit-Preview', LANG.label.end_preview, this.props.endPreviewMode)}
-                    {this._renderToolButton('shoot', 'Shoot', LANG.label.preview, () => {
+                    {this.renderToolButton('back', 'Exit-Preview', LANG.label.end_preview, this.props.endPreviewMode)}
+                    {this.renderToolButton('shoot', 'Shoot', LANG.label.preview, () => {
                         if (!PreviewModeController.isPreviewMode()) {
                             this.props.setShouldStartPreviewController(true)
                         }
                     }, 'active')}
-                    {this._renderToolButton('trace', 'Trace', LANG.label.trace, this.startImageTrace, '', isDrawing || !isDrawn)}
-                    {this._renderToolButton('trash', 'Trash', LANG.label.clear_preview, this.clearPreview, '', isDrawing || !isDrawn)}
+                    {this.renderToolButton('trace', 'Trace', LANG.label.trace, this.startImageTrace, '', isDrawing || !isDrawn)}
+                    {this.renderToolButton('trash', 'Trash', LANG.label.clear_preview, this.clearPreview, '', isDrawing || !isDrawn)}
                 </div>
             );
         }

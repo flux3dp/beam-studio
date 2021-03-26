@@ -1,11 +1,13 @@
 import alert from 'app/actions/alert-caller';
-import dialog from 'app/actions/dialog-caller';
 import progress from 'app/actions/progress-caller';
+import parseQueryData from 'helpers/query-data-parser';
 import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
+import { IUser } from 'interfaces/IUser';
 
 const axios = requireNode('axios');
 const electron = requireNode('electron');
+const EventEmitter = requireNode('events');
 
 // TODO: Update redirect URL & FB App ID
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
@@ -24,11 +26,15 @@ const axiosFluxId = axios.create({
     timeout: 2000,
 });
 
+let currentUser: IUser = null;
+
 axiosFluxId.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     return { error };
 });
+
+export const fluxIDEvents = new EventEmitter();
 
 const handleErrorMessage = (error) => {
     if (!error) {
@@ -47,24 +53,35 @@ const updateMenu = (info?) => {
     electron.ipcRenderer.send('UPDATE_ACCOUNT', info);
 };
 
-const parseData = (hashString: string) => {
-    if (hashString.startsWith('#')) {
-        hashString = hashString.slice(1);
-    }
-    const pairs = hashString.split('&');
-    const data: { access_token?: string, code?: string } = {};
-    for (let i = 0; i < pairs.length; i++) {
-        const pair = pairs[i].split('=');
-        if (pair.length > 1) {
-            data[pair[0]] = pair[1];
+const updateUser = (info?) => {
+    if (info) {
+        if (!currentUser) {
+            updateMenu(info);
+            currentUser = {
+                email: info.email,
+                info,
+            };
+            fluxIDEvents.emit('update-user', currentUser);
+        } else {
+            if (currentUser.email !== info.email) {
+                updateMenu(info);
+            }
+            Object.assign(currentUser.info, info);
+        }
+    } else {
+        if (currentUser) {
+            currentUser = null;
+            updateMenu();
+            fluxIDEvents.emit('update-user');
         }
     }
-    return data;
 };
 
+export const getCurrentUser = () => currentUser;
+
 const handleOAuthLoginSuccess = (data) => {
-    updateMenu(data);
-    dialog.popDialogById('flux-id-login');
+    updateUser(data);
+    fluxIDEvents.emit('oauth-logged-in');
     if (location.hash === '#initialize/connect/flux-id-login') {
         location.hash = '#initialize/connect/select-connection-type';
     } else {
@@ -80,12 +97,12 @@ export const init = async () => {
         }
     });
     electron.ipcRenderer.on('FB_AUTH_TOKEN', (e, dataString: string) => {
-        const data = parseData(dataString);
+        const data = parseQueryData(dataString);
         const token = data.access_token;
         signInWithFBToken(token);
     });
     electron.ipcRenderer.on('GOOGLE_AUTH', (e, dataString: string) => {
-        const data = parseData(dataString);
+        const data = parseQueryData(dataString);
         signInWithGoogleCode(data);
     });
     if (storage.get('keep-flux-id-login')) {
@@ -98,9 +115,7 @@ export const init = async () => {
             axiosFluxId.defaults.headers.post['X-CSRFToken'] = csrfcookies[0].value;
         }
         const res = await getInfo();
-        if (res.status === 'ok') {
-            updateMenu(res);
-        } else {
+        if (res.status !== 'ok') {
             updateMenu();
         }
     } else {
@@ -109,10 +124,8 @@ export const init = async () => {
         });
         fluxIdCookies.forEach((cookie) => {
             let url = '';
-            // get prefix, like https://www.
             url += cookie.secure ? 'https://' : 'http://';
             url += cookie.domain.charAt(0) === '.' ? 'www' : '';
-            // append domain and path
             url += cookie.domain;
             url += cookie.path;
 
@@ -134,6 +147,15 @@ export const externalLinkGoogleSignIn = () => {
     electron.remote.shell.openExternal(gAuthUrl);
 };
 
+export const externalLinkMemberDashboard = async () => {
+    const token = await getAccessToken();
+    if (token) {
+        // TODO: Update url
+        const url = `https://google.com/search?q=${token}`
+        electron.remote.shell.openExternal(url);
+    }
+}
+
 export const signIn = async (data: { email: string, password?: string, fb_token?: string }) => {
     progress.openNonstopProgress({ id: 'flux-id-login' });
     const response = await axiosFluxId.post('/user/signin', data, {
@@ -143,7 +165,7 @@ export const signIn = async (data: { email: string, password?: string, fb_token?
     if (response.status === 200) {
         const data = response.data;
         if (data.status === 'ok') {
-            updateMenu({ email: data.email });
+            updateUser({ email: data.email });
         }
         return data;
     }
@@ -153,28 +175,27 @@ export const signIn = async (data: { email: string, password?: string, fb_token?
 
 const signInWithFBToken = async (fb_token: string) => {
     progress.openNonstopProgress({ id: 'flux-id-login' });
-    await signOut();
     const response = await axiosFluxId.post('/user/signin', { fb_token }, {
         withCredentials: true,
     });
     progress.popById('flux-id-login');
     if (response.error) {
         handleErrorMessage(response.error);
-        return;
+        return false;
     }
 
     const data = response.data;
     if (data.status === 'ok') {
         handleOAuthLoginSuccess(data);
-        return;
+        return true;
     }
     const message = data.message ? `${data.info}: ${data.message}` : data.info;
     alert.popUpError({ message });
+    return false;
 }
 
 const signInWithGoogleCode = async (data) => {
     progress.openNonstopProgress({ id: 'flux-id-login' });
-    await signOut();
     const response = await axiosFluxId.post('/user/signin', data, {
         withCredentials: true,
     });
@@ -183,16 +204,17 @@ const signInWithGoogleCode = async (data) => {
 
     if (response.error) {
         handleErrorMessage(response.error);
-        return;
+        return false;
     }
 
     const responseData = response.data;
     if (responseData.status === 'ok') {
         handleOAuthLoginSuccess(responseData);
-        return;
+        return true;
     }
     const message = responseData.message ? `${responseData.info}: ${responseData.message}` : responseData.info;
     alert.popUpError({ message });
+    return false;
 }
 
 export const signOut = async () => {
@@ -200,25 +222,57 @@ export const signOut = async () => {
         withCredentials: true,
     });
     if (response.status === 200) {
-        updateMenu();
+        updateUser();
+        return response.data;
     }
-    return response;
+    return false;
 }
 
-export const getInfo = async () => {
+export const getInfo = async (silent: boolean = false) => {
     const response = await axiosFluxId.get('/user/info', {
         withCredentials: true,
     });
-    if (response.status === 200) {
-        return response.data;
+    if (response.error) {
+        if (!silent) {
+            handleErrorMessage(response.error);
+        }
+        return false;
     }
-    return response;
+    const responseData = response.data;
+    if (response.status === 200) {
+        if (responseData.status === 'ok') {
+            updateUser(responseData);
+        }
+        return responseData;
+    }
+    if (!silent) {
+        const message = responseData.message ? `${responseData.info}: ${responseData.message}` : responseData.info;
+        alert.popUpError({ message });
+    }
+    return false;
 };
+
+const getAccessToken = async () => {
+    const response = await axiosFluxId.get('/oauth/', {
+        params: {
+            response_type: 'token',
+        }
+    }, {
+        withCredentials: true,
+    });
+    if (response.error) {
+        handleErrorMessage(response.error);
+        return false;
+    }
+    const responseData = response.data;
+    if (responseData.status === 'ok') {
+        return responseData.token;
+    }
+    const message = responseData.message ? `${responseData.info}: ${responseData.message}` : responseData.info;
+    alert.popUpError({ message });
+    return false;
+}
 
 export default {
     init,
-    signIn,
-    externalLinkFBSignIn,
-    signOut,
-    getInfo,
 };
