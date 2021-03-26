@@ -150,8 +150,8 @@ export const externalLinkGoogleSignIn = () => {
 export const externalLinkMemberDashboard = async () => {
     const token = await getAccessToken();
     if (token) {
-        // TODO: Update url
-        const url = `https://google.com/search?q=${token}`
+        const urlPrefix = i18n.getActiveLang() === 'zh-tw' ? 'tw-' : '';
+        const url = `https://${urlPrefix}store.flux3dp.com/api_entry/?feature=beam-studio-login&key=${token}`
         electron.remote.shell.openExternal(url);
     }
 }
