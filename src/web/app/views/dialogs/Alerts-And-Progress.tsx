@@ -1,12 +1,12 @@
-import ProgressConstants from '../../constants/progress-constants';
-import Modal from '../../widgets/Modal';
-import ButtonGroup from '../../widgets/Button-Group';
-import { AlertProgressContext, AlertProgressContextProvider } from '../../contexts/Alert-Progress-Context';
-import * as i18n from '../../../helpers/i18n';
+import ProgressConstants from 'app/constants/progress-constants';
+import Alert from 'app/widgets/Alert';
+import ButtonGroup from 'app/widgets/Button-Group';
+import Modal from 'app/widgets/Modal';
+import { AlertProgressContext, AlertProgressContextProvider } from 'app/contexts/Alert-Progress-Context';
+import * as i18n from 'helpers/i18n';
 
-const electron = requireNode('electron');
-const React = requireNode('react');
 const classNames = requireNode('classnames');
+const React = requireNode('react');
 const LANG = i18n.lang;
 let _contextCaller;
 export interface IProgress {
@@ -99,7 +99,7 @@ class Progress extends React.Component {
     }
 
     render() {
-        const { progress, popFromStack } = this.props;
+        const { progress } = this.props;
         return (
             <Modal>
                 <div className={classNames('modal-alert', 'progress')}>
@@ -112,127 +112,6 @@ class Progress extends React.Component {
     }
 }
 Progress.contextType = AlertProgressContext;
-
-class Alert extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            checkboxChecked: false
-        }
-        this.messageRef = React.createRef();
-    }
-
-    componentDidMount() {
-        const message = this.messageRef.current as Element;
-        if (message) {
-            const aElements = message.querySelectorAll('a');
-            for (let i = 0; i < aElements.length; i++) {
-                const a = aElements[i];
-                a.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    electron.remote.shell.openExternal(a.getAttribute('href'));
-                })
-            }
-        }
-    }
-
-    renderCaption = (caption: string) => {
-        if (!caption) return null;
-
-        return (
-            <h2 className='caption'>{caption}</h2>
-        );
-    }
-
-    renderIcon = (iconUrl: string) => {
-        if (!iconUrl) return null;
-
-        return (
-            <img className='icon' src={iconUrl}/>
-        )
-    }
-
-    renderMessage = (message) => {
-        return typeof message === 'string' ?
-            <pre ref={this.messageRef} className='message' dangerouslySetInnerHTML={{__html: message}}></pre> :
-            <pre className='message'>{message}</pre>
-    }
-
-    renderCheckbox = (checkBoxText: string) => {
-        if (!checkBoxText) return null;
-
-        return (
-            <div className='modal-checkbox'>
-                <input type='checkbox' onClick={() => {this.setState({checkboxChecked: !this.state.checkboxChecked})}}></input>{checkBoxText}
-            </div>
-        );
-    }
-
-    renderChildren = (children: Element) => {
-        if (!children) return null;
-
-        return (
-            <div className='alert-children'>
-                {children}
-            </div>
-        );
-    }
-
-    render = () => {
-        const { alert, popFromStack } = this.props;
-        const {checkboxChecked} = this.state;
-        let buttons = alert.buttons.map((b, i) => {
-            const newButton = {...b};
-            const buttonCallback = b.onClick;
-            if (!checkboxChecked || !alert.checkboxText || !alert.checkboxCallbacks)  {
-                newButton.onClick = () => {
-                    popFromStack();
-                    buttonCallback();
-                }
-            } else {
-                // Need to reset checkbox state after callback
-                if (typeof alert.checkboxCallbacks === 'function') {
-                    newButton.onClick = () => {
-                        // If only one checkbox callback passed, run checkbox callback after
-                        // runing button callback
-                        popFromStack();
-                        buttonCallback();
-                        alert.checkboxCallbacks();
-                        this.setState({checkboxChecked: false});
-                    }
-                } else if (alert.checkboxCallbacks.length > i){
-                    newButton.onClick = () => {
-                        // If more than one checkbox callbacks passed,
-                        // replace original checkbox callbacks.
-                        popFromStack();
-                        alert.checkboxCallbacks[i]();
-                        this.setState({checkboxChecked: false});
-                    }
-                } else {
-                    newButton.onClick = () => {
-                        popFromStack();
-                        buttonCallback();
-                        this.setState({checkboxChecked: false});
-                    };
-                }
-            }
-            return newButton;
-        });
-
-        return (
-            <Modal>
-                <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
-                    {this.renderCaption(alert.caption)}
-                    {this.renderIcon(alert.iconUrl)}
-                    {this.renderMessage(alert.message)}
-                    {this.renderChildren(alert.children)}
-                    {this.renderCheckbox(alert.checkBoxText)}
-                    <ButtonGroup buttons={buttons}/>
-                </div>
-            </Modal>
-        );
-    }
-}
 
 export class AlertsAndProgress extends React.Component {
     constructor(props) {
@@ -254,15 +133,15 @@ export class AlertsAndProgress extends React.Component {
                     <Progress
                         key={index}
                         progress={alertOrProgress}
-                        popFromStack={popFromStack}
+                        onClose={popFromStack}
                     />
                 );
             } else {
                 return (
                     <Alert
                         key={index}
-                        alert={alertOrProgress}
-                        popFromStack={popFromStack}
+                        {...alertOrProgress}
+                        onClose={popFromStack}
                     />
                 );
             }
