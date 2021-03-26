@@ -2,12 +2,13 @@
     position: absolute;
     z-index: 4;
     .dialog-box {
-        //min-height: 75px;
+        width: max-content;
+        max-width: 130px;
+        padding: 13px;
         border-radius: 9px;
         color: #ffffff;
         background-color: #0091ff;
         .tutorial-dialog {
-            padding: 13px;
             font-size: 13px;
             font-weight: bold;
             letter-spacing: 1px;
@@ -19,7 +20,6 @@
                 .sub-line {
                     line-height: 12px;
                     padding-top: 8px;
-                    height: 20px;
                 }
                 .hint-mark {
                     float: right;

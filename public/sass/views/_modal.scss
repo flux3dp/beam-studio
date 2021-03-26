@@ -15,11 +15,11 @@
     align-items: center;
     justify-content: center;
     &.no-background {
-        position: absolute;
+        position: fixed;
         background: none;
     }
     &.with-hole {
-        position: absolute;
+        position: fixed;
         background: none;
         pointer-events: none;
         .modal-background {
