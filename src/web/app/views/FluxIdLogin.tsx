@@ -5,6 +5,12 @@ import { fluxIDEvents, externalLinkFBSignIn, externalLinkGoogleSignIn, signIn, s
 import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
 
+const electron = requireNode('electron');
+
+// TODO change url if needed
+const LOST_PASSWORD_URL = 'https://store.flux3dp.com/my-account/lost-password/';
+const SIGNUP_URL = 'https://store.flux3dp.com/my-account/#sign-up';
+
 let LANG = i18n.lang.flux_id_login;
 const updateLang = () => {
     LANG = i18n.lang.flux_id_login;
@@ -68,7 +74,7 @@ const FluxIdLogin = ({ onClose }) => {
                         <input ref={rememberMeCheckbox} type='checkbox' checked={isRememberMeChecked} onChange={() => {}}/>
                         <div>{LANG.remember_me}</div>
                     </div>
-                    <div className='forget-password' onClick={() => console.log('TODO: open forget password page')}>{LANG.forget_password}</div>
+                    <div className='forget-password' onClick={() => electron.remote.shell.openExternal(LOST_PASSWORD_URL)}>{LANG.forget_password}</div>
                 </div>
             </div>
         );
@@ -78,7 +84,7 @@ const FluxIdLogin = ({ onClose }) => {
         return (
             <div className='footer'>
                 <div className={classNames('button', 'primary')} onClick={handleLogin}>{LANG.login}</div>
-                <div className={classNames('button')} onClick={() => console.log('TODO: open regis page')}>{LANG.register}</div>
+                <div className={classNames('button')} onClick={() => electron.remote.shell.openExternal(SIGNUP_URL)}>{LANG.register}</div>
                 <div className='skip' onClick={() => onClose()}>{LANG.offline}</div>
             </div>
         );
