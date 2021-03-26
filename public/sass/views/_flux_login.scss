@@ -39,12 +39,19 @@
     }
     .oauth {
         .button {
-            height: 45px;
-            line-height: 45px;
+            height: 42px;
+            line-height: 42px;
+            background-repeat: no-repeat;
+            background-size: 24px 24px;
+            background-position: 14px 8px;
             &.facebook {
                 color: #ffffff;
                 background-color: #1877f2;
                 border-color: #1877f2;
+                background-image: url(../img/facebook-icon.svg);
+            }
+            &.google {
+                background-image: url(../img/google-icon.svg);
             }
         }
     }
