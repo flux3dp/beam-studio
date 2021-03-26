@@ -76,7 +76,7 @@ class Alert extends React.Component {
     }
 
     render = () => {
-        const { checkboxText, checkboxCallbacks, onClose } = this.props;
+        const { checkboxText, checkboxCallbacks, onClose, animationClass } = this.props;
         let { buttons } = this.props;
         const {checkboxChecked} = this.state;
         buttons = buttons.map((b, i) => {
@@ -119,7 +119,7 @@ class Alert extends React.Component {
 
         return (
             <Modal>
-                <div className={classNames('modal-alert', 'animate__animated', 'animate__bounceIn')}>
+                <div className={classNames('modal-alert', animationClass)}>
                     {this.renderCaption()}
                     {this.renderIcon()}
                     {this.renderMessage()}

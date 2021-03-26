@@ -141,6 +141,7 @@ export class AlertsAndProgress extends React.Component {
                     <Alert
                         key={index}
                         {...alertOrProgress}
+                        animationClass={classNames('animate__animated', 'animate__bounceIn')}
                         onClose={popFromStack}
                     />
                 );
