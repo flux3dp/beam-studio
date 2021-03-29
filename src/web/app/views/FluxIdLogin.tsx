@@ -122,6 +122,7 @@ const FluxIdLogin = ({ onClose }) => {
         <Modal>
             <div className='flux-login'>
                 <div className='title'>{LANG.login}</div>
+                <div className='sub-title'>{'t登入後享有百萬圖庫資源'}</div>
                 {renderOAuthContent()}
                 {renderSeperator()}
                 {renderLoginInputs()}
