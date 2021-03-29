@@ -1032,6 +1032,7 @@ export default {
             draw_a_rect: '畫一個方形',
             switch_to_preview_mode: '切換到相機預覽模式',
             preview_the_platform: '預覽工作平台',
+            end_preview_mode: '結束相機預覽模式',
             put_wood: '1. 放進木板',
             adjust_focus: '2. 調整焦距',
             close_cover: '3. 將門蓋關上',

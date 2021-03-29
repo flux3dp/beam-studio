@@ -1032,6 +1032,7 @@ export default {
             draw_a_rect: 'Zeichne ein Rechteck',
             switch_to_preview_mode: 'Wechseln Sie in den Vorschaumodus',
             preview_the_platform: 'Vorschau der Plattform',
+            end_preview_mode: 'Beenden Sie den Vorschaumodus',
             put_wood: '1. Legen Sie das Musterholz',
             adjust_focus: '2. Stellen Sie den Fokus ein',
             close_cover: '3. Schließen Sie die Abdeckung',

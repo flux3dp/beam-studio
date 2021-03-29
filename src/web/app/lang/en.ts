@@ -1032,6 +1032,7 @@ export default {
             draw_a_rect: 'Draw a Rectangle',
             switch_to_preview_mode: 'Switch to Preview Mode',
             preview_the_platform: 'Preview the Platform',
+            end_preview_mode: 'End Preview Mode',
             put_wood: '1. Put the sample wood',
             adjust_focus: '2. Adjust the focus',
             close_cover: '3. Close the cover',

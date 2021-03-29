@@ -1032,6 +1032,7 @@ export default {
             draw_a_rect: '長方形を描く',
             switch_to_preview_mode: 'プレビューモードに切り替え',
             preview_the_platform: 'プラットフォームをプレビューする',
+            end_preview_mode: 'プレビューモードを終了する',
             put_wood: '1. サンプル木材を入れます',
             adjust_focus: '2. フォーカスを調整する',
             close_cover: '3. カバーを閉じます',

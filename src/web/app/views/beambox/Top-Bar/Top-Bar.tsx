@@ -254,6 +254,9 @@ export class TopBar extends React.Component {
         } catch (error) {
             console.log(error);
         } finally {
+            if (TutorialController.getNextStepRequirement() === TutorialConstants.TO_EDIT_MODE) {
+                TutorialController.handleNextStep();
+            }
             FnWrapper.useSelectTool();
             $('#workarea').off('contextmenu');
             svgEditor.setWorkAreaContextMenu();

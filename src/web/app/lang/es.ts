@@ -1032,6 +1032,7 @@ export default {
             draw_a_rect: 'Dibuja un rectángulo',
             switch_to_preview_mode: 'Cambiar al modo de vista previa',
             preview_the_platform: 'Vista previa de la plataforma',
+            end_preview_mode: 'Finalizar el modo de vista previa',
             put_wood: '1. Pon la madera de muestra',
             adjust_focus: '2. Ajusta el foco...',
             close_cover: '3. Cierra la tapa.',

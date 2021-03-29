@@ -1030,6 +1030,7 @@ export interface ILang {
             draw_a_rect: string,
             switch_to_preview_mode: string,
             preview_the_platform: string,
+            end_preview_mode: string,
             put_wood: string,
             adjust_focus: string,
             close_cover: string,
