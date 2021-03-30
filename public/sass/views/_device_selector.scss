@@ -1,0 +1,98 @@
+.device-selector {
+    background-color: #f8f8f8;
+    padding: 20px 10px 10px;
+    border-radius: 2px;
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+    .title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 500;
+        margin: 0 0 30px;
+    }
+    .device-list {
+        cursor: pointer;
+        height: 160px;
+        list-style: none;
+        margin: 0;
+        padding: 10px;
+        text-align: left;
+
+        .select-printer {
+            position: relative;
+        }
+
+        ul {
+            border: 1px solid $primaryColor;
+            border-radius: 2px;
+            color: $primaryColor;
+            font-family: Helvetica Neue;
+            font-size: 12px;
+            font-weight: 500;
+            height: 100%;
+            margin: 0;
+            overflow-y: scroll;
+            padding: 0;
+            width: 350px;
+
+            .spinner-roller {
+                width: 50px;
+                height: 50px;
+                left: calc(50% - 25px);
+                top: calc(50% - 25px);
+            }
+
+            li {
+                @include flexbox();
+                line-height: 2.8rem;
+
+                label {
+                    cursor: pointer;
+                }
+
+                .name {
+                    padding-left: 5px;
+                    width: 150px;
+                }
+
+                .status {
+                    width: 110px;
+                }
+
+                .connection-type {
+                    line-height: 20px;
+                    padding-right: 10px;
+
+                    img {
+                        margin-top: 7px;
+                        image-rendering: optimizeSpeed;
+                        image-rendering: -moz-crisp-edges;
+                        image-rendering: -webkit-optimize-contrast;
+                        image-rendering: optimize-contrast;
+                        image-rendering: pixelated;
+                        -ms-interpolation-mode: nearest-neighbor;
+                    }
+                }
+
+                .progress {
+                    width: 50px;
+                }
+
+                .type {
+                    padding-top: 3px;
+                }
+
+                &:hover {
+                    background-color: $primaryColor;
+                    color: #FFF;
+                }
+            }
+        }
+    }
+    .footer {
+        display: flex;
+        justify-content: center;
+        .btn {
+            margin: 0;
+        }
+    }
+}

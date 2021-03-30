@@ -4,7 +4,8 @@ import InputLightBox from 'app/widgets/Input-Lightbox';
 import FluxIdLogin from 'app/views/FluxIdLogin';
 import ChangeLogDialog from 'app/views/dialogs/Change-Log';
 import ConfirmPrompt from 'app/views/dialogs/Confirm-Prompt';
-import { Dialog, DialogContextHelper } from 'app/views/dialogs/Dialog';
+import DeviceSelector from 'app/views/dialogs/DeviceSelector';
+import { DialogContextHelper } from 'app/views/dialogs/Dialog';
 import Prompt from 'app/views/dialogs/Prompt';
 import AboutBeamStudio from 'app/views/beambox/About-Beam-Studio';
 import DocumentPanel from 'app/views/beambox/Document-Panels/Document-Panel';
@@ -18,6 +19,7 @@ import { Tutorial } from 'app/views/tutorials/Tutorial';
 import { ITutorial } from 'interfaces/ITutorial';
 import * as i18n from 'helpers/i18n';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
+import { IDeviceInfo } from 'interfaces/IDevice';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -52,10 +54,22 @@ const popDialogById = (id: string) => {
 
 let promptIndex = 0;
 
-export default {
+const showDeviceSelector = (onSelect) => {
+    addDialogComponent('device-selector',
+        <DeviceSelector
+            onSelect={onSelect}
+            onClose={() => popDialogById('device-selector')}
+        />
+    );
+}
+
+export default window['Dialog'] = {
     addDialogComponent,
     isIdExist,
     popDialogById,
+    selectDevice: () => new Promise<IDeviceInfo>(async (resolve) => {
+        showDeviceSelector(resolve);
+    }),
     showAboutBeamStudio: () => {
         if (isIdExist('about-bs')) return;
         addDialogComponent('about-bs',
