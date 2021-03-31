@@ -1,16 +1,16 @@
 
 /* eslint-disable react/no-multi-comp */
 import $ from 'jquery';
-import Constants from '../../actions/beambox/constant'
-import * as i18n from '../../../helpers/i18n';
-import ImageData from '../../../helpers/image-data';
-import JimpHelper from '../../../helpers/JimpHelper';
-import Progress from '../../actions/progress-caller';
-import Modal from '../../widgets/Modal';
-import ButtonGroup from '../../widgets/Button-Group';
-import CurveControl from '../../widgets/Curve-Control';
-import SliderControl from '../../widgets/Slider-Control';
-import { getSVGAsync } from '../../../helpers/svg-editor-helper';
+import Constants from 'app/actions/beambox/constant'
+import * as i18n from 'helpers/i18n';
+import ImageData from 'helpers/image-data';
+import jimpHelper from 'helpers/jimp-helper';
+import Progress from 'app/actions/progress-caller';
+import Modal from 'app/widgets/Modal';
+import ButtonGroup from 'app/widgets/Button-Group';
+import CurveControl from 'app/widgets/Curve-Control';
+import SliderControl from 'app/widgets/Slider-Control';
+import { getSVGAsync } from 'helpers/svg-editor-helper';
 
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => {
@@ -471,11 +471,11 @@ class PhotoEditPanel extends React.Component {
             const jimpImage = await jimp.read(imageData);
             const w = jimpImage.bitmap.width;
             const h = jimpImage.bitmap.height;
-            await JimpHelper.binarizeImage(jimpImage, this.state.shading ? 128 : this.state.threshold);
+            await jimpHelper.binarizeImage(jimpImage, this.state.shading ? 128 : this.state.threshold);
             const origImage = jimpImage.clone();
-            await JimpHelper.stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
+            await jimpHelper.stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
             // await origImage.blur(Math.ceil(Math.min(w, h) / 40));
-            JimpHelper.regulateBlurredImage(origImage);
+            jimpHelper.regulateBlurredImage(origImage);
             await jimpImage.composite(origImage, 0, 0, {
                 mode: jimp.BLEND_OVERLAY
             });
