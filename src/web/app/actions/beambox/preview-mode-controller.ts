@@ -140,12 +140,12 @@ class PreviewModeController {
         }
         this.isDrawing = true;
         this.isPreviewBlocked = true;
-        const constrainedXY = this.constrainPreviewXY(x, y);
-        x = constrainedXY.x;
-        y = constrainedXY.y;
 
         $('#workarea').css('cursor', 'wait');
         try {
+            const constrainedXY = this.constrainPreviewXY(x, y);
+            x = constrainedXY.x;
+            y = constrainedXY.y;
             const imgUrl = await this.getPhotoAfterMove(x, y);
             const p = PreviewModeBackgroundDrawer.draw(imgUrl, x, y, last, callback);
 
