@@ -36,7 +36,6 @@ export default {
             power_too_high: 'パワーが高すぎる',
             power_too_high_msg: 'より低いレーザー出力（70％未満）を使用すると、レーザー管の寿命が延びます。\n「了解」と入力して続行します。' ,
             power_too_high_confirm: '了解',
-            suggest_calibrate_camera_first: 'カメラを較正してください。（メニュー>マシン>[お使いのマシン]>カメラを較正\nより良いプレビュー結果を実行するには、プラットフォームを使用するたびにプラットフォームを適切に再フォーカスします。',
         },
         hint: {
             polygon: '+ / - キーを押して、辺を増減します。'
@@ -747,7 +746,8 @@ export default {
         see_older_version: '以前のバージョンを見る',
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: 'デバイスを選択',
         auth_failure: '#811 認証失敗',
         unable_to_connect: '#810 マシンとの安定した接続を構築できません'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: '彫刻開始',
         ask_for_readjust: '彫刻ステップをスキップして写真を撮り、キャリブレーションを行いますか？',
         please_goto_beambox_first: 'この機能を使用するには、彫刻モード（Beambox）に切り替えてください。',
-        please_place_paper: {
-            beambox: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
-            beamo: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
-        },
+        please_place_paper: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
         please_refocus: {
             beambox: 'プラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
             beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ'
         },
+        without_af: 'Without Autofocus', // TODO: translate
+        with_af: 'With Autofocus', // TODO: translate
         dx: 'X',
         dy: 'Y',
         rotation_angle: '回転',
@@ -993,10 +992,7 @@ export default {
             beambox: 'ハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nプラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
             beamo: 'ハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nレーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ）'
         },
-        please_place_paper: {
-            beambox: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
-            beamo: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
-        },
+        please_place_paper: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
         dx: 'X',
         dy: 'Y',
         drawing_calibration_image: '較正画像の描画中…',
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: 'スキップ',
         welcome: 'ようこそ',
+        suggest_calibrate_camera_first: '初めて本機を使用するときは、カメラを較正してください。（メニュー>マシン>[お使いのマシン]>カメラを較正\nより良いプレビュー結果を実行するには、プレビューするたびにプラットフォームを適切に再フォーカスします。',
+        camera_calibration_failed: 'カメラの較正に失敗しました',
+        ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
+        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
         needNewUserTutorial: 'Beam Studioのチュートリアルはよろしいですか？',
         needNewInterfaceTutorial: 'Beam Studioのの新しいインターフェースの紹介はよろしいですか？',
         next: '次ヘ',

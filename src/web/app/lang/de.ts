@@ -36,7 +36,6 @@ export default {
             power_too_high: 'Leistung zu hoch',
             power_too_high_msg: 'Die Verwendung einer niedrigeren Laserleistung (unter 70%) verlängert die Lebensdauer der Laserröhre!\nGeben Sie "OK" ein, um fortzufahren.' ,
             power_too_high_confirm: 'OK',
-            suggest_calibrate_camera_first: 'Bitte kalibriere die Kamera. (Menü> Maschine> [Ihre Maschine]> Kamera kalibrieren)\nRichte die Plattform jedes Mal neu aus, wenn du sie verwendest, um ein besseres Vorschauergebnis zu erzielen.',
         },
         hint: {
             polygon: 'Press + / - key to increse / decrease sides.'
@@ -747,7 +746,8 @@ export default {
         see_older_version: 'Siehe Ältere Versionen',
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: 'Wählen Sie Gerät', // TODO: translate
         auth_failure: '#811 Authentifizierung fehlgeschlagen',
         unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: 'STARTE ENGRAVE',
         ask_for_readjust: 'Möchten Sie den Schneideschritt überspringen und Bilder und Kalibrierungen aufnehmen?',
         please_goto_beambox_first: 'Bitte wechsle in den Gravurmodus (Beambox), um diese Funktion nutzen zu können.',
-        please_place_paper: {
-            beambox: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
-            beamo: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
-        },
+        please_place_paper: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
         please_refocus: {
             beambox: 'Stelle die Plattform bitte auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
             beamo: 'Stelle den Laserkopf bitte so ein, dass er auf das Gravurobjekt fokussiert (Höhe des umgedrehten Acryls).'
         },
+        without_af: 'Without Autofocus', // TODO: translate
+        with_af: 'With Autofocus', // TODO: translate
         dx: 'X',
         dy: 'Y',
         rotation_angle: 'Drehung',
@@ -993,10 +992,7 @@ export default {
             beambox: 'Beim Kalibrieren von Hybrid-Lasermodul wird eine Kamera benötigt\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte die Plattform auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
             beamo: 'Beim Kalibrieren von Hybrid-Lasermodul wird eine Kamera benötigt.\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte den Laserkopf so ein, dass er auf das Gravurobjekt fokussiert ist (die Höhe des umgedrehten Acryls).'
         },
-        please_place_paper: {
-            beambox: 'Bitte lege ein weißes Papier im Format A4 oder Letter in die linke obere Ecke des Arbeitsbereichs',
-            beamo: 'Bitte lege ein weißes Papier im Format A4 oder Letter in die linke obere Ecke des Arbeitsbereichs',
-        },
+        please_place_paper: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
         dx: 'X',
         dy: 'Y',
         drawing_calibration_image: 'Zeichnen eines Kalibrierungsbildes...',
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: 'Überspringen',
         welcome: 'WILLKOMMEN',
+        suggest_calibrate_camera_first: 'Bitte kalibrieren Sie die Kamera, wenn Sie das Gerät zum ersten Mal verwenden. (Menü> Maschine> [Ihre Maschine]> Kamera kalibrieren)\nUnd fokussieren Sie die Plattform jedes Mal vor der Vorschau richtig, um ein besseres Vorschauergebnis zu erzielen.',
+        camera_calibration_failed: 'Kamerakalibrierung fehlgeschlagen',
+        ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
+        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
         needNewUserTutorial: 'Benötigen Sie ein Tutorial zu Beam Studio?',
         needNewInterfaceTutorial: 'Möchten Sie ein Tutorial für die neue Benutzeroberfläche von Beam Studio starten?',
         next: 'NÄCHSTER',

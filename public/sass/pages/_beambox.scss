@@ -1790,6 +1790,38 @@
 }
 
 .modal-camera-calibration {
+    .video {
+        width: 400px;
+        min-height: 225px;
+    }
+
+    .video-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .tab-container {
+            width: 400px;
+            display: flex;
+            .tab {
+                width: 50%;
+                height: 35px;
+                line-height: 35px;
+                border: 1px solid #bbbbbb;
+                cursor: pointer;
+                &.right {
+                    border-width: 1px 1px 1px 0;
+                }
+                &:hover:not(.selected) {
+                    background-color: #eaeaea;
+                }
+                &.selected {
+                    color: #fff;
+                    background-color: #444444;
+                    border-color: #444444;
+                }
+            }
+        }
+    }
 
     .modal-alert {
         width: 480px;

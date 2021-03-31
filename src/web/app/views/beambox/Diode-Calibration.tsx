@@ -149,7 +149,8 @@ class DiodeCalibration extends React.Component {
     }
 
     renderStepAlert() {
-        const { model } = this.props;
+        const { device } = this.props;
+        const model = device.model === 'fbm1' ? 'beamo' : 'beambox';
         return (
             <AlertDialog
                 caption={LANG.diode_calibration}
@@ -171,12 +172,12 @@ class DiodeCalibration extends React.Component {
     }
     // Cut and Take Picture
     renderStepCut() {
-        const { model, device } = this.props;
+        const { device } = this.props;
         const { isCutButtonDisabled } = this.state;
         return (
             <AlertDialog
                 caption={LANG.diode_calibration}
-                message={LANG.please_place_paper[model]}
+                message={LANG.please_place_paper}
                 buttons={
                     [{
                         label: LANG.start_engrave,
@@ -499,7 +500,6 @@ export const showDiodeCalibration = (device) => {
         <Modal>
             <DiodeCalibration
                 device={device}
-                model={'beamo'}
                 onClose={() => Dialog.popDialogById('diode-cali')}
             />
         </Modal>

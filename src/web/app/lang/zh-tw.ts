@@ -36,7 +36,6 @@ export default {
             power_too_high: '功率過高',
             power_too_high_msg: '雷射管在高功率（70％ 以上）下耗損較快，使用低功率可以延長雷試管使用壽命。\n輸入「知道了」以繼續。' ,
             power_too_high_confirm: '知道了',
-            suggest_calibrate_camera_first: '提醒您：\n第一次使用相機，請先進行相機校正。並在每次使用時將平台對焦，以取得最好的效果。',
         },
         hint: {
             polygon: '按下 + / - 鍵以增加 / 減少邊數。'
@@ -747,7 +746,8 @@ export default {
         see_older_version: '查看之前版本',
         help_center_url: 'https://support.flux3dp.com/hc/zh-tw/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: '選擇機器',
         auth_failure: '#811 認證失敗',
         unable_to_connect: '#810 無法與機器建立穩定連線'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: '開始繪製校正圖片',
         ask_for_readjust: '是否需要跳過切割步驟，進行拍照及校正？',
         please_goto_beambox_first: '請先選擇 Beambox 功能，再進行校正',
-        please_place_paper: {
-            beambox: '請將乾淨 A4 白紙放在工作區域的左上角',
-            beamo: '請將乾淨 A4 白紙放在工作區域的左上角',
-        },
+        please_place_paper: '請將乾淨 A4 白紙放在工作區域的左上角',
         please_refocus: {
             beambox: '請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
             beamo: '請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
         },
+        without_af: '無自動對焦',
+        with_af: '有自動對焦',
         dx: '水平位移',
         dy: '垂直位移',
         rotation_angle: '旋轉角度',
@@ -974,7 +973,7 @@ export default {
         analyze_result_fail: '校正失敗<br/>請確認:<br/>1. 校正圖片完整畫在 A4 紙上<br/>2. 已旋轉升降平台旋鈕，直到輕觸焦距螺絲，完成對焦',
         drawing_calibration_image: '繪製校正圖片中...',
         calibrate_done: '校正相機完成<br/>使用時請正確對焦以取得良好的預覽效果。',
-        hint_red_square: '請將紅框對齊切割出來的方塊',
+        hint_red_square: '請將紅框外側對齊切割出來的方塊',
         hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小'
     },
     diode_calibration: {
@@ -993,10 +992,7 @@ export default {
             beambox: '校正混合雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
             beamo: '校正混合雷射需要使用相機校正參數，請確認您的機器已進行過相機校正。並請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
         },
-        please_place_paper: {
-            beambox: '請將乾淨 A4 白紙放在工作區域的左上角',
-            beamo: '請將乾淨 A4 白紙放在工作區域的左上角',
-        },
+        please_place_paper: '請將乾淨 A4 白紙放在工作區域的左上角',
         dx: '水平位移',
         dy: '垂直位移',
         drawing_calibration_image: '繪製校正圖片中...',
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: '跳過教學',
         welcome: '歡迎使用',
+        suggest_calibrate_camera_first: '提醒您：\n第一次使用請先進行相機校正。並在每次使用時將平台對焦，以取得最好的效果。',
+        camera_calibration_failed: '相機校正失敗',
+        ask_retry_calibration: '請問是否重新執行相機校正？',
+        skipped_camera_calibration: '已跳過相機校正引導，您可從隨時從上方選單「機器」>「您的機器名稱」>「校正相機」進行相機校正。',
         needNewUserTutorial: '請問您是否需要 Beam Studio 的教學？',
         needNewInterfaceTutorial: '請問是否需要為您介紹 Beam Studio 的新介面？',
         next: '下一步',

@@ -5,10 +5,10 @@ import ImageTracePanelController from './Image-Trace-Panel-Controller';
 import ToolPanelsController from './Tool-Panels-Controller';
 import Tutorials from './tutorials';
 import ElectronDialogs from '../electron-dialogs';
-import { showCameraCalibration } from '../../views/beambox/Camera-Calibration';
-import { showDiodeCalibration } from '../../views/beambox/Diode-Calibration';
-import AlertConstants from '../../constants/alert-constants';
-import FontConstants from '../../constants/font-constants';
+import { showCameraCalibration } from 'app/views/beambox/Camera-Calibration';
+import { showDiodeCalibration } from 'app/views/beambox/Diode-Calibration';
+import AlertConstants from 'app/constants/alert-constants';
+import FontConstants from 'app/constants/font-constants';
 import { Mode } from 'app/constants/monitor-constants';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
@@ -162,14 +162,14 @@ const initMenuBarEvents = () => {
         try {
             const res = await DeviceMaster.select(printer);
             if (res.success) {
-                Progress.openSteppingProgress({id: 'get_log', message: 'downloading',});
+                Progress.openSteppingProgress({ id: 'get_log', message: 'downloading', });
                 try {
                     const file = await DeviceMaster.downloadLog(log, async (progress: { completed: number, size: number }) => {
                         Progress.update('get_log', { message: 'downloading', percentage: progress.completed / progress.size * 100 });
                     });
                     Progress.popById('get_log');
-                    const targetFilePath = await ElectronDialogs.saveFileDialog(log , log, [{extensionName: 'log', extensions: ['log']}]);
-    
+                    const targetFilePath = await ElectronDialogs.saveFileDialog(log, log, [{ extensionName: 'log', extensions: ['log'] }]);
+
                     if (targetFilePath) {
                         const fs = requireNode('fs');
                         const arrBuf = await new Response(file[1]).arrayBuffer();
@@ -244,7 +244,7 @@ const initMenuBarEvents = () => {
                 AlertStore.onRetry(handleYes);
                 AlertStore.onCancel(handleCancel);
 
-                Progress.openNonstopProgress({id: 'check-status', caption: LANG.update.preparing});
+                Progress.openNonstopProgress({ id: 'check-status', caption: LANG.update.preparing });
                 if (type === 'toolhead') {
                     DeviceMaster.enterMaintainMode().then(() => {
                         setTimeout(() => {
@@ -264,7 +264,7 @@ const initMenuBarEvents = () => {
             if (res.success) {
                 checkStatus();
             }
-        } catch(resp) {
+        } catch (resp) {
             console.error(resp);
             Alert.popUp({
                 id: 'exec-fw-update',
@@ -298,8 +298,8 @@ const initMenuBarEvents = () => {
                     message: info,
                     buttonLabels: [lang.topmenu.device.network_test, lang.topmenu.ok],
                     callbacks: [
-                        () => {Dialog.showNetworkTestingPanel(device.ipaddr)},
-                        () => {}
+                        () => { Dialog.showNetworkTestingPanel(device.ipaddr) },
+                        () => { }
                     ],
                     primaryButtonIndex: 1
                 });
@@ -316,10 +316,8 @@ const initMenuBarEvents = () => {
                         showCameraCalibration(device, isBorderless);
                     }
                 } catch (e) {
-                    Progress.popById('connect');
                     console.error(e);
                 }
-
             }
 
             _action['CALIBRATE_BEAMBOX_CAMERA'] = async (device) => {
@@ -371,7 +369,6 @@ const initMenuBarEvents = () => {
                             showDiodeCalibration(device);
                         }
                     } catch (e) {
-                        Progress.popById('connect');
                         console.error(e);
                     }
                 } else {
@@ -456,9 +453,9 @@ const initMenuBarEvents = () => {
             if (typeof _action[menuItem.id] === 'function') {
                 if (
                     menuItem.id === 'SIGN_IN' ||
-                        menuItem.id === 'SIGN_OUT' ||
-                        menuItem.id === 'MY_ACCOUNT' ||
-                        menuItem.id === 'BUG_REPORT'
+                    menuItem.id === 'SIGN_OUT' ||
+                    menuItem.id === 'MY_ACCOUNT' ||
+                    menuItem.id === 'BUG_REPORT'
                 ) {
                     _action[menuItem.id]();
                 }
@@ -484,6 +481,13 @@ const initMenuBarEvents = () => {
 const showStartUpDialogs = async () => {
     await askAndInitSentry();
     const isNewUser = storage.get('new-user');
+    if (isNewUser) {
+        if (await askFirstTimeCameraCalibration()) {
+            await doFirstTimeCameraCalibration();
+        } else {
+            await onCameraCalibrationSkipped();
+        }
+    }
     await showTutorial(isNewUser);
     if (!isNewUser) {
         const lastInstalledVersion = storage.get('last-installed-version');
@@ -526,6 +530,68 @@ const initSentry = async () => {
         console.log('Sentry Initiated');
         const Sentry = window['nodeModules']['@sentry/electron'];
         Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
+    }
+};
+
+const askFirstTimeCameraCalibration = () => {
+    return new Promise((resolve) => {
+        Alert.popUp({
+            caption: i18n.lang.tutorial.welcome,
+            message: i18n.lang.tutorial.suggest_calibrate_camera_first,
+            buttonType: AlertConstants.YES_NO,
+            onNo: () => resolve(false),
+            onYes: () => resolve(true),
+        });
+    });
+};
+
+const onCameraCalibrationSkipped = () => {
+    return new Promise((resolve) => {
+        Alert.popUp({
+            message: i18n.lang.tutorial.skipped_camera_calibration,
+            callbacks: resolve,
+        });
+    });
+};
+
+const doFirstTimeCameraCalibration = async () => {
+    const LANG = i18n.lang.tutorial;
+    const askForRetry = () => {
+        return new Promise((resolve) => {
+            Alert.popUp({
+                caption: LANG.camera_calibration_failed,
+                message: LANG.ask_retry_calibration,
+                buttonType: AlertConstants.YES_NO,
+                onYes: async () => resolve(await doFirstTimeCameraCalibration()),
+                onNo: async () => resolve(await onCameraCalibrationSkipped()),
+            });
+        });
+    }
+
+    const device = await Dialog.selectDevice();
+    if (!device) {
+        await onCameraCalibrationSkipped();
+        return;
+    }
+    try {
+        const deviceStatus = await checkDeviceStatus(device);
+        if (!deviceStatus) {
+            await onCameraCalibrationSkipped();
+            return;
+        }
+        const selectRes = await DeviceMaster.select(device);
+        if (selectRes.success) {
+            const caliRes = await showCameraCalibration(device, false);
+            if (!caliRes) {
+                await onCameraCalibrationSkipped();
+            }
+            return;
+        } else {
+            await askForRetry();
+        }
+    } catch (e) {
+        console.error(e);
+        await askForRetry();
     }
 };
 
@@ -586,11 +652,11 @@ const showQuestionnaire = async () => {
         url = res.urls[i18n.getActiveLang()] || res.urls.en;
     }
     if (!url) return;
-    
+
     storage.set('questionnaire-version', res.version);
 
     return new Promise<void>((resolve) => {
-        Alert.popUp({ 
+        Alert.popUp({
             id: 'qustionnaire',
             caption: i18n.lang.beambox.popup.questionnaire.caption,
             message: i18n.lang.beambox.popup.questionnaire.message,
@@ -622,7 +688,7 @@ const checkOSVersion = () => {
                         type: AlertConstants.SHOW_POPUP_WARNING,
                         checkbox: {
                             text: LANG.popup.dont_show_again,
-                            callbacks: () => {AlertConfig.write('skip_os_version_warning', true)}
+                            callbacks: () => { AlertConfig.write('skip_os_version_warning', true) }
                         }
                     });
                 }
@@ -632,20 +698,20 @@ const checkOSVersion = () => {
             }
         } else if (process.platform === 'win32') {
             var windowsVersionStrings = [
-                {s:'Windows 10', r:/(Windows 10.0|Windows NT 10.0)/, shouldAlert: false},
-                {s:'Windows 8.1', r:/(Windows 8.1|Windows NT 6.3)/, shouldAlert: true},
-                {s:'Windows 8', r:/(Windows 8|Windows NT 6.2)/, shouldAlert: true},
-                {s:'Windows 7', r:/(Windows 7|Windows NT 6.1)/, shouldAlert: true},
-                {s:'Windows Vista', r:/Windows NT 6.0/, shouldAlert: true},
-                {s:'Windows Server 2003', r:/Windows NT 5.2/, shouldAlert: true},
-                {s:'Windows XP', r:/(Windows NT 5.1|Windows XP)/, shouldAlert: true},
-                {s:'Windows 2000', r:/(Windows NT 5.0|Windows 2000)/, shouldAlert: true},
-                {s:'Windows ME', r:/(Win 9x 4.90|Windows ME)/, shouldAlert: true},
-                {s:'Windows 98', r:/(Windows 98|Win98)/, shouldAlert: true},
-                {s:'Windows 95', r:/(Windows 95|Win95|Windows_95)/, shouldAlert: true},
-                {s:'Windows NT 4.0', r:/(Windows NT 4.0|WinNT4.0|WinNT)/, shouldAlert: true},
-                {s:'Windows CE', r:/Windows CE/, shouldAlert: true},
-                {s:'Windows 3.11', r:/Win16/, shouldAlert: true},
+                { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/, shouldAlert: false },
+                { s: 'Windows 8.1', r: /(Windows 8.1|Windows NT 6.3)/, shouldAlert: true },
+                { s: 'Windows 8', r: /(Windows 8|Windows NT 6.2)/, shouldAlert: true },
+                { s: 'Windows 7', r: /(Windows 7|Windows NT 6.1)/, shouldAlert: true },
+                { s: 'Windows Vista', r: /Windows NT 6.0/, shouldAlert: true },
+                { s: 'Windows Server 2003', r: /Windows NT 5.2/, shouldAlert: true },
+                { s: 'Windows XP', r: /(Windows NT 5.1|Windows XP)/, shouldAlert: true },
+                { s: 'Windows 2000', r: /(Windows NT 5.0|Windows 2000)/, shouldAlert: true },
+                { s: 'Windows ME', r: /(Win 9x 4.90|Windows ME)/, shouldAlert: true },
+                { s: 'Windows 98', r: /(Windows 98|Win98)/, shouldAlert: true },
+                { s: 'Windows 95', r: /(Windows 95|Win95|Windows_95)/, shouldAlert: true },
+                { s: 'Windows NT 4.0', r: /(Windows NT 4.0|WinNT4.0|WinNT)/, shouldAlert: true },
+                { s: 'Windows CE', r: /Windows CE/, shouldAlert: true },
+                { s: 'Windows 3.11', r: /Win16/, shouldAlert: true },
             ];
             let shouldAlert = false;
             let osVersion;
@@ -664,7 +730,7 @@ const checkOSVersion = () => {
                     type: AlertConstants.SHOW_POPUP_WARNING,
                     checkbox: {
                         text: LANG.popup.dont_show_again,
-                        callbacks: () => {AlertConfig.write('skip_os_version_warning', true)}
+                        callbacks: () => { AlertConfig.write('skip_os_version_warning', true) }
                     }
                 });
             }

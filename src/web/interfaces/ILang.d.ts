@@ -34,7 +34,6 @@ export interface ILang {
             power_too_high: string,
             power_too_high_msg: string,
             power_too_high_confirm: string,
-            suggest_calibrate_camera_first: string,
         },
         hint: {
             polygon: string,
@@ -745,7 +744,8 @@ export interface ILang {
         see_older_version: string,
         help_center_url: string,
     },
-    select_printer: {
+    select_device: {
+        select_device: string,
         auth_failure: string,
         unable_to_connect: string,
     },
@@ -954,14 +954,13 @@ export interface ILang {
         start_engrave: string,
         ask_for_readjust: string,
         please_goto_beambox_first: string,
-        please_place_paper: {
-            beambox: string,
-            beamo: string,
-        },
+        please_place_paper: string,
         please_refocus: {
             beambox: string,
             beamo: string,
         },
+        without_af: string,
+        with_af: string,
         dx: string,
         dy: string,
         rotation_angle: string,
@@ -991,10 +990,7 @@ export interface ILang {
             beambox: string,
             beamo: string,
         },
-        please_place_paper: {
-            beambox: string,
-            beamo: string,
-        },
+        please_place_paper: string,
         dx: string,
         dy: string,
         drawing_calibration_image: string,
@@ -1011,6 +1007,10 @@ export interface ILang {
     tutorial: {
         skip: string,
         welcome: string,
+        suggest_calibrate_camera_first: string,
+        camera_calibration_failed: string,
+        ask_retry_calibration: string,
+        skipped_camera_calibration: string,
         needNewUserTutorial: string,
         needNewInterfaceTutorial: string,
         next: string,

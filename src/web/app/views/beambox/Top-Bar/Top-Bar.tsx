@@ -119,14 +119,6 @@ export class TopBar extends React.Component {
 
     changeToPreviewMode = () => {
         const { setTopBarPreviewMode } = this.context;
-        if (BeamboxPreference.read('should_remind_calibrate_camera')) {
-            Alert.popUp({
-                type: AlertConstants.SHOW_INFO,
-                message: LANG.alerts.suggest_calibrate_camera_first,
-            });
-            BeamboxPreference.write('should_remind_calibrate_camera', false);
-            return;
-        }
         svgCanvas.setMode('select');
 
         $('#workarea').contextMenu({menu: []},()=>{});

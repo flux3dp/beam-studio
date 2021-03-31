@@ -36,7 +36,6 @@ export default {
             power_too_high: 'POTENCIA DEMASIADO ALTA',
             power_too_high_msg: 'Usar una potencia de láser menor (menos del 70%) alargará la vida del tubo láser.\nPulsa "ANOTADO" para proceder.',
             power_too_high_confirm: 'ANOTADO',
-            suggest_calibrate_camera_first: 'Por favor, calibre la cámara. (Menú > Máquina > [tu máquina] > Calibrar la cámara)\nReenfoca la plataforma adecuadamente cada vez que la uses para obtener un mejor resultado de previsualización.',
         },
         hint: {
             polygon: 'Presiona la tecla + / - para aumentar / disminuir los lados.'
@@ -747,7 +746,8 @@ export default {
         see_older_version: 'Ver versiones anteriores',
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: 'Seleccione el dispositivo', // TODO: translate
         auth_failure: '#811 Fallo de autenticación',
         unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: 'EMPEZAR A GRABAR',
         ask_for_readjust: '¿Quiere omitir el paso de grabado y luego tomar una foto y calibrar directamente?',
         please_goto_beambox_first: 'Por favor, cambia al Modo de Grabación ( Beambox ) para poder usar esta función.',
-        please_place_paper: {
-            beambox: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
-            beamo: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
-        },
+        please_place_paper: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
         please_refocus: {
             beambox: 'Por favor, ajusta la plataforma al punto focal (la altura del acrílico rechazado)',
             beamo: 'Por favor, ajusta el cabezal del láser para enfocar el objeto grabado (la altura del acrílico rechazado)'
         },
+        without_af: 'Without Autofocus', // TODO: translate
+        with_af: 'With Autofocus', // TODO: translate
         dx: 'X',
         dy: 'Y',
         rotation_angle: 'Rotación',
@@ -993,10 +992,7 @@ export default {
             beambox: 'Al calibrar el módulo láser híbrido, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la plataforma al punto focal (la altura del acrílico rechazado)',
             beamo: 'Al calibrar el módulo láser híbrido, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la cabeza del láser para enfocar el objeto grabado (la altura del acrílico rechazado)'
         },
-        please_place_paper: {
-            beambox: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina superior izquierda del área de trabajo.',
-            beamo: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina superior izquierda del área de trabajo.',
-        },
+        please_place_paper: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
         dx: 'X',
         dy: 'Y',
         drawing_calibration_image: 'Dibujando la imagen de calibración...',
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: 'Saltar',
         welcome: 'BIENVENIDO',
+        suggest_calibrate_camera_first: 'Calibre la cámara cuando utilice la máquina por primera vez. (Menú > Máquina > [tu máquina] > Calibrar la cámara)\nY vuelva a enfocar la plataforma correctamente cada vez antes de la vista previa para obtener un mejor resultado de vista previa.',
+        camera_calibration_failed: 'Falló la calibración de la cámara',
+        ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
+        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
         needNewUserTutorial: '¿Te gustaría empezar un tutorial?',
         needNewInterfaceTutorial: '¿Le gustaría comenzar un tutorial para la nueva interfaz de Beam Studio?',
         next: 'SIGUIENTE',

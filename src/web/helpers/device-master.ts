@@ -211,8 +211,8 @@ class DeviceMaster {
         if (authResult.data !== 'cancel') {
             const message = (
                 authResult.data.reachable ?
-                lang.select_printer.auth_failure : 
-                lang.select_printer.unable_to_connect     
+                lang.select_device.auth_failure : 
+                lang.select_device.unable_to_connect     
             );
             Alert.popById('device-auth-fail');
             Alert.popUp({
@@ -363,7 +363,7 @@ class DeviceMaster {
                 });
                 return {
                     success: false,
-                    error: ConnectionError.TIMEOUT
+                    error: errorCode,
                 }
             }
         } finally {

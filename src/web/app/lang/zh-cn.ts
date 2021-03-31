@@ -36,7 +36,6 @@ export default {
             power_too_high: '功率过高',
             power_too_high_msg: '激光管在高功率（70％ 以上）下耗损较快，使用低功率可以延长雷试管使用寿命。\n输入「知道了」以继续。' ,
             power_too_high_confirm: '知道了',
-            suggest_calibrate_camera_first: '提醒您：\n第一次使用相机，请先进行相机校正。并在每次使用时将平台对焦，以取得最好的效果。',
         },
         hint: {
             polygon: '按下 + / - 键以增加 / 减少边数。'
@@ -747,7 +746,8 @@ export default {
         see_older_version: '查看之前版本',
         help_center_url: 'https://support.flux3dp.com/hc/zh-tw/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: '选择机器',
         auth_failure: '#811 认证失败',
         unable_to_connect: '#810 无法与机器创建稳定连接'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: '开始绘制校正图片',
         ask_for_readjust: '是否需要跳过切割步骤，进行拍照及校正？',
         please_goto_beambox_first: '请先选择 Beambox 功能，再进行校正',
-        please_place_paper: {
-            beambox: '请将干净 A4 白纸放在工作区域的左上角',
-            beamo: '请将干净 A4 白纸放在工作区域的左上角',
-        },
+        please_place_paper: '请将干净 A4 白纸放在工作区域的左上角',
         please_refocus: {
             beambox: '请旋转升降平台旋钮，直到轻触焦距螺丝，完成对焦',
             beamo: '请转开焦距固定环，调整雷射头至平台轻触焦距尺，完成对焦',
         },
+        without_af: '无自动对焦',
+        with_af: '有自动对焦',
         dx: '水平位移',
         dy: '垂直位移',
         rotation_angle: '旋转角度',
@@ -993,10 +992,7 @@ export default {
             beambox: '校正混合雷射需要使用相机校正参数，请确认您的机器已进行过相机校正。并请旋转升降平台旋钮，直到轻触焦距螺丝或焦距尺，完成对焦',
             beamo: '校正混合雷射需要使用相机校正参数，请确认您的机器已进行过相机校正。并请转开焦距固定环，调整雷射头至平台轻触焦距尺，完成对焦',
         },
-        please_place_paper: {
-            beambox: '请将干净 A4 白纸放在工作区域的左上角',
-            beamo: '请将干净 A4 白纸放在工作区域的左上角',
-        },
+        please_place_paper: '请将干净 A4 白纸放在工作区域的左上角',
         dx: '水平位移',
         dy: '垂直位移',
         drawing_calibration_image: '绘制校正图片中...',
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: '跳过教学',
         welcome: '欢迎使用',
+        suggest_calibrate_camera_first: '提醒您：\n第一次使用请先进行相机校正。并在每次使用时将平台对焦，以取得最好的效果。',
+        camera_calibration_failed: '相机校正失败',
+        ask_retry_calibration: '请问是否重新执行相机校正？',
+        skipped_camera_calibration: '已跳过相机校正引导，您可从随时从上方选单「机器」>「您的机器名称」>「校正相机」进行相机校正。',
         needNewUserTutorial: '请问您是否需要 Beam Studio 的教学？',
         needNewInterfaceTutorial: '请问是否需要为您介绍 Beam Studio 的新介面？',
         next: '下一步',

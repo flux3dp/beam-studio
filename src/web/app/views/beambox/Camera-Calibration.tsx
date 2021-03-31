@@ -23,8 +23,9 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const React = requireNode('react');
 const classNames = requireNode('classnames');
+const React = requireNode('react');
+const { useState, useEffect, useRef } = React;
 const LANG = i18n.lang.camera_calibration;
 
 const cameraCalibrationWebSocket = CameraCalibration();
@@ -32,7 +33,7 @@ const cameraCalibrationWebSocket = CameraCalibration();
 //View render the following steps
 const STEP_ASK_READJUST = Symbol();
 const STEP_REFOCUS = Symbol();
-const STEP_BEFORE_CUT = Symbol();
+const STEP_PUT_PAPER = Symbol();
 const STEP_BEFORE_ANALYZE_PICTURE = Symbol();
 const STEP_FINISH = Symbol();
 
@@ -53,11 +54,9 @@ class CameraCalibrationComponent extends React.Component {
     const didCalibrate = calibratedMachineUUIDs.includes(props.device.uuid);
 
     this.state = {
-      currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_REFOCUS,
+      currentStep: didCalibrate ? STEP_ASK_READJUST : STEP_PUT_PAPER,
       currentOffset: { X: 15, Y: 30, R: 0, SX: 1.625, SY: 1.625 },
       imgBlobUrl: '',
-      showHint: false,
-      shouldShowLastConfig: false,
     };
     this.unit = Config().read('default-units') as string || 'mm';
     this.updateCurrentStep = this.updateCurrentStep.bind(this);
@@ -71,8 +70,8 @@ class CameraCalibrationComponent extends React.Component {
     });
   }
 
-  async onClose() {
-    this.props.onClose();
+  async onClose(completed: boolean = false) {
+    this.props.onClose(completed);
     await PreviewModeController.end();
     if (this.origFanSpeed) {
       await DeviceMaster.setFan(this.origFanSpeed);
@@ -90,41 +89,33 @@ class CameraCalibrationComponent extends React.Component {
     this.setState(data);
   }
 
-  updateShowHint(show) {
-    this.setState({ showHint: show });
-  }
-
-  toggleShowLastConfig() {
-    this.setState({ shouldShowLastConfig: !this.state.shouldShowLastConfig });
-  }
-
   render() {
+    const { device } = this.props;
+    const model = device.model === 'fbm1' ? 'beamo' : 'beambox';
     const stepsMap = {
       [STEP_ASK_READJUST]:
         <StepAskReadjust
-          device={this.props.device}
-          model={this.props.model}
+          device={device}
           parent={this}
           updateImgBlobUrl={this.updateImgBlobUrl}
           updateOffsetDataCb={this.updateOffsetData.bind(this)}
+          gotoNextStep={this.updateCurrentStep}
+          onClose={this.onClose}
+        />,
+      [STEP_PUT_PAPER]:
+        <StepPutPaper
           gotoNextStep={this.updateCurrentStep}
           onClose={this.onClose}
         />,
       [STEP_REFOCUS]:
         <StepRefocus
-          gotoNextStep={this.updateCurrentStep}
-          onClose={this.onClose}
-          model={this.props.model}
-        />,
-      [STEP_BEFORE_CUT]:
-        <StepBeforeCut
-          gotoNextStep={this.updateCurrentStep}
-          onClose={this.onClose}
-          device={this.props.device}
-          updateImgBlobUrl={this.updateImgBlobUrl}
-          model={this.props.model}
-          updateOffsetDataCb={this.updateOffsetData.bind(this)}
           parent={this}
+          device={device}
+          model={model}
+          gotoNextStep={this.updateCurrentStep}
+          onClose={this.onClose}
+          updateImgBlobUrl={this.updateImgBlobUrl}
+          updateOffsetDataCb={this.updateOffsetData.bind(this)}
         />,
       [STEP_BEFORE_ANALYZE_PICTURE]:
         <StepBeforeAnalyzePicture
@@ -134,12 +125,9 @@ class CameraCalibrationComponent extends React.Component {
           imgBlobUrl={this.state.imgBlobUrl}
           updateImgBlobUrl={this.updateImgBlobUrl}
           updateOffsetDataCb={this.updateOffsetData.bind(this)}
-          showHint={this.state.showHint}
-          updateShowHint={this.updateShowHint.bind(this)}
           device={this.props.device}
           unit={this.unit}
           parent={this}
-
         />,
       [STEP_FINISH]:
         <StepFinish
@@ -158,7 +146,7 @@ class CameraCalibrationComponent extends React.Component {
   }
 };
 
-const StepAskReadjust = ({ device, model, parent, gotoNextStep, updateImgBlobUrl, updateOffsetDataCb, onClose }) => {
+const StepAskReadjust = ({ device, parent, gotoNextStep, updateImgBlobUrl, updateOffsetDataCb, onClose }) => {
   return (
     <Alert
       caption={LANG.camera_calibration}
@@ -186,7 +174,7 @@ const StepAskReadjust = ({ device, model, parent, gotoNextStep, updateImgBlobUrl
               const movementY = Constant.camera.calibrationPicture.centerY - Constant.camera.offsetY_ideal;
               blobUrl = await PreviewModeController.takePictureAfterMoveTo(movementX, movementY);
               cameraPosition = { x: movementX, y: movementY };
-              await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
+              await doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
               updateImgBlobUrl(blobUrl);
               gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
             } catch (error) {
@@ -209,23 +197,31 @@ const StepAskReadjust = ({ device, model, parent, gotoNextStep, updateImgBlobUrl
         {
           label: LANG.do_engraving,
           className: 'btn-default pull-right',
-          onClick: () => gotoNextStep(STEP_REFOCUS)
+          onClick: () => gotoNextStep(STEP_PUT_PAPER)
         }]
       }
     />
   );
 };
 
-const StepRefocus = ({ gotoNextStep, onClose, model }) => {
+const StepPutPaper = ({ gotoNextStep, onClose }) => {
+  // TODO: Update video
+  const video = (
+    <video className='video' autoPlay loop>
+      <source src="video/focus.webm" type="video/webm" />
+    </video>
+  );
+
   return (
     <Alert
       caption={LANG.camera_calibration}
-      message={LANG.please_refocus[model]}
+      message={LANG.please_place_paper}
+      children={video}
       buttons={
         [{
           label: LANG.next,
           className: 'btn-default pull-right primary',
-          onClick: () => gotoNextStep(STEP_BEFORE_CUT)
+          onClick: () => gotoNextStep(STEP_REFOCUS)
         },
         {
           label: LANG.cancel,
@@ -237,17 +233,15 @@ const StepRefocus = ({ gotoNextStep, onClose, model }) => {
   );
 };
 
-const StepBeforeCut = ({ device, updateImgBlobUrl, gotoNextStep, onClose, model, updateOffsetDataCb, parent }) => {
-  const [isCutButtonDisabled, setCutButtonDisabled] = React.useState(false);
-  const cutThenCapture = async function (updateOffsetDataCb, parent) {
-    await _doCuttingTask(parent);
-    let blobUrl = await _doCaptureTask();
-    // TODO: Original is let blobUrl = await _doCaptureTask(true);
-    await _doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
+const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBlobUrl, updateOffsetDataCb }) => {
+  const cutThenCapture = async function () {
+    await doCuttingTask();
+    let blobUrl = await doCaptureTask();
+    await doGetOffsetFromPicture(blobUrl, updateOffsetDataCb);
     updateImgBlobUrl(blobUrl);
     return;
   };
-  const _doCuttingTask = async function (parent) {
+  const doCuttingTask = async function () {
     const res = await DeviceMaster.select(device);
     if (!res.success) {
       throw 'Fail to select device';
@@ -261,28 +255,24 @@ const StepBeforeCut = ({ device, updateImgBlobUrl, gotoNextStep, onClose, model,
       await DeviceMaster.setFanTemp(100);
     } else {
       if (fanSpeed > 100) {
-        await DeviceMaster.setFan(100); // 10%
+        await DeviceMaster.setFan(100);
       }
     }
-
     if (laserPower !== 1) {
       await DeviceMaster.setLaserPower(1);
     }
-
     await DeviceMaster.runBeamboxCameraTest();
-
     if (laserPower !== 1) {
       await DeviceMaster.setLaserPower(Number(laserPower));
     }
-
     if (!tempCmdAvailable) {
       await DeviceMaster.setFan(fanSpeed);
     }
   };
-  const _doCaptureTask = async () => {
+  const doCaptureTask = async () => {
     let blobUrl;
     try {
-      await PreviewModeController.start(device, () => { console.log('camera fail. stop preview mode'); });
+      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
       parent.lastConfig = PreviewModeController._getCameraOffset();
       progress.openNonstopProgress({
         id: 'taking-picture',
@@ -300,10 +290,40 @@ const StepBeforeCut = ({ device, updateImgBlobUrl, gotoNextStep, onClose, model,
     }
     return blobUrl;
   };
+
+  const [isAutoFocus, setIsAutoFocus] = useState(false);
+  const [isCutButtonDisabled, setIsCutButtonDisabled] = useState(false);
+  const videoElem = useRef(null);
+  useEffect(() => {
+    if (videoElem.current) {
+      videoElem.current.load();
+    }
+  }, [isAutoFocus]);
+
+  // TODO: Update video
+  let child = null;
+  if (model === 'beamo') {
+    child = (
+      <div className="video-container">
+        <div className="tab-container">
+          <div className={classNames('tab', 'left', { selected: !isAutoFocus })} onClick={() => setIsAutoFocus(false)}>{LANG.without_af}</div>
+          <div className={classNames('tab', 'right', { selected: isAutoFocus })} onClick={() => setIsAutoFocus(true)}>{LANG.with_af}</div>
+        </div>
+        <video className="video" ref={videoElem} autoPlay loop>
+          <source src={isAutoFocus ? 'video/autofocus_LQ.webm' : 'video/focus.webm'} type="video/webm" />
+        </video>
+      </div>
+    );
+  } else {
+    <video className="video" ref={videoElem} autoPlay loop>
+      <source src='video/focus.webm' type="video/webm" />
+    </video>
+  }
   return (
     <Alert
       caption={LANG.camera_calibration}
-      message={LANG.please_place_paper[model]}
+      message={LANG.please_refocus[model]}
+      children={child}
       buttons={
         [{
           label: LANG.start_engrave,
@@ -313,14 +333,14 @@ const StepBeforeCut = ({ device, updateImgBlobUrl, gotoNextStep, onClose, model,
               return;
             }
             try {
-              setCutButtonDisabled(true);
-              await cutThenCapture(updateOffsetDataCb, parent);
+              setIsCutButtonDisabled(true);
+              await cutThenCapture();
               if (!calibratedMachineUUIDs.includes(device.uuid)) {
                 calibratedMachineUUIDs.push(device.uuid);
               }
               gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
             } catch (error) {
-              setCutButtonDisabled(false);
+              setIsCutButtonDisabled(false);
               console.log(error);
               alert.popUp({
                 id: 'menu-item',
@@ -439,7 +459,7 @@ const _doAnalyzeResult = async (imgBlobUrl, x, y, angle, squareWidth, squareHeig
   };
 };
 
-const _doGetOffsetFromPicture = async function (imgBlobUrl, updateOffsetCb) {
+const doGetOffsetFromPicture = async function (imgBlobUrl, updateOffsetCb) {
   let sdata = await _doSendPictureTask(imgBlobUrl);
   let hadGotOffsetFromPicture = true;
   if (!sdata) {
@@ -466,7 +486,14 @@ const _doSetConfigTask = async (device, X, Y, R, SX, SY, borderless) => {
   }
 };
 
-const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, showHint, updateShowHint, unit, device, parent }) => {
+const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImgBlobUrl, imgBlobUrl, gotoNextStep, onClose, unit, device, parent }) => {
+  const [showHint, setShowHint] = useState(false);
+  const [showLastConfig, setShowLastConfig] = useState(false);
+
+  useEffect(() => {
+    setShowHint(true);
+  }, [])
+
   const imageScale = 200 / 280;
   const mmToImage = 10 * imageScale;
   let imgBackground = {
@@ -499,9 +526,9 @@ const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImg
     updateOffsetDataCb(currentOffset);
   };
 
-  const hint_modal = showHint ? renderHintModal(updateShowHint) : null;
-  const lastConfigSquare = parent.state.shouldShowLastConfig ? <div className="virtual-square last-config" style={lastConfigSquareStyle} /> : null;
-  let manual_calibration = (
+  const hint_modal = showHint ? renderHintModal(setShowHint) : null;
+  const lastConfigSquare = showLastConfig ? <div className="virtual-square last-config" style={lastConfigSquareStyle} /> : null;
+  const manual_calibration = (
     <div>
       <div className="img-center" style={imgBackground}>
         <div className="virtual-square" style={squareStyle} />
@@ -511,7 +538,7 @@ const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImg
         <div className="camera-control left" onClick={() => moveAndRetakePicture('left', updateImgBlobUrl)} />
         <div className="camera-control right" onClick={() => moveAndRetakePicture('right', updateImgBlobUrl)} />
       </div>
-      <div className="hint-icon" onClick={() => updateShowHint(true)}>
+      <div className="hint-icon" onClick={() => setShowHint(true)}>
         ?
             </div>
       <div className="controls">
@@ -589,8 +616,8 @@ const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImg
             isDoOnInput={true}
           />
         </div>
-        <div className='checkbox-container' onClick={() => { parent.toggleShowLastConfig() }}>
-          <input type="checkbox" checked={parent.state.shouldShowLastConfig} onChange={() => { }} />
+        <div className='checkbox-container' onClick={() => { setShowLastConfig(!showLastConfig) }}>
+          <input type="checkbox" checked={showLastConfig} onChange={() => { }} />
           <div className='title'>{LANG.show_last_config}</div>
         </div>
       </div>
@@ -627,7 +654,7 @@ const StepBeforeAnalyzePicture = ({ currentOffset, updateOffsetDataCb, updateImg
           className: 'btn-default btn-right',
           onClick: async () => {
             await PreviewModeController.end();
-            gotoNextStep(STEP_BEFORE_CUT);
+            gotoNextStep(STEP_REFOCUS);
           }
         },
         {
@@ -673,7 +700,7 @@ const moveAndRetakePicture = async (dir: string, updateImgBlobUrl: Function) => 
   }
 }
 
-const renderHintModal = (updateShowHint) => {
+const renderHintModal = (setShowHint: (showHint :boolean) => void) => {
   const virtual_square = $('.modal-camera-calibration .virtual-square');
   let position1 = virtual_square.offset();
   position1.top += virtual_square.height() + 5;
@@ -682,7 +709,7 @@ const renderHintModal = (updateShowHint) => {
   position2.left += 30;
   position2.top -= 45;
   return (
-    <div className="hint-modal-background" onClick={() => { updateShowHint(false) }}>
+    <div className="hint-modal-background" onClick={() => { setShowHint(false) }}>
       <div className="hint-box" style={position1}>
         <div className="arrowup"></div>
         <div className="hint-body">
@@ -710,7 +737,7 @@ const StepFinish = ({ parent, onClose }) => (
         onClick: () => {
           BeamboxPreference.write('should_remind_calibrate_camera', false);
           svgCanvas.toggleBorderless(parent.props.borderless);
-          onClose();
+          onClose(true);
         }
       }]
     }
@@ -722,12 +749,17 @@ export default CameraCalibrationComponent;
 // Not putting this in dialog-caller to avoid circular import because DeviceMaster imports dialog
 export const showCameraCalibration = (device, isBorderless: boolean) => {
   if (dialog.isIdExist('camera-cali')) return;
-  dialog.addDialogComponent('camera-cali',
-    <CameraCalibrationComponent
-      device={device}
-      model={'beamo'}
-      borderless={isBorderless}
-      onClose={() => dialog.popDialogById('camera-cali')}
-    />
-  );
+  return new Promise<boolean>((resolve) => {
+    console.log(device);
+    dialog.addDialogComponent('camera-cali',
+      <CameraCalibrationComponent
+        device={device}
+        borderless={isBorderless}
+        onClose={(completed: boolean = false) => {
+          dialog.popDialogById('camera-cali');
+          resolve(completed);
+        }}
+      />
+    );
+  });
 };

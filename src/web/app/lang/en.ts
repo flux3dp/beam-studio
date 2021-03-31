@@ -36,7 +36,6 @@ export default {
             power_too_high: 'POWER TOO HIGH',
             power_too_high_msg: 'Using lower laser power (under 70%) will extends laser tube\'s lifetime.\nEnter "NOTED" to proceed.',
             power_too_high_confirm: 'NOTED',
-            suggest_calibrate_camera_first: 'Please calibrate the camera. (Menu > Machine > [Your Machine] > Calibrate Camera)\nRefocus platform properly everytime using it to perform better preview result.',
         },
         hint: {
             polygon: 'Press + / - key to increase / decrease sides.'
@@ -747,7 +746,8 @@ export default {
         see_older_version: 'See Older Versions',
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
-    select_printer: {
+    select_device: {
+        select_device: 'Select Device',
         auth_failure: '#811 Authentication fail',
         unable_to_connect: '#810 Unable to build a stable connection with machine'
     },
@@ -956,14 +956,13 @@ export default {
         start_engrave: 'START ENGRAVE',
         ask_for_readjust: 'Do your want to skip the engraving step and then take photo and calibrate directly?',
         please_goto_beambox_first: 'Please switch to Engraving Mode ( Beambox ) in order to use this feature.',
-        please_place_paper: {
-            beambox: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
-            beamo: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
-        },
+        please_place_paper: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
         please_refocus: {
             beambox: 'Kindly adjust the platform to the focal point (the height of turned down acrylic)',
             beamo: 'Kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
         },
+        without_af: 'Without Autofocus',
+        with_af: 'With Autofocus',
         dx: 'X',
         dy: 'Y',
         rotation_angle: 'Rotation',
@@ -974,7 +973,7 @@ export default {
         analyze_result_fail: 'Fail to analyze captured image.<br/>Please make sure:<br/>1. Captured picture fully coverd with white paper.<br/>2. The platform is focus properly.',
         drawing_calibration_image: 'Drawing calibration image...',
         calibrate_done: 'Calibration done. Better camera accurency is given when focus precisely.',
-        hint_red_square: 'Please align the red square with cut square',
+        hint_red_square: 'Please align the outside of the red square with cut square',
         hint_adjust_parameters: 'Use these parameters to adjust the red square'
     },
     diode_calibration: {
@@ -993,16 +992,13 @@ export default {
             beambox: 'When calibrating hybrid laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the platform to the focal point (the height of turned down acrylic)',
             beamo: 'When calibrating hybrid laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
         },
-        please_place_paper: {
-            beambox: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
-            beamo: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
-        },
+        please_place_paper: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
         dx: 'X',
         dy: 'Y',
         drawing_calibration_image: 'Drawing calibration image...',
         taking_picture: 'Taking Picture...',
         calibrate_done: 'Calibration done. Offset of diode module has been saved.',
-        hint_red_square: 'Please align the red square with cut square',
+        hint_red_square: 'Please align the outside of the red square with cut square',
         hint_adjust_parameters: 'Use these parameters to adjust the red square'
     },
     input_machine_password: {
@@ -1013,6 +1009,10 @@ export default {
     tutorial: {
         skip: 'Skip',
         welcome: 'WELCOME',
+        suggest_calibrate_camera_first: 'Please calibrate the camera when using the machine for the first time. (Menu > Machine > [Your Machine] > Calibrate Camera)\nAnd refocus platform properly every time before preview to get better preview result.',
+        camera_calibration_failed: 'Camera Calibration Failed',
+        ask_retry_calibration: 'Would you like to calibrate the camera again?',
+        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).',
         needNewUserTutorial: 'Would you like to start a tutorial?',
         needNewInterfaceTutorial: 'Would you like to start a tutorial for Beam Studio’s new interface?',
         next: 'NEXT',
