@@ -223,6 +223,7 @@ export const signOut = async () => {
     });
     if (response.status === 200) {
         updateUser();
+        fluxIDEvents.emit('logged-out');
         return response.data;
     }
     return false;
@@ -271,6 +272,34 @@ const getAccessToken = async () => {
     const message = responseData.message ? `${responseData.info}: ${responseData.message}` : responseData.info;
     alert.popUpError({ message });
     return false;
+}
+
+export const getNPIconsByTerm = async (term: string, offset: number = 0) => {
+    const response = await axiosFluxId.get(`/api/np/icons/${term}`, {
+        params: {
+            offset,
+        }
+    }, {
+        withCredentials: true,
+    });
+    if (response.error) {
+        handleErrorMessage(response.error);
+        return false;
+    }
+
+    return response.data;
+}
+
+export const getNPIconByID = async (id: string) => {
+    const response = await axiosFluxId.get(`/api/np/icon/${id}`, {
+        withCredentials: true,
+    });
+    if (response.error) {
+        handleErrorMessage(response.error);
+        return false;
+    }
+    console.log(response.data);
+    return response.data;
 }
 
 export default {
