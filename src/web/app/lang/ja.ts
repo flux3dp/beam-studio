@@ -253,7 +253,7 @@ export default {
         default_enable_autofocus_module: 'オートフォーカス既定',
         default_enable_diode_module: 'ハイブリッドレーザー既定',
         diode_offset: 'ハイブリッドレーザーオフセット',
-        share_with_flux: 'FLUXと共有',
+        share_with_flux: 'Beam Studio Analyticsを共有する',
         none: 'なし',
         close: '閉じる',
         enabled: '有効',
@@ -379,6 +379,7 @@ export default {
                 oval: '楕円形',
                 polygon: '多角形',
                 pen: 'ペン',
+                shapes: '形',
                 array: '配列',
                 preview: 'カメラプレビュー',
                 trace: 'トレース画像',
@@ -721,14 +722,23 @@ export default {
         connection_fail: '#847 FLUXメンバーサービスへの接続に失敗しました。',
         login_success: '正常にログインしました。',
         login: 'ログイン',
+        unlock_shape_library: 'ログインして形状データベースのロックを解除します。',
         email: 'Eメール',
         password: 'パスワード',
-        remember_me: 'ログイン状態を保持する',
-        forget_password: 'パスワードをお忘れですか？',
-        register: '新規登録',
-        offline: 'オフラインモード',
+        remember_me: 'ログインしたままにする',
+        forget_password: 'パスワードをお忘れの場合',
+        register: '新規登録はこちら',
+        offline: 'オフライン作業',
+        work_offline: 'オフライン作業',
+        incorrect: 'メールアドレスまたはパスワードが正しくありません。',
+        not_verified: 'メールアドレスが未認証です。',
+        new_to_flux: 'FLUXは初めてですか？ アカウントの作成してください。',
+        signup_url: 'https://store.flux3dp.com/my-account/#sign-up',
+        lost_password_url: 'https://store.flux3dp.com/my-account/lost-password/',
     },
     noun_project_panel: {
+        login_first: 'ログインして形状データベースのロックを解除します。',
+        enjoy_shape_library: '形状データベースをお楽しみください。',
         shapes: '形',
         elements: '要素',
         recent: '最近使用された',
@@ -961,8 +971,8 @@ export default {
             beambox: 'プラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
             beamo: 'レーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ'
         },
-        without_af: 'Without Autofocus', // TODO: translate
-        with_af: 'With Autofocus', // TODO: translate
+        without_af: 'オートフォーカスなし',
+        with_af: 'オートフォーカスオン',
         dx: 'X',
         dy: 'Y',
         rotation_angle: '回転',
@@ -973,7 +983,7 @@ export default {
         analyze_result_fail: 'キャプチャした画像を分析することができません。<br/>次のことを確認してください：<br/>1. キャプチャした画像が白い紙で完全に覆われている。<br/>2. プラットフォームは適切にフォーカスされている。',
         drawing_calibration_image: '較正画像の描画中…',
         calibrate_done: '較正が完了しました。正確に焦点を合わせると、カメラの精度が向上します。',
-        hint_red_square: '赤い正方形をカットした正方形に合わせてください',
+        hint_red_square: '赤い枠の外側をカットした枠に合わせてください。',
         hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
     },
     diode_calibration: {
@@ -998,7 +1008,7 @@ export default {
         drawing_calibration_image: '較正画像の描画中…',
         taking_picture: '写真撮影中…',
         calibrate_done: '較正が完了しました。ハイブリッドレーザーオフセットを保存しました。',
-        hint_red_square: '赤い正方形をカットした正方形に合わせてください',
+        hint_red_square: '赤い枠の外側をカットした枠に合わせてください。',
         hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
     },
     input_machine_password: {
@@ -1009,10 +1019,10 @@ export default {
     tutorial: {
         skip: 'スキップ',
         welcome: 'ようこそ',
-        suggest_calibrate_camera_first: '初めて本機を使用するときは、カメラを較正してください。（メニュー>マシン>[お使いのマシン]>カメラを較正\nより良いプレビュー結果を実行するには、プレビューするたびにプラットフォームを適切に再フォーカスします。',
+        suggest_calibrate_camera_first: '本機を初めて使用する場合は、カメラのキャリブレーションを行ってください。 （メニュー> マシン> [マイマシン]> カメラのキャリブレーション）そして、プレビューの前に毎回プラットフォームの焦点を適切に合わせ直して、より良い撮影結果プレビューを取得します。',
         camera_calibration_failed: 'カメラの較正に失敗しました',
-        ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
-        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
+        ask_retry_calibration: 'カメラをもう一度キャリブレーションしますか？',
+        skipped_camera_calibration: 'カメラのキャリブレーションをスキップしました。 メニューバー（メニュー> マシン> [マイマシン]> カメラのキャリブレーション）からいつでもカメラをキャリブレーションできます。',
         needNewUserTutorial: 'Beam Studioのチュートリアルはよろしいですか？',
         needNewInterfaceTutorial: 'Beam Studioのの新しいインターフェースの紹介はよろしいですか？',
         next: '次ヘ',

@@ -253,7 +253,7 @@ export default {
         default_enable_autofocus_module: 'Standardeinstellung für Autofokusmodul',
         default_enable_diode_module: 'Hybrid Laser Standard',
         diode_offset: 'Hybrid Laser Offset',
-        share_with_flux: 'Mit FLUX teilen',
+        share_with_flux: 'Teilen Sie Beam Studio Analytics',
         none: 'Keiner',
         close: 'Schließen',
         enabled: 'Aktiviert',
@@ -379,6 +379,7 @@ export default {
                 oval: 'Oval',
                 polygon: 'Vieleck',
                 pen: 'Stift',
+                shapes: 'Formen',
                 array: 'Anordnung',
                 preview: 'Kameravorschau',
                 trace: 'Bild verfolgen',
@@ -718,17 +719,26 @@ export default {
         }
     },
     flux_id_login: {
-        connection_fail: '#847 Verbindung zum FLUX-Mitgliederservice fehlgeschlagen.',
-        login_success: 'Erfolgreich angemeldet.',
+        connection_fail: '#847 Verbindung zum FLUX Mitgliederservice fehlgeschlagen.',
+        login_success: 'Anmeldung erfolgreich',
         login: 'Einloggen',
+        unlock_shape_library: 'Melden Sie sich an, um die shapes Datenbank freizuschalten.',
         email: 'Email',
         password: 'Passwort',
-        remember_me: 'Mich erinnern',
+        remember_me: 'Passwort merken',
         forget_password: 'Passwort vergessen?',
-        register: 'Konto erstellen',
-        offline: 'Verwenden Sie den Offline-Modus',
+        register: 'Account erstellen',
+        offline: 'Offline arbeiten',
+        work_offline: 'Offline arbeiten',
+        incorrect: 'Email Adresse oder Passwort ist falsch.',
+        not_verified: 'Die Email Adresse ist noch nicht bestätigt worden.',
+        new_to_flux: 'Neu bei FLUX? Erstellen Sie einen Account.',
+        signup_url: 'https://store.flux3dp.com/my-account/#sign-up',
+        lost_password_url: 'https://store.flux3dp.com/my-account/lost-password/',
     },
     noun_project_panel: {
+        login_first: 'Melden Sie sich an, um die shapes Datenbank freizuschalten.',
+        enjoy_shape_library: 'Genießen Sie die shapes Datenbank.',
         shapes: 'Formen',
         elements: 'Elemente',
         recent: 'Kürzlich',
@@ -747,7 +757,7 @@ export default {
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_device: {
-        select_device: 'Wählen Sie Gerät', // TODO: translate
+        select_device: 'Gerät wählen',
         auth_failure: '#811 Authentifizierung fehlgeschlagen',
         unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
     },
@@ -961,8 +971,8 @@ export default {
             beambox: 'Stelle die Plattform bitte auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
             beamo: 'Stelle den Laserkopf bitte so ein, dass er auf das Gravurobjekt fokussiert (Höhe des umgedrehten Acryls).'
         },
-        without_af: 'Without Autofocus', // TODO: translate
-        with_af: 'With Autofocus', // TODO: translate
+        without_af: 'Ohne Autofukus',
+        with_af: 'Mit Autofokus',
         dx: 'X',
         dy: 'Y',
         rotation_angle: 'Drehung',
@@ -973,7 +983,7 @@ export default {
         analyze_result_fail: 'Konnte das aufgenommene Bild nichtanalysieren. <br/> Bitte stelle Folgendes sicher: <br/>1. Das aufgenommene Bild ist vollständig mit weißem Papier bedeckt.<br/>2. Die Plattform ist richtig fokussiert.',
         drawing_calibration_image: 'Kalibrierungsbild zeichnen ...',
         calibrate_done: 'Kalibrierung abgeschlossen. Eine bessere Kameragenauigkeit ist gegeben, wenn genau fokussiert wird.',
-        hint_red_square: 'Bitte richte das rote Quadrat mit dem ausgeschnittenen Quadrat aus',
+        hint_red_square: 'Bitte richten Sie das Äußere des roten Quadrats am ausgeschnittenen Quadrat aus.',
         hint_adjust_parameters: 'Verwende diese Parameter, um das rote Quadrat anzupassen'
     },
     diode_calibration: {
@@ -998,7 +1008,7 @@ export default {
         drawing_calibration_image: 'Zeichnen eines Kalibrierungsbildes...',
         taking_picture: 'Foto machen...',
         calibrate_done: 'Kalibrierung durchgeführt. Offset des Diodenmoduls wurde gespeichert.',
-        hint_red_square: 'Bitte das rote Quadrat mit dem ausgeschnittenen Quadrat ausrichten',
+        hint_red_square: 'Bitte richten Sie das Äußere des roten Quadrats am ausgeschnittenen Quadrat aus.',
         hint_adjust_parameters: 'Verwende diese Parameter zur Einstellung des roten Quadrats'
     },
     input_machine_password: {
@@ -1009,10 +1019,10 @@ export default {
     tutorial: {
         skip: 'Überspringen',
         welcome: 'WILLKOMMEN',
-        suggest_calibrate_camera_first: 'Bitte kalibrieren Sie die Kamera, wenn Sie das Gerät zum ersten Mal verwenden. (Menü> Maschine> [Ihre Maschine]> Kamera kalibrieren)\nUnd fokussieren Sie die Plattform jedes Mal vor der Vorschau richtig, um ein besseres Vorschauergebnis zu erzielen.',
-        camera_calibration_failed: 'Kamerakalibrierung fehlgeschlagen',
-        ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
-        skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
+        suggest_calibrate_camera_first: 'Bitte kalibrieren Sie die Kamera, wenn Sie das Gerät das erste Mal benutzen. (Menü > Gerät >  [Ihr Gerät] > Kamera kalibrieren) und fokussieren Sie die Plattform vor der Vorschau jedes Mal angemessen, um eine bessere Vorschau zu erhalten.',
+        camera_calibration_failed: 'Kamera Kalibrierung fehlgeschlagen',
+        ask_retry_calibration: 'Möchten Sie die Kamera noch einmal kalibrieren?',
+        skipped_camera_calibration: 'Sie haben die Kamera-Kalibrierung übersprungen. Sie können die Kamera jederzeit im Menü kalibrieren (Menü > Gerät > [Ihr Gerät] > Kamera kalibrieren).',
         needNewUserTutorial: 'Benötigen Sie ein Tutorial zu Beam Studio?',
         needNewInterfaceTutorial: 'Möchten Sie ein Tutorial für die neue Benutzeroberfläche von Beam Studio starten?',
         next: 'NÄCHSTER',

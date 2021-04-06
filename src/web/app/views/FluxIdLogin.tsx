@@ -7,10 +7,6 @@ import i18n from 'helpers/i18n';
 
 const electron = requireNode('electron');
 
-// TODO change url if needed
-const LOST_PASSWORD_URL = 'https://store.flux3dp.com/my-account/lost-password/';
-const SIGNUP_URL = 'https://store.flux3dp.com/my-account/#sign-up';
-
 let LANG = i18n.lang.flux_id_login;
 const updateLang = () => {
     LANG = i18n.lang.flux_id_login;
@@ -55,6 +51,7 @@ const FluxIdLogin = ({ onClose }) => {
     };
 
     const renderLoginInputs = () => {
+        const lost_password_url = LANG.lost_password_url;
         return (
             <div className='login-inputs'>
                 <input
@@ -74,18 +71,19 @@ const FluxIdLogin = ({ onClose }) => {
                         <input ref={rememberMeCheckbox} type='checkbox' checked={isRememberMeChecked} onChange={() => {}}/>
                         <div>{LANG.remember_me}</div>
                     </div>
-                    <div className='forget-password' onClick={() => electron.remote.shell.openExternal(LOST_PASSWORD_URL)}>{LANG.forget_password}</div>
+                    <div className='forget-password' onClick={() => electron.remote.shell.openExternal(lost_password_url)}>{LANG.forget_password}</div>
                 </div>
             </div>
         );
     };
 
     const renderFooterButtons = () => {
+        const signup_url = LANG.signup_url;
         return (
             <div className='footer'>
                 <div className={classNames('button', 'primary')} onClick={handleLogin}>{LANG.login}</div>
-                <div className={classNames('button')} onClick={() => electron.remote.shell.openExternal(SIGNUP_URL)}>{LANG.register}</div>
-                <div className='skip' onClick={() => onClose()}>{LANG.offline}</div>
+                <div className={classNames('button')} onClick={() => electron.remote.shell.openExternal(signup_url)}>{LANG.register}</div>
+                <div className='skip' onClick={() => onClose()}>{LANG.work_offline}</div>
             </div>
         );
     }
@@ -103,9 +101,9 @@ const FluxIdLogin = ({ onClose }) => {
         }
         if (res.status === 'error') {
             if (res.info === 'USER_NOT_FOUND') {
-                alert.popUpError({ message: 'tEmail or password incorrect.' });
+                alert.popUpError({ message: LANG.incorrect });
             } else if (res.info === 'NOT_VERIFIED') {
-                alert.popUpError({ message: 'tAccount has not verified yet.' });
+                alert.popUpError({ message: LANG.not_verified });
             } else {
                 alert.popUpError({ message: res.message });
             }
@@ -122,7 +120,7 @@ const FluxIdLogin = ({ onClose }) => {
         <Modal>
             <div className='flux-login'>
                 <div className='title'>{LANG.login}</div>
-                <div className='sub-title'>{'t登入後享有百萬圖庫資源'}</div>
+                <div className='sub-title'>{LANG.unlock_shape_library}</div>
                 {renderOAuthContent()}
                 {renderSeperator()}
                 {renderLoginInputs()}

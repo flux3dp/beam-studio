@@ -17,6 +17,7 @@ let svgEditor;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgEditor = globalSVG.Editor; });
 const React = requireNode('react');
 const classNames = requireNode('classnames');
+const electron = requireNode('electron');
 
 const LANG = i18n.lang.beambox.left_panel;
 const interProcessWebSocket = InterProcessApi();
@@ -130,26 +131,36 @@ class LeftPanel extends React.Component {
 
     renderNpButton() {
         const { user } = this.props;
-        if (user) {
-            return this.renderToolButton('np', 'Icons', 'Open Shape Library', dialog.showNounProjectPanel);
-        } else {
-            return this.renderToolButton('np', 'Icons', 'Open Shape Library', () => {
-                alert.popUp({
-                    message: 't登入 FLUX 會員後即可以啟用此功能，\n若還沒有註冊的使用者，我們誠摯地邀請您成為 FLUX 會員\n請問您是否要登入？',
-                    buttonType: alertConstants.YES_NO,
-                    onYes: () => dialog.showLoginDialog(() => {
+        const signup_url = i18n.lang.flux_id_login.signup_url;
+        return this.renderToolButton('np', 'Icons', LANG.label.shapes, () => {
+            if (user) {
+                dialog.showNounProjectPanel();
+                return;
+            }
+            alert.popUp({
+                message: i18n.lang.noun_project_panel.login_first,
+                children: (
+                    <div className='hyper-link' onClick={() => electron.remote.shell.openExternal(signup_url)}>
+                        {i18n.lang.flux_id_login.new_to_flux}
+                    </div>
+                ),
+                buttonLabels: [i18n.lang.flux_id_login.login, i18n.lang.flux_id_login.offline],
+                primaryButtonIndex: 0,
+                callbacks: [
+                    () => dialog.showLoginDialog(() => {
                         if (!alertConfig.read('skip-np-dialog-box')) {
                             if (getCurrentUser()) {
                                 dialog.showDialogBox('login-np', {
                                     position: { left: 52, top: 413 },
-                                }, 't快來試試全新圖型庫');
+                                }, i18n.lang.noun_project_panel.enjoy_shape_library);
                                 alertConfig.write('skip-np-dialog-box', true);
                             }
                         }
                     }),
-                });
+                    () => {}
+                ],
             });
-        }
+        });
     }
 
     render() {

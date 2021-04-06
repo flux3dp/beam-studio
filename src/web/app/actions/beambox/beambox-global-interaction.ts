@@ -107,7 +107,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                     if (getCurrentUser()) {
                         dialog.showDialogBox('login-np', {
                             position: { left: 52, top: 413 },
-                        }, 't快來試試全新圖型庫');
+                        }, i18n.lang.noun_project_panel.enjoy_shape_library);
                         alertConfig.write('skip-np-dialog-box', true);
                     }
                 }

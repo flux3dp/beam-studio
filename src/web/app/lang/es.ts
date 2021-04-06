@@ -253,7 +253,7 @@ export default {
         default_enable_autofocus_module: 'Autoenfoque predeterminado',
         default_enable_diode_module: 'Láser híbrido por defecto',
         diode_offset: 'Compensación de láser híbrido',
-        share_with_flux: 'Compartir con FLUX',
+        share_with_flux: 'Compartir Beam Studio Analytics',
         none: 'Ninguno',
         close: 'Cerrar',
         enabled: 'Habilitado',
@@ -379,6 +379,7 @@ export default {
                 oval: 'Ovalado',
                 polygon: 'Polígono',
                 pen: 'Pluma',
+                shapes: 'Formas',
                 array: 'Gama',
                 preview: 'Vista previa de la cámara',
                 trace: 'Imagen de rastro',
@@ -718,17 +719,26 @@ export default {
         }
     },
     flux_id_login: {
-        connection_fail: '#847 No se pudo conectar al servicio para miembros de FLUX.',
-        login_success: 'Iniciar sesión correctamente.',
+        connection_fail: '#847 La conexión con el servicio al cliente de Flux ha fallado.',
+        login_success: 'Ingreso exitoso.',
         login: 'Iniciar sesión',
-        email: 'Email',
+        unlock_shape_library: 'Ingresa para desbloquear la base de datos de figuras.',
+        email: 'Correo electrónico',
         password: 'Contraseña',
-        remember_me: 'Recuérdame',
-        forget_password: '¿Se te olvidó tu contraseña?',
-        register: 'Crear una cuenta',
-        offline: 'Usar el modo sin conexión',
+        remember_me: 'Recordarme',
+        forget_password: '¿Olvidaste la contraseña?',
+        register: 'Crear cuenta',
+        offline: 'Trabajar sin conexión',
+        work_offline: 'Trabajar sin conexión',
+        incorrect: 'El correo y/o la contraseña son incorrectos.',
+        not_verified: 'Este correo electrónico no ha sido verificado.',
+        new_to_flux: '¿Nuevo en FLUX? Crea una cuenta ahora.',
+        signup_url: 'https://store.flux3dp.com/my-account/#sign-up',
+        lost_password_url: 'https://store.flux3dp.com/my-account/lost-password/',
     },
     noun_project_panel: {
+        login_first: 'Ingresa para desbloquear la base de datos de figuras.',
+        enjoy_shape_library: 'Base de datos Disfruta las Figuras.',
         shapes: 'Formas',
         elements: 'Elementos',
         recent: 'Recientemente',
@@ -747,7 +757,7 @@ export default {
         help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     },
     select_device: {
-        select_device: 'Seleccione el dispositivo', // TODO: translate
+        select_device: 'Seleccionar Dispositivo',
         auth_failure: '#811 Fallo de autenticación',
         unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina'
     },
@@ -961,8 +971,8 @@ export default {
             beambox: 'Por favor, ajusta la plataforma al punto focal (la altura del acrílico rechazado)',
             beamo: 'Por favor, ajusta el cabezal del láser para enfocar el objeto grabado (la altura del acrílico rechazado)'
         },
-        without_af: 'Without Autofocus', // TODO: translate
-        with_af: 'With Autofocus', // TODO: translate
+        without_af: 'Sin ajuste de enfoque',
+        with_af: 'Con ajuste de enfoque',
         dx: 'X',
         dy: 'Y',
         rotation_angle: 'Rotación',
@@ -973,7 +983,7 @@ export default {
         analyze_result_fail: 'Falla en el análisis de la imagen capturada.<br/>Por favor asegúrese:<br/>1. Imagen capturada totalmente cubierta con papel blanco.<br/>2. La plataforma está bien enfocada.',
         drawing_calibration_image: 'Dibujando la imagen de calibración...',
         calibrate_done: 'Calibración realizada. La precisión de la cámara es mejor cuando se enfoca con precisión.',
-        hint_red_square: 'Por favor, alinea el cuadrado rojo con el cuadrado cortado',
+        hint_red_square: 'Favor de alinear el contorno del cuadro rojo con el cuadro punteado.',
         hint_adjust_parameters: 'Usa estos parámetros para ajustar el cuadro rojo'
     },
     diode_calibration: {
@@ -1009,7 +1019,7 @@ export default {
     tutorial: {
         skip: 'Saltar',
         welcome: 'BIENVENIDO',
-        suggest_calibrate_camera_first: 'Calibre la cámara cuando utilice la máquina por primera vez. (Menú > Máquina > [tu máquina] > Calibrar la cámara)\nY vuelva a enfocar la plataforma correctamente cada vez antes de la vista previa para obtener un mejor resultado de vista previa.',
+        suggest_calibrate_camera_first: 'Favor de calibrar la cámara al usar la máquina por primera vez. (Menú > Máquina > [Tu Máquina] > Calibrar Cámara) Recuerda ajustar el enfoque de la plataforma adecuadamente cada vez antes de la vista preliminar para una mejor pre-visualización.',
         camera_calibration_failed: 'Falló la calibración de la cámara',
         ask_retry_calibration: 'Would you like to calibrate the camera again?', // TODO: translate
         skipped_camera_calibration: 'You have skipped the camera calibration. You can calibrate the camera anytime from menubar (Menu > Machine > [Your Machine] > Calibrate Camera).', // TODO: translate
