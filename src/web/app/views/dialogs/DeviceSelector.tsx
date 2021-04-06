@@ -57,7 +57,7 @@ const DeviceSelector = ({ onSelect, onClose }) => {
     return (
         <Modal>
             <div className='device-selector'>
-                <div className='title'>{'t選擇機器'}</div>
+                <div className='title'>{i18n.lang.select_device.select_device}</div>
                 <div className="device-list">
                     <ul>{list}</ul>
                 </div>
