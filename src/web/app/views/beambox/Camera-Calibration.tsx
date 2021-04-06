@@ -208,7 +208,7 @@ const StepPutPaper = ({ gotoNextStep, onClose }) => {
   // TODO: Update video
   const video = (
     <video className='video' autoPlay loop>
-      <source src="video/focus.webm" type="video/webm" />
+      <source src="video/put_paper.webm" type="video/webm" />
     </video>
   );
 
@@ -300,7 +300,6 @@ const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBl
     }
   }, [isAutoFocus]);
 
-  // TODO: Update video
   let child = null;
   if (model === 'beamo') {
     child = (
@@ -310,14 +309,16 @@ const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBl
           <div className={classNames('tab', 'right', { selected: isAutoFocus })} onClick={() => setIsAutoFocus(true)}>{LANG.with_af}</div>
         </div>
         <video className="video" ref={videoElem} autoPlay loop>
-          <source src={isAutoFocus ? 'video/autofocus_LQ.webm' : 'video/focus.webm'} type="video/webm" />
+          <source src={isAutoFocus ? 'video/autofocus.webm' : 'video/bm_focus.webm'} type="video/webm" />
         </video>
       </div>
     );
   } else {
-    <video className="video" ref={videoElem} autoPlay loop>
-      <source src='video/focus.webm' type="video/webm" />
-    </video>
+    child = (
+      <video className="video" ref={videoElem} autoPlay loop>
+        <source src='video/bb_focus.webm' type="video/webm" />
+      </video>
+    );
   }
   return (
     <Alert
