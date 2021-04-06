@@ -19,6 +19,10 @@
             width: 100%;
             background: #ffd24b;
             border-color: #ffd24b;
+            &:hover {
+                background: #ffc109;
+                border-color: #ffc109;
+            }
         }
     }
     input[type=text], input[type=password] {
