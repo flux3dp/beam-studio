@@ -15,7 +15,7 @@ const FB_APP_ID = '151570246832729';
 const FB_REDIRECT_URI = 'http://localhost:8001/user/fb-auth';
 
 const G_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-const G_CLIENT_ID = '923029051122-rbt88kegp89eh1j3pu99fu5fus92f178.apps.googleusercontent.com';
+const G_CLIENT_ID = '1071432315622-4q1r7rm0fqnuhmoav0ecbf0ar6fj8ggo.apps.googleusercontent.com';
 const G_REDIRECT_URI = 'http://localhost:8001/user/google-auth';
 
 // TODO: Update FLUXID url
@@ -105,7 +105,8 @@ export const init = async () => {
         const data = parseQueryData(dataString);
         signInWithGoogleCode(data);
     });
-    if (storage.get('keep-flux-id-login')) {
+    if (storage.get('keep-flux-id-login') || storage.get('new-user')) {
+        // If user is new, keep login status after setting machines.
         const csrfcookies = await cookies.get({
             domain: FLUXID_DOMAIN,
             name: 'csrftoken'
@@ -114,7 +115,7 @@ export const init = async () => {
             // Should be unique
             axiosFluxId.defaults.headers.post['X-CSRFToken'] = csrfcookies[0].value;
         }
-        const res = await getInfo();
+        const res = await getInfo(true);
         if (res.status !== 'ok') {
             updateMenu();
         }
