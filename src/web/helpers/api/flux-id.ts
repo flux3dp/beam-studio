@@ -9,18 +9,16 @@ const axios = requireNode('axios');
 const electron = requireNode('electron');
 const EventEmitter = requireNode('events');
 
-// TODO: Update redirect URL & FB App ID
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
-const FB_APP_ID = '151570246832729';
-const FB_REDIRECT_URI = 'http://localhost:8001/user/fb-auth';
+const FB_APP_ID = '1071530792957137';
+const FB_REDIRECT_URI = 'https://store.flux3dp.com/beam-studio-oauth';
 
 const G_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-const G_CLIENT_ID = '1071432315622-4q1r7rm0fqnuhmoav0ecbf0ar6fj8ggo.apps.googleusercontent.com';
-const G_REDIRECT_URI = 'http://localhost:8001/user/google-auth';
+const G_CLIENT_ID = '1071432315622-ekdkc89hdt70sevt6iv9ia4659lg70vi.apps.googleusercontent.com';
+const G_REDIRECT_URI = 'https://store.flux3dp.com/beam-studio-oauth';
 
-// TODO: Update FLUXID url
-const FLUXID_HOST = 'http://127.0.0.1:8001';
-const FLUXID_DOMAIN = '127.0.0.1';
+const FLUXID_HOST = 'https://id.flux3dp.com';
+const FLUXID_DOMAIN = 'id.flux3dp.com';
 const axiosFluxId = axios.create({
     baseURL: FLUXID_HOST,
     timeout: 2000,
@@ -196,6 +194,10 @@ const signInWithFBToken = async (fb_token: string) => {
 }
 
 const signInWithGoogleCode = async (data) => {
+    data = {
+        google_code: data.code,
+        redirect_uri: data.redirect_url,
+    };
     progress.openNonstopProgress({ id: 'flux-id-login' });
     const response = await axiosFluxId.post('/user/signin', data, {
         withCredentials: true,
