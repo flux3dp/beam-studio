@@ -130,6 +130,7 @@ class LeftPanel extends React.Component {
     }
 
     renderNpButton() {
+        return null;
         const { user } = this.props;
         const signup_url = i18n.lang.flux_id_login.signup_url;
         return this.renderToolButton('np', 'Icons', LANG.label.shapes, () => {
@@ -176,7 +177,7 @@ class LeftPanel extends React.Component {
                     {this.renderToolButton('polygon', 'Polygon', LANG.label.polygon, FnWrapper.insertPolygon)}
                     {this.renderToolButton('line', 'Line', LANG.label.line + ' (\\)', FnWrapper.insertLine)}
                     {this.renderToolButton('draw', 'Pen', LANG.label.pen + ' (P)', FnWrapper.insertPath)}
-                    {this.renderNpButton()}
+                    {/* {this.renderNpButton()} */}
                 </div>
             );
         } else {

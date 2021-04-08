@@ -103,7 +103,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'TASK_INTERPRETER': () => BeamboxActions.showTaskInterpreter(),
             'MANAGE_ACCOUNT': () => externalLinkMemberDashboard(),
             'SIGN_IN': () => dialog.showLoginDialog(() => {
-                if (!alertConfig.read('skip-np-dialog-box')) {
+                if (false && !alertConfig.read('skip-np-dialog-box')) {
                     if (getCurrentUser()) {
                         dialog.showDialogBox('login-np', {
                             position: { left: 52, top: 413 },

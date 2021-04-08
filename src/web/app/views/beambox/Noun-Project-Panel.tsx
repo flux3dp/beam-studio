@@ -7,7 +7,6 @@ import storage from 'helpers/storage-helper';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
 import * as i18n from 'helpers/i18n';
 
-// import EventEmitter from 'events';
 const EventEmitter = requireNode('events');
 
 let svgEditor;
