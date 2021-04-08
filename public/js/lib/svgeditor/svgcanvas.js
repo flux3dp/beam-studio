@@ -3316,7 +3316,7 @@ define([
                 }
             }
 
-            let calculateCharbb = () => {
+            const calculateCharbb = () => {
                 if (!curtext) {
                     let bb = {x: 0, y: 0, width: 0, height: 0};
                     chardata.push([bb]);
@@ -3336,7 +3336,7 @@ define([
                     return;
                 }
 
-                // When we use the widest char as first row's width
+                // When text is vertical, we use the widest char as first row's width
                 let firstRowMaxWidth = 0;
                 if (isVertical && rowNumbers > 0) {
                     for (let i = 0; i < tspans[0].textContent.length; i++) {
@@ -3365,10 +3365,10 @@ define([
 
                             start.x /= current_zoom;
                             end.x /= current_zoom;
-                        } 
+                        }
                         chardata[i].push({
                             x: start.x,
-                            y: isVertical ? start.y - charHeight : tspanbb.y + i * lineSpacing * charHeight,
+                            y: isVertical ? start.y - charHeight : tspanbb.y,
                             width: isVertical ? (i === 0 ? firstRowMaxWidth : lastRowX - start.x) : end.x - start.x,
                             height: charHeight
                         });
@@ -3378,7 +3378,7 @@ define([
                     if (lines[i] !== '') {
                         chardata[i].push({
                             x: isVertical ? start.x : end.x,
-                            y: isVertical ? end.y : tspanbb.y + i * lineSpacing * charHeight,
+                            y: isVertical ? end.y : tspanbb.y,
                             width: isVertical ? (i === 0 ? firstRowMaxWidth : lastRowX - start.x) : 0,
                             height: isVertical ? 0 : charHeight
                         });
