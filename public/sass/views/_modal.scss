@@ -149,9 +149,13 @@
         .alert-children {
             width: 100%;
             .hyper-link {
+                font-size: 12px;
                 cursor: pointer;
-                color: #1199cc;
+                color: #333333;
                 text-decoration: underline;
+                &.blue {
+                    color: #1199cc;
+                }
             }
             margin: 0 0 20px 0;
         }
