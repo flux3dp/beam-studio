@@ -727,7 +727,7 @@ export default {
         password: '密码',
         remember_me: '记住我',
         forget_password: '忘记密码',
-        register: '注册新帐号',
+        register: '注册 FLUX 帐号',
         offline: '离线使用',
         work_offline: '我要离线使用',
         incorrect: '信箱或密码输入错误',

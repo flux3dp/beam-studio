@@ -727,7 +727,7 @@ export default {
         password: 'パスワード',
         remember_me: 'ログインしたままにする',
         forget_password: 'パスワードをお忘れの場合',
-        register: '新規登録はこちら',
+        register: 'FLUXアカウントを作成する',
         offline: 'オフライン作業',
         work_offline: 'オフライン作業',
         incorrect: 'メールアドレスまたはパスワードが正しくありません。',

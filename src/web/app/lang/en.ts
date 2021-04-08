@@ -727,7 +727,7 @@ export default {
         password: 'Password',
         remember_me: 'Remember me',
         forget_password: 'Forgot Password?',
-        register: 'Create Account',
+        register: 'Create Your FLUX Account',
         offline: 'Work Offline',
         work_offline: 'Work Offline',
         incorrect: 'Email address or password is not correct.',
