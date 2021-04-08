@@ -354,7 +354,7 @@ class DeviceMaster {
                     default:
                         errMessage = `${lang.message.unknown_error} ${errorCode}`
                 }
-
+                Alert.popById('connection-error');
                 Alert.popUp({
                     id: 'connection-error',
                     caption: errCaption,
