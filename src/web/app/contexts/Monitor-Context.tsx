@@ -129,7 +129,7 @@ export class MonitorContextProvider extends React.Component {
             this.processReport(report);
         } catch (error) {
             console.log('monitor fetch initial info error:\n', error);
-            if(error.status === 'fatal') {
+            if (error.status === 'fatal') {
                 await DeviceMaster.reconnect();
             }
         }
@@ -142,12 +142,18 @@ export class MonitorContextProvider extends React.Component {
             if (currentReport[key] === undefined || JSON.stringify(currentReport[key]) !== JSON.stringify(report[key])) {
                 console.log(key, 'changed');
                 if (report.st_id > 0 && (mode !== Mode.WORKING || key === 'session')) {
-                    console.log('to work mode');
-                    this.enterWorkingMode();
-                } else if (mode === Mode.WORKING && report.st_id === DeviceConstants.status.IDLE) {
-                    this.exitWorkingMode();
+                    const keepsCameraMode = mode === Mode.CAMERA && MonitorStatus.allowedCameraStatus.includes(report.st_id);
+                    if (!keepsCameraMode) {
+                        console.log('to work mode');
+                        this.enterWorkingMode();
+                    }
+                } else if (report.st_id === DeviceConstants.status.IDLE) {
+                    if (mode === Mode.WORKING || (mode === Mode.CAMERA && this.modeBeforeCamera === Mode.WORKING)) {
+                        this.exitWorkingMode();
+                    }
                 }
                 this.setState({ report });
+                break;
             }
         }
 
@@ -158,7 +164,7 @@ export class MonitorContextProvider extends React.Component {
         let error = report.error;
         error = (error instanceof Array ? error : [error]);
 
-        if(error[0] === 'TIMEOUT') {
+        if (error[0] === 'TIMEOUT') {
             try {
                 await DeviceMaster.reconnect();
             } catch (e) {
@@ -181,7 +187,7 @@ export class MonitorContextProvider extends React.Component {
             DeviceConstants.status.PAUSING_FROM_STARTING
         ];
 
-        if(state.includes(report.st_id)) {
+        if (state.includes(report.st_id)) {
             const errorMessage = DeviceErrorHandler.translate(error);
 
             const handleRetry = async () => {
@@ -202,7 +208,7 @@ export class MonitorContextProvider extends React.Component {
 
             const handleReport = async () => {
                 const targetFilePath = await ElectronDialogs.saveFileDialog(LANG.beambox.popup.bug_report, 'devicelogs.txt', [
-                    {extensionName: 'txt', extensions: ['txt']}
+                    { extensionName: 'txt', extensions: ['txt'] }
                 ], false);
                 if (!targetFilePath) return;
 
@@ -251,7 +257,7 @@ export class MonitorContextProvider extends React.Component {
                         message: errorMessage,
                         primaryButtonIndex: 0,
                         buttonLabels: [LANG.alert.retry, LANG.monitor.bug_report, LANG.alert.cancel],
-                        callbacks: [handleRetry, handleReport, () => {}],
+                        callbacks: [handleRetry, handleReport, () => { }],
                     });
                 }
             }
@@ -270,7 +276,7 @@ export class MonitorContextProvider extends React.Component {
         return { imageBlob, taskTime };
     }
 
-    enterWorkingMode = async (task?: {taskImageURL: string, taskTime: number}) => {
+    enterWorkingMode = async (task?: { taskImageURL: string, taskTime: number }) => {
         if (!task) {
             const taskInfo = await this.getWorkingTaskInfo();
             const { imageBlob, taskTime } = this.getTaskInfo(taskInfo);
@@ -293,26 +299,29 @@ export class MonitorContextProvider extends React.Component {
     }
 
     exitWorkingMode = () => {
-        const { fileInfo, previewTask } = this.state;
+        const { mode, fileInfo, previewTask } = this.state;
         console.log(fileInfo);
         if (previewTask) {
             this.setState({
-                mode: Mode.PREVIEW,
+                mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.PREVIEW,
                 taskImageURL: previewTask.taskImageURL,
                 taskTime: previewTask.taskTime,
             });
+            this.modeBeforeCamera = Mode.PREVIEW;
         } else if (fileInfo) {
             const { imageBlob, taskTime } = this.getTaskInfo(fileInfo);
-            const taskImageURL = URL.createObjectURL(imageBlob);
+            const taskImageURL = URL.createObjectURL(imageBlob); 
             this.setState({
-                mode: Mode.FILE_PREVIEW,
+                mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.FILE_PREVIEW,
                 taskImageURL,
                 taskTime,
             });
+            this.modeBeforeCamera = Mode.FILE_PREVIEW;
         } else {
             this.setState({
-                mode: Mode.FILE,
+                mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.FILE
             });
+            this.modeBeforeCamera = Mode.FILE;
         }
     }
 
@@ -338,9 +347,9 @@ export class MonitorContextProvider extends React.Component {
             console.log(`Reading ${configName}\nResp = ${resp.value}`);
             resp.value = ` ${resp.value}`;
             let cameraOffset = {
-                x:          Number(/ X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
-                y:          Number(/ Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
-                angle:      Number(/R:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                x: Number(/ X:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                y: Number(/ Y:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
+                angle: Number(/R:\s?(\-?\d+\.?\d+)/.exec(resp.value)[1]),
                 scaleRatioX: Number((/SX:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
                 scaleRatioY: Number((/SY:\s?(\-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(\-?\d+\.?\d+)/.exec(resp.value))[1]),
             };
@@ -390,7 +399,7 @@ export class MonitorContextProvider extends React.Component {
 
     onNavigationBtnClick = () => {
         const { mode, currentPath, previewTask } = this.state;
-        if (mode === Mode.FILE ) {
+        if (mode === Mode.FILE) {
             if (currentPath.length > 0) {
                 currentPath.pop();
                 this.setState({
@@ -418,7 +427,7 @@ export class MonitorContextProvider extends React.Component {
         }
     }
 
-    onHighlightItem = (item: {name: string, type: ItemType }) => {
+    onHighlightItem = (item: { name: string, type: ItemType }) => {
         const { highlightedItem } = this.state;
         if (!highlightedItem || highlightedItem.name !== item.name || highlightedItem.type !== item.type) {
             this.setState({ highlightedItem: item });
@@ -462,7 +471,7 @@ export class MonitorContextProvider extends React.Component {
 
     onUpload = async (e) => {
         const fileElem = e.target as HTMLInputElement;
-        if(fileElem.files.length > 0) {
+        if (fileElem.files.length > 0) {
             const doesFileExistInDirectory = async (path: string, fileName: string) => {
                 fileName = fileName.replace('.gcode', '.fc');
                 try {
@@ -491,7 +500,7 @@ export class MonitorContextProvider extends React.Component {
                     let type;
                     let isValid = false;
 
-                    if(ext === 'fc') {
+                    if (ext === 'fc') {
                         type = { type: 'application/fcode' };
                         isValid = true;
                     } else if (ext === 'gcode') {
@@ -499,7 +508,7 @@ export class MonitorContextProvider extends React.Component {
                         isValid = true;
                     }
 
-                    if(isValid) {
+                    if (isValid) {
                         const blob = new Blob([reader.result], type);
 
                         await DeviceMaster.uploadToDirectory(blob, path, file.name, (progress: IProgress) => {
@@ -518,7 +527,7 @@ export class MonitorContextProvider extends React.Component {
                 };
             };
 
-            if(fileExist) {
+            if (fileExist) {
                 Alert.popUp({
                     type: AlertConstants.SHOW_POPUP_INFO,
                     message: LANG.monitor.fileExistContinue,
@@ -539,7 +548,7 @@ export class MonitorContextProvider extends React.Component {
                 this.setState({ downloadProgress: p });
             });
             this.setState({ downloadProgress: null });
-            const targetFilePath = await ElectronDialogs.saveFileDialog(highlightedItem.name , highlightedItem.name, [], true);
+            const targetFilePath = await ElectronDialogs.saveFileDialog(highlightedItem.name, highlightedItem.name, [], true);
             if (targetFilePath) {
                 const fs = requireNode('fs');
                 const arrBuf = await new Response(file[1]).arrayBuffer();

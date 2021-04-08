@@ -71,5 +71,13 @@ export default {
                 mid: ButtonTypes.DISABLED_PLAY,
             };
         }
-    }
+    },
+    allowedCameraStatus: [
+        DeviceConstants.status.IDLE,
+        DeviceConstants.status.PAUSED,
+        DeviceConstants.status.PAUSED_FROM_STARTING,
+        DeviceConstants.status.PAUSED_FROM_RUNNING,
+        DeviceConstants.status.COMPLETED,
+        DeviceConstants.status.ABORTED,
+    ],
 };
