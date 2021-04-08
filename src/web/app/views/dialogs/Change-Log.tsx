@@ -25,6 +25,7 @@ const CHANGES_TW = {
         '相機校正預設不顯示前次校正結果。',
         '「與 FLUX 分享」 更改為 「分享 Beam Studio 分析」',
         '調整德文多語。',
+        '更新 Beam Studio 功能圖示',
     ],
 };
 
@@ -48,6 +49,7 @@ const CHANGES_EN = {
         'Not display Camera Calibration last time result by default.',
         'Changed "share with FLUX" to "Share Beam Studio Analytics."',
         'Adjust the translation of the German version.',
+        'Redesign Beam Studio icons',
     ],
 };
 const FLUX = window['FLUX'];
