@@ -187,6 +187,8 @@ function createWindow () {
     mainWindow = new BrowserWindow({
         width: 1300,
         height: 650,
+        minWidth: 800,
+        minHeight: 400,
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : null,
         frame: process.platform === 'win32' ? false : null,
         title: `Beam Studio - ${app.getVersion()}`,
