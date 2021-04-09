@@ -7,6 +7,7 @@ const LANG = i18n.lang.change_logs;
 
 const CHANGES_TW = {
     added: [
+        '新增 FLUX 會員中心登入功能',
         '新增 快捷鍵 Shift 減選功能。',
         '新增 更多「相機預覽」失敗之錯誤訊息提示。',
         '新增 下載「錯誤回報」按鈕在「韌體發生錯誤」視窗',
@@ -31,6 +32,7 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
     added: [
+        'Added FLUX account login function.',
         'Added "Shift" shortcut for deselecting.',
         'Added more error reports for "Camera Preview."',
         'Added "Bug Report" button in the "DEVICE ERROR" panel.',
