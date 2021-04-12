@@ -301,9 +301,12 @@ class DeviceMaster {
             Progress.popById('select-device');
             console.error(e);
             if (e.error) e = e.error;
-            const errorCode = e.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
+            let errorCode = '';
+            if (typeof e === 'string') {
+                errorCode = e.replace(/^.*\:\s+(\w+)$/g, '$1').toUpperCase();
+            }
             // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
-            if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode)) {
+            if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
                 if (device.info.password) {
                     const authed = await self.showAuthDialog(uuid);
                     if (authed) {
@@ -363,7 +366,7 @@ class DeviceMaster {
                 });
                 return {
                     success: false,
-                    error: errorCode,
+                    error: errorCode as ConnectionError,
                 }
             }
         } finally {
