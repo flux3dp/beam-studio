@@ -100,7 +100,7 @@ class ConnectMachine extends React.Component{
                 throw 'Fail to select device';
             }
             await DeviceMaster.connectCamera();
-            const imgBlob = await DeviceMaster.takeOnePicture();
+            const { imgBlob } = await DeviceMaster.takeOnePicture();
             DeviceMaster.disconnectCamera();
             if (imgBlob.size >= 30) {
                 this.setState({
