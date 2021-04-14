@@ -13,13 +13,11 @@ getSVGAsync((globalSVG) => {
 });
 
 let autoSaveInterval = null;
-let editingValue: IConfig = null;
 
 const init = () => {
   if (!storage.isExisting('auto-save-config')) {
     useDefaultConfig();
   }
-  editingValue = storage.get('auto-save-config');
 };
 
 const useDefaultConfig = async () => {
@@ -58,8 +56,6 @@ const getConfig = () => {
 const setConfig = (config: IConfig) => {
   storage.set('auto-save-config', config);
 };
-
-init();
 
 const toggleAutoSave = (start: boolean = false) => {
   if (start) {
@@ -101,6 +97,7 @@ const stopAutoSave = () => {
 }
 
 export default {
+  init,
   useDefaultConfig,
   getConfig,
   setConfig,

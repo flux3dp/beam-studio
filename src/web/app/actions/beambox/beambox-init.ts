@@ -18,6 +18,7 @@ import AlertStore from '../../stores/alert-store';
 import AlertConfig from 'helpers/api/alert-config';
 import Config from 'helpers/api/config';
 import fluxId from 'helpers/api/flux-id';
+import autoSaveHelper from 'helpers/auto-save-helper';
 import checkDeviceStatus from 'helpers/check-device-status';
 import checkFirmware from 'helpers/check-firmware';
 import checkQuestionnaire from 'helpers/check-questionnaire';
@@ -71,6 +72,7 @@ const init = () => {
         initDefaultFont();
     }
     initMenuBarEvents();
+    autoSaveHelper.init();
     fluxId.init();
 };
 
