@@ -171,6 +171,18 @@ function buildMenu(callback) {
         });
     }
 
+    const helpSubmenu = buildHelpMenu(callback);
+    menu.push({
+        id: '_help',
+        label: r.help || 'Help',
+        role: 'help',
+        submenu: helpSubmenu,
+    });
+
+    return menu;
+}
+
+const buildHelpMenu = (callback) => {
     const helpSubmenu = [];
     if (process.platform !== 'darwin') {
         helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback});
@@ -198,14 +210,7 @@ function buildMenu(callback) {
         { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
         { id: 'DEV_TOOL', label: r.dev_tool || 'Debug Tool', click() {BrowserWindow.getFocusedWindow().webContents.openDevTools()}, accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J'}
     ]);
-    menu.push({
-        id: '_help',
-        label: r.help || 'Help',
-        role: 'help',
-        submenu: helpSubmenu,
-    });
-
-    return menu;
+    return helpSubmenu;
 }
 
 
@@ -334,7 +339,29 @@ class MenuManager extends EventEmitter {
 
         ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
             accountInfo = info;
-            this.constructMenu();
+            const helpSubmenu = Menu.getApplicationMenu().items.find((i) => i.id === '_help').submenu;
+            const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
+            const current = helpSubmenu.items;
+            helpSubmenu.items = [];
+            helpSubmenu.clear();
+
+            for (let menuitem of current) {
+                if (menuitem.id === 'SIGN_IN') {
+                    menuitem.visible = !info;
+                    helpSubmenu.append(menuitem);
+                } else if (menuitem.id === 'SIGN_OUT') {
+                    const newSignOut = new MenuItem({
+                        id: 'SIGN_OUT',
+                        visible: !!info,
+                        click: menuitem.click,
+                        label: signoutLabel,
+                    })
+                    helpSubmenu.append(newSignOut);
+                } else {
+                    helpSubmenu.append(menuitem);
+                }
+            }
+            Menu.setApplicationMenu(Menu.getApplicationMenu());
         });
 
         // ipcMain.on(events.SET_AS_DEFAULT, (e, device) => {
