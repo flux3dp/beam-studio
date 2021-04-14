@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: 'Processing, please wait'
+        wait: 'Processing, please wait',
+        choose_folder: 'Choose Folder',
     },
     buttons: {
         next: 'NEXT'
@@ -226,6 +227,11 @@ export default {
         language: 'Language',
         notifications: 'Desktop Notifications',
         check_updates: 'Auto Check',
+        autosave_enabled: 'Auto Save',
+        autosave_path: 'Auto Save Location',
+        autosave_interval: 'Save Every',
+        autosave_number: 'Number of Auto Save',
+        autosave_path_not_correct: 'Specified path not found.',
         preview_movement_speed: 'Preview Movement Speed',
         preview_movement_speed_hl: 'Preview Movement Speed (Hybrid Laser Enabled)',
         default_units: 'Default Units',
@@ -264,6 +270,7 @@ export default {
             general: 'General',
             update: 'Software Updates',
             connection: 'Connection',
+            autosave: 'Auto Save',
             camera: 'Camera',
             editor: 'Editor',
             engraving: 'Rastering (Scanning)',

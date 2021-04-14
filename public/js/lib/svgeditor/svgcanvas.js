@@ -46,6 +46,7 @@ define([
     'app/actions/beambox/open-bottom-boundary-drawer',
     'app/actions/progress-caller',
     'helpers/api/config',
+    'helpers/auto-save-helper',
     'helpers/beam-file-helper',
     'helpers/bezier-fit-curve',
     'helpers/file-export-helper',
@@ -76,6 +77,7 @@ define([
     OpenBottomBoundaryDrawer,
     Progress,
     Config,
+    autoSaveHelper,
     BeamFileHelper,
     BezierFitCurve,
     FileExportHelper,
@@ -106,6 +108,7 @@ define([
     OpenBottomBoundaryDrawer = OpenBottomBoundaryDrawer.default;
     Progress = Progress.default;
     Config = Config.default;
+    autoSaveHelper = autoSaveHelper.default;
     BeamFileHelper = BeamFileHelper.default;
     BezierFitCurve = __importStar(BezierFitCurve);
     FileExportHelper = FileExportHelper.default;
@@ -9192,6 +9195,7 @@ define([
             if (shouldClearEstTime) {
                 TimeEstimationButtonController.clearEstimatedTime();
             }
+            autoSaveHelper.toggleAutoSave(hasUnsaveChanged);
         }
 
         this.getHasUnsaveChanged = () => {

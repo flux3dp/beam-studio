@@ -1,6 +1,7 @@
 export interface ILang {
     general: {
         wait: string,
+        choose_folder: string,
     },
     buttons: {
         next: string
@@ -224,6 +225,11 @@ export interface ILang {
         language: string,
         notifications: string,
         check_updates: string,
+        autosave_enabled: string,
+        autosave_path: string,
+        autosave_interval: string,
+        autosave_number: string,
+        autosave_path_not_correct: string,
         preview_movement_speed: string,
         preview_movement_speed_hl: string,
         default_units: string,
@@ -262,6 +268,7 @@ export interface ILang {
             general: string,
             update: string,
             connection: string,
+            autosave: string,
             camera: string,
             editor: string,
             engraving: string,

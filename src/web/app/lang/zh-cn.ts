@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: '处理中，请稍待'
+        wait: '处理中，请稍待',
+        choose_folder: '选择档案夹',
     },
     buttons: {
         next: '下一步'
@@ -226,6 +227,11 @@ export default {
         language: '语言',
         notifications: '显示桌面通知',
         check_updates: '自动检查',
+        autosave_enabled: '自动储存',
+        autosave_path: '档案夹',
+        autosave_interval: '储存间隔',
+        autosave_number: '自动储存数',
+        autosave_path_not_correct: '找不到指定的路径',
         preview_movement_speed: '相机预览移动速度',
         preview_movement_speed_hl: '相机预览移动速度（混合雷射启用时）',
         default_units: '预设单位',
@@ -264,6 +270,7 @@ export default {
             general: '一般',
             update: '软体更新',
             connection: '连线',
+            autosave: '自动储存',
             camera: '相机',
             editor: '编辑器',
             path: '路径 (线段)',

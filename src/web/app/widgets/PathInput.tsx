@@ -21,6 +21,7 @@ const propertiesMap = {
 }
 
 interface IProps {
+  buttonTitle?: string,
   className?: string
   defaultValue: string,
   getValue: Function,
@@ -30,12 +31,11 @@ interface IProps {
   filters?: IFileFilter[],
 };
 
-const PathInput = ({ className, defaultValue, getValue, forceValidValue = true, onBlur, type = InputType.FILE, filters, }: IProps) => {
+const PathInput = ({ buttonTitle, className, defaultValue, getValue, forceValidValue = true, onBlur, type = InputType.FILE, filters, }: IProps) => {
   const [displayValue, setDisplayValue] = useState(defaultValue);
   const [savedValue, setSavedValue] = useState(defaultValue);
   const inputEl = useRef(null);
   useEffect(() => {
-    console.log(defaultValue);
     setDisplayValue(defaultValue);
     setSavedValue(defaultValue);
   }, [defaultValue]);
@@ -102,7 +102,7 @@ const PathInput = ({ className, defaultValue, getValue, forceValidValue = true, 
   }
 
   const openDialogButton = (
-    <div className='dialog-btn' onClick={setValueFromDialog}>
+    <div className='dialog-btn' title={buttonTitle} onClick={setValueFromDialog}>
       <img src={'img/right-panel/icon-import.svg'} />
     </div>
   );

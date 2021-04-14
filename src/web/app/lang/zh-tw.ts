@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: '處理中，請稍待'
+        wait: '處理中，請稍待',
+        choose_folder: '選擇檔案夾',
     },
     buttons: {
         next: '下一步'
@@ -226,6 +227,11 @@ export default {
         language: '語言',
         notifications: '通知',
         check_updates: '自動檢查',
+        autosave_enabled: '自動儲存',
+        autosave_path: '檔案夾',
+        autosave_interval: '儲存間隔',
+        autosave_number: '自動儲存數',
+        autosave_path_not_correct: '找不到指定的路徑',
         preview_movement_speed: '相機預覽移動速度',
         preview_movement_speed_hl: '相機預覽移動速度（混合雷射啟用時）',
         default_units: '預設單位',
@@ -264,6 +270,7 @@ export default {
             general: '一般',
             update: '軟體更新',
             connection: '連線',
+            autosave: '自動儲存',
             camera: '相機',
             editor: '編輯器',
             path: '路徑 (線段)',

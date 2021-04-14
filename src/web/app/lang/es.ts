@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: 'Procesando, por favor espera'
+        wait: 'Procesando, por favor espera',
+        choose_folder: 'Elegir Carpeta',
     },
     buttons: {
         next: 'SIGUIENTE'
@@ -226,6 +227,11 @@ export default {
         language: 'Idioma',
         notifications: 'Notificaciones de escritorio',
         check_updates: 'Comprobación automática',
+        autosave_enabled: 'Guardado Automático',
+        autosave_path: 'Guardado Automático Ubicación',
+        autosave_interval: 'Guardar Cada',
+        autosave_number: 'Número de Guardado Automático',
+        autosave_path_not_correct: 'No se encontró la ruta de acceso especificada.',
         preview_movement_speed: 'Previtualización de la velocidad del movimiento',
         preview_movement_speed_hl: 'Previtualización de la velocidad de movimiento (Láser híbrido activado)',
         default_units: 'Unidades por defecto',
@@ -264,6 +270,7 @@ export default {
             general: 'General',
             update: 'Actualizaciones de software',
             connection: 'Conexión',
+            autosave: 'Guardado Automático',
             camera: 'Cámara',
             editor: 'Editor',
             engraving: 'Rasterización (Escaneo)',

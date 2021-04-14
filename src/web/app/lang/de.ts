@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: 'Verarbeite .. Bitte warten'
+        wait: 'Verarbeite .. Bitte warten',
+        choose_folder: 'Ordner Auswählen',
     },
     buttons: {
         next: 'NÄCHSTER'
@@ -226,6 +227,11 @@ export default {
         language: 'Sprache',
         notifications: 'Desktop-Benachrichtigungen',
         check_updates: 'Auto-Check',
+        autosave_enabled: 'Automatisch Speichern',
+        autosave_path: 'Automatisch Speichern Speicherort',
+        autosave_interval: 'Speichern Alle',
+        autosave_number: 'Anzahl von Automatisch Speichern',
+        autosave_path_not_correct: 'Der angegebene Pfad wurde nicht gefunden.',
         preview_movement_speed: 'Vorschau der Bewegungsgeschwindigkeit',
         preview_movement_speed_hl: 'Vorschau der Bewegungsgeschwindigkeit (Hybrid Laser aktiviert)',
         default_units: 'Standardeinheiten',
@@ -264,6 +270,7 @@ export default {
             general: 'Allgemeines',
             update: 'Software-Updates',
             connection: 'Verbindung',
+            autosave: 'Automatisch Speichern',
             camera: 'Kamera',
             editor: 'Editor',
             engraving: 'Rasterung (Scannen)',

@@ -143,6 +143,16 @@
                 padding-left: 5px;
             }
         }
+        .path-input {
+            input[type="text"] {
+                width: 200px;
+            }
+            &.with-error {
+                input[type="text"] {
+                    outline: 5px auto #e25601;
+                }
+            }
+        }
     }
 
     footer {
@@ -178,6 +188,10 @@
         }
     }
 
+    .span8 {
+        display: inline-flex;
+    }
+
     .font1 {
         font-size: 18px;
         font-weight: 500;
@@ -208,6 +222,12 @@
         font-weight: bold;
         letter-spacing: 0.3px;
         color: #424242;
+    }
+
+    .btn {
+        &.disabled {
+            pointer-events: none;
+        }
     }
 
     .btn-done {

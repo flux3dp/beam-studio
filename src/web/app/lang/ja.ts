@@ -2,7 +2,8 @@ import { ILang } from 'interfaces/ILang';
 
 export default {
     general: {
-        wait: '処理中です、お待ちください'
+        wait: '処理中です、お待ちください',
+        choose_folder: 'フォルダーの選択',
     },
     buttons: {
         next: '次へ'
@@ -226,6 +227,11 @@ export default {
         language: '言語',
         notifications: 'デスクトップ通知',
         check_updates: '自動チェック',
+        autosave_enabled: '自動保存',
+        autosave_path: '自動保存位置',
+        autosave_interval: '保存間隔',
+        autosave_number: '自動保存の数',
+        autosave_path_not_correct: '指定されたパスが見つかりません',
         preview_movement_speed: 'プレビューの移動速度',
         preview_movement_speed_hl: 'プレビューの移動速度（ハイブリッドレーザー対応）',
         default_units: 'デフォルト単位',
@@ -264,6 +270,7 @@ export default {
             general: '一般',
             update: 'ソフトウェア更新',
             connection: '接続',
+            autosave: '自動保存',
             camera: 'カメラ',
             editor: 'エディター',
             path: 'パス（線分）',
