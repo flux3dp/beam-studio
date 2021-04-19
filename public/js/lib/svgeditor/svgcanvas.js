@@ -3415,8 +3415,7 @@ define([
                 }
 
                 selblock = svgedit.utilities.getElem('text_selectblock');
-                if (!selblock) {
-
+                if (!selblock && document.getElementById('text_cursor')) {
                     selblock = document.createElementNS(NS.SVG, 'path');
                     svgedit.utilities.assignAttributes(selblock, {
                         id: 'text_selectblock',
@@ -3434,6 +3433,7 @@ define([
                 var endbb = chardata[endRowIndex][endIndex];
 
                 cursor.setAttribute('visibility', 'hidden');
+
                 let dString;
                 let points = [];
                 //drawing selection block
@@ -3456,10 +3456,12 @@ define([
                 points = points.map(p => `${p.x},${p.y}`);
                 dString = `M ${points.join(' L ')} z`;
 
-                svgedit.utilities.assignAttributes(selblock, {
-                    d: dString,
-                    'display': 'inline'
-                });
+                if (selblock) {
+                    svgedit.utilities.assignAttributes(selblock, {
+                        d: dString,
+                        'display': 'inline'
+                    });
+                }
             }
 
             function getIndexFromPoint(mouse_x, mouse_y) {
@@ -3562,9 +3564,9 @@ define([
             }
 
             function hideCursor() {
-                if (cursor) {
-                    cursor.setAttribute('visibility', 'hidden');
-                }
+                clearInterval(blinker);
+                document.getElementById('text_cursor')?.remove();
+                document.getElementById('text_selectblock')?.remove();
             }
 
             let moveCursorLastRow = () => {
@@ -3711,6 +3713,7 @@ define([
 
                 },
                 setCursor: setCursor,
+                hideCursor,
                 onUpKey: () => {
                     if (isVertical) {
                         textinput.selectionEnd = Math.max(textinput.selectionEnd - 1, 0);
@@ -8945,6 +8948,7 @@ define([
          * @param {boolean} isSub whether this operation is a subcmd
          */
         this.deleteSelectedElements = function (isSub=false) {
+            textActions.hideCursor();
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
