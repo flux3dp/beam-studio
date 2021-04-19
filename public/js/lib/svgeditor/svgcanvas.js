@@ -5359,7 +5359,8 @@ define([
                                 out.push(this.svgToString(childs.item(i), indent));
                                 break;
                             case 3: // text node
-                                var str = child.nodeValue.replace(/^\s+|\s+$/g, '');
+                                // to keep the spaces before a line
+                                var str = elem.tagName === 'tspan' ? child.nodeValue : child.nodeValue.replace(/^\s+|\s+$/g, '');
                                 if (str != '') {
                                     bOneLine = true;
                                     out.push(String(toXml(str)));
