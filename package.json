@@ -44,6 +44,7 @@
     "request": "^2.88.2",
     "rxjs": "^6.6.3",
     "serialport": "^8.0.5",
+    "sharp": "^0.28.1",
     "socket.io-client": "^1.4.6",
     "squirejs": "^0.2.1",
     "sudo-prompt": "^9.0.0",
