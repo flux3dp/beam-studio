@@ -3567,7 +3567,7 @@ define([
                 clearInterval(blinker);
                 document.getElementById('text_cursor')?.remove();
                 document.getElementById('text_selectblock')?.remove();
-                textActions.toSelectMode(true);
+                textActions.toSelectMode();
             }
 
             let moveCursorLastRow = () => {
