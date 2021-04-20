@@ -1,8 +1,6 @@
 const allowTracking = false;
 
 import $ from 'jquery';
-import * as i18n from './helpers/i18n';
-import Shortcuts from './helpers/shortcuts';
 import Backbone from 'backbone';
 import Router from './app/router';
 import globalEvents from './app/actions/global';

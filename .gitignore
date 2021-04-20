@@ -80,3 +80,6 @@ build-script.sh
 curl.exe
 
 **/top-menu/black/**
+
+coverage
+yarn-error.log
