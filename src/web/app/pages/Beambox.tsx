@@ -9,6 +9,7 @@ import { TimeEstimationButton } from '../views/beambox/Time-Estimation-Button/Ti
 import { SVGEditor } from './svg-editor';
 import svgEditor from '../actions/beambox/svg-editor';
 import * as i18n from 'helpers/i18n';
+import BeamboxActions from 'app/actions/beambox';
 
 const electron = window['electron'];
 const React = requireNode('react');
@@ -16,7 +17,6 @@ const classNames = requireNode('classnames');
 
 BeamboxInit.initSentry();
 BeamboxInit.init();
-
 
 class Beambox extends React.Component {
     constructor(props) {
@@ -27,7 +27,7 @@ class Beambox extends React.Component {
 
         // need to run after svgedit packages loaded, so place it at componentDidMouont
         if (BeamboxPreference.read('show_guides')) {
-            BeamboxInit.displayGuides();
+            BeamboxActions.drawGuideLines();
         }
 
         let ipc = electron.ipc;
