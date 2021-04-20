@@ -31,6 +31,7 @@ import storage from 'helpers/storage-helper';
 import * as i18n from 'helpers/i18n';
 import { IFont } from 'interfaces/IFont';
 import { getSVGEdit } from 'helpers/svg-editor-helper';
+import BeamboxStore from 'app/stores/beambox-store';
 
 const init = () => {
     ToolPanelsController.init('tool-panels-placeholder');
@@ -74,9 +75,13 @@ const init = () => {
     initMenuBarEvents();
     autoSaveHelper.init();
     fluxId.init();
+    BeamboxStore.onDrawGuideLines(displayGuides);
 };
 
 const displayGuides = () => {
+    document.getElementById('horizontal_guide')?.remove();
+    document.getElementById('vertical_guide')?.remove();
+
     const guidesLines = (() => {
         const svgedit = getSVGEdit();
         const svgdoc = document.getElementById('svgcanvas').ownerDocument;
@@ -742,7 +747,6 @@ const checkOSVersion = () => {
 
 export default {
     init,
-    displayGuides,
     initMenuBarEvents,
     showStartUpDialogs,
     initSentry,
