@@ -137,6 +137,7 @@ export default function(options) {
                     data = data.replace(/\\/g, '\\\\');
                     data = data.replace(/\bNaN\b/g, 'null');
                     data = data.replace(/\r?\n|\r/g, ' ');
+                    data = (true === isJson(data) ? JSON.parse(data) : data);
                 }
 
                 while(received_data.length >= logLimit) {
