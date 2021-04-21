@@ -63,54 +63,13 @@ const funcs = {
         funcs.useSelectTool();
     },
 
-    insertSvg: function(svgString, type, cropData = { x: 0, y: 0 }, preCrop = { offsetX: 0, offsetY: 0 }) {
-        const imageElement = svgString.split('<image');
+    insertSvg: function(svgString?:string, callback?:any) {
+        svgEditor.importSvg(
+            new Blob([svgString], { type: 'text/plain' }),
+            { skipVersionWarning: true, isFromAI: true }
+        );
 
-        svgString = svgString.replace(/fill(: ?#(fff(fff)?|FFF(FFF)?));/g, 'fill: none;');
-        svgString = svgString.replace(/fill= ?"#(fff(fff)?|FFF(FFF))"/g, 'fill="none"');
-        svgString = svgString.replace(/<image(.|\n)+\/image>/g, '');
-        svgString = svgString.replace(/<image(.|\n)+\/>/g, '');
-
-        const newElement = svgCanvas.importSvgString(svgString, type);
-        const { x, y } = cropData;
-        const { offsetX, offsetY } = preCrop;
-
-        if (imageElement.length > 1) {
-            for (let i = 1; i < imageElement.length; i++) {
-                const nodeString = imageElement[i].substr(0, imageElement[i].indexOf('>'));
-                const widthString = nodeString.match(/width="\d+"/)[0];
-                const heightString = nodeString.match(/height="\d+"/)[0];
-                const matrixString = nodeString.match(/matrix\(.+\)/)[0];
-                const xlink = nodeString.indexOf('xlink:href=')+ 12;
-                const width = parseInt(widthString.substr(widthString.indexOf('"')+1, widthString.lastIndexOf('"')-1));
-                const height = parseInt(heightString.substr(heightString.indexOf('"')+1, heightString.lastIndexOf('"')-1));
-                const matrix = matrixString.substring(matrixString.indexOf('(')+1, matrixString.indexOf(')')-1).split(' ').map((e) => (Number(e)));
-                const imageHref = nodeString.substr(xlink , nodeString.substr(xlink).indexOf('"')).replace(/\n/g, '');
-                const sizeFactor = ((matrix[0] === matrix[3]) ? matrix[0] : 1);
-
-                this.insertImage(imageHref, {x: matrix[4], y: matrix[5], width, height}, preCrop, sizeFactor);
-            }
-        }
-
-        svgCanvas.ungroupSelectedElement();
-        svgCanvas.ungroupSelectedElement();
-        svgCanvas.groupSelectedElements();
-        svgCanvas.alignSelectedElements('m', 'page');
-        svgCanvas.alignSelectedElements('c', 'page');
-        // highlight imported element, otherwise we get strange empty selectbox
-        try {
-            svgCanvas.selectOnly([newElement]);
-
-            if (type === 'image-trace') {
-                svgCanvas.setSvgElemPosition('x', offsetX + x);
-                svgCanvas.setSvgElemPosition('y', offsetY + y);
-                svgCanvas.zoomSvgElem(72/254);
-            }
-        } catch(e) {
-            console.warn('Reading empty SVG');
-        }
-
-        $('#dialog_box').hide();
+        setTimeout(callback, 1500);
     },
     insertImage: function(insertedImageSrc, cropData, preCrop, sizeFactor = 1, threshold = 255, imageTrace = false) {
 

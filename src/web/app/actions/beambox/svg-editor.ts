@@ -5834,7 +5834,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                     });
                 }
                 editor.readSVG = readSVG;
-                const importSvg = async (file, args: { skipVersionWarning?: boolean, skipByLayer?: boolean, isFromNounProject?: boolean } = {}) => {
+                const importSvg = async (file, args: { skipVersionWarning?: boolean, skipByLayer?: boolean, isFromNounProject?: boolean, isFromAI?: boolean } = {}) => {
                     async function importAs(type) {
                         const result = await svgWebSocket.uploadPlainSVG(file, args.skipVersionWarning);
                         if (result !== 'ok') {
@@ -5924,12 +5924,17 @@ const svgEditor = window['svgEditor'] = (function($) {
                         buttonLabels.splice(0, 1);
                         callbacks.splice(0, 1);
                     }
-                    Alert.popUp({
-                        id: 'select-import-method',
-                        message: LANG.popup.select_import_method,
-                        buttonLabels: buttonLabels,
-                        callbacks: callbacks,
-                    });
+
+                    if (args.isFromAI) {
+                        importAs('layer');
+                    } else {
+                        Alert.popUp({
+                            id: 'select-import-method',
+                            message: LANG.popup.select_import_method,
+                            buttonLabels: buttonLabels,
+                            callbacks: callbacks,
+                        });
+                    }
                 };
                 editor.importSvg = importSvg;
                 const importBitmap = file => {
