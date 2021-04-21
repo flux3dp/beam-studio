@@ -606,7 +606,7 @@ module.exports = {
         help_center: 'Hilfezentrum',
         show_start_tutorial: 'Erstmaliges Tutorial anzeigen',
         show_ui_intro: 'Einführung in die Benutzeroberfläche anzeigen',
-        questionnaire: 'Protokolle ändern',
+        questionnaire: 'Feedback-Fragebogen',
         change_logs: 'Protokolle ändern',
         contact: 'Kontaktiere uns',
         tutorial: 'Starte das Delta Family Printing Tutorial',
