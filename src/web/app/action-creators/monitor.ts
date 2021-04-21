@@ -3,58 +3,58 @@ import GC from '../constants/global-constants';
 
 const changeMode = (mode) => ({
     type: C.CHANGE_MODE,
-    mode: mode
+    mode,
 });
 
 const changePath = (path, content) => ({
     type: C.CHANGE_PATH,
     mode: GC.FILE,
-    path: path,
+    path,
     folderContent: content,
-    isWaiting: false
+    isWaiting: false,
 });
 
 const updateFoldercontent = (content) => ({
     type: C.UPDATE_FOLDER_CONTENT,
     folderContent: content,
     mode: GC.FILE,
-    isWaiting: false
+    isWaiting: false,
 });
 
 const previewFile = (info) => ({
     type: C.PREVIEW_FILE,
     mode: GC.FILE_PREVIEW,
-    selectedFileInfo: info
+    selectedFileInfo: info,
 });
 
 const selectItem = (item) => ({
     type: C.SELECT_ITEM,
-    selectedItem: item
+    selectedItem: item,
 });
 
 const setDownloadProgress = (progress) => ({
     type: C.SET_DOWNLOAD_PROGRESS,
-    downloadProgress: progress
+    downloadProgress: progress,
 });
 
 const setUploadProgress = (progress) => ({
     type: C.SET_UPLOAD_PROGRESS,
-    uploadProgress: progress
+    uploadProgress: progress,
 });
 
 const showWait = () => ({
     type: C.SHOW_WAIT,
-    isWaiting: true
+    isWaiting: true,
 });
 
 const closeWait = () => ({
     type: C.CLOSE_WAIT,
-    isWaiting: false
+    isWaiting: false,
 });
 
 const setCameraOffset = (cameraOffset) => ({
     type: C.SET_CAMERA_OFFSET,
-    cameraOffset
+    cameraOffset,
 });
 
 const setMaintainMoving = () => ({
@@ -65,26 +65,26 @@ const setMaintainMoving = () => ({
 const setCurrentPosition = (currentPosition) => ({
     type: C.SET_CURRENT_POSITION,
     isMaintainMoving: false,
-    currentPosition
+    currentPosition,
 });
 
 const setRelocateOrigin = (relocateOrigin) => ({
     type: C.SET_RELOCATE_ORIGIN,
-    relocateOrigin
+    relocateOrigin,
 });
 
 export default {
-    changeMode          : changeMode,
-    changePath          : changePath,
-    updateFoldercontent : updateFoldercontent,
-    previewFile         : previewFile,
-    selectItem          : selectItem,
-    setDownloadProgress : setDownloadProgress,
-    setUploadProgress   : setUploadProgress,
-    showWait            : showWait,
-    closeWait           : closeWait,
-    setCameraOffset     : setCameraOffset,
-    setMaintainMoving   : setMaintainMoving,
-    setCurrentPosition  : setCurrentPosition,
-    setRelocateOrigin   : setRelocateOrigin,
+    changeMode,
+    changePath,
+    updateFoldercontent,
+    previewFile,
+    selectItem,
+    setDownloadProgress,
+    setUploadProgress,
+    showWait,
+    closeWait,
+    setCameraOffset,
+    setMaintainMoving,
+    setCurrentPosition,
+    setRelocateOrigin,
 };
