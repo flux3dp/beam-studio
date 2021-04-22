@@ -1401,12 +1401,16 @@
                     overflow-y: auto;
 
                     .config-entry {
+                        display: flex;
+                        justify-content: space-between;
                         border-bottom: 1px solid #E0E0DF;
                         color: $primaryColor;
                         cursor: pointer;
                         line-height: 20px;
                         overflow-x: scroll;
-
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
                         .entry-name {
                             height: 19px;
                             margin-left: 10px;
