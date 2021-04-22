@@ -73,8 +73,9 @@ export default {
     rightPanelWidth: process.platform !== 'darwin' ? 258 : 242, //px
     rightPanelScrollBarWidth: process.platform !== 'darwin' ? 16 : 0, //px
     sidePanelsWidth: process.platform !== 'darwin' ? 308 : 292, //px
-    topBarHeight: process.platform === 'win32' ? 75 : 40, //px
+    topBarHeight: process.platform === 'win32' ? 70 : 40, //px
     topBarHeightWithoutTitleBar: 40, //px
+    menuberHeight: process.platform === 'win32' ? 30 : 0, //px
     layerListHeight: 240, //px
     rulerWidth: 15, //px
 };
