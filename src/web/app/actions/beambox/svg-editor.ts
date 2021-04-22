@@ -5467,6 +5467,15 @@ const svgEditor = window['svgEditor'] = (function($) {
                         }
                     }
                 );
+
+                $('#workarea').mousedown(function(event) {
+                    switch (event.which) {
+                        case 3:
+                            $('#workarea').css('cursor', 'default');
+                            $('#svg_editor g').css('cursor', 'default');
+                            break;
+                    }
+                });
             }
 
             // Select given tool
