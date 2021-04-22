@@ -23,17 +23,19 @@ TODOS
 1. JSDoc
 */
 import ToolPanelsController from './Tool-Panels-Controller';
-import RightPanelController from '../../views/beambox/Right-Panels/contexts/RightPanelController';
-import LayerPanelController from '../../views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from '../../views/beambox/Right-Panels/contexts/ObjectPanelController';
-import TopBarController from '../../views/beambox/Top-Bar/contexts/Top-Bar-Controller';
-import { NounProjectPanelController } from '../../views/beambox/Noun-Project-Panel';
+import RightPanelController from 'app/views/beambox/Right-Panels/contexts/RightPanelController';
+import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import TopBarController from 'app/views/beambox/Top-Bar/contexts/Top-Bar-Controller';
+import { getNextStepRequirement } from 'app/views/tutorials/Tutorial-Controller';
+import { NounProjectPanelController } from 'app/views/beambox/Noun-Project-Panel';
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
 import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
 import PreviewModeController from './preview-mode-controller';
 import Alert from '../alert-caller';
-import AlertConstants from '../../constants/alert-constants';
+import AlertConstants from 'app/constants/alert-constants';
+import TutorialConstants from 'app/constants/tutorial-constants';
 import Progress from '../progress-caller';
 import Dialog from 'app/actions/dialog-caller';
 import AwsHelper from 'helpers/aws-helper';
@@ -1352,6 +1354,9 @@ const svgEditor = window['svgEditor'] = (function($) {
             };
 
             var clickSelect = editor.clickSelect = function () {
+                if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
+                    return;
+                }
                 svgCanvas.clearSelection();
                 if (toolButtonClick('#tool_select')) {
                     svgCanvas.setMode('select');
