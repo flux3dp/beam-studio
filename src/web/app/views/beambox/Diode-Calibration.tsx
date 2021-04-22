@@ -232,8 +232,7 @@ class DiodeCalibration extends React.Component {
         const fanSpeed = Number((await DeviceMaster.getFan()).value);
         this.origFanSpeed = fanSpeed;
 
-        const deviceInfo = await DeviceMaster.getDeviceInfo();
-        const vc = VersionChecker(deviceInfo.version);
+        const vc = VersionChecker(device.version);
         const tempCmdAvailable = vc.meetRequirement('TEMP_I2C_CMD');
         if (tempCmdAvailable) {
             await DeviceMaster.setFanTemp(100);
@@ -262,7 +261,7 @@ class DiodeCalibration extends React.Component {
         const { device } = this.props;
         let blobUrl;
         try {
-            await PreviewModeController.start(device, ()=>{console.log('camera fail. stop preview mode');});
+            await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
             Progress.openNonstopProgress({
                 id: 'taking-picture',
                 message: LANG.taking_picture,
