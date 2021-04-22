@@ -59,7 +59,7 @@ class RowColumn extends React.Component{
                     </p>
                     <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
                         <div className="control">
-                            <span className="text-center header">{LANG.columns}</span>
+                            <div className="text-center header">{LANG.columns}</div>
                             <UnitInput
                                 min={1}
                                 unit=""
@@ -69,7 +69,7 @@ class RowColumn extends React.Component{
                             />
                         </div>
                         <div className="control">
-                            <span className="text-center header">{LANG.rows}</span>
+                            <div className="text-center header">{LANG.rows}</div>
                             <UnitInput
                                 min={1}
                                 unit=""
