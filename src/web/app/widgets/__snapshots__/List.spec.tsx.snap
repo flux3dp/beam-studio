@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<ul
+  className="flux"
+  data-empty-message="this is an empty message"
+  id="12345"
+  name="flux-list"
+  onClick={[MockFunction]}
+  onDoubleClick={[MockFunction]}
+>
+  <li
+    data-meta="{\\"name\\":\\"abc\\",\\"id\\":123}"
+    data-value={12345}
+    key="0"
+  >
+    xyz
+  </li>
+  <li
+    data-meta="{\\"name\\":\\"def\\",\\"id\\":456}"
+    data-value={67890}
+    key="1"
+  >
+    <Component />
+  </li>
+</ul>
+`;
