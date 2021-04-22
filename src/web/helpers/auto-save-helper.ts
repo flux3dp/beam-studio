@@ -75,18 +75,20 @@ const startAutoSave = () => {
     const { directory, fileNumber, timeInterval } = config;
     console.log('auto save service started');
     autoSaveInterval = setInterval(async () => {
-      console.log('auto save triggered');
-      const svgString = svgCanvas.getSvgString();
-      const imageSource = await svgCanvas.getImageSource();
-      for (let i = fileNumber - 1; i >= 1; i--) {
-        const from = path.join(directory, `beam-studio auto-save-${i}.beam`);
-        if (fs.existsSync(from)) {
-          const to = path.join(directory, `beam-studio auto-save-${i + 1}.beam`);
-          await fsPromises.rename(from, to);
+      if (location.hash === '#studio/beambox') {
+        console.log('auto save triggered');
+        const svgString = svgCanvas.getSvgString();
+        const imageSource = await svgCanvas.getImageSource();
+        for (let i = fileNumber - 1; i >= 1; i--) {
+          const from = path.join(directory, `beam-studio auto-save-${i}.beam`);
+          if (fs.existsSync(from)) {
+            const to = path.join(directory, `beam-studio auto-save-${i + 1}.beam`);
+            await fsPromises.rename(from, to);
+          }
         }
+        const target = path.join(directory, 'beam-studio auto-save-1.beam');
+        beamFileHelper.saveBeam(target, svgString, imageSource);
       }
-      const target = path.join(directory, 'beam-studio auto-save-1.beam');
-      beamFileHelper.saveBeam(target, svgString, imageSource);
     }, timeInterval * 60 * 1000);
   }
 };

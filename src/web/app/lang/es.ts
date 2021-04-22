@@ -477,7 +477,7 @@ export default {
                         acrylic_3mm_cutting: 'Acrílico - Corte de 3mm',
                         acrylic_5mm_cutting: 'Acrílico -  Corte de 5mm',
                         acrylic_engraving: 'Acrílico - Grabado',
-                        leather_3mm_cutting: 'Cuero - Corte de 3mmm',
+                        leather_3mm_cutting: 'Cuero - Corte de 3mm',
                         leather_5mm_cutting: 'Cuero -  Corte de 5mm',
                         leather_engraving: 'Cuero - Grabado',
                         fabric_3mm_cutting: 'Tejido -  Corte de 3mm',
