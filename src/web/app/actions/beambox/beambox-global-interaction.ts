@@ -132,6 +132,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
                 electron.remote.shell.openExternal(url);
             },
             'CHANGE_LOGS': () => dialog.showChangLog(),
+            'PASTE_IN_PLACE': () => svgCanvas.pasteElements('in_place'),
         };
     }
     attach() {
@@ -151,7 +152,7 @@ class BeamboxGlobalInteraction extends GlobalInteraction {
             'SHOW_GRIDS',
             'SHOW_LAYER_COLOR',
             'NETWORK_TESTING',
-            'ABOUT_BEAM_STUDIO'
+            'ABOUT_BEAM_STUDIO',
         ]);
         ElectronUpdater.autoCheck();
     }

@@ -79,17 +79,17 @@ function buildAccountMenuItems(callback, accountInfo) {
     ];
 }
 
-function buildMenu(callback) {
-    let menu = [];
+function buildMenuItems(callback) {
+    let menuItems = [];
     let fnKey =  process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
 
     if(process.platform === 'darwin') {
-        menu.push(_buildOSXAppMenu(callback));
+        menuItems.push(_buildOSXAppMenu(callback));
     }
 
-    menu.push(_buildFileMenu(fnKey, callback));
+    menuItems.push(_buildFileMenu(fnKey, callback));
 
-    menu.push({
+    menuItems.push({
         id: '_edit',
         label: r.edit,
         submenu: [
@@ -99,6 +99,7 @@ function buildMenu(callback) {
             { id: 'CUT', label: r.cut, role: 'cut'},
             { id: 'COPY', label: r.copy, role: 'copy'},
             { id: 'PASTE', label: r.paste, role: 'paste'},
+            { id: 'PASTE_IN_PLACE', label: r.paste_in_place, click: callback, 'accelerator': `${fnKey}+Shift+V` },
             { id: 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, 'accelerator': `${fnKey}+D` },
             { type:'separator'},
             { id: 'GROUP', label: r.group || 'Group', enabled: false, click: callback, 'accelerator': `${fnKey}+G` },
@@ -135,7 +136,7 @@ function buildMenu(callback) {
         ]
     });
 
-    menu.push({
+    menuItems.push({
         id: '_view',
         label: r.view,
         submenu: [
@@ -150,7 +151,7 @@ function buildMenu(callback) {
         ]
     });
 
-    menu.push({
+    menuItems.push({
         id: '_machines',
         label: r.machines || 'Machines',
         submenu: [
@@ -161,7 +162,7 @@ function buildMenu(callback) {
     });
 
     if(process.platform === 'darwin') {
-        menu.push({
+        menuItems.push({
             label: r.window,
             role: 'window',
             submenu: [
@@ -172,14 +173,14 @@ function buildMenu(callback) {
     }
 
     const helpSubmenu = buildHelpMenu(callback);
-    menu.push({
+    menuItems.push({
         id: '_help',
         label: r.help || 'Help',
         role: 'help',
         submenu: helpSubmenu,
     });
 
-    return menu;
+    return menuItems;
 }
 
 const buildHelpMenu = (callback) => {
@@ -315,7 +316,7 @@ function buildAccountMenu(callback, account) {
 
 
 class MenuManager extends EventEmitter {
-    constructor(on_trigger) {
+    constructor() {
         super();
         this._device_list = {};
         this.constructMenu();
@@ -391,7 +392,7 @@ class MenuManager extends EventEmitter {
     }
     constructMenu() {
         this._appmenu = Menu.buildFromTemplate(
-            buildMenu(this._on_menu_click.bind(this))
+            buildMenuItems(this._on_menu_click.bind(this))
         );
 
         for(let i in this._appmenu.items) {
