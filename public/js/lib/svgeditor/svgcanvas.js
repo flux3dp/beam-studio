@@ -2869,11 +2869,9 @@ define([
                     case 'rect':
                         attrs = $(element).attr(['width', 'height']);
                         keep = (attrs.width != 0 && attrs.height != 0);
-                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT) {
-                            if (keep) {
-                                TutorialController.handleNextStep();
-                                canvas.setMode('select');
-                            }
+                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT && keep) {
+                            TutorialController.handleNextStep();
+                            canvas.setMode('select');
                         } else {
                             if (!isContinuousDrawing) {
                                 canvas.setMode('select');
@@ -2893,11 +2891,9 @@ define([
                     case 'ellipse':
                         attrs = $(element).attr(['rx', 'ry']);
                         keep = (attrs.rx > 0 && attrs.ry > 0);
-                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE) {
-                            if (keep) {
-                                TutorialController.handleNextStep();
-                                canvas.setMode('select');
-                            }
+                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE && keep) {
+                            TutorialController.handleNextStep();
+                            canvas.setMode('select');
                         } else {
                             if (!isContinuousDrawing) {
                                 canvas.setMode('select');
