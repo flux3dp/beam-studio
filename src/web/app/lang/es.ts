@@ -879,7 +879,7 @@ export default {
         no: 'No',
         stop: 'Parar',
         save: 'Guardar',
-        dont_save: 'No guardar...'
+        dont_save: 'No guardar',
     },
     caption: {
         connectionTimeout: 'Tiempo de espera de la conexión'
