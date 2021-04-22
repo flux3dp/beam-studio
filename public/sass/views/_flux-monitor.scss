@@ -54,6 +54,9 @@
                 overflow-y: auto;
                 height: 100%;
                 border-radius: 4px;
+                &::-webkit-scrollbar {
+                    display: none;
+                }
                 .task {
                     height: 100%;
                 }
