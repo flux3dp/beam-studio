@@ -1,7 +1,5 @@
 import { Tutorial, TutorialContextCaller } from './Tutorial';
 
-const React = requireNode('react');
-
 export const handleNextStep = () => {
     if (!TutorialContextCaller.context) {
         //console.log('Tutorial is not mounted now.');

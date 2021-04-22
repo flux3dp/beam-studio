@@ -7,5 +7,11 @@ module.exports = {
     ],
     collectCoverageFrom: [
         "src/web/**/*.(ts|tsx)"
-    ]
+    ],
+    globals: {
+        "ts-jest": {
+            tsConfig: "src/web/tsconfig.json"
+        }
+    },
+    setupFilesAfterEnv: ["./src/web/setupTests.ts"]
 }
