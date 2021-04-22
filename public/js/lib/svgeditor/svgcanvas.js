@@ -1606,11 +1606,9 @@ define([
                         current_mode = 'select';
                         return;
                     }
-                    current_mode = 'select';
-                    $('.tool-btn').removeClass('active');
-                    $('#left-Cursor').addClass('active');
-                    $('#left-Shoot').addClass('active');
+                    svgEditor.clickSelect();
                     lastClickPoint = pt;
+                    return;
                 }
 
                 // This would seem to be unnecessary...
@@ -2871,11 +2869,15 @@ define([
                     case 'rect':
                         attrs = $(element).attr(['width', 'height']);
                         keep = (attrs.width != 0 && attrs.height != 0);
-                        if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT) {
-                            TutorialController.handleNextStep();
-                        }
-                        if (!isContinuousDrawing) {
-                            canvas.setMode('select');
+                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT) {
+                            if (keep) {
+                                TutorialController.handleNextStep();
+                                canvas.setMode('select');
+                            }
+                        } else {
+                            if (!isContinuousDrawing) {
+                                canvas.setMode('select');
+                            }
                         }
                         break;
                     case 'image':
@@ -2891,11 +2893,15 @@ define([
                     case 'ellipse':
                         attrs = $(element).attr(['rx', 'ry']);
                         keep = (attrs.rx > 0 && attrs.ry > 0);
-                        if (keep && TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE) {
-                            TutorialController.handleNextStep();
-                        }
-                        if (!isContinuousDrawing) {
-                            canvas.setMode('select');
+                        if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE) {
+                            if (keep) {
+                                TutorialController.handleNextStep();
+                                canvas.setMode('select');
+                            }
+                        } else {
+                            if (!isContinuousDrawing) {
+                                canvas.setMode('select');
+                            }
                         }
                         break;
                     case 'fhellipse':
