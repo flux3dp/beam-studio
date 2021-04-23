@@ -7,7 +7,7 @@ import globalEvents from './app/actions/global';
 import menuBar from './helpers/menubar';
 
 declare global {
-  let requireNode: (name: string) => any;
+  var requireNode: (name: string) => any;
   interface Window {
     electron: {
       ipc: any,
