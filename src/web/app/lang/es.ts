@@ -976,7 +976,8 @@ export default {
         please_place_paper: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
         please_refocus: {
             beambox: 'Por favor, ajusta la plataforma al punto focal (la altura del acrílico rechazado)',
-            beamo: 'Por favor, ajusta el cabezal del láser para enfocar el objeto grabado (la altura del acrílico rechazado)'
+            beamo: 'Por favor, ajusta el cabezal del láser para enfocar el objeto grabado (la altura del acrílico rechazado)',
+            beamo_af: 'Por favor, toque dos veces el botón lateral del complemento de enfoque automático y deje que la sonda toque el material suavemente.',
         },
         without_af: 'Sin ajuste de enfoque',
         with_af: 'Con ajuste de enfoque',

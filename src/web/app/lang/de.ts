@@ -976,7 +976,8 @@ export default {
         please_place_paper: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
         please_refocus: {
             beambox: 'Stelle die Plattform bitte auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
-            beamo: 'Stelle den Laserkopf bitte so ein, dass er auf das Gravurobjekt fokussiert (Höhe des umgedrehten Acryls).'
+            beamo: 'Stelle den Laserkopf bitte so ein, dass er auf das Gravurobjekt fokussiert (Höhe des umgedrehten Acryls).',
+            beamo_af: 'Tippen Sie bitte zweimal auf die Seitentaste des Autofokus-Add-Ons und lassen Sie die Sonde das Material sanft berühren.',
         },
         without_af: 'Ohne Autofukus',
         with_af: 'Mit Autofokus',

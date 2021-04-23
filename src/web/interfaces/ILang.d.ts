@@ -975,6 +975,7 @@ export interface ILang {
         please_refocus: {
             beambox: string,
             beamo: string,
+            beamo_af: string,
         },
         without_af: string,
         with_af: string,

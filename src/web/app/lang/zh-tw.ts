@@ -975,8 +975,9 @@ export default {
         please_goto_beambox_first: '請先選擇 Beambox 功能，再進行校正',
         please_place_paper: '請將乾淨 A4 白紙放在工作區域的左上角',
         please_refocus: {
-            beambox: '請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦',
-            beamo: '請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦',
+            beambox: '請旋轉升降平台旋鈕，直到輕觸焦距螺絲或焦距尺，完成對焦後，轉回對焦尺。',
+            beamo: '請轉開焦距固定環，調整雷射頭至平台輕觸焦距尺，完成對焦後，旋緊固定環、轉回對焦尺。',
+            beamo_af: '請雙擊自動對焦套件側邊按鈕，使探針輕觸雕刻材料。',
         },
         without_af: '無自動對焦',
         with_af: '有自動對焦',

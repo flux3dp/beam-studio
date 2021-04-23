@@ -976,7 +976,8 @@ export default {
         please_place_paper: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
         please_refocus: {
             beambox: 'Kindly adjust the platform to the focal point (the height of turned down acrylic)',
-            beamo: 'Kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
+            beamo: 'Kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)',
+            beamo_af: 'Kindly double tap the side button of autofocus add-on, and let the probe touch the material softly.',
         },
         without_af: 'Without Autofocus',
         with_af: 'With Autofocus',
