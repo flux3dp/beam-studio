@@ -3,7 +3,7 @@ name: Electron CD Linux
 on:
   push:
     tags:
-      '*'
+      - '*'
 
 jobs:
   build:
@@ -41,21 +41,31 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /usr/bin/g++ g++ /usr/bin/g++-7
           gcc -v
           g++ -v
-      # using https://github.com/InVisionApp/private-action-loader for private repo.
-      - name: Install Beamify
-        uses: invisionapp/private-action-loader@v3
+
+      - name: Checkout Beamify
+        uses: actions/checkout@v2
         with:
-          pal-repo-token: ${{ secrets.REPO_TOKEN }}
-          pal-repo-name: flux3dp/beamify@master
+          repository: flux3dp/beamify
+          ref: master
+          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          path: .github/actions/beamify
+
+      - name: Install Beamify
+        uses: ./.github/actions/beamify
 
       - name: Install Fluxsvg
         uses: flux3dp/fluxsvg@master
 
-      - name: Install FluxClient
-        uses: invisionapp/private-action-loader@v3
+      - name: Checkout FluxClient
+        uses: actions/checkout@v2
         with:
-          pal-repo-token: ${{ secrets.REPO_TOKEN }}
-          pal-repo-name: flux3dp/fluxclient-dev@develop
+          repository: flux3dp/fluxclient-dev
+          ref: develop
+          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          path: .github/actions/fluxclient
+
+      - name: Install FluxClient
+        uses: ./.github/actions/fluxclient
 
       - name: Build Flux Api
         uses: flux3dp/fluxghost@develop
@@ -74,10 +84,11 @@ jobs:
           gulp frontend
 
           cp -R $HOME/flux_api_swap backend/flux_api
-          ./backend/flux_api/flux_api --test --without_pcl 
+          ./backend/flux_api/flux_api --test --without_pcl
 
           rm -rf util
           rm -rf lib
+          rm -rf .github
 
           if [ ${{ matrix.os }} = "ubuntu-16.04" ]
           then
@@ -93,7 +104,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ${{ matrix.os }}
-            
+
 
       - name: Cleanup artifacts
         run: |
