@@ -1,7 +1,7 @@
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 import DeviceMaster from 'helpers/device-master';
 import i18n from 'helpers/i18n';
 
@@ -65,7 +65,7 @@ export default class MonitorCamera extends React.PureComponent {
         const { isHd } = this.state;
         const className = classNames('camera-image', { 'beambox-camera': this.isBeamboxCamera, hd: isHd });
         return (
-            <div className='camera'> 
+            <div className='camera'>
                 <img id={'camera-image'} className={className}/>
             </div>
         );

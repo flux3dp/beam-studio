@@ -2,7 +2,7 @@ const React = requireNode('react');
 const classNames = requireNode('classnames');
 
 import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 import Modal from 'app/widgets/Modal';
 import FormatDuration from 'helpers/duration-formatter';
 import MonitorStatus from 'helpers/monitor-status';
@@ -12,10 +12,10 @@ import isObjectEmpty from 'helpers/is-object-empty';
 import MonitorHeader, { NavBtnType } from './Monitor-Header';
 import MonitorFilelist from './Monitor-Filelist';
 import MonitorTask from './Monitor-Task';
-import MonitorControl from './Monitor-Control';
+import MonitorControl from './MonitorControl';
 import MonitorCamera from './Monitor-Camera';
 import MonitorRelocate from './Monitor-Relocate';
-import MonitorInfo from './Monitor-Info';
+import MonitorInfo from './MonitorInfo';
 
 let LANG = i18n.lang;
 
@@ -118,22 +118,22 @@ export default class Monitor extends React.Component {
 
         const getInfoProgressText = () => {
             const { mode, taskTime, report, uploadProgress, downloadProgress } = this.context;
-    
+
             if (uploadProgress !== null) {
                 return `${LANG.monitor.processing} ${uploadProgress}%`;
             }
-    
+
             if(downloadProgress !== null) {
                 return `${LANG.monitor.processing} ${Math.floor((downloadProgress.size - downloadProgress.left) / downloadProgress.size * 100)}%`;
             }
-    
+
             if (!taskTime || mode !== Mode.WORKING || !report.prog || MonitorStatus.isAbortedOrCompleted(report)) {
                 return '';
             }
-    
+
             const percentageDone = Math.floor(report.prog * 100);
             const timeLeft = FormatDuration(taskTime * (1 - report.prog));
-    
+
             return `${percentageDone}%, ${timeLeft} ${i18n.lang.monitor.left}`;
         }
 

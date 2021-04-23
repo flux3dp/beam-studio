@@ -1,6 +1,6 @@
 const React = requireNode('react');
 
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 
 export enum NavBtnType {
     NONE = 0,
@@ -31,7 +31,7 @@ class MonitorHeader extends React.PureComponent {
         }
         return <div/>
     }
-    
+
     render() {
         const { onClose } = this.context;
         return (

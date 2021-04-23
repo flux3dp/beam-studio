@@ -2,7 +2,7 @@ const React = requireNode('react');
 const classNames = requireNode('classnames');
 
 import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 import FormatDuration from 'helpers/duration-formatter';
 import MonitorStatus from 'helpers/monitor-status';
 import VersionChecker from 'helpers/version-checker';
@@ -55,7 +55,7 @@ export default class MonitorTask extends React.PureComponent {
                 <div className="btn-relocate-container">
                     <div className="btn-relocate" onClick={startRelocate}>
                         <img src="img/beambox/icon-target.svg"/>
-                        {(relocateOrigin.x !== 0 || relocateOrigin.y !== 0) ? 
+                        {(relocateOrigin.x !== 0 || relocateOrigin.y !== 0) ?
                             <div className="relocate-origin">{`(${relocateOrigin.x}, ${relocateOrigin.y})`}</div>
                             : null
                         }

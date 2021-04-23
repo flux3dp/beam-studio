@@ -5,7 +5,7 @@ import Alert from 'app/actions/alert-caller';
 import AlertConstants from 'app/constants/alert-constants';
 import DeviceConstants from 'app/constants/device-constants';
 import { ItemType } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 import FileItem from './widgets/File-Item';
 import DeviceMaster from 'helpers/device-master';
 

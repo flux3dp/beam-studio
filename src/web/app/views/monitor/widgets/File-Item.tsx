@@ -2,7 +2,7 @@ const React = requireNode('react');
 const classNames = requireNode('classnames');
 
 import { ItemType } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 
 const maxFileNameLength = 12;
 const DEFAULT_IMAGE = 'img/ph_s.png';

@@ -16,7 +16,8 @@ import VersionChecker from 'helpers/version-checker';
 import i18n from 'helpers/i18n';
 import { IReport } from 'interfaces/IDevice';
 import { IProgress } from 'interfaces/IProgress';
-
+import MonitorContext from './MonitorContext';
+'
 let LANG = i18n.lang;
 const updateLang = () => {
     LANG = i18n.lang;
@@ -39,9 +40,6 @@ const findKeyInObjectArray = (array: any[], key: string) => {
     }
     return null;
 }
-
-export const MonitorContext = createContext();
-
 export class MonitorContextProvider extends React.Component {
     constructor(props) {
         super(props);
@@ -310,7 +308,7 @@ export class MonitorContextProvider extends React.Component {
             this.modeBeforeCamera = Mode.PREVIEW;
         } else if (fileInfo) {
             const { imageBlob, taskTime } = this.getTaskInfo(fileInfo);
-            const taskImageURL = URL.createObjectURL(imageBlob); 
+            const taskImageURL = URL.createObjectURL(imageBlob);
             this.setState({
                 mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.FILE_PREVIEW,
                 taskImageURL,

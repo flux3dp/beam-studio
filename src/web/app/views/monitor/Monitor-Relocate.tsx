@@ -1,7 +1,7 @@
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 
-import { MonitorContext } from 'app/contexts/Monitor-Context';
+import MonitorContext from 'app/contexts/MonitorContext';
 import RawMovePanel from 'app/widgets/Raw-Move-Panel';
 import DeviceMaster from 'helpers/device-master';
 

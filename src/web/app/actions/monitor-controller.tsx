@@ -2,7 +2,7 @@ const React = requireNode('react');
 
 import Dialog from 'app/actions/dialog-caller';
 import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContextProvider } from 'app/contexts/Monitor-Context';
+import { MonitorContextProvider } from 'app/contexts/MonitorContextProvider';
 import Monitor from 'app/views/monitor/Monitor';
 import { IDeviceInfo } from 'interfaces/IDevice';
 
