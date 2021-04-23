@@ -301,6 +301,7 @@ const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBl
   }, [isAutoFocus]);
 
   let child = null;
+  let message = LANG.please_refocus.beambox;
   if (model === 'beamo') {
     child = (
       <div className="video-container">
@@ -313,6 +314,7 @@ const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBl
         </video>
       </div>
     );
+    message = isAutoFocus ? LANG.please_refocus.beamo_af : LANG.please_refocus.beamo;
   } else {
     child = (
       <video className="video" ref={videoElem} autoPlay loop>
@@ -323,7 +325,7 @@ const StepRefocus = ({ parent, device, model, gotoNextStep, onClose, updateImgBl
   return (
     <Alert
       caption={LANG.camera_calibration}
-      message={LANG.please_refocus[model]}
+      message={message}
       children={child}
       buttons={
         [{
