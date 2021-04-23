@@ -6,12 +6,12 @@ export default {
     choose_folder: 'フォルダーの選択',
   },
   buttons: {
-    next: '次へ'
+    next: '次へ',
   },
   topbar: {
     untitled: '無題',
     titles: {
-      settings: '環境設定'
+      settings: '環境設定',
     },
     export: 'ゴー',
     preview: 'プレビュー',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: '了解',
     },
     hint: {
-      polygon: '+ / - キーを押して、辺を増減します。'
+      polygon: '+ / - キーを押して、辺を増減します。',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] ステータスの競合が発生しました。アクションを再試行してください。',
     SUBSYSTEM_ERROR: '[SE] マシンファームウェアがタスクを実行しているときにエラーが発生しました。マシンを再起動してください',
     UNKNOWN_COMMAND: '[UC] 「マシンファームウェア」をアップデートしてください',
-    RESOURCE_BUSY: '[RB] マシンを再起動するか、再試行してください'
+    RESOURCE_BUSY: '[RB] マシンを再起動するか、再試行してください',
   },
   device_selection: {
     no_beambox: '#801 お使いのマシンがネットワーク上で見つかりません。\n<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">このガイド</a>に従って、接続の問題をトラブルシューティングしてください。',
@@ -71,7 +71,7 @@ export default {
       confirm: 'アップロード',
       upload_file: 'ファームウェアのアップロード（*.bin / *.fxfw）',
       update_success: 'ファームウェアアップデートが正常にアップロードされました',
-      update_fail: '#822 アップデート失敗'
+      update_fail: '#822 アップデート失敗',
     },
     software: {
       checking: 'アップデートの確認中',
@@ -96,7 +96,7 @@ export default {
     download: 'オンラインアップデート',
     cannot_reach_internet: '#823 サーバーにアクセスできません。<br/>インターネット接続を確認してください',
     install: 'インストール',
-    upload: 'アップロード'
+    upload: 'アップロード',
   },
   topmenu: {
     version: 'バージョン',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Beam Studioシーン',
       fcode_files: 'FLUXコード',
       clear_recent: '最近開いた項目をクリア',
-      path_not_exit: 'このパスは、デスク上にもう存在しないようです。'
+      path_not_exit: 'このパスは、デスク上にもう存在しないようです。',
     },
     device: {
       download_log_canceled: 'ログのダウンロードをキャンセルしました',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'USBリスト',
       },
-      network_test: 'ネットワークをテスト'
+      network_test: 'ネットワークをテスト',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: 'IP が空の場合',
       what_if_1_content: '1. イーサネットケーブルが完全に差し込まれていることを確認します。\n2. タッチパネルに有線接続の MAC アドレスがない場合は、 FLUX サポートに連絡してください。',
       what_if_2: 'IP が 169 で始まる場合',
-      what_if_2_content: '1. IP アドレスが 169.254 で始まる場合は、 DHCP 設定の問題であるはずです。詳細については、ISP（インターネットサービスプロバイダー）にお問い合わせください。\n2. コンピューターが PPPoE を使用して直接インターネットに接続している場合は、ルーターを使用して PPPoE を使用して接続し、ルーターで DHCP 機能を有効にしてください。'
+      what_if_2_content: '1. IP アドレスが 169.254 で始まる場合は、 DHCP 設定の問題であるはずです。詳細については、ISP（インターネットサービスプロバイダー）にお問い合わせください。\n2. コンピューターが PPPoE を使用して直接インターネットに接続している場合は、ルーターを使用して PPPoE を使用して接続し、ルーターで DHCP 機能を有効にしてください。',
     },
     connect_ethernet: {
       title: '直接接続',
@@ -196,12 +196,12 @@ export default {
       great: 'Beam Studioへようこそ',
       setup_later: 'タイトルバ >「マシン」>「マシン設定」からいつでもマシンをセットアップできます。',
       back: '戻る',
-      ok: '作成を開始'
+      ok: '作成を開始',
     },
   },
   menu: {
     mm: 'mm',
-    inches: 'インチ'
+    inches: 'インチ',
   },
   settings: {
     on: 'オン',
@@ -211,7 +211,7 @@ export default {
     caption: '設定',
     tabs: {
       general: '一般',
-      device: 'マシン'
+      device: 'マシン',
     },
     ip: 'マシンIPアドレス',
     guess_poke: 'マシンIPを自動的に検索',
@@ -290,7 +290,7 @@ export default {
       g: 'グループ',
       use: 'Import Svg',
       image: '画像',
-      text: 'テキスト'
+      text: 'テキスト',
     },
     context_menu: {
       cut: '切り取り',
@@ -391,7 +391,7 @@ export default {
         preview: 'カメラプレビュー',
         trace: 'トレース画像',
         end_preview: 'プレビューを終了',
-        clear_preview: 'プレビューをクリア'
+        clear_preview: 'プレビューをクリア',
       },
     },
     right_panel: {
@@ -428,7 +428,7 @@ export default {
           merge_all: 'すべてをマージ',
           merge_selected: '選択したレイヤーをマージ',
           move_elems_to: '移動先レイヤ:',
-          move_selected: '選択対象を別のレイヤに移動'
+          move_selected: '選択対象を別のレイヤに移動',
         },
       },
       laser_panel: {
@@ -505,7 +505,7 @@ export default {
             glass_bw_engraving: 'ガラス - 彫刻',
             metal_bw_engraving: '金属 - 彫刻',
             stainless_steel_bw_engraving_diode: '金属 - 彫刻 (ダイオードレーザー)',
-          }
+          },
         },
         laser_speed: {
           text: 'レーザー速度',
@@ -514,7 +514,7 @@ export default {
           slow: '低速',
           min: 3,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: '出力',
@@ -522,11 +522,11 @@ export default {
           low: '低',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: 'このパラメーターは使用中です。',
         do_not_adjust_default_para: 'デフォルトのパラメーターは調整できません。',
-        existing_name: 'このパラメーター名は使用されています。'
+        existing_name: 'このパラメーター名は使用されています。',
       },
       object_panel: {
         zoom: 'ズーム',
@@ -576,7 +576,7 @@ export default {
           ungrouping: 'グループ解除中...',
         },
         path_edit_panel: {
-          node_type: 'ノードタイプ'
+          node_type: 'ノードタイプ',
         },
       },
     },
@@ -594,7 +594,7 @@ export default {
       contrast: 'コントラスト',
       threshold: 'しきい値',
       okay: 'OK',
-      tuning: 'パラメーター'
+      tuning: 'パラメーター',
     },
     photo_edit_panel: {
       apply: '適用する',
@@ -609,7 +609,7 @@ export default {
       processing: '処理中',
       invert: '色を反転',
       okay: 'OK',
-      phote_edit: '写真編集'
+      phote_edit: '写真編集',
     },
     document_panel: {
       document_settings: 'ドキュメント設定',
@@ -628,7 +628,7 @@ export default {
       enable: '有効',
       disable: '無効',
       cancel: 'キャンセル',
-      save: '保存する'
+      save: '保存する',
     },
     object_panels: {
       wait_for_parsing_font: 'フォントの解析中です… 少々お待ちください',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: 'テキストをパスに変換するときにエラーが発生しました：\n%s',
         use_current_font: '現在のフォントを使用',
       },
-      lock_desc: '幅と高さの比率を保持（SHIFT）'
+      lock_desc: '幅と高さの比率を保持（SHIFT）',
     },
     tool_panels: {
       cancel: 'キャンセル',
@@ -670,7 +670,7 @@ export default {
         spacing: '間隔',
         rotations: 'Possible Rotation',
         no_element: '整列できるオブジェクトがありません',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: 'ネットワーク試験',
@@ -714,7 +714,7 @@ export default {
       in_use: 'この色は使用中です。',
       no_input: '16進数の有効なカラーコードを入力してください。',
       sure_to_reset: 'カスタマイズされたパラメータはすべて失われます。本当にデフォルトにリセットしますか？',
-      sure_to_delete: 'この色の設定を削除してもよろしいですか？'
+      sure_to_delete: 'この色の設定を削除してもよろしいですか？',
     },
     svg_editor: {
       unnsupported_file_type: 'ファイルタイプは直接サポートされていません。ファイルをSVGまたはビットマップに変換してください',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 FLUXメンバーサービスへの接続に失敗しました。',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: 'デバイスを選択',
     auth_failure: '#811 認証失敗',
-    unable_to_connect: '#810 マシンとの安定した接続を構築できません'
+    unable_to_connect: '#810 マシンとの安定した接続を構築できません',
   },
   device: {
     pause: '一時停止',
@@ -796,7 +796,7 @@ export default {
     processing: '処理中',
     disconnectedError: {
       caption: 'マシンが切断されました',
-      message: '%sのネットワークアクセスが利用可能かどうか確認してください'
+      message: '%sのネットワークアクセスが利用可能かどうか確認してください',
     },
     unknown: '不明',
     pausedFromError: 'エラーにより一時停止しました',
@@ -858,7 +858,7 @@ export default {
       CUT: 'ビニール切断',
       VINYL: 'ビニール切断',
       BEAMBOX: 'レーザー彫刻',
-      'N/A': 'フリーモード'
+      'N/A': 'フリーモード',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: 'いいえ',
     stop: '停止',
     save: '保存する',
-    dont_save: '保存しない'
+    dont_save: '保存しない',
   },
   caption: {
-    connectionTimeout: '接続タイムアウト'
+    connectionTimeout: '接続タイムアウト',
   },
   message: {
     connecting: '接続中…',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 デバイス接続タイムアウト，ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
     device_not_found: {
       caption: '出るフォトのマシンが見つかりません',
-      message: '#812 マシンのWi-Fiインジケーターを確認してください'
+      message: '#812 マシンのWi-Fiインジケーターを確認してください',
     },
     device_busy: {
       caption: 'マシンビジー状態',
-      message: 'マシンは別のタスクを実行しています。後で再試行してください。動作しなくなった場合は、マシンを再起動してください。'
+      message: 'マシンは別のタスクを実行しています。後で再試行してください。動作しなくなった場合は、マシンを再起動してください。',
     },
     device_is_used: 'マシンは使用中です。現在のタスクをアボートしますか？',
     monitor_too_old: {
       caption: '古いファームウェア',
-      content: '#814 <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">このガイド</a>を使って、最新のファームウェアをインストールしてください。'
+      content: '#814 <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">このガイド</a>を使って、最新のファームウェアをインストールしてください。',
     },
     unknown_error: '#821 アプリケーションで不明なエラーが発生しました。[ヘルプ]>[メニュー]>[バグレポート]を使用してください。',
     unknown_device: '#826 マシンに接続できません。USBがマシンに接続されていることを確認してください',
@@ -958,7 +958,7 @@ export default {
     66: '完了処理中',
     68: '準備中',
     128: 'アボートしました',
-    UNKNOWN: '不明'
+    UNKNOWN: '不明',
   },
   camera_calibration: {
     update_firmware_msg1: 'ファームウェアはこの機能をサポートしていません。ファームウェアを v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: '較正画像の描画中…',
     calibrate_done: '較正が完了しました。正確に焦点を合わせると、カメラの精度が向上します。',
     hint_red_square: '赤い枠の外側をカットした枠に合わせてください。',
-    hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
+    hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します',
   },
   diode_calibration: {
     update_firmware_msg1: 'ファームウェアはこの機能をサポートしていません。ファームウェアを v',
@@ -1008,7 +1008,7 @@ export default {
     ask_for_readjust: '彫刻ステップをスキップして写真を撮り、キャリブレーションを行いますか？',
     please_do_camera_calibration_and_focus: {
       beambox: 'ハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nプラットフォームを焦点に合わせてください（折り返されたアクリルの高さ）',
-      beamo: 'ハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nレーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ）'
+      beamo: 'ハイブリッドレーザーモジュールを校正する場合、カメラが必要です。\nレーザーヘッドを調整して、彫刻オブジェクトに焦点を合わせます（折り返されたアクリルの高さ）',
     },
     please_place_paper: 'ワークエリアの左上隅にA4またはレターサイズの白い用紙を置いてください',
     dx: 'X',
@@ -1017,12 +1017,12 @@ export default {
     taking_picture: '写真撮影中…',
     calibrate_done: '較正が完了しました。ハイブリッドレーザーオフセットを保存しました。',
     hint_red_square: '赤い枠の外側をカットした枠に合わせてください。',
-    hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します'
+    hint_adjust_parameters: 'これらのパラメーターを使用して、赤い正方形を調整します',
   },
   input_machine_password: {
     require_password: '「%s」にはパスワードが必要です。',
     connect: '接続する',
-    password: 'パスワード'
+    password: 'パスワード',
   },
   tutorial: {
     skip: 'スキップ',

@@ -6,12 +6,12 @@ export default {
     choose_folder: '选择档案夹',
   },
   buttons: {
-    next: '下一步'
+    next: '下一步',
   },
   topbar: {
     untitled: '无标题',
     titles: {
-      settings: '偏好设定'
+      settings: '偏好设定',
     },
     export: 'GO',
     preview: '相机预览',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: '知道了',
     },
     hint: {
-      polygon: '按下 + / - 键以增加 / 减少边数。'
+      polygon: '按下 + / - 键以增加 / 减少边数。',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] 机器发生状态冲突，请再试一次',
     SUBSYSTEM_ERROR: '[SE] 固件执行雕刻程序错误，请尝试重新启动机器',
     UNKNOWN_COMMAND: '[UC] 请更新机器固件',
-    RESOURCE_BUSY: '[RB] 请重新启动 Delta, 或再试一次'
+    RESOURCE_BUSY: '[RB] 请重新启动 Delta, 或再试一次',
   },
   device_selection: {
     no_beambox: '#801 我们在网路上找不到您的机器，\n请参考<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001683556">此指南</a>排除连线问题！',
@@ -71,7 +71,7 @@ export default {
       confirm: '上传',
       upload_file: '固件上传',
       update_success: '固件更新上传成功',
-      update_fail: '#822 更新失败'
+      update_fail: '#822 更新失败',
     },
     software: {
       checking: '检查更新中',
@@ -96,7 +96,7 @@ export default {
     download: '在线更新',
     cannot_reach_internet: '#823 服务器无法连接<br/>请确认网络连接',
     install: '下载',
-    upload: '上传'
+    upload: '上传',
   },
   topmenu: {
     version: '版本',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Beam Studio 场景',
       fcode_files: 'FLUX Code',
       clear_recent: '清除历史纪录',
-      path_not_exit: '此路径似乎已不存在于电脑中，请确认是否有更改档案位置。'
+      path_not_exit: '此路径似乎已不存在于电脑中，请确认是否有更改档案位置。',
     },
     device: {
       download_log_canceled: '取消日志下载',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'USB 清单',
       },
-      network_test: '网路检测'
+      network_test: '网路检测',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: '机器显示的有线网路 IP 是空的',
       what_if_1_content: '1. 确认您的乙太网路线是否有着实插上。 \n2. 如果面板上没有出现有线网路硬体位置，请联系客服。',
       what_if_2: '机器显示的 IP 开头为 169',
-      what_if_2_content: '1. IP 地址为 169.254 开头通常为 DHCP 设定问题，需要联系网路服务提供商或是网路设定者来协助。 \n2. 如果工作环境的网路是由电脑直接 PPPoE 连网，请改由路由器直接 PPPoE 联网，并在路由器中开启DHCP 功能。'
+      what_if_2_content: '1. IP 地址为 169.254 开头通常为 DHCP 设定问题，需要联系网路服务提供商或是网路设定者来协助。 \n2. 如果工作环境的网路是由电脑直接 PPPoE 连网，请改由路由器直接 PPPoE 联网，并在路由器中开启DHCP 功能。',
     },
     connect_ethernet: {
       title: '网路线直连',
@@ -188,7 +188,7 @@ export default {
       check_firmware: '确认韧体版本',
       check_camera: '确认相机',
       retry: '重试',
-      finish_setting: '结束设定'
+      finish_setting: '结束设定',
     },
     connecting: '连接中',
     setting_completed: {
@@ -196,12 +196,12 @@ export default {
       great: '欢迎使用 Beam Studio',
       setup_later: '您可以随时从选单 >「机器」>「新增或设定机器」来设定连线。',
       back: '回到 Wi-Fi 设置',
-      ok: '开始使用'
+      ok: '开始使用',
     },
   },
   menu: {
     mm: '毫米',
-    inches: '英吋'
+    inches: '英吋',
   },
   settings: {
     on: '开',
@@ -211,7 +211,7 @@ export default {
     caption: '设置',
     tabs: {
       general: '一般',
-      device: '机器'
+      device: '机器',
     },
     ip: '机器 IP 位址',
     guess_poke: '自动搜寻机器 IP',
@@ -290,7 +290,7 @@ export default {
       g: '群组',
       use: '汇入图档',
       image: '图片',
-      text: '文字'
+      text: '文字',
     },
     context_menu: {
       cut: '剪切',
@@ -361,7 +361,7 @@ export default {
       },
     },
     zoom_block: {
-      fit_to_window: '配合视窗尺寸'
+      fit_to_window: '配合视窗尺寸',
     },
     time_est_button: {
       calculate: '预估时间',
@@ -391,7 +391,7 @@ export default {
         preview: '相机预览',
         trace: '影像描图',
         end_preview: '结束预览',
-        clear_preview: '清除预览'
+        clear_preview: '清除预览',
       },
     },
     right_panel: {
@@ -428,7 +428,7 @@ export default {
           merge_all: '全部合并',
           merge_selected: '合并选取图层',
           move_elems_to: '移动元素至:',
-          move_selected: '移动元素至另一个图层'
+          move_selected: '移动元素至另一个图层',
         },
       },
       laser_panel: {
@@ -514,7 +514,7 @@ export default {
           slow: '慢',
           min: 1,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: '激光強度',
@@ -522,11 +522,11 @@ export default {
           low: '弱',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: '此参数已在使用中。',
         do_not_adjust_default_para: '无法调整预设参数。',
-        existing_name: '已存在此名称的自订参数。'
+        existing_name: '已存在此名称的自订参数。',
       },
       object_panel: {
         zoom: '缩放',
@@ -594,7 +594,7 @@ export default {
       contrast: '对比',
       threshold: '临界值',
       okay: '完成',
-      tuning: '描图参数'
+      tuning: '描图参数',
     },
     photo_edit_panel: {
       apply: '套用',
@@ -609,7 +609,7 @@ export default {
       processing: '处理中',
       invert: '色彩反转',
       okay: '完成',
-      phote_edit: '影像编辑'
+      phote_edit: '影像编辑',
     },
     document_panel: {
       document_settings: '文件设定',
@@ -628,7 +628,7 @@ export default {
       enable: '啟用',
       disable: '关闭',
       cancel: '取消',
-      save: '储存'
+      save: '储存',
     },
     object_panels: {
       wait_for_parsing_font: '解析字体中...',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: '将文本转换为路径时出错：\n%s',
         use_current_font: '使用当前字体',
       },
-      lock_desc: '缩放时固定比例 (SHIFT)'
+      lock_desc: '缩放时固定比例 (SHIFT)',
     },
     tool_panels: {
       cancel: '取消',
@@ -670,7 +670,7 @@ export default {
         spacing: '间距',
         rotations: '旋转方向数距',
         no_element: '没有物件可以进行排列。',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: '网路检测',
@@ -714,7 +714,7 @@ export default {
       in_use: '此颜色已在使用中。',
       no_input: '请输入颜色色码。',
       sure_to_reset: '您将会失去所有自订颜色参数，确定要回复到预设值？',
-      sure_to_delete: '确定要删除这项颜色参数。'
+      sure_to_delete: '确定要删除这项颜色参数。',
     },
     svg_editor: {
       unnsupported_file_type: 'Beam Studio 不直接支持此文件格式。请先输出成图片档或 SVG 格式',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 无法连接至 FLUX 会员中心。',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: '选择机器',
     auth_failure: '#811 认证失败',
-    unable_to_connect: '#810 无法与机器创建稳定连接'
+    unable_to_connect: '#810 无法与机器创建稳定连接',
   },
   device: {
     pause: '暂停',
@@ -796,7 +796,7 @@ export default {
     processing: '处理中',
     disconnectedError: {
       caption: '机器连接中断',
-      message: '请确认 %s 的网络连接是否正常'
+      message: '请确认 %s 的网络连接是否正常',
     },
     unknown: '未知状态',
     pausedFromError: '发生错误暂停',
@@ -858,7 +858,7 @@ export default {
       CUT: '贴纸切割',
       VINYL: '贴纸切割',
       BEAMBOX: '激光雕刻',
-      'N/A': '自由模式'
+      'N/A': '自由模式',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: '否',
     stop: '停止',
     save: '储存',
-    dont_save: '不要储存'
+    dont_save: '不要储存',
   },
   caption: {
-    connectionTimeout: '连接逾时'
+    connectionTimeout: '连接逾时',
   },
   message: {
     connecting: '连接中...',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 连接机器逾时，请确认你的网路状态和机器的 Wi-Fi 讯号符号。',
     device_not_found: {
       caption: '找不到默认机器',
-      message: '#812 请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器'
+      message: '#812 请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器',
     },
     device_busy: {
       caption: '机器忙碌中',
-      message: '机器正在进行另外一项工作，请稍候再试。如果机器持续没有回应，请将机器重新启动。'
+      message: '机器正在进行另外一项工作，请稍候再试。如果机器持续没有回应，请将机器重新启动。',
     },
     device_is_used: '机器正被使用中，是否要终止现在任务？',
     monitor_too_old: {
       caption: '固件需要更新',
-      content: '#814 请按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此说明</a>安装最新固件版本'
+      content: '#814 请按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此说明</a>安装最新固件版本',
     },
     unknown_error: '#821 无法与机器创建连接，请使用“功能表 > 说明 > 错误回报”',
     unknown_device: '#826 无法与机器创建连接，请确认 USB 有连接于机器',
@@ -958,7 +958,7 @@ export default {
     66: '完成中',
     68: '准备中',
     128: '已中断',
-    UNKNOWN: '-'
+    UNKNOWN: '-',
   },
   camera_calibration: {
     update_firmware_msg1: '您的固件版本不支援此功能。请先更新 Beambox 的固件至 v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: '绘制校正图片中...',
     calibrate_done: '校正相机完成<br/>使用时请正确对焦以取得良好的预览效果。',
     hint_red_square: '请将红框对齐切割出来的方块',
-    hint_adjust_parameters: '由这些参数来调整红框的位置，旋转与大小'
+    hint_adjust_parameters: '由这些参数来调整红框的位置，旋转与大小',
   },
   diode_calibration: {
     update_firmware_msg1: '您的固件版本不支援此功能。请先更新 Beambox 的固件至 v',
@@ -1022,7 +1022,7 @@ export default {
   input_machine_password: {
     require_password: '"%s" 需要密码',
     connect: '连接',
-    password: '密码'
+    password: '密码',
   },
   tutorial: {
     skip: '跳过教学',

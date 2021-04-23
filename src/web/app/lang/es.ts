@@ -6,12 +6,12 @@ export default {
     choose_folder: 'Elegir Carpeta',
   },
   buttons: {
-    next: 'SIGUIENTE'
+    next: 'SIGUIENTE',
   },
   topbar: {
     untitled: 'Sin título',
     titles: {
-      settings: 'Preferencias'
+      settings: 'Preferencias',
     },
     export: 'GO',
     preview: 'VISIÓN PREVIO',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: 'ANOTADO',
     },
     hint: {
-      polygon: 'Presiona la tecla + / - para aumentar / disminuir los lados.'
+      polygon: 'Presiona la tecla + / - para aumentar / disminuir los lados.',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] Ocurrió un conflicto de estatus, por favor, reintenta la acción.',
     SUBSYSTEM_ERROR: '[SE]  Error cuando el firmware de la máquina ejecuta la tarea. Por favor, reinicia la máquina',
     UNKNOWN_COMMAND: '[UC] Por favor, actualiza el firmware del dispositivo',
-    RESOURCE_BUSY: '[RB] Por favor, reinicia la máquina o inténtalo de nuevo.'
+    RESOURCE_BUSY: '[RB] Por favor, reinicia la máquina o inténtalo de nuevo.',
   },
   device_selection: {
     no_beambox: '#801 No podemos encontrar tu máquina en la red.\nPor favor, sigue el <a target="_blank" href="https://tupport.flux3dp.com/hc/en-us/articles/360001683556">guide</a> para solucionar el problema de conexión.',
@@ -71,7 +71,7 @@ export default {
       confirm: 'CARGA',
       upload_file: 'subir el firmware (*.bin / *.fxfw)',
       update_success: 'La actualización del firmware se ha cargado con éxito',
-      update_fail: '#822 Fallo de actualización'
+      update_fail: '#822 Fallo de actualización',
     },
     software: {
       checking: 'Comprobando la actualización',
@@ -96,7 +96,7 @@ export default {
     download: 'ACTUALIZACIÓN EN LÍNEA',
     cannot_reach_internet: '#823 El servidor es inalcanzable <br/>Por favor, comprueba la conexión a Internet',
     install: 'INSTALAR',
-    upload: 'CARGA'
+    upload: 'CARGA',
   },
   topmenu: {
     version: 'Versión',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Escena de Beam Studio',
       fcode_files: 'Código FLUX',
       clear_recent: 'Eliminado Recientemente Abierto',
-      path_not_exit: 'Esta trayectoria parece no existir en el disco.'
+      path_not_exit: 'Esta trayectoria parece no existir en el disco.',
     },
     device: {
       download_log_canceled: 'Descarga del registro cancelada',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'Lista USB',
       },
-      network_test: 'Probar red'
+      network_test: 'Probar red',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: '¿Qué pasa si la IP está vacía?',
       what_if_1_content: '1. Asegúrate de que el cable Ethernet esté completamente enchufado.\n2. Si no hay una dirección MAC de la red alámbrica en la pantalla táctil, por favor contacta con el soporte de FLUX.',
       what_if_2: '¿Qué pasa si la IP comienza con 169?',
-      what_if_2_content: '1. Si la dirección IP comienza con 169.254, debería ser un problema de configuración de DHCP, por favor contacta a tu ISP (proveedor de servicios de Internet) para mejor asistencia.'
+      what_if_2_content: '1. Si la dirección IP comienza con 169.254, debería ser un problema de configuración de DHCP, por favor contacta a tu ISP (proveedor de servicios de Internet) para mejor asistencia.',
     },
     connect_ethernet: {
       title: 'Conexión directa',
@@ -196,12 +196,12 @@ export default {
       great: 'Bienvenido a Beam Studio',
       setup_later: 'Siempre puedes configurar tu máquina desde la barra de título > "Máquinas" > "Configuración de la máquina"',
       back: 'Volver',
-      ok: 'COMIENZA A CREAR'
+      ok: 'COMIENZA A CREAR',
     },
   },
   menu: {
     mm: 'mm',
-    inches: 'Pulgadas'
+    inches: 'Pulgadas',
   },
   settings: {
     on: 'Encendido',
@@ -211,7 +211,7 @@ export default {
     caption: 'Ajustes',
     tabs: {
       general: 'General',
-      device: 'Máquina'
+      device: 'Máquina',
     },
     ip: 'Dirección IP de la máquina',
     guess_poke: 'Buscar la IP de la máquina',
@@ -290,7 +290,7 @@ export default {
       g: 'Grupo',
       use: 'Importación SVG',
       image: 'Imagen',
-      text: 'Texto'
+      text: 'Texto',
     },
     context_menu: {
       cut: 'Cortar',
@@ -391,7 +391,7 @@ export default {
         preview: 'Vista previa de la cámara',
         trace: 'Imagen de rastro',
         end_preview: 'Finalizar vista previa',
-        clear_preview: 'Vista previa clara'
+        clear_preview: 'Vista previa clara',
       },
     },
     right_panel: {
@@ -428,7 +428,7 @@ export default {
           merge_all: 'Fusionar todo',
           merge_selected: 'Fusionar capas seleccionadas',
           move_elems_to: 'Mover los elementos a:',
-          move_selected: 'Mover los elementos seleccionados a una capa diferente'
+          move_selected: 'Mover los elementos seleccionados a una capa diferente',
         },
       },
       laser_panel: {
@@ -514,7 +514,7 @@ export default {
           slow: 'Lento',
           min: 3,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: 'Power',
@@ -522,11 +522,11 @@ export default {
           low: 'Bajo',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: 'Este parámetro está siendo utilizado.',
         do_not_adjust_default_para: 'Los preajustes no pueden ser ajustados.',
-        existing_name: 'Se ha utilizado este nombre.'
+        existing_name: 'Se ha utilizado este nombre.',
       },
       object_panel: {
         zoom: 'Zoom',
@@ -594,7 +594,7 @@ export default {
       contrast: 'Contraste',
       threshold: 'Umbral',
       okay: 'Bien',
-      tuning: 'Parámetros'
+      tuning: 'Parámetros',
     },
     photo_edit_panel: {
       apply: 'Aplicar',
@@ -609,7 +609,7 @@ export default {
       processing: 'Procesando',
       invert: 'Invertir el color',
       okay: 'Bien',
-      phote_edit: 'Edición de fotos'
+      phote_edit: 'Edición de fotos',
     },
     document_panel: {
       document_settings: 'Configuración del documento',
@@ -628,7 +628,7 @@ export default {
       enable: 'Habilitar',
       disable: 'Deshabilitar',
       cancel: 'Cancelar',
-      save: 'Guardar'
+      save: 'Guardar',
     },
     object_panels: {
       wait_for_parsing_font: 'Fuente de análisis... Por favor, espera un segundo.',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: 'Error al convertir texto a ruta:\n%s',
         use_current_font: 'Usar fuente actual',
       },
-      lock_desc: 'Preservar la relación entre anchura y altura (SHIFT)'
+      lock_desc: 'Preservar la relación entre anchura y altura (SHIFT)',
     },
     tool_panels: {
       cancel: 'Cancelar',
@@ -670,7 +670,7 @@ export default {
         spacing: 'Espaciamiento',
         rotations: 'Posible rotación',
         no_element: 'No hay ningún elemento que arreglar.',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: 'Prueba de la red',
@@ -714,7 +714,7 @@ export default {
       in_use: 'Este color está en uso.',
       no_input: 'Por favor, introduce un código de color hexadecimal válido.',
       sure_to_reset: 'Perderás todos los parámetros personalizados, ¿estás seguro de volver a los valores por defecto?',
-      sure_to_delete: '¿Está seguro de eliminar este ajuste de color?Are you sure to delete this color setting ?'
+      sure_to_delete: '¿Está seguro de eliminar este ajuste de color?Are you sure to delete this color setting ?',
     },
     svg_editor: {
       unnsupported_file_type: 'El tipo de archivo no está soportado directamente. Por favor, convierte el archivo en SVG o mapa de bits',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 La conexión con el servicio al cliente de Flux ha fallado.',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: 'Seleccionar Dispositivo',
     auth_failure: '#811 Fallo de autenticación',
-    unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina'
+    unable_to_connect: '#810 Incapaz de construir una conexión estable con la máquina',
   },
   device: {
     pause: 'Pausa',
@@ -796,7 +796,7 @@ export default {
     processing: 'Procesamiento',
     disconnectedError: {
       caption: 'Máquina desconectada',
-      message: 'Por favor, confirma si el acceso a la red de %s está disponible'
+      message: 'Por favor, confirma si el acceso a la red de %s está disponible',
     },
     unknown: 'Desconocido',
     pausedFromError: 'Pausado por error',
@@ -858,7 +858,7 @@ export default {
       CUT: 'Corte de vinilo',
       VINYL: 'Corte de vinilo',
       BEAMBOX: 'Grabado Láser',
-      'N/A': 'Modo libre'
+      'N/A': 'Modo libre',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: 'No',
     stop: 'Parar',
     save: 'Guardar',
-    dont_save: 'No guardar...'
+    dont_save: 'No guardar...',
   },
   caption: {
-    connectionTimeout: 'Tiempo de espera de la conexión'
+    connectionTimeout: 'Tiempo de espera de la conexión',
   },
   message: {
     connecting: 'Conectando...',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 Por favor, comprueba el estado de tu red y el indicador de Wi-Fi de tu máquina.',
     device_not_found: {
       caption: 'Máquina por defecto no encontrada',
-      message: '#812 Por favor, comprueba el indicador de Wi-Fi de tu máquina'
+      message: '#812 Por favor, comprueba el indicador de Wi-Fi de tu máquina',
     },
     device_busy: {
       caption: 'Máquina ocupada',
-      message: 'La máquina está ejecutando otra tarea, inténtalo de nuevo más tarde. Si deja de funcionar, por favor reinicia la máquina.'
+      message: 'La máquina está ejecutando otra tarea, inténtalo de nuevo más tarde. Si deja de funcionar, por favor reinicia la máquina.',
     },
     device_is_used: 'La máquina está siendo usada, ¿quieres abortar la tarea actual?',
     monitor_too_old: {
       caption: 'El firmware está desactualizado',
-      content: '#814 Por favor, instala el último firmware con <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">esta guía</a>.'
+      content: '#814 Por favor, instala el último firmware con <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">esta guía</a>.',
     },
     unknown_error: '#821 La aplicación ha encontrado un error desconocido, por favor usa Ayuda > Menú > Informe de errores.',
     unknown_device: '#826 No se puede conectar a la máquina, por favor asegúrate de que el USB está conectado a la máquina',
@@ -958,7 +958,7 @@ export default {
     66: 'Completando',
     68: 'Preparando',
     128: 'Abortado',
-    UNKNOWN: 'Desconocido'
+    UNKNOWN: 'Desconocido',
   },
   camera_calibration: {
     update_firmware_msg1: 'tu firmware no es compatible con esta función. Por favor, actualiza el firmware a v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: 'Dibujando la imagen de calibración...',
     calibrate_done: 'Calibración realizada. La precisión de la cámara es mejor cuando se enfoca con precisión.',
     hint_red_square: 'Favor de alinear el contorno del cuadro rojo con el cuadro punteado.',
-    hint_adjust_parameters: 'Usa estos parámetros para ajustar el cuadro rojo'
+    hint_adjust_parameters: 'Usa estos parámetros para ajustar el cuadro rojo',
   },
   diode_calibration: {
     update_firmware_msg1: 'tu firmware no es compatible con esta función. Por favor, actualiza el firmware a v',
@@ -1008,7 +1008,7 @@ export default {
     ask_for_readjust: '¿Quiere omitir el paso de grabado y luego tomar una foto y calibrar directamente?',
     please_do_camera_calibration_and_focus: {
       beambox: 'Al calibrar el módulo láser híbrido, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la plataforma al punto focal (la altura del acrílico rechazado)',
-      beamo: 'Al calibrar el módulo láser híbrido, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la cabeza del láser para enfocar el objeto grabado (la altura del acrílico rechazado)'
+      beamo: 'Al calibrar el módulo láser híbrido, se necesita una cámara.\nPor favor, asegúrate de que la cámara de esta máquina ha sido calibrada.\nAjusta la cabeza del láser para enfocar el objeto grabado (la altura del acrílico rechazado)',
     },
     please_place_paper: 'Por favor, coloca un papel blanco tamaño A4 o Carta en la esquina tuperior izquierda del área de trabajo',
     dx: 'X',
@@ -1017,12 +1017,12 @@ export default {
     taking_picture: 'Tomando la imagen...',
     calibrate_done: 'Calibración realizada. Se ha guardado el desplazamiento del módulo de diodos.',
     hint_red_square: 'Por favor, alinea el cuadrado rojo con el cuadrado cortado',
-    hint_adjust_parameters: 'Usa estos parámetros para ajustar el cuadro rojo'
+    hint_adjust_parameters: 'Usa estos parámetros para ajustar el cuadro rojo',
   },
   input_machine_password: {
     require_password: '"%s" requiere una contraseña',
     connect: 'CONECTAR',
-    password: 'Contraseña'
+    password: 'Contraseña',
   },
   tutorial: {
     skip: 'Saltar',

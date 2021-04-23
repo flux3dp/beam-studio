@@ -6,12 +6,12 @@ export default {
     choose_folder: '選擇檔案夾',
   },
   buttons: {
-    next: '下一步'
+    next: '下一步',
   },
   topbar: {
     untitled: '無標題',
     titles: {
-      settings: '偏好設定'
+      settings: '偏好設定',
     },
     export: 'GO',
     preview: '相機預覽',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: '知道了',
     },
     hint: {
-      polygon: '按下 + / - 鍵以增加 / 減少邊數。'
+      polygon: '按下 + / - 鍵以增加 / 減少邊數。',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] 機器發生狀態衝突，請再試一次',
     SUBSYSTEM_ERROR: '[SE] 韌體執行雕刻程序錯誤，請嘗試重新啟動機器',
     UNKNOWN_COMMAND: '[UC] 請更新機器韌體',
-    RESOURCE_BUSY: '[RB] 請重新啟動 Delta, 或再試一次'
+    RESOURCE_BUSY: '[RB] 請重新啟動 Delta, 或再試一次',
   },
   device_selection: {
     no_beambox: '#801 我們在網路上找不到您的機器，\n請參考<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001683556">此指南</a>排除連線問題！',
@@ -71,7 +71,7 @@ export default {
       confirm: '上傳',
       upload_file: '韌體上傳',
       update_success: '韌體更新上傳成功',
-      update_fail: '#822 更新失敗'
+      update_fail: '#822 更新失敗',
     },
     software: {
       checking: '檢查更新中',
@@ -96,7 +96,7 @@ export default {
     download: '線上更新',
     cannot_reach_internet: '#823 伺服器無法連接<br/>請確認網路連線',
     install: '下載',
-    upload: '上傳'
+    upload: '上傳',
   },
   topmenu: {
     version: '版本',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Beam Studio 場景',
       fcode_files: 'FLUX Code',
       clear_recent: '清除歷史紀錄',
-      path_not_exit: '此路徑似乎已不存在於電腦中，請確認是否有更改檔案位置。'
+      path_not_exit: '此路徑似乎已不存在於電腦中，請確認是否有更改檔案位置。',
     },
     device: {
       download_log_canceled: '取消日誌下載',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'USB 清單',
       },
-      network_test: '網路檢測'
+      network_test: '網路檢測',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: '機器顯示的有線網路 IP 是空的',
       what_if_1_content: '1. 確認您的乙太網路線是否有著實插上。\n2. 如果面板上沒有出現有線網路硬體位置，請聯繫客服。',
       what_if_2: '機器顯示的 IP 開頭為 169',
-      what_if_2_content: '1. IP 地址為 169.254 開頭通常為 DHCP 設定問題，需要聯繫網路服務提供商或是網路設定者來協助。\n2. 如果工作環境的網路是由電腦直接 PPPoE 連網，請改由路由器直接 PPPoE 聯網，並在路由器中開啟DHCP 功能。'
+      what_if_2_content: '1. IP 地址為 169.254 開頭通常為 DHCP 設定問題，需要聯繫網路服務提供商或是網路設定者來協助。\n2. 如果工作環境的網路是由電腦直接 PPPoE 連網，請改由路由器直接 PPPoE 聯網，並在路由器中開啟DHCP 功能。',
     },
     connect_ethernet: {
       title: '網路線直連',
@@ -196,12 +196,12 @@ export default {
       great: '歡迎使用 Beam Studio',
       setup_later: '您可以隨時從選單 >「機器」>「新增或設定機器」來設定連線。',
       back: '回到 Wi-Fi 設定',
-      ok: '開始使用'
+      ok: '開始使用',
     },
   },
   menu: {
     mm: '毫米',
-    inches: '英吋'
+    inches: '英吋',
   },
   settings: {
     on: '開',
@@ -211,7 +211,7 @@ export default {
     caption: '設定',
     tabs: {
       general: '一般',
-      device: '機器'
+      device: '機器',
     },
     ip: '機器 IP 位址',
     guess_poke: '自動搜尋機器 IP',
@@ -290,7 +290,7 @@ export default {
       g: '群組',
       use: '匯入圖檔',
       image: '圖片',
-      text: '文字'
+      text: '文字',
     },
     context_menu: {
       cut: '剪下',
@@ -391,7 +391,7 @@ export default {
         preview: '相機預覽',
         trace: '影像描圖',
         end_preview: '結束預覽',
-        clear_preview: '清除預覽'
+        clear_preview: '清除預覽',
       },
     },
     right_panel: {
@@ -428,7 +428,7 @@ export default {
           merge_all: '合併全部圖層',
           merge_selected: '合併選取圖層',
           move_elems_to: '移動物件',
-          move_selected: '移動被點選的物件其他圖層'
+          move_selected: '移動被點選的物件其他圖層',
         },
       },
       laser_panel: {
@@ -514,7 +514,7 @@ export default {
           slow: '慢',
           min: 1,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: '雷射強度',
@@ -522,11 +522,11 @@ export default {
           low: '弱',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: '此參數已在使用中。',
         do_not_adjust_default_para: '無法調整預設參數。',
-        existing_name: '已存在此名稱的自訂參數。'
+        existing_name: '已存在此名稱的自訂參數。',
       },
       object_panel: {
         zoom: '縮放',
@@ -594,7 +594,7 @@ export default {
       contrast: '對比',
       threshold: '臨界值',
       okay: '完成',
-      tuning: '描圖參數'
+      tuning: '描圖參數',
     },
     photo_edit_panel: {
       apply: '套用',
@@ -609,7 +609,7 @@ export default {
       processing: '處理中',
       invert: '色彩反轉',
       okay: '完成',
-      phote_edit: '影像編輯'
+      phote_edit: '影像編輯',
     },
     document_panel: {
       document_settings: '文件設定',
@@ -628,7 +628,7 @@ export default {
       enable: '啟用',
       disable: '關閉',
       cancel: '取消',
-      save: '儲存'
+      save: '儲存',
     },
     object_panels: {
       wait_for_parsing_font: '解析字體中...',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: '文字轉換路徑時發生錯誤：\n%s',
         use_current_font: '使用當前字體',
       },
-      lock_desc: '縮放時固定比例 (SHIFT)'
+      lock_desc: '縮放時固定比例 (SHIFT)',
     },
     tool_panels: {
       cancel: '取消',
@@ -670,7 +670,7 @@ export default {
         spacing: '間距',
         rotations: '旋轉方向數',
         no_element: '沒有物件可以進行排列。',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: '網路檢測',
@@ -714,7 +714,7 @@ export default {
       in_use: '此顏色已在使用中。',
       no_input: '請輸入顏色色碼。',
       sure_to_reset: '您將會失去所有自訂顏色參數，確定要回復到預設值？',
-      sure_to_delete: '確定要刪除這項顏色參數。'
+      sure_to_delete: '確定要刪除這項顏色參數。',
     },
     svg_editor: {
       unnsupported_file_type: 'Beam Studio 不直接支援此檔案格式。請先輸出成圖片檔或 SVG 格式',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 無法連接至 FLUX 會員中心。',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: '選擇機器',
     auth_failure: '#811 認證失敗',
-    unable_to_connect: '#810 無法與機器建立穩定連線'
+    unable_to_connect: '#810 無法與機器建立穩定連線',
   },
   device: {
     pause: '暫停',
@@ -796,7 +796,7 @@ export default {
     processing: '處理中',
     disconnectedError: {
       caption: '機器連線中斷',
-      message: '請確認 %s 的網路連線是否正常'
+      message: '請確認 %s 的網路連線是否正常',
     },
     unknown: '未知狀態',
     pausedFromError: '發生錯誤暫停',
@@ -858,7 +858,7 @@ export default {
       CUT: '貼紙切割',
       VINYL: '貼紙切割',
       BEAMBOX: '雷射雕刻',
-      'N/A': '自由模式'
+      'N/A': '自由模式',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: '否',
     stop: '停止',
     save: '儲存',
-    dont_save: '不要儲存'
+    dont_save: '不要儲存',
   },
   caption: {
-    connectionTimeout: '連線逾時'
+    connectionTimeout: '連線逾時',
   },
   message: {
     connecting: '連線中...',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 連接機器逾時，請確認你的網路狀態和機器的 Wi-Fi 訊號符號。',
     device_not_found: {
       caption: '找不到預設機器',
-      message: '#812 請確認預設機器的 Wi-Fi 指示燈，或取消設定預設機器'
+      message: '#812 請確認預設機器的 Wi-Fi 指示燈，或取消設定預設機器',
     },
     device_busy: {
       caption: '機器忙碌中',
-      message: '機器正在進行另外一項工作，請稍候再試。如果機器持續沒有回應，請將機器重新啟動。'
+      message: '機器正在進行另外一項工作，請稍候再試。如果機器持續沒有回應，請將機器重新啟動。',
     },
     device_is_used: '機器正被使用中，是否要終止現在任務？',
     monitor_too_old: {
       caption: '韌體需要更新',
-      content: '#814 請按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此說明</a>安裝最新韌體版本'
+      content: '#814 請按照<a target="_blank" href="http://helpcenter.flux3dp.com/hc/zh-tw/articles/216251077">此說明</a>安裝最新韌體版本',
     },
     unknown_error: '#821 無法與機器建立連線，請使用「功能表 > 說明 > 錯誤回報」',
     unknown_device: '#826 無法與機器建立連線，請確認 USB 有連接於機器',
@@ -958,7 +958,7 @@ export default {
     66: '完成中',
     68: '準備中',
     128: '已中斷',
-    UNKNOWN: '-'
+    UNKNOWN: '-',
   },
   camera_calibration: {
     update_firmware_msg1: '您的韌體版本不支援此功能。請先更新 Beambox 的韌體至 v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: '繪製校正圖片中...',
     calibrate_done: '校正相機完成<br/>使用時請正確對焦以取得良好的預覽效果。',
     hint_red_square: '請將紅框外側對齊切割出來的方塊',
-    hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小'
+    hint_adjust_parameters: '由這些參數來調整紅框的位置，旋轉與大小',
   },
   diode_calibration: {
     update_firmware_msg1: '您的韌體版本不支援此功能。請先更新 Beambox 的韌體至 v',
@@ -1022,7 +1022,7 @@ export default {
   input_machine_password: {
     require_password: '"%s" 需要密碼',
     connect: '連接',
-    password: '密碼'
+    password: '密碼',
   },
   tutorial: {
     skip: '跳過教學',

@@ -6,12 +6,12 @@ export default {
     choose_folder: 'Ordner Auswählen',
   },
   buttons: {
-    next: 'NÄCHSTER'
+    next: 'NÄCHSTER',
   },
   topbar: {
     untitled: 'Ohne Titel',
     titles: {
-      settings: 'Einstellungen'
+      settings: 'Einstellungen',
     },
     export: 'GEHEN',
     preview: 'VORSCHAU',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: 'OK',
     },
     hint: {
-      polygon: 'Press + / - key to increse / decrease sides.'
+      polygon: 'Press + / - key to increse / decrease sides.',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] Ein Statuskonflikt ist aufgetreten. Bitte wiederholen Sie die Aktion.',
     SUBSYSTEM_ERROR: '[SE] Fehler beim Ausführen der Aufgabe durch die Maschinenfirmware. Bitte starte die Maschine neu.',
     UNKNOWN_COMMAND: '[UC] Bitte aktualisieren Sie die Geräte-Firmware',
-    RESOURCE_BUSY: '[RB] Bitte starte die Maschine neu oder versuchen Sie es erneut'
+    RESOURCE_BUSY: '[RB] Bitte starte die Maschine neu oder versuchen Sie es erneut',
   },
   device_selection: {
     no_beambox: '#801 Wir können Ihren Computer nicht im Netzwerk finden.\nBefolgen Sie bitte <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">die Anleitung</a>, um das Verbindungsproblem zu beheben.',
@@ -71,7 +71,7 @@ export default {
       confirm: 'HOCHLADEN',
       upload_file: 'Firmware-Upload (* .bin / * .fxfw)',
       update_success: 'Firmware-Update erfolgreich hochgeladen',
-      update_fail: '#822 Update fehlgeschlagen'
+      update_fail: '#822 Update fehlgeschlagen',
     },
     software: {
       checking: 'Suche nach Updates',
@@ -96,7 +96,7 @@ export default {
     download: 'ONLINE-UPDATE',
     cannot_reach_internet: '#823 Server ist nicht erreichbar <br/> Bitte überprüfe die Internetverbindung',
     install: 'INSTALLIEREN',
-    upload: 'HOCHLADEN'
+    upload: 'HOCHLADEN',
   },
   topmenu: {
     version: 'Ausführung',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Beam-Studio-Datei',
       fcode_files: 'FLUX-Code',
       clear_recent: 'Vor kurzem geöffnet löschen',
-      path_not_exit: 'Dieser Pfad scheint auf dem Schreibtisch nicht mehr zu existieren.'
+      path_not_exit: 'Dieser Pfad scheint auf dem Schreibtisch nicht mehr zu existieren.',
     },
     device: {
       download_log_canceled: 'Protokoll-Download abgebrochen',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'USB-Liste',
       },
-      network_test: 'Netzwerk testen'
+      network_test: 'Netzwerk testen',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: 'Was ist, wenn die IP leer ist?',
       what_if_1_content: '1. Stellen Sie sicher, dass das Ethernet-Kabel vollständig eingesteckt ist.\n2. Wenn auf dem Touchscreen keine MAC-Adresse des kabelgebundenen Netzwerks vorhanden ist, wenden Sie sich an den FLUX-Support.',
       what_if_2: 'Was ist, wenn die IP mit 169 beginnt??',
-      what_if_2_content: '1. Wenn die IP-Adresse mit 169.254 beginnt, sollte es sich um ein Problem mit der DHCP-Einstellung handeln. Wenden Sie sich an Ihren ISP (Internetdienstanbieter), um weitere Unterstützung zu erhalten.\n2. Wenn Ihr Computer über PPPoE eine direkte Verbindung zum Internet herstellt, wechseln Sie zur Verwendung des Routers, um eine Verbindung über PPPoE herzustellen, und aktivieren Sie die DHCP-Funktion im Router.'
+      what_if_2_content: '1. Wenn die IP-Adresse mit 169.254 beginnt, sollte es sich um ein Problem mit der DHCP-Einstellung handeln. Wenden Sie sich an Ihren ISP (Internetdienstanbieter), um weitere Unterstützung zu erhalten.\n2. Wenn Ihr Computer über PPPoE eine direkte Verbindung zum Internet herstellt, wechseln Sie zur Verwendung des Routers, um eine Verbindung über PPPoE herzustellen, und aktivieren Sie die DHCP-Funktion im Router.',
     },
     connect_ethernet: {
       title: 'Direkte Verbindung',
@@ -196,12 +196,12 @@ export default {
       great: 'Willkommen bei Beam Studio',
       setup_later: 'Sie können Ihren Computer jederzeit über die Titelleiste> "Maschinen"> "Maschineneinrichtung" einrichten.',
       back: 'Zurück',
-      ok: 'STARTE EIN PROJEKT'
+      ok: 'STARTE EIN PROJEKT',
     },
   },
   menu: {
     mm: 'mm',
-    inches: 'Zoll'
+    inches: 'Zoll',
   },
   settings: {
     on: 'Auf',
@@ -211,7 +211,7 @@ export default {
     caption: 'die Einstellungen',
     tabs: {
       general: 'Allgemeines',
-      device: 'Maschine'
+      device: 'Maschine',
     },
     ip: 'IP-Adresse des Geräts',
     guess_poke: 'Suchen Sie nach der IP-Adresse des Geräts',
@@ -290,7 +290,7 @@ export default {
       g: 'Gruppe',
       use: 'SVG importieren',
       image: 'Bild',
-      text: 'Text'
+      text: 'Text',
     },
     context_menu: {
       cut: 'Ausschneiden',
@@ -391,7 +391,7 @@ export default {
         preview: 'Kameravorschau',
         trace: 'Bild verfolgen',
         end_preview: 'Vorschau beenden',
-        clear_preview: 'Vorschau löschen'
+        clear_preview: 'Vorschau löschen',
       },
     },
     right_panel: {
@@ -514,7 +514,7 @@ export default {
           slow: 'Langsam',
           min: 3,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: 'Leistung',
@@ -522,11 +522,11 @@ export default {
           low: 'Niedrig',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: 'Dieser Parameter wird verwendet.',
         do_not_adjust_default_para: 'Standardparameter kann nicht angepasst werden.',
-        existing_name: 'Dieser Parametername wurde verwendet.'
+        existing_name: 'Dieser Parametername wurde verwendet.',
       },
       object_panel: {
         zoom: 'Zoomen',
@@ -594,7 +594,7 @@ export default {
       contrast: 'Kontrast',
       threshold: 'Schwellenwert',
       okay: 'okay',
-      tuning: 'Parameter'
+      tuning: 'Parameter',
     },
     photo_edit_panel: {
       apply: 'Anwenden',
@@ -609,7 +609,7 @@ export default {
       processing: 'wird bearbeitet',
       invert: 'Farbe umkehren',
       okay: 'okay',
-      phote_edit: 'Fotobearbeitung'
+      phote_edit: 'Fotobearbeitung',
     },
     document_panel: {
       document_settings: 'Dokumenteinstellungen',
@@ -628,7 +628,7 @@ export default {
       enable: 'Aktivieren',
       disable: 'Deaktivieren',
       cancel: 'Stornieren',
-      save: 'Speichern'
+      save: 'Speichern',
     },
     object_panels: {
       wait_for_parsing_font: 'Schriftart analysieren ... Bitte warten.',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: 'Fehler beim Konvertieren von Text in Pfad:\n%s',
         use_current_font: 'Aktuelle Schriftart verwenden',
       },
-      lock_desc: 'Behalte das Verhältnis von Breite und Höhe bei (UMSCHALTTASTE)'
+      lock_desc: 'Behalte das Verhältnis von Breite und Höhe bei (UMSCHALTTASTE)',
     },
     tool_panels: {
       cancel: 'Stornieren',
@@ -670,7 +670,7 @@ export default {
         spacing: 'Abstand',
         rotations: 'Mögliche Drehung',
         no_element: 'Es ist kein Element zu arrangieren.',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: 'Netzwerktests',
@@ -714,7 +714,7 @@ export default {
       in_use: 'Diese Farbe wird verwendet.',
       no_input: 'Bitte gebe einen gültigen Hex-Farbcode ein.',
       sure_to_reset: 'Du verlierst alle benutzerdefinierten Parameter. Bist du sicher, dass du die Standardeinstellungen wiederherzustellen?',
-      sure_to_delete: 'Bist du sicher, diese Farbeinstellung zu löschen?'
+      sure_to_delete: 'Bist du sicher, diese Farbeinstellung zu löschen?',
     },
     svg_editor: {
       unnsupported_file_type: 'Der Dateityp wird nicht direkt unterstützt. Bitte konvertiere die Datei in SVG oder Bitmap.',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 Verbindung zum FLUX Mitgliederservice fehlgeschlagen.',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: 'Gerät wählen',
     auth_failure: '#811 Authentifizierung fehlgeschlagen',
-    unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden'
+    unable_to_connect: '#810 Es kann keine stabile Verbindung zur Maschine hergestellt werden',
   },
   device: {
     pause: 'Pause',
@@ -796,7 +796,7 @@ export default {
     processing: 'wird bearbeitet',
     disconnectedError: {
       caption: 'Maschine nicht angeschlossen',
-      message: 'Bitte bestätige, ob ein Netzwerkzugriff von %s verfügbar ist'
+      message: 'Bitte bestätige, ob ein Netzwerkzugriff von %s verfügbar ist',
     },
     unknown: 'Unbekannt',
     pausedFromError: 'Wegen Fehler angehalten',
@@ -858,7 +858,7 @@ export default {
       CUT: 'Schneiden von Vinyl',
       VINYL: 'Schneiden von Vinyl',
       BEAMBOX: 'Laser-Gravur',
-      'N/A': 'Freier Modus'
+      'N/A': 'Freier Modus',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: 'Nein',
     stop: 'Halt',
     save: 'Speichern',
-    dont_save: 'Nicht speichern'
+    dont_save: 'Nicht speichern',
   },
   caption: {
-    connectionTimeout: 'Verbindungs-Timeout'
+    connectionTimeout: 'Verbindungs-Timeout',
   },
   message: {
     connecting: 'Verbinden...',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 Zeitlimit für Geräteverbindung. Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
     device_not_found: {
       caption: 'Standard-Maschine nicht gefunden',
-      message: '#812 Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts'
+      message: '#812 Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts',
     },
     device_busy: {
       caption: 'Maschine beschäftigt',
-      message: 'Die Maschine führt eine andere Aufgabe aus, versuchen Sie es später noch einmal. Wenn sie nicht mehr funktioniert, starte die Maschine bitte neu.'
+      message: 'Die Maschine führt eine andere Aufgabe aus, versuchen Sie es später noch einmal. Wenn sie nicht mehr funktioniert, starte die Maschine bitte neu.',
     },
     device_is_used: 'Die Maschine wird benutzt, möchten Sie die aktuelle Aufgabe abbrechen?',
     monitor_too_old: {
       caption: 'Veraltete Firmware',
-      content: '#814 Bitte installieren Sie die neueste Firmware mit <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">dieser Anleitung</a>.'
+      content: '#814 Bitte installieren Sie die neueste Firmware mit <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">dieser Anleitung</a>.',
     },
     unknown_error: '#821 Die Anwendung ist auf einen unbekannten Fehler gestoßen, bitte benutzen Sie Hilfe > Menü > Fehlerbericht.',
     unknown_device: '#826 Die Verbindung zum Gerät kann nicht hergestellt werden, Bitte stelle sicher, dass USB an das Gerät angeschlossen ist.',
@@ -958,7 +958,7 @@ export default {
     66: 'Abschluss',
     68: 'Vorbereiten',
     128: 'Abgebrochen',
-    UNKNOWN: 'Unbekannt'
+    UNKNOWN: 'Unbekannt',
   },
   camera_calibration: {
     update_firmware_msg1: 'Ihre Firmware unterstützt diese Funktion nicht. Bitte aktualisieren Sie die Firmware auf v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: 'Kalibrierungsbild zeichnen ...',
     calibrate_done: 'Kalibrierung abgeschlossen. Eine bessere Kameragenauigkeit ist gegeben, wenn genau fokussiert wird.',
     hint_red_square: 'Bitte richten Sie das Äußere des roten Quadrats am ausgeschnittenen Quadrat aus.',
-    hint_adjust_parameters: 'Verwende diese Parameter, um das rote Quadrat anzupassen'
+    hint_adjust_parameters: 'Verwende diese Parameter, um das rote Quadrat anzupassen',
   },
   diode_calibration: {
     update_firmware_msg1: 'Ihre Firmware unterstützt diese Funktion nicht. Bitte aktualisieren Sie die Firmware auf v',
@@ -1008,7 +1008,7 @@ export default {
     ask_for_readjust: 'Möchten Sie den Schneideschritt überspringen und Bilder und Kalibrierungen aufnehmen?',
     please_do_camera_calibration_and_focus: {
       beambox: 'Beim Kalibrieren von Hybrid-Lasermodul wird eine Kamera benötigt\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte die Plattform auf den Brennpunkt ein (die Höhe des umgedrehten Acryls).',
-      beamo: 'Beim Kalibrieren von Hybrid-Lasermodul wird eine Kamera benötigt.\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte den Laserkopf so ein, dass er auf das Gravurobjekt fokussiert ist (die Höhe des umgedrehten Acryls).'
+      beamo: 'Beim Kalibrieren von Hybrid-Lasermodul wird eine Kamera benötigt.\nBitte stelle sicher, dass die Kamera dieser Maschine kalibriert wurde.\nUnd stelle bitte den Laserkopf so ein, dass er auf das Gravurobjekt fokussiert ist (die Höhe des umgedrehten Acryls).',
     },
     please_place_paper: 'Bitte lege ein weißes Papier im A4- oder Letter-Format in die linke obere Ecke des Arbeitsbereichs',
     dx: 'X',
@@ -1017,12 +1017,12 @@ export default {
     taking_picture: 'Foto machen...',
     calibrate_done: 'Kalibrierung durchgeführt. Offset des Diodenmoduls wurde gespeichert.',
     hint_red_square: 'Bitte richten Sie das Äußere des roten Quadrats am ausgeschnittenen Quadrat aus.',
-    hint_adjust_parameters: 'Verwende diese Parameter zur Einstellung des roten Quadrats'
+    hint_adjust_parameters: 'Verwende diese Parameter zur Einstellung des roten Quadrats',
   },
   input_machine_password: {
     require_password: '%s erfordert ein Passwort',
     connect: 'VERBINDEN',
-    password: 'Passwort'
+    password: 'Passwort',
   },
   tutorial: {
     skip: 'Überspringen',

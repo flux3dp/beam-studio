@@ -6,12 +6,12 @@ export default {
     choose_folder: 'Choose Folder',
   },
   buttons: {
-    next: 'NEXT'
+    next: 'NEXT',
   },
   topbar: {
     untitled: 'Untitled',
     titles: {
-      settings: 'Preferences'
+      settings: 'Preferences',
     },
     export: 'GO',
     preview: 'PREVIEW',
@@ -39,7 +39,7 @@ export default {
       power_too_high_confirm: 'NOTED',
     },
     hint: {
-      polygon: 'Press + / - key to increase / decrease sides.'
+      polygon: 'Press + / - key to increase / decrease sides.',
     },
   },
   support: {
@@ -51,7 +51,7 @@ export default {
     OPERATION_ERROR: '[OE] A status conflict occured, please retry the action.',
     SUBSYSTEM_ERROR: '[SE] Error when machine firmware executing the task. Please restart the machine.',
     UNKNOWN_COMMAND: '[UC] Please update the Device Firmware',
-    RESOURCE_BUSY: '[RB] Please restart  the machine, or try again'
+    RESOURCE_BUSY: '[RB] Please restart  the machine, or try again',
   },
   device_selection: {
     no_beambox: '#801 We can\'t find your machine on the network.\nKindly follow the <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001683556">guide</a> to troubleshoot the connection problem.',
@@ -71,7 +71,7 @@ export default {
       confirm: 'UPLOAD',
       upload_file: 'Firmware upload (*.bin / *.fxfw)',
       update_success: 'Firmware update successfully uploaded',
-      update_fail: '#822 Update Fail'
+      update_fail: '#822 Update Fail',
     },
     software: {
       checking: 'Checking for Update',
@@ -96,7 +96,7 @@ export default {
     download: 'ONLINE UPDATE',
     cannot_reach_internet: '#823 Server is unreachable<br/>Please checking internet connection',
     install: 'INSTALL',
-    upload: 'UPLOAD'
+    upload: 'UPLOAD',
   },
   topmenu: {
     version: 'Version',
@@ -117,7 +117,7 @@ export default {
       scene_files: 'Beam Studio Scene',
       fcode_files: 'FLUX Code',
       clear_recent: 'Clear Recently Opened',
-      path_not_exit: 'This path does not seem to exist anymore on disk.'
+      path_not_exit: 'This path does not seem to exist anymore on disk.',
     },
     device: {
       download_log_canceled: 'Log download canceled',
@@ -125,7 +125,7 @@ export default {
       log: {
         usblist: 'USB List',
       },
-      network_test: 'Test Network'
+      network_test: 'Test Network',
     },
   },
   initialize: {
@@ -165,7 +165,7 @@ export default {
       what_if_1: 'What if the IP is empty?',
       what_if_1_content: '1. Make sure the Ethernet Cable is fully plugged in.\n2. If there is no MAC Address of the wired network on the touchscreen, please contact FLUX Support.',
       what_if_2: 'What if the IP starts with 169?',
-      what_if_2_content: '1. If the IP address starts with 169.254, it should be a DHCP setting issue, please contact your ISP (internet service provider) for further assistance.\n2. If your computer connects to the internet directly using PPPoE, please change to using the router to connect using PPPoE, and enable DHCP feature in the router.'
+      what_if_2_content: '1. If the IP address starts with 169.254, it should be a DHCP setting issue, please contact your ISP (internet service provider) for further assistance.\n2. If your computer connects to the internet directly using PPPoE, please change to using the router to connect using PPPoE, and enable DHCP feature in the router.',
     },
     connect_ethernet: {
       title: 'Direct Connection',
@@ -196,12 +196,12 @@ export default {
       great: 'Welcome to Beam Studio',
       setup_later: 'You can always set up your machine from Titlebar > "Machines" > "Machine Setup"',
       back: 'Back',
-      ok: 'START CREATING'
+      ok: 'START CREATING',
     },
   },
   menu: {
     mm: 'mm',
-    inches: 'Inches'
+    inches: 'Inches',
   },
   settings: {
     on: 'On',
@@ -211,7 +211,7 @@ export default {
     caption: 'Settings',
     tabs: {
       general: 'General',
-      device: 'Machine'
+      device: 'Machine',
     },
     ip: 'Machine IP Address',
     guess_poke: 'Search for machine IP address',
@@ -290,7 +290,7 @@ export default {
       g: 'Group',
       use: 'Import SVG',
       image: 'Image',
-      text: 'Text'
+      text: 'Text',
     },
     context_menu: {
       cut: 'Cut',
@@ -391,7 +391,7 @@ export default {
         preview: 'Camera Preview',
         trace: 'Trace Image',
         end_preview: 'End Preview',
-        clear_preview: 'Clear Preview'
+        clear_preview: 'Clear Preview',
       },
     },
     right_panel: {
@@ -428,7 +428,7 @@ export default {
           merge_all: 'Merge All',
           merge_selected: 'Merge Selected Layers',
           move_elems_to: 'Move elements to:',
-          move_selected: 'Move selected elements to a different layer'
+          move_selected: 'Move selected elements to a different layer',
         },
       },
       laser_panel: {
@@ -514,7 +514,7 @@ export default {
           slow: 'Slow',
           min: 3,
           max: 300,
-          step: 0.1
+          step: 0.1,
         },
         power: {
           text: 'Power',
@@ -522,11 +522,11 @@ export default {
           low: 'Low',
           min: 1,
           max: 100,
-          step: 0.1
+          step: 0.1,
         },
         para_in_use: 'This parameter is being used.',
         do_not_adjust_default_para: 'Presets can not be adjusted.',
-        existing_name: 'This name has been used.'
+        existing_name: 'This name has been used.',
       },
       object_panel: {
         zoom: 'Zoom',
@@ -594,7 +594,7 @@ export default {
       contrast: 'Contrast',
       threshold: 'Threshold',
       okay: 'Okay',
-      tuning: 'Parameters'
+      tuning: 'Parameters',
     },
     photo_edit_panel: {
       apply: 'Apply',
@@ -609,7 +609,7 @@ export default {
       processing: 'Processing',
       invert: 'Invert Color',
       okay: 'Okay',
-      phote_edit: 'Photo Edit'
+      phote_edit: 'Photo Edit',
     },
     document_panel: {
       document_settings: 'Document Settings',
@@ -628,7 +628,7 @@ export default {
       enable: 'Enable',
       disable: 'Disable',
       cancel: 'Cancel',
-      save: 'Save'
+      save: 'Save',
     },
     object_panels: {
       wait_for_parsing_font: 'Parsing font... Please wait a second',
@@ -638,7 +638,7 @@ export default {
         error_when_parsing_text: 'Error when coverting text to path:\n%s',
         use_current_font: 'Use Current Font',
       },
-      lock_desc: 'Preserve the ratio of width and height (SHIFT)'
+      lock_desc: 'Preserve the ratio of width and height (SHIFT)',
     },
     tool_panels: {
       cancel: 'Cancel',
@@ -670,7 +670,7 @@ export default {
         spacing: 'Spacing',
         rotations: 'Possible Rotation',
         no_element: 'There is no element to arrange.',
-      }
+      },
     },
     network_testing_panel: {
       network_testing: 'Network Testing',
@@ -714,7 +714,7 @@ export default {
       in_use: 'This color is in use.',
       no_input: 'Please input valid hex color code.',
       sure_to_reset: 'You will lose all customized parameters, are you sure to reset to default?',
-      sure_to_delete: 'Are you sure to delete this color setting?'
+      sure_to_delete: 'Are you sure to delete this color setting?',
     },
     svg_editor: {
       unnsupported_file_type: 'The file type is not directly supported. Please convert the file into SVG or bitmap',
@@ -722,8 +722,8 @@ export default {
     },
     units: {
       walt: 'W',
-      mm: 'mm'
-    }
+      mm: 'mm',
+    },
   },
   flux_id_login: {
     connection_fail: '#847 Failed to connect to FLUX member service.',
@@ -766,7 +766,7 @@ export default {
   select_device: {
     select_device: 'Select Device',
     auth_failure: '#811 Authentication fail',
-    unable_to_connect: '#810 Unable to build a stable connection with machine'
+    unable_to_connect: '#810 Unable to build a stable connection with machine',
   },
   device: {
     pause: 'Pause',
@@ -796,7 +796,7 @@ export default {
     processing: 'Processing',
     disconnectedError: {
       caption: 'Machine disconnected',
-      message: 'Please confirm if network access of %s is available'
+      message: 'Please confirm if network access of %s is available',
     },
     unknown: 'Unknown',
     pausedFromError: 'Paused from error',
@@ -858,7 +858,7 @@ export default {
       CUT: 'Vinyl Cutting',
       VINYL: 'Vinyl Cutting',
       BEAMBOX: 'Laser Engraving',
-      'N/A': 'Free Mode'
+      'N/A': 'Free Mode',
     },
   },
   alert: {
@@ -879,10 +879,10 @@ export default {
     no: 'No',
     stop: 'Stop',
     save: 'Save',
-    dont_save: 'Don\'t Save'
+    dont_save: 'Don\'t Save',
   },
   caption: {
-    connectionTimeout: 'Connection timeout'
+    connectionTimeout: 'Connection timeout',
   },
   message: {
     connecting: 'Connecting...',
@@ -905,16 +905,16 @@ export default {
     connectionTimeout: '#805 Device Connection Timeout. Please check your network state and your machine\'s Wi-Fi indicator.',
     device_not_found: {
       caption: 'Default Machine not found',
-      message: '#812 Please check your machine\'s Wi-Fi indicator'
+      message: '#812 Please check your machine\'s Wi-Fi indicator',
     },
     device_busy: {
       caption: 'Machine Busy',
-      message: 'The machine is executing another task, try again later. If it stops working, please restart the machine.'
+      message: 'The machine is executing another task, try again later. If it stops working, please restart the machine.',
     },
     device_is_used: 'The machine is being used, do you want to abort current task?',
     monitor_too_old: {
       caption: 'Firmware Outdated',
-      content: '#814 Please install the latest firmware with <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">this guide</a>.'
+      content: '#814 Please install the latest firmware with <a target="_blank" href="http://helpcenter.flux3dp.com/hc/en-us/articles/216251077">this guide</a>.',
     },
     unknown_error: '#821 The application has encountered an unknown error, please use Help > Menu > Bug Report.',
     unknown_device: '#826 Cannot connect to the machine, please make sure USB is attached to the machine',
@@ -958,7 +958,7 @@ export default {
     66: 'Completing',
     68: 'Preparing',
     128: 'Aborted',
-    UNKNOWN: 'Unknown'
+    UNKNOWN: 'Unknown',
   },
   camera_calibration: {
     update_firmware_msg1: 'Your firmware does not support this function. Please update firmware to v',
@@ -992,7 +992,7 @@ export default {
     drawing_calibration_image: 'Drawing calibration image...',
     calibrate_done: 'Calibration done. Better camera accurency is given when focus precisely.',
     hint_red_square: 'Please align the outside of the red square with the cut square.',
-    hint_adjust_parameters: 'Use these parameters to adjust the red square'
+    hint_adjust_parameters: 'Use these parameters to adjust the red square',
   },
   diode_calibration: {
     update_firmware_msg1: 'Your firmware does not support this function. Please update firmware to v',
@@ -1008,7 +1008,7 @@ export default {
     ask_for_readjust: 'Do your want to skip the engraving step and then take photo and calibrate directly?',
     please_do_camera_calibration_and_focus: {
       beambox: 'When calibrating hybrid laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the platform to the focal point (the height of turned down acrylic)',
-      beamo: 'When calibrating hybrid laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)'
+      beamo: 'When calibrating hybrid laser module, camera is needed.\nPlease make sure camera of this machine has been calibrated.\nAnd kindly adjust the laser head to focus on the engraving object (the height of turned down acrylic)',
     },
     please_place_paper: 'Please place an A4 or Letter size white paper at left-top corner of workarea',
     dx: 'X',
@@ -1017,12 +1017,12 @@ export default {
     taking_picture: 'Taking Picture...',
     calibrate_done: 'Calibration done. Offset of diode module has been saved.',
     hint_red_square: 'Please align the outside of the red square with the cut square.',
-    hint_adjust_parameters: 'Use these parameters to adjust the red square'
+    hint_adjust_parameters: 'Use these parameters to adjust the red square',
   },
   input_machine_password: {
     require_password: '"%s" requires a password',
     connect: 'CONNECT',
-    password: 'Password'
+    password: 'Password',
   },
   tutorial: {
     skip: 'Skip',
