@@ -16,3 +16,12 @@ jobs:
         run: yarn install
       - name: Run unit tests
         run: yarn run spec
+  # https://github.com/marketplace/actions/run-eslint-with-reviewdog
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Eslint check
+        uses: reviewdog/action-eslint@v1
+        with:
+          fail_on_error: true
