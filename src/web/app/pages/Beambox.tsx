@@ -1,4 +1,4 @@
-import * as i18n from 'helpers/i18n';
+import * as i18n from 'helpers/i18n'
 import BeamboxActions from 'app/actions/beambox';
 import BeamboxInit from '../actions/beambox/beambox-init';
 import BeamboxGlobalInteraction from '../actions/beambox/beambox-global-interaction';

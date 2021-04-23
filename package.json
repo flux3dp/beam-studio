@@ -104,8 +104,7 @@
     "dist": "electron-builder",
     "test": "jest --passWithNoTests",
     "spec": "jest --config jest.config.spec.only.js --passWithNoTests",
-    "integration": "jest --config jest.config.integration.only.js --passWithNoTests",
-    "lint": "eslint src/web/**/*.ts{,x}"
+    "integration": "jest --config jest.config.integration.only.js --passWithNoTests"
   },
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
