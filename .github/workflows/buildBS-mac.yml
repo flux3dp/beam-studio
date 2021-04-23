@@ -45,23 +45,32 @@ jobs:
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
-      # using https://github.com/InVisionApp/private-action-loader for private repo.
-      - name: Install Beamify
-        uses: invisionapp/private-action-loader@v3
+      - name: Checkout Beamify
+        uses: actions/checkout@v2
         with:
-          pal-repo-token: ${{ secrets.REPO_TOKEN }}
-          pal-repo-name: flux3dp/beamify@master
+          repository: flux3dp/beamify
+          ref: master
+          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          path: .github/actions/beamify
+
+      - name: Install Beamify
+        uses: ./.github/actions/beamify
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Install Fluxsvg
         uses: flux3dp/fluxsvg@master
 
-      - name: Install FluxClient
-        uses: invisionapp/private-action-loader@v3
+      - name: Checkout FluxClient
+        uses: actions/checkout@v2
         with:
-          pal-repo-token: ${{ secrets.REPO_TOKEN }}
-          pal-repo-name: flux3dp/fluxclient-dev@develop
+          repository: flux3dp/fluxclient-dev
+          ref: develop
+          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          path: .github/actions/fluxclient
+
+      - name: Install FluxClient
+        uses: ./.github/actions/fluxclient
         env:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
@@ -95,6 +104,7 @@ jobs:
 
           rm -rf util
           rm -rf lib
+          rm -rf .github
 
           echo "Signing *.so files..."
           find ./backend -name "*.so" | while read f ; do
