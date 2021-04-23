@@ -9162,7 +9162,7 @@ define([
                 this.updateElementColor(copy);
             }
 
-            selectOnly(pasted);
+            selectOnly(pasted, true);
 
             if (type !== 'in_place') {
 
