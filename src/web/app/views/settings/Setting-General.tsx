@@ -16,7 +16,7 @@ import { IFont } from 'interfaces/IFont';
 import { ILang } from 'interfaces/ILang';
 
 const React = requireNode('react');
-const classNames = requireNode('classNames');
+const classNames = requireNode('classnames');
 
 const Controls = (props) => {
     const style = { width: 'calc(100% / 10 * 3 - 10px)' };
