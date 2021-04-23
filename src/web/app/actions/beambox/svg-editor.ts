@@ -5252,9 +5252,6 @@ const svgEditor = window['svgEditor'] = (function($) {
 
                         // 'fnkey' means 'cmd' or 'ctrl'
                         Shortcuts.on(['del'], deleteSelected);
-                        Shortcuts.on(['fnkey', 'shift', 'v'], () => {
-                            svgCanvas.pasteElements('in_place');
-                        });
                         //Shortcuts.on(['fnkey', 'z'], clickUndo);
                         //if (process.platform === 'darwin') {
                         //    Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
