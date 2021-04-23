@@ -7,7 +7,7 @@ import globalEvents from './app/actions/global';
 import menuBar from './helpers/menubar';
 
 declare global {
-  var requireNode: (name: string) => any
+  let requireNode: (name: string) => any;
   interface Window {
     electron: {
       ipc: any,
@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-export default function () {
+export default function main() {
   console.log(`Beam-Studio: ${window['FLUX'].version}`);
 
   if (allowTracking) {
@@ -29,7 +29,7 @@ export default function () {
   menuBar();
 
   globalEvents(function () {
-    let router = new Router();
+    const router = new Router();
     Backbone.history.start();
   });
 }
