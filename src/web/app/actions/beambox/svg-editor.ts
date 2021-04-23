@@ -320,6 +320,24 @@ const svgEditor = window['svgEditor'] = (function($) {
         }
         const config = Config();
         const defaultFont = config.read('default-font') as IFont;
+        let pressedKey = [];
+
+        document.addEventListener('keydown', (e) => {
+            if (!pressedKey.includes(e.key)) {
+                pressedKey.push(e.key);
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const index = pressedKey.findIndex((key) => key === e.key);
+            if (index > 0) {
+                pressedKey.splice(index, 1);
+            }
+        });
+
+        window.addEventListener('blur', (e) => {
+            pressedKey = [];
+        });
 
         var svgCanvas, urldata,
             Utils = window['svgedit'].utilities,
@@ -3947,6 +3965,10 @@ const svgEditor = window['svgEditor'] = (function($) {
                     return;
                 }
 
+                if (['Shift', 'Control', 'V'].every((key) => pressedKey.includes(key))) {
+                    return;
+                }
+
                 const clipboardData = e.clipboardData;
                 let importedFromClipboard = false;
                 if (clipboardData) {
@@ -5252,9 +5274,6 @@ const svgEditor = window['svgEditor'] = (function($) {
 
                         // 'fnkey' means 'cmd' or 'ctrl'
                         Shortcuts.on(['del'], deleteSelected);
-                        Shortcuts.on(['fnkey', 'shift', 'v'], () => {
-                            svgCanvas.pasteElements('in_place');
-                        });
                         //Shortcuts.on(['fnkey', 'z'], clickUndo);
                         //if (process.platform === 'darwin') {
                         //    Shortcuts.on(['cmd', 'shift', 'z'], clickRedo);
