@@ -1,5 +1,5 @@
 exports.default = async function notarizing(context) {
-  const { electronPlatformName, appOutDir } = context;  
+  const { electronPlatformName, appOutDir } = context;
   if (electronPlatformName !== 'darwin') {
     return;
   }
@@ -8,9 +8,10 @@ exports.default = async function notarizing(context) {
   const { notarize } = require('electron-notarize');
 
   const appName = context.packager.appInfo.productFilename;
-
+  const appBundleId = context.packager.appInfo.platformSpecificOptions.category;
+  console.log(`Notarizing with bundle ID: ${appBundleId}`);
   let result = await notarize({
-    appBundleId: 'com.flux3dp.beam-studio',
+    appBundleId,
     appPath: `${appOutDir}/${appName}.app`,
     appleId: process.env.APPLEID,
     appleIdPassword: process.env.APPLEIDPASS,
