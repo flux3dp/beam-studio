@@ -300,6 +300,9 @@
                 text-align: center;
                 width: 60px;
                 cursor: pointer;
+                &::-webkit-scrollbar {
+                    display: none;
+                }
                 .description {
                     padding-top: 5px;
                     font-size: 1rem;
