@@ -17,7 +17,7 @@ jobs:
       - name: Run unit tests
         run: yarn run spec
   # https://github.com/marketplace/actions/eslint-plus
-  eslint:
+  eslint-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
