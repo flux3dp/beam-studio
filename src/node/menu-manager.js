@@ -231,24 +231,24 @@ function buildDeviceMenu(callback, uuid, data) {
             { type: 'separator' },
             { id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, source, label: r.calibrate_beambox_camera, click: callback },
         ];
-        if (modelType === 'fbm1' || true) {
+        if (modelType === 'fbm1') {
             submenu.push({
-                id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS', 
-                uuid, 
-                serial, 
-                source, 
-                label: r.calibrate_beambox_camera_borderless, 
+                id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
+                uuid,
+                serial,
+                source,
+                label: r.calibrate_beambox_camera_borderless,
+                click: callback
+            });
+            submenu.push({
+                id: 'CALIBRATE_DIODE_MODULE',
+                uuid,
+                serial,
+                source,
+                label: r.calibrate_diode_module,
                 click: callback
             });
         }
-        submenu.push({
-            id: 'CALIBRATE_DIODE_MODULE', 
-            uuid, 
-            serial, 
-            source, 
-            label: r.calibrate_diode_module, 
-            click: callback
-        });
         submenu = submenu.concat([
             { type: 'separator' },
             { id: 'UPDATE_FIRMWARE', uuid, serial, source, label: r.update_firmware, click: callback},
