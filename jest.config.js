@@ -13,5 +13,6 @@ module.exports = {
             tsConfig: "src/web/tsconfig.json"
         }
     },
-    setupFilesAfterEnv: ["./src/web/setupTests.ts"]
+    setupFilesAfterEnv: ["./src/web/setupTests.ts"],
+    moduleDirectories: ["node_modules", "src/web"]
 }
