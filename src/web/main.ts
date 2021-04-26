@@ -1,12 +1,13 @@
-const allowTracking = false;
-
 import $ from 'jquery';
 import Backbone from 'backbone';
 import Router from './app/router';
 import globalEvents from './app/actions/global';
 import menuBar from './helpers/menubar';
 
+const allowTracking = false;
+
 declare global {
+  // eslint-disable-next-line no-var
   var requireNode: (name: string) => any;
   interface Window {
     electron: {
