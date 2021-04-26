@@ -162,7 +162,7 @@ define([
             '<feMergeNode in="SourceGraphic"/>' +
             '</feMerge>' +
             '</filter>' +
-            //(BeamboxPreference.read('enable_mask') ? ('<clipPath id="scene_mask"><rect x="0" y="0" width="' + dimensions[0] + '" height="' + dimensions[1] + '" /></clipPath>') : '') + 
+            //(BeamboxPreference.read('enable_mask') ? ('<clipPath id="scene_mask"><rect x="0" y="0" width="' + dimensions[0] + '" height="' + dimensions[1] + '" /></clipPath>') : '') +
             '</defs>' +
             '</svg>').documentElement, true);
         container.appendChild(svgroot);
@@ -882,7 +882,7 @@ define([
                                 elem,
                                 bbox,
                             });
-                            
+
                         }
                     }
                 }
@@ -1606,7 +1606,7 @@ define([
                         current_mode = 'select';
                         return;
                     }
-                    svgEditor.clickSelect();
+                    svgEditor.clickSelect(false);
                     lastClickPoint = pt;
                     return;
                 }
@@ -1700,7 +1700,7 @@ define([
                                 'display': 'inline'
                             }, 100);
                         };
-                        
+
                         if (PreviewModeController.isPreviewMode() || TopBarController.getTopBarPreviewMode()) {
                             // preview mode
                             clearSelection();
@@ -2318,7 +2318,7 @@ define([
                                 const newHeight = Math.abs(height * sy);
                                 const newLeft = newCx - 0.5 * newWidth;
                                 const newTop = newCy - 0.5 * newHeight;
-                                
+
                                 if (selected.tagName === 'ellipse') {
                                     ObjectPanelController.updateDimensionValues({cx: newCx, cy: newCy, rx: newWidth / 2, ry: newHeight / 2});
                                 } else {
@@ -2805,7 +2805,7 @@ define([
                             svgCanvas.tempGroupSelectedElements();
                             window.updateContextPanel();
                         }
-                        
+
                         if (mouseSelectModeCmds.length > 1) {
                             const batchCmd = new svgedit.history.BatchCommand('Mouse Event');
                             for (let i = 0; i < mouseSelectModeCmds.length; i++) {
@@ -3108,7 +3108,7 @@ define([
                     textActions.select(mouseTarget, pt.x, pt.y);
                 }
 
-                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) { 
+                if ((tagName === 'g' || tagName === 'a') && svgedit.utilities.getRotationAngle(mouseTarget)) {
                     // TODO: Ingroup Edit Mode
 
                     // Ungroup and regroup
@@ -3335,7 +3335,7 @@ define([
 
                 // No contents
                 if (rowNumbers === 0) {
-                    let bb = isVertical ? { x: textbb.x, y: textbb.y + (textbb.height / 2), width: charHeight, height: 0 } 
+                    let bb = isVertical ? { x: textbb.x, y: textbb.y + (textbb.height / 2), width: charHeight, height: 0 }
                         : { x: textbb.x + (textbb.width / 2), y: textbb.y, width: 0, height: charHeight };
                     chardata.push([bb]);
                     return;
@@ -3662,7 +3662,7 @@ define([
                     }
 
                     canvas.textActions.renderMultiLineText(this.elem, this.oldText, false);
-                                
+
                     if (handler) {
                         handler.handleHistoryEvent(svgedit.history.HistoryEventTypes.AFTER_UNAPPLY, this);
                     }
@@ -3966,7 +3966,7 @@ define([
 
                     textinput.focus();
                     $(curtext).unbind('dblclick', selectWord).dblclick(selectWord);
-                    
+
                     setSelection(textinput.selectionStart, textinput.selectionEnd, true);
                 }
             };
@@ -4353,9 +4353,9 @@ define([
                     } else if (current_mode === 'pathedit') {
                         // TODO: Make sure current_path isn't null at this point
                         if (!svgedit.path.path) return;
-    
+
                         svgedit.path.path.storeD();
-    
+
                         id = evt.target.id;
                         var pointIndex;
                         if (id.substr(0, 14) === 'pathpointgrip_') {
@@ -4379,12 +4379,12 @@ define([
                             window.updateContextPanel();
                         } else if (id.indexOf('ctrlpointgrip_') === 0) {
                             svgedit.path.path.dragging = [start_x, start_y];
-    
+
                             var parts = id.split('_')[1].split('c');
                             svgedit.path.path.selectCtrlPoint(parts[0], parts[1]);
                             window.updateContextPanel();
                         }
-    
+
                         // Start selection box
                         if (!svgedit.path.path.dragging) {
                             if (rubberBox == null) {
@@ -5188,7 +5188,7 @@ define([
             svgcontent.setAttribute('data-left', Math.round(x));
             svgcontent.setAttribute('data-top', Math.round(y));
             var output = this.svgToString(svgcontent, 0);
-            
+
             // Rewrap gsvg
             if (naked_svgs.length) {
                 $(naked_svgs).each(function () {
@@ -5421,7 +5421,7 @@ define([
                 if (blobUrl) {
                     const res = await fetch(blobUrl);
                     const blob = await res.blob();
-                    const arrayBuffer = await new Response(blob).arrayBuffer(); 
+                    const arrayBuffer = await new Response(blob).arrayBuffer();
                     ret[id] = arrayBuffer;
                 }
             }
@@ -6582,7 +6582,7 @@ define([
                             node.setAttribute('data-wireframe', true);
                             node.setAttribute('stroke', '#000');
                             node.setAttribute('fill-opacity', '0');
-                            iterationStack.push(...Array.from(node.childNodes));   
+                            iterationStack.push(...Array.from(node.childNodes));
                         }
                     }
                 }
@@ -7035,7 +7035,7 @@ define([
                         $(elem).attr('stroke', color);
                     }
                     if (attrFill !== 'none') {
-                        $(elem).attr('fill', color); 
+                        $(elem).attr('fill', color);
                     }
                 } else if (elem.tagName === 'image') {
                     if (color === '#000') {
@@ -7232,7 +7232,7 @@ define([
 
         // Function: toggleBorderless
         // switch Borderless mode if no input, set to turnOnBorderless if passed
-        // 
+        //
         // Parameters:
         // turnOnBorderless - turn on borderless mode or not
         this.toggleBorderless = function (turnOnBorderless) {
@@ -8283,7 +8283,7 @@ define([
 
         /**
          * Returns the font family data of element
-         * @param {Element | null} elem 
+         * @param {Element | null} elem
          * @returns {string} the font family data of element
          */
         this.getFontFamilyData = (elem) => {
@@ -9320,8 +9320,8 @@ define([
 
         /**
          * Create grid array of selected element
-         * @param {{dx: number, dy: number}} interval 
-         * @param {{row: number, column: number}} arraySize 
+         * @param {{dx: number, dy: number}} interval
+         * @param {{row: number, column: number}} arraySize
          */
         this.gridArraySelectedElement = (interval, arraySize) => {
             if (tempGroup) {
@@ -9582,7 +9582,7 @@ define([
                         succeeded = clipper.Execute(1, res, 1, 1);
                     }
                     solution_paths = res;
-                } 
+                }
             } else {
                 solution_paths = solution_paths.slice(1);
             }
@@ -9986,7 +9986,7 @@ define([
                         'vector-effect': "non-scaling-stroke"
                     });
                     svgedit.utilities.getElem('svgcontent').appendChild(xAlignLine);
-                } 
+                }
                 xAlignLine.setAttribute('d', `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${yMatchPoint ? yMatchPoint.y : y / current_zoom}`)
                 xAlignLine.setAttribute('display', 'inline');
             } else {
@@ -9995,7 +9995,7 @@ define([
                 }
             }
             let yAlignLine = svgedit.utilities.getElem('y_align_line');
-            if (yMatchPoint) {    
+            if (yMatchPoint) {
                 if (!yAlignLine) {
                     yAlignLine = document.createElementNS(NS.SVG, 'path');
                     svgedit.utilities.assignAttributes(yAlignLine, {
@@ -10006,7 +10006,7 @@ define([
                         'vector-effect': "non-scaling-stroke"
                     });
                     svgedit.utilities.getElem('svgcontent').appendChild(yAlignLine);
-                } 
+                }
                 yAlignLine.setAttribute('d', `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / current_zoom} ${yMatchPoint.y}`)
                 yAlignLine.setAttribute('display', 'inline');
             } else {
@@ -10059,7 +10059,7 @@ define([
         }
 
         this.collectAlignPoints = () => {
-            let elems = []; 
+            let elems = [];
             const layers = $('#svgcontent > g.layer').toArray();
             layers.forEach(layer => {
                 elems.push(...layer.childNodes);
@@ -10156,7 +10156,7 @@ define([
                     default:
                         break;
                 }
-                
+
                 points.forEach(p => {
                     const newX = center.x + (p.x - center.x) * Math.cos(angle) - (p.y - center.y) * Math.sin(angle);
                     const newY = center.y + (p.x - center.x) * Math.sin(angle) + (p.y - center.y) * Math.cos(angle);
@@ -10470,7 +10470,7 @@ define([
                 // Is svg, so actually convert to group
                 convertToGroup(g);
                 return;
-            } 
+            }
             var parents_a = $(g).parents('a');
             if (parents_a.length) {
                 g = parents_a[0];
@@ -11236,7 +11236,7 @@ define([
                             centers.push({x, y});
                             topElem.childNodes.forEach((e) => {
                                 stack.push({elem: e});
-                            }); 
+                            });
                         } else {
                             centers.pop();
                             canvas.setRotationAngle(-originalAngle, true, topElem);
@@ -11315,7 +11315,7 @@ define([
                 const jimp = requireNode('jimp');
                 let data = await fetch(origImage);
                 data = await data.blob();
-                data = await new Response(data).arrayBuffer(); 
+                data = await new Response(data).arrayBuffer();
                 data = await jimp.read(data);
                 data.flip(horizon === -1, vertical === -1);
                 data = await data.getBufferAsync(jimp.MIME_PNG);
@@ -11779,7 +11779,7 @@ define([
             let y = b * obj.x + d * obj.y + f;
             let width = obj.width * a + obj.height * c;
             let height = obj.width * b + obj.height * d;
-            
+
             if (width < 0) {
                 x += width;
                 width *= -1;

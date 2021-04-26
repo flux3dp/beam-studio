@@ -103,7 +103,7 @@ interface ISVGEditor {
     addDropDown(elem: string, callback: JQuery.EventHandler<HTMLLIElement, JQuery.MouseUpEvent<HTMLLIElement>>, dropUp?: boolean)
     addExtension: () => void
     canvas: any
-    clickSelect: () => void
+    clickSelect: (clearSelection?: boolean) => void
     curConfig: ISVGConfig
     curPrefs: ISVGPref
     disableUI: (featList: any) => void
@@ -1371,15 +1371,15 @@ const svgEditor = window['svgEditor'] = (function($) {
                 return true;
             };
 
-            var clickSelect = editor.clickSelect = function () {
+            var clickSelect = editor.clickSelect = function (clearSelection: boolean = true) {
                 if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) {
                     return;
                 }
-                svgCanvas.clearSelection();
                 if (toolButtonClick('#tool_select')) {
                     svgCanvas.setMode('select');
                     $('#styleoverrides').text('#svgcanvas svg *:not(#previewBoundary *){cursor:move;pointer-events:all;stroke-width:1px;vector-effect:non-scaling-stroke;}, #svgcanvas svg{cursor:default}');
                 }
+                if (clearSelection) svgCanvas.clearSelection();
             };
 
             var setImageURL = editor.setImageURL = function (url) {
@@ -2037,7 +2037,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 label.value = title;
                                 setInputWidth(label);
                                 $('#g_title').prop('disabled', el_name === 'use');
-    
+
                                 if ((el_name === 'use') && ($(elem).attr('data-xform'))) {
                                     const location = svgCanvas.getSvgRealLocation(elem);
                                     ObjectPanelController.updateDimensionValues({
@@ -2055,7 +2055,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 break;
                         }
                     }
-                    
+
                     if (svgCanvas.getTempGroup()) {
                         menu_items
                             .enableContextMenuItems('#group')
@@ -3271,9 +3271,9 @@ const svgEditor = window['svgEditor'] = (function($) {
                 svgCanvas.setRotationAngle(ctl.value);
                 $('#tool_reorient').toggleClass('disabled', parseInt(ctl.value, 10) === 0);
             };
-            
+
             // TODO: what is ctl, what is val?
-            var changeOpacity = function (ctl, val?: number) { 
+            var changeOpacity = function (ctl, val?: number) {
                 if (val == null) {
                     val = ctl.value;
                 }
@@ -3877,7 +3877,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                             caption: LANG.left_panel.label.array
                         });
                     }
-                } 
+                }
             }
             editor.triggerGridTool = triggerGridTool;
 
@@ -5795,7 +5795,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                         else if ((marker & 0xFF00) != 0xFF00) {
                             break;
                         }
-                        else { 
+                        else {
                             offset += view.getUint16(offset, false);
                         }
                     }
@@ -5983,7 +5983,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                             }
                                         });
                                     }
-                                    
+
                                 }
                             }
 
@@ -6220,7 +6220,7 @@ const svgEditor = window['svgEditor'] = (function($) {
                                 reader.readAsText(file);
                             });
                         }
-                    }); 
+                    });
                 };
                 editor.importLaserConfig = importLaserConfig;
 
