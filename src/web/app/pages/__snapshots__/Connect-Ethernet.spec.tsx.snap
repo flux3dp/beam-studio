@@ -1,0 +1,175 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Connect-Ethernet should render correctly in mac 1`] = `
+<View
+  className={
+    Object {
+      "initialization": true,
+    }
+  }
+  content={
+    <div
+      className="connect-machine"
+    >
+      <div
+        className="top-bar"
+      />
+      <div
+        className="btn-page-container"
+      >
+        <div
+          className="btn-page"
+          onClick={[Function]}
+        >
+          Back
+        </div>
+        <div
+          className="btn-page primary"
+          onClick={[Function]}
+        >
+          Next
+        </div>
+      </div>
+      <div
+        className="connection-ethernet"
+      >
+        <div
+          className="image-container ether"
+        >
+          <div
+            className="circle c1"
+          />
+          <img
+            className="ethernet-icon"
+            draggable="false"
+            src="img/init-panel/icon-dual-cable.svg"
+          />
+          <div
+            className="circle c2"
+          />
+        </div>
+        <div
+          className="text-container"
+        >
+          <div
+            className="title"
+          >
+            Direct Connection
+          </div>
+          <div
+            className="contents tutorial"
+          >
+            <div>
+              1. Connect the machine with your computer with ethernet cable.
+            </div>
+            <div>
+              2. Follow 
+              <a
+                href="https://support.flux3dp.com/hc/en-us/articles/360001517076"
+                rel="noreferrer"
+                target="_blank"
+              >
+                this guide
+              </a>
+               to make your comuter as a router.
+            </div>
+            <div>
+              3. Click Next.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  disabledEscapeOnBackground={false}
+  onClose={[Function]}
+  onOpen={[Function]}
+/>
+`;
+
+exports[`test Connect-Ethernet should render correctly in win 1`] = `
+<View
+  className={
+    Object {
+      "initialization": true,
+    }
+  }
+  content={
+    <div
+      className="connect-machine"
+    >
+      <div
+        className="top-bar"
+      />
+      <div
+        className="btn-page-container"
+      >
+        <div
+          className="btn-page"
+          onClick={[Function]}
+        >
+          Back
+        </div>
+        <div
+          className="btn-page primary"
+          onClick={[Function]}
+        >
+          Next
+        </div>
+      </div>
+      <div
+        className="connection-ethernet"
+      >
+        <div
+          className="image-container ether"
+        >
+          <div
+            className="circle c1"
+          />
+          <img
+            className="ethernet-icon"
+            draggable="false"
+            src="img/init-panel/icon-dual-cable.svg"
+          />
+          <div
+            className="circle c2"
+          />
+        </div>
+        <div
+          className="text-container"
+        >
+          <div
+            className="title"
+          >
+            Direct Connection
+          </div>
+          <div
+            className="contents tutorial"
+          >
+            <div>
+              1. Connect the machine with your computer with ethernet cable.
+            </div>
+            <div>
+              2. Follow 
+              <a
+                href="https://support.flux3dp.com/hc/en-us/articles/360001507715"
+                rel="noreferrer"
+                target="_blank"
+              >
+                this guide
+              </a>
+               to make your comuter as a router.
+            </div>
+            <div>
+              3. Click Next.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  disabledEscapeOnBackground={false}
+  onClose={[Function]}
+  onOpen={[Function]}
+/>
+`;
