@@ -1,34 +1,42 @@
 const React = requireNode('react');
 
-export default class List extends React.Component {
-  render() {
-    var list_items = this.props.items.map(function (opt, i) {
-      var metadata = JSON.stringify(opt.data),
-        labelItem = opt.label;
-      if (labelItem.item) labelItem = labelItem.item;
-      return <li data-meta={metadata} data-value={opt.value} key={i}>{labelItem}</li>;
-    }, this);
+interface Props {
+  name: string;
+  id: string;
+  emptyMessage: string;
+  className: string;
+  items: any[];
+  onClick: () => void;
+  ondblclick: () => void;
+}
 
-    return (
-      <ul
-        name={this.props.name}
-        id={this.props.id}
-        className={this.props.className}
-        data-empty-message={this.props.emptyMessage}
-        onClick={this.props.onClick}
-        onDoubleClick={this.props.ondblclick}>
-        {list_items}
-      </ul>
-    );
-  }
-};
+export default function List({
+  name = '',
+  id = '',
+  emptyMessage = '',
+  className = '',
+  items = [],
+  onClick = () => { },
+  ondblclick = () => { },
+}: Props) {
+  const listItems = items.map((opt: any, i) => {
+    const metadata = JSON.stringify(opt.data);
+    let labelItem = opt.label;
+    if (labelItem.item) labelItem = labelItem.item;
+    // eslint-disable-next-line react/no-array-index-key
+    return (<li data-meta={metadata} data-value={opt.value} key={i}>{labelItem}</li>);
+  }, this);
 
-List.defaultProps = {
-  name: '',
-  id: '',
-  emptyMessage: '',
-  className: '',
-  items: [],
-  onClick: function () { },
-  ondblclick: function () { }
-};
+  return (
+    <ul
+      name={name}
+      id={id}
+      className={className}
+      data-empty-message={emptyMessage}
+      onClick={onClick}
+      onDoubleClick={ondblclick}
+    >
+      {listItems}
+    </ul>
+  );
+}
