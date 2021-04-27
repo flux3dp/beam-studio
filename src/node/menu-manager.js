@@ -222,7 +222,7 @@ function getDeviceMenuId(uuid, data) {
 function buildDeviceMenu(callback, uuid, data) {
     let { serial, source } = data;
     let menuLabel = data.source == "lan" ? data.name : `${data.name} (USB)`;
-    const modelType = (['fbm1', 'fbb1b', 'fbb1p', 'fbb2b', 'laser-b1', 'darwin-dev'].includes(data.model))?'beambox-series':'delta-series';
+    const modelType = (['fbm1', 'fbb1b', 'fbb1p', 'fbb2b', 'laser-b1', 'darwin-dev'].includes(data.model)) ? 'beambox-series' : 'delta-series';
     let submenu = [];
     if(modelType === 'beambox-series') {
         submenu = [
@@ -231,7 +231,8 @@ function buildDeviceMenu(callback, uuid, data) {
             { type: 'separator' },
             { id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, source, label: r.calibrate_beambox_camera, click: callback },
         ];
-        if (modelType === 'fbm1') {
+
+        if (data.model === 'fbm1') {
             submenu.push({
                 id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
                 uuid,
