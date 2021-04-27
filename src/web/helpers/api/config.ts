@@ -4,14 +4,19 @@
  */
 import storage from 'helpers/storage-helper';
 
-export default function () {
+interface IConfig {
+  write: (key: string, value, opts?) => void,
+  read: (key: string, opts?) => any,
+  remove: (key: string) => void,
+}
+
+export default function config(): IConfig {
   const stardardOptions = (opts) => ({
     ...opts,
-    onFinished: opts.onFinished || function () { },
+    onFinished: opts?.onFinished || (() => {}),
   });
 
   return {
-    connection: {},
     write(key, value, opts?) {
       storage.set(key, value);
       stardardOptions(opts).onFinished();
