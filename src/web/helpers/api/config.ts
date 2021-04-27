@@ -7,7 +7,7 @@ import storage from 'helpers/storage-helper';
 export default function () {
   const stardardOptions = (opts) => ({
     ...opts,
-    onFinished: opts.onFinished || function () { },
+    onFinished: opts?.onFinished || function () { },
   });
 
   return {
