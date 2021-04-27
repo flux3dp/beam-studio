@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<div
+  className="modal-window with-hole abc"
+>
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "top": "calc(100% - 10px)",
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "bottom": "calc(100% - 10px)",
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "left": "calc(100% - 20px)",
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "right": "calc(100% - 20px)",
+      }
+    }
+  />
+  <div
+    className="modal-body"
+  />
+</div>
+`;
+
+exports[`should render correctly 2`] = `
+<View
+  className={
+    Object {
+      "with-hole": true,
+    }
+  }
+  content={<div />}
+  disabledEscapeOnBackground={false}
+  onClose={[Function]}
+  onOpen={[Function]}
+/>
+`;
+
+exports[`should render correctly 3`] = `
+<div
+  className="modal-window with-hole abc"
+>
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "top": NaN,
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "bottom": NaN,
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "left": NaN,
+      }
+    }
+  />
+  <div
+    className="modal-background"
+    style={
+      Object {
+        "right": NaN,
+      }
+    }
+  />
+  <div
+    className="modal-body"
+  />
+</div>
+`;

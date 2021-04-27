@@ -1,63 +1,55 @@
 const Store = requireNode('electron-store');
-let store = new Store();
+const store = new Store();
+
 function get(name: string): any {
-    name = name || '';
+  let item: any = store.get(name || '');
 
-    let item: any = store.get(name),
-        temp_item: any;
+  item = (item === null ? '' : item);
 
-    item = (null === item ? '' : item);
-
-    try {
-        temp_item = JSON.parse(item);
-
-        if ('object' === typeof temp_item) {
-            item = temp_item;
-        }
+  try {
+    const tempItem = JSON.parse(item);
+    if (typeof tempItem === 'object') {
+      item = tempItem;
     }
-    catch (ex) {
-        // TODO: do something
-    }
+  } catch (ex) {
+    // TODO: do something
+  }
 
-    return item;
-};
+  return item;
+}
 
 function set(name: string, val: any) {
-    name = name || '';
-
-    store.set(name, val);
-
-    return this;
-};
+  store.set(name || '', val);
+  return this;
+}
 
 function removeAt(name: string) {
-    store.delete(name);
-    return this;
-};
+  store.delete(name);
+  return this;
+}
 
 function clearAll() {
-    store.clear();
-
-    return this;
+  store.clear();
+  return this;
 }
 
 function clearAllExceptIP() {
-    let ip = this.get('poke-ip-addr');
-    this.clearAll();
-    this.set('poke-ip-addr', ip);
+  const ip = this.get('poke-ip-addr');
+  this.clearAll();
+  this.set('poke-ip-addr', ip);
 
-    return this;
-};
+  return this;
+}
 
 function isExisting(key: string): boolean {
-    return store.has(key);
-};
+  return store.has(key);
+}
 
 export default {
-    get,
-    set,
-    removeAt,
-    clearAll,
-    clearAllExceptIP,
-    isExisting
+  get,
+  set,
+  removeAt,
+  clearAll,
+  clearAllExceptIP,
+  isExisting,
 };
