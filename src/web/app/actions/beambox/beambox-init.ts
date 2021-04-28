@@ -96,14 +96,14 @@ const displayGuides = () => {
             'height': '100%',
             'x': 0,
             'y': 0,
-            'viewBox': `0 0 ${Constant.dimension.getWidth()} ${Constant.dimension.getHeight()}`,
+            'viewBox': `0 0 ${Constant.dimension.getWidth(BeamboxPreference.read('model'))} ${Constant.dimension.getHeight(BeamboxPreference.read('model'))}`,
             'style': 'pointer-events: none'
         });
 
         svgedit.utilities.assignAttributes(lineHorizontal, {
             'id': 'horizontal_guide',
             'x1': 0,
-            'x2': Constant.dimension.getWidth(),
+            'x2': Constant.dimension.getWidth(BeamboxPreference.read('model')),
             'y1': BeamboxPreference.read('guide_y0') * 10,
             'y2': BeamboxPreference.read('guide_y0') * 10,
             'stroke': '#000',
@@ -120,7 +120,7 @@ const displayGuides = () => {
             'x1': BeamboxPreference.read('guide_x0') * 10,
             'x2': BeamboxPreference.read('guide_x0') * 10,
             'y1': 0,
-            'y2': Constant.dimension.getHeight(),
+            'y2': Constant.dimension.getHeight(BeamboxPreference.read('model')),
             'stroke': '#000',
             'stroke-width': '2',
             'stroke-opacity': 0.8,

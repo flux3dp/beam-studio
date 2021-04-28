@@ -5157,8 +5157,8 @@ define([
       svgcontent.setAttribute('data-rotary_mode', rotaryMode);
       svgcontent.setAttribute('data-en_diode', isUsingDiode);
       svgcontent.setAttribute('data-en_af', isUsingAF);
-      const x = $('#workarea').scrollLeft() / current_zoom - Constant.dimension.getWidth();
-      const y = $('#workarea').scrollTop() / current_zoom - Constant.dimension.getHeight();
+      const x = $('#workarea').scrollLeft() / current_zoom - Constant.dimension.getWidth(BeamboxPreference.read('model'));
+      const y = $('#workarea').scrollTop() / current_zoom - Constant.dimension.getHeight(BeamboxPreference.read('model'));
       svgcontent.setAttribute('data-zoom', (Math.round(current_zoom * 1000) / 1000));
       svgcontent.setAttribute('data-left', Math.round(x));
       svgcontent.setAttribute('data-top', Math.round(y));
@@ -6153,8 +6153,8 @@ define([
         }
 
         // Keep workarea size after loading external svg
-        attrs.width = Constant.dimension.getWidth();
-        attrs.height = Constant.dimension.getHeight();
+        attrs.width = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+        attrs.height = Constant.dimension.getHeight(BeamboxPreference.read('model'));
 
         // identify layers
         identifyLayers();

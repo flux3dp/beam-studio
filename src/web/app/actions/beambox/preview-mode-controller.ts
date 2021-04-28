@@ -320,8 +320,8 @@ class PreviewModeController {
     constrainPreviewXY(x, y) {
         const isDiodeEnabled = BeamboxPreference.read('enable-diode') && Constant.addonsSupportList.hybridLaser.includes(BeamboxPreference.read('workarea'));
         const isBorderlessEnabled = BeamboxPreference.read('borderless');
-        let maxWidth = Constant.dimension.getWidth();
-        let maxHeight = Constant.dimension.getHeight();
+        let maxWidth = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+        let maxHeight = Constant.dimension.getHeight(BeamboxPreference.read('model'));
         if (isDiodeEnabled) {
             maxWidth -= Constant.diode.safeDistance.X * Constant.dpmm;
             maxHeight -= Constant.diode.safeDistance.Y * Constant.dpmm;

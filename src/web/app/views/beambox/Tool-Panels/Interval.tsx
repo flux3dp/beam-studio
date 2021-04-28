@@ -2,6 +2,7 @@ import UnitInput from'app/widgets/Unit-Input-v2';
 import Constant from 'app/actions/beambox/constant';
 import storage from 'helpers/storage-helper';
 import * as i18n from 'helpers/i18n';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 
 const React = requireNode('react');
 const PropTypes = requireNode('prop-types');
@@ -19,7 +20,7 @@ class Interval extends React.Component{
             isCollapsed: false,
         };
     }
-    
+
     UNSAFE_componentWillReceiveProps(nextProps) {
         this.setState({
             dx: nextProps.dx,
@@ -39,11 +40,11 @@ class Interval extends React.Component{
         this.setState({dy: val});
         let distance = this.state;
         distance.dy = val;
-        this.props.onValueChange(distance);       
+        this.props.onValueChange(distance);
     }
 
     getValueCaption = () => {
-        const dx = this.state.dx, 
+        const dx = this.state.dx,
             dy = this.state.dy,
             units = storage.get('default-units') || 'mm';
         if (units === 'inches') {
@@ -78,7 +79,7 @@ class Interval extends React.Component{
                             <span className="text-center header">{LANG.dy}</span>
                             <UnitInput
                                 min={0}
-                                max={Constant.dimension.getHeight()/Constant.dpmm}
+                                max={Constant.dimension.getHeight(BeamboxPreference.read('model'))/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.dy}
                                 getValue={this.updateDyHandler}
