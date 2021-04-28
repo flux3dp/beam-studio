@@ -211,7 +211,7 @@ async function getCertificateFromStoreInfo(options, vm) {
 
 async function doSign(configuration, packager) {
   // https://github.com/electron-userland/electron-builder/pull/1944
-  const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 10 * 60 * 1000;
+  const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 60 * 60 * 1000;
   let tool;
   let args;
   let env = process.env;
@@ -235,7 +235,7 @@ async function doSign(configuration, packager) {
   }
 
   const { exec } = require('child_process');
-  
+
   await new Promise((resolve) => {
     let retryTime = 0;
     const doCodeSign = () => {
@@ -407,6 +407,6 @@ async function getToolPath() {
       path: path.join(vendorPath, process.platform, "osslsigncode")
     };
   }
-} 
+}
 // __ts-babel@6.0.4
 //# sourceMappingURL=windowsCodeSign.js.map
