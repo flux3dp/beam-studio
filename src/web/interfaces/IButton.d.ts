@@ -1,10 +1,10 @@
 export interface IButton {
-    type?: string,
-    dataAttrs?: Object,
-    className?: string,
-    right?: boolean,
-    label?: string,
-    href?: string,
-    onClick?: Function,
-    title?: string,
+  type?: string,
+  dataAttrs?: { [key: string]: string|number; },
+  className?: string,
+  right?: boolean,
+  label?: string,
+  href?: string,
+  onClick?: () => void,
+  title?: string,
 }
