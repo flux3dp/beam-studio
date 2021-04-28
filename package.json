@@ -105,7 +105,8 @@
     "test": "jest --passWithNoTests",
     "test-debug": "DEBUG_MODE=1 jest --passWithNoTests",
     "spec": "jest --config jest.config.spec.only.js --passWithNoTests",
-    "integration": "jest --config jest.config.integration.only.js --passWithNoTests"
+    "integration": "jest --config jest.config.integration.only.js --passWithNoTests",
+    "eslint": "eslint"
   },
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",

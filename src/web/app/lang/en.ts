@@ -147,7 +147,7 @@ export default {
     connection_types: {
       wifi: 'Wi-Fi',
       wired: 'Wired Network',
-      ether_to_ether: 'Direct Connection',
+      ether2ether: 'Direct Connection',
     },
     connect_wifi: {
       title: 'Connecting to Wi-Fi',

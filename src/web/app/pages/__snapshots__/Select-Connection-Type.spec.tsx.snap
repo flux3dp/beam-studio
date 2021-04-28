@@ -1,0 +1,562 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Select-Connection-Type should render correctly but not new user 1`] = `
+<SelectConnectionType>
+  <View
+    className={
+      Object {
+        "initialization": true,
+        "modal-window": true,
+      }
+    }
+    content={
+      <div
+        className="connect-machine"
+      >
+        <div
+          className="top-bar"
+        />
+        <div
+          className="btn-page-container"
+        >
+          <div
+            className="btn-page primary"
+            onClick={[Function]}
+          >
+            Cancel
+          </div>
+        </div>
+        <div
+          className="select-connection-type"
+        >
+          <h1
+            className="main-title"
+          >
+            How do you wish to connect?
+          </h1>
+          <div
+            className="btn-h-group"
+          >
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wifi.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wi-Fi
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wired.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wired Network
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-ether2ether.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Direct Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    disabledEscapeOnBackground={false}
+    onClose={[Function]}
+    onOpen={[Function]}
+  >
+    <div
+      className="initialization modal-window"
+    >
+      <div
+        className="modal-background"
+        onClick={[Function]}
+      />
+      <div
+        className="modal-body"
+      >
+        <div
+          className="connect-machine"
+        >
+          <div
+            className="top-bar"
+          />
+          <div
+            className="btn-page-container"
+          >
+            <div
+              className="btn-page primary"
+              onClick={[Function]}
+            >
+              Cancel
+            </div>
+          </div>
+          <div
+            className="select-connection-type"
+          >
+            <h1
+              className="main-title"
+            >
+              How do you wish to connect?
+            </h1>
+            <div
+              className="btn-h-group"
+            >
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wifi.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wi-Fi
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wired.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wired Network
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-ether2ether.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Direct Connection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </View>
+</SelectConnectionType>
+`;
+
+exports[`test Select-Connection-Type should render correctly with new user 1`] = `
+<SelectConnectionType>
+  <View
+    className={
+      Object {
+        "initialization": true,
+        "modal-window": true,
+      }
+    }
+    content={
+      <div
+        className="connect-machine"
+      >
+        <div
+          className="top-bar"
+        />
+        <div
+          className="btn-page-container"
+        >
+          <div
+            className="btn-page primary"
+            onClick={[Function]}
+          >
+            Skip
+          </div>
+        </div>
+        <div
+          className="select-connection-type"
+        >
+          <h1
+            className="main-title"
+          >
+            How do you wish to connect?
+          </h1>
+          <div
+            className="btn-h-group"
+          >
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wifi.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wi-Fi
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wired.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wired Network
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-ether2ether.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Direct Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    disabledEscapeOnBackground={false}
+    onClose={[Function]}
+    onOpen={[Function]}
+  >
+    <div
+      className="initialization modal-window"
+    >
+      <div
+        className="modal-background"
+        onClick={[Function]}
+      />
+      <div
+        className="modal-body"
+      >
+        <div
+          className="connect-machine"
+        >
+          <div
+            className="top-bar"
+          />
+          <div
+            className="btn-page-container"
+          >
+            <div
+              className="btn-page primary"
+              onClick={[Function]}
+            >
+              Skip
+            </div>
+          </div>
+          <div
+            className="select-connection-type"
+          >
+            <h1
+              className="main-title"
+            >
+              How do you wish to connect?
+            </h1>
+            <div
+              className="btn-h-group"
+            >
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wifi.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wi-Fi
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wired.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wired Network
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-ether2ether.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Direct Connection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </View>
+</SelectConnectionType>
+`;
+
+exports[`test Select-Connection-Type should render correctly with new user 2`] = `
+<SelectConnectionType>
+  <View
+    className={
+      Object {
+        "initialization": true,
+        "modal-window": true,
+      }
+    }
+    content={
+      <div
+        className="connect-machine"
+      >
+        <div
+          className="top-bar"
+        />
+        <div
+          className="btn-page-container"
+        >
+          <div
+            className="btn-page primary"
+            onClick={[Function]}
+          >
+            Skip
+          </div>
+        </div>
+        <div
+          className="select-connection-type"
+        >
+          <h1
+            className="main-title"
+          >
+            How do you wish to connect?
+          </h1>
+          <div
+            className="btn-h-group"
+          >
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wifi.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wi-Fi
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-wired.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Wired Network
+              </button>
+            </div>
+            <div
+              className="btn-container"
+            >
+              <img
+                className="connect-btn-icon"
+                draggable="false"
+                src="img/init-panel/icon-ether2ether.svg"
+              />
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Direct Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+    disabledEscapeOnBackground={false}
+    onClose={[Function]}
+    onOpen={[Function]}
+  >
+    <div
+      className="initialization modal-window"
+    >
+      <div
+        className="modal-background"
+        onClick={[Function]}
+      />
+      <div
+        className="modal-body"
+      >
+        <div
+          className="connect-machine"
+        >
+          <div
+            className="top-bar"
+          />
+          <div
+            className="btn-page-container"
+          >
+            <div
+              className="btn-page primary"
+              onClick={[Function]}
+            >
+              Skip
+            </div>
+          </div>
+          <div
+            className="select-connection-type"
+          >
+            <h1
+              className="main-title"
+            >
+              How do you wish to connect?
+            </h1>
+            <div
+              className="btn-h-group"
+            >
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wifi.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wi-Fi
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-wired.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Wired Network
+                </button>
+              </div>
+              <div
+                className="btn-container"
+              >
+                <img
+                  className="connect-btn-icon"
+                  draggable="false"
+                  src="img/init-panel/icon-ether2ether.svg"
+                />
+                <button
+                  className="btn btn-action"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Direct Connection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </View>
+</SelectConnectionType>
+`;
