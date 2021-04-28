@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Connect-Wi-Fi should render correctly 1`] = `
+<View
+  className={
+    Object {
+      "initialization": true,
+    }
+  }
+  content={
+    <div
+      className="connect-machine"
+    >
+      <div
+        className="top-bar"
+      />
+      <div
+        className="btn-page-container"
+      >
+        <div
+          className="btn-page"
+          onClick={[Function]}
+        >
+          Back
+        </div>
+        <div
+          className="btn-page primary"
+          onClick={[Function]}
+        >
+          Next
+        </div>
+      </div>
+      <div
+        className="connection-wifi"
+      >
+        <div
+          className="image-container"
+        >
+          <div
+            className="hint-circle"
+          />
+          <img
+            className="touch-panel-icon"
+            draggable="false"
+            src="img/init-panel/touch-panel-en.jpg"
+          />
+        </div>
+        <div
+          className="text-container"
+        >
+          <div
+            className="title"
+          >
+            Connecting to Wi-Fi
+          </div>
+          <div
+            className="contents tutorial"
+          >
+            <div>
+              1. Go to Touch Panel &gt; Click "Network" &gt; "Connect to WiFi".
+            </div>
+            <div>
+              2. Select and connect your prefered Wi-Fi.
+            </div>
+          </div>
+          <div
+            className="contents what-if collapsed"
+          >
+            <div
+              className="collapse-title"
+              onClick={[Function]}
+            >
+              What if I don't see my Wi-Fi?
+              <div
+                className="collapse-arrow"
+              />
+            </div>
+            <div
+              className="collapse-contents"
+            >
+              1. The Wi-Fi encryption mode should be WPA2 or no password.
+2. The encryption mode can be set in the Wi-Fi router administration interface. If the router doesn’t support WPA2 and you need help picking out the right router, please contact FLUX Support.
+            </div>
+          </div>
+          <div
+            className="contents what-if collapsed"
+          >
+            <div
+              className="collapse-title"
+              onClick={[Function]}
+            >
+              What if I don't see any Wi-Fi?
+              <div
+                className="collapse-arrow"
+              />
+            </div>
+            <div
+              className="collapse-contents"
+            >
+              1. Make sure the Wi-Fi dongle is fully plugged in.
+2. If there is no MAC Address of the wireless network on the touchscreen, please contact FLUX Support.
+3. The Wi-Fi channel should be 2.4Ghz (5Ghz is not supported).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  disabledEscapeOnBackground={false}
+  onClose={[Function]}
+  onOpen={[Function]}
+/>
+`;

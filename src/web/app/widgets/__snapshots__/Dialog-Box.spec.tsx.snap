@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<div
+  className="dialog-box-container"
+  onClick={[Function]}
+  style={
+    Object {
+      "bottom": NaN,
+      "right": NaN,
+    }
+  }
+>
+  <div
+    className="dialog-box-arrow top"
+    style={
+      Object {
+        "borderColor": "transparent transparent black transparent",
+        "borderWidth": "0 10px 10px 10px",
+        "right": 30,
+      }
+    }
+  />
+  <div
+    className="dialog-box"
+  />
+  <div
+    className="close-btn right"
+    onClick={[Function]}
+  >
+    <div
+      className="cross-wrapper"
+    >
+      <div
+        className="bars bar1"
+      />
+      <div
+        className="bars bar2"
+      />
+    </div>
+  </div>
+</div>
+`;
