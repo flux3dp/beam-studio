@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Select-Machine-Type should render correctly 1`] = `
+<SelectMachineType>
+  <View
+    className={
+      Object {
+        "initialization": true,
+        "modal-window": true,
+      }
+    }
+    content={
+      <div
+        className="connect-machine"
+      >
+        <div
+          className="top-bar"
+        />
+        <div
+          className="select-machine-type"
+        >
+          <h1
+            className="main-title"
+          >
+            Select Your Model
+          </h1>
+          <div
+            className="btn-h-group"
+          >
+            <button
+              className="btn btn-action"
+              onClick={[Function]}
+              type="button"
+            >
+              beamo
+            </button>
+            <button
+              className="btn btn-action"
+              onClick={[Function]}
+              type="button"
+            >
+              Beambox
+            </button>
+            <button
+              className="btn btn-action"
+              onClick={[Function]}
+              type="button"
+            >
+              Beambox Pro
+            </button>
+          </div>
+          <div
+            className="btn btn-link"
+            onClick={[Function]}
+          >
+            I don't have a machine now.
+          </div>
+        </div>
+      </div>
+    }
+    disabledEscapeOnBackground={false}
+    onClose={[Function]}
+    onOpen={[Function]}
+  >
+    <div
+      className="initialization modal-window"
+    >
+      <div
+        className="modal-background"
+        onClick={[Function]}
+      />
+      <div
+        className="modal-body"
+      >
+        <div
+          className="connect-machine"
+        >
+          <div
+            className="top-bar"
+          />
+          <div
+            className="select-machine-type"
+          >
+            <h1
+              className="main-title"
+            >
+              Select Your Model
+            </h1>
+            <div
+              className="btn-h-group"
+            >
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                beamo
+              </button>
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Beambox
+              </button>
+              <button
+                className="btn btn-action"
+                onClick={[Function]}
+                type="button"
+              >
+                Beambox Pro
+              </button>
+            </div>
+            <div
+              className="btn btn-link"
+              onClick={[Function]}
+            >
+              I don't have a machine now.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </View>
+</SelectMachineType>
+`;

@@ -13,7 +13,7 @@ const createBoundary = () => {
         'id': 'diode-boundary',
         'width': '100%',
         'height': '100%',
-        'viewBox': `0 0 ${Constant.dimension.getWidth()} ${Constant.dimension.getHeight()}`,
+        'viewBox': `0 0 ${Constant.dimension.getWidth(BeamboxPreference.read('model'))} ${Constant.dimension.getHeight(BeamboxPreference.read('model'))}`,
         'x': 0,
         'y': 0,
         'style': 'pointer-events:none',
@@ -29,8 +29,8 @@ const createBoundary = () => {
 //console.log(diodeBoundaryPath);
 const show = () => {
     if (!diodeBoundaryPath) createBoundary();
-    const w = Constant.dimension.getWidth();
-    const h = Constant.dimension.getHeight();
+    const w = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+    const h = Constant.dimension.getHeight(BeamboxPreference.read('model'));
     const limitXR = Constant.diode.limitX * Constant.dpmm;
     const limitYB = Constant.diode.limitY * Constant.dpmm;
     const OffsetX = Math.max(BeamboxPreference.read('diode_offset_x'), 0);

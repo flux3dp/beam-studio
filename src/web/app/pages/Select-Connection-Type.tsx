@@ -7,7 +7,7 @@ const React = requireNode('react');
 
 let lang;
 
-class SelectConnectionType extends React.Component {
+class SelectConnectionType extends React.PureComponent {
   constructor(props) {
     super(props);
     lang = i18n.lang.initialize;

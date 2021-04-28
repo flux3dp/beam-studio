@@ -152,7 +152,7 @@ export class TopBar extends React.Component {
                     onYes: () => {
                         BeamboxPreference.write('workarea', device.model);
                         BeamboxPreference.write('model', device.model);
-                        svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
+                        svgCanvas.setResolution(Constant.dimension.getWidth(BeamboxPreference.read('model')), Constant.dimension.getHeight(BeamboxPreference.read('model')));
                         svgEditor.resetView();
                         PreviewModeBackgroundDrawer.updateCanvasSize();
                         BeamboxActions.updateLaserPanel();

@@ -37,8 +37,8 @@ class PreviewModeBackgroundDrawer {
     }
 
     start(cameraOffset) {
-        this.canvas.width = Constant.dimension.getWidth();
-        this.canvas.height = Constant.dimension.getHeight();
+        this.canvas.width = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+        this.canvas.height = Constant.dimension.getHeight(BeamboxPreference.read('model'));
 
         // { x, y, angle, scaleRatioX, scaleRatioY }
         this.cameraOffset = cameraOffset;
@@ -63,8 +63,8 @@ class PreviewModeBackgroundDrawer {
     }
 
     updateCanvasSize() {
-        const newWidth = Constant.dimension.getWidth();
-        const newHeight = Constant.dimension.getHeight();
+        const newWidth = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+        const newHeight = Constant.dimension.getHeight(BeamboxPreference.read('model'));
         const ctx = this.canvas.getContext('2d');
         const data = ctx.getImageData(0, 0, newWidth, newHeight);
         this.canvas.width = newWidth;
@@ -232,7 +232,7 @@ class PreviewModeBackgroundDrawer {
             'id': previewBoundaryId,
             'width': '100%',
             'height': '100%',
-            'viewBox': `0 0 ${Constant.dimension.getWidth()} ${Constant.dimension.getHeight()}`,
+            'viewBox': `0 0 ${Constant.dimension.getWidth(BeamboxPreference.read('model'))} ${Constant.dimension.getHeight(BeamboxPreference.read('model'))}`,
             'x': 0,
             'y': 0,
             'style': 'pointer-events:none'
@@ -265,7 +265,7 @@ class PreviewModeBackgroundDrawer {
         });
 
         svgedit.utilities.assignAttributes(borderTop, {
-            'width': Constant.dimension.getWidth(),
+            'width': Constant.dimension.getWidth(BeamboxPreference.read('model')),
             'height': uncapturabledHeight,
             'x': 0,
             'y': 0,
@@ -315,15 +315,15 @@ class PreviewModeBackgroundDrawer {
         const openBottomDescText = svgdoc.createElementNS(NS.SVG, 'text');
         svgedit.utilities.assignAttributes(openBottomBoundary, {
             'width': Constant.borderless.safeDistance.X * Constant.dpmm,
-            'height': Constant.dimension.getHeight(),
-            'x': Constant.dimension.getWidth() - Constant.borderless.safeDistance.X * Constant.dpmm,
+            'height': Constant.dimension.getHeight(BeamboxPreference.read('model')),
+            'x': Constant.dimension.getWidth(BeamboxPreference.read('model')) - Constant.borderless.safeDistance.X * Constant.dpmm,
             'y': 0,
             'fill': 'url(#border-pattern)',
             'style': 'pointer-events:none'
         });
         svgedit.utilities.assignAttributes(openBottomDescText, {
             'font-size': 60,
-            'x': Constant.dimension.getWidth() -  (uncapturabledHeight - 60) / 2,
+            'x': Constant.dimension.getWidth(BeamboxPreference.read('model')) -  (uncapturabledHeight - 60) / 2,
             'y': (uncapturabledHeight + 60) / 2 - 10,
             'text-anchor': 'end',
             'font-weight': 'bold',
@@ -345,15 +345,15 @@ class PreviewModeBackgroundDrawer {
         const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text');
         svgedit.utilities.assignAttributes(hybridBorder, {
             'width': Constant.diode.safeDistance.X * Constant.dpmm,
-            'height': Constant.dimension.getHeight(),
-            'x': Constant.dimension.getWidth() - Constant.diode.safeDistance.X * Constant.dpmm,
+            'height': Constant.dimension.getHeight(BeamboxPreference.read('model')),
+            'x': Constant.dimension.getWidth(BeamboxPreference.read('model')) - Constant.diode.safeDistance.X * Constant.dpmm,
             'y': 0,
             'fill': 'url(#border-pattern)',
             'style': 'pointer-events:none'
         });
         svgedit.utilities.assignAttributes(hybridDescText, {
             'font-size': 60,
-            'x': Constant.dimension.getWidth() -  (uncapturabledHeight - 60) / 2,
+            'x': Constant.dimension.getWidth(BeamboxPreference.read('model')) -  (uncapturabledHeight - 60) / 2,
             'y': (uncapturabledHeight + 60) / 2 - 10,
             'text-anchor': 'end',
             'font-weight': 'bold',

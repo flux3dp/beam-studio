@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
@@ -49,13 +48,13 @@ describe('test Select-Connection-Type', () => {
     expect(mockSet).not.toHaveBeenCalled();
 
     wrapper.find('.btn-action').at(0).simulate('click');
-    expect(location.hash).toBe('#initialize/connect/connect-wi-fi');
+    expect(window.location.hash).toBe('#initialize/connect/connect-wi-fi');
 
     wrapper.find('.btn-action').at(1).simulate('click');
-    expect(location.hash).toBe('#initialize/connect/connect-wired');
+    expect(window.location.hash).toBe('#initialize/connect/connect-wired');
 
     wrapper.find('.btn-action').at(2).simulate('click');
-    expect(location.hash).toBe('#initialize/connect/connect-ethernet');
+    expect(window.location.hash).toBe('#initialize/connect/connect-ethernet');
 
     wrapper.find('.btn-page').simulate('click');
     expect(mockSet).toHaveBeenCalledTimes(2);
@@ -63,7 +62,7 @@ describe('test Select-Connection-Type', () => {
     expect(mockSet).toHaveBeenNthCalledWith(2, 'printer-is-ready', true);
     expect(mockShowLoadingWindow).toHaveBeenCalledTimes(1);
     expect(toJson(wrapper)).toMatchSnapshot();
-    expect(location.hash).toBe('#studio/beambox');
+    expect(window.location.hash).toBe('#studio/beambox');
   });
 
   test('should render correctly but not new user', () => {
