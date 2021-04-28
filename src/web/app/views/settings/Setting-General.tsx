@@ -524,7 +524,7 @@ class SettingGeneral extends React.Component {
                     <UnitInput
                         unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
-                        max={BeamboxConstant.dimension.getWidth() / 10}
+                        max={BeamboxConstant.dimension.getWidth(BeamboxPreference.read('model')) / 10}
                         defaultValue={this.getBeamboxPreferenceEditingValue('guide_x0')}
                         getValue={val => this.updateBeamboxPreferenceChange('guide_x0', val)}
                         forceUsePropsUnit={true}
@@ -534,7 +534,7 @@ class SettingGeneral extends React.Component {
                     <UnitInput
                         unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
-                        max={BeamboxConstant.dimension.getHeight() / 10}
+                        max={BeamboxConstant.dimension.getHeight(BeamboxPreference.read('model')) / 10}
                         defaultValue={this.getBeamboxPreferenceEditingValue('guide_y0')}
                         getValue={val => this.updateBeamboxPreferenceChange('guide_y0', val)}
                         forceUsePropsUnit={true}
@@ -605,7 +605,7 @@ class SettingGeneral extends React.Component {
                             <UnitInput
                                 unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
-                                max={BeamboxConstant.dimension.getWidth() / 10}
+                                max={BeamboxConstant.dimension.getWidth(BeamboxPreference.read('model')) / 10}
                                 defaultValue={this.getBeamboxPreferenceEditingValue('precut_x') || 0}
                                 getValue={val => this.updateBeamboxPreferenceChange('precut_x', val)}
                                 forceUsePropsUnit={true}
@@ -615,7 +615,7 @@ class SettingGeneral extends React.Component {
                             <UnitInput
                                 unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                                 min={0}
-                                max={BeamboxConstant.dimension.getHeight() / 10}
+                                max={BeamboxConstant.dimension.getHeight(BeamboxPreference.read('model')) / 10}
                                 defaultValue={this.getBeamboxPreferenceEditingValue('precut_y') || 0}
                                 getValue={val => this.updateBeamboxPreferenceChange('precut_y', val)}
                                 forceUsePropsUnit={true}
@@ -671,7 +671,7 @@ class SettingGeneral extends React.Component {
                     <UnitInput
                         unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
-                        max={BeamboxConstant.dimension.getWidth() / 10}
+                        max={BeamboxConstant.dimension.getWidth(BeamboxPreference.read('model')) / 10}
                         defaultValue={this.getBeamboxPreferenceEditingValue('diode_offset_x') || 0}
                         getValue={val => this.updateBeamboxPreferenceChange('diode_offset_x', val)}
                         forceUsePropsUnit={true}
@@ -681,7 +681,7 @@ class SettingGeneral extends React.Component {
                     <UnitInput
                         unit={this.getConfigEditingValue('default-units') === 'inches' ? 'in' : 'mm'}
                         min={0}
-                        max={BeamboxConstant.dimension.getHeight() / 10}
+                        max={BeamboxConstant.dimension.getHeight(BeamboxPreference.read('model')) / 10}
                         defaultValue={this.getBeamboxPreferenceEditingValue('diode_offset_y') || 0}
                         getValue={val => this.updateBeamboxPreferenceChange('diode_offset_y', val)}
                         forceUsePropsUnit={true}

@@ -1,70 +1,78 @@
-import Modal from '../widgets/Modal';
-import BeamboxPreference from '../actions/beambox/beambox-preference';
-import Constant from '../actions/beambox/constant';
-import * as i18n from '../../helpers/i18n';
+import Modal from 'app/widgets/Modal';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import * as i18n from 'helpers/i18n';
+import { WorkareaMap, WorkAreaModel } from 'app/actions/beambox/constant';
+
 const React = requireNode('react');
+const { lang } = i18n;
 
-const lang = i18n.lang;
+class SelectMachineType extends React.PureComponent {
+  onSelectMachine = (model) => {
+    BeamboxPreference.write('model', model);
+    BeamboxPreference.write('workarea', model);
+    window.location.hash = '#initialize/connect/select-connection-type';
+  };
 
-class SelectMachineType extends React.Component{
-    onSelectMachine = (model) => {
-        BeamboxPreference.write('model', model);
-        BeamboxPreference.write('workarea', model);
-        location.hash = '#initialize/connect/select-connection-type';
-    }
+  skipConnectMachine = () => {
+    window.location.hash = '#initialize/connect/skip-connect-machine';
+  };
 
-    skipConnectMachine = () => {
-        location.hash = '#initialize/connect/skip-connect-machine';
-    }
+  renderSelectMachineButton = (model: WorkAreaModel) => (
+    <button
+      type="button"
+      className="btn btn-action"
+      onClick={this.onSelectMachine.bind(this, model)}
+    >
+      {WorkareaMap.get(model).label}
+    </button>
+  );
 
-    renderSelectMachineStep = () => {
-        return (
-            <div className="select-machine-type">
-                <h1 className="main-title">{lang.initialize.select_machine_type}</h1>
-                <div className="btn-h-group">
-                    <button
-                        className="btn btn-action"
-                        onClick={() => this.onSelectMachine('fbm1')}
-                    >
-                        {'beamo'}
-                    </button>
-                    <button
-                        className="btn btn-action"
-                        onClick={() => this.onSelectMachine('fbb1b')}
-                    >
-                        {'Beambox'}
-                    </button>
-                    <button
-                        className="btn btn-action"
-                        onClick={() => this.onSelectMachine('fbb1p')}
-                    >
-                        {'Beambox Pro'}
-                    </button>
-                </div>
-                <div className="btn btn-link" onClick={() => this.skipConnectMachine()}>
-                    {lang.initialize.no_machine}
-                </div>
-            </div>
-        );
-    }
+  renderSelectMachineStep = () => (
+    <div className="select-machine-type">
+      <h1 className="main-title">{lang.initialize.select_machine_type}</h1>
+      <div className="btn-h-group">
+        <button
+          type="button"
+          className="btn btn-action"
+          onClick={() => this.onSelectMachine('fbm1')}
+        >
+          beamo
+        </button>
+        <button
+          type="button"
+          className="btn btn-action"
+          onClick={() => this.onSelectMachine('fbb1b')}
+        >
+          Beambox
+        </button>
+        <button
+          type="button"
+          className="btn btn-action"
+          onClick={() => this.onSelectMachine('fbb1p')}
+        >
+          Beambox Pro
+        </button>
+      </div>
+      <div className="btn btn-link" onClick={() => this.skipConnectMachine()}>
+        {lang.initialize.no_machine}
+      </div>
+    </div>
+  );
 
-    render() {
-        const wrapperClassName = {
-            'initialization': true
-        };
-        const innerContent = this.renderSelectMachineStep();
-        const content = (
-            <div className="connect-machine">
-                <div className="top-bar"/>
-                {innerContent}
-            </div>
-        );
+  render() {
+    const wrapperClassName = {
+      initialization: true,
+    };
+    const content = (
+      <div className="connect-machine">
+        <div className="top-bar" />
+        {this.renderSelectMachineStep()}
+      </div>
+    );
+    return (
+      <Modal className={wrapperClassName} content={content} />
+    );
+  }
+}
 
-        return (
-            <Modal className={wrapperClassName} content={content} />
-        );
-    }
-
-};
-
-export default () => SelectMachineType
+export default () => SelectMachineType;

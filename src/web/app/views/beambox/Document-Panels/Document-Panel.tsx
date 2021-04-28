@@ -132,7 +132,7 @@ export default class DocumentPanel extends React.PureComponent {
         BeamboxPreference.write('enable-autofocus', this.state.enableAutofocus);
         if (this.state.workarea !== BeamboxPreference.read('workarea')) {
             BeamboxPreference.write('workarea', this.state.workarea);
-            svgCanvas.setResolution(Constant.dimension.getWidth(), Constant.dimension.getHeight());
+            svgCanvas.setResolution(Constant.dimension.getWidth(BeamboxPreference.read('model')), Constant.dimension.getHeight(BeamboxPreference.read('model')));
             svgEditor.resetView();
             PreviewModeBackgroundDrawer.updateCanvasSize();
         }

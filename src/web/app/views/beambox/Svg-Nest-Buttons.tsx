@@ -3,6 +3,8 @@ import Constant from '../../actions/beambox/constant';
 import Modal from '../../widgets/Modal';
 import * as i18n from 'helpers/i18n';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+
 let svgCanvas, svgedit;
 getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; svgedit = globalSVG.Edit });
 
@@ -30,8 +32,8 @@ class SvgNestButtons extends React.Component {
             };
             containerPoints = ClipperLib.dPathtoPointPathsAndScale(containerDpath, rotation, 1);
         } else {
-            const w = Constant.dimension.getWidth();
-            const h = Constant.dimension.getHeight();
+            const w = Constant.dimension.getWidth(BeamboxPreference.read('model'));
+            const h = Constant.dimension.getHeight(BeamboxPreference.read('model'));
             containerPoints = [{x: 0, y: 0}, {x: w, y: 0}, {x: w, y: h}, {x: 0, y: h}];
         }
 

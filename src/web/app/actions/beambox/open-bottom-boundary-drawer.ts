@@ -37,7 +37,7 @@ const createBoundary = async () => {
         'id': 'open-bottom-boundary',
         'width': '100%',
         'height': '100%',
-        'viewBox': `0 0 ${Constant.dimension.getWidth()} ${Constant.dimension.getHeight()}`,
+        'viewBox': `0 0 ${Constant.dimension.getWidth(BeamboxPreference.read('model'))} ${Constant.dimension.getHeight(BeamboxPreference.read('model'))}`,
         'x': 0,
         'y': 0,
         'style': 'pointer-events:none',
@@ -68,7 +68,7 @@ const show = async () => {
     if (!document.getElementById('open-bottom-boundary')) {
         await createBoundary();
     }
-    const x = Constant.dimension.getWidth() - Constant.borderless.safeDistance.X * Constant.dpmm;
+    const x = Constant.dimension.getWidth(BeamboxPreference.read('model')) - Constant.borderless.safeDistance.X * Constant.dpmm;
     openBottomBoundaryRect.setAttribute('x', x);
     openBottomBoundaryRect.setAttribute('display', 'block');
 };
