@@ -4,44 +4,33 @@
  */
 import storage from 'helpers/storage-helper';
 
-export default function() {
-    var stardardOptions = function(opts) {
-        opts = opts || {};
-        opts.onFinished = opts.onFinished || function() {};
+interface IConfig {
+  write: (key: string, value, opts?) => void,
+  read: (key: string, opts?) => any,
+  remove: (key: string) => void,
+}
 
-        return opts;
-    };
+export default function config(): IConfig {
+  const stardardOptions = (opts) => ({
+    ...opts,
+    onFinished: opts?.onFinished || (() => {}),
+  });
 
-    return {
-        connection: {},
-        write: function(key, value, opts?) {
-            opts = stardardOptions(opts);
+  return {
+    write(key, value, opts?) {
+      storage.set(key, value);
+      stardardOptions(opts).onFinished();
 
-            storage.set(key, value);
-            opts.onFinished();
+      return this;
+    },
+    read(key, opts?): any {
+      const value = storage.get(key);
+      stardardOptions(opts).onFinished(value);
+      return value;
+    },
 
-            return this;
-        },
-        read: function(key, opts?): string | Object {
-            var value = storage.get(key);
-
-            opts = stardardOptions(opts);
-
-            opts.onFinished(value);
-
-            return value;
-        },
-
-        update: function(key, item_key, item_value) {
-            let configs = this.read(key);
-            if(configs === '') configs = {};
-            configs[item_key] = item_value;
-            this.write(key, configs);
-        },
-
-        remove: function(key) {
-            storage.removeAt(key);
-        }
-    };
-
-};
+    remove(key) {
+      storage.removeAt(key);
+    },
+  };
+}

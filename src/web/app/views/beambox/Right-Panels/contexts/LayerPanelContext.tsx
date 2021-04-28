@@ -1,44 +1,58 @@
+import { ILayerPanelContext } from 'interfaces/IContext';
+
 const React = requireNode('react');
+const PropTypes = requireNode('prop-types');
 const { createContext } = React;
-export const LayerPanelContext = createContext();
-let id = 0;
+
+export const LayerPanelContext: ILayerPanelContext = createContext();
 export class LayerPanelContextProvider extends React.Component {
-    private contextValue = {};
-    private selectedLayers: string[] = [];
-    constructor(props) {
-        super(props);
-        this.state = {};
-        this.updateContextValue();
-    }
+  private contextValue = {};
 
-    updateContextValue = () => {
-        const {
-            selectedLayers,
-            setSelectedLayers,
-            updateLayerPanel,
-        } = this;
-        this.contextValue = {
-            selectedLayers,
-            setSelectedLayers,
-            updateLayerPanel,
-        };
-    }
+  private selectedLayers: string[] = [];
 
-    setSelectedLayers = (selectedLayers: string[]) => {
-        this.selectedLayers = [...selectedLayers];
-        this.updateContextValue();
-        this.setState(this.state);
-    }
+  constructor(props: { children?: Element | Element[] }) {
+    super(props);
+    this.state = {};
+    this.updateContextValue();
+  }
 
-    updateLayerPanel = () => {
-        this.setState(this.state);
-    }
+  updateContextValue = (): void => {
+    const {
+      selectedLayers,
+      setSelectedLayers,
+      updateLayerPanel,
+    } = this;
+    this.contextValue = {
+      selectedLayers,
+      setSelectedLayers,
+      updateLayerPanel,
+    };
+  };
 
-    render() {
-        return (
-            <LayerPanelContext.Provider value={this.contextValue}>
-                {this.props.children}
-            </LayerPanelContext.Provider>
-        );
-    }
+  setSelectedLayers = (selectedLayers: string[]): void => {
+    this.selectedLayers = [...selectedLayers];
+    this.updateContextValue();
+    this.forceUpdate();
+  };
+
+  updateLayerPanel = (): void => {
+    this.forceUpdate();
+  };
+
+  render(): Element {
+    const { children } = this.props;
+    return (
+      <LayerPanelContext.Provider value={this.contextValue}>
+        {children}
+      </LayerPanelContext.Provider>
+    );
+  }
+}
+
+LayerPanelContextProvider.propTypes = {
+  children: PropTypes.element,
+};
+
+LayerPanelContextProvider.defaultProps = {
+  children: null,
 };
