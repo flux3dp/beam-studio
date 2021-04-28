@@ -212,6 +212,10 @@
                     a {
                         color: #999999;
                     }
+                    .link {
+                      cursor: pointer;
+                      text-decoration: underline;
+                    }
                     &.tutorial {
                         padding-bottom: 25px;
                     }

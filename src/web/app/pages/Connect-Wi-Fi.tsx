@@ -1,16 +1,19 @@
-/* eslint-disable no-restricted-globals */
 import Modal from 'app/widgets/Modal';
 import i18n from 'helpers/i18n';
 
 const React = requireNode('react');
 const classNames = requireNode('classnames');
 
-let lang;
+let lang = i18n.lang.initialize;
+
+const updateLang = () => {
+  lang = i18n.lang.initialize;
+};
 
 class ConnectWiFi extends React.PureComponent {
   constructor(props) {
     super(props);
-    lang = i18n.lang.initialize;
+    updateLang();
     this.state = {
       showCollapse1: false,
       showCollapse2: false,
@@ -32,7 +35,7 @@ class ConnectWiFi extends React.PureComponent {
             <div>{lang.connect_wifi.tutorial2}</div>
           </div>
           <div className={classNames('contents', 'what-if', { collapsed: !showCollapse1 })}>
-            <div className="collapse-title" onClick={() => { this.setState({ showCollapse1: !showCollapse1 }); }}>
+            <div className="collapse-title" onClick={() => this.setState({ showCollapse1: !showCollapse1 })}>
               {lang.connect_wifi.what_if_1}
               <div className="collapse-arrow" />
             </div>
@@ -41,7 +44,7 @@ class ConnectWiFi extends React.PureComponent {
             </div>
           </div>
           <div className={classNames('contents', 'what-if', { collapsed: !showCollapse2 })}>
-            <div className="collapse-title" onClick={() => { this.setState({ showCollapse2: !showCollapse2 }); }}>
+            <div className="collapse-title" onClick={() => this.setState({ showCollapse2: !showCollapse2 })}>
               {lang.connect_wifi.what_if_2}
               <div className="collapse-arrow" />
             </div>
@@ -56,19 +59,17 @@ class ConnectWiFi extends React.PureComponent {
 
   renderButtons = () => (
     <div className="btn-page-container">
-      <div className="btn-page" onClick={() => { location.hash = '#initialize/connect/select-connection-type'; }}>
+      <div className="btn-page" onClick={() => { window.location.hash = '#initialize/connect/select-connection-type'; }}>
         {lang.back}
       </div>
-      <div className="btn-page primary" onClick={() => { location.hash = '#initialize/connect/connect-machine-ip?wired=0'; }}>
+      <div className="btn-page primary" onClick={() => { window.location.hash = '#initialize/connect/connect-machine-ip?wired=0'; }}>
         {lang.next}
       </div>
     </div>
   );
 
   render() {
-    const wrapperClassName = {
-      initialization: true,
-    };
+    const wrapperClassName = { initialization: true };
     const innerContent = this.renderContent();
     const content = (
       <div className="connect-machine">
@@ -84,4 +85,5 @@ class ConnectWiFi extends React.PureComponent {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default () => ConnectWiFi;

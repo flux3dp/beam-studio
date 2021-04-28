@@ -64,13 +64,12 @@ exports[`test Connect-Ethernet should render correctly in mac 1`] = `
             </div>
             <div>
               2. Follow 
-              <a
-                href="https://support.flux3dp.com/hc/en-us/articles/360001517076"
-                rel="noreferrer"
-                target="_blank"
+              <span
+                className="link"
+                onClick={[Function]}
               >
                 this guide
-              </a>
+              </span>
                to make your comuter as a router.
             </div>
             <div>
@@ -151,13 +150,12 @@ exports[`test Connect-Ethernet should render correctly in win 1`] = `
             </div>
             <div>
               2. Follow 
-              <a
-                href="https://support.flux3dp.com/hc/en-us/articles/360001507715"
-                rel="noreferrer"
-                target="_blank"
+              <span
+                className="link"
+                onClick={[Function]}
               >
                 this guide
-              </a>
+              </span>
                to make your comuter as a router.
             </div>
             <div>
