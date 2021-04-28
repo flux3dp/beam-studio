@@ -69,7 +69,7 @@ class Interval extends React.Component{
                             <span className="text-center header">{LANG.dx}</span>
                             <UnitInput
                                 min={0}
-                                max={Constant.dimension.getWidth()/Constant.dpmm}
+                                max={Constant.dimension.getWidth(BeamboxPreference.read('model'))/Constant.dpmm}
                                 unit="mm"
                                 defaultValue={this.state.dx}
                                 getValue={this.updateDxHandler}

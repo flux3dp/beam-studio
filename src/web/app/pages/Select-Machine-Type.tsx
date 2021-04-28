@@ -31,27 +31,9 @@ class SelectMachineType extends React.PureComponent {
     <div className="select-machine-type">
       <h1 className="main-title">{lang.initialize.select_machine_type}</h1>
       <div className="btn-h-group">
-        <button
-          type="button"
-          className="btn btn-action"
-          onClick={() => this.onSelectMachine('fbm1')}
-        >
-          beamo
-        </button>
-        <button
-          type="button"
-          className="btn btn-action"
-          onClick={() => this.onSelectMachine('fbb1b')}
-        >
-          Beambox
-        </button>
-        <button
-          type="button"
-          className="btn btn-action"
-          onClick={() => this.onSelectMachine('fbb1p')}
-        >
-          Beambox Pro
-        </button>
+        {this.renderSelectMachineButton('fbm1')}
+        {this.renderSelectMachineButton('fbb1b')}
+        {this.renderSelectMachineButton('fbb1p')}
       </div>
       <div className="btn btn-link" onClick={() => this.skipConnectMachine()}>
         {lang.initialize.no_machine}
