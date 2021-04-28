@@ -145,7 +145,7 @@ export interface ILang {
     connection_types: {
       wifi: string,
       wired: string,
-      ether_to_ether: string,
+      ether2ether: string,
     },
     connect_wifi: {
       title: string,

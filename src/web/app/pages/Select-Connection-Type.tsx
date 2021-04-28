@@ -11,12 +11,12 @@ class SelectConnectionType extends React.Component {
   constructor(props) {
     super(props);
     lang = i18n.lang.initialize;
-    this.state = {};
   }
 
-  onClick = (method: string) => {
-    switch (method) {
-      case 'wi-fi':
+  selectConnectionType = (type: 'wifi' | 'wired' | 'ether2ether') => {
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case 'wifi':
         window.location.hash = '#initialize/connect/connect-wi-fi';
         break;
       case 'wired':
@@ -25,65 +25,52 @@ class SelectConnectionType extends React.Component {
       case 'ether2ether':
         window.location.hash = '#initialize/connect/connect-ethernet';
         break;
-      default:
-        break;
     }
   };
+
+  renderConnectionTypeContainer = (type: 'wifi' | 'wired' | 'ether2ether') => (
+    <div className="btn-container">
+      <img className="connect-btn-icon" src={`img/init-panel/icon-${type}.svg`} draggable="false" />
+      {this.renderConnectionTypeButton(type)}
+    </div>
+  );
+
+  renderConnectionTypeButton = (type: 'wifi' | 'wired' | 'ether2ether') => (
+    <button
+      type="button"
+      className="btn btn-action"
+      onClick={this.selectConnectionType.bind(this, type)}
+    >
+      {lang.connection_types[type]}
+    </button>
+  );
 
   renderSelectConnectTypeStep = () => (
     <div className="select-connection-type">
       <h1 className="main-title">{lang.select_connection_type}</h1>
       <div className="btn-h-group">
-        <div className="btn-container">
-          <img className="connect-btn-icon" src="img/init-panel/icon-wifi.svg" draggable="false" />
-          <button
-            type="button"
-            className="btn btn-action"
-            onClick={() => this.onClick('wi-fi')}
-          >
-            {lang.connection_types.wifi}
-          </button>
-        </div>
-        <div className="btn-container">
-          <img className="connect-btn-icon" src="img/init-panel/icon-wired.svg" draggable="false" />
-          <button
-            type="button"
-            className="btn btn-action"
-            onClick={() => this.onClick('wired')}
-          >
-            {lang.connection_types.wired}
-          </button>
-        </div>
-        <div className="btn-container">
-          <img className="connect-btn-icon" src="img/init-panel/icon-e2e.svg" draggable="false" />
-          <button
-            type="button"
-            className="btn btn-action"
-            onClick={() => this.onClick('ether2ether')}
-          >
-            {lang.connection_types.ether_to_ether}
-          </button>
-        </div>
+        {this.renderConnectionTypeContainer('wifi')}
+        {this.renderConnectionTypeContainer('wired')}
+        {this.renderConnectionTypeContainer('ether2ether')}
       </div>
     </div>
   );
+
+  clickButton = (isNewUser: boolean) => {
+    if (isNewUser) {
+      storage.set('new-user', true);
+    }
+    storage.set('printer-is-ready', true);
+    dialog.showLoadingWindow();
+    window.location.hash = '#studio/beambox';
+    window.location.reload();
+  };
 
   renderButtons = () => {
     const isNewUser = !storage.get('printer-is-ready');
     return (
       <div className="btn-page-container">
-        <div
-          className="btn-page primary"
-          onClick={() => {
-            if (isNewUser) {
-              storage.set('new-user', true);
-            }
-            storage.set('printer-is-ready', true);
-            dialog.showLoadingWindow();
-            window.location.hash = '#studio/beambox';
-            window.location.reload();
-          }}
-        >
+        <div className="btn-page primary" onClick={this.clickButton.bind(this, isNewUser)}>
           {isNewUser ? lang.skip : lang.cancel}
         </div>
       </div>
@@ -91,7 +78,9 @@ class SelectConnectionType extends React.Component {
   };
 
   render() {
-    const wrapperClassName = { initialization: true };
+    const wrapperClassName = {
+      initialization: true,
+    };
     const innerContent = this.renderSelectConnectTypeStep();
     const content = (
       <div className="connect-machine">
@@ -107,5 +96,4 @@ class SelectConnectionType extends React.Component {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default () => SelectConnectionType;

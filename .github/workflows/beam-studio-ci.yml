@@ -23,5 +23,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Eslint check
         uses: reviewdog/action-eslint@v1
-        with:
-          fail_on_error: true
+        # with:
+        # remove this parameter due to this known issue: https://github.com/reviewdog/reviewdog/issues/848
+        #   fail_on_error: true
