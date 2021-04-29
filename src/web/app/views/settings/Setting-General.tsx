@@ -709,7 +709,6 @@ class SettingGeneral extends React.Component {
 };
 
 SettingGeneral.defaultProps = {
-    lang: {},
     supported_langs: '',
     onLangChange: function () { }
 };

@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Settings should render correctly 1`] = `
+<HomeView>
+  <div
+    className="studio-container settings-studio"
+  >
+    <div
+      className="settings-gradient-overlay"
+    />
+    <DummySettingGeneral
+      supported_langs={
+        Object {
+          "de": "Deutsche",
+          "en": "English",
+          "es": "Español",
+          "ja": "日本語",
+          "zh-cn": "简体中文",
+          "zh-tw": "繁體中文",
+        }
+      }
+    >
+      <div>
+        Hello World
+      </div>
+    </DummySettingGeneral>
+  </div>
+</HomeView>
+`;

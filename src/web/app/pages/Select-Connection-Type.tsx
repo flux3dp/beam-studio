@@ -2,6 +2,7 @@ import dialog from 'app/actions/dialog-caller';
 import Modal from 'app/widgets/Modal';
 import storage from 'helpers/storage-helper';
 import i18n from 'helpers/i18n';
+import windowLocationReload from 'app/actions/windowLocation';
 
 const React = requireNode('react');
 
@@ -63,7 +64,7 @@ class SelectConnectionType extends React.PureComponent {
     storage.set('printer-is-ready', true);
     dialog.showLoadingWindow();
     window.location.hash = '#studio/beambox';
-    window.location.reload();
+    windowLocationReload();
   };
 
   renderButtons = () => {
