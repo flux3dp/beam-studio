@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Skip-Connect-Machine should render correctly 1`] = `
+<SkipConnectMachine>
+  <View
+    className={
+      Object {
+        "initialization": true,
+        "modal-window": true,
+      }
+    }
+    content={
+      <div
+        className="connect-machine"
+      >
+        <div
+          className="top-bar"
+        />
+        <div
+          className="skip-connect-machine"
+        >
+          <h1
+            className="main-title"
+          >
+            Welcome to Beam Studio
+          </h1>
+          <div
+            className="text-content"
+          >
+            You can always set up your machine from Titlebar &gt; "Machines" &gt; "Machine Setup"
+          </div>
+          <button
+            className="btn btn-action"
+            onClick={[Function]}
+            type="button"
+          >
+            START CREATING
+          </button>
+        </div>
+      </div>
+    }
+    disabledEscapeOnBackground={false}
+    onClose={[Function]}
+    onOpen={[Function]}
+  >
+    <div
+      className="initialization modal-window"
+    >
+      <div
+        className="modal-background"
+        onClick={[Function]}
+      />
+      <div
+        className="modal-body"
+      >
+        <div
+          className="connect-machine"
+        >
+          <div
+            className="top-bar"
+          />
+          <div
+            className="skip-connect-machine"
+          >
+            <h1
+              className="main-title"
+            >
+              Welcome to Beam Studio
+            </h1>
+            <div
+              className="text-content"
+            >
+              You can always set up your machine from Titlebar &gt; "Machines" &gt; "Machine Setup"
+            </div>
+            <button
+              className="btn btn-action"
+              onClick={[Function]}
+              type="button"
+            >
+              START CREATING
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </View>
+</SkipConnectMachine>
+`;
