@@ -14,7 +14,7 @@ import DxfDpiSelector from 'app/views/beambox/DxfDpiSelector';
 import LayerColorConfigPanel from 'app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from 'app/views/beambox/Network-Testing-Panel';
 import NounProjectPanel from 'app/views/beambox/Noun-Project-Panel';
-import PhotoEditPanel from 'app/views/beambox/Photo-Edit-Panel';
+import PhotoEditPanel, { PhotoEditMode } from 'app/views/beambox/Photo-Edit-Panel';
 import SvgNestButtons from 'app/views/beambox/Svg-Nest-Buttons';
 import { Tutorial } from 'app/views/tutorials/Tutorial';
 import { IPrompt, IDialogBoxStyle, IInputLightBox } from 'interfaces/IDialog';
@@ -118,7 +118,7 @@ export default {
         onClose={() => popDialogById('noun-project')}
       />);
   },
-  showPhotoEditPanel: (mode: string): void => {
+  showPhotoEditPanel: (mode: PhotoEditMode): void => {
     if (isIdExist('photo-edit')) return;
     const selectedElements = svgCanvas.getSelectedElems();
     let len = selectedElements.length;
