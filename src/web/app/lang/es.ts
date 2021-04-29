@@ -610,7 +610,7 @@ export default {
       processing: 'Procesando',
       invert: 'Invertir el color',
       okay: 'Bien',
-      compare: 'Compare',
+      compare: 'Comparar',
       phote_edit: 'Edición de fotos',
     },
     document_panel: {
