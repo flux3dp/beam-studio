@@ -2,10 +2,6 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 
-jest.mock('helpers/i18n', () => ({
-  lang: 'en',
-}));
-
 jest.mock('app/app-settings', () => ({
   i18n: {
     supported_langs: {
@@ -36,16 +32,5 @@ describe('test Settings', () => {
     const HomeView = settings();
     const wrapper = mount(<HomeView />);
     expect(toJson(wrapper)).toMatchSnapshot();
-    expect(wrapper.state().lang).toEqual({
-      de: 'Deutsche',
-      en: 'English',
-      es: 'Español',
-      'zh-tw': '繁體中文',
-      ja: '日本語',
-      'zh-cn': '简体中文',
-    });
-
-    wrapper.find(DummySettingGeneral).prop('onLangChange')();
-    expect(wrapper.state().lang).toBe('en');
   });
 });

@@ -9,7 +9,6 @@ exports[`test Settings should render correctly 1`] = `
       className="settings-gradient-overlay"
     />
     <DummySettingGeneral
-      onLangChange={[Function]}
       supported_langs={
         Object {
           "de": "Deutsche",
