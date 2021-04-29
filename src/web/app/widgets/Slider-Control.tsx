@@ -1,92 +1,172 @@
+/* eslint-disable react/sort-comp */
 const React = requireNode('react');
+const classNames = requireNode('classnames');
 const PropTypes = requireNode('prop-types');
 
-class SliderControl extends React.Component {
-  constructor(props) {
+interface IProps {
+  id: string,
+  key? :string,
+  label?: string,
+  min: number,
+  max: number,
+  step: number,
+  default?: number,
+  onChange: (id: string, value: string | number) => void,
+  unit?: string,
+  doOnlyOnMouseUp?: boolean,
+  doOnlyOnBlur?: boolean,
+}
+
+interface IState {
+  inputValue? : string | number,
+  sliderValue? : string | number,
+  lastValidValue? : string | number,
+}
+
+function isValueValid(value: string): boolean {
+  return value.length > 0 && !Number.isNaN(Number(value));
+}
+
+class SliderControl extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
     super(props);
+    const { default: defaultValue } = this.props;
     this.state = {
-      sliderValue: this.props.default,
-      lastValidValue: this.props.default
-    }
+      inputValue: defaultValue,
+      sliderValue: defaultValue,
+      lastValidValue: defaultValue,
+    };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    var newPropIsDifferent = nextProps.default !== this.state.sliderValue,
-      newStateIsDifferent = this.state.sliderValue !== nextState.sliderValue;
+  shouldComponentUpdate(nextProps: IProps, nextState: IState): boolean {
+    const { sliderValue } = this.state;
+    const newPropIsDifferent = nextProps.default !== sliderValue;
+    const newStateIsDifferent = sliderValue !== nextState.sliderValue;
 
     return newPropIsDifferent || newStateIsDifferent;
   }
 
-  fireChange = (newValue) => {
-    this.props.onChange(this.props.id, newValue);
-  }
+  fireChange = (newValue: string|number): void => {
+    const { id, onChange } = this.props;
+    onChange(id, newValue);
+  };
 
-  validateValue = (e) => {
-    if (!this.isValidValue(this.state.sliderValue)) {
-      this.setState({
-        sliderValue: this.state.lastValidValue,
-      });
-      this.fireChange(this.state.lastValidValue);
+  getValidatedValue = (value: string): number => {
+    const { max, min } = this.props;
+    const { lastValidValue } = this.state;
+    if (!isValueValid(value)) {
+      return lastValidValue;
     }
-  }
+    const validatedValue = Number(value);
+    return Math.max(min, Math.min(max, validatedValue));
+  };
 
-  isValidValue = (value) => {
-    var min = this.props.min,
-      max = this.props.max;
-
-    return min <= value && value <= max;
-  }
-
-  handleSliderChange = (key, e) => {
-    var value = e.target.value;
+  handleSliderChange = (value: string|number): void => {
+    const { doOnlyOnMouseUp } = this.props;
     this.setState({
+      inputValue: value,
       sliderValue: value,
-      lastValidValue: value
-    }, function () {
-      this.fireChange(value);
+      lastValidValue: value,
+    }, () => {
+      if (!doOnlyOnMouseUp) {
+        this.fireChange(value);
+      }
     });
-  }
+  };
 
-  handleEditValue = (e) => {
-    var newValue = e.target.value;
-
-    if (this.isValidValue(newValue)) {
-      this.setState({ lastValidValue: newValue });
-      this.fireChange(newValue);
+  handleSliderMouseUp = (value: string|number): void => {
+    const { doOnlyOnMouseUp } = this.props;
+    if (doOnlyOnMouseUp) {
+      this.fireChange(value);
     }
+  };
 
-    this.setState({ sliderValue: newValue });
-  }
+  handleInputBlur = (): void => {
+    const { doOnlyOnBlur } = this.props;
+    const { lastValidValue, inputValue } = this.state;
+    if (isValueValid(inputValue)) {
+      const validatedValue = this.getValidatedValue(inputValue);
+      if (doOnlyOnBlur) {
+        this.setState({
+          inputValue: validatedValue,
+          sliderValue: validatedValue,
+          lastValidValue: validatedValue,
+        });
+        this.fireChange(validatedValue);
+      }
+    } else {
+      this.setState({
+        inputValue: lastValidValue,
+        sliderValue: lastValidValue,
+      });
+      if (!doOnlyOnBlur) {
+        this.fireChange(lastValidValue);
+      }
+    }
+  };
 
-  render() {
-    let unitClass = "control pull-right unit-" + this.props.unit;
+  handleEditValue = (e: InputEvent): void => {
+    const { doOnlyOnBlur } = this.props;
+    const target = e.target as HTMLInputElement;
+    const newValue = target.value;
+    this.setState({ inputValue: newValue });
 
+    if (isValueValid(newValue)) {
+      const validatedValue = this.getValidatedValue(newValue);
+      if (!doOnlyOnBlur) {
+        this.setState({
+          lastValidValue: validatedValue,
+          sliderValue: validatedValue,
+          inputValue: newValue,
+        });
+        this.fireChange(newValue);
+        return;
+      }
+      this.setState({
+        sliderValue: validatedValue,
+        inputValue: newValue,
+      });
+    }
+  };
+
+  render(): Element {
+    const {
+      id, unit, label, min, max, step,
+    } = this.props;
+    const unitClass = classNames('control', 'pull-right', `unit-${unit}`);
+    const { sliderValue, inputValue } = this.state;
     return (
       <div className="controls">
-        <div className="label pull-left">{this.props.label}</div>
+        <div className="label pull-left">{label}</div>
         <div className={unitClass}>
 
           <div className="slider-container">
-            <input className="slider" type="range"
-              min={this.props.min}
-              max={this.props.max}
-              step={this.props.step}
-              value={this.state.sliderValue}
-              onChange={this.handleSliderChange.bind(null, this.props.id)} />
+            <input
+              className="slider"
+              type="range"
+              min={min}
+              max={max}
+              step={step}
+              value={sliderValue}
+              onChange={(e) => this.handleSliderChange(e.target.value)}
+              onMouseUp={(e) => this.handleSliderMouseUp(e.target.value)}
+            />
           </div>
 
-          <input id={this.props.id} type="text" value={this.state.sliderValue}
+          <input
+            id={id}
+            type="text"
+            value={inputValue}
             onChange={this.handleEditValue}
             onFocus={this.handleEditValue}
-            onBlur={this.validateValue}
+            onBlur={this.handleInputBlur}
             onKeyDown={(e: KeyboardEvent) => e.stopPropagation()}
           />
         </div>
       </div>
     );
   }
-
-};
+}
 
 SliderControl.propTypes = {
   id: PropTypes.string.isRequired,
@@ -94,9 +174,18 @@ SliderControl.propTypes = {
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   step: PropTypes.number.isRequired,
-  default: PropTypes.number,
+  default: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
-  unit: PropTypes.string
-}
+  unit: PropTypes.string,
+  doOnlyOnMouseUp: PropTypes.bool,
+  doOnlyOnBlur: PropTypes.bool,
+};
+
+SliderControl.defaultProps = {
+  label: '',
+  unit: '',
+  doOnlyOnMouseUp: false,
+  doOnlyOnBlur: false,
+};
 
 export default SliderControl;

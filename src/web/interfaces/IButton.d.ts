@@ -6,5 +6,8 @@ export interface IButton {
   label?: string,
   href?: string,
   onClick?: () => void,
+  onMouseDown?: () => void,
+  onMouseUp?: () => void,
+  onMouseLeave?: () => void,
   title?: string,
 }
