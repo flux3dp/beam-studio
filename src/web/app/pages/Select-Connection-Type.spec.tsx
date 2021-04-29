@@ -29,6 +29,9 @@ jest.mock('helpers/i18n', () => ({
   },
 }));
 
+const mockWindowLocationReload = jest.fn();
+jest.mock('app/actions/windowLocation', () => mockWindowLocationReload);
+
 // eslint-disable-next-line import/first
 import selectConnectionType from './Select-Connection-Type';
 
@@ -63,6 +66,7 @@ describe('test Select-Connection-Type', () => {
     expect(mockShowLoadingWindow).toHaveBeenCalledTimes(1);
     expect(toJson(wrapper)).toMatchSnapshot();
     expect(window.location.hash).toBe('#studio/beambox');
+    expect(mockWindowLocationReload).toHaveBeenCalled();
   });
 
   test('should render correctly but not new user', () => {
