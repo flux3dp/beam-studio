@@ -8,7 +8,7 @@ import { TopBarContextProvider } from '../views/beambox/Top-Bar/contexts/Top-Bar
 import { ZoomBlock } from '../views/beambox/Zoom-Block/Zoom-Block';
 import { ZoomBlockContextProvider } from '../views/beambox/Zoom-Block/contexts/Zoom-Block-Context';
 import { TimeEstimationButton } from '../views/beambox/Time-Estimation-Button/Time-Estimation-Button';
-import { SVGEditor } from './svg-editor';
+import SVGEditor from './svg-editor';
 import svgEditor from '../actions/beambox/svg-editor';
 
 const { electron } = window;
