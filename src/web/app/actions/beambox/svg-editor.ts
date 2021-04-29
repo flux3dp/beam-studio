@@ -160,6 +160,7 @@ interface ISVGEditor {
   dimensions: number[]
   uiStrings: any
   updateContextPanel: () => void
+  clearScene: () => void
 }
 
 interface ISVGPref {
@@ -310,6 +311,7 @@ const svgEditor = window['svgEditor'] = (function ($) {
     dimensions: [Constant.dimension.getWidth(BeamboxPreference.read('model')), Constant.dimension.getHeight(BeamboxPreference.read('model'))],
     uiStrings: {},
     updateContextPanel: () => {},
+    clearScene: () => {},
   };
 
   const availableLangMap = {
@@ -4137,7 +4139,7 @@ const svgEditor = window['svgEditor'] = (function ($) {
       path.opencloseSubPath();
     };
 
-    var clickClear = function () {
+    var clearScene = function () {
       Alert.popById('clear-scene');
       Alert.popUp({
         id: 'clear-scene',
@@ -4159,7 +4161,7 @@ const svgEditor = window['svgEditor'] = (function ($) {
       });
     };
 
-    window['svgEditorClearScene'] = clickClear;
+    editor.clearScene = clearScene;
 
     var clickBold = function () {
       svgCanvas.setBold(!svgCanvas.getBold());
