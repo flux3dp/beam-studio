@@ -603,7 +603,7 @@ export default {
       next: '下一步',
       sharpen: '銳化',
       sharpness: '鋭化強度',
-      radius: '鋭化半径',
+      radius: '鋭化半徑',
       crop: '裁剪',
       curve: '曲線',
       start: '開始',

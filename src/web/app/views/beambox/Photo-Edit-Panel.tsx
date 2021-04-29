@@ -32,10 +32,12 @@ const updateLang = () => {
   LANG = i18n.lang.beambox.photo_edit_panel;
 };
 
+export type PhotoEditMode = 'sharpen' | 'crop' | 'curve';
+
 interface IProps {
   element: HTMLElement,
   src: string,
-  mode: 'sharpen' | 'crop' | 'curve',
+  mode: PhotoEditMode,
   unmount: () => void,
 }
 
