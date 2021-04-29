@@ -1,7 +1,6 @@
-
-/* eslint-disable react/no-multi-comp */
+/* eslint-disable react/sort-comp, no-console */
 import $ from 'jquery';
-import Constants from 'app/actions/beambox/constant'
+import Constants from 'app/actions/beambox/constant';
 import * as i18n from 'helpers/i18n';
 import ImageData from 'helpers/image-data';
 import jimpHelper from 'helpers/jimp-helper';
@@ -10,643 +9,549 @@ import Modal from 'app/widgets/Modal';
 import ButtonGroup from 'app/widgets/Button-Group';
 import CurveControl from 'app/widgets/Curve-Control';
 import SliderControl from 'app/widgets/Slider-Control';
+import OpenCVWebSocket from 'helpers/api/open-cv';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
+import { IButton } from 'interfaces/IButton';
+import { IImageDataResult } from 'interfaces/IImageData';
 
-let svgCanvas, svgedit;
+let svgCanvas;
+let svgedit;
 getSVGAsync((globalSVG) => {
-    svgCanvas = globalSVG.Canvas;
-    svgedit = globalSVG.Edit
+  svgCanvas = globalSVG.Canvas;
+  svgedit = globalSVG.Edit;
 });
 
-const React = requireNode('react');
+const classNames = requireNode('classnames');
 const Cropper = requireNode('cropperjs');
+const React = requireNode('react');
 const jimp = requireNode('jimp');
 
-const LANG = i18n.lang.beambox.photo_edit_panel;
-
-let cropper = null;
-class PhotoEditPanel extends React.Component {
-    constructor(props) {
-        super(props);
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        this.state = {
-            origSrc: this.props.src,
-            previewSrc: this.props.src,
-            src: this.props.src,
-            srcHistory: [],
-            isCropping: false,
-            wRatio: 1,
-            hRatio: 1,
-            threshold: $(this.props.element).attr('data-threshold'),
-            shading: ($(this.props.element).attr('data-shading') === 'true'),
-            hadPreprocessDone: false,
-            grayScaleUrl: null,
-            isGrayScale: false,
-        };
-        this.sharpenIntensity = 0;
-    }
-
-    componentDidMount() {
-        switch(this.props.mode) {
-            case 'sharpen':
-            case 'curve':
-            case 'crop':
-                this._handlePreprocess();
-                break;
-            case 'invert':
-                this._handleInvertAndComplete();
-                break;
-            case 'stamp':
-                this._handleStamp();
-                break;
-            default:
-                break;
-        }
-    }
-
-    async _handlePreprocess() {
-        let imgBlobUrl = this.state.origSrc;
-        try {
-            const res = await fetch(imgBlobUrl)
-            const blob = await res.blob();
-            const arrayBuffer = await new Response(blob).arrayBuffer(); 
-            const image = await jimp.read(arrayBuffer);
-            let w = image.bitmap.width;
-            let h = image.bitmap.height;
-            if (['sharpen', 'curve'].includes(this.props.mode)){
-                if( Math.max(image.bitmap.width, image.bitmap.height) > 600 ) {
-                    console.log('Down Sampling');
-                    if (image.bitmap.width >= image.bitmap.height) {
-                        image.resize(600, jimp.AUTO);
-                    } else {
-                        image.resize(jimp.AUTO, 600);
-                    }
-                    const buffer = await image.getBufferAsync(jimp.MIME_PNG);
-                    const newBlob = new Blob([buffer]);
-                    const src = URL.createObjectURL(newBlob);
-                    if (this.state.src !== this.state.origSrc) {
-                        URL.revokeObjectURL(this.state.src);
-                    }
-                    this.state.previewSrc= src;
-                    this.setState({
-                        imageWidth: w,
-                        imageHeight: h,
-                        previewSrc: src,
-                        src: src,
-                        hadPreprocessDone: true
-                    });
-                } else {
-                    this.setState({
-                        imageWidth: w,
-                        imageHeight: h,
-                        previewSrc: imgBlobUrl,
-                        src: imgBlobUrl,
-                        hadPreprocessDone: true
-                    });
-                }
-            } else if (this.props.mode === 'crop') {
-                Progress.popById('photo-edit-processing');
-
-                this.setState({
-                    imageWidth: w,
-                    origWidth: w,
-                    imageHeight: h,
-                    origHeight: h,
-                    hadPreprocessDone: true
-                });
-            } else {
-                throw new Error(`Unknown Mode ${this.props.mode}`); 
-
-            }
-            
-        } catch (err) {
-            console.log(err)
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    _handleCancel() {
-        let src = this.state.src
-        while (this.state.srcHistory.length > 0) {
-            URL.revokeObjectURL(src);
-            src = this.state.srcHistory.pop();
-        }
-        this.props.unmount();
-    }
-
-    _handleComplete() {
-        let self = this;
-        this.batchCmd = new svgedit.history.BatchCommand('Photo edit');
-        let elem = this.props.element;
-        this._handleSetAttribute('origImage', this.state.src);
-        if (this.props.mode === 'crop') {
-            const image = document.getElementById('original-image') as HTMLImageElement;
-            if (this.state.origWidth !== image.naturalWidth) {
-                let ratio = image.naturalWidth / this.state.origWidth;
-                this._handleSetAttribute('width', parseFloat($(elem).attr('width')) * ratio);
-            }
-            if (this.state.origHeight !== image.naturalHeight) {
-                let ratio = image.naturalHeight / this.state.origHeight;
-                this._handleSetAttribute('height', parseFloat($(elem).attr('height')) * ratio);
-            }
-        }
-        if (this.props.mode === 'invert') {
-            this._handleSetAttribute('data-threshold', this.state.threshold);
-        }
-        if (this.props.mode === 'stamp') {
-            this._handleSetAttribute('data-threshold', 255);
-            this._handleSetAttribute('data-shading', true);
-        }
-
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        ImageData(
-            this.state.src, {
-                grayscale: {
-                    is_rgba: true,
-                    is_shading: this.state.shading,
-                    threshold: this.state.threshold,
-                    is_svg: false,
-                },
-                isFullResolution: true,
-                onComplete: function (result) {
-                    self._handleSetAttribute('xlink:href', result.pngBase64);
-                    svgCanvas.undoMgr.addCommandToHistory(self.batchCmd);
-                    svgCanvas.selectOnly([elem], true);
-
-                    Progress.popById('photo-edit-processing');
-                }
-            }
-        );
-        let src;
-        while (this.state.srcHistory.length > 0) {
-            URL.revokeObjectURL(src);
-            src = this.state.srcHistory.pop();
-        }
-        if (this.state.previewSrc !== this.state.origSrc) {
-            URL.revokeObjectURL(this.state.previewSrc);
-        }
-        this.props.unmount();
-    }
-
-    _handleSetAttribute(attr, value) {
-        let elem = this.props.element;
-        svgCanvas.undoMgr.beginUndoableChange(attr, [elem]);
-        elem.setAttribute(attr, value);
-        let cmd = svgCanvas.undoMgr.finishUndoableChange();
-        if (!cmd.isEmpty()) {
-            this.batchCmd.addSubCommand(cmd);
-        }
-    }
-
-    _handleGoBack() {
-        if (this.state.isCropping) {
-            this._destroyCropper();
-        }
-        URL.revokeObjectURL(this.state.src);
-        const src = this.state.srcHistory.pop();
-        this.setState({
-            src: src,
-            isCropping: false,
-            isGrayScale: false,
-        });
-    }
-
-    _renderPhotoEditeModal() {
-        if (!this.state.isGrayScale && this.state.hadPreprocessDone) {
-            this._handleGrayScale();
-        } 
-        let panelContent;
-        let rightWidth = 40;
-        switch (this.props.mode) {
-            case 'sharpen':
-                panelContent = this._renderSharpenPanel();
-                rightWidth = 390;
-                break;
-            case 'curve':
-                panelContent = this._renderCurvePanel();
-                rightWidth = 390;
-                break;
-            default:
-                break;
-        }
-        const maxAllowableWidth = window.innerWidth - rightWidth;
-        const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 180;
-        const containerStyle = (this.state.imageWidth / maxAllowableWidth > this.state.imageHeight / maxAllowableHieght) ? 
-            {width: `${maxAllowableWidth}px`} : {height: `${maxAllowableHieght}px`};
-        const footer = this._renderPhotoEditFooter();
-        const onImgLoad = () => {
-            if (this.props.mode === 'crop' && !this.state.isCropping) {
-                this._handleStartCrop();
-            }
-            Progress.popById('photo-edit-processing');
-        };
-        return (
-            <Modal>
-                <div className='photo-edit-panel'>
-                    <div className='main-content'>
-                        <div className='image-container' style={containerStyle} >
-                            <img 
-                                id='original-image'
-                                style={containerStyle}
-                                src={this.state.grayScaleUrl}
-                                onLoad={() => onImgLoad()}/>
-                        </div>
-                        {panelContent}
-                    </div>
-                    {footer}
-                </div>
-            </Modal>
-        );
-    }
-
-    _handleGrayScale = () => {
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        ImageData(
-            this.state.src,
-            {
-                grayscale: {
-                    is_rgba: true,
-                    is_shading: this.state.shading,
-                    threshold: this.state.threshold,
-                    is_svg: false
-                },
-                isFullResolution: true,
-                onComplete: (result) => {
-                    Progress.popById('photo-edit-processing');
-                    if (this.state.grayScaleUrl) {
-                        URL.revokeObjectURL(this.state.grayScaleUrl);
-                    }
-                    this.setState({
-                        grayScaleUrl: result.pngBase64,
-                        isGrayScale: true
-                    });
-                }
-            }
-        );
-    }
-
-    // SHARPEN
-    _renderSharpenPanel() {
-        return (
-            <div className='right-part'>
-                <div className={`scroll-bar-container ${this.props.mode}`}>
-                    <div className='sub-functions with-slider'> 
-                    <div className='title'>{LANG.sharpen}</div>
-                    <SliderControl
-                        id='sharpen-intensity'
-                        key='sharpen-intensity'
-                        label={LANG.sharpness}
-                        min={0}
-                        max={20}
-                        step={1}
-                        default={0}
-                        onChange={(id, val) => this._handleSharp(true, val)}
-                    />
-                    </div>
-                </div>
-            </div>    
-        );
-    }
-
-    async _handleSharp(isPreview?: boolean, val?: string) {
-        const imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
-        const sharpness = isPreview ? parseInt(val) : this.state.sharpness;
-        const k_edge = -sharpness / 2;
-        const k_corner = -sharpness / 4;
-        const k_m = -4 * (k_edge + k_corner) + 1;
-        const kernel = [[k_corner, k_edge, k_corner], [k_edge, k_m, k_edge], [k_corner, k_edge, k_corner]];
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        try {
-            const resp = await fetch(imgBlobUrl);
-            const respData = await resp.blob();
-            const imageData = await new Response(respData).arrayBuffer(); 
-            const jimpImage = await jimp.read(imageData);
-            jimpImage.convolute(kernel);
-            const convolutedData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
-            const convolutedBlob = new Blob([convolutedData]);
-            const src = URL.createObjectURL(convolutedBlob);
-            if (this.state.src !== this.state.previewSrc) {
-                URL.revokeObjectURL(this.state.src);
-            }
-            if (isPreview) {
-                this.setState({
-                    src: src,
-                    isGrayScale: false,
-                    sharpness: sharpness
-                });
-            } else {
-                this.setState({src: src}, () => this._handleComplete());
-            }
-            
-            Progress.popById('photo-edit-processing');
-        } catch(e) {
-            console.error(e);
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    // CROP
-    _handleStartCrop = () => {
-        if (this.state.isCropping) {
-            return;
-        }
-        const image = document.getElementById('original-image') as HTMLImageElement;
-        cropper = new Cropper(
-            image,
-            {
-                autoCropArea: 1,
-                zoomable: false,
-                viewMode: 0,
-                targetWidth: image.width,
-                targetHeight: image.height
-            }
-        );
-        this.setState({isCropping: true});
-    }
-
-    async _handleCrop(complete=false) {
-        const image = document.getElementById('original-image') as HTMLImageElement;
-        const cropData = cropper.getData();
-        const x = Math.max(0, Math.round(cropData.x));
-        const y = Math.max(0, Math.round(cropData.y));
-        const w = Math.min(image.naturalWidth - x, Math.round(cropData.width));
-        const h = Math.min(image.naturalHeight - y, Math.round(cropData.height));
-        if (x === 0 && y === 0 && w === image.naturalWidth && h === image.naturalHeight && !complete) {
-            return;
-        }
-
-        let imgBlobUrl = this.state.src;
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        try {
-            const resp = await fetch(imgBlobUrl);
-            const respData = await resp.blob();
-            const imageData = await new Response(respData).arrayBuffer(); 
-            const jimpImage = await jimp.read(imageData);
-            jimpImage.crop(x, y, w, h);
-            const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
-            const jimpBlob = new Blob([jimpData]);
-            const src = URL.createObjectURL(jimpBlob);
-            this.state.srcHistory.push(this.state.src);
-            this._destroyCropper();
-            this.setState({
-                src: src,
-                isCropping: false,
-                isGrayScale: false,
-                imageWidth: cropData.width,
-                imageHeight: cropData.height
-            }, () => {
-                Progress.popById('photo-edit-processing');
-                if (complete) {
-                    Progress.openNonstopProgress({
-                        id: 'photo-edit-processing',
-                        message: LANG.processing,
-                    });
-                    let timeout = window.setTimeout(this._handleComplete.bind(this) , 500);
-                }
-            });
-        } catch(e) {
-            console.error(e);
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    _handleCancelCrop() {
-        this._destroyCropper();
-        this.setState({isCropping: false});
-    }
-
-    _destroyCropper() {
-        if(cropper) {
-            cropper.destroy();
-        }
-    }
-
-    // INVERT
-    async _handleInvertAndComplete() {
-        let imgBlobUrl = this.state.src;
-        try {
-            const resp = await fetch(imgBlobUrl);
-            const respData = await resp.blob();
-            const imageData = await new Response(respData).arrayBuffer(); 
-            const jimpImage = await jimp.read(imageData);
-            jimpImage.invert();
-            const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
-            const jimpBlob = new Blob([jimpData]);
-            const src = URL.createObjectURL(jimpBlob);
-            if (!this.state.shading) {
-                this.state.threshold = 256 - this.state.threshold;
-            }
-            this.state.srcHistory.push(this.state.src);
-            this.state.src = src;
-            Progress.popById('photo-edit-processing');
-            this._handleComplete();
-        } catch(e) {
-            console.error(e);
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    // STAMP
-    _handleStamp = async () => {
-        let imgBlobUrl = this.state.src;
-        try {
-            const resp = await fetch(imgBlobUrl);
-            const respData = await resp.blob();
-            const imageData = await new Response(respData).arrayBuffer(); 
-            const jimpImage = await jimp.read(imageData);
-            const w = jimpImage.bitmap.width;
-            const h = jimpImage.bitmap.height;
-            await jimpHelper.binarizeImage(jimpImage, this.state.shading ? 128 : this.state.threshold);
-            const origImage = jimpImage.clone();
-            await jimpHelper.stampBlur(origImage, Math.ceil(Math.min(w, h) / 30));
-            // await origImage.blur(Math.ceil(Math.min(w, h) / 40));
-            jimpHelper.regulateBlurredImage(origImage);
-            await jimpImage.composite(origImage, 0, 0, {
-                mode: jimp.BLEND_OVERLAY
-            });
-            const jimpData = await jimpImage.getBufferAsync(jimp.MIME_PNG);
-            const jimpBlob = new Blob([jimpData]);
-            const src = URL.createObjectURL(jimpBlob);
-            this.state.srcHistory.push(this.state.src);
-            this.state.shading = true;
-            this.state.threshold = 255;
-            this.state.src = src;
-            Progress.popById('photo-edit-processing');
-            this._handleComplete();
-        } catch(e) {
-            console.error(e);
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    // CURVE
-    _renderCurvePanel() {
-        const updateCurveFunction = (curvefunction) => {this._updateCurveFunction(curvefunction)};
-        const handleCurve = () => {this._handleCurve(true)};
-        return (
-            <div className='right-part'>
-                <div className='curve-panel'>
-                    <div className='title'>{LANG.curve}</div>
-                    <CurveControl
-                        updateCurveFunction={updateCurveFunction}
-                        updateImage={handleCurve}
-                    />
-                </div>
-            </div>
-        );
-    }
-
-    _updateCurveFunction(curvefunction) {
-        console.log(curvefunction);
-        this.curvefunction = curvefunction;
-    }
-
-    async _handleCurve(isPreview) {
-        const curveFunc = [...Array(256).keys()].map(e => Math.round(this.curvefunction(e)));
-        let imgBlobUrl = isPreview ? this.state.previewSrc : this.state.origSrc;
-        Progress.openNonstopProgress({
-            id: 'photo-edit-processing',
-            message: LANG.processing,
-        });
-        try {
-            const resp = await fetch(imgBlobUrl);
-            const respBlob = await resp.blob();
-            const respData = await new Response(respBlob).arrayBuffer(); 
-            const jimgImage = await jimp.read(respData);
-            for (let i = 0; i < jimgImage.bitmap.data.length; i++) {
-                if (i % 4 != 3) {
-                    jimgImage.bitmap.data[i] =  curveFunc[jimgImage.bitmap.data[i]];
-                }
-            }
-            const jimpData = await jimgImage.getBufferAsync(jimp.MIME_PNG);
-            const jimpBlob = new Blob([jimpData]);
-            const src = URL.createObjectURL(jimpBlob);
-            if (this.state.src !== this.state.previewSrc) {
-                URL.revokeObjectURL(this.state.src);
-            }
-            if (isPreview) {
-                this.setState({
-                    src: src,
-                    isGrayScale: false,
-                });
-            } else {
-                this.setState({src: src}, () => this._handleComplete());
-            }
-            Progress.popById('photo-edit-processing');
-        } catch(e) {
-            console.error(e);
-            Progress.popById('photo-edit-processing');
-        }
-    }
-
-    _handleCurveComplete() {
-        this._handleCurve(false);
-    }
-
-    _renderPhotoEditFooter() {
-        if (this.props.mode === 'sharpen') {
-            let buttons = [
-                {
-                    label: LANG.okay,
-                    onClick: () => {this._handleSharp(false)},
-                    className: 'btn btn-default primary'
-                },
-                {
-                    label: LANG.cancel,
-                    onClick: () => {this._handleCancel()},
-                    className: 'btn btn-default'
-                }
-            ];
-            return (
-            <div className='footer'>
-                <ButtonGroup buttons={buttons}/>
-            </div>
-            );
-        } 
-        if (this.props.mode === 'crop') {
-            const disableGoBack = (this.state.srcHistory.length === 0);
-            let buttons = [
-                {
-                    label: LANG.okay,
-                    onClick: () => {this._handleCrop(true)},
-                    className: 'btn btn-default pull-right primary'
-                },
-                {
-                    label: LANG.apply,
-                    onClick: () => {this._handleCrop()},
-                    className: 'btn btn-default pull-right'
-                },
-                {
-                    label: LANG.back,
-                    onClick: disableGoBack ? () => {} : () => {this._handleGoBack()},
-                    className: `btn btn-default pull-right${disableGoBack ? ' disabled':''}`
-                },
-                {
-                    label: LANG.cancel,
-                    onClick: () => {this._handleCancel()},
-                    className: 'btn btn-default pull-right'
-                }
-            ];
-            return (
-                <div className='footer'>
-                    <ButtonGroup buttons={buttons}/>
-                </div>
-            );
-        }
-        if (this.props.mode === 'curve') {
-            let buttons = [
-                {
-                    label: LANG.okay,
-                    onClick: () => {this._handleCurveComplete()},
-                    className: 'btn btn-default primary'
-                },
-                {
-                    label: LANG.cancel,
-                    onClick: () => {this._handleCancel()},
-                    className: 'btn btn-default'
-                }
-            ];
-            return (
-                <div className='footer'>
-                    <ButtonGroup buttons={buttons}/>
-                </div>
-            );
-        }
-    }
-
-    render() {
-        let renderContent;
-        switch (this.props.mode) {
-            case 'sharpen':
-            case 'crop':
-            case 'curve':
-                renderContent = this._renderPhotoEditeModal();
-                break;
-            case 'invert':
-            case 'stamp':
-                renderContent = (<div/>)
-                break;
-            default:
-                renderContent = (<div/>)
-                break;
-        }
-        return renderContent;
-    }
+const opencvWS = new OpenCVWebSocket();
+let LANG = i18n.lang.beambox.photo_edit_panel;
+const updateLang = () => {
+  LANG = i18n.lang.beambox.photo_edit_panel;
 };
+
+interface IProps {
+  element: HTMLElement,
+  src: string,
+  mode: 'sharpen' | 'crop' | 'curve',
+  unmount: () => void,
+}
+
+class PhotoEditPanel extends React.Component<IProps> {
+  constructor(props: IProps) {
+    super(props);
+    updateLang();
+    const { element, src } = this.props;
+    this.cropper = null;
+    this.state = {
+      origSrc: src,
+      previewSrc: src,
+      displaySrc: src,
+      sharpness: 1,
+      sharpRadius: 0,
+      srcHistory: [],
+      isCropping: false,
+      threshold: $(element).attr('data-threshold'),
+      shading: (element.getAttribute('data-shading') === 'true'),
+      displayBase64: null,
+      isImageDataGenerated: false,
+      isShowingOriginal: false,
+    };
+  }
+
+  componentDidMount(): void {
+    const { mode, unmount } = this.props;
+    if (!['sharpen', 'crop', 'curve'].includes(mode)) {
+      unmount();
+      return;
+    }
+    this.handlePreprocess();
+  }
+
+  componentDidUpdate(): void {
+    const { isImageDataGenerated } = this.state;
+    if (!isImageDataGenerated) {
+      this.generateImageData();
+    }
+  }
+
+  async handlePreprocess(): Promise<void> {
+    const setCompareBase64 = async (imgUrl: string) => {
+      const result = await this.calculateImageData(imgUrl);
+      this.compareBase64 = result.pngBase64;
+    };
+
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const { mode } = this.props;
+    const { origSrc } = this.state;
+    let imgBlobUrl = origSrc;
+    try {
+      const image = await jimpHelper.urlToImage(imgBlobUrl);
+      const { width: origWidth, height: origHeight } = image.bitmap;
+      if (['sharpen', 'curve'].includes(mode)) {
+        if (Math.max(origWidth, origHeight) > 600) {
+          console.log('Down Sampling');
+          if (origWidth >= origHeight) {
+            image.resize(600, jimp.AUTO);
+          } else {
+            image.resize(jimp.AUTO, 600);
+          }
+          imgBlobUrl = await jimpHelper.imageToUrl(image);
+        }
+        setCompareBase64(imgBlobUrl);
+        this.setState({
+          origWidth,
+          origHeight,
+          imageWidth: image.bitmap.width,
+          imageHeight: image.bitmap.height,
+          previewSrc: imgBlobUrl,
+          displaySrc: imgBlobUrl,
+        });
+      } else if (mode === 'crop') {
+        this.setState({
+          origWidth,
+          origHeight,
+          imageWidth: origWidth,
+          imageHeight: origHeight,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      Progress.popById('photo-edit-processing');
+    }
+  }
+
+  handleCancel(): void {
+    const { displaySrc, srcHistory } = this.state;
+    const { unmount } = this.props;
+    let src = displaySrc;
+    while (srcHistory.length > 0) {
+      URL.revokeObjectURL(src);
+      src = srcHistory.pop();
+    }
+    unmount();
+  }
+
+  async handleComplete(): Promise<void> {
+    const clearHistory = () => {
+      const { srcHistory, previewSrc, origSrc } = this.state;
+      let src = '';
+      while (srcHistory.length > 0) {
+        URL.revokeObjectURL(src);
+        src = srcHistory.pop();
+      }
+      if (previewSrc !== origSrc) {
+        URL.revokeObjectURL(previewSrc);
+      }
+    };
+
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const { displaySrc, origWidth, origHeight } = this.state;
+    const { element, mode, unmount } = this.props;
+    const batchCmd = new svgedit.history.BatchCommand('Photo edit');
+
+    const handleSetAttribute = (attr: string, value) => {
+      svgCanvas.undoMgr.beginUndoableChange(attr, [element]);
+      element.setAttribute(attr, value);
+      const cmd = svgCanvas.undoMgr.finishUndoableChange();
+      if (!cmd.isEmpty()) {
+        batchCmd.addSubCommand(cmd);
+      }
+    };
+
+    handleSetAttribute('origImage', displaySrc);
+    if (mode === 'crop') {
+      const image = document.getElementById('original-image') as HTMLImageElement;
+      if (origWidth !== image.naturalWidth) {
+        const ratio = image.naturalWidth / origWidth;
+        handleSetAttribute('width', parseFloat($(element).attr('width')) * ratio);
+      }
+      if (origHeight !== image.naturalHeight) {
+        const ratio = image.naturalHeight / origHeight;
+        handleSetAttribute('height', parseFloat($(element).attr('height')) * ratio);
+      }
+    }
+
+    clearHistory();
+    const result = await this.calculateImageData(displaySrc);
+    handleSetAttribute('xlink:href', result.pngBase64);
+    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    svgCanvas.selectOnly([element], true);
+    unmount();
+    Progress.popById('photo-edit-processing');
+  }
+
+  async handleSharp(isPreview?: boolean): Promise<void> {
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const {
+      sharpness, displaySrc, previewSrc, origSrc, origWidth, imageWidth,
+    } = this.state;
+    let { sharpRadius } = this.state;
+    sharpRadius = isPreview ? Math.ceil(sharpRadius * (imageWidth / origWidth)) : sharpRadius;
+    const imgBlobUrl = isPreview ? previewSrc : origSrc;
+    try {
+      let newImgUrl = imgBlobUrl;
+      if (sharpRadius * sharpness > 0) {
+        const blob = await opencvWS.sharpen(imgBlobUrl, sharpness, sharpRadius);
+        newImgUrl = URL.createObjectURL(blob);
+      }
+      if (displaySrc !== previewSrc) {
+        URL.revokeObjectURL(displaySrc);
+      }
+      Progress.popById('photo-edit-processing');
+      if (isPreview) {
+        this.setState({
+          displaySrc: newImgUrl,
+          isImageDataGenerated: false,
+        });
+      } else {
+        this.setState({ displaySrc: newImgUrl }, () => this.handleComplete());
+      }
+    } catch (error) {
+      console.log('Error when sharpening image', error);
+      Progress.popById('photo-edit-processing');
+    }
+  }
+
+  handleStartCrop = (): void => {
+    const { isCropping } = this.state;
+    if (isCropping) {
+      return;
+    }
+    const image = document.getElementById('original-image') as HTMLImageElement;
+    this.cropper = new Cropper(
+      image,
+      {
+        autoCropArea: 1,
+        zoomable: false,
+        viewMode: 0,
+        targetWidth: image.width,
+        targetHeight: image.height,
+      },
+    );
+    this.setState({ isCropping: true });
+  };
+
+  async handleCrop(complete = false): Promise<void> {
+    const { displaySrc, srcHistory } = this.state;
+    const image = document.getElementById('original-image') as HTMLImageElement;
+    const cropData = this.cropper.getData();
+    const x = Math.max(0, Math.round(cropData.x));
+    const y = Math.max(0, Math.round(cropData.y));
+    const w = Math.min(image.naturalWidth - x, Math.round(cropData.width));
+    const h = Math.min(image.naturalHeight - y, Math.round(cropData.height));
+    if (x === 0 && y === 0 && w === image.naturalWidth && h === image.naturalHeight && !complete) {
+      return;
+    }
+
+    const imgBlobUrl = displaySrc;
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const newImgUrl = await jimpHelper.cropImage(imgBlobUrl, x, y, w, h);
+    if (newImgUrl) {
+      srcHistory.push(displaySrc);
+      this.destroyCropper();
+      this.setState({
+        displaySrc: newImgUrl,
+        srcHistory,
+        isCropping: false,
+        isImageDataGenerated: false,
+        imageWidth: cropData.width,
+        imageHeight: cropData.height,
+      }, () => {
+        Progress.popById('photo-edit-processing');
+        if (complete) {
+          Progress.openNonstopProgress({
+            id: 'photo-edit-processing',
+            message: LANG.processing,
+          });
+          setTimeout(() => this.handleComplete(), 500);
+        }
+      });
+    } else {
+      Progress.popById('photo-edit-processing');
+    }
+  }
+
+  destroyCropper(): void {
+    if (this.cropper) {
+      this.cropper.destroy();
+    }
+  }
+
+  updateCurveFunction(curvefunction: (n: number) => number): void {
+    this.curvefunction = curvefunction;
+  }
+
+  async handleCurve(isPreview: boolean): Promise<void> {
+    const { displaySrc, previewSrc, origSrc } = this.state;
+    const curveMap = [...Array(256).keys()].map((e: number) => Math.round(this.curvefunction(e)));
+    const imgBlobUrl = isPreview ? previewSrc : origSrc;
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const newImgUrl = await jimpHelper.curveOperate(imgBlobUrl, curveMap);
+    if (newImgUrl) {
+      if (displaySrc !== previewSrc) {
+        URL.revokeObjectURL(displaySrc);
+      }
+      Progress.popById('photo-edit-processing');
+      if (isPreview) {
+        this.setState({
+          displaySrc: newImgUrl,
+          isImageDataGenerated: false,
+        });
+      } else {
+        this.setState({ displaySrc: newImgUrl }, () => this.handleComplete());
+      }
+    } else {
+      Progress.popById('photo-edit-processing');
+    }
+  }
+
+  generateImageData = async (): Promise<void> => {
+    const { displaySrc, displayBase64 } = this.state;
+    Progress.openNonstopProgress({
+      id: 'photo-edit-processing',
+      message: LANG.processing,
+    });
+    const result = await this.calculateImageData(displaySrc);
+    Progress.popById('photo-edit-processing');
+    if (displayBase64) {
+      URL.revokeObjectURL(displayBase64);
+    }
+    this.setState({
+      displayBase64: result.pngBase64,
+      isImageDataGenerated: true,
+    });
+  };
+
+  async calculateImageData(src: string): Promise<IImageDataResult> {
+    const { shading, threshold } = this.state;
+    return new Promise<IImageDataResult>((resolve) => {
+      ImageData(src, {
+        grayscale: {
+          is_rgba: true,
+          is_shading: shading,
+          threshold,
+          is_svg: false,
+        },
+        isFullResolution: true,
+        onComplete: (result: IImageDataResult) => {
+          resolve(result);
+        },
+      });
+    });
+  }
+
+  handleGoBack(): void {
+    const { isCropping, displaySrc, srcHistory } = this.state;
+    if (isCropping) {
+      this.destroyCropper();
+    }
+    URL.revokeObjectURL(displaySrc);
+    const src = srcHistory.pop();
+    this.setState({
+      displaySrc: src,
+      isCropping: false,
+      isImageDataGenerated: false,
+    });
+  }
+
+  renderPhotoEditeModal(): Element {
+    const { mode } = this.props;
+    const {
+      imageWidth, imageHeight, isCropping, isShowingOriginal, displayBase64,
+    } = this.state;
+
+    let panelContent = null;
+    let rightWidth = 40;
+    switch (mode) {
+      case 'sharpen':
+        panelContent = this.renderSharpenPanel();
+        rightWidth = 390;
+        break;
+      case 'curve':
+        panelContent = this.renderCurvePanel();
+        rightWidth = 390;
+        break;
+      default:
+        break;
+    }
+    const maxAllowableWidth = window.innerWidth - rightWidth;
+    const maxAllowableHieght = window.innerHeight - 2 * Constants.topBarHeightWithoutTitleBar - 180;
+    const containerStyle = (imageWidth / maxAllowableWidth > imageHeight / maxAllowableHieght)
+      ? { width: `${maxAllowableWidth}px` } : { height: `${maxAllowableHieght}px` };
+    const onImgLoad = () => {
+      if (mode === 'crop' && !isCropping) {
+        this.handleStartCrop();
+      }
+    };
+    return (
+      <Modal>
+        <div className="photo-edit-panel">
+          <div className="main-content">
+            <div className="image-container" style={containerStyle}>
+              <img
+                id="original-image"
+                style={containerStyle}
+                src={isShowingOriginal ? this.compareBase64 : displayBase64}
+                onLoad={() => onImgLoad()}
+              />
+            </div>
+            {panelContent}
+          </div>
+          {this.renderPhotoEditFooter()}
+        </div>
+      </Modal>
+    );
+  }
+
+  renderSharpenPanel(): Element {
+    const setStateAndPreview = (key: string, value: number) => {
+      const { state } = this;
+      if (state[key] === value) {
+        return;
+      }
+      state[key] = value;
+      this.setState(state, () => {
+        this.handleSharp(true);
+      });
+    };
+
+    return (
+      <div className="right-part">
+        <div className="scroll-bar-container sharpen">
+          <div className="sub-functions with-slider">
+            <div className="title">{LANG.sharpen}</div>
+            <SliderControl
+              id="sharpen-intensity"
+              label={LANG.sharpness}
+              min={0}
+              max={20}
+              step={1}
+              default={1}
+              onChange={(id: string, val: string) => setStateAndPreview('sharpness', parseFloat(val))}
+              doOnlyOnMouseUp
+              doOnlyOnBlur
+            />
+            <SliderControl
+              id="sharpen-radius"
+              label={LANG.radius}
+              min={0}
+              max={100}
+              step={1}
+              default={0}
+              onChange={(id: string, val: string) => setStateAndPreview('sharpRadius', parseInt(val, 10))}
+              doOnlyOnMouseUp
+              doOnlyOnBlur
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderCurvePanel(): Element {
+    const updateCurveFunction = (curvefunction) => this.updateCurveFunction(curvefunction);
+    const handleCurve = () => this.handleCurve(true);
+    return (
+      <div className="right-part">
+        <div className="curve-panel">
+          <div className="title">{LANG.curve}</div>
+          <CurveControl
+            updateCurveFunction={updateCurveFunction}
+            updateImage={handleCurve}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderPhotoEditFooter(): Element {
+    const { mode } = this.props;
+    const { srcHistory } = this.state;
+    const previewButton = {
+      label: LANG.compare,
+      onMouseDown: () => this.setState({ isShowingOriginal: true }),
+      onMouseUp: () => this.setState({ isShowingOriginal: false }),
+      onMouseLeave: () => this.setState({ isShowingOriginal: false }),
+      className: 'btn btn-default pull-left',
+    };
+    const buttons: IButton[] = [
+      {
+        label: LANG.cancel,
+        onClick: () => this.handleCancel(),
+        className: 'btn btn-default pull-right',
+      },
+    ];
+    if (mode === 'sharpen') {
+      buttons.push(...[
+        previewButton,
+        {
+          label: LANG.okay,
+          onClick: () => this.handleSharp(false),
+          className: 'btn btn-default pull-right primary',
+        },
+      ]);
+    } else if (mode === 'crop') {
+      const disableGoBack = srcHistory.length === 0;
+      buttons.push(...[
+        {
+          label: LANG.okay,
+          onClick: () => this.handleCrop(true),
+          className: 'btn btn-default pull-right primary',
+        },
+        {
+          label: LANG.apply,
+          onClick: () => this.handleCrop(),
+          className: 'btn btn-default pull-right',
+        },
+        {
+          label: LANG.back,
+          onClick: disableGoBack ? () => { } : () => this.handleGoBack(),
+          className: classNames('btn btn-default pull-right', { disabled: disableGoBack }),
+        },
+      ]);
+    } else if (mode === 'curve') {
+      buttons.push(...[
+        previewButton,
+        {
+          label: LANG.okay,
+          onClick: () => this.handleCurve(false),
+          className: 'btn btn-default pull-right primary',
+        },
+      ]);
+    }
+    return (
+      <div className="footer">
+        <ButtonGroup buttons={buttons} />
+      </div>
+    );
+  }
+
+  render(): Element {
+    const { mode } = this.props;
+    if (['sharpen', 'crop', 'curve'].includes(mode)) {
+      return this.renderPhotoEditeModal();
+    }
+    return null;
+  }
+}
 
 export default PhotoEditPanel;

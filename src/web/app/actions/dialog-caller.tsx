@@ -118,7 +118,7 @@ export default {
         onClose={() => popDialogById('noun-project')}
       />);
   },
-  showPhotoEditPanel: (mode: string): void => {
+  showPhotoEditPanel: (mode: 'sharpen' | 'crop' | 'curve'): void => {
     if (isIdExist('photo-edit')) return;
     const selectedElements = svgCanvas.getSelectedElems();
     let len = selectedElements.length;
