@@ -9,7 +9,7 @@ export default function () {
     constructor(props) {
       super(props);
       this.state = {
-        lang: settings.i18n.supported_langs,
+        lang: i18n.lang,
       };
     }
 
@@ -23,7 +23,8 @@ export default function () {
       const { lang } = this.state;
       return (
         <GeneralSetting
-          supported_langs={lang}
+          lang={lang}
+          supported_langs={settings.i18n.supported_langs}
           onLangChange={this.onLangChange}
         />
       );
