@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Slider-Control should render correctly 1`] = `
+<SliderControl
+  default={0}
+  doOnlyOnBlur={true}
+  doOnlyOnMouseUp={true}
+  id="abc"
+  label="Threshold"
+  max={100}
+  min={0}
+  onChange={[MockFunction]}
+  step={2}
+  unit="cm"
+>
+  <div
+    className="controls"
+  >
+    <div
+      className="label pull-left"
+    >
+      Threshold
+    </div>
+    <div
+      className="control pull-right unit-cm"
+    >
+      <div
+        className="slider-container"
+      >
+        <input
+          className="slider"
+          max={100}
+          min={0}
+          onChange={[Function]}
+          onMouseUp={[Function]}
+          step={2}
+          type="range"
+          value={0}
+        />
+      </div>
+      <input
+        id="abc"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        type="text"
+        value={0}
+      />
+    </div>
+  </div>
+</SliderControl>
+`;

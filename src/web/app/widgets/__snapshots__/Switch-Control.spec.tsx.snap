@@ -1,0 +1,195 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Switch-Control should render correctly 1`] = `
+<SwitchControl
+  default={true}
+  id="abc"
+  label="Work Area"
+  name="rotary_mode"
+  offText="Disable"
+  onChange={[MockFunction]}
+  onText="Enable"
+>
+  <div
+    className="controls"
+    name="abc"
+  >
+    <div
+      className="label pull-left"
+    >
+      Work Area
+    </div>
+    <div
+      className="control"
+    >
+      <div
+        className="switch-container"
+      >
+        <div
+          className="switch-status"
+        >
+          Enable
+        </div>
+        <div
+          className="onoffswitch"
+          name="rotary_mode"
+        >
+          <input
+            checked={true}
+            className="onoffswitch-checkbox"
+            id="abc"
+            name="onoffswitch"
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <label
+            className="onoffswitch-label"
+            htmlFor="abc"
+          >
+            <span
+              className="onoffswitch-inner"
+            />
+            <span
+              className="onoffswitch-switch"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</SwitchControl>
+`;
+
+exports[`test Switch-Control should render correctly 2`] = `
+<SwitchControl
+  default={true}
+  id="abc"
+  label="Work Area"
+  name="rotary_mode"
+  offText="Disable"
+  onChange={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          "abc",
+          false,
+        ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
+    }
+  }
+  onText="Enable"
+>
+  <div
+    className="controls"
+    name="abc"
+  >
+    <div
+      className="label pull-left"
+    >
+      Work Area
+    </div>
+    <div
+      className="control"
+    >
+      <div
+        className="switch-container"
+      >
+        <div
+          className="switch-status"
+        >
+          Disable
+        </div>
+        <div
+          className="onoffswitch"
+          name="rotary_mode"
+        >
+          <input
+            checked={false}
+            className="onoffswitch-checkbox"
+            id="abc"
+            name="onoffswitch"
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <label
+            className="onoffswitch-label"
+            htmlFor="abc"
+          >
+            <span
+              className="onoffswitch-inner"
+            />
+            <span
+              className="onoffswitch-switch"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</SwitchControl>
+`;
+
+exports[`test Switch-Control should render correctly if disabled 1`] = `
+<SwitchControl
+  default={true}
+  id="abc"
+  isDisabled={true}
+  label="Work Area"
+  name="rotary_mode"
+  onChange={[MockFunction]}
+>
+  <div
+    className="controls disabled"
+    name="abc"
+  >
+    <div
+      className="label pull-left"
+    >
+      Work Area
+    </div>
+    <div
+      className="control"
+    >
+      <div
+        className="switch-container"
+      >
+        <div
+          className="switch-status"
+        >
+          ON
+        </div>
+        <div
+          className="onoffswitch"
+          name="rotary_mode"
+        >
+          <input
+            checked={true}
+            className="onoffswitch-checkbox"
+            id="abc"
+            name="onoffswitch"
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <label
+            className="onoffswitch-label"
+            htmlFor="abc"
+          >
+            <span
+              className="onoffswitch-inner"
+            />
+            <span
+              className="onoffswitch-switch"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</SwitchControl>
+`;
