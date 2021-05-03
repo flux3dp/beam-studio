@@ -10366,7 +10366,13 @@ define([
             var coldc = svgedit.math.transformPoint(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2, ceqm);
 
             // sum group and child's angles
-            var sangle = gangle + cangle;
+            var sangle = (gangle + cangle) % 360;
+
+            if (sangle > 180) {
+              sangle -= 360;
+            } else if (sangle < -180) {
+              sangle += 360;
+            }
 
             // get child's rotation at the old center (Rc2_inv)
             var r2 = svgroot.createSVGTransform();
