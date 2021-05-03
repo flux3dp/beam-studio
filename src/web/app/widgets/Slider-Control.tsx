@@ -1,16 +1,13 @@
-/* eslint-disable react/sort-comp */
 const React = requireNode('react');
 const classNames = requireNode('classnames');
-const PropTypes = requireNode('prop-types');
 
 interface IProps {
   id: string,
-  key? :string,
-  label?: string,
+  label: string,
   min: number,
   max: number,
   step: number,
-  default?: number,
+  default: number,
   onChange: (id: string, value: string | number) => void,
   unit?: string,
   doOnlyOnMouseUp?: boolean,
@@ -18,9 +15,9 @@ interface IProps {
 }
 
 interface IState {
-  inputValue? : string | number,
-  sliderValue? : string | number,
-  lastValidValue? : string | number,
+  inputValue?: string | number,
+  sliderValue?: string | number,
+  lastValidValue?: string | number,
 }
 
 function isValueValid(value: string): boolean {
@@ -46,7 +43,7 @@ class SliderControl extends React.Component<IProps, IState> {
     return newPropIsDifferent || newStateIsDifferent;
   }
 
-  fireChange = (newValue: string|number): void => {
+  fireChange = (newValue: string | number): void => {
     const { id, onChange } = this.props;
     onChange(id, newValue);
   };
@@ -61,8 +58,8 @@ class SliderControl extends React.Component<IProps, IState> {
     return Math.max(min, Math.min(max, validatedValue));
   };
 
-  handleSliderChange = (value: string|number): void => {
-    const { doOnlyOnMouseUp } = this.props;
+  handleSliderChange = (value: string | number): void => {
+    const { doOnlyOnMouseUp = false } = this.props;
     this.setState({
       inputValue: value,
       sliderValue: value,
@@ -74,15 +71,15 @@ class SliderControl extends React.Component<IProps, IState> {
     });
   };
 
-  handleSliderMouseUp = (value: string|number): void => {
-    const { doOnlyOnMouseUp } = this.props;
+  handleSliderMouseUp = (value: string | number): void => {
+    const { doOnlyOnMouseUp = false } = this.props;
     if (doOnlyOnMouseUp) {
       this.fireChange(value);
     }
   };
 
   handleInputBlur = (): void => {
-    const { doOnlyOnBlur } = this.props;
+    const { doOnlyOnBlur = false } = this.props;
     const { lastValidValue, inputValue } = this.state;
     if (isValueValid(inputValue)) {
       const validatedValue = this.getValidatedValue(inputValue);
@@ -106,12 +103,12 @@ class SliderControl extends React.Component<IProps, IState> {
   };
 
   handleEditValue = (e: InputEvent): void => {
-    const { doOnlyOnBlur } = this.props;
     const target = e.target as HTMLInputElement;
     const newValue = target.value;
     this.setState({ inputValue: newValue });
 
     if (isValueValid(newValue)) {
+      const { doOnlyOnBlur = false } = this.props;
       const validatedValue = this.getValidatedValue(newValue);
       if (!doOnlyOnBlur) {
         this.setState({
@@ -131,7 +128,7 @@ class SliderControl extends React.Component<IProps, IState> {
 
   render(): Element {
     const {
-      id, unit, label, min, max, step,
+      id, unit = '', label = '', min, max, step,
     } = this.props;
     const unitClass = classNames('control', 'pull-right', `unit-${unit}`);
     const { sliderValue, inputValue } = this.state;
@@ -139,7 +136,6 @@ class SliderControl extends React.Component<IProps, IState> {
       <div className="controls">
         <div className="label pull-left">{label}</div>
         <div className={unitClass}>
-
           <div className="slider-container">
             <input
               className="slider"
@@ -152,7 +148,6 @@ class SliderControl extends React.Component<IProps, IState> {
               onMouseUp={(e) => this.handleSliderMouseUp(e.target.value)}
             />
           </div>
-
           <input
             id={id}
             type="text"
@@ -167,25 +162,5 @@ class SliderControl extends React.Component<IProps, IState> {
     );
   }
 }
-
-SliderControl.propTypes = {
-  id: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  min: PropTypes.number.isRequired,
-  max: PropTypes.number.isRequired,
-  step: PropTypes.number.isRequired,
-  default: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-  unit: PropTypes.string,
-  doOnlyOnMouseUp: PropTypes.bool,
-  doOnlyOnBlur: PropTypes.bool,
-};
-
-SliderControl.defaultProps = {
-  label: '',
-  unit: '',
-  doOnlyOnMouseUp: false,
-  doOnlyOnBlur: false,
-};
 
 export default SliderControl;
