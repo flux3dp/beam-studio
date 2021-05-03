@@ -36,6 +36,14 @@ const addDialogComponent = (id: string, component: Element): void => {
   }
 };
 
+const clearAllDialogComponents = (): void => {
+  if (!DialogContextHelper.context) {
+    console.log('Dialog context not loaded Yet');
+  } else {
+    DialogContextHelper.context.clearAllDialogComponents();
+  }
+};
+
 const isIdExist = (id: string): boolean => {
   if (!DialogContextHelper.context) {
     console.log('Dialog context not loaded Yet');
@@ -65,6 +73,7 @@ const showDeviceSelector = (onSelect) => {
 
 export default {
   addDialogComponent,
+  clearAllDialogComponents,
   isIdExist,
   popDialogById,
   selectDevice: (): Promise<IDeviceInfo> => new Promise<IDeviceInfo>((resolve) => {

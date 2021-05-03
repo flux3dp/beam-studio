@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 import windowLocationReload from 'app/actions/windowLocation';
 import fileExportHelper from 'helpers/file-export-helper';
+import dialogCaller from './dialog-caller';
 
 const MENU_ITEMS = ['IMPORT', 'EXPORT_FLUX_TASK', 'SAVE_SCENE',
   'UNDO', 'DUPLICATE', 'PHOTO_EDIT', 'DOCUMENT_SETTING', 'CLEAR_SCENE',
@@ -20,6 +21,7 @@ if (electron) {
 
   defaultAction = {
     PREFERENCE: async () => {
+      dialogCaller.clearAllDialogComponents();
       const res = await fileExportHelper.toggleUnsavedChangedDialog();
       if (res) window.location.hash = '#studio/settings';
     },
