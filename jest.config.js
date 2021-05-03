@@ -14,5 +14,6 @@ module.exports = {
     }
   },
   setupFilesAfterEnv: ["./src/web/setupTests.ts"],
-  moduleDirectories: ["node_modules", "src/web"]
+  moduleDirectories: ["node_modules", "src/web"],
+  coverageReporters: ["text-summary", "html"]
 }

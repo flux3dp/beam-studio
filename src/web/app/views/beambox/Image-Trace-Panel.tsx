@@ -530,7 +530,7 @@ class ImageTracePanel extends React.Component {
         } else {
             const containerMaxWidth = maxAllowableWidth - 330;
             const containerMaxHeight = maxAllowableHieght - 40;
-            containerStyle = (cropData.width / containerMaxWidth > cropData.height / containerMaxHeight) ? 
+            containerStyle = (cropData.width / containerMaxWidth > cropData.height / containerMaxHeight) ?
             {width: `${containerMaxWidth}px`} : {height: `${containerMaxHeight}px`};
         }
 
@@ -547,7 +547,6 @@ class ImageTracePanel extends React.Component {
                                 <div className='title'>{LANG.tuning}</div>
                                 <SliderControl
                                     id='threshold'
-                                    key='threshold'
                                     label={LANG.threshold}
                                     min={0}
                                     max={255}
