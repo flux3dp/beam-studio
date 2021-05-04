@@ -50,7 +50,7 @@ jobs:
         with:
           repository: flux3dp/beamify
           ref: master
-          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beamify
 
       - name: Install Beamify
@@ -66,7 +66,7 @@ jobs:
         with:
           repository: flux3dp/fluxclient-dev
           ref: develop
-          token: ${{ secrets.REPO_TOKEN }} # `GitHub_PAT` is a secret that contains your PAT
+          token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/fluxclient
 
       - name: Install FluxClient
@@ -80,6 +80,17 @@ jobs:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
           MACOSX_DEPLOYMENT_TARGET: "10.10"
+
+      - name: Checkout Beam Studio Core
+        uses: actions/checkout@v2
+        with:
+          repository: flux3dp/beam-studio-core
+          token: ${{ secrets.REPO_TOKEN }}
+          path: .github/actions/beam-studio-core
+
+      - name: Copy Beam Studio Core
+        run: |
+          cp -R .github/actions/beam-studio-core ../beam-studio-core
 
       - name: Create Apple Certs
         uses: apple-actions/import-codesign-certs@v1
@@ -102,9 +113,7 @@ jobs:
 
           cp -R util/mac utils
 
-          rm -rf util
-          rm -rf lib
-          rm -rf .github
+          sudo bash ./build/clearup-develop-files.sh
 
           echo "Signing *.so files..."
           find ./backend -name "*.so" | while read f ; do
