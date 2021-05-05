@@ -3,19 +3,6 @@ name: beam-studio-ci
 on: [pull_request]
 
 jobs:
-  unit-test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node-version: [12.19]
-        python-version: [3.7]
-        os: [macOS-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: yarn install
-      - name: Run unit tests
-        run: yarn run spec
   # https://github.com/marketplace/actions/run-eslint-with-reviewdog
   eslint-check:
     runs-on: ubuntu-latest
