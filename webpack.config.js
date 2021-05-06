@@ -11,6 +11,13 @@ module.exports = {
       loader: '/public/js/dist/loader',
     },
   },
+  externals: {
+    crypto: 'require("crypto")',
+    electron: 'require("electron")',
+    fs: 'require("fs")',
+    os: 'require("os")',
+    path: 'require("path")',
+  },
   node: {
     __dirname: false
   },
