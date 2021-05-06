@@ -4,16 +4,12 @@ requirejs.config({
     waitSeconds: 30,
     paths: {
         //jquery: 'lib/jquery-1.11.0.min',
-        main: 'main',
-        tsLoader: 'loader',
         jquery: '../lib/svgeditor/jquery',
-        backbone: '../lib/backbone',
         underscore: '../lib/underscore',
         svgeditor: '../lib/svgeditor',
         imagetracer: '../lib/svgeditor/imagetracer',
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
-        Redux: '../lib/redux.min',
         jqueryGrowl: '../lib/jquery.growl',
         dxf2svg: '../lib/dxf2svg',
         // SVG Editor Libraries Begin
@@ -42,9 +38,6 @@ requirejs.config({
         layer: '../lib/svgeditor/layer',
         path: '../lib/svgeditor/path',
         svgcanvas: '../lib/svgeditor/svgcanvas',
-        beameasyapi: '../lib/svgeditor/beam-easy-api',
-        locale: '../lib/svgeditor/locale/locale',
-        contextmenu: '../lib/svgeditor/contextmenu',
         clipper_unminified: '../lib/clipper_unminified',
         svgnest: '../lib/svg-nest/svgnest',
         svgnestGeoUtil: '../lib/svg-nest/util/geometryutil',
@@ -66,67 +59,11 @@ requirejs.config({
     },
 
     shim: {
-        tsLoader: {
-            deps: [
-                'svgedit'
-            ]
-        },
-        main: {
-            deps: [
-                'Redux',
-                'jsHotkeys',
-                'jquerybbq',
-                'svgicons',
-                'jgraduate',
-                'spinbtn',
-                'touch',
-                'svgedit',
-                'jquerySvg',
-                'jqueryContextMenu',
-                'pathseg',
-                'browser',
-                'svgtransformlist',
-                'math',
-                'units',
-                'svgutils',
-                'sanitize',
-                'history',
-                'historyrecording',
-                'coords',
-                'recalculate',
-                'select',
-                'draw',
-                'layer',
-                'path',
-                'svgcanvas',
-                'locale',
-                'contextmenu',
-                'clipper_unminified',
-                'jqueryUi',
-                'jpicker',
-                'css!svgeditor/svg-editor',
-                'css!svgeditor/jgraduate/css/jPicker',
-                'css!svgeditor/jgraduate/css/jgraduate',
-                'css!svgeditor/spinbtn/JQuerySpinBtn',
-                'canvg',
-                'rgbcolor'
-            ]
-        },
-        backbone: {
-            deps: [
-                'underscore',
-                'jquery'
-            ],
-            exports: 'Backbone'
-        },
         jquery: {
             exports: '$'
         },
         underscore: {
             exports: '_'
-        },
-        Redux: {
-            exports: 'Redux'
         },
         // SVG Editor Libraries Begin (load in the same order with js/lib/svgeditor/svg-editor.html)
         jsHotkeys: {
@@ -198,20 +135,8 @@ requirejs.config({
         path: {
             deps: ['layer']
         },
-        svgcanvas: {
-            deps: ['path']
-        },
-        beameasyapi: {
-            deps: ['svgcanvas']
-        },
-        locale: {
-            deps: ['tsLoader', 'beameasyapi']
-        },
-        contextmenu: {
-            deps: ['locale']
-        },
         clipper_unminified: {
-            deps: ['contextmenu']
+            deps: ['path']
         },
         svgnest: {
             deps: ['clipper_unminified']
@@ -229,8 +154,17 @@ requirejs.config({
             deps: ['svgnestEval']
         },
         jpicker: {
-            deps: ['jqueryUi']
-        }
+            deps: [
+              'jqueryUi',
+              'svgedit',
+              'css!svgeditor/svg-editor',
+              'css!svgeditor/jgraduate/css/jPicker',
+              'css!svgeditor/jgraduate/css/jgraduate',
+              'css!svgeditor/spinbtn/JQuerySpinBtn',
+              'canvg',
+              'rgbcolor',
+            ]
+        },
         // SVG Editor Libraries End
     }
 });
@@ -258,12 +192,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 
 // Load main
 
-requirejs([
-    'tsLoader',
-    'main'
-], 
-function (tsLoader, Main) {
-    //console.log("Element", Main);
-    Main.default();
-}
-);
+requirejs(['jpicker', 'jquery'], function (jpicker, $) {
+  window.$ = $;
+  window.jQuery = $;
+  const body = document.querySelector('body');
+  const mainScript = document.createElement('script');
+  mainScript.setAttribute('src', 'js/dist/bundle.js');
+  body.appendChild(mainScript);
+});

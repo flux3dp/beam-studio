@@ -2,3 +2,4 @@ node_modules
 public/js/dist
 public/js/lib
 src/web/app/actions/beambox/svg-editor.ts
+src/web/app/svgedit
