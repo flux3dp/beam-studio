@@ -2,7 +2,7 @@ import Store from 'electron-store';
 import { IStorage } from 'interfaces/IStorage';
 
 class ElectronStorage implements IStorage {
-  protected store: Store;
+  private store: Store;
 
   constructor() {
     this.store = new Store();
