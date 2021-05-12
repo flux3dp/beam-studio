@@ -22,6 +22,13 @@ const TTC2TTF = require('./src/node/ttc2ttf.js');
 const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
 
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
+Sentry.captureMessage('User Census', {
+  level: 'info',
+  tags: {
+    census: 'v1',
+    from: 'backend',
+  },
+});
 
 let mainWindow;
 let menuManager;
@@ -205,7 +212,7 @@ function createWindow () {
     if (!store.get('poke-ip-addr')) {
         store.set('poke-ip-addr', '192.168.1.1');
     }
-    
+
     if (!store.get('customizedLaserConfigs')) {
         mainWindow.webContents
             .executeJavaScript('({...localStorage});', true)
@@ -218,14 +225,14 @@ function createWindow () {
                             console.log(key, localStorage[key]);
                         } catch (e) {
                             console.log(key, e);
-                            //Error when parsing 
+                            // Error when parsing
                         }
                     }
                 }
                 store.set(localStorage);
             });
     }
-    
+
     // mainWindow.maximize();
 
     mainWindow.loadURL(url.format({
@@ -242,7 +249,7 @@ function createWindow () {
 
     mainWindow.on('close', function(e) {
         if (isFrontEndReady && !isCloseConfirmed) {
-            e.preventDefault(); 
+            e.preventDefault();
             mainWindow.webContents.send('WINDOW_CLOSE');
             // if save dialog does not pop in 10 seconds, something may goes wrong in frontend, close the app
             let isSaveDialogPopped = false;
@@ -474,7 +481,7 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         });
 
         // array of used family which are in the text
-        
+
         const originPostscriptName = originFont.postscriptName;
         const fontList = Array.from(text).map(char =>
             FontScanner.substituteFontSync(originPostscriptName, char)
@@ -488,8 +495,8 @@ ipcMain.on(events.REQUEST_PATH_D_OF_TEXT , async (event, {text, x, y, fontFamily
         if (familyList.length === 1) {
             return familyList[0];
         } else {
-            // Test all found fonts if they contain all 
-            
+            // Test all found fonts if they contain all
+
             let fontIndex;
             for (let i = 0; i < postscriptList.length; ++i) {
                 let allFit = true;
