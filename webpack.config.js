@@ -9,6 +9,7 @@ module.exports = {
       app: '/public/js/dist/app',
       helpers: '/public/js/dist/helpers',
       loader: '/public/js/dist/loader',
+      implementations: '/public/js/dist/implementations',
     },
   },
   externals: {
@@ -24,5 +25,5 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'public', 'js', 'dist'),
     filename: 'bundle.js',
-  },
+  }
 };

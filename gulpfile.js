@@ -13,7 +13,7 @@ const mocha = require('gulp-mocha');
 const notify = require('gulp-notify');
 const webpack = require('webpack-stream');
 
-const frontendTSProject = ts.createProject('src/web/tsconfig.json', {
+const frontendTSProject = ts.createProject('src/tsconfig.json', {
   declaration: false,
   jsx: 'react'
 });
@@ -44,9 +44,15 @@ gulp.task('cleancss', function () {
 
 gulp.task('frontendSrc', async function () {
   await new Promise((resolve) => {
-    gulp.src(['src/web/**/*.ts', 'src/web/**/*.tsx',])
+    gulp.src(['src/web/**/*.ts', 'src/web/**/*.tsx'])
       .pipe(frontendTSProject())
       .pipe(gulp.dest('./public/js/dist'))
+      .on('end', resolve);
+  });
+  await new Promise((resolve) => {
+    gulp.src(['src/implementations/**/*.ts'])
+      .pipe(frontendTSProject())
+      .pipe(gulp.dest('./public/js/dist/implementations'))
       .on('end', resolve);
   });
   return new Promise((resolve) => {
@@ -115,7 +121,7 @@ gulp.task('sass:watch', function () {
 });
 
 gulp.task('ts:watch', function () {
-  return gulp.watch(['./src/**/*.ts', './src/**/*.tsx', './src/web/tsconfig.json'], ['frontend']);
+  return gulp.watch(['./src/**/*.ts', './src/**/*.tsx', './src/tsconfig.json'], ['frontend']);
 });
 
 gulp.task('webserver', ['sass:watch'], function () {
@@ -130,27 +136,4 @@ gulp.task('webserver', ['sass:watch'], function () {
 
 gulp.task('dev', ['sass:watch', 'frontend', 'sass', 'ts:watch', 'webserver'], () => {
   return new Promise(() => { });
-});
-
-gulp.task('unit-test', function () {
-  return gulp.
-    src('./_test/unit/**/*.js', { read: false }).
-    pipe(mocha({
-      require: [
-        process.cwd() + '/_test/unit/bootstrap.js'
-      ]
-    })).
-    once('error', function () {
-      process.exit(1);    // bad happens
-    }).
-    once('end', function () {
-      process.exit(); // good
-    });
-});
-
-gulp.task('api-test', function () {
-  return gulp.
-    src('./_test/api/**/*.js').
-    pipe(exec('node <%= file.path %>')).
-    pipe(exec.reporter());
 });
