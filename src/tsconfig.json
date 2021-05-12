@@ -23,9 +23,6 @@
       "interfaces/*": [
         "web/interfaces/*",
       ],
-      "core-implementations/*": [
-        "implementations/core-implementations/*",
-      ],
       "implementations/*": [
         "implementations/*",
       ],

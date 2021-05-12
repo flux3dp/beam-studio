@@ -9,7 +9,6 @@ module.exports = {
       app: '/public/js/dist/app',
       helpers: '/public/js/dist/helpers',
       loader: '/public/js/dist/loader',
-      "core-implementations": '/public/js/dist/core-implementations/implementations',
       implementations: '/public/js/dist/implementations',
     },
   },
