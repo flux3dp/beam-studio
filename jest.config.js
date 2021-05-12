@@ -10,7 +10,7 @@ module.exports = {
   ],
   globals: {
     "ts-jest": {
-      tsConfig: "src/web/tsconfig.json"
+      tsConfig: "src/tsconfig.json"
     }
   },
   setupFilesAfterEnv: ["./src/web/setupTests.ts"],

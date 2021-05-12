@@ -15,7 +15,7 @@
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./src/web/tsconfig.json",
+    "project": "./src/tsconfig.json",
     "ecmaFeatures": {
       "jsx": true
     },
