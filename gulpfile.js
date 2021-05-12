@@ -50,9 +50,9 @@ gulp.task('frontendSrc', async function () {
       .on('end', resolve);
   });
   await new Promise((resolve) => {
-    gulp.src(['src/**/*.ts', '!src/web/**/*.{tsx,ts}', '!src/node/**/*.js'])
+    gulp.src(['src/implementations/**/*.ts'])
       .pipe(frontendTSProject())
-      .pipe(gulp.dest('./public/js/dist'))
+      .pipe(gulp.dest('./public/js/dist/implementations'))
       .on('end', resolve);
   });
   return new Promise((resolve) => {
