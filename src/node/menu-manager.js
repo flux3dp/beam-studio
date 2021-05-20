@@ -159,6 +159,7 @@ const buildHelpMenu = (callback) => {
 function buildMenuItems(callback) {
   const menuItems = [];
   const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
+  const deleteKey = 'Delete';
 
   if (process.platform === 'darwin') {
     menuItems.push(buildOSXAppMenu(callback));
@@ -185,6 +186,9 @@ function buildMenuItems(callback) {
       },
       {
         id: 'DUPLICATE', label: r.duplicate || 'Duplicate', enabled: false, click: callback, accelerator: `${fnKey}+D`,
+      },
+      {
+        id: 'DELETE', label: r.delete || 'Delete', enabled: false, click: callback, accelerator: deleteKey,
       },
       { type: 'separator' },
       {
