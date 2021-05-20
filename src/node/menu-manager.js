@@ -71,6 +71,7 @@ function buildFileMenu(fnKey, callback) {
         { id: 'IMPORT_MATERIAL_TESTING_CUT', label: r.import_material_testing_cut, click: callback },
         { id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT', label: r.import_material_testing_simple_cut, click: callback },
         { id: 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line, click: callback },
+        { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
       ],
     },
     { type: 'separator' },
