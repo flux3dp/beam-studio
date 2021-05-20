@@ -282,6 +282,9 @@ function buildMenuItems(callback) {
       {
         id: 'SHOW_LAYER_COLOR', label: r.show_layer_color || 'Show Layer Color', click: callback, type: 'checkbox',
       },
+      {
+        id: 'ANTI_ALIASING', label: r.anti_aliasing, click: callback, type: 'checkbox',
+      },
     ],
   });
 
