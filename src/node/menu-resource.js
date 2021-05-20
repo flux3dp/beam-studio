@@ -135,6 +135,7 @@ module.exports = {
     show_grids: 'Show Grids',
     show_rulers: 'Show Rulers',
     show_layer_color: 'Use Layer Color',
+    anti_aliasing: 'Anti-Aliasing',
     disassemble_use: 'Disassemble SVG',
   },
   'zh-tw': {
@@ -272,6 +273,7 @@ module.exports = {
     show_grids: '顯示格線',
     show_rulers: '顯示尺規',
     show_layer_color: '顯示圖層顏色',
+    anti_aliasing: '反鋸齒',
     disassemble_use: '解散圖檔',
   },
   'zh-cn': {
@@ -409,6 +411,7 @@ module.exports = {
     show_grids: '显示格线',
     show_rulers: '显示尺规',
     show_layer_color: '显示图层颜色',
+    anti_aliasing: '抗锯齿',
     disassemble_use: '解散图档',
   },
   ja: {
@@ -546,6 +549,7 @@ module.exports = {
     show_grids: 'グリッドを表示',
     show_rulers: '定規を表示',
     show_layer_color: 'レイヤーカラーを表示',
+    anti_aliasing: 'アンチエイリアス',
     disassemble_use: 'SVGを逆アセンブル',
   },
   de: {
@@ -683,6 +687,7 @@ module.exports = {
     show_grids: 'Gitter anzeigen',
     show_rulers: 'Lineale anzeigen',
     show_layer_color: 'Ebenenfarbe verwenden',
+    anti_aliasing: 'Suavizado',
     disassemble_use: 'SVG zerlegen',
   },
   es: {
@@ -820,6 +825,7 @@ module.exports = {
     show_grids: 'Mostrar las cuadrículas',
     show_rulers: 'Mostrar las reglas',
     show_layer_color: 'Usar el color de la capa',
+    anti_aliasing: 'Anti-Aliasing',
     disassemble_use: 'Desmontar el SVG',
   },
 };
