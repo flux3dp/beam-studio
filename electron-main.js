@@ -197,7 +197,7 @@ function createWindow () {
         minWidth: 800,
         minHeight: 400,
         titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
-        frame: process.platform === 'win32' ? false : true,
+        frame: process.platform !== 'win32',
         title: `Beam Studio - ${app.getVersion()}`,
         webPreferences: {
             enableRemoteModule: true,
