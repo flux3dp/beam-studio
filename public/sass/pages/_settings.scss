@@ -113,6 +113,35 @@
             margin-bottom: 15px;
             width: 400px;
         }
+
+        .info-icon-medium {
+            display: inline;
+            vertical-align: middle;
+            margin-left: 10px;
+
+            img {
+                width: 18px;
+            }
+
+            img:hover {
+                cursor: pointer;
+            }
+        }
+
+        .info-icon-small {
+            display: inline;
+            vertical-align: middle;
+            margin-left: 5px;
+
+            img {
+                width: 16px;
+            }
+
+            img:hover {
+                cursor: pointer;
+            }
+        }
+
         .ui.ui-control-unit-input-v2 {
             &.half {
                 display: inline;
