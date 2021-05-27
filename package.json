@@ -15,6 +15,8 @@
     "@types/backbone": "^1.4.4",
     "@types/electron": "^1.6.10",
     "@types/html2canvas": "^0.0.35",
+    "@types/jest": "^26.0.20",
+    "@types/webdriverio": "^5.0.0",
     "animate.css": "^4.1.0",
     "axios": "^0.21.1",
     "backbone": "^1.4.0",
@@ -31,6 +33,7 @@
     "fontkit": "^1.8.1",
     "gulp-notify": "^3.2.0",
     "gulp-typescript": "^6.0.0-alpha.1",
+    "jest": "^26.6.3",
     "jimp": "^0.10.3",
     "jquery": "^1.11.0",
     "jsencrypt": "3.0.0-rc.1",
@@ -48,6 +51,7 @@
     "serialport": "^8.0.5",
     "socket.io-client": "^1.4.6",
     "sprintf-js": "^1.1.2",
+    "spectron": "^13.0.0",
     "squirejs": "^0.2.1",
     "sudo-prompt": "^9.0.0",
     "text-to-svg": "^3.1.5",
@@ -104,6 +108,7 @@
     "webpack-stream": "^6.1.2"
   },
   "scripts": {
+    "test": "jest ./test/test.js",
     "start": "electron .",
     "start-debug": "electron . --debug",
     "start-server": "electron . --server",
