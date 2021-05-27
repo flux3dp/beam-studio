@@ -52,3 +52,4 @@ test('App Init', async function() {
 
 require('./features/settings/home-lang-test');
 require('./features/editor/editor-tests');
+

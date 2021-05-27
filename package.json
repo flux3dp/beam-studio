@@ -51,7 +51,7 @@
     "serialport": "^8.0.5",
     "socket.io-client": "^1.4.6",
     "sprintf-js": "^1.1.2",
-    "spectron": "10.0.1",
+    "spectron": "^13.0.0",
     "squirejs": "^0.2.1",
     "sudo-prompt": "^9.0.0",
     "text-to-svg": "^3.1.5",
