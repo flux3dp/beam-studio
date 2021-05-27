@@ -29,8 +29,6 @@ requirejs.config({
         units: '../lib/svgeditor/units',
         svgutils: '../lib/svgeditor/svgutils',
         sanitize: '../lib/svgeditor/sanitize',
-        history: '../lib/svgeditor/history',
-        historyrecording: '../lib/svgeditor/historyrecording',
         coords: '../lib/svgeditor/coords',
         recalculate: '../lib/svgeditor/recalculate',
         select: '../lib/svgeditor/select',
@@ -111,14 +109,8 @@ requirejs.config({
         sanitize: {
             deps: ['svgutils']
         },
-        history: {
-            deps: ['sanitize']
-        },
-        historyrecording: {
-            deps: ['history']
-        },
         coords: {
-            deps: ['historyrecording']
+            deps: ['sanitize']
         },
         recalculate: {
             deps: ['coords']
