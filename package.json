@@ -108,7 +108,7 @@
     "webpack-stream": "^6.1.2"
   },
   "scripts": {
-    "test": "jest ./test/test.js",
+    "test-spectron": "jest ./test/test.js",
     "start": "electron .",
     "start-debug": "electron . --debug",
     "start-server": "electron . --server",
