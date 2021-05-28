@@ -18,6 +18,7 @@ module.exports = {
     fs: 'require("fs")',
     os: 'require("os")',
     path: 'require("path")',
+    '@sentry/electron': 'require("@sentry/electron")',
   },
   node: {
     __dirname: false
