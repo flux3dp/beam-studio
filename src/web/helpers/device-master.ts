@@ -23,7 +23,7 @@ class DeviceMaster {
     private discoveredDevices: IDeviceInfo[];
     private unnotifiedDeviceUUIDs: string[] = [];
     private _currentDevice: IDeviceConnection;
-    
+
     constructor() {
         this.deviceConnections = new Map<string, IDeviceConnection>();
         this.discoveredDevices = [];
@@ -98,7 +98,7 @@ class DeviceMaster {
     getAvailableDevices() {
         return this.discoveredDevices;
     }
-    
+
     set currentDevice(device: IDeviceConnection) {
         this._currentDevice = device;
     }
@@ -211,8 +211,8 @@ class DeviceMaster {
         if (authResult.data !== 'cancel') {
             const message = (
                 authResult.data.reachable ?
-                lang.select_device.auth_failure : 
-                lang.select_device.unable_to_connect     
+                lang.select_device.auth_failure :
+                lang.select_device.unable_to_connect
             );
             Alert.popById('device-auth-fail');
             Alert.popUp({
@@ -381,7 +381,8 @@ class DeviceMaster {
         } catch(e) {
             console.error(`currentDevice.control.killSelf error ${e}`);
         }
-        await this.selectDevice(this.currentDevice.info);
+        const res = await this.selectDevice(this.currentDevice.info);
+        return res;
     }
 
     closeConnection(uuid: string) {
@@ -732,7 +733,7 @@ class DeviceMaster {
         }
     }
 
-    // Get, Set functions 
+    // Get, Set functions
     getLaserPower() {
         const controlSocket = this.currentDevice.control;
         return controlSocket.addTask(controlSocket.getLaserPower);
@@ -864,7 +865,7 @@ class DeviceMaster {
         const currentDevice = this.currentDevice;
         currentDevice.cameraNeedsFlip = !!(Number((/F:\s?(\-?\d+\.?\d+)/.exec(cameraOffset) || ['',''])[1]));
         return currentDevice.cameraNeedsFlip;
-    } 
+    }
 
     async connectCamera(shouldCrop: boolean = true) {
         const currentDevice = this.currentDevice;

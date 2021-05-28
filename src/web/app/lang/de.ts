@@ -850,6 +850,7 @@ export default {
     fileExistContinue: 'Datei existiert bereits, möchten Sie sie ersetzen?',
     confirmGToF: 'Der GCode wird in FCode umgewandelt, möchten Sie fortfahren? ( wird ersetzt, falls vorhanden )',
     confirmFileDelete: 'Sind Sie sicher, dass Sie diese Datei löschen möchten?',
+    ask_reconnect: 'Die Verbindung zur Maschine ist unterbrochen. Möchten Sie die Verbindung wiederherstellen?',
     task: {
       EXTRUDER: 'Drucken',
       PRINT: 'Drucken',

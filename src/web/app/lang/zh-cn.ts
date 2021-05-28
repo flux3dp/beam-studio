@@ -850,6 +850,7 @@ export default {
     fileExistContinue: '文件已存在，是否要覆盖？',
     confirmGToF: 'GCode 上传后会自动转档成 FCode，是否继续？',
     confirmFileDelete: '是否确定要删除这个文件？',
+    ask_reconnect: '与机器的连线中断，是否尝试重新连接？',
     task: {
       EXTRUDER: '打印',
       PRINT: '打印',

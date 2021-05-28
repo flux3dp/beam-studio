@@ -850,6 +850,7 @@ export default {
     fileExistContinue: 'El archivo ya existe, ¿quieres reemplazarlo?',
     confirmGToF: 'El GCode se convertirá en FCode, ¿quieres continuar? ( reemplazará si existe )',
     confirmFileDelete: '¿Estás seguro de que quieres borrar este archivo?',
+    ask_reconnect: 'Se ha interrumpido la conexión con el equipo. ¿Deseas reconectar?',
     task: {
       EXTRUDER: 'Imprimiendo',
       PRINT: 'Imprimiendo',

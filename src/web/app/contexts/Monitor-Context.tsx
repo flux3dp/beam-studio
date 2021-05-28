@@ -112,10 +112,38 @@ export class MonitorContextProvider extends React.Component {
                     return;
                 }
                 console.error('Monitor report error:', error);
-                DeviceMaster.reconnect();
-                // this.processReport(error);
+                this.stopReport();
+                const res = await DeviceMaster.reconnect();
+                console.log(res);
+                if (res.success) {
+                    this.startReport();
+                } else {
+                    const { onClose } = this.props;
+                    const askRetryReconnect = () => new Promise<boolean>((resolve) => {
+                        Alert.popUp({
+                            type: AlertConstants.SHOW_POPUP_ERROR,
+                            buttonType: AlertConstants.RETRY_CANCEL,
+                            message: LANG.monitor.ask_reconnect,
+                            onRetry: async () => {
+                                const res2 = await DeviceMaster.reconnect();
+                                if (res2.success) {
+                                    Alert.popById('connection-error');
+                                    resolve(true);
+                                } else {
+                                    resolve(await askRetryReconnect());
+                                }
+                            },
+                            onCancel: () => resolve(false),
+                        });
+                    });
+                    if (await askRetryReconnect()) {
+                        this.startReport();
+                    } else {
+                        onClose();
+                    }
+                }
             }
-        }, 1500)
+        }, 1500);
     }
 
     stopReport() {
@@ -310,7 +338,7 @@ export class MonitorContextProvider extends React.Component {
             this.modeBeforeCamera = Mode.PREVIEW;
         } else if (fileInfo) {
             const { imageBlob, taskTime } = this.getTaskInfo(fileInfo);
-            const taskImageURL = URL.createObjectURL(imageBlob); 
+            const taskImageURL = URL.createObjectURL(imageBlob);
             this.setState({
                 mode: mode === Mode.CAMERA ? Mode.CAMERA : Mode.FILE_PREVIEW,
                 taskImageURL,

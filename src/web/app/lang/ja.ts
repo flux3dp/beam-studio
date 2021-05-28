@@ -850,6 +850,7 @@ export default {
     fileExistContinue: 'ファイルはすでに存在します。ファイルを置き換えますか？',
     confirmGToF: 'GCodeは、FCodeに変換されます。続行しますか？（存在する場合は、置き換えられます）',
     confirmFileDelete: 'このファイルを削除してもよろしいですか？',
+    ask_reconnect: 'マシンとの接続が切断されました。再接続しますか？',
     task: {
       EXTRUDER: '印刷',
       PRINT: '印刷',
