@@ -14,6 +14,11 @@ export default {
   writeFile(filePath: string, data: Buffer | string): void {
     fs.writeFileSync(filePath, data);
   },
+  readFile(filePath: string, encoding: BufferEncoding): string {
+    return fs.readFileSync(filePath, {
+      encoding,
+    });
+  },
   isFile(input: string): boolean {
     return fs.lstatSync(input).isFile();
   },
