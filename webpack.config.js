@@ -18,6 +18,8 @@ module.exports = {
     fs: 'require("fs")',
     os: 'require("os")',
     path: 'require("path")',
+    'fontkit': 'require("fontkit")',
+    'font-scanner': 'require("font-scanner")',
     '@sentry/electron': 'require("@sentry/electron")',
   },
   node: {
