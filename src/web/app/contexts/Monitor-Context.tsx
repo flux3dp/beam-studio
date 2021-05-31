@@ -47,6 +47,7 @@ export class MonitorContextProvider extends React.Component {
         super(props);
         const { mode, previewTask } = props;
         updateLang();
+        this.isGettingReport = false;
         this.didErrorPopped = false;
         this.modeBeforeCamera = mode;
         this.modeBeforeRelocate = mode;
@@ -105,7 +106,10 @@ export class MonitorContextProvider extends React.Component {
     startReport() {
         this.reporter = setInterval(async () => {
             try {
+                if(this.isGettingReport) return;
+                this.isGettingReport = true;
                 const report = await DeviceMaster.getReport();
+                this.isGettingReport = false;
                 this.processReport(report);
             } catch (error) {
                 if (error && error.status === 'raw') {
