@@ -155,10 +155,10 @@ export default {
     },
 
     autoCheck: function() {
-        let isAutoCheck = Config().read('auto_check_update') === 1 || !Config().read('auto_check_update');
+        let isAutoCheck = Config().read('auto_check_update') !== 0;
         if (isAutoCheck) {
             checkForUpdate(isAutoCheck);
         }
     },
-    switchVersion
+    switchVersion,
 };
