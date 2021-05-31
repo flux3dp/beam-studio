@@ -7,21 +7,10 @@ const LANG = i18n.lang.change_logs;
 
 const CHANGES_TW = {
   added: [
-    '新增「自動儲存」專案功能。',
-    '在編輯功能列表上新增原地貼上選項。',
   ],
   fixed: [
-    '修正了一些「相機校正」的問題。',
-    '修正混和雷射校正失敗問題。',
-    '修正 Windows「新手教學」介面顯示異常。',
-    '修正德文說明功能列表中「問卷回饋」字串。',
-    '修正Windows版本儀表板顯示問題。',
-    '修正Windows版本管理參數顯示問題。',
-    '修正Windows版本「原地貼上」功能重複貼上的問題。',
-    '修正文字於編輯狀態下刪除文字介面顯示異常問題。',
-    '修正新增機器時，確認相機狀態回報資訊錯誤的問題。',
-    '修正執行新手教學流程中，建立幾何圖形步驟按下右鍵後無法再次建立圖形的問題。',
-    '修正開啟參考線的狀態下改變工作範圍後顯示錯誤的問題。',
+    '修正 開啟儀表板狀態下與機器斷線，彈出多個無法連線視窗的問題。',
+    '修正 偏好設定內，「自動更新」功能。',
   ],
   changed: [
   ],
@@ -29,21 +18,10 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
   added: [
-    'Added "Auto Save" feature.',
-    'Added "Paste in Place" function in the Edit Menu.',
   ],
   fixed: [
-    'Fixed some "Calibrate Camera" problem.',
-    'Fixed "Calibrate Hybrid Module" failed problem.',
-    'Fixed abnormal interface display in "Starting Tutorial." (Windows only)',
-    'Fixed “Feedback-Fragebogen” text for the Deutsche version in the Help Menu.',
-    'Fixed "Dashboard" interface display problem. (Windows only)',
-    'Fixed "Manage Parameter" interface display problem. (Windows only)',
-    'Fixed "Paste in Place" double paste problem. (Windows only)',
-    'Fixed abnormal display on canvas while deleting the text during editing it.',
-    'Fixed the wrong log report with  "Checking camera availability..." during Machine Setup.',
-    'Fixed fail to create the rectangle or oval while right-clicking on canvas during the Starting Tutorial.',
-    'Fixed the "Guides" wrong display after changing the "Work Area."',
+    'Fixed the problem that multiple dialogs pop out when Beam Studio loses connection with the machine when opening the "Dashboard."',
+    'Fixed the “Auto Update" setting in the Preference.',
   ],
   changed: [
   ],
