@@ -558,6 +558,9 @@ class MenuManager extends EventEmitter {
             label: signoutLabel,
           });
           helpSubmenu.append(newSignOut);
+        } else if (menuitem.id === 'MANAGE_ACCOUNT') {
+          menuitem.enabled = !!info;
+          helpSubmenu.append(menuitem);
         } else {
           helpSubmenu.append(menuitem);
         }
