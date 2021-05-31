@@ -21,7 +21,7 @@ const FLUXID_HOST = 'https://id.flux3dp.com';
 const FLUXID_DOMAIN = 'id.flux3dp.com';
 const axiosFluxId = axios.create({
     baseURL: FLUXID_HOST,
-    timeout: 2000,
+    timeout: 10000,
 });
 
 let currentUser: IUser = null;
@@ -160,6 +160,7 @@ export const signIn = async (data: { email: string, password?: string, fb_token?
     const response = await axiosFluxId.post('/user/signin', data, {
         withCredentials: true,
     });
+    console.log(response);
     progress.popById('flux-id-login');
     if (response.status === 200) {
         const data = response.data;

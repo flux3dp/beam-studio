@@ -346,11 +346,9 @@ class MenuManager extends EventEmitter {
             const current = helpSubmenu.items;
             helpSubmenu.items = [];
             helpSubmenu.clear();
-
             for (let menuitem of current) {
                 if (menuitem.id === 'SIGN_IN') {
                     menuitem.visible = !info;
-                    helpSubmenu.append(menuitem);
                 } else if (menuitem.id === 'SIGN_OUT') {
                     const newSignOut = new MenuItem({
                         id: 'SIGN_OUT',
@@ -358,10 +356,11 @@ class MenuManager extends EventEmitter {
                         click: menuitem.click,
                         label: signoutLabel,
                     })
-                    helpSubmenu.append(newSignOut);
-                } else {
-                    helpSubmenu.append(menuitem);
+                    menuitem = newSignOut;
+                } else if (menuitem.id === 'MANAGE_ACCOUNT') {
+                  menuitem.enabled = !!info;
                 }
+                helpSubmenu.append(menuitem);
             }
             Menu.setApplicationMenu(Menu.getApplicationMenu());
         });
