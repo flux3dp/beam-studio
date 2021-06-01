@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import fs from 'fs';
+import path from 'path';
 import { IFileSystem } from 'interfaces/IFileSystem';
 
 export default {
@@ -34,11 +36,14 @@ export default {
       recursive: isRecursive,
     }));
   },
-  writeStream(path: string, flags: string, data?: Buffer[]) {
+  writeStream(path: string, flags: string, data?: Buffer[]): void {
     const stream = fs.createWriteStream(path, {
       flags,
     });
     data?.forEach((datum) => stream.write(datum));
     stream.close();
+  },
+  join(...paths: string[]): string {
+    return path.join(...paths);
   },
 } as IFileSystem;
