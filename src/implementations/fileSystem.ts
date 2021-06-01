@@ -35,10 +35,10 @@ export default {
     const fsPromises = fs.promises;
     return fsPromises.rename(oldPath, newPath);
   },
-  mkdir(path: string, isRecursive: boolean): Promise<string> {
-    return new Promise<string>(() => fs.mkdirSync(path, {
+  async mkdir(path: string, isRecursive: boolean): Promise<string> {
+    return fs.mkdirSync(path, {
       recursive: isRecursive,
-    }));
+    });
   },
   writeStream(path: string, flags: string, data?: Buffer[]): void {
     const stream = fs.createWriteStream(path, {
