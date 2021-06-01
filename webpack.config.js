@@ -23,6 +23,7 @@ module.exports = {
     fontkit: 'require("fontkit")',
     serialport: 'require("serialport")',
     child_process: 'require("child_process")',
+    util: 'require("util")',
     'font-scanner': 'require("font-scanner")',
     '@sentry/electron': 'require("@sentry/electron")',
   },
