@@ -18,11 +18,11 @@ export default {
   appendMenuItem(menu: electron.Menu, options: MenuItemOptions): void {
     menu.append(new MenuItem(options));
   },
-  createTitleBar(options: {
-    backgroundColor: customTitlebar.Color,
-    icon?: string,
-    shadow?: boolean,
-  }) {
-    return new customTitlebar.Titlebar(options);
+  createTitleBar() {
+    return new customTitlebar.Titlebar({
+      backgroundColor: customTitlebar.Color.fromHex('#333'),
+      shadow: false,
+      icon: 'win-title-icon.png',
+    });
   },
 } as IMenu;
