@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-shadow */
+import electron from 'electron';
 import fs from 'fs';
 import path from 'path';
+
 import { IFileSystem } from 'interfaces/IFileSystem';
 
+export type Path = 'documents' | 'userData' | 'appData';
 export default {
   exists(path: string): boolean {
     return fs.existsSync(path);
@@ -45,5 +48,8 @@ export default {
   },
   join(...paths: string[]): string {
     return path.join(...paths);
+  },
+  getPath(path: Path): string {
+    return electron.remote.app.getPath(path);
   },
 } as IFileSystem;
