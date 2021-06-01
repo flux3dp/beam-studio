@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/ban-types */
 import electron from 'electron';
 import { Cookie, CookiesFilter, ICookies } from 'interfaces/ICookies';

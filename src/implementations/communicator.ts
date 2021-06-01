@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import electron from 'electron';
 import { ICommunicator } from 'interfaces/ICommunicator';
 
@@ -7,6 +8,6 @@ export default {
     electron.ipcRenderer.on(channel, listener);
   },
   send(channel: string, ...args: any[]) {
-    electron.ipcRenderer.send(channel, args);
+    electron.ipcRenderer.send(channel, ...args);
   },
 } as ICommunicator;
