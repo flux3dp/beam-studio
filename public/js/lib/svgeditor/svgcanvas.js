@@ -3567,9 +3567,9 @@ define([
 
             function hideCursor() {
                 clearInterval(blinker);
+                blinker = null;
                 document.getElementById('text_cursor')?.remove();
                 document.getElementById('text_selectblock')?.remove();
-                textActions.toSelectMode();
             }
 
             let moveCursorLastRow = () => {
@@ -3827,14 +3827,7 @@ define([
                 toSelectMode: function (shouldSelectElem) {
                     isEditing = false;
                     current_mode = previousMode;
-                    clearInterval(blinker);
-                    blinker = null;
-                    if (selblock) {
-                        $(selblock).attr('display', 'none');
-                    }
-                    if (cursor) {
-                        $(cursor).attr('visibility', 'hidden');
-                    }
+                    hideCursor();
                     $(curtext).css('cursor', 'move');
 
                     if (shouldSelectElem) {
@@ -8952,7 +8945,7 @@ define([
          * @param {boolean} isSub whether this operation is a subcmd
          */
         this.deleteSelectedElements = function (isSub=false) {
-            textActions.hideCursor();
+            textActions.clear();
             if (tempGroup) {
                 let children = this.ungroupTempGroup();
                 this.selectOnly(children, false);
