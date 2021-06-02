@@ -43,10 +43,11 @@
         line-height: 20px;
         width: 100%;
         margin: 0;
+        white-space: pre-wrap;
       }
       pre {
         font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial,
-        "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
+          "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
       }
     }
   }
