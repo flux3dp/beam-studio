@@ -154,9 +154,11 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     case 'g':
       break;
     default:
-      if ((tlist.numberOfItems === 1 && tlist.getItem(0).type === 1) ||
-          (tlist.numberOfItems === 2 && tlist.getItem(0).type === 1 && tlist.getItem(0).type === 4)) {
-        return null;
+      if ((tlist.numberOfItems === 1 && tlist.getItem(0).type === 1)) {
+        let matrix = tlist.getItem(0).matrix;
+        if (!matrix.b === 0 || matrix.c !== 0) {
+          return null;
+        }
       }
   }
 
@@ -334,7 +336,7 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
               let newCenter = svgedit.math.transformPoint(r.center.x, r.center.y, svgedit.math.transformListToTransform(tlist).matrix);
               let rotationBack = svgroot.createSVGTransform();
               rotationBack.setRotate(-r.angle, newCenter.x, newCenter.y);
-              
+
               e2t.setMatrix(svgedit.math.matrixMultiply(rotationBack.matrix, tm, sm, tmn, m));
               let rotation = svgroot.createSVGTransform();
               rotation.setRotate(r.angle, newCenter.x, newCenter.y);
@@ -661,10 +663,12 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     var m = svgroot.createSVGMatrix(),
       // temporarily strip off the rotate and save the old center
       angle = svgedit.utilities.getRotationAngle(selected);
+
+    let oldcenter = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+    let newcenter = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
     if (angle) {
-      var oldcenter = {x: box.x+box.width/2, y: box.y+box.height/2},
-      newcenter = svgedit.math.transformPoint(box.x+box.width/2, box.y+box.height/2,
-              svgedit.math.transformListToTransform(tlist).matrix);
+      newcenter = svgedit.math.transformPoint(box.x + box.width / 2, box.y + box.height / 2,
+        svgedit.math.transformListToTransform(tlist).matrix);
       if (selected.tagName === 'text') {
         for (var i = 0; i < tlist.numberOfItems; ++i) {
           var xform = tlist.getItem(i);
@@ -703,7 +707,6 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
         }
       }
     }
-
     // 2 = translate, 3 = scale, 4 = rotate, 1 = matrix imposition
     var operation = 0;
     var N = tlist.numberOfItems;
@@ -773,34 +776,42 @@ svgedit.recalculate.recalculateDimensions = function(selected) {
     }
     // else if this child now has a matrix imposition (from a parent group)
     // we might be able to simplify
-    else if (N == 1 && tlist.getItem(0).type == 1 && !angle) {
-      // Remap all point-based elements
-      m = svgedit.math.transformListToTransform(tlist).matrix;
-      if (['line', 'polyline', 'polygon', 'path'].includes(selected.tagName)) {
-        if (selected.tagName === 'line') {
-          changes = $(selected).attr(['x1', 'y1', 'x2', 'y2']);
-        } else if (selected.tagName === 'path') {
-          changes.d = selected.getAttribute('d');
-        } else {
-          // polyline or polygon
-          changes.points = selected.getAttribute('points');
-          if (changes.points) {
-            const list = selected.points;
-            const len = list.numberOfItems;
-            changes.points = new Array(len);
-            for (var i = 0; i < len; ++i) {
-              var pt = list.getItem(i);
-              changes.points[i] = {x:pt.x, y:pt.y};
+    else if (N == 1 && tlist.getItem(0).type == 1) {
+      let matrix = svgedit.math.transformListToTransform(tlist).matrix;
+      if (matrix.b === 0 && matrix.c === 0) {
+        operation = 3; // scale
+        m = matrix;
+        tlist.removeItem(0);
+      } else {
+        if (!angle) {
+          // Remap all point-based elements
+          m = svgedit.math.transformListToTransform(tlist).matrix;
+          if (['line', 'polyline', 'polygon', 'path'].includes(selected.tagName)) {
+            if (selected.tagName === 'line') {
+              changes = $(selected).attr(['x1', 'y1', 'x2', 'y2']);
+            } else if (selected.tagName === 'path') {
+              changes.d = selected.getAttribute('d');
+            } else {
+              // polyline or polygon
+              changes.points = selected.getAttribute('points');
+              if (changes.points) {
+                const list = selected.points;
+                const len = list.numberOfItems;
+                changes.points = new Array(len);
+                for (var i = 0; i < len; ++i) {
+                  var pt = list.getItem(i);
+                  changes.points[i] = {x:pt.x, y:pt.y};
+                }
+              }
             }
+            operation = 1;
+            tlist.clear();
           }
         }
-        operation = 1;
-        tlist.clear();
       }
     }
-    // if it was a rotation, put the rotate back and return without a command
-    // (this function has zero work to do for a rotate())
-    else {
+
+    if (operation === 0) {
       operation = 4; // rotation
       if (angle) {
         var newRot = svgroot.createSVGTransform();
