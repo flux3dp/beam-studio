@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import electron from 'electron';
+import { Color, Titlebar } from 'custom-electron-titlebar';
 
-import customTitlebar from 'custom-electron-titlebar';
 import {
   IMenu,
   MenuItemOptions,
@@ -19,8 +19,8 @@ export default {
     menu.append(new MenuItem(options));
   },
   createTitleBar() {
-    return new customTitlebar.Titlebar({
-      backgroundColor: customTitlebar.Color.fromHex('#333'),
+    return new Titlebar({
+      backgroundColor: Color.fromHex('#333'),
       shadow: false,
       icon: 'win-title-icon.png',
     });
