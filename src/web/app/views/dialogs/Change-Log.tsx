@@ -9,8 +9,11 @@ const CHANGES_TW = {
   added: [
   ],
   fixed: [
-    '修正 開啟儀表板狀態下與機器斷線，彈出多個無法連線視窗的問題。',
-    '修正 偏好設定內，「自動更新」功能。',
+    '修正 文字框在未輸入文字的狀態下，點擊空白處造成軟體當機的問題。',
+    '修正 某些情況下旋轉數值顯示錯誤，導致物件錯位的問題。',
+    '修正 使用曲線功能時，點擊曲線兩下，線條會不見。',
+    '修正 解散圖檔後圖形尺寸顯示錯誤。',
+    '修正 圖片取消漸層無法回到上一步的功能。',
   ],
   changed: [
   ],
@@ -20,8 +23,11 @@ const CHANGES_EN = {
   added: [
   ],
   fixed: [
-    'Fixed the problem that multiple dialogs pop out when Beam Studio loses connection with the machine when opening the "Dashboard."',
-    'Fixed the “Auto Update" setting in the Preference.',
+    'Fixed an issue where the software freezes when clicking on the blank space in the text box with no text was entered.',
+    'Fixed some operations caused the rotate value display to fail, also cause the object to move to the wrong position problem.',
+    'Fixed the problem that Double-clicks while drawing path. The path will disappear.',
+    'Fixed the wrong value display after the Disassemble object.',
+    'Fixed the undo function for the gradient function.',
   ],
   changed: [
   ],
