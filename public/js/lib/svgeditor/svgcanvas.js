@@ -10248,7 +10248,7 @@ define([
         // Pushes all appropriate parent group properties down to its children, then
         // removes them from the group
         var pushGroupProperties = this.pushGroupProperties = function (g, undoable) {
-
+            const origTransform = startTransform;
             var children = g.childNodes;
             var len = children.length;
             var xform = g.getAttribute('transform');
@@ -10433,7 +10433,7 @@ define([
                     }
                 }
             }
-
+            startTransform = origTransform;
 
             // remove transform and make it undo-able
             if (xform) {
