@@ -17,7 +17,7 @@ const showSaveDialog = async (
     filters,
   });
   return canceled ? null : filePath;
-}
+};
 
 const showOpenDialog = async (options: {
   defaultPath?: string,
@@ -35,7 +35,7 @@ const showOpenDialog = async (options: {
     canceled,
     filePaths,
   });
-}
+};
 
 export default {
   showSaveDialog,
@@ -44,7 +44,7 @@ export default {
     title?: string,
     defaultPath?: string,
     filters?: DialogFilter[],
-): Promise<string | null> {
+  ): Promise<string | null> {
     const targetPath = await showSaveDialog(title, defaultPath, filters);
     if (targetPath) {
       const content = await getContent();
