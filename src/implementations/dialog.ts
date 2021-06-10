@@ -1,38 +1,75 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import fs from 'fs';
 import { remote } from 'electron';
 
 import { DialogFilter, IDialog, OpenDialogProperties } from 'interfaces/IDialog';
 
 const { dialog } = remote;
 
+const showSaveDialog = async (
+  title?: string,
+  defaultPath?: string,
+  filters?: DialogFilter[],
+): Promise<string | null> => {
+  const { filePath, canceled } = await dialog.showSaveDialog({
+    title,
+    defaultPath,
+    filters,
+  });
+  return canceled ? null : filePath;
+}
+
+const showOpenDialog = async (options: {
+  defaultPath?: string,
+  filters?: DialogFilter[],
+  properties?: OpenDialogProperties[],
+}): Promise<{
+  canceled: boolean,
+  filePaths: string[],
+}> => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    ...options,
+    properties: !options.properties ? ['openFile'] : options.properties,
+  });
+  return Promise.resolve({
+    canceled,
+    filePaths,
+  });
+}
+
 export default {
-  async showSaveDialog(
+  showSaveDialog,
+  async writeFileDialog(
+    getContent: () => string | Blob | Promise<string | Blob>,
     title?: string,
     defaultPath?: string,
     filters?: DialogFilter[],
-  ): Promise<string | null> {
-    const { filePath, canceled } = await dialog.showSaveDialog({
-      title,
-      defaultPath,
-      filters,
-    });
-    return canceled ? null : filePath;
+): Promise<string | null> {
+    const targetPath = await showSaveDialog(title, defaultPath, filters);
+    if (targetPath) {
+      const content = await getContent();
+      if (typeof content === 'string') {
+        fs.writeFileSync(targetPath, content);
+      } else {
+        const arrBuf = await content.arrayBuffer();
+        const buf = Buffer.from(arrBuf);
+        fs.writeFileSync(targetPath, buf);
+      }
+      return targetPath;
+    }
+    return null;
   },
-  async showOpenDialog(options: {
+  showOpenDialog,
+  async getFileFromDialog(options: {
     defaultPath?: string,
     filters?: DialogFilter[],
     properties?: OpenDialogProperties[],
-  }): Promise<{
-      canceled: boolean,
-      filePaths: string[],
-    }> {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      ...options,
-      properties: !options.properties ? ['openFile'] : options.properties,
-    });
-    return Promise.resolve({
-      canceled,
-      filePaths,
-    });
+  }): Promise<Blob | File> {
+    const { canceled, filePaths } = await dialog.showOpenDialog(options);
+    if (canceled || !filePaths) return null;
+    const filePath = filePaths[0];
+    const file = await fetch(filePath);
+    const fileBlob = await file.blob();
+    return fileBlob;
   },
 } as IDialog;
