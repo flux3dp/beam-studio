@@ -101,11 +101,9 @@ jobs:
       - name: Build Beam Studio
         run: |
           mkdir backend
-          npm install --global gulp-cli
 
           yarn install
-          gulp sass
-          gulp frontend
+          ./node_modules/.bin/webpack
 
           cp -R $HOME/flux_api_swap backend/flux_api
           cp -R lib/monitorexe-osx backend/monitorexe-osx
