@@ -103,7 +103,7 @@ jobs:
           mkdir backend
 
           yarn install
-          webpack
+          ./node_modules/.bin/webpack
 
           cp -R $HOME/flux_api_swap backend/flux_api
           cp -R lib/monitorexe-osx backend/monitorexe-osx
