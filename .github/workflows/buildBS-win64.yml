@@ -91,9 +91,7 @@ jobs:
           mkdir backend
 
           yarn install
-
-          gulp sass
-          gulp frontend
+          webpack
 
           $env:TMP
           cp -R $env:TMP/flux_api_swap backend/flux_api

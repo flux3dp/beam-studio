@@ -43,7 +43,7 @@
             dev: dev
         };
 
-        // Add electron listener 
+        // Add electron listener
         if (window["electron"]) {
             let ipc = electron.ipc,
                 events = electron.events;
@@ -82,7 +82,7 @@
         }
 
         cssLink.setAttribute('rel', 'stylesheet');
-        cssLink.setAttribute('href', 'css/main.css?v=' + window.FLUX.timestamp);
+        cssLink.setAttribute('href', 'css/dist/main.css?v=' + window.FLUX.timestamp);
         head.appendChild(cssLink);
         head.appendChild(cssLink);
 

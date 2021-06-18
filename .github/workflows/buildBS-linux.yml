@@ -88,11 +88,9 @@ jobs:
         run: |
           echo $PUBLISH_PATH
           mkdir backend
-          npm install --global gulp-cli
 
           yarn install
-          gulp sass
-          gulp frontend
+          webpack
 
           cp -R $HOME/flux_api_swap backend/flux_api
           ./backend/flux_api/flux_api --test --without_pcl

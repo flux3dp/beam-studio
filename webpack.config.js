@@ -1,37 +1,96 @@
 const path = require('path');
 
-module.exports = {
-  entry: './public/js/dist/main.js',
-  devtool: 'inline-source-map',
-  mode: 'development',
-  resolve: {
-    alias: {
-      app: '/public/js/dist/app',
-      helpers: '/public/js/dist/helpers',
-      loader: '/public/js/dist/loader',
-      implementations: '/public/js/dist/implementations',
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = [
+  {
+    entry: './src/web/main.ts',
+    devtool: 'inline-source-map',
+    mode: 'development',
+    resolve: {
+      alias: {
+        app: '/src/web/app',
+        helpers: '/src/web/helpers',
+        loader: '/src/web/loader',
+        implementations: '/src/implementations',
+      },
+      extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      symlinks: false,
     },
-  },
-  externals: {
-    crypto: 'require("crypto")',
-    electron: 'require("electron")',
-    fs: 'require("fs")',
-    os: 'require("os")',
-    path: 'require("path")',
-    dns: 'require("dns")',
-    'net-ping': 'require("net-ping")',
-    fontkit: 'require("fontkit")',
-    serialport: 'require("serialport")',
-    child_process: 'require("child_process")',
-    util: 'require("util")',
-    'font-scanner': 'require("font-scanner")',
-    '@sentry/electron': 'require("@sentry/electron")',
-  },
-  node: {
-    __dirname: false
-  },
-  output: {
-    path: path.resolve(__dirname, 'public', 'js', 'dist'),
-    filename: 'bundle.js',
+    externals: {
+      crypto: 'require("crypto")',
+      electron: 'require("electron")',
+      fs: 'require("fs")',
+      os: 'require("os")',
+      path: 'require("path")',
+      dns: 'require("dns")',
+      'net-ping': 'require("net-ping")',
+      fontkit: 'require("fontkit")',
+      serialport: 'require("serialport")',
+      child_process: 'require("child_process")',
+      util: 'require("util")',
+      'font-scanner': 'require("font-scanner")',
+      '@sentry/electron': 'require("@sentry/electron")',
+    },
+    node: {
+      __dirname: false
+    },
+    module: {
+      rules: [
+        {
+          test: /\.worker\.ts$/,
+          loader: 'worker-loader',
+        },
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: ['babel-loader'],
+        },
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    output: {
+      path: path.resolve(__dirname, 'public', 'js', 'dist'),
+      filename: 'bundle.js',
+    },
+  }, {
+    mode: 'development',
+    entry: {
+      main: './public/sass/main.scss',
+    },
+    module: {
+      rules: [
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            "sass-loader",
+          ],
+        },
+        {
+          test: /\.(woff(2)?|ttf|eot|svg|png)$/,
+          use: ['file-loader'],
+        }
+      ],
+    },
+    plugins: [
+      new MiniCssExtractPlugin(),
+    ],
+
+    output: {
+      path: path.resolve(__dirname, 'public', 'css', 'dist'),
+    },
   }
-};
+];
