@@ -137,7 +137,7 @@ module.exports = {
     show_rulers: 'Show Rulers',
     show_layer_color: 'Use Layer Color',
     anti_aliasing: 'Anti-Aliasing',
-    disassemble_use: 'Disassemble SVG',
+    disassemble_use: 'Disassemble',
   },
   'zh-tw': {
     preferences: '偏好設定',
@@ -557,7 +557,7 @@ module.exports = {
     show_rulers: '定規を表示',
     show_layer_color: 'レイヤーカラーを表示',
     anti_aliasing: 'アンチエイリアス',
-    disassemble_use: 'SVGを逆アセンブル',
+    disassemble_use: '逆アセンブル',
   },
   de: {
     preferences: 'Einstellungen',
@@ -697,7 +697,7 @@ module.exports = {
     show_rulers: 'Lineale anzeigen',
     show_layer_color: 'Ebenenfarbe verwenden',
     anti_aliasing: 'Suavizado',
-    disassemble_use: 'SVG zerlegen',
+    disassemble_use: 'Zerlegen',
   },
   es: {
     preferences: 'Preferencias',
@@ -837,6 +837,6 @@ module.exports = {
     show_rulers: 'Mostrar las reglas',
     show_layer_color: 'Usar el color de la capa',
     anti_aliasing: 'Anti-Aliasing',
-    disassemble_use: 'Desmontar el SVG',
+    disassemble_use: 'Desmontar',
   },
 };
