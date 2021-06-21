@@ -64,7 +64,49 @@ module.exports = [
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'bundle.js',
     },
-  }, {
+  },
+  {
+    entry: './src/shadow-window.ts',
+    devtool: 'inline-source-map',
+    mode: 'development',
+    resolve: {
+      extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      symlinks: false,
+    },
+    externals: {
+      electron: 'require("electron")',
+      '@sentry/electron': 'require("@sentry/electron")',
+    },
+    node: {
+      __dirname: false
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: ['babel-loader'],
+        },
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+        },
+      ],
+    },
+    output: {
+      path: path.resolve(__dirname, 'public', 'js', 'dist'),
+      filename: 'shadow-window.js',
+    },
+  },
+  {
     mode: 'development',
     entry: {
       main: './public/sass/main.scss',
@@ -92,5 +134,5 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'public', 'css', 'dist'),
     },
-  }
+  },
 ];
