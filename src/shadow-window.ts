@@ -1,12 +1,13 @@
 import electron from 'electron';
+
 const main = async () => {
-  console.log(electron);
+  // console.log(electron);
   const { ipcRenderer: ipc } = electron;
   ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {
     const {
       url, width, height, id, strokeWidth,
     } = data;
-    console.log(data);
+    // console.log(data);
     const img = new Image(width + parseInt(strokeWidth, 10), height + parseInt(strokeWidth, 10));
     img.onload = async () => {
       const imgCanvas = document.createElement('canvas');
