@@ -1,28 +1,19 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import electron from 'electron';
-import { Color, Titlebar } from 'custom-electron-titlebar';
+import AbstractMenu from 'helpers/menubar/AbstractMenu';
+import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 
-import {
-  IMenu,
-  MenuItemOptions,
-} from 'interfaces/IMenu';
+import { updateCheckbox } from '../electron-menubar-helper';
 
-const { Menu, MenuItem } = electron.remote;
-export default {
-  getApplicationMenu(): electron.Menu {
-    return Menu.getApplicationMenu();
-  },
-  setApplicationMenu(menu: electron.Menu) {
-    Menu.setApplicationMenu(menu);
-  },
-  appendMenuItem(menu: electron.Menu, options: MenuItemOptions): void {
-    menu.append(new MenuItem(options));
-  },
-  createTitleBar() {
-    return new Titlebar({
-      backgroundColor: Color.fromHex('#333'),
-      shadow: false,
-      icon: 'win-title-icon.png',
-    });
-  },
-} as IMenu;
+class Menu extends AbstractMenu {
+  init(): void {
+    const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+    updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
+    const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
+    updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
+    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing') !== false;
+    updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
+
+    this.initMenuEvents();
+  }
+}
+
+export default new Menu();
