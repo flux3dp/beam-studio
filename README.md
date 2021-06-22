@@ -19,7 +19,7 @@ Beam Studio is the companion application for [FLUX Beam Series](http://flux3dp.c
 
 ## Build javascript/css resources
 
-1. Build resource `$> gulp dev`
+1. Build resource `$> webpack watch`
 
 ## Rebuild module for electron `$> node_modules/.bin/electron-rebuild`
 * Rebuild C++ module to make it compatible with the node inside of electron.
