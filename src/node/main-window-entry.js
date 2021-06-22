@@ -19,6 +19,7 @@
                 webFrame.executeJavaScript(
                     `document.querySelector("[data-file-input=${inputId}]").click()`, true);
             }
-        }
+        },
+        remote,
     }
 })(global)

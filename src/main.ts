@@ -5,10 +5,10 @@ import { Color, Titlebar } from 'custom-electron-titlebar';
 
 import globalEvents from 'app/actions/global';
 import globalHelper from 'helpers/global-helper';
+import Router from 'app/router';
 
 import communicator from 'implementations/communicator';
 import loaderResult from './loader';
-import Router from './router';
 
 globalHelper.setWindowMember();
 console.log('Loader success: ', loaderResult);
