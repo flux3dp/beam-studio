@@ -48,6 +48,9 @@
       pre {
         font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial,
           "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
     }
   }
