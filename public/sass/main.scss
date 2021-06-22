@@ -1,73 +1,20 @@
-// core
-@import "core/normalize";
-@import "core/font-awesome";
-@import "core/open-sans";
-@import "core/variables";
+// abstracts font, animations...
+@import "abstracts/__abstracts";
 
-//animate
-@import "animate/animation";
-@import "animate/animate.min.scss";
+// vendor
+@import "vendor/__verdor";
 
-//fonts
-@import "fonts/font-face";
+// base styles written for everywhere
+@import "base/__base";
 
-// mixins
-@import "mixins/flexbox";
-@import "mixins/absolute-center";
-@import "mixins/force-hide";
+// small modules or components
+@import "components/__components";
 
-// global style
-@import "core/global";
+// main layout
+@import "layout/__layout";
 
-// widgets
-@import "widgets/animation";
-@import "widgets/button";
-@import "widgets/controls";
-@import "widgets/control";
-@import "widgets/dialog-box";
-@import "widgets/draggable";
-@import "widgets/maintain-move-panel";
-@import "widgets/path-input";
-@import "widgets/showable_password_input";
+// pages contents
+@import "pages/__pages";
 
-// views
-@import "views/modal";
-@import "views/accordion";
-@import "views/advanced-panel";
-@import "views/change-log-dialog";
-@import "views/color-picker-panel";
-@import "views/device-selector";
-@import "views/document-panel";
-@import "views/dxf-dpi-selector";
-@import "views/flux_login";
-@import "views/flux-monitor";
-@import "views/image-trace-panel";
-@import "views/layer-color-config";
-@import "views/rating-panel";
-@import "views/message-growl";
-@import "views/network-testing-panel";
-@import "views/noun-project";
-@import "views/photo-edit-panel";
-@import "views/prompt-dialogs";
-@import "views/svg-nest-buttons";
-@import "views/task-interpreter";
-@import "views/time-est-btn";
-@import "views/toolbox";
-@import "views/top-menu";
-@import "views/zoom-block";
-
-// pages
-@import "pages/print";
-@import "pages/settings";
-@import "pages/usb";
-@import "pages/initialize";
-@import "pages/scan";
-@import "pages/device";
-@import "pages/cloud";
-@import "pages/beambox";
-
-// langs
-@import "lang/de";
-@import "lang/en";
-@import "lang/es";
-@import "lang/ja";
+// langs overide
+@import "lang/__lang";
