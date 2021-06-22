@@ -6,7 +6,7 @@ import BeamFileHelper from 'helpers/beam-file-helper';
 import FileExportHelper from 'helpers/file-export-helper';
 import i18n from 'helpers/i18n';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IRecentMenuUpdator } from 'interfaces/IRecentMenuUpdator';
+import { IRecentMenuUpdater } from 'interfaces/IRecentMenuUpdater';
 
 import fs from './fileSystem';
 import storage from './storage';
@@ -20,7 +20,7 @@ getSVGAsync((globalSVG) => {
 
 const { Menu, MenuItem } = electron.remote;
 
-const recentMenuUpdator = {
+const recentMenuUpdater = {
   update() {
     const recentFiles = storage.get('recent_files') || [];
     const recentMenu = Menu.getApplicationMenu().items.filter((i) => i.id === '_file')[0].submenu.items.filter((i) => i.id === 'RECENT')[0].submenu;
@@ -73,7 +73,7 @@ const recentMenuUpdator = {
                 message: i18n.lang.topmenu.file.path_not_exit,
               });
               storage.set('recent_files', storage.get('recent_files').filter((path) => path !== filePath));
-              recentMenuUpdator.update();
+              recentMenuUpdater.update();
             }
           }
         },
@@ -85,7 +85,7 @@ const recentMenuUpdator = {
       label: i18n.lang.topmenu.file.clear_recent,
       click: () => {
         storage.set('recent_files', []);
-        recentMenuUpdator.update();
+        recentMenuUpdater.update();
       },
     }));
     Menu.setApplicationMenu(Menu.getApplicationMenu());
@@ -95,4 +95,4 @@ const recentMenuUpdator = {
   },
 };
 
-export default recentMenuUpdator as IRecentMenuUpdator;
+export default recentMenuUpdater as IRecentMenuUpdater;
