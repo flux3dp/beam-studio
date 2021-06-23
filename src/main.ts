@@ -22,6 +22,7 @@ declare global {
       events: { [key: string]: string; },
       version: string,
       trigger_file_input_click: (inputId: string) => void,
+      remote: any,
     },
     FLUX: {
       allowTracking: boolean,
