@@ -1,0 +1,511 @@
+#laser-panel {
+  background-color: #f8f8f8;
+  height: 100%;
+  margin-top: -1px;
+  border: 1px $panelBorderColor solid;
+  border-width: 1px 0 0 0;
+  border-radius: 4px;
+
+  .layername {
+    line-height: 20px;
+    padding: 10px 15px;
+    background: #f2f2f2;
+    border-bottom: 1px $panelBorderColor solid;
+    text-align: left;
+    color: #333;
+    font-weight: bold;
+  }
+  .layerparams {
+    padding: 10px 3px;
+    .layer-param-buttons {
+      height: 25px;
+      margin: 0 15px 5px;
+      display: flex;
+      justify-content: space-between;
+      .left {
+        display: flex;
+        align-items: center;
+      }
+      .right {
+        display: flex;
+        align-items: center;
+      }
+    }
+    .icon-button {
+      width: 24px;
+      height: 24px;
+      opacity: 0.5;
+      &:not(:first-child) {
+        margin-left: 10px;
+      }
+      &:hover:not(.disabled) {
+        opacity: 1;
+      }
+      &.disabled {
+        opacity: 0.3;
+      }
+      img {
+        filter: brightness(0);
+      }
+    }
+  }
+  .preset-dropdown-containter {
+    display: flex;
+    margin: 0 15px 0 0;
+    justify-content: space-between;
+    align-items: center;
+    .controls {
+      width: calc(100% - 35px);
+    }
+  }
+  .add-preset-btn {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    opacity: 0.5;
+    &:hover:not(.disabled) {
+      opacity: 1;
+    }
+    &.disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+    img {
+      filter: brightness(0);
+    }
+    .bar {
+      position: absolute;
+      width: 2px;
+      height: 14px;
+      border-radius: 1px;
+      border: 1px solid #000000;
+      background-color: #000000;
+    }
+    .bar1 {
+      transform: translateX(6px);
+    }
+    .bar2 {
+      transform: translateX(14px) rotate(90deg) translateX(6px);
+    }
+  }
+  .panel {
+    margin-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    clear: both;
+    .ui.ui-control-unit-input-v2 {
+      width: 80px;
+      float: right;
+      input {
+        width: 100%;
+        height: 30px;
+        padding: 1px 1px 0px;
+        outline: none;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-width: 0 0 1px 0;
+        border-radius: 0;
+        background-color: unset;
+      }
+      .unit {
+        width: 25px;
+        font-size: 9px;
+        margin-left: -25px;
+        text-align: right;
+        color: rgba(0, 0, 0, 0.25);
+      }
+    }
+    .title {
+      line-height: 32px;
+    }
+    &.without-drag {
+      height: 32px;
+      .title {
+        line-height: 32px;
+      }
+    }
+    &.checkbox {
+      height: 16px;
+      .title {
+        line-height: 16px;
+      }
+      input {
+        float: right;
+        margin-top: 2px;
+        margin-right: 10%;
+      }
+    }
+    .speed-warning {
+      display: flex;
+      margin-top: 15px;
+      .warning-icon {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #333333;
+        border-radius: 10px;
+        line-height: 18px;
+        text-align: center;
+      }
+      .warning-text {
+        width: calc(100% - 20px);
+        padding-left: 8px;
+        font-size: 12px;
+      }
+    }
+  }
+  .addon-block {
+    .label {
+      height: 40px;
+      line-height: 20px;
+      padding: 10px 15px;
+      background: #f2f2f2;
+      border: 1px $panelBorderColor solid;
+      border-width: 1px 0;
+      text-align: left;
+      color: #333;
+      font-weight: bold;
+    }
+    .addon-setting {
+      padding: 10px 3px;
+    }
+  }
+  .controls {
+    overflow: hidden;
+
+    .control {
+      line-height: 0;
+      width: 100%;
+    }
+    .label {
+      font-size: 10pt;
+      color: #000;
+      line-height: 16px;
+      padding-left: 10px;
+    }
+    .dropdown-container {
+      position: static;
+      width: 100%;
+
+      :focus {
+        outline: none;
+      }
+
+      select {
+        background-color: #fff;
+        font-size: 10pt;
+        color: #000;
+        width: calc(100% - 29px);
+        margin: 5px 0 5px 15px;
+      }
+      &.more-than-one {
+        select {
+          background-image: url("../img/icon-3d-arrow-down.png");
+          background-position: calc(100% - 4px) center;
+          background-repeat: no-repeat;
+          background-size: 8px 8px;
+        }
+      }
+    }
+  }
+  .rainbow-slider {
+    &::-webkit-slider-thumb {
+      width: 15px;
+      height: 15px;
+      border-radius: 7.5px;
+      background-color: #fdfdfd;
+      border: none;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+    &::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 25px;
+      border: 1px solid #ededed;
+      background-blend-mode: overlay, normal;
+      background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5)),
+        linear-gradient(to right, #89d307, #9ede05 59%, #fff600 71%, #c50101);
+    }
+    &.speed-for-vector {
+      &::-webkit-slider-runnable-track {
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5)),
+          linear-gradient(to right, #89d307 0%, #9ede05 2%, #fff600 4%, #c50101 6%);
+      }
+    }
+    &.hide-thumb {
+      &::-webkit-slider-thumb {
+        opacity: 0;
+      }
+    }
+  }
+
+  .more-config-panel {
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background: #fff;
+    padding: 20px 20px 0;
+    width: 680px;
+
+    .title {
+      color: #626262;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 18px;
+    }
+    .config-list-columns {
+      width: 100%;
+      margin-top: 15px;
+      display: inline-flex;
+    }
+
+    .operation-buttons {
+      width: 10%;
+      font-size: 16px;
+      color: #e0e0df;
+      padding-top: 58px;
+      .operation-button {
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        &:hover {
+          color: #888888;
+        }
+      }
+    }
+    .config-list-column {
+      width: 45%;
+      .title {
+        display: inline-flex;
+        color: #888888;
+        font-weight: 500;
+      }
+      .add-btn {
+        cursor: pointer;
+        margin: 2px 0 3px 10px;
+        .bar {
+          position: absolute;
+          border: 1px solid #ffffff;
+          width: 4px;
+          height: 13px;
+          border-radius: 2px;
+          background-color: #888888;
+        }
+        .bar1 {
+          transform: translateX(4.5px);
+        }
+        .bar2 {
+          transform: translateX(13px) rotate(90deg) translateX(4.5px);
+        }
+        .bar3 {
+          width: 2px;
+          height: 11px;
+          border: 1px solid #888888;
+          border-radius: 1px;
+          transform: translateX(5.5px) translateY(1px);
+        }
+        &:hover {
+          .bar {
+            background-color: #444444;
+          }
+          .bar3 {
+            border: 1px solid #444444;
+          }
+        }
+      }
+    }
+    .config-list {
+      margin-top: 10px;
+      border: 2px solid #e0e0df;
+      height: 160px;
+      overflow-y: auto;
+
+      .config-entry {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e0e0df;
+        color: $primaryColor;
+        cursor: pointer;
+        line-height: 20px;
+        overflow-x: scroll;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        .entry-name {
+          height: 19px;
+          margin-left: 10px;
+          float: left;
+        }
+        .sub-text {
+          height: 19px;
+          margin-left: 0px;
+          margin-right: 5px;
+          float: right;
+          font-style: italic;
+          font-size: 10px;
+          font-weight: 300;
+        }
+        &.no-border {
+          border-bottom: 0px;
+        }
+      }
+      .selected {
+        background-color: #e0e0e0;
+        color: #555;
+      }
+    }
+
+    .config-name {
+      margin: 20px 0 10px 0;
+      height: 21px;
+      line-height: 21px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #888888;
+    }
+
+    .controls {
+      padding: 0 0 10px 0;
+      display: flex;
+      justify-content: space-between;
+      &.disable {
+        opacity: 0.5;
+      }
+      .controls-column {
+        width: 45%;
+      }
+
+      .control {
+        color: #888;
+        display: flex;
+        font-size: 13px;
+        height: 40px;
+        align-items: center;
+        justify-content: space-between;
+
+        .label {
+          font-size: 13px;
+          text-transform: uppercase;
+          color: #888;
+          line-height: 1em;
+          width: 100px;
+          align-self: center;
+        }
+        .ui-control-unit-input-v2 {
+          margin: 0px 0px 0px 5px;
+          width: 90px;
+          input {
+            height: 28px;
+            width: 100%;
+            font-size: 13px;
+            padding: 3px 0px 3px 5px;
+          }
+          .unit {
+            margin-left: -40px;
+          }
+        }
+        .value-text {
+          width: 120px;
+          margin: 5px 0 5px 2px;
+          padding: 0 5px;
+
+          &::after {
+            content: attr(data-tail);
+          }
+        }
+      }
+    }
+
+    .form {
+      margin: 0 0 10px 0;
+    }
+
+    .footer {
+      border: none;
+      border-top: 1px solid #ccc;
+      position: static;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+
+      div {
+        line-height: 10px;
+      }
+
+      .right {
+        float: right;
+        padding: 10px 0;
+        .btn:last-child {
+          margin: 0;
+        }
+      }
+
+      .left {
+        float: left;
+        padding: 10px 0;
+        .btn:first-child {
+          margin: 0;
+        }
+      }
+
+      .btn {
+        font-size: 15px;
+        line-height: 30px;
+        margin: 0 10px 0 0;
+      }
+    }
+  }
+
+  .save-config-panel {
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background: #fff;
+    padding: 20px 20px 0;
+    width: 440px;
+
+    .title {
+      color: #626262;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 18px;
+    }
+
+    .name {
+      color: #909090;
+      font-size: 16px;
+      height: 40px;
+      line-height: 40px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      display: flex;
+
+      span {
+        flex: 1;
+      }
+
+      input {
+        border: 2px solid #ccc;
+        flex: 2;
+        padding: 3px;
+        margin-left: 30px;
+      }
+    }
+
+    .form {
+      margin: 0 0 10px 0;
+    }
+
+    .footer {
+      padding: 10px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+      position: static;
+
+      .btn {
+        margin: 0;
+        min-width: 40px;
+        line-height: 30px;
+        flex: initial;
+
+        &.btn-apply {
+          margin: 0;
+        }
+      }
+    }
+  }
+}

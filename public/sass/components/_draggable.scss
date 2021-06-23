@@ -1,0 +1,68 @@
+.react-draggable {
+  position: absolute;
+  z-index: 5;
+  .handle {
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+    border: 1px solid #dddddd;
+    border-width: 0 0 1px 0;
+  }
+
+  .traffic-lights {
+    position: absolute;
+    top: 0;
+    height: 24px;
+    padding: 6px 0;
+    .traffic-light {
+      width: 12px;
+      height: 12px;
+      margin: 0 6px;
+      border-radius: 6px;
+
+      &:before,
+      &:after {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 1px;
+        margin: auto;
+      }
+      &-close {
+        background-color: #ff6159;
+        &:before,
+        &:after {
+          width: 8px;
+          height: 1px;
+          background-color: #4e0000;
+        }
+        &:before {
+          transform: translate(0, -0.5px) rotate(45deg);
+        }
+        &:after {
+          transform: translate(0, -0.5px) rotate(-45deg);
+        }
+        &:active {
+          background-color: #bf4942;
+          &:before,
+          &:after {
+            background-color: #190000;
+          }
+        }
+      }
+    }
+
+    &:hover {
+      .traffic-light {
+        &:before,
+        &:after {
+          content: "";
+        }
+      }
+    }
+  }
+}
