@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Backbone from 'backbone';
 import { Color, Titlebar } from 'custom-electron-titlebar';
 
 import globalEvents from 'app/actions/global';
 import globalHelper from 'helpers/global-helper';
-import Router from 'app/router';
+import router from 'app/router';
 
 import communicator from 'implementations/communicator';
 import loaderResult from './loader';
@@ -72,9 +71,8 @@ export default function main(): void {
 
   menuBar();
 
-  globalEvents(function () {
-    const router = new Router();
-    Backbone.history.start();
+  globalEvents(() => {
+    router();
   });
 }
 
