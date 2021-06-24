@@ -72,7 +72,7 @@ export default function main(): void {
   menuBar();
 
   globalEvents(() => {
-    router();
+    router($('section.content')[0]);
   });
 }
 
