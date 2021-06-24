@@ -2,7 +2,7 @@ const { pause, checkExist, checkVisible, updateInput } = require('../../../util/
 const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
 const { mouseAction, keyAction } = require('../../../util/actions');
 
-test('Draw Line', async function() {
+test('Check Draw Line', async function() {
     const { app } = require('../../../test');
     //const app = await restartAndSetStorage();
     //await checkExist('#svgcanvas', 15000);

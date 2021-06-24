@@ -2,7 +2,7 @@ const { pause, checkExist, checkVisible, updateInput } = require('../../../util/
 const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
 const { mouseAction, keyAction } = require('../../../util/actions');
 
-test('Draw Curve', async function() {
+test('Check Draw Curve', async function() {
     const { app } = require('../../../test');
 
     await app.client.execute(() => {
@@ -10,8 +10,8 @@ test('Draw Curve', async function() {
     });
     await checkExist('#svgcanvas',15000);
 
-    const elem = await app.client.$('#left-Pen');
-    await elem.click(); 
+    const pen = await app.client.$('#left-Pen');
+    await pen.click(); 
 
     await mouseAction([
         { type: 'pointerMove', x: 400, y: 250, duration: 100, },

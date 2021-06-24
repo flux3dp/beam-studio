@@ -16,6 +16,18 @@ const checkExist = async (tag, time = 10000, reverse = false) => {
     }
     throw `Element ${tag} does not exist after ${time}`;
 };
+const checknotExist = async (tag, time = 10000, reverse = false) => {
+    const { app } = application;
+    const start = Date.now();
+    while (Date.now() < start + time) {
+        const elem = await app.client.$(tag);
+        if (elem.error) {
+            return true;
+        }
+    }
+    throw `Element ${tag} is exist after ${time}`;
+};
+
 const checkVisible = async (tag, time = 10000, reverse = false) => {
     const { app } = application;
     await app.client.waitForDisplayed(tag, time, reverse);
@@ -70,7 +82,7 @@ const setDefaultStorage = async () => {
         'printer-is-ready': true,
         'enable-sentry': 0,
         'active-lang': 'zh-tw',
-        'last-installed-version': '1.6.1-alpha',
+        'last-installed-version': '1.7.1-alpha',
         'questionnaire-version': 1,
         'alert-config': {
             'skip-interface-tutorial': true,
@@ -92,6 +104,7 @@ const setDefaultStorage = async () => {
 module.exports = {
     pause,
     checkExist,
+    checknotExist,
     checkVisible,
     updateInput,
     setAppStorage,

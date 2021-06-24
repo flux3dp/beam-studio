@@ -2,7 +2,7 @@ const { pause, checkExist, checkVisible, updateInput } = require('../../../util/
 const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
 const { mouseAction, keyAction } = require('../../../util/actions');
 
-test('Draw Ellipse', async function() {
+test('Check Draw Ellipse', async function() {
 
     const { app }= require('../../../test');
     //const app = await restartAndSetStorage();//要重啟顯示這行，不重啟顯示上行，沒辦法同時開啟，因為app共用

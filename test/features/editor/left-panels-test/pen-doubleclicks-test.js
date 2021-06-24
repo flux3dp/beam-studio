@@ -2,7 +2,7 @@ const { pause, checkExist, checkVisible, updateInput } = require('../../../util/
 const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
 const { mouseAction, keyAction, touchAction} = require('../../../util/actions');
 
-test('Draw Pen Doubleclicks', async function() {
+test('Check Draw Pen Doubleclicks', async function() {
     const { app } = require('../../../test');
 
     await app.client.execute(() => {
