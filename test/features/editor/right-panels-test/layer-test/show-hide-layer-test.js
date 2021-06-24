@@ -1,14 +1,15 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { pause, checkExist, checknotExist,checkVisible, updateInput } = require('../../../../util/utils');
+const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
+const { mouseAction, keyAction } = require('../../../../util/actions');
 
-test('Draw Pen', async function() {
-    const { app } = require('../../../test');
-
+test('Check Hide Layer', async function() {
+    const { app } = require('../../../../test');
+    
     await app.client.execute(() => {
-        location.reload()
+        location.reload();
     });
-    await checkExist('#svgcanvas',15000);
+    await checkExist('#svgcanvas', 15000);
+
 
     const pen = await app.client.$('#left-Pen');
     await pen.click(); 
@@ -44,13 +45,16 @@ test('Draw Pen', async function() {
     ]);
     
     await checkExist('#svg_1');
-    // await new Promise((r) => setTimeout(r, 50000));
-    const svg_1d = await app.client.$('#svg_1');
-    const pend = await svg_1d.getAttribute('d');
-    expect(pend).toEqual("M 106.55794517829963 395.018199746274 L 303.40557275541795 394.0332113706727 L 500.4221784407543 394.0332113706727 L 500.4221784407543 591.049817056009 L 500.4221784407543 788.0664227413454 L 303.40557275541795 788.0664227413454 L 106.38896707008162 788.0664227413454 L 106.38896707008162 591.049817056009 L 106.55794517829963 395.018199746274 z");
-    
-    // const svg_1node = await app.client.$('#svg_1');
-    // const pennode = await svg_1node.getAttribute('data-nodeTypes');
-    // expect(pend).toEqual("{"0":0,"1":0,"2":0,"3":0,"4":0}");
 
+    const switchlayer = await app.client.$('div.tab.layers');
+    await switchlayer.click();
+
+    const hidelayer = await app.client.$('div#layervis-0');
+    await hidelayer.click();
+
+    const layer0 = await app.client.$('g.layer');
+    const layer0display = await layer0.getAttribute('display');
+    expect(layer0display).toEqual('none');
+
+    
 });

@@ -10,6 +10,9 @@ test('Add Parameter', async function() {
     });
     await checkExist('#svgcanvas',15000);
 
+    const btn = await app.client.$('button#qa-btn-default.primary');
+    await btn.click();
+
     const set = await app.client.$('div.right');
     await set.click(); 
     

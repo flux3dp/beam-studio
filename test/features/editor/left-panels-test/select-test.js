@@ -9,8 +9,8 @@ test('Select', async function() {
     });
     await checkExist('#svgcanvas',15000);
 
-    const elem = await app.client.$('#left-Polygon');
-    await elem.click();
+    const polygon = await app.client.$('#left-Polygon');
+    await polygon.click();
 
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },

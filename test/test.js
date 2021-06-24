@@ -50,6 +50,4 @@ test('App Init', async function() {
     expect(count).toEqual(3);
 });
 
-require('./features/settings/home-lang-test');
 require('./features/editor/editor-tests');
-

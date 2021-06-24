@@ -1,4 +1,4 @@
-const { checkExist, restartApp, stopApp, setAppStorage, restartAndSetStorage } = require('../../util/utils');
+const { checkExist, checknotExist, restartApp, stopApp, setAppStorage, restartAndSetStorage } = require('../../util/utils');
 const application = require('../../../test/test');
 const request = require('request');
 
@@ -6,7 +6,7 @@ test('Init Editor', async function() {
     const app = await restartAndSetStorage();
     let isVisible = await app.browserWindow.isVisible();
     expect(isVisible).toBe(true);
-    await checkExist('#svgcanvas', 15000);
+    await checknotExist('#svgcanvas', 15000);
 });
 
 
@@ -26,6 +26,18 @@ test('Init Editor', async function() {
 // require('./left-panels-test/select-test');
 // require('./left-panels-test/text-convert-to-path-test');
 // require('./left-panels-test/text-test');
+
+/* Modify Action */
+// require('./modify-action-test/align-test');
+// require('./modify-action-test/distribute-test');
+// require('./modify-action-test/group-test');
+// require('./modify-action-test/group-layer-test');
+// require('./modify-action-test/union-test');
+// require('./modify-action-test/change-object-test');
+// require('./modify-action-test/offset-test');
+// require('./modify-action-test/array-test');
+// require('./modify-action-test/mirror-test');
+// require('./modify-action-test/decompose-path-test');
 
 
 
@@ -69,18 +81,40 @@ test('Init Editor', async function() {
 // require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
 
 /* Layer(right-panels) */
-require('./right-panels-test/layer-test/add-layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
-// require('./right-panels-test/layer-test');
+// require('./right-panels-test/layer-test/copy-layer-color-test');
+// require('./right-panels-test/layer-test/copy-layer-test');
+// require('./right-panels-test/layer-test/create-layer-test');
+// require('./right-panels-test/layer-test/create-object-diffierent-layer');
+// require('./right-panels-test/layer-test/delete-layer-atleastone-test');
+// require('./right-panels-test/layer-test/delete-layer-test');
+// require('./right-panels-test/layer-test/drag-layer-object-test');
+// require('./right-panels-test/layer-test/drag-layer-test');
+// require('./right-panels-test/layer-test/lock-layer-test');
+// require('./right-panels-test/layer-test/lock-layer-moveobj-test');
+// require('./right-panels-test/layer-test/merge-down-layer-test');
+// require('./right-panels-test/layer-test/merge-all-layer-test');
+// require('./right-panels-test/layer-test/merge-selected-layer-test');
+// require('./right-panels-test/layer-test/move-object-layer-parameter-test');
+// require('./right-panels-test/layer-test/move-object-layer-test');
+// require('./right-panels-test/layer-test/show-hide-layer-test');
+// require('./right-panels-test/layer-test/switch-layer-parameter-test');
+
+
+
+/* Layer(right-panels) */
+// require('./viewport-test/zoom_in_out-test');
+// require('./viewport-test/fit-to-window-test');
+// // require('./viewport-test/auto-fit-to-window-test');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/percentage-test');
+// require('./viewport-test');
+// require('./viewport-test');
+// require('./viewport-test');
+
+
+/* setting */
+// require('../settings/home-lang-test');
+// require('../settings/connect-machine');
 
 
 test('End Editor', async function() {
