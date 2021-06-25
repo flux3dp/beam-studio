@@ -103,7 +103,7 @@ export default {
       return new Promise((resolve) => {
         let failed = 0;
         const doPing = () => {
-          session.pingHost(ip, (error, target, sent, rcvd) => {
+          session.pingHost(ip, (error) => {
             if (!error) {
               // console.log('rrt', rcvd - sent);
               resolve({ isExisting: true });
