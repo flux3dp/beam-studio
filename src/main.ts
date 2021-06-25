@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Color, Titlebar } from 'custom-electron-titlebar';
+import { remote } from 'electron';
 
 import globalEvents from 'app/actions/global';
 import globalHelper from 'helpers/global-helper';
@@ -19,7 +20,6 @@ declare global {
     electron?: {
       ipc: any,
       events: { [key: string]: string; },
-      version: string,
       trigger_file_input_click: (inputId: string) => void,
       remote: any,
     },
@@ -62,6 +62,7 @@ function menuBar() {
 }
 
 export default function main(): void {
+  window.FLUX.version = remote.app.getVersion();
   console.log(`Beam-Studio: ${window['FLUX'].version}`);
 
   // if (allowTracking) {

@@ -13,7 +13,6 @@
     G.electron = {
         ipc: ipcRenderer,
         events: events,
-        version: remote.app.getVersion(),
         trigger_file_input_click: (inputId) => {
             if(inputId.match(/^[a-zA-Z0-9\-\_]+$/)) {
                 webFrame.executeJavaScript(
