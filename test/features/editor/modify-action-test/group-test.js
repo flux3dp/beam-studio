@@ -1,5 +1,5 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Group', async function() {
     const { app } = require('../../../test');

@@ -1,7 +1,7 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction, zoomAction} = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
-test('Check Text of Array', async function() {
+test('Check Array Text', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -79,7 +79,7 @@ test('Check Text of Array', async function() {
 });
 
 
-test('Check Geometry of Array', async function() {
+test('Check Array Geometry', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -148,7 +148,7 @@ test('Check Geometry of Array', async function() {
 
 });
 
-test('Check Path of Array', async function() {
+test('Check Array Path', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -223,7 +223,7 @@ test('Check Path of Array', async function() {
 
 });
 
-test('Check Multi Select of Array', async function() {
+test('Check Array Multi Select', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -327,7 +327,7 @@ test('Check Multi Select of Array', async function() {
 });
 
 
-test('Check Group of Array', async function() {
+test('Check Array Group', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();

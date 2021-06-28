@@ -1,8 +1,6 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist } = require('../../../../util/utils');
 
-test('Coustom Parameter', async function() {
+test('Check Coustom Parameter', async function() {
     const { app } = require('../../../../test');
     
     await app.client.execute(() => {
@@ -11,28 +9,28 @@ test('Coustom Parameter', async function() {
     await checkExist('#svgcanvas',15000);
 
     const set = await app.client.$('div.right');
-    await set.click();
+    await set.click(); 
     
-    const add = await app.client.$('#qa-bar-bar3');
+    const add = await app.client.$('div#add_bar3');
     await add.click(); 
 
-    const textinput = await app.client.$('div#addparameter input');
+    const textinput = await app.client.$('input.text-input');
     await textinput.click();
     await app.client.keys(['T', 'E', 'S', 'T', 'C', 'U', 'S', 'T', 'O', 'M', 'Enter',"NULL"]);
     
-    const powerinput = await app.client.$('div#qa-power-input.control input');
+    const powerinput = await app.client.$('input#laser_power');
     await powerinput.doubleClick();
     await app.client.keys(['Delete', '9', '5', 'Enter',"NULL"]);
 
-    const speedinput = await app.client.$('div#qa-speed-input.control input');
+    const speedinput = await app.client.$('input#laser_speed');
     await speedinput.doubleClick();
     await app.client.keys(['Delete','1', '5', '0', 'Enter',"NULL"]);
 
-    const repeatinput = await app.client.$('div#qa-repeat-input.control input');
+    const repeatinput = await app.client.$('input#laser_repeat');
     await repeatinput.doubleClick();
     await app.client.keys(['Delete','3', 'Enter',"NULL"]);
 
-    const zStepinput = await app.client.$('div#qa-zStep-input.control input');
+    const zStepinput = await app.client.$('input#laser_zStep');
     await zStepinput.doubleClick();
     await app.client.keys(['Delete','1', '0', 'Enter',"NULL"]);
     await new Promise((r) => setTimeout(r, 1000));
@@ -41,25 +39,25 @@ test('Coustom Parameter', async function() {
     const w5cut = await app.client.$('#wood_5mm_cutting');
     await w5cut.click(); 
 
-    const rew5cut = await app.client.$('#qa-remove-button');
+    const rew5cut = await app.client.$('div#removeselect');
     await rew5cut.click();
 
     const a5cut = await app.client.$('#acrylic_5mm_cutting');
     await a5cut.click(); 
 
-    const rea5cut = await app.client.$('#qa-remove-button');
+    const rea5cut = await app.client.$('div#removeselect');
     await rea5cut.click();
 
     const l5cut = await app.client.$('#leather_5mm_cutting');
     await l5cut.click();
 
-    const rel5cut = await app.client.$('#qa-remove-button');
+    const rel5cut = await app.client.$('div#removeselect');
     await rel5cut.click();
 
     const f5cut = await app.client.$('#fabric_5mm_cutting');
     await f5cut.click();
 
-    const ref5cut = await app.client.$('#qa-remove-button');
+    const ref5cut = await app.client.$('div#removeselect');
     await ref5cut.click();
 
     
