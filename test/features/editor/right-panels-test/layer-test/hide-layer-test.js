@@ -1,19 +1,14 @@
-const { pause, checkExist, checknotExist,checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist } = require('../../../../util/utils');
+const { mouseAction } = require('../../../../util/actions');
 
 test('Check Hide Layer', async function() {
     const { app } = require('../../../../test');
-    
     await app.client.execute(() => {
         location.reload();
     });
     await checkExist('#svgcanvas', 15000);
-
-
     const pen = await app.client.$('#left-Pen');
     await pen.click(); 
-
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },

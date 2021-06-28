@@ -1,7 +1,5 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-const { dialog } = require('electron');
+const { checkExist, setAppPage } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Loop Compensation', async function() {
     const { app } = require('../../../test');
@@ -29,9 +27,7 @@ test('Check Preference Loop Compensation', async function() {
     expect(await timeresult.getText()).toEqual('Estimated Time: 21 s');
 
 
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings'); 
 
     const selectloop = await app.client.$('input#qa-set-loop-compensation');
     await selectloop.doubleClick();
@@ -42,7 +38,7 @@ test('Check Preference Loop Compensation', async function() {
     const loopcheck2 = await loopcheck.getAttribute('value');
     expect(loopcheck2).toEqual('10');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     const poly2 = await app.client.$('#left-Polygon');

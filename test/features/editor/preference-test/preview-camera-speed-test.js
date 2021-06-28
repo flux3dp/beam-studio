@@ -1,19 +1,11 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-const { dialog } = require('electron');
+const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Preview Camera Speed ', async function() {
     const { app } = require('../../../test');
     
     await checkExist('#svgcanvas',15000);
 
-    await app.client.execute(() => {
-
-        location.hash = '#studio/settings';
-
-    });
-
+    await setAppPage('#studio/settings');
     const selectcameraspeed = await app.client.$('input#qa-set-groups-camera');
     await selectcameraspeed.doubleClick();
     await app.client.keys(['Delete', '1', '5', '0', 'Enter', "NULL"]);
@@ -30,7 +22,7 @@ test('Check Preference Preview Camera Speed ', async function() {
     const speedcheck2_2 = await speedcheck_2.getAttribute('value');
     expect(speedcheck2_2).toEqual('50');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);

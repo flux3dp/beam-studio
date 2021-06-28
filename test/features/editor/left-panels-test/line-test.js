@@ -1,19 +1,16 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Line', async function() {
     const { app } = require('../../../test');
-    //const app = await restartAndSetStorage();
-    //await checkExist('#svgcanvas', 15000);
-
     await app.client.execute(() => {
         location.reload()
     });
     await checkExist('#svgcanvas',15000);
 
-    const elem = await app.client.$('#left-Line');
-    await elem.click(); 
+    const line = await app.client.$('#left-Line');
+    await line.click(); 
 
     await mouseAction([
         { type: 'pointerMove', x: 300, y: 300, duration: 100, },

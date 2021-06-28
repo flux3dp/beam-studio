@@ -50,9 +50,18 @@ const setAppStorage = async (storage) => {
         for (let key in storage) {
             s.set(key, storage[key]);
         }
+        // location.reload();
         return s.store;
     }, storage);
     return store;
+};
+
+const setAppPage = async (page) => {
+    const { app } = application;
+    const gopage = await app.client.execute((page) => {
+        location.hash = page;
+    }, page);
+    return gopage;
 };
 
 const restartApp = async () => {
@@ -110,5 +119,6 @@ module.exports = {
     setAppStorage,
     setDefaultStorage,
     restartApp,
-    restartAndSetStorage
+    restartAndSetStorage,
+    setAppPage
 };

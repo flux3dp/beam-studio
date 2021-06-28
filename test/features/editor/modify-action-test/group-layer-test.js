@@ -1,5 +1,5 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Group Layer', async function() {
     const { app } = require('../../../test');
@@ -9,7 +9,7 @@ test('Check Group Layer', async function() {
     });
     await checkExist('#svgcanvas',15000);
  
-    const rect = await app.client.$('#left-Rectangle');//預設黑色
+    const rect = await app.client.$('#left-Rectangle');//
     await rect.click();
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },

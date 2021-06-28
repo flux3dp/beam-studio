@@ -1,6 +1,4 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist } = require('../../../../util/utils');
 
 test('Check Add New Layer', async function() {
     const { app } = require('../../../../test');
@@ -19,7 +17,7 @@ test('Check Add New Layer', async function() {
     const innerHTMLlayer1 = await app.client.$('div.layercolor');
     await innerHTMLlayer1.getHTML();
     // console.log(await innerHTML.getHTML());
-    expect(await innerHTMLlayer1.getHTML()).toEqual('<div class="layercolor"><div style="background-color: rgb(63, 81, 181);"></div></div>');
+    expect(await innerHTMLlayer1.getHTML()).toEqual('<div id=\"layerbackgroundColor-1\" class=\"layercolor\"><div style=\"background-color: rgb(63, 81, 181);\"></div></div>');
 
 
 
@@ -31,7 +29,7 @@ test('Check Add New Layer', async function() {
     expect(layer2data).toEqual('layer-2');
     const innerHTMLlayer2 = await app.client.$('div.layercolor');
     await innerHTMLlayer2.getHTML();
-    expect(await innerHTMLlayer2.getHTML()).toEqual('<div class="layercolor"><div style="background-color: rgb(244, 67, 54);"></div></div>');
+    expect(await innerHTMLlayer2.getHTML()).toEqual('<div id=\"layerbackgroundColor-2\" class=\"layercolor\"><div style=\"background-color: rgb(244, 67, 54);\"></div></div>');
 
 
     const add3 = await app.client.$('div.add-layer-btn');
@@ -42,7 +40,7 @@ test('Check Add New Layer', async function() {
     expect(layer3data).toEqual('layer-3');
     const innerHTMLlayer3 = await app.client.$('div.layercolor');
     await innerHTMLlayer3.getHTML();
-    expect(await innerHTMLlayer3.getHTML()).toEqual('<div class="layercolor"><div style="background-color: rgb(255, 193, 7);"></div></div>');
+    expect(await innerHTMLlayer3.getHTML()).toEqual('<div id=\"layerbackgroundColor-3\" class="layercolor"><div style="background-color: rgb(255, 193, 7);"></div></div>');
 
 
 
@@ -54,6 +52,6 @@ test('Check Add New Layer', async function() {
     expect(layer4data).toEqual('layer-4');
     const innerHTMLlayer4 = await app.client.$('div.layercolor');
     await innerHTMLlayer4.getHTML();
-    expect(await innerHTMLlayer4.getHTML()).toEqual("<div class=\"layercolor\"><div style=\"background-color: rgb(139, 195, 74);\"></div></div>");
+    expect(await innerHTMLlayer4.getHTML()).toEqual("<div id=\"layerbackgroundColor-4\" class=\"layercolor\"><div style=\"background-color: rgb(139, 195, 74);\"></div></div>");
 
 });

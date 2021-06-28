@@ -1,5 +1,5 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Move Object', async function() {
     const { app } = require('../../../test');
@@ -22,12 +22,12 @@ test('Check Move Object', async function() {
     // console.log(await rectlocation.getLocation());
     await new Promise((r) => setTimeout(r, 1000));
 
-    const rectmovex = await app.client.$('input#qa-x');
+    const rectmovex = await app.client.$('input#x_position');
     await rectmovex.doubleClick();
     await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
 
 
-    const rectmovey = await app.client.$('input#qa-y');
+    const rectmovey = await app.client.$('input#y_position');
     await rectmovey.doubleClick();
     await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
 

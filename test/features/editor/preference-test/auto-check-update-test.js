@@ -1,6 +1,4 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
 const { dialog } = require('electron');
 
 test('Check Preference Update', async function() {
@@ -17,7 +15,7 @@ test('Check Preference Update', async function() {
     const updatecheck2 = await updatecheck.getAttribute('value');
     expect(updatecheck2).toEqual('0');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);

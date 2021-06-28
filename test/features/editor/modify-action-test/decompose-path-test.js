@@ -1,5 +1,5 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Decompose Path', async function() {
     const { app } = require('../../../test');

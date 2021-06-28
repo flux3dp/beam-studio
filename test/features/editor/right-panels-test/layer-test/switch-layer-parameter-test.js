@@ -1,6 +1,4 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist } = require('../../../../util/utils');
 
 test('Check Switch Layer Parameter', async function() {
     const { app } = require('../../../../test');
@@ -34,13 +32,13 @@ test('Check Switch Layer Parameter', async function() {
     const checklayer1parameter = await app.client.$('[data-test-key="layer-1"]');
     await checklayer1parameter.click();
 
-    const wood5cutpower= await app.client.$('input#qa-power');
+    const wood5cutpower= await app.client.$('input#power');
     const wood5cutpowernumber = await wood5cutpower.getAttribute('value');
     expect(wood5cutpowernumber).toEqual('55');
-    const wood5cutspeed= await app.client.$('input#qa-speed');
+    const wood5cutspeed= await app.client.$('input#speed');
     const wood5cutspeednumber = await wood5cutspeed.getAttribute('value');
     expect(wood5cutspeednumber).toEqual('4');
-    const wood5cutrepeat= await app.client.$('input#qa-repect');
+    const wood5cutrepeat= await app.client.$('input#repeat');
     const wood5cutrepeatnumber = await wood5cutrepeat.getAttribute('value');
     expect(wood5cutrepeatnumber).toEqual('2');
 
@@ -48,13 +46,13 @@ test('Check Switch Layer Parameter', async function() {
     const checklayer3parameter = await app.client.$('[data-test-key="layer-3"]');
     await checklayer3parameter.click();
 
-    const acrylic5cutpower= await app.client.$('input#qa-power');
+    const acrylic5cutpower= await app.client.$('input#power');
     const acrylic5cutpowernumber = await acrylic5cutpower.getAttribute('value');
     expect(acrylic5cutpowernumber).toEqual('55');
-    const acrylic5cutspeed= await app.client.$('input#qa-speed');
+    const acrylic5cutspeed= await app.client.$('input#speed');
     const acrylic5cutspeednumber = await acrylic5cutspeed.getAttribute('value');
     expect(acrylic5cutspeednumber).toEqual('5');
-    const acrylic5cutrepeat= await app.client.$('input#qa-repect');
+    const acrylic5cutrepeat= await app.client.$('input#repeat');
     const acrylic5cutrepeatnumber = await acrylic5cutrepeat.getAttribute('value');
     expect(acrylic5cutrepeatnumber).toEqual('2');
 
