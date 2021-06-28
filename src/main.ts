@@ -3,6 +3,7 @@
 import { Color, Titlebar } from 'custom-electron-titlebar';
 import { remote } from 'electron';
 
+import fileExportHelper from 'helpers/file-export-helper';
 import globalEvents from 'app/actions/global';
 import globalHelper from 'helpers/global-helper';
 import router from 'app/router';
@@ -58,6 +59,10 @@ function menuBar() {
   window.titlebar = titlebar;
   communicator.on('UPDATE_CUSTOM_TITLEBAR', (e) => {
     window.dispatchEvent(new Event('mousedown'));
+  });
+  communicator.on('WINDOW_CLOSE', async () => {
+    const res = await fileExportHelper.toggleUnsavedChangedDialog();
+    if (res) communicator.send('CLOSE_REPLY', true);
   });
 }
 
