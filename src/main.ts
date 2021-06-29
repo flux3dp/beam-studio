@@ -60,10 +60,6 @@ function menuBar() {
   communicator.on('UPDATE_CUSTOM_TITLEBAR', (e) => {
     window.dispatchEvent(new Event('mousedown'));
   });
-  communicator.on('WINDOW_CLOSE', async () => {
-    const res = await fileExportHelper.toggleUnsavedChangedDialog();
-    if (res) communicator.send('CLOSE_REPLY', true);
-  });
 }
 
 export default function main(): void {
@@ -76,6 +72,10 @@ export default function main(): void {
   // }
 
   menuBar();
+  communicator.on('WINDOW_CLOSE', async () => {
+    const res = await fileExportHelper.toggleUnsavedChangedDialog();
+    if (res) communicator.send('CLOSE_REPLY', true);
+  });
 
   globalEvents(() => {
     router($('section.content')[0]);
