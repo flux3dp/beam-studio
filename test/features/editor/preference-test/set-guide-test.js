@@ -2,9 +2,6 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Set Guide ', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
 
     const openguide = await app.client.$('select#qa-set-guide option[value="TRUE"]');
@@ -45,9 +42,4 @@ test('Check Preference Set Guide ', async function() {
     const horizontalcheck= await app.client.$('#horizontal_guide');
     const horizontalcheck2 = await horizontalcheck.getAttribute('y1');
     expect(horizontalcheck2).toEqual('300');
-    
-
-
-
-    
 });

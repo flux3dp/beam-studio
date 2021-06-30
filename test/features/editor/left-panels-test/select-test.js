@@ -1,11 +1,9 @@
-const { checkExist} = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Select', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const polygon = await app.client.$('#left-Polygon');
@@ -18,7 +16,6 @@ test('Check Select', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     
-
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -30,14 +27,12 @@ test('Check Select', async function() {
     const result = await app.client.execute(() =>{
         return svgCanvas.getSelectedElems();
     });
-    
     expect(result.length).toEqual(1);
 
     const id = await app.client.execute(() => {
         const e = svgCanvas.getSelectedElems();
         return e.map((e) => {return e.getAttribute('id')});
     });
-    
     expect(id).toEqual(["svg_1"]);
 
 });
@@ -45,9 +40,7 @@ test('Check Select', async function() {
 test('Check Multi-Select', async function() {
     const { app } = require('../../../test');
     
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -59,7 +52,6 @@ test('Check Multi-Select', async function() {
         { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-    
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
@@ -82,13 +74,11 @@ test('Check Multi-Select', async function() {
     const result = await app.client.execute(() =>{
         let g = svgCanvas.getTempGroup();
         let childNodes = Array.from(g.childNodes);
-        
         const rectangle = document.getElementById('svg_1');
         const ellipse = document.getElementById('svg_2');
         const isRectInsideGroup =  childNodes.includes(rectangle);
         const isEllipseInsideGroup =  childNodes.includes(ellipse);
         return {isRectInsideGroup, isEllipseInsideGroup};
-        
     });
     expect(result.isRectInsideGroup).toBe(true);
     expect(result.isEllipseInsideGroup).toBe(true);

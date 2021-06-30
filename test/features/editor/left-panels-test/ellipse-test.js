@@ -1,12 +1,10 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Ellipse', async function() {
     let { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const elli = await app.client.$('#left-Ellipse');
@@ -42,5 +40,4 @@ test('Check Draw Ellipse', async function() {
     const aR = parseFloat(actualR).toFixed(10);
     expect(Math.abs(expectedX - aCX)).toBeLessThanOrEqual(1e-10);
     expect(Math.abs(expectedY - aCY)).toBeLessThanOrEqual(1e-10);
-
 });

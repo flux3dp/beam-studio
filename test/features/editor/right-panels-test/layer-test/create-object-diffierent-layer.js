@@ -1,11 +1,9 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
+
 test('Check Object In Diffierent Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     
     const rect = await app.client.$('#left-Rectangle');
@@ -28,7 +26,6 @@ test('Check Object In Diffierent Layer', async function() {
     await switchlayer3.click();
 
     await checkExist('[data-test-key="layer-1"]');
-    
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
@@ -49,7 +46,4 @@ test('Check Object In Diffierent Layer', async function() {
     const ellilayer1 = await app.client.$('#svg_2');
     const ellicolor = await ellilayer1.getAttribute('stroke');
     expect(rectcolor).not.toEqual(ellicolor);
-
-    
-    
 });

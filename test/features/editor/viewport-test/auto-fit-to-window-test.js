@@ -1,13 +1,8 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-
+const { checkExist, setReload} = require('../../../util/utils');
 
 test('Check Auto Fit To Window', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const autofitwindow = await app.client.$$('#_view');

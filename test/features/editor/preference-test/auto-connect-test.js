@@ -2,8 +2,6 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Auto Connect One Machine ', async function() {
     const { app } = require('../../../test');
-    await setAppPage('#studio/settings');
-
     await setAppPage('#initialize/connect/select-connection-type');
 
     const connectwifi = await app.client.$('#qa-connect-wifi');
@@ -30,5 +28,4 @@ test('Check Preference Auto Connect One Machine ', async function() {
     await nextstepatofinish.click();
 
     await checkExist('#svgcanvas', 15000);
-
 });

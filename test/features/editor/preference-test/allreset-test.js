@@ -1,6 +1,5 @@
 const { checkExist, setAppPage } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
-const { dialog } = require('electron');
 
 test('Check Preference All Reset', async function() {
     const { app } = require('../../../test');

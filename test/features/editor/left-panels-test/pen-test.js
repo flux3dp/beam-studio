@@ -1,16 +1,14 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Pen', async function() {
     const { app } = require('../../../test');
-
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const pen = await app.client.$('#left-Pen');
     await pen.click(); 
+
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -45,16 +43,12 @@ test('Check Draw Pen', async function() {
     const svg_1d = await app.client.$('#svg_1');
     const pend = await svg_1d.getAttribute('d');
     expect(pend).toEqual("M 116.607652 391.7239531 L 312.441882090385 390.5523526129813 L 507.7180583968756 390.5523526129813 L 507.7180583968756 585.8285289194719 L 507.7180583968756 781.1047052259626 L 312.441882090385 781.1047052259626 L 117.16570578389438 781.1047052259626 L 117.16570578389438 585.8285289194719 L 116.607652 391.7239531 z");
-
 });
-
 
 test('Check Draw Pen Curve', async function() {
     const { app } = require('../../../test');
 
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const pen = await app.client.$('#left-Pen');
@@ -79,15 +73,12 @@ test('Check Draw Pen Curve', async function() {
     const svg_1d = await app.client.$('#svg_1');
     const curved = await svg_1d.getAttribute('d');
     expect(curved).toEqual("M 897.7123395 587.000125 C 311.8838239 1172.8286406 1288.2646832 977.5524687 897.7123395 1172.8286406 L 507.7180583968756 1366.9332341454344");
-    
 });
 
 test('Check Draw Pen Doubleclicks', async function() {
     const { app } = require('../../../test');
 
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const pen = await app.client.$('#left-Pen');
@@ -115,12 +106,10 @@ test('Check Draw Pen Doubleclicks', async function() {
     await checkExist('div#qa-tCorner-seg-item');
     await checkExist('div#qa-tSmooth-seg-item');
     await checkExist('div#qa-tSymmetry-seg-item');
-   
 });
 
 test('Check Draw Pen tCorner', async function() {
     const { app } = require('../../../test');
-
     /* tCorner */
     const pathpoint1 = await app.client.$('#pathpointgrip_1');
     await pathpoint1.doubleClick();
@@ -139,7 +128,6 @@ test('Check Draw Pen tCorner', async function() {
     expect(curved).toEqual("M897.71234,1172.82864Q637.71616,456.03495 1093.54659,976.38088Q1549.19099,455.64442 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
 });
 
-
 test('Check Draw Pen tSmooth', async function() {
     const { app } = require('../../../test');
     /* tSmooth */
@@ -152,7 +140,6 @@ test('Check Draw Pen tSmooth', async function() {
     const curve2d = await svg_2d.getAttribute('d');
     // console.lozg(curve2d);
     expect(curve2d).toEqual("M897.71234,1172.82864Q442.43999,260.75878 1093.54659,976.38088Q1559.20632,1488.18094 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
-
 });
 
 test('Check Draw Pen tSymmetry', async function() {
@@ -167,5 +154,4 @@ test('Check Draw Pen tSymmetry', async function() {
      const curve3d = await svg_3d.getAttribute('d');
      // console.log(curve3d);
      expect(curve3d).toEqual("M897.71234,1172.82864Q442.43999,651.31112 1093.54659,976.38088Q1744.65319,1301.45064 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
- 
 });

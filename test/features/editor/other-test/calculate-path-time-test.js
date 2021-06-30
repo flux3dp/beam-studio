@@ -1,12 +1,9 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Calculate Time Geometry', async function() {
     const { app } = require('../../../test');
-   
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -17,6 +14,7 @@ test('Check Calculate Time Geometry', async function() {
         { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
+
     const time = await app.client.$('div.time-est-btn');
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
@@ -38,7 +36,6 @@ test('Check Calculate Time Text', async function() {
     await time2.click();
     const timereult2 = await app.client.$('div.time-est-result');
     expect(await timereult2.getText()).toEqual('Estimated Time: 30 秒');
-
 });
 
 test('Check Calculate Time Path', async function() {
@@ -55,5 +52,4 @@ test('Check Calculate Time Path', async function() {
     await time3.click();
     const timereult3 = await app.client.$('div.time-est-result');
     expect(await timereult3.getText()).toEqual('Estimated Time: 36 秒');
-
 });

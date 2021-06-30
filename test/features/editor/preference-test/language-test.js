@@ -1,9 +1,9 @@
 const { checkExist, setAppPage } = require('../../../util/utils');
 
-
 test('Check Preference Language', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings'); 
+    
     const selectde = await app.client.$('select#select-lang option[value="de"]');
     await selectde.click();
     const decheck= await app.client.$('select#select-lang');
@@ -16,9 +16,7 @@ test('Check Preference Language', async function() {
     const selectdecheck2 = await selectdecheck.getAttribute('title');
     expect(selectdecheck2).toEqual('Wählen (V)');
 
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings'); 
     const selecten = await app.client.$('select#select-lang option[value="en"]');
     await selecten.click();
     const encheck= await app.client.$('select#select-lang');
@@ -31,9 +29,7 @@ test('Check Preference Language', async function() {
     const selectencheck2 = await selectencheck.getAttribute('title');
     expect(selectencheck2).toEqual('Select (V)');
 
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings'); 
     const selectes = await app.client.$('select#select-lang option[value="es"]');
     await selectes.click();
     const escheck= await app.client.$('select#select-lang');
@@ -46,9 +42,7 @@ test('Check Preference Language', async function() {
     const selectescheck2 = await selectescheck.getAttribute('title');
     expect(selectescheck2).toEqual('Selecciona (V)');
 
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings'); 
     const selectzhtw = await app.client.$('select#select-lang option[value="zh-tw"]');
     await selectzhtw.click();
     const zhtwcheck = await app.client.$('select#select-lang');
@@ -61,9 +55,7 @@ test('Check Preference Language', async function() {
     const selectzhtwcheck2 = await selectzhtwcheck.getAttribute('title');
     expect(selectzhtwcheck2).toEqual('選取 (V)');
 
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings'); 
     const selectja = await app.client.$('select#select-lang option[value="ja"]');
     await selectja.click();
     const jacheck = await app.client.$('select#select-lang');
@@ -75,10 +67,8 @@ test('Check Preference Language', async function() {
     const selectjacheck= await app.client.$('div#left-Cursor');
     const selectjacheck2 = await selectjacheck.getAttribute('title');
     expect(selectjacheck2).toEqual('選択する (V)');
-
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    
+    await setAppPage('#studio/settings'); 
     const selectzhcn = await app.client.$('select#select-lang option[value="zh-cn"]');
     await selectzhcn.click();
     const zhcncheck = await app.client.$('select#select-lang');
@@ -90,6 +80,4 @@ test('Check Preference Language', async function() {
     const selectzhcncheck= await app.client.$('div#left-Cursor');
     const selectzhcncheck2 = await selectzhcncheck.getAttribute('title');
     expect(selectzhcncheck2).toEqual('选取 (V)');
-
-    
 });

@@ -1,13 +1,10 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Polygon', async function() {
     const { app } = require('../../../test');
-
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const polygon = await app.client.$('#left-Polygon');
@@ -41,10 +38,7 @@ test('Check Draw Polygon', async function() {
 
 test('Check Polygon Sides', async function() {
     const { app } = require('../../../test');
-
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const poly = await app.client.$('#left-Polygon');
@@ -78,5 +72,4 @@ test('Check Polygon Sides', async function() {
     const svg_2sides = await app.client.$('#svg_2');
     const actualSide2 = await svg_2sides.getAttribute('sides');
     expect(actualSide2).toEqual("4");
-
 });

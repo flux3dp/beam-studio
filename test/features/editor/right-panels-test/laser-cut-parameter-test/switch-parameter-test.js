@@ -1,10 +1,8 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
+
 test('Check Switch Option Check Parameter', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     /* Wood */
@@ -43,7 +41,6 @@ test('Check Switch Option Check Parameter', async function() {
     const woodEngravingrepeat= await app.client.$('input#repeat');
     const woodEngravingrepeatnumber = await woodEngravingrepeat.getAttribute('value');
     expect(woodEngravingrepeatnumber).toEqual('1');
-
 
     /* Acrylic */
     const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
@@ -156,8 +153,6 @@ test('Check Switch Option Check Parameter', async function() {
     const fabricEngravingrepeatnumber = await fabricEngravingrepeat.getAttribute('value');
     expect(fabricEngravingrepeatnumber).toEqual('1');
 
-
-
     /* Rubber */
     const rubberEngraving = await app.client.$('option[value="印章墊 - 刻印"]');
     await rubberEngraving.click();
@@ -171,7 +166,6 @@ test('Check Switch Option Check Parameter', async function() {
     const rubberEngravingrepeatnumber = await rubberEngravingrepeat.getAttribute('value');
     expect(rubberEngravingrepeatnumber).toEqual('1');
 
-
     /* Glass */
     const glassEngraving = await app.client.$('option[value="玻璃 - 刻印"]');
     await glassEngraving.click();
@@ -184,7 +178,6 @@ test('Check Switch Option Check Parameter', async function() {
     const glassEngravingrepeat= await app.client.$('input#repeat');
     const glassEngravingrepeatnumber = await glassEngravingrepeat.getAttribute('value');
     expect(glassEngravingrepeatnumber).toEqual('1');
-
 
     /* Metal */
     const metalEngraving = await app.client.$('option[value="不鏽鋼噴劑 - 刻印"]');

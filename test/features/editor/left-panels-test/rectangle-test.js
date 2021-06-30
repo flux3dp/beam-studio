@@ -1,15 +1,11 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Rectangle', async function() {
     const { app } = require('../../../test');
-    //const app = await restartAndSetStorage();
-    //await checkExist('#svgcanvas', 15000);
 
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -40,7 +36,6 @@ test('Check Draw Rectangle', async function() {
 
     const svg_1height = await app.client.$('#svg_1');
     const actualH = await svg_1height.getAttribute('height');
-
     
     expect(Math.abs(expectedY - actualY)).toBeLessThanOrEqual(0);
     expect(Math.abs(expectedW - actualW)).toBeLessThanOrEqual(0);
@@ -69,4 +64,3 @@ test('Check Rectangle Corner', async function() {
     expect(actuaCorner).toEqual("100");
     expect(actuaInfill).toEqual("1");
 });
-

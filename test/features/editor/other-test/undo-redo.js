@@ -1,12 +1,10 @@
-const { checkExist, checknotExist} = require('../../../util/utils');
+const { checkExist, checknotExist, setReload} = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 
 test('Check Undo Redo Geometry', async function() {
     const { app } = require('../../../test');      
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();

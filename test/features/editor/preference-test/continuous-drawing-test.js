@@ -3,10 +3,8 @@ const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Continuous Drawing', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+
     const drawing = await app.client.$('select#qa-set-continuous-drawing option[value="TRUE"]');
     await drawing.click();
 
@@ -16,7 +14,6 @@ test('Check Preference Continuous Drawing', async function() {
 
     const done = await app.client.$('div.btn.btn-done');
     await done.click();
-    
 
     const rect = await app.client.$('#left-Rectangle');
     await rect.click();
@@ -43,10 +40,4 @@ test('Check Preference Continuous Drawing', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     await checkExist('#svg_3');
-
-
-
-
-
-
 });

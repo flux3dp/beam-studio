@@ -1,11 +1,8 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 
 test('Check Add Parameter', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const set = await app.client.$('div.right');

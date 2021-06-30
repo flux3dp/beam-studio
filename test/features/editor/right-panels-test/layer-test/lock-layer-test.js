@@ -1,31 +1,24 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Lock Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const rightclick = await app.client.$('[data-test-key="layer-0"]');
     await rightclick.click({ button: 2});
     const chooselock = await app.client.$('div#locklayer');
     await chooselock.click();
     const rightclick2 = await app.client.$('[data-test-key="layer-0"]');
     await rightclick2.getAttribute('class');
-    // console.log(await rightclick2.getAttribute('class'));
     expect(await rightclick2.getAttribute('class')).toEqual('layer layersel lock current');
     await checkExist('div#layerlock-0', 15000);
-
 });
 
 test('Check Object In Diffierent Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     
     const rect = await app.client.$('#left-Rectangle');
@@ -46,10 +39,8 @@ test('Check Object In Diffierent Layer', async function() {
     
     const switchlayer3 = await app.client.$('div.tab.layers');
     await switchlayer3.click();
-
     await checkExist('[data-test-key="layer-1"]');
     
-
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
     await mouseAction([
@@ -69,7 +60,4 @@ test('Check Object In Diffierent Layer', async function() {
     const ellilayer1 = await app.client.$('#svg_2');
     const ellicolor = await ellilayer1.getAttribute('stroke');
     expect(rectcolor).not.toEqual(ellicolor);
-
-    
-    
 });

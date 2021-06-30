@@ -1,11 +1,9 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Preview Camera', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const camera = await app.client.$('div.img-container');

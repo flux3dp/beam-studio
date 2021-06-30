@@ -2,10 +2,8 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Path Optimize', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+    
     const speedlimit = await app.client.$('select#qa-set-simplify-clipper-path option[value="TRUE"]');
     await speedlimit.click();
 
@@ -15,7 +13,6 @@ test('Check Preference Path Optimize', async function() {
 
     const done = await app.client.$('div.btn.btn-done');
     await done.click();
-    
 
     await checkExist('#svgcanvas',15000);
 });
