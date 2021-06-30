@@ -1,9 +1,14 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import electron from 'electron';
+
 import AbstractMenu from 'helpers/menubar/AbstractMenu';
 import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 
 import communicator from 'implementations/communicator';
 import ElectronUpdater from '../electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
+
+const { remote } = electron;
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -38,6 +43,15 @@ class Menu extends AbstractMenu {
   disable(items: string[]): void {
     if (this.communicator) {
       this.communicator.send('DISABLE_MENU_ITEM', items);
+    }
+  }
+
+  updateLanguage(): void {
+    if (this.communicator) {
+      this.communicator.send('NOTIFY_LANGUAGE');
+      if (window.os === 'Windows') {
+        window.titlebar.updateMenu(remote.Menu.getApplicationMenu());
+      }
     }
   }
 }
