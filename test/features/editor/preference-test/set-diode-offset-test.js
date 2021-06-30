@@ -2,9 +2,6 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Hybrid Laser Offset', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
     
     const diodeoffsetx = await app.client.$('input#qa-settings-diode-offsetx');
@@ -21,11 +18,10 @@ test('Check Preference Hybrid Laser Offset', async function() {
 
     const offsetycheck_2= await app.client.$('input#qa-settings-diode-offsety');
     const offsetycheck2_2 = await offsetycheck_2.getAttribute('value');
-    expect(offsetycheck2_2).toEqual('7');
+    expect(offsetycheck2_2).toEqual('7.00');
 
     const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);
-
 });

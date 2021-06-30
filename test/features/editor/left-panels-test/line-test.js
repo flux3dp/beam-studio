@@ -1,12 +1,10 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Line', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const line = await app.client.$('#left-Line');
@@ -54,8 +52,4 @@ test('Check Draw Line', async function() {
     expect(Math.abs(eY1 - aY1)).toBeLessThanOrEqual(0);
     expect(Math.abs(eX2 - aX2)).toBeLessThanOrEqual(0);
     expect(Math.abs(eY2 - aY2)).toBeLessThanOrEqual(0);
-
-    
-    
-
 });

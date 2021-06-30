@@ -1,13 +1,8 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction, zoomAction } = require('../../../util/actions');
+const { checkExist, setReload} = require('../../../util/utils');
 
 test('Check Zoom ', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     await zoomAction();
-
-
 });

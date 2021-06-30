@@ -3,10 +3,8 @@ const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Font Style', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+    
     const fontfamily = await app.client.$('select#qa-set-font-family option[value="Times New Roman"]');
     await fontfamily.click();
 
@@ -39,6 +37,4 @@ test('Check Preference Font Style', async function() {
     const svg_1font= await app.client.$('#svg_1');
     const fonttext = await svg_1font.getAttribute('font-postscript');
     expect(fonttext).toEqual('TimesNewRomanPS-ItalicMT');
-
-    // await new Promise((r) => setTimeout(r, 100000));
 });

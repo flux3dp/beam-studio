@@ -1,12 +1,10 @@
-const { checkExist, checknotExist} = require('../../../../util/utils');
+const { checkExist, checknotExist, setReload} = require('../../../../util/utils');
 
 test('Check Merge All Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const add1 = await app.client.$('div.add-layer-btn');
     await add1.click();
 
@@ -39,16 +37,11 @@ test('Check Merge All Layer', async function() {
     await checknotExist('[data-test-key="layer-3"]');
     await checknotExist('[data-test-key="layer-4"]');
     await checknotExist('[data-test-key="layer-5"]');
-    
-    
 });
 
 test('Check Merge Down Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const add1 = await app.client.$('div.add-layer-btn');
@@ -64,20 +57,16 @@ test('Check Merge Down Layer', async function() {
     await rightclick.click({ button: 2});
     const choosemergedown = await app.client.$('div#merge_down_layer');
     await choosemergedown.click();
-
     await checknotExist('div#layerbackgroundColor-2');
 
     const checklayer1color = await app.client.$('div#layerbackgroundColor-1');
     expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(63, 81, 181);");
-
 });
 
 // test('Check Merge Selected Layer', async function() {
 //     const { app } = require('../../../../test');
     
-//     await app.client.execute(() => {
-//         location.reload();
-//     });
+//     await setReload();
 //     await checkExist('#svgcanvas', 15000);
 //     const add1 = await app.client.$('div.add-layer-btn');
 //     await add1.click();
@@ -111,13 +100,11 @@ test('Check Merge Down Layer', async function() {
 //     await keyAction([
 //         { type: 'keyUp', value:'\uE008' },
 //     ]);
-    
 
 //     const rightclick3 = await app.client.$('[data-test-key="layer-2"]');
 //     await rightclick3.click({ button: 2 });
 //     const choosemergeall = await app.client.$('div#merge_select_layer');
 //     await choosemergeall.click();
 
-//     await new Promise((r) => setTimeout(r, 10000));
-    
+//     await new Promise((r) => setTimeout(r, 10000)); 
 // });

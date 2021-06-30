@@ -1,11 +1,9 @@
-const { checkExist, setAppPage } = require('../../../util/utils');
+const { checkExist, setAppPage, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Loop Compensation', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
+    await setReload();
     const poly = await app.client.$('#left-Polygon');
     await poly.click();
 
@@ -17,8 +15,6 @@ test('Check Preference Loop Compensation', async function() {
     ]);
     await checkExist('#svg_1');
 
-    await checkExist('#svgcanvas',15000);
-
     const time = await app.client.$('div.time-est-btn');
     await time.click();
 
@@ -26,13 +22,11 @@ test('Check Preference Loop Compensation', async function() {
     await timeresult.getText();
     expect(await timeresult.getText()).toEqual('Estimated Time: 21 s');
 
-
     await setAppPage('#studio/settings'); 
 
     const selectloop = await app.client.$('input#qa-set-loop-compensation');
     await selectloop.doubleClick();
     await app.client.keys(['Delete', '10', 'Enter', "NULL"]);
-
 
     const loopcheck= await app.client.$('input#qa-set-loop-compensation');
     const loopcheck2 = await loopcheck.getAttribute('value');
@@ -52,15 +46,10 @@ test('Check Preference Loop Compensation', async function() {
     ]);
     await checkExist('#svg_1');
 
-    await checkExist('#svgcanvas',15000);
-
     const time2 = await app.client.$('div.time-est-btn');
     await time2.click();
 
     const timeresult2 = await app.client.$('div.time-est-result');
     await timeresult2.getText();
     expect(await timeresult2.getText()).toEqual('Estimated Time: 21 秒');
-
-    
-
 });

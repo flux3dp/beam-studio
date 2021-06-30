@@ -1,12 +1,11 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Drag Layer', async function() {
     const { app } = require('../../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const add1 = await app.client.$('div.add-layer-btn');
     await add1.click();
 
@@ -23,13 +22,10 @@ test('Check Drag Layer', async function() {
     expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(63, 81, 181);");
 });
 
-
 test('Check Drag Object of Layer', async function() {
     const { app } = require('../../../../test');
     
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     
     const add1 = await app.client.$('div.add-layer-btn');
@@ -45,7 +41,6 @@ test('Check Drag Object of Layer', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     
-
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
 
@@ -101,5 +96,4 @@ test('Check Drag Object of Layer', async function() {
 
     const polylocation2 = await app.client.$('#svg_3');
     expect(await polylocation.getLocation()).toEqual(await polylocation2.getLocation());
-
 });

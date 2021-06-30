@@ -1,10 +1,8 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 
 test('Check Copy Layer', async function() {
     const { app } = require('../../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const rightclick = await app.client.$('[data-test-key="layer-0"]');
@@ -22,10 +20,7 @@ test('Check Copy Layer', async function() {
 
 test('Check Copy Layer Color', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
     const rightclick = await app.client.$('[data-test-key="layer-0"]');
@@ -36,11 +31,8 @@ test('Check Copy Layer Color', async function() {
 
     const checklayer0color = await app.client.$('div#layerbackgroundColor-0');
     await checklayer0color.getAttribute('style');
-    // console.log(await checklayer0color.getAttribute('style'));
 
     const checklayer1color = await app.client.$('div#layerbackgroundColor-1');
     await checklayer1color.getAttribute('style');
-    // console.log(await checklayer1color.getAttribute());
-
     expect(await checklayer0color.getAttribute('style')).toEqual(await checklayer1color.getAttribute('style'));
 });

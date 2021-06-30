@@ -1,12 +1,11 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Hide Layer', async function() {
     const { app } = require('../../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const pen = await app.client.$('#left-Pen');
     await pen.click(); 
     await mouseAction([
@@ -50,6 +49,4 @@ test('Check Hide Layer', async function() {
     const layer0 = await app.client.$('g.layer');
     const layer0display = await layer0.getAttribute('display');
     expect(layer0display).toEqual('none');
-
-    
 });

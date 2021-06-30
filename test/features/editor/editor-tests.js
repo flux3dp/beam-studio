@@ -10,7 +10,6 @@ test('Init Editor', async function() {
     await checkExist('#svgcanvas', 150000);
 });
 
-
 /* Create(left-panels) */
 // require('./left-panels-test/ellipse-test');
 // require('./left-panels-test/line-test');
@@ -22,22 +21,20 @@ test('Init Editor', async function() {
 
 /* Modify Action */
 // require('./modify-action-test/align-test');
-// require('./modify-action-test/distribute-test');
-// require('./modify-action-test/group-test');
-// require('./modify-action-test/group-layer-test');
-// require('./modify-action-test/union-test');
-// require('./modify-action-test/change-object-test');
-// require('./modify-action-test/offset-test');
 // require('./modify-action-test/array-test');
-// require('./modify-action-test/mirror-test');
+// require('./modify-action-test/change-object-test');
 // require('./modify-action-test/decompose-path-test');
-
+// require('./modify-action-test/distribute-test');
+// require('./modify-action-test/group-layer-test');
+// require('./modify-action-test/group-test');
+// require('./modify-action-test/mirror-test');
+// require('./modify-action-test/offset-test');
+// require('./modify-action-test/union-test');
 
 /* Other Test */
 // require('./other-test/calculate-path-time-test');
 // require('./other-test/copy-paste-test');
 // require('./other-test/undo-redo');
-
 
 /* Perefence */
 // require('./preference-test/allreset-test');
@@ -65,7 +62,6 @@ test('Init Editor', async function() {
 // require('./preference-test/vector-speed-constraint-test');
 // require('./preference-test/workarea-clipping-test');
 
-
 /* Laser-Cut-Parameter(right-panels) */
 // require('./right-panels-test/laser-cut-parameter-test/add-parameter-test');
 // require('./right-panels-test/laser-cut-parameter-test/custom-parameter-list-test');
@@ -75,7 +71,6 @@ test('Init Editor', async function() {
 // require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
 // require('./right-panels-test/laser-cut-parameter-test/power-enter-text-test');
 // require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
-
 
 /* Layer(right-panels) */
 // require('./right-panels-test/layer-test/copy-layer-test');
@@ -89,28 +84,23 @@ test('Init Editor', async function() {
 // require('./right-panels-test/layer-test/move-object-layer-test');
 // require('./right-panels-test/layer-test/switch-layer-parameter-test');
 
-
 /* Top-panels */
 // require('./top-panels-tset/connect-test');
 // require('./top-panels-tset');
 
-
-
 /* Viewport */
-// require('./viewport-test/zoom_in_out-test');
-// require('./viewport-test/fit-to-window-test');
-// // require('./viewport-test/auto-fit-to-window-test');not yet
-// require('./viewport-test/view-color-test');
-// require('./viewport-test/percentage-test');
+require('./viewport-test/zoom_in_out-test');
+require('./viewport-test/fit-to-window-test');
+// require('./viewport-test/auto-fit-to-window-test');not yet
+require('./viewport-test/view-color-test');
+require('./viewport-test/percentage-test');
 // require('./viewport-test');
 // require('./viewport-test');
 // require('./viewport-test');
-
 
 /* setting */
 // require('../settings/home-lang-test');
 // require('../settings/connect-machine');
-
 
 test('End Editor', async function() {
     const { app } = application;

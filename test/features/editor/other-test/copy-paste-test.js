@@ -1,13 +1,9 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
-
 
 test('Check Copy Paste Geometry', async function() {
     const { app } = require('../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -58,9 +54,7 @@ test('Check Copy Paste Geometry', async function() {
 
     const svg_5text = await app.client.$('#svg_5');
     const text2 = await svg_5text.getText();
-
     expect(text1).toEqual(text2);
-
 });
 
 test('Check Copy Paste Text', async function() {
@@ -77,16 +71,13 @@ test('Check Copy Paste Text', async function() {
     await app.client.keys(['Enter', "NULL"]);
     await app.client.keys(['Control', 'c', "NULL"]);
     await app.client.keys(['Control', 'v', "NULL"]);
-    // await new Promise((r) => setTimeout(r, 30000000));
 
     const svg_4text = await app.client.$('#svg_4');
     const text1 = await svg_4text.getText();
 
     const svg_5text = await app.client.$('#svg_5');
     const text2 = await svg_5text.getText();
-
     expect(text1).toEqual(text2);
-
 });
 
 test('Check Copy Paste Path', async function() {
@@ -102,7 +93,6 @@ test('Check Copy Paste Path', async function() {
     ]);
     await app.client.keys(['Control', 'c', "NULL"]);
     await app.client.keys(['Control', 'v', "NULL"]);
-    // await new Promise((r) => setTimeout(r, 30000000));
 
     const svg_10line = await app.client.$('#svg_10');
     const line1x1 = await svg_10line.getAttribute('x1');
@@ -122,5 +112,4 @@ test('Check Copy Paste Path', async function() {
     const line2valuefix = parseFloat(line2value).toFixed(10);
 
     expect(line1valuefix).toEqual(line2valuefix);
-
 });

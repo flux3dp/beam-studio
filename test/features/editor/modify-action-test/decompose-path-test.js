@@ -1,11 +1,9 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Decompose Path', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const text = await app.client.$('#left-Text');
@@ -29,6 +27,7 @@ test('Check Decompose Path', async function() {
         { type: 'pointerMove', x: 700, y: 500, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
+
     const decompose_path = await app.client.$('button#decompose_path');
     await decompose_path.click();
 
@@ -39,6 +38,4 @@ test('Check Decompose Path', async function() {
     });
     expect(result.grouplength).toEqual(0);
     expect(result.groupvisible.length).toEqual(23);
-
-
 });

@@ -1,11 +1,8 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 
 test('Check Reset Parameter', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const set = await app.client.$('div.right');
@@ -121,7 +118,7 @@ test('Check Reset Parameter', async function() {
     await checkreset.click();
     await new Promise((r) => setTimeout(r, 1000));
 
-    const savereset = await app.client.$('div#laser_save_and_exit');
+    const savereset = await app.client.$('button#laser_save_and_exit');
     await savereset.click();
     await new Promise((r) => setTimeout(r, 1000));
 
@@ -142,11 +139,7 @@ test('Check Reset Parameter', async function() {
     await refabric3cut.isExisting()
     expect(await refabric3cut.isExisting()).toEqual(true);
     
-
     const custom2 = await app.client.$('option[value="TESTRESET"]');
     await custom2.isExisting()
     expect(await custom2.isExisting()).toEqual(true);
-
-
-
 });

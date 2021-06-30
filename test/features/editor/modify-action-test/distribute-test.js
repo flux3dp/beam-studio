@@ -1,11 +1,9 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Vertical Distribute', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -51,19 +49,17 @@ test('Check Vertical Distribute', async function() {
 
     const vdistalign = await app.client.$('#qa-vdist');
     await vdistalign.click();
-    
 
     const rectlocation = await app.client.$('#svg_1');
     const rect2location = await app.client.$('#svg_2');
     const rect3location = await app.client.$('#svg_3');
-    console.log(await rectlocation.getLocation('y'));
-    console.log(await rect2location.getLocation('y'));
-    console.log(await rect3location.getLocation('y'));
+    // console.log(await rectlocation.getLocation('y'));
+    // console.log(await rect2location.getLocation('y'));
+    // console.log(await rect3location.getLocation('y'));
     const recty12 = await rect2location.getLocation('y')-await rectlocation.getLocation('y');
     const recty23 = await rect3location.getLocation('y')-await rect2location.getLocation('y')
     expect(recty12).toEqual(100);
     expect(recty23).toEqual(100);
-
 });
 
 test('Check Horizontal Distribute', async function() {
@@ -78,14 +74,13 @@ test('Check Horizontal Distribute', async function() {
 
     const hidstalign = await app.client.$('#qa-hdist');
     await hidstalign.click();
-    
 
     const rectlocation = await app.client.$('#svg_1');
     const rect2location = await app.client.$('#svg_2');
     const rect3location = await app.client.$('#svg_3');
-    console.log(await rectlocation.getLocation('x'));
-    console.log(await rect2location.getLocation('x'));
-    console.log(await rect3location.getLocation('x'));
+    // console.log(await rectlocation.getLocation('x'));
+    // console.log(await rect2location.getLocation('x'));
+    // console.log(await rect3location.getLocation('x'));
     const recty12 = await rect2location.getLocation('x')-await rectlocation.getLocation('x');
     const recty23 = await rect3location.getLocation('x')-await rect2location.getLocation('x')
     expect(recty12).toEqual(100);

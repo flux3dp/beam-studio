@@ -1,12 +1,8 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 
 test('Check Switch Layer Parameter', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
-    
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
     await wood3cut.click();
@@ -42,7 +38,6 @@ test('Check Switch Layer Parameter', async function() {
     const wood5cutrepeatnumber = await wood5cutrepeat.getAttribute('value');
     expect(wood5cutrepeatnumber).toEqual('2');
 
-
     const checklayer3parameter = await app.client.$('[data-test-key="layer-3"]');
     await checklayer3parameter.click();
 
@@ -55,7 +50,4 @@ test('Check Switch Layer Parameter', async function() {
     const acrylic5cutrepeat= await app.client.$('input#repeat');
     const acrylic5cutrepeatnumber = await acrylic5cutrepeat.getAttribute('value');
     expect(acrylic5cutrepeatnumber).toEqual('2');
-
-
-
 });

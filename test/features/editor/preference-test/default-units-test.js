@@ -3,10 +3,8 @@ const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Units', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+    
     const units = await app.client.$('select#qa-set-groups-editor option[value="inches"]');
     await units.click();
 
@@ -28,18 +26,13 @@ test('Check Preference Units', async function() {
         { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-    
     await checkExist('#svg_1');
 
     const widthcheck= await app.client.$('input#width');
     const widthcheck2 = await widthcheck.getAttribute('value');
-    expect(widthcheck2).toEqual('1.5376');//1.5513
+    expect(widthcheck2).toEqual('1.5376');
 
     const lengthcheck= await app.client.$('input#height');
     const lengthcheck2 = await lengthcheck.getAttribute('value');
     expect(lengthcheck2).toEqual('1.5376');
-    // await new Promise((r) => setTimeout(r, 100000));
-
-
-
 });

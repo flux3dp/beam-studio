@@ -1,13 +1,11 @@
-const { checkExist } = require('../../../util/utils');
+const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Horizontal Flip', async function() {
     const { app } = require('../../../test');
-
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
+
     const text = await app.client.$('#left-Text');
     await text.click();
   
@@ -17,6 +15,7 @@ test('Check Horizontal Flip', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     await app.client.keys(['MIRROR', 'Space', 'TEST']);
+
     const HorizontalFlip = await app.client.$('div#horizontal_flip.tool-btn');
     await HorizontalFlip.click();
     const textnotransform = await app.client.$('#svg_1');
@@ -24,11 +23,11 @@ test('Check Horizontal Flip', async function() {
     // console.log(transformvalue);
     expect(transformvalue).toEqual('matrix(-1,0,0,1,1662.203125,0) ');
     await new Promise((r) => setTimeout(r, 1000));
+
     const HorizontalFlip_1 = await app.client.$('div#horizontal_flip.tool-btn');
     await HorizontalFlip_1.click();
     const notransformvalue = await textnotransform.getAttribute('transform');
     expect(notransformvalue).toEqual('matrix(1,0,0,1,0,0) ');
-
 });
 
 test('Check Vertical Flip', async function() {
@@ -42,10 +41,8 @@ test('Check Vertical Flip', async function() {
     expect(transformvalue).toEqual('matrix(1,0,0,-1,0,1483.3125) ');
     await new Promise((r) => setTimeout(r, 1000));
 
-
     const VerticalFlip_1 = await app.client.$('div#vertical_flip.tool-btn');
     await VerticalFlip_1.click();
     const notransformvalue = await texttransform.getAttribute('transform');
     expect(notransformvalue).toEqual('matrix(1,0,0,1,0,0) ');
-
 });

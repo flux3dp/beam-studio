@@ -1,12 +1,9 @@
-const { checkExist } = require('../../../../util/utils');
+const { checkExist, setReload } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Move Object In Diffierent Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
     
     const rect = await app.client.$('#left-Rectangle');
@@ -21,7 +18,6 @@ test('Check Move Object In Diffierent Layer', async function() {
     const rectlayer0= await app.client.$('#svg_1');
     const rectcolor = await rectlayer0.getAttribute('stroke');
     expect(rectcolor).toEqual("#333333");
-
 
     const switchlayer = await app.client.$('div.tab.layers');
     await switchlayer.click();
@@ -58,17 +54,13 @@ test('Check Move Object In Diffierent Layer', async function() {
     const rectlayer2 = await app.client.$('#svg_1');
     const rectcolor2 = await rectlayer2.getAttribute('stroke');
     expect(rectcolor2).toEqual("#F44336");
-    
 });
-
 
 test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
     await wood3cut.click();
     
@@ -85,7 +77,6 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const rectcolor = await rectlayer0.getAttribute('stroke');
     expect(rectcolor).toEqual("#333333");
 
-
     const switchlayer = await app.client.$('div.tab.layers');
     await switchlayer.click();
 
@@ -94,12 +85,10 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
     await acrylic3cut.click();
 
-
     const add2 = await app.client.$('div.add-layer-btn');
     await add2.click();
     const leather3cut = await app.client.$('option[value="皮革 - 3mm 切割"]');
     await leather3cut.click();
-
 
     await mouseAction([
         { type: 'pointerMove', x: 290, y: 290, duration: 100, },
@@ -162,7 +151,6 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const switchlayer5 = await app.client.$('div.tab.layers');
     await switchlayer5.click();
 
-
     const leather3cutpower= await app.client.$('input#power');
     const leather3cutpowernumber = await leather3cutpower.getAttribute('value');
     expect(leather3cutpowernumber).toEqual('60');
@@ -172,6 +160,4 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const leather3cutrepeat= await app.client.$('input#repeat');
     const leather3cutrepeatnumber = await leather3cutrepeat.getAttribute('value');
     expect(leather3cutrepeatnumber).toEqual('1');
-
-    
 });

@@ -2,10 +2,8 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Preview Camera Speed ', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+
     const selectcameraspeed = await app.client.$('input#qa-set-groups-camera');
     await selectcameraspeed.doubleClick();
     await app.client.keys(['Delete', '1', '5', '0', 'Enter', "NULL"]);
@@ -25,6 +23,5 @@ test('Check Preference Preview Camera Speed ', async function() {
     const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
-    await checkExist('#svgcanvas',15000);
-    
+    await checkExist('#svgcanvas',15000);    
 });

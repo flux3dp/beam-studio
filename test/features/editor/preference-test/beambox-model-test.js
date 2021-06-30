@@ -2,10 +2,8 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Canvas Model', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
+
     const fbm1canvas = await app.client.$('select#qa-set-beambox-model option[value="fbm1"]');
     await fbm1canvas.click();
 
@@ -36,7 +34,6 @@ test('Check Preference Canvas Model', async function() {
 
     const done2 = await app.client.$('div.btn.btn-done');
     await done2.click();
-
     await checkExist('#svgcanvas',15000);
     
     const fbb1bheightcheck= await app.client.$("svg#canvasBackground")
@@ -47,10 +44,7 @@ test('Check Preference Canvas Model', async function() {
     const fbb1bwidthcheck2 = await fbb1bwidthcheck.getAttribute('width');
     expect(fbb1bwidthcheck2).toEqual('573.5466666666666');
 
-
     await setAppPage('#studio/settings');
-    // fbb1b position: relative; width: 1513.35px; height: 1418.77px;
-    // fbb1p position: relative; width: 1513.35px; height: 945.844px;
     const fbb1pcanvas2 = await app.client.$('select#qa-set-beambox-model option[value="fbb1p"]');
     await fbb1pcanvas2.click();
 
@@ -60,7 +54,6 @@ test('Check Preference Canvas Model', async function() {
 
     const done3 = await app.client.$('div.btn.btn-done');
     await done3.click();
-
     await checkExist('#svgcanvas',15000);
     
     const fbb1pheightcheck= await app.client.$("svg#canvasBackground")
@@ -70,8 +63,4 @@ test('Check Preference Canvas Model', async function() {
     const fbb1pwidthcheck= await app.client.$("svg#canvasBackground")
     const fbb1pwidthcheck2 = await fbb1pwidthcheck.getAttribute('width');
     expect(fbb1pwidthcheck2).toEqual('860.3199999999999');
-
-
-
-    
 });

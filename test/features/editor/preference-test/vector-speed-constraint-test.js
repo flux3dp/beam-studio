@@ -2,9 +2,6 @@ const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Vector Speed Constraint', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
     await setAppPage('#studio/settings');
 
     const speedlimit = await app.client.$('select#qa-set-vector-speed-constraint option[value="FALSE"]');
