@@ -10,7 +10,7 @@
   "private": true,
   "main": "electron-main.js",
   "dependencies": {
-    "@sentry/electron": "^2.2.0",
+    "@sentry/electron": "^2.5.0",
     "@simonwep/pickr": "^1.2.6",
     "@szhsin/react-menu": "^1.10.1",
     "@types/html2canvas": "^0.0.35",
