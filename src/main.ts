@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Color, Titlebar } from 'custom-electron-titlebar';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { remote } from 'electron';
 
+// This module setup global window variable, Should be put at top
+import globalHelper from 'helpers/global-helper';
 import fileExportHelper from 'helpers/file-export-helper';
 import globalEvents from 'app/actions/global';
-import globalHelper from 'helpers/global-helper';
 import router from 'app/router';
 
 import communicator from 'implementations/communicator';
@@ -64,7 +66,7 @@ function menuBar() {
 
 export default function main(): void {
   window.FLUX.version = remote.app.getVersion();
-  console.log(`Beam-Studio: ${window['FLUX'].version}`);
+  console.log(`Beam-Studio: ${window.FLUX.version}`);
 
   // if (allowTracking) {
   //   // google analytics
