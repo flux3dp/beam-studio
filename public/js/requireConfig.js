@@ -31,7 +31,6 @@ requirejs.config({
         sanitize: '../lib/svgeditor/sanitize',
         coords: '../lib/svgeditor/coords',
         recalculate: '../lib/svgeditor/recalculate',
-        select: '../lib/svgeditor/select',
         draw: '../lib/svgeditor/draw',
         layer: '../lib/svgeditor/layer',
         path: '../lib/svgeditor/path',
@@ -115,11 +114,8 @@ requirejs.config({
         recalculate: {
             deps: ['coords']
         },
-        select: {
-            deps: ['recalculate']
-        },
         draw: {
-            deps: ['select']
+            deps: ['recalculate']
         },
         layer: {
             deps: ['draw']
