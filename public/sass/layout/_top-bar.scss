@@ -38,6 +38,13 @@
         }
       }
     }
+    .path-preview-button-container {
+      position: relative;
+      float: right;
+      .path-preview-button {
+          border-color: transparent transparent transparent #333333;
+      }
+    }
     .element-title {
       position: relative;
       float: left;
@@ -136,6 +143,46 @@
       &:hover {
         opacity: 1;
       }
+    }
+  }
+  .path-preview-button-container {
+    display: inline-flex;
+    position: absolute;
+    right: 30px;
+    height: $topBarHeight;
+    margin: 0 13px 0 0;
+    opacity: 0.85;
+    cursor: pointer;
+    .path-preview-button {
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        /*border-style: solid;
+        border-color: transparent transparent transparent #ffffff;
+        border-width: 7px 0px 7px 12px;
+        margin: 13px 0;*/
+
+        img {
+          width: 20px;
+          height: 20px;
+        }
+    }
+    .go-text {
+        height: 40px;
+        margin-right: 9px;
+        line-height: 40px;
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 0.95px;
+        color: #353535;
+    }
+    &.no-machine {
+        opacity: 0.2;
+    }
+    &:hover:not(.no-machine) {
+        opacity: 1;
     }
   }
   .go-button-container {
