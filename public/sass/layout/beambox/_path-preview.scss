@@ -43,8 +43,7 @@
       &::-webkit-slider-runnable-track {
         height: 6px;
         border-radius: 25px;
-        //background-color: none;
-        //background-blend-mode: overlay, normal;
+        background: linear-gradient(to right,#007cf8 0%,#007cf8 var(--percentage), #bbbbbb var(--percentage), #bbbbbb 100%);
       }
 
       &::-webkit-slider-thumb {
@@ -58,29 +57,17 @@
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
       }
 
-      &::-webkit-slider-thumb:before,
-      &::-webkit-slider-thumb:after {
-        position: absolute;
-        top: 3px;
-        width: 2000px; /* 長度很長沒關係，因為剛剛有用 overflow:hidden 了 */
+      // firefox
+      &::-moz-range-progress {
         height: 4px;
-        content: "";
-        pointer-events: none; /* 讓滑鼠可以點擊穿透偽元素，不然會點不到下面 */
-        transition: 0.2s;
+        background: #007cf8;
       }
-
-      &::-webkit-slider-thumb:before {
-        left: -1997px;
-        background: #003bd1;
+      // IE
+      &::-ms-fill-lower {
+        background-color: #007cf8;
       }
-      &::-webkit-slider-thumb:after {
-        left: 10px;
-        background: #edc;
-      }
-
-      input[type="range"]::-moz-range-progress {
-        height: 4px;
-        background: #003bd1;
+      &::-ms-fill-upper {
+        background-color: #bbbbbb;
       }
     }
   }
