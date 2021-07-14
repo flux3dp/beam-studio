@@ -1,11 +1,9 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction, zoomAction} = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
-test('Check Text of Array', async function() {
+test('Check Array Text', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const text = await app.client.$('#left-Text');
@@ -17,7 +15,6 @@ test('Check Text of Array', async function() {
     ]);
     await app.client.keys(['ARRAY', 'Space', 'TEST']);
     await checkExist('#svg_1');
-
 
     const array = await app.client.$('button#array');
     await array.click();
@@ -75,11 +72,9 @@ test('Check Text of Array', async function() {
     expect(await svg_6_text.getText()).toEqual(await svg_1_text.getText());
     expect((await svg_6_text.getAttribute('x')-await svg_1_text.getAttribute('x'))).toEqual(1000);
     expect((await svg_6_text.getAttribute('y')-await svg_1_text.getAttribute('y'))).toEqual(1000);
-
 });
 
-
-test('Check Geometry of Array', async function() {
+test('Check Array Geometry', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -137,7 +132,6 @@ test('Check Geometry of Array', async function() {
     expect((await svg_2_polygon.getAttribute('x')-await svg_1_ploygon.getAttribute('x'))).toEqual(0);
     expect((await svg_2_polygon.getAttribute('y')-await svg_1_ploygon.getAttribute('y'))).toEqual(0);
 
-
     const svg_3_polygon = await app.client.$('#svg_3');
     expect((await svg_3_polygon.getAttribute('x')-await svg_1_ploygon.getAttribute('x'))).toEqual(0);
     expect((await svg_3_polygon.getAttribute('y')-await svg_1_ploygon.getAttribute('y'))).toEqual(0);
@@ -145,10 +139,9 @@ test('Check Geometry of Array', async function() {
     const svg_4_polygon = await app.client.$('#svg_4');
     expect((await svg_4_polygon.getAttribute('x')-await svg_1_ploygon.getAttribute('x'))).toEqual(0);
     expect((await svg_4_polygon.getAttribute('y')-await svg_1_ploygon.getAttribute('y'))).toEqual(0);
-
 });
 
-test('Check Path of Array', async function() {
+test('Check Array Path', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -204,26 +197,22 @@ test('Check Path of Array', async function() {
     const actual_svg1_x1 = await svg_1_line.getAttribute('x1');
     const svg_1_x1 = parseFloat(actual_svg1_x1).toFixed(7);
 
-
     const svg_2_line = await app.client.$('#svg_2');
     const actual_svg2_x1 = await svg_2_line.getAttribute('x1');
     const svg_2_x1 = parseFloat(actual_svg2_x1).toFixed(7);
     expect(svg_2_x1).toEqual(svg_1_x1);
     expect((await svg_2_line.getAttribute('y1') - await svg_1_line.getAttribute('y1'))).toEqual(1000);
 
-
     const svg_3_line = await app.client.$('#svg_3');
     expect(await svg_3_line.getAttribute('y1')).toEqual(await svg_1_line.getAttribute('y1'));
     expect((await svg_3_line.getAttribute('x1')-await svg_1_line.getAttribute('x1'))).toEqual(1000);
 
-
     const svg_4_line = await app.client.$('#svg_4');
     expect((await svg_4_line.getAttribute('x1')-await svg_1_line.getAttribute('x1'))).toEqual(1000);
     expect((await svg_4_line.getAttribute('y1')-await svg_1_line.getAttribute('y1'))).toEqual(1000);
-
 });
 
-test('Check Multi Select of Array', async function() {
+test('Check Array Multi Select', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -322,12 +311,9 @@ test('Check Multi Select of Array', async function() {
     const svg_9_line = await app.client.$('#svg_9');
     expect((await svg_9_line.getAttribute('y1') - await svg_2_line.getAttribute('y1'))).toEqual(1000);
     expect((await svg_9_line.getAttribute('x1') - await svg_2_line.getAttribute('x1'))).toEqual(1000);
-
-   
 });
 
-
-test('Check Group of Array', async function() {
+test('Check Array Group', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() => {
         location.reload();
@@ -409,16 +395,13 @@ test('Check Group of Array', async function() {
     expect(await svg_6_rect.getAttribute('x')).toEqual(svg_1_x1);
     expect((await svg_6_rect.getAttribute('y')-await svg_1_rect.getAttribute('y'))).toEqual(1000);
 
-
     const svg_10_rect = await app.client.$('#svg_10');
     expect(await svg_10_rect.getAttribute('y')).toEqual(await svg_1_rect.getAttribute('y'));
     expect((await svg_10_rect.getAttribute('x')-await svg_1_rect.getAttribute('x'))).toEqual(1000);
 
-
     const svg_14_rect = await app.client.$('#svg_14');
     expect((await svg_14_rect.getAttribute('x')-await svg_1_rect.getAttribute('x'))).toEqual(1000);
     expect((await svg_14_rect.getAttribute('y')-await svg_1_rect.getAttribute('y'))).toEqual(1000);
-
 
     const svg_7_rect = await app.client.$('#svg_7');
     expect(await svg_7_rect.getAttribute('x')).toEqual(await svg_2_text.getAttribute('x'));
@@ -428,10 +411,7 @@ test('Check Group of Array', async function() {
     expect(await svg_11_text.getAttribute('y')).toEqual(await svg_2_text.getAttribute('y'));
     expect((await svg_11_text.getAttribute('x')-await svg_2_text.getAttribute('x'))).toEqual(1000);
 
-
     const svg_15_text = await app.client.$('#svg_15');
     expect((await svg_15_text.getAttribute('x')-await svg_2_text.getAttribute('x'))).toEqual(1000);
     expect((await svg_15_text.getAttribute('y')-await svg_2_text.getAttribute('y'))).toEqual(1000);
-
-
 });

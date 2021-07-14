@@ -1,19 +1,8 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-const { dialog } = require('electron');
+const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Hybrid Laser Offset', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
-    await app.client.execute(() => {
-
-        location.hash = '#studio/settings';
-
-    });
-
+    await setAppPage('#studio/settings');
     
     const diodeoffsetx = await app.client.$('input#qa-settings-diode-offsetx');
     await diodeoffsetx.doubleClick();
@@ -29,11 +18,10 @@ test('Check Preference Hybrid Laser Offset', async function() {
 
     const offsetycheck_2= await app.client.$('input#qa-settings-diode-offsety');
     const offsetycheck2_2 = await offsetycheck_2.getAttribute('value');
-    expect(offsetycheck2_2).toEqual('7');
+    expect(offsetycheck2_2).toEqual('7.00');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);
-
 });

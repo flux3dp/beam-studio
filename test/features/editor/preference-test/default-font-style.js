@@ -1,19 +1,10 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-const { dialog } = require('electron');
+const { checkExist, setAppPage } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Font Style', async function() {
     const { app } = require('../../../test');
+    await setAppPage('#studio/settings');
     
-    await checkExist('#svgcanvas',15000);
-
-    await app.client.execute(() => {
-
-        location.hash = '#studio/settings';
-
-    });
-
     const fontfamily = await app.client.$('select#qa-set-font-family option[value="Times New Roman"]');
     await fontfamily.click();
 
@@ -28,7 +19,7 @@ test('Check Preference Font Style', async function() {
     const fontstylecheck2 = await fontstylecheck.getAttribute('value');
     expect(fontstylecheck2).toEqual('TimesNewRomanPS-ItalicMT');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);
@@ -46,6 +37,4 @@ test('Check Preference Font Style', async function() {
     const svg_1font= await app.client.$('#svg_1');
     const fonttext = await svg_1font.getAttribute('font-postscript');
     expect(fonttext).toEqual('TimesNewRomanPS-ItalicMT');
-
-    // await new Promise((r) => setTimeout(r, 100000));
 });

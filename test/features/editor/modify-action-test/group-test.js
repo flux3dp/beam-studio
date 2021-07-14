@@ -1,12 +1,9 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload, checknotExist } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Group', async function() {
     const { app } = require('../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -56,8 +53,7 @@ test('Check Group', async function() {
         const isRectInsideGroup =  childNodes.includes(rectangle);
         const isEllipseInsideGroup =  childNodes.includes(ellipse);
         const ispolygonInsideGroup =  childNodes.includes(polygon);
-        return {isRectInsideGroup, isEllipseInsideGroup, ispolygonInsideGroup};
-        
+        return {isRectInsideGroup, isEllipseInsideGroup, ispolygonInsideGroup};    
     });
     expect(result.isRectInsideGroup).toBe(true);
     expect(result.isEllipseInsideGroup).toBe(true);
@@ -65,17 +61,13 @@ test('Check Group', async function() {
 
     const group = await app.client.$('#qa-group');
     await group.click();
-
     await checkExist('#svg_5');
 
     const result2 = await app.client.execute(() =>{
         const groupvisible = svgCanvas.getVisibleElements();
         const grouplength = $('#svg_5').children().length;
-        
         return {grouplength, groupvisible};
     });
-
-    // console.log(result);
     expect(result2.grouplength).toEqual(3);
     expect(result2.groupvisible.length).toEqual(1);
 });
@@ -93,7 +85,6 @@ test('Check Unroup', async function() {
     const result = await app.client.execute(() =>{
         const groupvisible = svgCanvas.getVisibleElements();
         const grouplength = $('#svg_6').children().length;
-        
         return {grouplength, groupvisible};
     });
     expect(result.grouplength).toEqual(0);

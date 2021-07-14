@@ -1,41 +1,34 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-
+const { checkExist, setReload} = require('../../../util/utils');
 
 test('Check Fit To Window', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
 
-    const zoomin = await app.client.$('div.zoom-btn.zoom-in');
-    await zoomin.click();
+    const zoomIn = await app.client.$('div.zoom-btn.zoom-in');
+    await zoomIn.click();
     await new Promise((r) => setTimeout(r, 1000));
 
-    const zoomin2 = await app.client.$('div.zoom-btn.zoom-in');
-    await zoomin2.click();
+    const zoomIn2 = await app.client.$('div.zoom-btn.zoom-in');
+    await zoomIn2.click();
     await new Promise((r) => setTimeout(r, 1000));
 
-    const zoomin3 = await app.client.$('div.zoom-btn.zoom-in');
-    await zoomin3.click();
+    const zoomIn3 = await app.client.$('div.zoom-btn.zoom-in');
+    await zoomIn3.click();
     await new Promise((r) => setTimeout(r, 1000));
 
     const number = await app.client.$('div.zoom-ratio');
     await number.click({button: 2});
 
-    const fittowindow = await app.client.$('div#fit_to_window');
-    await fittowindow.click();
+    const fittoWindow = await app.client.$('div#fit_to_window');
+    await fittoWindow.click();
 
     await new Promise((r) => setTimeout(r, 1000));
 
-    const zoomincanvas = await app.client.$('div#svgcanvas');
-    await zoomincanvas.getAttribute('style');
-    expect(await zoomincanvas.getAttribute('style')).toEqual('position: relative; width: 2304.43px; height: 1613.1px;');
-    const zoom_ratio = await app.client.$('div.zoom-ratio');
-    await zoom_ratio.getText();
-    expect(await zoom_ratio.getText()).toEqual('56%');
-    // await new Promise((r) => setTimeout(r, 10000));
-
+    const zoominCanvas = await app.client.$('div#svgcanvas');
+    await zoominCanvas.getAttribute('style');
+    expect(await zoominCanvas.getAttribute('style')).toEqual('position: relative; width: 2304.43px; height: 1613.1px;');
+    const zoomRatio = await app.client.$('div.zoom-ratio');
+    await zoomRatio.getText();
+    expect(await zoomRatio.getText()).toEqual('56%');
 });

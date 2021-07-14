@@ -1,15 +1,10 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
-
-test('Copy Paste', async function() {
+test('Check Copy Paste Geometry', async function() {
     const { app } = require('../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
-    await checkExist('#svgcanvas',5000);
+    await setReload();
+    await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
     await rect.click();
@@ -34,8 +29,7 @@ test('Copy Paste', async function() {
 
     const svg_2height = await app.client.$('#svg_2');
     const rect2H = await svg_2height.getAttribute('height');
-
-
+    
     const r1W = parseFloat(rect1W).toFixed(10);
     const r1H = parseFloat(rect1H).toFixed(10);
     const r2W = parseFloat(rect2W).toFixed(10);
@@ -43,26 +37,79 @@ test('Copy Paste', async function() {
     expect(r1H).toEqual(r2H);
     expect(r1W).toEqual(r2W);
 
-    await app.client.keys(['Control', 'Shift', 'v', "NULL"]);
+    const text = await app.client.$('#left-Text');
+    await text.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 400, y: 400, duration: 10, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+    await app.client.keys(['Copy', 'Space', 'Paste', 'Space', 'TEST']);
+    await app.client.keys(['Enter', "NULL"]);
+    await app.client.keys(['Control', 'c', "NULL"]);
+    await app.client.keys(['Control', 'v', "NULL"]);
 
+    const svg_4text = await app.client.$('#svg_4');
+    const text1 = await svg_4text.getText();
 
-    const svg_1x = await app.client.$('#svg_1');
-    const rect1X = await svg_1x.getAttribute('x');
+    const svg_5text = await app.client.$('#svg_5');
+    const text2 = await svg_5text.getText();
+    expect(text1).toEqual(text2);
+});
 
-    const svg_1y = await app.client.$('#svg_1');
-    const rect1Y = await svg_1y.getAttribute('y');
+test('Check Copy Paste Text', async function() {
+    const { app } = require('../../../test');
 
-    const svg_4x = await app.client.$('#svg_4');
-    const rect4X = await svg_4x.getAttribute('x');
+    const text = await app.client.$('#left-Text');
+    await text.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 400, y: 400, duration: 10, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+    await app.client.keys(['Copy', 'Space', 'Paste', 'Space', 'TEST']);
+    await app.client.keys(['Enter', "NULL"]);
+    await app.client.keys(['Control', 'c', "NULL"]);
+    await app.client.keys(['Control', 'v', "NULL"]);
 
-    const svg_4y = await app.client.$('#svg_4');
-    const rect4Y = await svg_4y.getAttribute('y');
+    const svg_4text = await app.client.$('#svg_4');
+    const text1 = await svg_4text.getText();
 
-    /*使用ctrl+shift+v原地貼上時，會出現兩物件，此測試還跳過svg_3，直接變成svg_4 */
-    expect(rect1X).toEqual(rect4X);
-    expect(rect1Y).toEqual(rect4Y);
+    const svg_5text = await app.client.$('#svg_5');
+    const text2 = await svg_5text.getText();
+    expect(text1).toEqual(text2);
+});
 
+test('Check Copy Paste Path', async function() {
+    const { app } = require('../../../test');
 
-    await new Promise((r) => setTimeout(r, 1000));
+    const line = await app.client.$('#left-Line');
+    await line.click(); 
+    await mouseAction([
+        { type: 'pointerMove', x: 300, y: 300, duration: 100, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+    await app.client.keys(['Control', 'c', "NULL"]);
+    await app.client.keys(['Control', 'v', "NULL"]);
 
+    const svg_10line = await app.client.$('#svg_10');
+    const line1x1 = await svg_10line.getAttribute('x1');
+    const line1y1 = await svg_10line.getAttribute('y1');
+    const line1x2 = await svg_10line.getAttribute('x2');
+    const line1y2 = await svg_10line.getAttribute('y2');
+    const line1value = Math.sqrt(Math.pow((line1x2-line1x1),2)+Math.pow((line1y2-line1y1),2));
+
+    const svg_11line = await app.client.$('#svg_11');
+    const line2x1 = await svg_11line.getAttribute('x1');
+    const line2y1 = await svg_11line.getAttribute('y1');
+    const line2x2 = await svg_11line.getAttribute('x2');
+    const line2y2 = await svg_11line.getAttribute('y2');
+    const line2value = Math.sqrt(Math.pow((line2x2-line2x1),2)+Math.pow((line2y2-line2y1),2));
+
+    const line1valuefix = parseFloat(line1value).toFixed(10);
+    const line2valuefix = parseFloat(line2value).toFixed(10);
+
+    expect(line1valuefix).toEqual(line2valuefix);
 });

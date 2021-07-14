@@ -1,15 +1,12 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Group Layer', async function() {
     const { app } = require('../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
  
-    const rect = await app.client.$('#left-Rectangle');//預設黑色
+    const rect = await app.client.$('#left-Rectangle');//
     await rect.click();
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },
@@ -29,7 +26,6 @@ test('Check Group Layer', async function() {
     await switchlayer2.click();
 
     await checkExist('[data-test-key="layer-1"]');
-    
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
@@ -67,7 +63,6 @@ test('Check Group Layer', async function() {
 
 test('Check Unroup Layer', async function() {
     const { app } = require('../../../test');
-
     const ungroup = await app.client.$('#qa-ungroup');
     await ungroup.click();
     const rectlayer1= await app.client.$('#svg_1');

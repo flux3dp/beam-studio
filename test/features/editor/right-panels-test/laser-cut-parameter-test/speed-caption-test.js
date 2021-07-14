@@ -1,13 +1,9 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist, setReload } = require('../../../../util/utils');
+const { mouseAction } = require('../../../../util/actions');
 
-test('Change Speed', async function() {
+test('Check Speed Caption', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -23,11 +19,11 @@ test('Change Speed', async function() {
     const layerbutton = await app.client.$('div.tab.layers');
     await layerbutton.click(); 
 
-    const speed = await app.client.$('div#speed.panel input');
+    const speed = await app.client.$('input#speed');
     await speed.doubleClick();
     await app.client.keys(['Backspace', '1', '2', '0', 'Enter',"NULL"]);
 
-    const input = await app.client.$('div#speed.panel input' );
+    const input = await app.client.$('input#speed' );
     const strengthvalue =await input.getAttribute('value');
     expect(strengthvalue).toEqual('120');
     
@@ -39,5 +35,4 @@ test('Change Speed', async function() {
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();    
-
 });

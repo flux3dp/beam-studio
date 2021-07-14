@@ -1,16 +1,8 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
-const { dialog } = require('electron');
+const { checkExist, setAppPage } = require('../../../util/utils');
 
 test('Check Preference Set Guide ', async function() {
     const { app } = require('../../../test');
-    
-    await checkExist('#svgcanvas',15000);
-
-    await app.client.execute(() => {
-        location.hash = '#studio/settings';
-    });
+    await setAppPage('#studio/settings');
 
     const openguide = await app.client.$('select#qa-set-guide option[value="TRUE"]');
     await openguide.click();
@@ -18,8 +10,6 @@ test('Check Preference Set Guide ', async function() {
     const setguidecheck= await app.client.$('select#qa-set-groups-engraving');
     const setguidecheck2 = await setguidecheck.getAttribute('value');
     expect(setguidecheck2).toEqual('TRUE');
-
-
 
     const selectguidex = await app.client.$('input#qa-set-settings-guides-originx');
     await selectguidex.doubleClick();
@@ -37,7 +27,7 @@ test('Check Preference Set Guide ', async function() {
     const selectguideycheck2 = await selectguideycheck.getAttribute('value');
     expect(selectguideycheck2).toEqual('30');
 
-    const done = await app.client.$('a.btn.btn-done');
+    const done = await app.client.$('div.btn.btn-done');
     await done.click();
 
     await checkExist('#svgcanvas',15000);
@@ -52,9 +42,4 @@ test('Check Preference Set Guide ', async function() {
     const horizontalcheck= await app.client.$('#horizontal_guide');
     const horizontalcheck2 = await horizontalcheck.getAttribute('y1');
     expect(horizontalcheck2).toEqual('300');
-    
-
-
-
-    
 });

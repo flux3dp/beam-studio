@@ -1,11 +1,9 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Decompose Path', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const text = await app.client.$('#left-Text');
@@ -39,6 +37,4 @@ test('Check Decompose Path', async function() {
     });
     expect(result.grouplength).toEqual(0);
     expect(result.groupvisible.length).toEqual(23);
-
-
 });

@@ -50,9 +50,25 @@ const setAppStorage = async (storage) => {
         for (let key in storage) {
             s.set(key, storage[key]);
         }
+        // location.reload();
         return s.store;
     }, storage);
     return store;
+};
+
+const setAppPage = async (page) => {
+    const { app } = application;
+    const gopage = await app.client.execute((page) => {
+        location.hash = page;
+    }, page);
+    return gopage;
+};
+
+const setReload = async () => {
+    const { app } = application;
+    await app.client.execute(() => {
+        location.reload();
+    });
 };
 
 const restartApp = async () => {
@@ -77,7 +93,11 @@ const restartAndSetStorage = async () => {
 };
 
 const setDefaultStorage = async () => {
+    // const currentVersion = await app.client.execute(() => {
+    //     return window['FLUX'].version;
+    // });
     // console.log(electron)
+    // console.log(currentVersion);
     await setAppStorage({
         'printer-is-ready': true,
         'enable-sentry': 0,
@@ -98,6 +118,10 @@ const setDefaultStorage = async () => {
             show_rulers: true,
             use_layer_color: true,
         },
+        'rating-record': {
+            version: '1.7.1-alpha',
+            isVoted: true,
+        },
     });
 };
 
@@ -107,8 +131,10 @@ module.exports = {
     checknotExist,
     checkVisible,
     updateInput,
+    setAppPage,
     setAppStorage,
     setDefaultStorage,
+    setReload,
     restartApp,
-    restartAndSetStorage
+    restartAndSetStorage,
 };

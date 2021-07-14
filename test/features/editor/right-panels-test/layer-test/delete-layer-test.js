@@ -1,14 +1,10 @@
-const { pause, checkExist, checknotExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist, setReload } = require('../../../../util/utils');
 
-test('Check Merge All Layer', async function() {
+test('Check Delete Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const add1 = await app.client.$('div.add-layer-btn');
     await add1.click();
 
@@ -38,7 +34,16 @@ test('Check Merge All Layer', async function() {
 
     const checknewlayer1color = await app.client.$('div#layerbackgroundColor-1');
     expect(await checknewlayer1color.getAttribute('style')).toEqual("background-color: rgb(244, 67, 54);");
+});
 
+test('Check Delete At Least One Layer ', async function() {
+    const { app } = require('../../../../test');
+    await setReload();
+    await checkExist('#svgcanvas', 15000);
 
-    
+    const rightclick = await app.client.$('[data-test-key="layer-0"]');
+    await rightclick.click({ button: 2});
+    const choosedeletelayer = await app.client.$('div#deletelayer');
+    await choosedeletelayer.click();
+    await checkExist('[data-test-key="layer-0"]');
 });

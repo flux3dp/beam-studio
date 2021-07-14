@@ -1,19 +1,15 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist, setReload } = require('../../../../util/utils');
 
-test('Strength Enter Text', async function() {
+test('Check Power Enter Text', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
-    const power = await app.client.$('div#strength.panel input');
+
+    const power = await app.client.$('input#power');
     await power.doubleClick();
     await app.client.keys(['Backspace', '7', '5', 'Enter',"NULL"]);
 
-    const input = await app.client.$('div#strength.panel input' );
+    const input = await app.client.$('input#power' );
     const strengthvalue =await input.getAttribute('value');
     expect(strengthvalue).toEqual('75');
     await new Promise((r) => setTimeout(r, 1000));
@@ -21,7 +17,7 @@ test('Strength Enter Text', async function() {
     const gobutton = await app.client.$('div.go-button-container');
     await gobutton.click(); 
 
-    const modalinput = await app.client.$('#qa-power-caption input');
+    const modalinput = await app.client.$('input#qa-power-caption');
     await modalinput.addValue('知道了');
 
     const next = await app.client.$('button.btn.btn-default.primary');

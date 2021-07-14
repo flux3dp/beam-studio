@@ -1,8 +1,9 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Ellipse', async function() {
+<<<<<<< HEAD
 
     const { app }= require('../../../test');
     //const app = await restartAndSetStorage();//要重啟顯示這行，不重啟顯示上行，沒辦法同時開啟，因為app共用
@@ -12,6 +13,11 @@ test('Check Draw Ellipse', async function() {
         location.reload()
     });
     await checkExist('#svgcanvas',15000);
+=======
+    let { app } = require('../../../test');
+    await setReload();
+    await checkExist('#svgcanvas', 15000);
+>>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
@@ -46,9 +52,4 @@ test('Check Draw Ellipse', async function() {
     const aR = parseFloat(actualR).toFixed(10);
     expect(Math.abs(expectedX - aCX)).toBeLessThanOrEqual(1e-10);
     expect(Math.abs(expectedY - aCY)).toBeLessThanOrEqual(1e-10);
-    expect(Math.abs(expectedR - aR)).toBeLessThanOrEqual(1e-10);
-
-
-
-
 });

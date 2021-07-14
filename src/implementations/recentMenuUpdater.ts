@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import electron from 'electron';
 
 import Alert from 'app/actions/alert-caller';
@@ -49,18 +50,20 @@ const recentMenuUpdater = {
                 message: i18n.lang.beambox.popup.loading_image,
               });
               fileName = fileName[fileName.length - 1];
-              fileName = fileName.slice(0, fileName.lastIndexOf('.')).replace(':', "/");
+              fileName = fileName.slice(0, fileName.lastIndexOf('.')).replace(':', '/');
               svgCanvas.setLatestImportFileName(fileName);
               svgCanvas.currentFilePath = filePath;
               svgCanvas.updateRecentFiles(filePath);
               try {
                 svgCanvas.clearSelection();
                 if (filePath.endsWith('beam')) {
-                  await BeamFileHelper.readBeam(filePath);
+                  const resp = await fetch(filePath);
+                  const blob = await resp.blob();
+                  await BeamFileHelper.readBeam(blob as File);
                 } else if (filePath.endsWith('bvg')) {
-                  let res: any = await fetch(filePath);
-                  res = await res.blob();
-                  svgEditor.importBvg(res);
+                  const resp = await fetch(filePath);
+                  const blob = await resp.blob();
+                  svgEditor.importBvg(blob);
                 }
                 svgCanvas.setHasUnsavedChange(false);
               } finally {

@@ -1,9 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Color, Titlebar } from 'custom-electron-titlebar';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { remote } from 'electron';
 
-import globalEvents from 'app/actions/global';
+// This module setup global window variable, Should be put at top
 import globalHelper from 'helpers/global-helper';
+import fileExportHelper from 'helpers/file-export-helper';
+import globalEvents from 'app/actions/global';
 import router from 'app/router';
 
 import communicator from 'implementations/communicator';
@@ -19,7 +23,6 @@ declare global {
     electron?: {
       ipc: any,
       events: { [key: string]: string; },
-      version: string,
       trigger_file_input_click: (inputId: string) => void,
       remote: any,
     },
@@ -62,7 +65,8 @@ function menuBar() {
 }
 
 export default function main(): void {
-  console.log(`Beam-Studio: ${window['FLUX'].version}`);
+  window.FLUX.version = remote.app.getVersion();
+  console.log(`Beam-Studio: ${window.FLUX.version}`);
 
   // if (allowTracking) {
   //   // google analytics
@@ -70,6 +74,10 @@ export default function main(): void {
   // }
 
   menuBar();
+  communicator.on('WINDOW_CLOSE', async () => {
+    const res = await fileExportHelper.toggleUnsavedChangedDialog();
+    if (res) communicator.send('CLOSE_REPLY', true);
+  });
 
   globalEvents(() => {
     router($('section.content')[0]);

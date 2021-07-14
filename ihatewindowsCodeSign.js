@@ -211,7 +211,7 @@ async function getCertificateFromStoreInfo(options, vm) {
 
 async function doSign(configuration, packager) {
   // https://github.com/electron-userland/electron-builder/pull/1944
-  const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 60 * 60 * 1000;
+  const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 10 * 60 * 60 * 1000; // 10 hours
   let tool;
   let args;
   let env = process.env;
@@ -245,7 +245,7 @@ async function doSign(configuration, packager) {
           console.log(err);
           console.log(stderr);
           retryTime += 1;
-          if (retryTime > 3) {
+          if (retryTime > 5) {
             throw err;
           } else {
             doCodeSign();

@@ -1,15 +1,11 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Union', async function() {
     const { app } = require('../../../test');
     //const app = await restartAndSetStorage();
     //await checkExist('#svgcanvas', 15000);
-
-    await app.client.execute(() => {
-        location.reload()
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -33,14 +29,12 @@ test('Check Union', async function() {
     const select = await app.client.$('#left-Cursor');
     await select.click();
 
-
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
         { type: 'pointerDown', button: 0, },
         { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-
 
     const unino = await app.client.$('#qa-union');
     await unino.click();
@@ -51,10 +45,7 @@ test('Check Union', async function() {
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
-
-
 });
-
 
 test('Check Subtract ', async function() {
     const { app } = require('../../../test');
@@ -69,7 +60,6 @@ test('Check Subtract ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-
     const subtract = await app.client.$('#qa-subtract');
     await subtract.click();
     
@@ -80,10 +70,7 @@ test('Check Subtract ', async function() {
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
-
-
 });
-
 
 test('Check Intersect ', async function() {
     const { app } = require('../../../test');
@@ -98,7 +85,6 @@ test('Check Intersect ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-
     const intersect = await app.client.$('#qa-intersect');
     await intersect.click();
     
@@ -109,8 +95,6 @@ test('Check Intersect ', async function() {
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
-
-
 });
 
 test('Check Difference ', async function() {
@@ -126,7 +110,6 @@ test('Check Difference ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-
     const difference = await app.client.$('#qa-difference');
     await difference.click();
 
@@ -137,5 +120,4 @@ test('Check Difference ', async function() {
     const checkunino = await app.client.$('#svg_10');
     // console.log(await checkunino.getAttribute('d'));
     expect(await checkunino.getAttribute('d')).toEqual('M702.43616,977.55249L311.88382,977.55249L311.88382,782.27625L507.15996,782.27625L507.15996,587.00012L702.43616,587.00012L702.43616,977.55249zM507.15996,587.00012L311.88382,587.00012L311.88382,782.27625L116.60765,782.27625L116.60765,391.72394L507.15996,391.72394L507.15996,587.00012z');
-
 });

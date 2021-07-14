@@ -1,22 +1,63 @@
-const { pause, checkExist, checkVisible, updateInput } = require('../../../../util/utils');
-const { pageCoordtoCanvasCoord, getCurrentZoom } = require('../../../../util/editor-utils');
-const { mouseAction, keyAction } = require('../../../../util/actions');
+const { checkExist, setReload } = require('../../../../util/utils');
+const { mouseAction } = require('../../../../util/actions');
 
 test('Check Lock Layer', async function() {
     const { app } = require('../../../../test');
-    
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas', 15000);
+
     const rightclick = await app.client.$('[data-test-key="layer-0"]');
     await rightclick.click({ button: 2});
     const chooselock = await app.client.$('div#locklayer');
     await chooselock.click();
     const rightclick2 = await app.client.$('[data-test-key="layer-0"]');
     await rightclick2.getAttribute('class');
-    // console.log(await rightclick2.getAttribute('class'));
     expect(await rightclick2.getAttribute('class')).toEqual('layer layersel lock current');
     await checkExist('div#layerlock-0', 15000);
+});
 
+test('Check Object In Diffierent Layer', async function() {
+    const { app } = require('../../../../test');
+    await setReload();
+    await checkExist('#svgcanvas', 15000);
+    
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 200, y: 200, duration: 100, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerMove', x: 250, y: 250, duration: 1000, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+    await checkExist('#svg_1');
+
+    const switchlayer = await app.client.$('div.tab.layers');
+    await switchlayer.click();
+
+    const add = await app.client.$('div.add-layer-btn');
+    await add.click();
+    
+    const switchlayer3 = await app.client.$('div.tab.layers');
+    await switchlayer3.click();
+    await checkExist('[data-test-key="layer-1"]');
+    
+    const elli = await app.client.$('#left-Ellipse');
+    await elli.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 300, y: 300, duration: 100, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerMove', x: 364, y: 364, duration: 1000, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+    await checkExist('#svg_2');
+
+    const switchlayer2 = await app.client.$('div.tab.layers');
+    await switchlayer2.click();
+    
+    const rectlayer0= await app.client.$('#svg_1');
+    const rectcolor = await rectlayer0.getAttribute('stroke');
+
+    const ellilayer1 = await app.client.$('#svg_2');
+    const ellicolor = await ellilayer1.getAttribute('stroke');
+    expect(rectcolor).not.toEqual(ellicolor);
 });
