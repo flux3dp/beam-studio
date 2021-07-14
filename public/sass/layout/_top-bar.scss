@@ -41,9 +41,7 @@
     .path-preview-button-container {
       position: relative;
       float: right;
-      .path-preview-button {
-          border-color: transparent transparent transparent #333333;
-      }
+      right: 55px;
     }
     .element-title {
       position: relative;
@@ -61,7 +59,6 @@
       top: 40px;
     }
     .go-button-container {
-      position: relative;
       float: right;
       .go-btn {
         border-color: transparent transparent transparent #333333;
