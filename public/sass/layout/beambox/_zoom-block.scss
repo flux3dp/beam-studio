@@ -1,9 +1,10 @@
 .zoom-block {
   display: inline-flex;
-  position: absolute;
+  position: fixed;
   bottom: 10px;
   left: 65px;
   height: 20px;
+  font-size: 16px;
   z-index: 1;
   .zoom-btn {
     cursor: pointer;
