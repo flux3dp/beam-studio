@@ -76,6 +76,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: flux3dp/beam-studio-core
+          ref: path-preview
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
 
