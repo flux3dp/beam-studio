@@ -1,4 +1,56 @@
 .path-preview-panel {
+  .tools-panel {
+    height: 95px;
+    padding: 40px 20px 0;
+    border: 1px solid #e0e0e0;
+    border-width: 1px 0 0 0;
+    // margin: 30px 0 0 0;
+    .options {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+      .play-control {
+        display: flex;
+        width: 48px;
+        margin: 0 8px;
+        img {
+          width: 24px;
+          height: 24px;
+          &:not(.disabled) {
+            cursor: pointer;
+          }
+        }
+      }
+      .speed-control {
+        display: flex;
+        align-items: center;
+        line-height: 18px;
+        input[type="range"]#speed {
+          width: 75px;
+          height: 10px;
+          margin: 0 10px;
+          background: none;
+          &::-webkit-slider-runnable-track {
+            height: 1px;
+          }
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none; // 一樣要消除
+            margin-top: -5px;
+            width: 10px;
+            height: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            border: 1px solid #000;
+          }
+        }
+      }
+      .current-time {
+        min-width: 60px;
+        text-align: right;
+      }
+    }
+  }
   .btn-box {
     display: inline-block;
     vertical-align: middle;
@@ -30,11 +82,11 @@
   }
 
   .path-preview-slider-container {
-    padding: 0 20px;
-
+    height: 15px;
     input[type="range"] {
+      margin: 0;
       width: 100%;
-      height: 50px;
+      height: 15px;
       background: none; // 清除不必要的東西
       outline: none; // 清除不必要的東西
       border-radius: 0; // 清除不必要的東西
@@ -43,20 +95,24 @@
       &::-webkit-slider-runnable-track {
         height: 6px;
         border-radius: 25px;
-        background: linear-gradient(to right,#007cf8 0%,#007cf8 var(--percentage), #bbbbbb var(--percentage), #bbbbbb 100%);
+        background: linear-gradient(
+          to right,
+          #007cf8 0%,
+          #007cf8 var(--percentage),
+          #bbbbbb var(--percentage),
+          #bbbbbb 100%
+        );
       }
-
       &::-webkit-slider-thumb {
         -webkit-appearance: none; // 一樣要消除
+        margin-top: -5px;
         width: 15px;
         height: 15px;
-        background-color: #a0a0a0;
+        background-color: #ffffff;
         border-radius: 7.5px;
-        //border: 2px solid #999;
-        border: none;
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+        border: 1px solid #000;
+        // box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
       }
-
       // firefox
       &::-moz-range-progress {
         height: 4px;
@@ -71,19 +127,16 @@
       }
     }
   }
-
   .switch-control {
     margin-left: 2px;
     display: flex;
     padding: 5px 0;
     .label {
-      margin-left: 32px;
+      margin-left: 40px;
       line-height: 20px;
     }
   }
   .control {
-    //width: 100%;
-
     .label {
       line-height: 16px;
       width: 160px;
@@ -133,7 +186,11 @@
       }
     }
   }
+  .zoom-block {
+    bottom: 65px;
+  }
 }
+
 #path-preview-side-panel {
   border: none;
   position: fixed;
@@ -148,6 +205,8 @@
   height: calc(100% - 40px);
   right: 0;
   transition: opacity 0.3s;
+  border: 1px solid #e0e0e0;
+  border-width: 0 0 0 1px;
   &.win {
     top: 70px;
     width: $winSidePanelWidth;
@@ -166,8 +225,14 @@
     line-height: 16px;
     font-size: 16px;
     padding: 12px 15px;
-    background: #ededed;
+    background: #eeeeee;
     font-weight: bold;
+    border: 1px solid #e0e0e0;
+    border-width: 0 0 1px;
+  }
+
+  .datas {
+    margin: 10px 0 0 0;
   }
 
   .data-block {
@@ -193,5 +258,16 @@
 
   .data-block:first {
     margin-top: 5px;
+  }
+
+  .buttons {
+    margin: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .btn {
+      margin: 5px 0;
+      width: 150px;
+    }
   }
 }
