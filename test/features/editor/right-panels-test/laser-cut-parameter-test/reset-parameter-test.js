@@ -86,20 +86,19 @@ test('Check Reset Parameter', async function() {
     const save = await app.client.$('button.btn.btn-default.primary');
     await save.click();
 
-    const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
+    const wood3cut = await app.client.$('option[value="Wood - 3mm Cutting"]');
     await wood3cut.isExisting()
     expect(await wood3cut.isExisting()).toEqual(false);
 
-    const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
+    const acrylic3cut = await app.client.$('option[value="Acrylic - 3mm Cutting"]');
     await acrylic3cut.isExisting()
     expect(await acrylic3cut.isExisting()).toEqual(false);
     
-
-    const leather3cut = await app.client.$('option[value="皮革 - 3mm 切割"]');
+    const leather3cut = await app.client.$('option[value="Leather - 3mm Cutting"]');
     await leather3cut.isExisting()
     expect(await leather3cut.isExisting()).toEqual(false);
 
-    const fabric3cut = await app.client.$('option[value="布料 - 3mm 切割"]');
+    const fabric3cut = await app.client.$('option[value="Fabric - 3mm Cutting"]');
     await fabric3cut.isExisting()
     expect(await fabric3cut.isExisting()).toEqual(false);
 
@@ -114,7 +113,7 @@ test('Check Reset Parameter', async function() {
     await reset.click();
     await new Promise((r) => setTimeout(r, 1000));
 
-    const checkreset = await app.client.$('[data-test-key=" 是"]');
+    const checkreset = await app.client.$('[data-test-key="yes"]');
     await checkreset.click();
     await new Promise((r) => setTimeout(r, 1000));
 
@@ -122,20 +121,19 @@ test('Check Reset Parameter', async function() {
     await savereset.click();
     await new Promise((r) => setTimeout(r, 1000));
 
-    const rewood3cut = await app.client.$('option[value="木板 - 3mm 切割"]')
+    const rewood3cut = await app.client.$('option[value="Wood - 3mm Cutting"]')
     await rewood3cut.isExisting()
     expect(await rewood3cut.isExisting()).toEqual(true); 
-    //find element  use childnode filter hide
     
-    const reacrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]')
+    const reacrylic3cut = await app.client.$('option[value="Acrylic - 3mm Cutting"]')
     await reacrylic3cut.isExisting()
     expect(await reacrylic3cut.isExisting()).toEqual(true);
 
-    const releather3cut = await app.client.$('option[value="皮革 - 3mm 切割"]')
+    const releather3cut = await app.client.$('option[value="Leather - 3mm Cutting"]')
     await releather3cut.isExisting()
     expect(await releather3cut.isExisting()).toEqual(true);
 
-    const refabric3cut = await app.client.$('option[value="布料 - 3mm 切割"]')
+    const refabric3cut = await app.client.$('option[value="Fabric - 3mm Cutting"]')
     await refabric3cut.isExisting()
     expect(await refabric3cut.isExisting()).toEqual(true);
     

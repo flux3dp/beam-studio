@@ -1,12 +1,13 @@
-const { checkExist, setAppPage } = require('../../../util/utils');
+const { checkExist, setAppPage, setReload} = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Substitute Unsupported Characters', async function() {
     const { app } = require('../../../test');
+    await setReload();
+    await checkExist('#svgcanvas',15000);
 
     const text = await app.client.$('#left-Text');
     await text.click();
-  
     await mouseAction([
         { type: 'pointerMove', x: 300, y: 300, duration: 10, },
         { type: 'pointerDown', button: 0, },
@@ -43,6 +44,6 @@ test('Check Preference Substitute Unsupported Characters', async function() {
     const gobutton2 = await app.client.$('div.go-button-container');
     await gobutton2.click(); 
 
-    await new Promise((r) => setTimeout(r, 1000));
-    await checkExist('div.modal-alert.animate__animated.animate__bounceIn',1500);
+    const beamo = await app.client.$('[data-test-key="FLPUAG5YEG"]');
+    await beamo.click();
 });

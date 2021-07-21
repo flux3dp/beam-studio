@@ -4,25 +4,25 @@ test('Check Switch Layer Parameter', async function() {
     const { app } = require('../../../../test');
     await setReload();
     await checkExist('#svgcanvas', 15000);
-    const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
+    const wood3cut = await app.client.$('option[value="Wood - 3mm Cutting"]');
     await wood3cut.click();
 
     const add1 = await app.client.$('div.add-layer-btn');
     await add1.click();
 
-    const wood5cut = await app.client.$('option[value="木板 - 5mm 切割"]');
+    const wood5cut = await app.client.$('option[value="Wood - 5mm Cutting"]');
     await wood5cut.click();
 
     const add2 = await app.client.$('div.add-layer-btn');
     await add2.click();
 
-    const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
+    const acrylic3cut = await app.client.$('option[value="Acrylic - 3mm Cutting"]');
     await acrylic3cut.click();
 
     const add3 = await app.client.$('div.add-layer-btn');
     await add3.click();
 
-    const acrylic5cut = await app.client.$('option[value="壓克力 - 5mm 切割"]');
+    const acrylic5cut = await app.client.$('option[value="Acrylic - 5mm Cutting"]');
     await acrylic5cut.click();
 
     const checklayer1parameter = await app.client.$('[data-test-key="layer-1"]');

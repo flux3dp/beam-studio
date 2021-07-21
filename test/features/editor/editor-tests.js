@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const { checkExist, checknotExist, restartApp, stopApp, setAppStorage, restartAndSetStorage } = require('../../util/utils');
-=======
 const { checkExist, checknotExist, restartApp, stopApp, setAppStorage, restartAndSetStorage, setAppPage} = require('../../util/utils');
->>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
 const application = require('../../../test/test');
 const request = require('request');
 
@@ -11,11 +7,7 @@ test('Init Editor', async function() {
     let isVisible = await app.browserWindow.isVisible();
     await setAppPage('#/studio/beambox');
     expect(isVisible).toBe(true);
-<<<<<<< HEAD
-    await checknotExist('#svgcanvas', 15000);
-=======
     await checkExist('#svgcanvas', 150000);
->>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
 });
 
 /* Create(left-panels) */
@@ -29,18 +21,6 @@ test('Init Editor', async function() {
 
 /* Modify Action */
 // require('./modify-action-test/align-test');
-<<<<<<< HEAD
-// require('./modify-action-test/distribute-test');
-// require('./modify-action-test/group-test');
-// require('./modify-action-test/group-layer-test');
-// require('./modify-action-test/union-test');
-// require('./modify-action-test/change-object-test');
-// require('./modify-action-test/offset-test');
-// require('./modify-action-test/array-test');
-// require('./modify-action-test/mirror-test');
-// require('./modify-action-test/decompose-path-test');
-
-=======
 // require('./modify-action-test/array-test');
 // require('./modify-action-test/change-object-test');
 // require('./modify-action-test/decompose-path-test');
@@ -50,7 +30,6 @@ test('Init Editor', async function() {
 // require('./modify-action-test/mirror-test');
 // require('./modify-action-test/offset-test');
 // require('./modify-action-test/union-test');
->>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
 
 /* Other Test */
 // require('./other-test/calculate-path-time-test');
@@ -58,9 +37,11 @@ test('Init Editor', async function() {
 // require('./other-test/undo-redo');
 
 /* Perefence */
-// require('./preference-test/allreset-test');
+// // require('./preference-test/allreset-test');
+// require('./preference-test/anti-aliasing-test');
 // require('./preference-test/auto-check-update-test');
 // require('./preference-test/auto-connect-test');
+// require('./preference-test/auto-save-test');
 // require('./preference-test/beambox-model-test');
 // require('./preference-test/bitmap-previewing-quality-test');
 // require('./preference-test/continuous-drawing-test');
@@ -69,67 +50,30 @@ test('Init Editor', async function() {
 // require('./preference-test/default-font-family');
 // require('./preference-test/default-font-style');
 // require('./preference-test/default-open-bottom-test');
-// require('./preference-test/default-units-test');
-// require('./preference-test/font-substitue-test');not yet
+// require('./preference-test/font-substitue-test');
 // require('./preference-test/language-test');
 // require('./preference-test/loop-compensation-test');
 // require('./preference-test/notification-test');
 // require('./preference-test/path-optimize');
 // require('./preference-test/preview-camera-speed-test');
-// require('./preference-test/save-connection-ip-test');not yet
+// require('./preference-test/save-connection-ip-test');
 // require('./preference-test/set-diode-offset-test');
-// require('./preference-test/set-guide-test');not yet
+// require('./preference-test/set-guide-test');
 // require('./preference-test/speed-optimization-test');
 // require('./preference-test/vector-speed-constraint-test');
 // require('./preference-test/workarea-clipping-test');
+// require('./preference-test/default-units-test');
 
 /* Laser-Cut-Parameter(right-panels) */
 // require('./right-panels-test/laser-cut-parameter-test/add-parameter-test');
 // require('./right-panels-test/laser-cut-parameter-test/custom-parameter-list-test');
+// require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
 // require('./right-panels-test/laser-cut-parameter-test/remove-speed-limit-test');
 // require('./right-panels-test/laser-cut-parameter-test/reset-parameter-test');
 // require('./right-panels-test/laser-cut-parameter-test/speed-caption-test');
-// require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
-// require('./right-panels-test/laser-cut-parameter-test/power-enter-text-test');
 // require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
 
 /* Layer(right-panels) */
-<<<<<<< HEAD
-// require('./right-panels-test/layer-test/copy-layer-color-test');
-// require('./right-panels-test/layer-test/copy-layer-test');
-// require('./right-panels-test/layer-test/create-layer-test');
-// require('./right-panels-test/layer-test/create-object-diffierent-layer');
-// require('./right-panels-test/layer-test/delete-layer-atleastone-test');
-// require('./right-panels-test/layer-test/delete-layer-test');
-// require('./right-panels-test/layer-test/drag-layer-object-test');
-// require('./right-panels-test/layer-test/drag-layer-test');
-// require('./right-panels-test/layer-test/lock-layer-test');
-// require('./right-panels-test/layer-test/lock-layer-moveobj-test');
-// require('./right-panels-test/layer-test/merge-down-layer-test');
-// require('./right-panels-test/layer-test/merge-all-layer-test');
-// require('./right-panels-test/layer-test/merge-selected-layer-test');
-// require('./right-panels-test/layer-test/move-object-layer-parameter-test');
-// require('./right-panels-test/layer-test/move-object-layer-test');
-// require('./right-panels-test/layer-test/show-hide-layer-test');
-// require('./right-panels-test/layer-test/switch-layer-parameter-test');
-
-
-
-/* Layer(right-panels) */
-// require('./viewport-test/zoom_in_out-test');
-// require('./viewport-test/fit-to-window-test');
-// // require('./viewport-test/auto-fit-to-window-test');
-// require('./viewport-test/view-color-test');
-// require('./viewport-test/percentage-test');
-// require('./viewport-test');
-// require('./viewport-test');
-// require('./viewport-test');
-
-
-/* setting */
-// require('../settings/home-lang-test');
-// require('../settings/connect-machine');
-=======
 // require('./right-panels-test/layer-test/copy-layer-test');
 // require('./right-panels-test/layer-test/create-layer-test');
 // require('./right-panels-test/layer-test/create-object-diffierent-layer');
@@ -142,19 +86,22 @@ test('Init Editor', async function() {
 // require('./right-panels-test/layer-test/switch-layer-parameter-test');
 
 /* Top-panels */
+// require('./top-panels-tset/clear-canvas-test');
 // require('./top-panels-tset/connect-test');
-// require('./top-panels-tset');
+// require('./top-panels-tset/example-test');
+// require('./top-panels-tset/document-test');
+// require('./top-panels-tset/network-test');
+// require('./top-panels-tset/preview-camera-test');
 
 /* Viewport */
-require('./viewport-test/zoom_in_out-test');
-require('./viewport-test/fit-to-window-test');
-// require('./viewport-test/auto-fit-to-window-test');not yet
-require('./viewport-test/view-color-test');
-require('./viewport-test/percentage-test');
-// require('./viewport-test');
-// require('./viewport-test');
-// require('./viewport-test');
->>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
+// require('./viewport-test/auto-fit-to-window-test');
+// require('./viewport-test/fit-to-window-test');
+// require('./viewport-test/move-zoom-canvas-test');
+// require('./viewport-test/percentage-test.js');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/preview-camera-zoom-in-test');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/zoom-in-out-test');
 
 /* setting */
 // require('../settings/home-lang-test');

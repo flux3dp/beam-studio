@@ -24,11 +24,11 @@ test('Check Preference Loop Compensation', async function() {
 
     await setAppPage('#studio/settings'); 
 
-    const selectloop = await app.client.$('input#qa-set-loop-compensation');
+    const selectloop = await app.client.$('input#loop-input');
     await selectloop.doubleClick();
     await app.client.keys(['Delete', '10', 'Enter', "NULL"]);
 
-    const loopcheck= await app.client.$('input#qa-set-loop-compensation');
+    const loopcheck= await app.client.$('input#loop-input');
     const loopcheck2 = await loopcheck.getAttribute('value');
     expect(loopcheck2).toEqual('10');
 
@@ -51,5 +51,5 @@ test('Check Preference Loop Compensation', async function() {
 
     const timeresult2 = await app.client.$('div.time-est-result');
     await timeresult2.getText();
-    expect(await timeresult2.getText()).toEqual('Estimated Time: 21 秒');
+    expect(await timeresult2.getText()).toEqual('Estimated Time: 21 s');
 });

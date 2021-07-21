@@ -55,14 +55,13 @@ test('Check Top align', async function() {
     const rect3location = await app.client.$('#svg_3');
     expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
-    // console.log(await rectlocation.getLocation('y'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
 });
 
 test('Check Middle align', async function() {
     const { app } = require('../../../test');
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
 
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
@@ -80,14 +79,13 @@ test('Check Middle align', async function() {
     // console.log(await rectlocation.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
- 
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
 });
 
 test('Check bottom align', async function() {
     const { app } = require('../../../test');
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
 
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
@@ -102,17 +100,15 @@ test('Check bottom align', async function() {
     const rectlocation = await app.client.$('#svg_1');
     const rect2location = await app.client.$('#svg_2');
     const rect3location = await app.client.$('#svg_3');
-    // console.log(await rectlocation.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
- 
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
 });
 
 test('Check Left align', async function() {
     const { app } = require('../../../test');
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
 
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
@@ -129,14 +125,13 @@ test('Check Left align', async function() {
     const rect3location = await app.client.$('#svg_3');
     expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
     expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
 });
 
 test('check Center align', async function() {
     const { app } = require('../../../test');
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
 
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
@@ -153,22 +148,20 @@ test('check Center align', async function() {
     const rect3location = await app.client.$('#svg_3');
     expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
     expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
 });
 
 test('check Right align', async function() {
     const { app } = require('../../../test');
-    
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
+
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
         { type: 'pointerDown', button: 0, },
         { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-    
     const rightalign = await app.client.$('#qa-right_align');
     await rightalign.click();
     
@@ -177,8 +170,4 @@ test('check Right align', async function() {
     const rect3location = await app.client.$('#svg_3');
     expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
     expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-    svgCanvas.undoMgr.undo();
-    });
 });

@@ -35,25 +35,28 @@ test('Check Move Object In Diffierent Layer', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const switchlayer2 = await app.client.$('div.tab.layers');
-    await switchlayer2.click();
+    const switchLayer2 = await app.client.$('div.tab.layers');
+    await switchLayer2.click();
 
-    const moveobjtolayer1 = await app.client.$('option[value="圖層 1"]');
-    await moveobjtolayer1.click();
+    const moveSelsect = await app.client.$('#selLayerNames');
+    await moveSelsect.click();
 
-    const movenext = await app.client.$('button.btn.btn-default.primary');
-    await movenext.click();
+    const moveobjtoLayer1 = await app.client.$('option[value="Layer 2"]');
+    await moveobjtoLayer1.click();
+
+    const moveNext = await app.client.$('button.btn.btn-default.primary');
+    await moveNext.click();
     
-    const rectlayer1 = await app.client.$('#svg_1');
-    const rectcolor1 = await rectlayer1.getAttribute('stroke');
-    expect(rectcolor1).toEqual("#3F51B5");
+    const rectLayer1 = await app.client.$('#svg_1');
+    const rectColor1 = await rectLayer1.getAttribute('stroke');
+    expect(rectColor1).toEqual("#3F51B5");
 
-    const moveobjtolayer2 = await app.client.$('option[value="圖層 2"]');
-    await moveobjtolayer2.click();
+    const moveObjtolayer2 = await app.client.$('option[value="Layer 3"]');
+    await moveObjtolayer2.click();
 
-    const rectlayer2 = await app.client.$('#svg_1');
-    const rectcolor2 = await rectlayer2.getAttribute('stroke');
-    expect(rectcolor2).toEqual("#F44336");
+    const rectLayer2 = await app.client.$('#svg_1');
+    const rectColor2 = await rectLayer2.getAttribute('stroke');
+    expect(rectColor2).toEqual("#F44336");
 });
 
 test('Check Parameter Of Move Object In Diffierent Layer', async function() {
@@ -61,7 +64,7 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     await setReload();
     await checkExist('#svgcanvas', 15000);
 
-    const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
+    const wood3cut = await app.client.$('option[value="Wood - 3mm Cutting"]');
     await wood3cut.click();
     
     const rect = await app.client.$('#left-Rectangle');
@@ -82,12 +85,12 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
 
     const add1 = await app.client.$('div.add-layer-btn');
     await add1.click();
-    const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
+    const acrylic3cut = await app.client.$('option[value="Acrylic - 3mm Cutting"]');
     await acrylic3cut.click();
 
     const add2 = await app.client.$('div.add-layer-btn');
     await add2.click();
-    const leather3cut = await app.client.$('option[value="皮革 - 3mm 切割"]');
+    const leather3cut = await app.client.$('option[value="Leather - 3mm Cutting"]');
     await leather3cut.click();
 
     await mouseAction([
@@ -100,7 +103,7 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const switchlayer2 = await app.client.$('div.tab.layers');
     await switchlayer2.click();
 
-    const moveobjtolayer1 = await app.client.$('option[value="圖層 1"]');
+    const moveobjtolayer1 = await app.client.$('option[value="Layer 2"]');
     await moveobjtolayer1.click();
 
     const movenext = await app.client.$('button.btn.btn-default.primary');
@@ -135,7 +138,7 @@ test('Check Parameter Of Move Object In Diffierent Layer', async function() {
     const switchlayer4 = await app.client.$('div.tab.layers');
     await switchlayer4.click();
 
-    const moveobjtolayer2 = await app.client.$('option[value="圖層 2"]');
+    const moveobjtolayer2 = await app.client.$('option[value="Layer 3"]');
     await moveobjtolayer2.click();
 
     const movenext2 = await app.client.$('button.btn.btn-default.primary');

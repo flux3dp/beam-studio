@@ -4,9 +4,9 @@ test('Check Preference Notification', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
 
-    const selectnoti = await app.client.$('select#qa-set-notifications option[value="1"]');
+    const selectnoti = await app.client.$('select#set-notifications option[value="1"]');
     await selectnoti.click();
-    const noticheck= await app.client.$('select#qa-set-notifications');
+    const noticheck= await app.client.$('select#set-notifications');
     const noticheck2 = await noticheck.getAttribute('value');
     expect(noticheck2).toEqual('1');
 

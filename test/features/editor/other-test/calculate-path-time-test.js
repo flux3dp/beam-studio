@@ -18,7 +18,7 @@ test('Check Calculate Time Geometry', async function() {
     const time = await app.client.$('div.time-est-btn');
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 9 秒');
+    expect(await timereult.getText()).toEqual('Estimated Time: 9 s');
 });
 
 test('Check Calculate Time Text', async function() {
@@ -35,7 +35,7 @@ test('Check Calculate Time Text', async function() {
     const time2 = await app.client.$('div.time-est-btn');
     await time2.click();
     const timereult2 = await app.client.$('div.time-est-result');
-    expect(await timereult2.getText()).toEqual('Estimated Time: 30 秒');
+    expect(await timereult2.getText()).toEqual('Estimated Time: 30 s');
 });
 
 test('Check Calculate Time Path', async function() {
@@ -51,5 +51,5 @@ test('Check Calculate Time Path', async function() {
     const time3 = await app.client.$('div.time-est-btn');
     await time3.click();
     const timereult3 = await app.client.$('div.time-est-result');
-    expect(await timereult3.getText()).toEqual('Estimated Time: 36 秒');
+    expect(await timereult3.getText()).toEqual('Estimated Time: 36 s');
 });

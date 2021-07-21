@@ -32,7 +32,6 @@ test('Check Coustom Parameter', async function() {
     await app.client.keys(['Delete','1', '0', 'Enter',"NULL"]);
     await new Promise((r) => setTimeout(r, 1000));
 
-
     const w5cut = await app.client.$('#wood_5mm_cutting');
     await w5cut.click(); 
 
@@ -57,7 +56,6 @@ test('Check Coustom Parameter', async function() {
     const ref5cut = await app.client.$('div#removeselect');
     await ref5cut.click();
 
-    
     const save = await app.client.$('button.btn.btn-default.primary');
     await save.click();
 
@@ -68,7 +66,6 @@ test('Check Coustom Parameter', async function() {
     const acrylic5cut = await app.client.$('option[value="壓克力 - 5mm 切割"]');
     await acrylic5cut.isExisting()
     expect(await acrylic5cut.isExisting()).toEqual(false);
-    
 
     const leather5cut = await app.client.$('option[value="皮革 - 5mm 切割"]');
     await leather5cut.isExisting()
@@ -81,6 +78,4 @@ test('Check Coustom Parameter', async function() {
     const custom = await app.client.$('option[value="TESTCUSTOM"]');
     await custom.isExisting()
     expect(await custom.isExisting()).toEqual(true);
-
-    
 });

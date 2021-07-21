@@ -15,7 +15,7 @@ test('Check Copy Layer', async function() {
     await checklayername.getText();
 
     // console.log(await checklayername.getText('class'));
-    expect(await checklayername.getText()).toEqual('預設圖層 copy');
+    expect(await checklayername.getText()).toEqual('Layer 1 copy');
 });
 
 test('Check Copy Layer Color', async function() {

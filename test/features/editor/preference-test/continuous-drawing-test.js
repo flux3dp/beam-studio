@@ -5,10 +5,10 @@ test('Check Preference Continuous Drawing', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
 
-    const drawing = await app.client.$('select#qa-set-continuous-drawing option[value="TRUE"]');
+    const drawing = await app.client.$('select#set-continuous-drawingg option[value="TRUE"]');
     await drawing.click();
 
-    const drawingcheck= await app.client.$('select#qa-set-continuous-drawing');
+    const drawingcheck= await app.client.$('select#set-continuous-drawingg');
     const drawingcheck2 = await drawingcheck.getAttribute('value');
     expect(drawingcheck2).toEqual('TRUE');
 

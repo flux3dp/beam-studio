@@ -5,9 +5,6 @@ test('Check Add Parameter', async function() {
     await setReload();
     await checkExist('#svgcanvas',15000);
 
-    const btn = await app.client.$('button#qa-btn-default.primary');
-    await btn.click();
-
     const set = await app.client.$('div.right');
     await set.click(); 
     
@@ -52,5 +49,4 @@ test('Check Add Parameter', async function() {
     const repeatenter= await app.client.$('input#repeat');
     const repeatnumber = await repeatenter.getAttribute('value');
     expect(repeatnumber).toEqual('3');
-
 });

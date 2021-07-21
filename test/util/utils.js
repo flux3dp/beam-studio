@@ -5,6 +5,15 @@ const pause = async (t) => {
     const { app } = application;
     await app.client.pause(t);
 };
+
+const callMenuEvent = async (data) => {
+    const { app } = application;
+    await app.client.execute((data) => {
+      const currentWebContent = electron.remote.getCurrentWebContents();
+      currentWebContent.send('MENU_CLICK', data);
+    }, data);
+};
+
 const checkExist = async (tag, time = 10000, reverse = false) => {
     const { app } = application;
     const start = Date.now();
@@ -101,7 +110,7 @@ const setDefaultStorage = async () => {
     await setAppStorage({
         'printer-is-ready': true,
         'enable-sentry': 0,
-        'active-lang': 'zh-tw',
+        'active-lang': 'en',
         'last-installed-version': '1.7.1-alpha',
         'questionnaire-version': 1,
         'alert-config': {
@@ -127,6 +136,7 @@ const setDefaultStorage = async () => {
 
 module.exports = {
     pause,
+    callMenuEvent,
     checkExist,
     checknotExist,
     checkVisible,

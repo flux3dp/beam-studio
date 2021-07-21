@@ -3,21 +3,9 @@ const { pageCoordtoCanvasCoord } = require('../../../util/editor-utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Draw Ellipse', async function() {
-<<<<<<< HEAD
-
-    const { app }= require('../../../test');
-    //const app = await restartAndSetStorage();//要重啟顯示這行，不重啟顯示上行，沒辦法同時開啟，因為app共用
-    //await checkExist('#svgcanvas', 15000);
-
-    await app.client.execute(() => {
-        location.reload()
-    });
-    await checkExist('#svgcanvas',15000);
-=======
     let { app } = require('../../../test');
     await setReload();
     await checkExist('#svgcanvas', 15000);
->>>>>>> 031c4151c40d540302f2cde9da92f1d2c6045110
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
