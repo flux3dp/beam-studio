@@ -1,10 +1,20 @@
-.path-preview-panel {
+#path-preview-panel {
+  position: absolute;
+  top: 40px;
+  left: 50px;
+  width: calc(100% - 50px - 258px);
+  height: calc(100% - 40px);
+  &.mac {
+    width: calc(100% - 50px - 242px);
+  }
+
   .tools-panel {
     height: 95px;
     padding: 40px 20px 0;
     border: 1px solid #e0e0e0;
     border-width: 1px 0 0 0;
     // margin: 30px 0 0 0;
+    font-size: 13px;
     .options {
       display: flex;
       align-items: center;
