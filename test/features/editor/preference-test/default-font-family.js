@@ -29,5 +29,11 @@ test('Check Preference Font Family', async function() {
     await app.client.keys(['T', 'E', 'S', 'T', 'Space','F', 'O', 'N', 'T', 'F', 'Space', 'F', 'A', 'M', 'I', 'L', 'Y', "NULL"]);
     const svg_1font= await app.client.$('#svg_1');
     const fonttext = await svg_1font.getAttribute('font-family');
-    expect(fonttext).toEqual('Times New Roman');
+    
+    if(process.platform === 'darwin'){
+        expect(fonttext).toEqual('TimesNewRomanPSMT');
+    } 
+    else{
+        expect(fonttext).toEqual('Times New Roman');
+    }
 });

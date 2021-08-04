@@ -38,8 +38,21 @@ test('Check Preference Substitute Unsupported Characters', async function() {
     ]);
     await app.client.keys(['T', 'E', 'S', 'T', 'F', 'O', 'N', 'T', 'S', 'U', 'B', 'S', 'T', 'I', 'T', 'U', 'T', 'E',"NULL"]);
 
-    const optionfont = await app.client.$('option[value="標楷體"]');
-    await optionfont.click();
+    if(process.platform === 'darwin'){
+        const reactSelectControl = await app.client.$('.react-select__control');
+        await reactSelectControl.click();
+        await app.client.keys(['Arial',"Enter", "NULL"]);
+        const svg_1font= await app.client.$('#svg_1');
+        const fonttext = await svg_1font.getAttribute('font-family');
+        expect(fonttext).toEqual('Arial-BoldItalicMT');
+        await new Promise((r) => setTimeout(r, 1000));
+    } else{
+        const optionfont = await app.client.$('option[value="Arial"]');
+        await optionfont.click();
+        const svg_1font= await app.client.$('#svg_1');
+        const fonttext = await svg_1font.getAttribute('font-family');
+        expect(fonttext).toEqual('Arial');
+    }
 
     const gobutton2 = await app.client.$('div.go-button-container');
     await gobutton2.click(); 

@@ -15,8 +15,14 @@ test('Check Copy Paste Geometry', async function() {
         { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-    await app.client.keys(['Control', 'c', "NULL"]);
-    await app.client.keys(['Control', 'v', "NULL"]);
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'c', "NULL"]);
+        await app.client.keys(['Command', 'v', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'c', "NULL"]);
+        await app.client.keys(['Control', 'v', "NULL"]);
+    }
 
     const svg_1width = await app.client.$('#svg_1');
     const rect1W = await svg_1width.getAttribute('width');
@@ -50,9 +56,14 @@ test('Check Copy Paste Text', async function() {
     ]);
     await app.client.keys(['Copy', 'Space', 'Paste', 'Space', 'TEST']);
     await app.client.keys(['Enter', "NULL"]);
-    await app.client.keys(['Control', 'c', "NULL"]);
-    await app.client.keys(['Control', 'v', "NULL"]);
-
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'c', "NULL"]);
+        await app.client.keys(['Command', 'v', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'c', "NULL"]);
+        await app.client.keys(['Control', 'v', "NULL"]);
+    }
     const svg_4text = await app.client.$('#svg_4');
     const text1 = await svg_4text.getText();
 
@@ -72,9 +83,14 @@ test('Check Copy Paste Path', async function() {
         { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-    await app.client.keys(['Control', 'c', "NULL"]);
-    await app.client.keys(['Control', 'v', "NULL"]);
-    // await new Promise((r) => setTimeout(r, 1500000));
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'c', "NULL"]);
+        await app.client.keys(['Command', 'v', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'c', "NULL"]);
+        await app.client.keys(['Control', 'v', "NULL"]);
+    }
 
     const svg_7line = await app.client.$('#svg_7');
     const line2x1 = await svg_7line.getAttribute('x1');

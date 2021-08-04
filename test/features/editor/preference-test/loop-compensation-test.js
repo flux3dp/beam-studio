@@ -20,7 +20,13 @@ test('Check Preference Loop Compensation', async function() {
 
     const timeresult = await app.client.$('div.time-est-result');
     await timeresult.getText();
-    expect(await timeresult.getText()).toEqual('Estimated Time: 21 s');
+    if(process.platform === 'darwin'){
+        expect(await timeresult.getText()).toEqual('Estimated Time: 20 s');
+    } 
+    else{
+        expect(await timeresult.getText()).toEqual('Estimated Time: 21 s');
+    }
+
 
     await setAppPage('#studio/settings'); 
 

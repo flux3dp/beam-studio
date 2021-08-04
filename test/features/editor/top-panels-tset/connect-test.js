@@ -30,7 +30,7 @@ test('Check Connect Wifi', async function() {
     expect(ipmessage).toEqual("Checking IP availability... IP unreachable"); 
 
     const input2 = await app.client.$('input.ip-input');
-    await input2.setValue('192.168.68.102');
+    await input2.setValue('192.168.68.142');
 
     const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
     await nextstepaftrightIP.click();
@@ -50,7 +50,7 @@ test('Check Connect Wifi', async function() {
 
     const firmwareinfo = await app.client.$('div#qa-firmware-test-info');
     const firmware = await firmwareinfo.getText();
-    expect(firmware).toEqual("Checking firmware version... 4.0");
+    expect(firmware).toEqual("Checking firmware version... 3.5.1");
     await new Promise((r) => setTimeout(r, 5000));
 
     const camerainfo = await app.client.$('div#qa-camera-test-info');
@@ -88,7 +88,7 @@ test('Check Connect Wired', async function() {
     expect(ipmessage).toEqual("Checking IP availability... IP unreachable"); 
 
     const intput2 = await app.client.$('input.ip-input');
-    await intput2.setValue('192.168.68.102');
+    await intput2.setValue('192.168.68.142');
 
     const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
     await nextstepaftrightIP.click();
@@ -108,7 +108,7 @@ test('Check Connect Wired', async function() {
 
     const firmwareinfo = await app.client.$('#qa-firmware-test-info');
     const firmware = await firmwareinfo.getText();
-    expect(firmware).toEqual("Checking firmware version... 4.0");
+    expect(firmware).toEqual("Checking firmware version... 3.5.1");
     await new Promise((r) => setTimeout(r, 5000));
 
     const camerainfo = await app.client.$('#qa-camera-test-info');
@@ -136,7 +136,7 @@ test('Check Connect Etherent', async function() {
     expect(await setip.getText()).toEqual("Checking IP availability... IP unreachable"); 
 
     const input2 = await app.client.$('input.ip-input');
-    await input2.setValue('192.168.68.102');
+    await input2.setValue('192.168.68.142');
 
     const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
     await nextstepaftrightIP.click();
@@ -156,7 +156,7 @@ test('Check Connect Etherent', async function() {
 
     const firmwareinfo = await app.client.$('#qa-firmware-test-info');
     const firmware = await firmwareinfo.getText();
-    expect(firmware).toEqual("Checking firmware version... 4.0");
+    expect(firmware).toEqual("Checking firmware version... 3.5.1");
     await new Promise((r) => setTimeout(r, 5000));
 
     const camerainfo = await app.client.$('#qa-camera-test-info');

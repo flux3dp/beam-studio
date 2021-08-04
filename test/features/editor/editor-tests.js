@@ -37,18 +37,19 @@ test('Init Editor', async function() {
 // require('./other-test/undo-redo');
 
 /* Perefence */
-// // require('./preference-test/allreset-test');
+// require('./preference-test/allreset-test');
+// require('./preference-test/beambox-model-test');
 // require('./preference-test/anti-aliasing-test');
 // require('./preference-test/auto-check-update-test');
 // require('./preference-test/auto-connect-test');
 // require('./preference-test/auto-save-test');
-// require('./preference-test/beambox-model-test');
 // require('./preference-test/bitmap-previewing-quality-test');
 // require('./preference-test/continuous-drawing-test');
 // require('./preference-test/default-autofocus-test');
 // require('./preference-test/default-diode-test');
 // require('./preference-test/default-font-family');
 // require('./preference-test/default-font-style');
+// require('./preference-test/default-units-test');
 // require('./preference-test/default-open-bottom-test');
 // require('./preference-test/font-substitue-test');
 // require('./preference-test/language-test');
@@ -62,7 +63,7 @@ test('Init Editor', async function() {
 // require('./preference-test/speed-optimization-test');
 // require('./preference-test/vector-speed-constraint-test');
 // require('./preference-test/workarea-clipping-test');
-// require('./preference-test/default-units-test');
+
 
 /* Laser-Cut-Parameter(right-panels) */
 // require('./right-panels-test/laser-cut-parameter-test/add-parameter-test');
@@ -102,10 +103,6 @@ test('Init Editor', async function() {
 // require('./viewport-test/preview-camera-zoom-in-test');
 // require('./viewport-test/view-color-test');
 // require('./viewport-test/zoom-in-out-test');
-
-/* setting */
-// require('../settings/home-lang-test');
-// require('../settings/connect-machine');
 
 test('End Editor', async function() {
     const { app } = application;

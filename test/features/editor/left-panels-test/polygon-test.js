@@ -33,7 +33,18 @@ test('Check Draw Polygon', async function() {
     
     expect(Math.abs(expectedX - actualX)).toBeLessThanOrEqual(0);
     expect(Math.abs(expectedY - actualY)).toBeLessThanOrEqual(0);
-    expect(actualP).toEqual("1678.817027,1953.9333281 1037.5146431709302,2055.5056471573967 742.7402921198344,1476.978408847954 1201.862107987634,1017.8565930977113 1780.3893462216006,1312.6309442969373 1678.817027,1953.9333281");
+    
+    const selectorGrip_resize_ne = await app.client.$('#selectorGrip_resize_ne');
+    const selectorGrip_ne_distancex = await selectorGrip_resize_ne.getAttribute('cx');
+    const selectorGrip_ne_distancey = await selectorGrip_resize_ne.getAttribute('cy');
+
+    const selectorGrip_resize_nw = await app.client.$('#selectorGrip_resize_nw');
+    const selectorGrip_nw_distance = await selectorGrip_resize_nw.getAttribute('cx');
+
+    const selectorGrip_resize_se = await app.client.$('#selectorGrip_resize_se');
+    const selectorGrip_se_distance = await selectorGrip_resize_se.getAttribute('cy');
+
+    expect(Math.abs(selectorGrip_ne_distancex - selectorGrip_nw_distance)-Math.abs(selectorGrip_se_distance - selectorGrip_ne_distancey)).toBeLessThanOrEqual(1);
 });
 
 test('Check Polygon Sides', async function() {

@@ -1,4 +1,4 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, checknotExist } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Union', async function() {
@@ -38,18 +38,29 @@ test('Check Union', async function() {
 
     const unino = await app.client.$('#qa-union');
     await unino.click();
-    
     await checkExist('#svg_4');
-    const checkunino = await app.client.$('#svg_4');
-    expect(await checkunino.getAttribute('d')).toEqual('M507.15996,587.00012L702.43616,587.00012L702.43616,977.55249L311.88382,977.55249L311.88382,782.27625L116.60765,782.27625L116.60765,391.72394L507.15996,391.72394L507.15996,587.00012z');
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
+
+    const selectGrip = await app.client.$('#selectorGrip_resize_ne');
+    await selectGrip.doubleClick();
+
+    const pathpointgrip_0 = await app.client.$('#pathpointgrip_0');
+    const cxPoint_0 = await pathpointgrip_0.getAttribute('cx');
+    const pathpointgrip_1 = await app.client.$('#pathpointgrip_1');
+    const cxPoint_1 = await pathpointgrip_1.getAttribute('cx');
+    expect(Math.round(cxPoint_1-cxPoint_0)).toEqual(50);
+
+    const pathpointgrip_5 = await app.client.$('#pathpointgrip_5');
+    const cxPoint_5 = await pathpointgrip_5.getAttribute('cx');
+    const pathpointgrip_4 = await app.client.$('#pathpointgrip_4');
+    const cxPoint_4 = await pathpointgrip_4.getAttribute('cx');
+    expect(Math.round(cxPoint_4-cxPoint_5)).toEqual(50);
 });
 
 test('Check Subtract ', async function() {
     const { app } = require('../../../test');
-
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
     const select = await app.client.$('#left-Cursor');
     await select.click();
 
@@ -63,18 +74,29 @@ test('Check Subtract ', async function() {
     const subtract = await app.client.$('#qa-subtract');
     await subtract.click();
     
+    await checknotExist('#svg_5')
     await checkExist('#svg_6');
-    const checkunino = await app.client.$('#svg_6');
-    // console.log(await checkunino.getAttribute('d'));
-    expect(await checkunino.getAttribute('d')).toEqual('M702.43616,977.55249L311.88382,977.55249L311.88382,782.27625L507.15996,782.27625L507.15996,587.00012L702.43616,587.00012L702.43616,977.55249z');
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
+
+    const selectGrip = await app.client.$('#selectorGrip_resize_ne');
+    await selectGrip.doubleClick();
+
+    const pathpointgrip_2 = await app.client.$('#pathpointgrip_2');
+    const cxPoint_2 = await pathpointgrip_2.getAttribute('cx');
+    const pathpointgrip_3 = await app.client.$('#pathpointgrip_3');
+    const cxPoint_3 = await pathpointgrip_3.getAttribute('cx');
+    const cyPoint_3 = await pathpointgrip_3.getAttribute('cy');
+    expect(Math.round(cxPoint_3-cxPoint_2)).toEqual(50);
+
+    const pathpointgrip_4 = await app.client.$('#pathpointgrip_4');
+    const cyPoint_4 = await pathpointgrip_4.getAttribute('cy');
+    expect(Math.round(cyPoint_3-cyPoint_4)).toEqual(50);
 });
 
 test('Check Intersect ', async function() {
     const { app } = require('../../../test');
-
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
     const select = await app.client.$('#left-Cursor');
     await select.click();
 
@@ -87,19 +109,29 @@ test('Check Intersect ', async function() {
 
     const intersect = await app.client.$('#qa-intersect');
     await intersect.click();
-    
     await checkExist('#svg_8');
-    const checkunino = await app.client.$('#svg_8');
-    // console.log(await checkunino.getAttribute('d'));
-    expect(await checkunino.getAttribute('d')).toEqual('M507.15996,782.27625L311.88382,782.27625L311.88382,587.00012L507.15996,587.00012L507.15996,782.27625z');
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
+
+    const selectGrip = await app.client.$('#selectorGrip_resize_ne');
+    await selectGrip.doubleClick();
+
+    const pathpointgrip_0 = await app.client.$('#pathpointgrip_0');
+    const cxPoint_0 = await pathpointgrip_0.getAttribute('cx');
+    const pathpointgrip_1 = await app.client.$('#pathpointgrip_1');
+    const cxPoint_1 = await pathpointgrip_1.getAttribute('cx');
+    expect(Math.round(cxPoint_0-cxPoint_1)).toEqual(50);
+
+    const pathpointgrip_2 = await app.client.$('#pathpointgrip_2');
+    const cxPoint_2 = await pathpointgrip_2.getAttribute('cx');
+    const pathpointgrip_3 = await app.client.$('#pathpointgrip_3');
+    const cxPoint_3 = await pathpointgrip_3.getAttribute('cx');
+    expect(Math.round(cxPoint_3-cxPoint_2)).toEqual(50);
 });
 
 test('Check Difference ', async function() {
     const { app } = require('../../../test');
-
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
     const select = await app.client.$('#left-Cursor');
     await select.click();
 
@@ -117,7 +149,26 @@ test('Check Difference ', async function() {
     await infillswitch.click();
 
     await checkExist('#svg_10');
-    const checkunino = await app.client.$('#svg_10');
-    // console.log(await checkunino.getAttribute('d'));
-    expect(await checkunino.getAttribute('d')).toEqual('M702.43616,977.55249L311.88382,977.55249L311.88382,782.27625L507.15996,782.27625L507.15996,587.00012L702.43616,587.00012L702.43616,977.55249zM507.15996,587.00012L311.88382,587.00012L311.88382,782.27625L116.60765,782.27625L116.60765,391.72394L507.15996,391.72394L507.15996,587.00012z');
+    const result = await app.client.execute(() =>{
+        const groupvisible = svgCanvas.getVisibleElements();
+        const grouplength = $('#svg_10').children().length;
+        return {grouplength, groupvisible};
+    });
+    expect(result.grouplength).toEqual(0);
+    expect(result.groupvisible.length).toEqual(1);
+
+    const selectGrip = await app.client.$('#selectorGrip_resize_ne');
+    await selectGrip.doubleClick();
+
+    const pathpointgrip_7 = await app.client.$('#pathpointgrip_7');
+    const cxPoint_7 = await pathpointgrip_7.getAttribute('cx');
+    const pathpointgrip_6 = await app.client.$('#pathpointgrip_6');
+    const cxPoint_6 = await pathpointgrip_6.getAttribute('cx');
+    expect(Math.round(cxPoint_6-cxPoint_7)).toEqual(50);
+
+    const pathpointgrip_3 = await app.client.$('#pathpointgrip_3');
+    const cxPoint_3 = await pathpointgrip_3.getAttribute('cx');
+    const pathpointgrip_8 = await app.client.$('#pathpointgrip_8');
+    const cxPoint_8 = await pathpointgrip_8.getAttribute('cx');
+    expect(Math.round(cxPoint_3-cxPoint_8)).toEqual(50);
 });

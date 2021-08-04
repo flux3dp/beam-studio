@@ -18,7 +18,7 @@ test('Check Preference Hybrid Laser Offset', async function() {
 
     const offsetycheck_2= await app.client.$('input#diode-offset-y-input');
     const offsetycheck2_2 = await offsetycheck_2.getAttribute('value');
-    expect(offsetycheck2_2).toEqual('6.00');
+    expect(offsetycheck2_2).toEqual('6');
 
     const done = await app.client.$('div.btn.btn-done');
     await done.click();
