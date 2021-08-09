@@ -265,9 +265,8 @@
           box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
         }
         &::-webkit-slider-runnable-track {
-          height: 6px;
+          height: 4px;
           border-radius: 25px;
-          border: 1px solid #e0e0df;
           background: #e0e0df;
         }
       }
