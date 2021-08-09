@@ -267,10 +267,8 @@
         &::-webkit-slider-runnable-track {
           height: 6px;
           border-radius: 25px;
-          border: 1px solid #ededed;
-          background-blend-mode: overlay, normal;
-          background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5)),
-            linear-gradient(to right, #333333, #ffffff);
+          border: 1px solid #e0e0df;
+          background: #e0e0df;
         }
       }
       &.with-slider {
