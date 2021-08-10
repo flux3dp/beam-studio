@@ -68,8 +68,9 @@ export default {
     const { canceled, filePaths } = await dialog.showOpenDialog(options);
     if (canceled || !filePaths) return null;
     const filePath = filePaths[0];
-    const file = await fetch(filePath);
-    const fileBlob = await file.blob();
-    return fileBlob;
+    const resp = await fetch(filePath);
+    const fileBlob = await resp.blob();
+    const file = new File([fileBlob], filePath, { type: fileBlob.type });
+    return file;
   },
 } as IDialog;

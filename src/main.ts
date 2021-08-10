@@ -23,7 +23,6 @@ declare global {
     electron?: {
       ipc: any,
       events: { [key: string]: string; },
-      trigger_file_input_click: (inputId: string) => void,
       remote: any,
     },
     FLUX: {
