@@ -1,24 +1,23 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
 
-(function(G) {
-    const path = require('path');
+(function mainEntry(G) {
+  const path = require('path');
 
-    const {ipcRenderer, webFrame, remote} = require('electron');
-    const events = require(path.join(__dirname, 'ipc-events'));
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  const { ipcRenderer, remote } = require('electron');
+  // eslint-disable-next-line import/no-dynamic-require
+  const events = require(path.join(__dirname, 'ipc-events'));
 
-    // For modules not loadable in renderer process
-    G.nodeModules = {
-        '@sentry/electron': require('@sentry/electron'),
-    }
+  // For modules not loadable in renderer process
+  G.nodeModules = {
+    '@sentry/electron': require('@sentry/electron'),
+  };
 
-    G.electron = {
-        ipc: ipcRenderer,
-        events: events,
-        trigger_file_input_click: (inputId) => {
-            if(inputId.match(/^[a-zA-Z0-9\-\_]+$/)) {
-                webFrame.executeJavaScript(
-                    `document.querySelector("[data-file-input=${inputId}]").click()`, true);
-            }
-        },
-        remote,
-    }
-})(global)
+  G.electron = {
+    ipc: ipcRenderer,
+    events,
+    remote,
+  };
+}(global));

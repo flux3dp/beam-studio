@@ -38,6 +38,11 @@
         }
       }
     }
+    .path-preview-button-container {
+      position: relative;
+      float: right;
+      right: 55px;
+    }
     .element-title {
       position: relative;
       float: left;
@@ -54,7 +59,6 @@
       top: 40px;
     }
     .go-button-container {
-      position: relative;
       float: right;
       .go-btn {
         border-color: transparent transparent transparent #333333;
@@ -134,6 +138,39 @@
         transform: translateX(4.8px) rotate(-45deg);
       }
       &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  .path-preview-button-container {
+    display: inline-flex;
+    position: absolute;
+    width: 40px;
+    right: 40px;
+    height: $topBarHeight;
+    padding: 0 10px;
+    margin: 0 3px 0 0;
+    cursor: pointer;
+    .path-preview-button {
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.85;
+      }
+    }
+    &.highlighted {
+      background: #eeeeee;
+      img {
+        filter: brightness(0);
+      }
+    }
+    &:hover {
+      img {
         opacity: 1;
       }
     }

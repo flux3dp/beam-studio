@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import electron from 'electron';
 
 import viewMenu from 'helpers/menubar/view';
@@ -20,12 +21,6 @@ export default {
     return {
       RELOAD_APP: () => windowLocationReload(),
       SWITCH_VERSION: () => ElectronUpdater.switchVersion(),
-      OPEN: () => {
-        const { electron } = window;
-        if (electron) {
-          electron.trigger_file_input_click('import_image');
-        }
-      },
       UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ALIGN_TO_EDGES: () => {
         const isBezierPathAlignToEdge = svgCanvas.toggleBezierPathAlignToEdge();
