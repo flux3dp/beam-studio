@@ -11,9 +11,8 @@
   .tools-panel {
     height: 95px;
     padding: 40px 20px 0;
-    border: 1px solid #e0e0e0;
     border-width: 1px 0 0 0;
-    // margin: 30px 0 0 0;
+    background-color: #f8f8f8;
     font-size: 13px;
     .options {
       display: flex;
@@ -22,11 +21,11 @@
       justify-content: space-between;
       .play-control {
         display: flex;
-        width: 48px;
+        width: 60px;
         margin: 0 8px;
         img {
-          width: 24px;
-          height: 24px;
+          width: 30px;
+          height: 30px;
           &:not(.disabled) {
             cursor: pointer;
           }
@@ -45,7 +44,7 @@
             height: 1px;
           }
           &::-webkit-slider-thumb {
-            -webkit-appearance: none; // 一樣要消除
+            -webkit-appearance: none;
             margin-top: -5px;
             width: 10px;
             height: 10px;
@@ -61,35 +60,6 @@
       }
     }
   }
-  .btn-box {
-    display: inline-block;
-    vertical-align: middle;
-    width: 35px;
-    height: 20px;
-    border-radius: 100px;
-    background-color: #ccc;
-    box-shadow: 0px 3px 0px rgba(0, 0, 0, 0.13) inset;
-  }
-  .btn-box .btn {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: #fff;
-    margin-left: 0; /*動畫從ml為0開始*/
-    transition: 0.5s;
-    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.3);
-  }
-  .checkbox {
-    position: absolute;
-    opacity: 0;
-  }
-  .checkbox:checked + .btn-box {
-    background-color: #8f8;
-  }
-  .checkbox:checked + .btn-box .btn {
-    margin-left: 15px;
-  }
 
   .path-preview-slider-container {
     height: 15px;
@@ -97,10 +67,10 @@
       margin: 0;
       width: 100%;
       height: 15px;
-      background: none; // 清除不必要的東西
-      outline: none; // 清除不必要的東西
-      border-radius: 0; // 清除不必要的東西
-      overflow: hidden; // 晚點會用到
+      background: none;
+      outline: none;
+      border-radius: 0;
+      overflow: hidden;
       cursor: pointer;
       &::-webkit-slider-runnable-track {
         height: 4px;
@@ -114,14 +84,13 @@
         );
       }
       &::-webkit-slider-thumb {
-        -webkit-appearance: none; // 一樣要消除
+        -webkit-appearance: none;
         margin-top: -6px;
         width: 15px;
         height: 15px;
         background-color: #ffffff;
         border-radius: 7.5px;
         border: 1px solid #000;
-        // box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
       }
       // firefox
       &::-moz-range-progress {
@@ -235,7 +204,7 @@
     line-height: 16px;
     font-size: 12px;
     padding: 12px 15px;
-    background: #eeeeee;
+    background: #ffffff;
     color: #333;
     font-weight: bold;
     border: 1px solid #e0e0e0;
