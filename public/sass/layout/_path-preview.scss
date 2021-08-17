@@ -9,13 +9,14 @@
   }
 
   .tools-panel {
-    height: 95px;
+    height: 100px;
     padding: 40px 20px 0;
     border-width: 1px 0 0 0;
     background-color: #f8f8f8;
     font-size: 13px;
     .options {
       display: flex;
+      margin-top: 5px;
       align-items: center;
       flex-direction: row;
       justify-content: space-between;
