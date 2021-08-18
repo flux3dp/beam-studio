@@ -118,4 +118,8 @@
   {
     @include force-hide();
   }
+
+  .react-contextmenu--visible {
+    z-index: 5;
+  }
 }

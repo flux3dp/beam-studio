@@ -21,7 +21,6 @@ requirejs.config({
         touch: '../lib/svgeditor/touch',
         svgedit: '../lib/svgeditor/svgedit',
         jquerySvg: '../lib/svgeditor/jquery-svg',
-        jqueryContextMenu: '../lib/svgeditor/contextmenu/jquery.contextMenu',
         pathseg: '../lib/svgeditor/pathseg',
         browser: '../lib/svgeditor/browser',
         svgtransformlist: '../lib/svgeditor/svgtransformlist',
@@ -84,11 +83,8 @@ requirejs.config({
         jquerySvg: {
             deps: ['touch']
         },
-        jqueryContextMenu: {
-            deps: ['jquerySvg']
-        },
         pathseg: {
-            deps: ['jqueryContextMenu']
+            deps: ['jquerySvg']
         },
         browser: {
             deps: ['pathseg']
