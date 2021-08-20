@@ -130,9 +130,9 @@
   }
 
   #drag-image {
-    position: absolute;
+    position: fixed;
     z-index: -1;
-    width: 100%;
+    width: $sidePanelWidth;
     background-color: transparent;
     .layer-back {
       position: absolute;
