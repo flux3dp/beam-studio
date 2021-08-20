@@ -245,6 +245,7 @@
     transform: translateX(4.5px);
   }
   .bar2 {
+    transform-origin: 0 0;
     transform: translateX(13px) rotate(90deg) translateX(4.5px);
   }
   .bar3 {
