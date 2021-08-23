@@ -42,6 +42,17 @@
       position: relative;
       float: right;
       right: 55px;
+      .path-preview-button {
+        img {
+          filter: brightness(0);
+        }
+      }
+      &.highlighted {
+        background-color: #f8f8f8;
+        padding-top: 3px;
+        border: 3px solid #595959;
+        border-width: 0 0 3px 0;
+      }
     }
     .element-title {
       position: relative;
