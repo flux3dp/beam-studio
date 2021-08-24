@@ -1,0 +1,43 @@
+.media-tutorial {
+  position: relative;
+  width: 400px;
+  padding: 20px 60px 20px 60px;
+  background: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+  .media-container {
+    height: 200px;
+    margin: 0 0 20px;
+    img {
+      width: 200px;
+      height: 200px;
+    }
+    video {
+      width: 200px;
+      height: 200px;
+    }
+  }
+  .description {
+    width: 240px;
+    min-height: 50px;
+    margin: 0 0 10px;
+  }
+  .step {
+    margin: 0 0 20px;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
