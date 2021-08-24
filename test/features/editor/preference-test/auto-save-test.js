@@ -15,7 +15,7 @@ test('Check Preference Auto Save Location', async function() {
     const { app } = require('../../../test');
     const check= await app.client.$('input#location-input');
     const check2 = await check.getAttribute('value');
-    expect(check2).toEqual('D:\Documents\Beam Studio\auto-save');
+    expect(check2).not.toEqual('');
 });
 
 test('Check Preference Auto Save Every', async function() {

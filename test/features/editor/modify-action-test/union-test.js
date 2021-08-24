@@ -36,7 +36,7 @@ test('Check Union', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const unino = await app.client.$('#qa-union');
+    const unino = await app.client.$('#union');
     await unino.click();
     await checkExist('#svg_4');
 
@@ -71,7 +71,7 @@ test('Check Subtract ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const subtract = await app.client.$('#qa-subtract');
+    const subtract = await app.client.$('#subtract');
     await subtract.click();
     
     await checknotExist('#svg_5')
@@ -107,7 +107,7 @@ test('Check Intersect ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const intersect = await app.client.$('#qa-intersect');
+    const intersect = await app.client.$('#intersect');
     await intersect.click();
     await checkExist('#svg_8');
 
@@ -142,7 +142,7 @@ test('Check Difference ', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const difference = await app.client.$('#qa-difference');
+    const difference = await app.client.$('#difference');
     await difference.click();
 
     const infillswitch = await app.client.$('div.onoffswitch');

@@ -34,7 +34,6 @@ test('Check Select', async function() {
         return e.map((e) => {return e.getAttribute('id')});
     });
     expect(id).toEqual(["svg_1"]);
-
 });
 
 test('Check Multi-Select', async function() {

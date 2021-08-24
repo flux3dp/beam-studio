@@ -280,10 +280,10 @@ test('Check Array Multi Select', async function() {
 
     await checkExist('#svg_4');
     await checkExist('#svg_5');
-    await checkExist('#svg_6');
     await checkExist('#svg_7');
     await checkExist('#svg_8');
-    await checkExist('#svg_9');
+    await checkExist('#svg_10');
+    await checkExist('#svg_11');
 
     const svg_1_elli = await app.client.$('#svg_1');
     const svg_2_line = await app.client.$('#svg_2');
@@ -292,25 +292,25 @@ test('Check Array Multi Select', async function() {
     expect(await svg_4_elli.getAttribute('cx')).toEqual(await svg_1_elli.getAttribute('cx'));
     expect(Math.round((await svg_4_elli.getAttribute('cy') - await svg_1_elli.getAttribute('cy')))).toEqual(1000);
 
-    const svg_5_elli = await app.client.$('#svg_5');
-    expect(await svg_5_elli.getAttribute('cy')).toEqual(await svg_1_elli.getAttribute('cy'));
-    expect(Math.round((await svg_5_elli.getAttribute('cx') - await svg_1_elli.getAttribute('cx')))).toEqual(1000);
+    const svg_5_line = await app.client.$('#svg_5');
+    expect(await svg_5_line.getAttribute('x1')).toEqual(await svg_2_line.getAttribute('x1'));
+    expect(Math.round((await svg_5_line.getAttribute('y1') - await svg_2_line.getAttribute('y1')))).toEqual(1000);
 
-    const svg_6_elli = await app.client.$('#svg_6');
-    expect(Math.round((await svg_6_elli.getAttribute('cy') - await svg_1_elli.getAttribute('cy')))).toEqual(1000);
-    expect(Math.round((await svg_6_elli.getAttribute('cx') - await svg_1_elli.getAttribute('cx')))).toEqual(1000);
-
-    const svg_7_line = await app.client.$('#svg_7');
-    expect(await svg_7_line.getAttribute('x1')).toEqual(await svg_2_line.getAttribute('x1'));
-    expect(Math.round((await svg_7_line.getAttribute('y1') - await svg_2_line.getAttribute('y1')))).toEqual(1000);
+    const svg_7_elli = await app.client.$('#svg_7');
+    expect(await svg_7_elli.getAttribute('cy')).toEqual(await svg_1_elli.getAttribute('cy'));
+    expect(Math.round((await svg_7_elli.getAttribute('cx') - await svg_1_elli.getAttribute('cx')))).toEqual(1000);
 
     const svg_8_line = await app.client.$('#svg_8');
     expect(await svg_8_line.getAttribute('y1')).toEqual(await svg_2_line.getAttribute('y1'));
     expect(Math.round((await svg_8_line.getAttribute('x1') - await svg_2_line.getAttribute('x1')))).toEqual(1000);
 
-    const svg_9_line = await app.client.$('#svg_9');
-    expect(Math.round((await svg_9_line.getAttribute('y1') - await svg_2_line.getAttribute('y1')))).toEqual(1000);
-    expect(Math.round((await svg_9_line.getAttribute('x1') - await svg_2_line.getAttribute('x1')))).toEqual(1000);
+    const svg_10_elli = await app.client.$('#svg_10');
+    expect(Math.round((await svg_10_elli.getAttribute('cy') - await svg_1_elli.getAttribute('cy')))).toEqual(1000);
+    expect(Math.round((await svg_10_elli.getAttribute('cx') - await svg_1_elli.getAttribute('cx')))).toEqual(1000);
+
+    const svg_11_line = await app.client.$('#svg_11');
+    expect(Math.round((await svg_11_line.getAttribute('y1') - await svg_2_line.getAttribute('y1')))).toEqual(1000);
+    expect(Math.round((await svg_11_line.getAttribute('x1') - await svg_2_line.getAttribute('x1')))).toEqual(1000);
 });
 
 test('Check Array Group', async function() {
@@ -352,7 +352,7 @@ test('Check Array Group', async function() {
     
     ]);
 
-    const group = await app.client.$('#qa-group');
+    const group = await app.client.$('#group');
     await group.click();
 
     const array = await app.client.$('button#array');

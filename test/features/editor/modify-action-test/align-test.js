@@ -1,7 +1,7 @@
 const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-test('Check Top align', async function() {
+test('Check Top Align', async function() {
     const { app } = require('../../../test');
     await setReload();
     await checkExist('#svgcanvas',15000);
@@ -33,21 +33,20 @@ test('Check Top align', async function() {
         { type: 'pointerDown', button: 0, },
         { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
         { type: 'pointerUp', button: 0, },
-
         { type: 'pointerMove', x: 510, y: 510, duration: 100, },
         { type: 'pointerDown', button: 0, },
         { type: 'pointerUp', button: 0, },
     ]);
     await checkExist('#svg_3');
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
 
-    const topalign = await app.client.$('#qa-top_align');
+    const topalign = await app.client.$('#top_align');
     await topalign.click();
     
     const rectlocation = await app.client.$('#svg_1');
@@ -57,44 +56,43 @@ test('Check Top align', async function() {
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
 });
 
-test('Check Middle align', async function() {
+test('Check Middle Align', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
 
-    const middlealign = await app.client.$('#qa-middle_align');
+    const middlealign = await app.client.$('#middle_align');
     await middlealign.click();
     
     const rectlocation = await app.client.$('#svg_1');
     const rect2location = await app.client.$('#svg_2');
     const rect3location = await app.client.$('#svg_3');
-    // console.log(await rectlocation.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
 });
 
-test('Check bottom align', async function() {
+test('Check bottom Align', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-
-    const bottomalign = await app.client.$('#qa-bottom_align');
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
+    
+    const bottomalign = await app.client.$('#bottom_align');
     await bottomalign.click();
 
     const rectlocation = await app.client.$('#svg_1');
@@ -104,20 +102,20 @@ test('Check bottom align', async function() {
     expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
 });
 
-test('Check Left align', async function() {
+test('Check Left Align', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
 
-    const leftalign = await app.client.$('#qa-left_align');
+    const leftalign = await app.client.$('#left_align');
     await leftalign.click();
 
     const rectlocation = await app.client.$('#svg_1');
@@ -127,20 +125,20 @@ test('Check Left align', async function() {
     expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
 });
 
-test('check Center align', async function() {
+test('Check Center Align', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
 
-    const centeralign = await app.client.$('#qa-center_align');
+    const centeralign = await app.client.$('#center_align');
     await centeralign.click();
     
     const rectlocation = await app.client.$('#svg_1');
@@ -150,19 +148,20 @@ test('check Center align', async function() {
     expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
 });
 
-test('check Right align', async function() {
+test('Check Right Align', async function() {
     const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    const rightalign = await app.client.$('#qa-right_align');
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'a', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'a', "NULL"]);
+    }
+
+    const rightalign = await app.client.$('div#right_align.tool-btn');
     await rightalign.click();
     
     const rectlocation = await app.client.$('#svg_1');

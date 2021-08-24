@@ -59,7 +59,7 @@ test('Check Group', async function() {
     expect(result.isEllipseInsideGroup).toBe(true);
     expect(result.ispolygonInsideGroup).toBe(true);
 
-    const group = await app.client.$('#qa-group');
+    const group = await app.client.$('#group');
     await group.click();
     await checkExist('#svg_5');
 
@@ -75,7 +75,7 @@ test('Check Group', async function() {
 test('Check Unroup', async function() {
     const { app } = require('../../../test');
 
-    const ungroup = await app.client.$('#qa-ungroup');
+    const ungroup = await app.client.$('#ungroup');
     await ungroup.click();
     await checkExist('#svg_6');
     await checknotExist('#svg_5');

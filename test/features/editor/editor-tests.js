@@ -18,6 +18,7 @@ test('Init Editor', async function() {
 // require('./left-panels-test/rectangle-test');
 // require('./left-panels-test/select-test');
 // require('./left-panels-test/text-test');
+// require("./left-panels-test/upload-file-test");
 
 /* Modify Action */
 // require('./modify-action-test/align-test');
@@ -34,6 +35,7 @@ test('Init Editor', async function() {
 /* Other Test */
 // require('./other-test/calculate-path-time-test');
 // require('./other-test/copy-paste-test');
+// require('./other-test/stop-pause-test');
 // require('./other-test/undo-redo');
 
 /* Perefence */

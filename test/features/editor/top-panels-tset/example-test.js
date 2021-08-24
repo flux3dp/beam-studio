@@ -8,7 +8,7 @@ test('Example of Beamo', async function() {
     const time = await app.client.$('div.time-est-btn');
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 2 m 22 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 3 m 9 s');
 });
 
 test('Example of Beambox', async function() {
@@ -19,7 +19,7 @@ test('Example of Beambox', async function() {
     const time = await app.client.$('div.time-est-btn');
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 1 m 25 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 1 m 33 s');
 });
 
 test('Example of Material Engrave ', async function() {
@@ -31,7 +31,7 @@ test('Example of Material Engrave ', async function() {
     await time.click();
     await checkExist('div.time-est-result', 150000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 12 m 11 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 25 m 13 s');
 });
 
 test('Example of Material Engrave Classic', async function() {
@@ -43,7 +43,7 @@ test('Example of Material Engrave Classic', async function() {
     await time.click();
     await checkExist('div.time-est-result', 80000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 4 m 30 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 7 m 52 s');
 });
 
 test('Example of Material Cut', async function() {
@@ -56,7 +56,7 @@ test('Example of Material Cut', async function() {
     await time.click();
     await checkExist('div.time-est-result', 80000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 10 m 6 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 11 m 11 s');
 });
 
 test('Example of Material Cut Sample', async function() {
@@ -69,7 +69,7 @@ test('Example of Material Cut Sample', async function() {
     await time.click();
     await checkExist('div.time-est-result', 80000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 4 m 56 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 5 m 34 s');
 });
 
 test('Example of Material Line', async function() {
@@ -82,7 +82,7 @@ test('Example of Material Line', async function() {
     await time.click();
     await checkExist('div.time-est-result', 80000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 4 m 12 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 5 m 6 s');
 });
 
 test('Example of Acrylic Focus Probe', async function() {
@@ -95,5 +95,5 @@ test('Example of Acrylic Focus Probe', async function() {
     await time.click();
     await checkExist('div.time-est-result', 80000);
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 25 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 26 s');
 });

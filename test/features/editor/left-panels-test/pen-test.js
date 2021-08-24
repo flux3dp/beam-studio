@@ -109,9 +109,9 @@ test('Check Draw Pen Doubleclicks', async function() {
     ]);
     
     await checkExist('#svg_1');
-    await checkExist('div#qa-tCorner-seg-item');
-    await checkExist('div#qa-tSmooth-seg-item');
-    await checkExist('div#qa-tSymmetry-seg-item');
+    await checkExist('[title="tCorner"]');
+    await checkExist('[title="tSmooth"]');
+    await checkExist('[title="tSymmetry"]');
 
     const drawingPoint_0 = await app.client.$('#drawingPoint_0');
     const cxPoint_0 = await drawingPoint_0.getAttribute('cx');
@@ -149,7 +149,7 @@ test('Check Draw Pen tCorner', async function() {
 test('Check Draw Pen tSmooth', async function() {
     const { app } = require('../../../test');
     /* tSmooth */
-    const smooth = await app.client.$('#qa-tSmooth-seg-item');
+    const smooth = await app.client.$('[title="tSmooth"]');
     await smooth.click();
     const ctrlpoint1move2 = await app.client.$('#ctrlpointgrip_1c1'); 
     await ctrlpoint1move2.dragAndDrop({x:-50, y:-50});  
@@ -163,7 +163,7 @@ test('Check Draw Pen tSmooth', async function() {
 test('Check Draw Pen tSymmetry', async function() {
     const { app } = require('../../../test');
     /* tSymmetry */
-    const symmetry = await app.client.$('#qa-tSymmetry-seg-item');
+    const symmetry = await app.client.$('[title="tSymmetry"]');
     await symmetry.click(); 
     const ctrlpoint2move2 = await app.client.$('#ctrlpointgrip_2c1'); 
     await ctrlpoint2move2.dragAndDrop({x:0, y:-100});

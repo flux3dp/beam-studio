@@ -23,7 +23,7 @@ test('Change Power Caption', async function() {
 
 test('Check Power Enter Text', async function() {
     const { app } = require('../../../../test');
-    const modalinput = await app.client.$('#power-caption');
+    const modalinput = await app.client.$('#text-input');
     await modalinput.addValue('NOTED');
 
     const next = await app.client.$('button.btn.btn-default.primary');

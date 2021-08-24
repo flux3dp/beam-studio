@@ -58,5 +58,5 @@ test('Check Calculate Time Path', async function() {
     const time = await app.client.$('div.time-est-btn');
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
-    expect(await timereult.getText()).toEqual('Estimated Time: 8 s');
+    expect(await timereult.getText()).toEqual('Estimated Time: 9 s');
 });

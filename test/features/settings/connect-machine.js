@@ -13,14 +13,14 @@ test('Init Connect Machine', async function() {
     const skip = await app.client.$('div.skip');
     await skip.click();
 
-    const connectwifi = await app.client.$('#qa-connect-wifi');
+    const connectwifi = await app.client.$('#connect-wifi');
     await connectwifi.click();
 
-    const wifitip1 = await app.client.$('div#qa-collapse-wifi1.collapse-title');
+    const wifitip1 = await app.client.$('div#collapse-wifi1.collapse-title');
     await wifitip1.click();
     await new Promise((r) => setTimeout(r, 500));
 
-    const wifitip2 = await app.client.$('div#qa-collapse-wifi2.collapse-title');
+    const wifitip2 = await app.client.$('div#collapse-wifi2.collapse-title');
     await wifitip2.click();
     await new Promise((r) => setTimeout(r, 500));
 
@@ -33,7 +33,7 @@ test('Init Connect Machine', async function() {
     await nextstepaftwrongIP.click();
     await new Promise((r) => setTimeout(r, 15000));
 
-    const setip = await app.client.$('div#qa-ip-test-info');
+    const setip = await app.client.$('div#ip-test-info');
     const ipmessage = await setip.getText();
     await new Promise((r) => setTimeout(r, 5000));
     expect(ipmessage).toEqual("Checking IP availability... IP unreachable"); 
@@ -49,20 +49,20 @@ test('Init Connect Machine', async function() {
     await nextstepatocheck.click();
     await new Promise((r) => setTimeout(r, 15000));
 
-    const ipinfo = await app.client.$('div#qa-ip-test-info');
+    const ipinfo = await app.client.$('div#ip-test-info');
     const ip = await ipinfo.getText();
     expect(ip).toEqual("Checking IP availability... OK"); 
 
-    const machineinfo = await app.client.$('div#qa-machine-test-info');
+    const machineinfo = await app.client.$('div#machine-test-info');
     const machine = await machineinfo.getText();
     expect(machine).toEqual("Checking Machine Connection... OK");
 
-    const firmwareinfo = await app.client.$('div#qa-firmware-test-info');
+    const firmwareinfo = await app.client.$('div#firmware-test-info');
     const firmware = await firmwareinfo.getText();
     expect(firmware).toEqual("Checking firmware version... 4.0");
     await new Promise((r) => setTimeout(r, 5000));
 
-    const camerainfo = await app.client.$('div#qa-camera-test-info');
+    const camerainfo = await app.client.$('div#camera-test-info');
     const camera = await camerainfo.getText();
     expect(camera).toEqual("Checking camera availability... OK");
 
