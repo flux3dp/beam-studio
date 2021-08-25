@@ -71,6 +71,9 @@ export default {
     const resp = await fetch(filePath);
     const fileBlob = await resp.blob();
     const file = new File([fileBlob], filePath, { type: fileBlob.type });
+    Object.defineProperty(file, 'path', {
+      value: filePath,
+    });
     return file;
   },
 } as IDialog;
