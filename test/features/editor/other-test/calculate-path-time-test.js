@@ -1,4 +1,4 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, uploadFile } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Calculate Time Geometry', async function() {
@@ -59,4 +59,16 @@ test('Check Calculate Time Path', async function() {
     await time.click();
     const timereult = await app.client.$('div.time-est-result');
     expect(await timereult.getText()).toEqual('Estimated Time: 9 s');
+});
+
+test('Check Calculate Time Image', async function() {
+    const { app } = require('../../../test');
+    await setReload();
+    await checkExist('#svgcanvas',15000);
+    await uploadFile('testfile/map.png');
+
+    const time = await app.client.$('div.time-est-btn');
+    await time.click();
+    const timereult = await app.client.$('div.time-est-result');
+    expect(await timereult.getText()).toEqual('Estimated Time: 8 h 9 m');
 });

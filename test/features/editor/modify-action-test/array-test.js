@@ -1,4 +1,4 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, uploadFile } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Array Text', async function() {
@@ -39,11 +39,9 @@ test('Check Array Text', async function() {
     await app.client.keys(['Backspace', '100', "NULL"]);
     expect(await array_height.getAttribute('value')).toEqual("100");
 
-
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();
 
-    // await new Promise((r) => setTimeout(r, 150000));
     await checkExist('#svg_1');
     await checkExist('#svg_2');
     await checkExist('#svg_4');
@@ -51,15 +49,12 @@ test('Check Array Text', async function() {
 
     const svg_1_text = await app.client.$('#svg_1');
     await svg_1_text.getText();
-    // console.log(await svg_1_text.getAttribute('x'));
-    // console.log(await svg_1_text.getAttribute('y'));
 
     const svg_2_text = await app.client.$('#svg_2');
     await svg_2_text.getText();
     expect(await svg_2_text.getText()).toEqual(await svg_1_text.getText());
     expect(await svg_2_text.getAttribute('x')).toEqual(await svg_1_text.getAttribute('x'));
     expect(Math.round((await svg_2_text.getAttribute('y')-await svg_1_text.getAttribute('y')))).toEqual(1000);
-
 
     const svg_4_text = await app.client.$('#svg_4');
     await svg_4_text.getText();
@@ -76,14 +71,11 @@ test('Check Array Text', async function() {
 
 test('Check Array Geometry', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const polygon = await app.client.$('#left-Polygon');
     await polygon.click();
-
     await mouseAction([
         { type: 'pointerMove', x: 300, y: 300, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -120,7 +112,6 @@ test('Check Array Geometry', async function() {
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();
-    // await new Promise((r) => setTimeout(r, 500000));
 
     await checkExist('#svg_2');
     await checkExist('#svg_3');
@@ -143,9 +134,7 @@ test('Check Array Geometry', async function() {
 
 test('Check Array Path', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const path = await app.client.$('#left-Line');
@@ -187,7 +176,6 @@ test('Check Array Path', async function() {
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();
-    // await new Promise((r) => setTimeout(r, 500000));
 
     await checkExist('#svg_2');
     await checkExist('#svg_3');
@@ -214,9 +202,7 @@ test('Check Array Path', async function() {
 
 test('Check Array Multi Select', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const elli = await app.client.$('#left-Ellipse');
@@ -242,7 +228,6 @@ test('Check Array Multi Select', async function() {
 
     const select = await app.client.$('#left-Cursor');
     await select.click(); 
-
     await mouseAction([
         { type: 'pointerMove', x: 100, y: 100, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -315,14 +300,11 @@ test('Check Array Multi Select', async function() {
 
 test('Check Array Group', async function() {
     const { app } = require('../../../test');
-    await app.client.execute(() => {
-        location.reload();
-    });
+    await setReload();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
     await rect.click();
-
     await mouseAction([
         { type: 'pointerMove', x: 300, y: 300, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -341,9 +323,9 @@ test('Check Array Group', async function() {
 
     await app.client.keys(["TEST", "NULL"]);
     await checkExist('#svg_2');
+
     const select = await app.client.$('#left-Cursor');
     await select.click(); 
-    
     await mouseAction([
         { type: 'pointerMove', x: 200, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },
@@ -380,7 +362,7 @@ test('Check Array Group', async function() {
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();
-    // await new Promise((r) => setTimeout(r, 500000));
+
     await checkExist('g#svg_4');
     await checkExist('g#svg_5');
     await checkExist('g#svg_9');
@@ -388,7 +370,6 @@ test('Check Array Group', async function() {
     const svg_1_rect = await app.client.$('#svg_1');
     const actual_svg1_x1 = await svg_1_rect.getAttribute('x');
     const svg_1_x1 = parseFloat(actual_svg1_x1).toFixed(7);
-
     const svg_2_text = await app.client.$('#svg_2');
 
     const svg_6_rect = await app.client.$('#svg_6');
@@ -414,4 +395,47 @@ test('Check Array Group', async function() {
     const svg_15_text = await app.client.$('#svg_15');
     expect(Math.round((await svg_15_text.getAttribute('x')-await svg_2_text.getAttribute('x')))).toEqual(1000);
     expect(Math.round((await svg_15_text.getAttribute('y')-await svg_2_text.getAttribute('y')))).toEqual(1000);
+});
+
+test('Check Array Image', async function() {
+    const { app } = require('../../../test');
+    await setReload();
+    await checkExist('#svgcanvas',15000);
+    await uploadFile('testfile/cat.jpg');
+    await checkExist('image#svg_1', 50000);
+
+    const array = await app.client.$('button#array');
+    await array.click();
+
+    const array_columns = await app.client.$('input#columns');
+    await array_columns.doubleClick();
+    await app.client.keys(['Backspace', '2', "NULL"]);
+    expect(await array_columns.getAttribute('value')).toEqual("2");
+
+    const array_rows = await app.client.$('input#rows');
+    await array_rows.doubleClick();
+    await app.client.keys(['Backspace', '2', "NULL"]);
+    expect(await array_rows.getAttribute('value')).toEqual("2");
+
+    const array_width = await app.client.$('input#array_width');
+    await array_width.doubleClick();
+    await app.client.keys(['Backspace', '100', "NULL"]);
+    expect(await array_width.getAttribute('value')).toEqual("100");
+
+    const array_height = await app.client.$('input#array_height');
+    await array_height.doubleClick();
+    await app.client.keys(['Backspace', '100', "NULL"]);
+    expect(await array_height.getAttribute('value')).toEqual("100");
+
+    const next = await app.client.$('button.btn.btn-default.primary');
+    await next.click();
+    
+    await checkExist('image#svg_2', 2000);
+    await checkExist('image#svg_3', 2000);
+    await checkExist('image#svg_4', 2000);
+
+    const width = await app.client.$('input#width');
+    const height = await app.client.$('input#height');
+    expect(Math.round(await width.getAttribute('value'))).toEqual(122);
+    expect(Math.round(await height.getAttribute('value'))).toEqual(122);
 });

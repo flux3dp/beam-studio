@@ -1,4 +1,4 @@
-const { checkExist, checknotExist, setReload} = require('../../../util/utils');
+const { checkExist, checknotExist, setReload, uploadFile} = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Undo Redo Geometry', async function() {
@@ -74,8 +74,21 @@ test('Check Undo Redo Path', async function() {
         { type: 'pointerDown', button: 0, },
     ]);
     await checkExist('#svg_3');
+});
+
+test('Check Undo Redo Image', async function() {
+    const { app } = require('../../../test');
     await app.client.execute(() =>{
         svgCanvas.undoMgr.undo();
     });
+
     await checknotExist('#svg_3');
+    await uploadFile('testfile/flux.png');
+    await checkExist('#svg_4');
+    await new Promise((r) => setTimeout(r, 1000));
+    
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
+    await checknotExist('#svg_4');
 });

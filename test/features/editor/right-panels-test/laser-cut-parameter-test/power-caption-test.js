@@ -16,15 +16,16 @@ test('Change Power Caption', async function() {
 
     const gobutton = await app.client.$('div.go-button-container');
     await gobutton.click(); 
-
-    await new Promise((r) => setTimeout(r, 1000));
-    await checkExist('#power-caption',15000);
+    await checkExist('div.modal-body',15000);
 });
 
 test('Check Power Enter Text', async function() {
     const { app } = require('../../../../test');
-    const modalinput = await app.client.$('#text-input');
-    await modalinput.addValue('NOTED');
+
+    const modalinput = await app.client.$('input.text-input');
+    await modalinput.click();
+    await app.client.keys(['N', 'O', 'T', 'E', 'D', "NULL"]);
+    expect(await modalinput.getValue()).toEqual('NOTED');
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click(); 

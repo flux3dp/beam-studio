@@ -1,4 +1,4 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, uploadFile } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Copy Paste Geometry', async function() {
@@ -110,4 +110,31 @@ test('Check Copy Paste Path', async function() {
     const line2valuefix = parseFloat(line2value).toFixed(10);
 
     expect(line1valuefix).toEqual(line2valuefix);
+});
+
+test('Check Copy Paste Image', async function() {
+    const { app } = require('../../../test');
+    await uploadFile('testfile/cat.jpg');
+    await checkExist('image#svg_10', 5000);
+    
+    if(process.platform === 'darwin'){
+        await app.client.keys(['Command', 'c', "NULL"]);
+        await app.client.keys(['Command', 'v', "NULL"]);
+    } 
+    else{
+        await app.client.keys(['Control', 'c', "NULL"]);
+        await app.client.keys(['Control', 'v', "NULL"]);
+    }
+    await checkExist('image#svg_11', 50000);
+
+    const image_svg_10 = await app.client.$('#svg_10');
+    const svg10Width = await image_svg_10.getAttribute('width');
+    const svg10Height = await image_svg_10.getAttribute('height');
+
+    const image_svg_11 = await app.client.$('#svg_11');
+    const svg11Width = await image_svg_11.getAttribute('width');
+    const svg11Height = await image_svg_11.getAttribute('height');
+
+    expect(Math.round(svg10Width)).toEqual(Math.round(svg11Width));
+    expect(Math.round(svg10Height)).toEqual(Math.round(svg11Height));
 });
