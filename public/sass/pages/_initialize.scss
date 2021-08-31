@@ -41,11 +41,6 @@
     }
   }
 
-  .usb-disabled {
-    opacity: 0.6 !important;
-    cursor: normal !important;
-  }
-
   .connect-machine {
     .main-title {
       margin-bottom: 50px;
@@ -270,6 +265,9 @@
           padding: 10px 0;
           height: 50px;
           margin-bottom: 10px;
+          &.disabled {
+            pointer-events: none;
+          }
           &:focus {
             border-radius: 0px;
             border-width: 0px;
