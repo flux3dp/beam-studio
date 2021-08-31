@@ -269,7 +269,7 @@
           }
           .test-infos {
             font-weight: 600;
-            height: 80px;
+            height: 100%;
             .test-info {
               padding: 5px 0;
               color: #333333;
@@ -297,6 +297,11 @@
             outline: none;
           }
         }
+      }
+    }
+    .connection-machine-ip {
+      &.usb {
+        margin-top: 220px;
       }
     }
     .btn-page-container {
