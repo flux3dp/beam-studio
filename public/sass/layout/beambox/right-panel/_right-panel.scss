@@ -58,12 +58,11 @@
     height: calc(100% - 40px);
     right: 0;
     transition: opacity 0.3s;
-    &.win {
+    &.short {
       top: 70px;
-      width: $winSidePanelWidth;
       height: calc(100% - 70px);
     }
-    &.linux {
+    &.wide {
       width: $winSidePanelWidth;
     }
     &:hover {
