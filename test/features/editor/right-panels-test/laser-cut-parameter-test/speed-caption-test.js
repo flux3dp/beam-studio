@@ -1,9 +1,15 @@
-const { checkExist, setReload } = require('../../../../util/utils');
+const { checkExist, setAppPage } = require('../../../../util/utils');
 const { mouseAction } = require('../../../../util/actions');
 
 test('Check Speed Caption', async function() {
     const { app } = require('../../../../test');
-    await setReload();
+    await setAppPage('#studio/settings');
+
+    const speedlimit = await app.client.$('select#set-vector-speed-contraint option[value="TRUE"]');
+    await speedlimit.click();
+
+    const done = await app.client.$('div.btn.btn-done');
+    await done.click();
     await checkExist('#svgcanvas',15000);
 
     const rect = await app.client.$('#left-Rectangle');
@@ -30,8 +36,7 @@ test('Check Speed Caption', async function() {
     const gobutton = await app.client.$('div.go-button-container');
     await gobutton.click(); 
 
-    await new Promise((r) => setTimeout(r, 1000));
-    await checkExist('div.modal-alert.animate__animated.animate__bounceIn',1500);
+    await checkExist('pre.message',15000);
 
     const next = await app.client.$('button.btn.btn-default.primary');
     await next.click();    

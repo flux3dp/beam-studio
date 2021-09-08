@@ -1,12 +1,13 @@
-const { checkExist, setAppPage } = require('../../../util/utils');
+const { checkExist, setAppPage, setReload} = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
 test('Check Preference Substitute Unsupported Characters', async function() {
     const { app } = require('../../../test');
+    await setReload();
+    await checkExist('#svgcanvas',15000);
 
     const text = await app.client.$('#left-Text');
     await text.click();
-  
     await mouseAction([
         { type: 'pointerMove', x: 300, y: 300, duration: 10, },
         { type: 'pointerDown', button: 0, },
@@ -37,12 +38,25 @@ test('Check Preference Substitute Unsupported Characters', async function() {
     ]);
     await app.client.keys(['T', 'E', 'S', 'T', 'F', 'O', 'N', 'T', 'S', 'U', 'B', 'S', 'T', 'I', 'T', 'U', 'T', 'E',"NULL"]);
 
-    const optionfont = await app.client.$('option[value="標楷體"]');
-    await optionfont.click();
+    if(process.platform === 'darwin'){
+        const reactSelectControl = await app.client.$('.react-select__control');
+        await reactSelectControl.click();
+        await app.client.keys(['Arial',"Enter", "NULL"]);
+        const svg_1font= await app.client.$('#svg_1');
+        const fonttext = await svg_1font.getAttribute('font-family');
+        expect(fonttext).toEqual('Arial-BoldItalicMT');
+        await new Promise((r) => setTimeout(r, 1000));
+    } else{
+        const optionfont = await app.client.$('option[value="Arial"]');
+        await optionfont.click();
+        const svg_1font= await app.client.$('#svg_1');
+        const fonttext = await svg_1font.getAttribute('font-family');
+        expect(fonttext).toEqual('Arial');
+    }
 
     const gobutton2 = await app.client.$('div.go-button-container');
     await gobutton2.click(); 
 
-    await new Promise((r) => setTimeout(r, 1000));
-    await checkExist('div.modal-alert.animate__animated.animate__bounceIn',1500);
+    const beamo = await app.client.$('[data-test-key="FLPUAG5YEG"]');
+    await beamo.click();
 });

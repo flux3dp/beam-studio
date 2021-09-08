@@ -27,7 +27,6 @@ test('Check Decompose Path', async function() {
         { type: 'pointerMove', x: 700, y: 500, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-
     const decompose_path = await app.client.$('button#decompose_path');
     await decompose_path.click();
 

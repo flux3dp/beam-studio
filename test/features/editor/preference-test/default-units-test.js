@@ -5,10 +5,10 @@ test('Check Preference Units', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
     
-    const units = await app.client.$('select#qa-set-groups-editor option[value="inches"]');
+    const units = await app.client.$('select#set-default-units option[value="inches"]');
     await units.click();
 
-    const unitscheck= await app.client.$('select#qa-set-groups-editor');
+    const unitscheck= await app.client.$('select#set-default-units');
     const unitscheck2 = await unitscheck.getAttribute('value');
     expect(unitscheck2).toEqual('inches');
 
@@ -28,11 +28,22 @@ test('Check Preference Units', async function() {
     ]);
     await checkExist('#svg_1');
 
-    const widthcheck= await app.client.$('input#width');
-    const widthcheck2 = await widthcheck.getAttribute('value');
-    expect(widthcheck2).toEqual('1.5376');
+    if(process.platform === 'darwin'){
+        const widthcheck= await app.client.$('input#width');
+        const widthcheck2 = await widthcheck.getAttribute('value');
+        expect(widthcheck2).toEqual('1.4627');
 
-    const lengthcheck= await app.client.$('input#height');
-    const lengthcheck2 = await lengthcheck.getAttribute('value');
-    expect(lengthcheck2).toEqual('1.5376');
+        const lengthcheck= await app.client.$('input#height');
+        const lengthcheck2 = await lengthcheck.getAttribute('value');
+        expect(lengthcheck2).toEqual('1.4627');
+    } 
+    else{
+        const widthcheck= await app.client.$('input#width');
+        const widthcheck2 = await widthcheck.getAttribute('value');
+        expect(widthcheck2).toEqual('1.5376');
+    
+        const lengthcheck= await app.client.$('input#height');
+        const lengthcheck2 = await lengthcheck.getAttribute('value');
+        expect(lengthcheck2).toEqual('1.5376');
+    }
 });

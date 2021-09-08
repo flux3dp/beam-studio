@@ -34,7 +34,7 @@ test('Check Draw Ellipse', async function() {
 
     const svg_1rx = await app.client.$('#svg_1');
     const actualR = await svg_1rx.getAttribute('rx');
-    
+
     const aCX = parseFloat(actualCX).toFixed(10);
     const aCY = parseFloat(actualCY).toFixed(10);
     const aR = parseFloat(actualR).toFixed(10);

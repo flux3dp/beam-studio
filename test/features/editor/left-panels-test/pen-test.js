@@ -40,14 +40,21 @@ test('Check Draw Pen', async function() {
     ]);
     await checkExist('#svg_1');
 
-    const svg_1d = await app.client.$('#svg_1');
-    const pend = await svg_1d.getAttribute('d');
-    expect(pend).toEqual("M 116.607652 391.7239531 L 312.441882090385 390.5523526129813 L 507.7180583968756 390.5523526129813 L 507.7180583968756 585.8285289194719 L 507.7180583968756 781.1047052259626 L 312.441882090385 781.1047052259626 L 117.16570578389438 781.1047052259626 L 117.16570578389438 585.8285289194719 L 116.607652 391.7239531 z");
+    const drawingPoint_0 = await app.client.$('#drawingPoint_0');
+    const cxPoint_0 = await drawingPoint_0.getAttribute('cx');
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = await drawingPoint_1.getAttribute('cx');
+    expect(Math.round(cxPoint_1-cxPoint_0)).toEqual(50);
+
+    const drawingPoint_3 = await app.client.$('#drawingPoint_3');
+    const cyPoint_3 = await drawingPoint_3.getAttribute('cy');
+    const drawingPoint_4 = await app.client.$('#drawingPoint_4');
+    const cyPoint_4 = await drawingPoint_4.getAttribute('cy');
+    expect(Math.round(cyPoint_4-cyPoint_3)).toEqual(50);
 });
 
 test('Check Draw Pen Curve', async function() {
     const { app } = require('../../../test');
-
     await setReload();
     await checkExist('#svgcanvas',15000);
 
@@ -68,16 +75,15 @@ test('Check Draw Pen Curve', async function() {
     ]);
     
     await checkExist('#svg_1');
-    
-    await checkExist('#svg_1', 2000);
-    const svg_1d = await app.client.$('#svg_1');
-    const curved = await svg_1d.getAttribute('d');
-    expect(curved).toEqual("M 897.7123395 587.000125 C 311.8838239 1172.8286406 1288.2646832 977.5524687 897.7123395 1172.8286406 L 507.7180583968756 1366.9332341454344");
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = await drawingPoint_1.getAttribute('cx');
+    const drawingPoint_2 = await app.client.$('#drawingPoint_2');
+    const cxPoint_2 = await drawingPoint_2.getAttribute('cx');
+    expect(Math.round(cxPoint_2-cxPoint_1)).toEqual(-100);
 });
 
 test('Check Draw Pen Doubleclicks', async function() {
     const { app } = require('../../../test');
-
     await setReload();
     await checkExist('#svgcanvas',15000);
 
@@ -103,9 +109,20 @@ test('Check Draw Pen Doubleclicks', async function() {
     ]);
     
     await checkExist('#svg_1');
-    await checkExist('div#qa-tCorner-seg-item');
-    await checkExist('div#qa-tSmooth-seg-item');
-    await checkExist('div#qa-tSymmetry-seg-item');
+    await checkExist('[title="tCorner"]');
+    await checkExist('[title="tSmooth"]');
+    await checkExist('[title="tSymmetry"]');
+
+    const drawingPoint_0 = await app.client.$('#drawingPoint_0');
+    const cxPoint_0 = await drawingPoint_0.getAttribute('cx');
+    const drawingPoint_2 = await app.client.$('#drawingPoint_2');
+    const cxPoint_2 = await drawingPoint_2.getAttribute('cx');
+    expect(Math.round(cxPoint_2-cxPoint_0)).toEqual(100);
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = await drawingPoint_1.getAttribute('cx');
+    const drawingPoint_3 = await app.client.$('#drawingPoint_3');
+    const cxPoint_3 = await drawingPoint_3.getAttribute('cx');
+    expect(Math.round(cxPoint_3-cxPoint_1)).toEqual(100);
 });
 
 test('Check Draw Pen tCorner', async function() {
@@ -118,40 +135,44 @@ test('Check Draw Pen tCorner', async function() {
 
     const ctrlpoint1move = await app.client.$('#ctrlpointgrip_1c1'); 
     await ctrlpoint1move.dragAndDrop({x:-100, y:-150});
+    const cxPointmove_1 = await ctrlpoint1move.getAttribute('cx');
 
     const ctrlpoint2move = await app.client.$('#ctrlpointgrip_2c1'); 
     await ctrlpoint2move.dragAndDrop({x:100, y:-150});
+    const cxPoint_move2 = Math.round(await ctrlpoint2move.getAttribute('cx'));
 
-    const svg_1d = await app.client.$('#svg_1');
-    const curved = await svg_1d.getAttribute('d');
-    // console.log(curved);
-    expect(curved).toEqual("M897.71234,1172.82864Q637.71616,456.03495 1093.54659,976.38088Q1549.19099,455.64442 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = Math.round(await drawingPoint_1.getAttribute('cx'));   
+    expect(Math.round(cxPoint_move2-cxPoint_1)-Math.round(cxPoint_1-cxPointmove_1)).toBeLessThanOrEqual(1);
 });
 
 test('Check Draw Pen tSmooth', async function() {
     const { app } = require('../../../test');
     /* tSmooth */
-    const smooth = await app.client.$('#qa-tSmooth-seg-item');
+    const smooth = await app.client.$('[title="tSmooth"]');
     await smooth.click();
     const ctrlpoint1move2 = await app.client.$('#ctrlpointgrip_1c1'); 
     await ctrlpoint1move2.dragAndDrop({x:-50, y:-50});  
+    const cxPoint_move2 = await ctrlpoint1move2.getAttribute('cx');
 
-    const svg_2d = await app.client.$('#svg_1');
-    const curve2d = await svg_2d.getAttribute('d');
-    // console.lozg(curve2d);
-    expect(curve2d).toEqual("M897.71234,1172.82864Q442.43999,260.75878 1093.54659,976.38088Q1559.20632,1488.18094 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = await drawingPoint_1.getAttribute('cx');  
+    expect(Math.round(cxPoint_1-cxPoint_move2)).toEqual(167);
 });
 
 test('Check Draw Pen tSymmetry', async function() {
     const { app } = require('../../../test');
-     /* tSymmetry */
-     const symmetry = await app.client.$('#qa-tSymmetry-seg-item');
-     await symmetry.click(); 
-     const ctrlpoint2move2 = await app.client.$('#ctrlpointgrip_2c1'); 
-     await ctrlpoint2move2.dragAndDrop({x:0, y:-100});
- 
-     const svg_3d = await app.client.$('#svg_1');
-     const curve3d = await svg_3d.getAttribute('d');
-     // console.log(curve3d);
-     expect(curve3d).toEqual("M897.71234,1172.82864Q442.43999,651.31112 1093.54659,976.38088Q1744.65319,1301.45064 1288.82276,1171.65706L1484.09894,976.38088L1679.37512,1171.65706");
+    /* tSymmetry */
+    const symmetry = await app.client.$('[title="tSymmetry"]');
+    await symmetry.click(); 
+    const ctrlpoint2move2 = await app.client.$('#ctrlpointgrip_2c1'); 
+    await ctrlpoint2move2.dragAndDrop({x:0, y:-100});
+    const cxPoint_move2 = await ctrlpoint2move2.getAttribute('cx');
+
+    const ctrlpoint1move = await app.client.$('#ctrlpointgrip_1c1'); 
+    const cxPointmove_1 = await ctrlpoint1move.getAttribute('cx');
+
+    const drawingPoint_1 = await app.client.$('#drawingPoint_1');
+    const cxPoint_1 = await drawingPoint_1.getAttribute('cx');   
+    expect(Math.round(cxPoint_move2-cxPoint_1)-Math.round(cxPoint_1-cxPointmove_1)).toBeLessThanOrEqual(1);
 });

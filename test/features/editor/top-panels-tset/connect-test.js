@@ -1,191 +1,181 @@
-const { setAppPage } = require('../../../util/utils');
+const { setAppPage, checkExist } = require('../../../util/utils');
 
 test('Check Connect Wifi', async function() {
     const { app } = require('../../../test');
     await setAppPage('#initialize/connect/select-connection-type');
 
-    const connectwifi = await app.client.$('#qa-connect-wifi');
-    await connectwifi.click();
+    const connectWifi = await app.client.$('#connect-wifi');
+    await connectWifi.click();
 
-    const wifitip1 = await app.client.$('div#qa-collapse-wifi1.collapse-title');
-    await wifitip1.click();
-
+    const wifiTip1 = await app.client.$('div#collapse-wifi1.collapse-title');
+    await wifiTip1.click();
     await new Promise((r) => setTimeout(r, 500));
 
-    const wifitip2 = await app.client.$('div#qa-collapse-wifi2.collapse-title');
-    await wifitip2.click();
-    
+    const wifiTip2 = await app.client.$('div#collapse-wifi2.collapse-title');
+    await wifiTip2.click();
     await new Promise((r) => setTimeout(r, 500));
-    
-    const nextstep = await app.client.$('div.btn-page.primary');
-    await nextstep.click();
-    
-    const input = await app.client.$('input.ip-input');
-    await input.setValue('192.154.16.112');
-    const nextstepaftwrongIP = await app.client.$('div.btn-page.next.primary');
-    await nextstepaftwrongIP.click();
 
+    const nextStep = await app.client.$('div.btn-page.primary');
+    await nextStep.click();
+    
+    const inputWrongip = await app.client.$('input.ip-input');
+    await inputWrongip.setValue('192.154.16.112');//set wrong ip
+    const nextWrongip = await app.client.$('div.btn-page.next.primary');
+    await nextWrongip.click();
     await new Promise((r) => setTimeout(r, 15000));
 
-    const setip = await app.client.$('div#qa-ip-test-info');
-    const ipmessage = await setip.getText();
+    const wrongIp = await app.client.$('div.test-infos');
+    const ipMessage = await wrongIp.getText();
     await new Promise((r) => setTimeout(r, 5000));
+    expect(ipMessage).toEqual("Checking IP availability... IP unreachable"); 
 
-    expect(ipmessage).toEqual("Checking IP availability... IP unreachable"); 
+    const inputRightip = await app.client.$('input.ip-input');
+    await inputRightip.setValue('192.168.1.123');//set right ip 
 
-    const input2 = await app.client.$('input.ip-input');
-    await input2.setValue('192.168.68.148');
+    const nextRightip = await app.client.$('div.btn-page.next.primary');
+    await nextRightip.click();
+    await checkExist('#ip-test-info',5000);
 
-    const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
-    await nextstepaftrightIP.click();
-    await new Promise((r) => setTimeout(r, 3000));
-
-    const nextstepatocheck = await app.client.$('div.btn-page.next.primary');
-    await nextstepatocheck.click();
-    await new Promise((r) => setTimeout(r, 15000));
-
-    const ipinfo = await app.client.$('div#qa-ip-test-info');
-    const ip = await ipinfo.getText();
+    const ipInfo = await app.client.$('div#ip-test-info');
+    const ip = await ipInfo.getText();
+    await new Promise((r) => setTimeout(r, 5000));
     expect(ip).toEqual("Checking IP availability... OK"); 
-    // expect(ip).toEqual("確認 IP... "); 
 
-    const machineinfo = await app.client.$('div#qa-machine-test-info');
-    const machine = await machineinfo.getText();
+    const machineInfo = await app.client.$('div#machine-test-info');
+    const machine = await machineInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
     expect(machine).toEqual("Checking Machine Connection... OK");
 
-    const firmwareinfo = await app.client.$('div#qa-firmware-test-info');
-    const firmware = await firmwareinfo.getText();
+    const firmwareInfo = await app.client.$('div#firmware-test-info');
+    const firmware = await firmwareInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
     expect(firmware).toEqual("Checking firmware version... 3.5.1");
 
-    const camerainfo = await app.client.$('div#qa-camera-test-info');
-    const camera = await camerainfo.getText();
+
+    const cameraInfo = await app.client.$('div#camera-test-info');
+    await new Promise((r) => setTimeout(r, 5000));
+    const camera = await cameraInfo.getText();
     expect(camera).toEqual("Checking camera availability... OK");
 
-    const nextstepatofinish = await app.client.$('div.btn-page.next.primary');
-    await nextstepatofinish.click();
+    const finishSetting = await app.client.$('div.btn-page.next.primary');
+    await finishSetting.click();
 
-    await checkExist('#svgcanvas', 15000);
-
+    await checkExist('#svgcanvas',15000);
 });
 
+test('Check Connect Wired', async function() {
+    const { app } = require('../../../test');
+    await setAppPage('#initialize/connect/select-connection-type');
 
+    const connectWired = await app.client.$('#connect-wired');
+    await connectWired.click();
 
-// test('Connect Wired', async function() {
-//     const { app } = require('../../../test');
-//     await setAppPage('#initialize/connect/select-connection-type');
+    const wiredTip1 = await app.client.$('div#collapse-wired1.collapse-title');
+    await wiredTip1.click();
+    await new Promise((r) => setTimeout(r, 500));
 
-//     const connectwifi = await app.client.$('#qa-connect-wired');
-//     await connectwifi.click();
+    const wiredTip2 = await app.client.$('div#collapse-wired2.collapse-title');
+    await wiredTip2.click();
+    await new Promise((r) => setTimeout(r, 500));
 
-//     const wifitip1 = await app.client.$('div#qa-collapse-wired1.collapse-title');
-//     await wifitip1.click();
-
-//     await new Promise((r) => setTimeout(r, 5000));
-
-//     const wifitip2 = await app.client.$('div#qa-collapse-wired2.collapse-title');
-//     await wifitip2.click();
+    const nextStep = await app.client.$('div.btn-page.primary');
+    await nextStep.click();
     
-//     await new Promise((r) => setTimeout(r, 5000));
+    const inputWrongip = await app.client.$('input.ip-input');
+    await inputWrongip.setValue('192.169');//set wrong ip
+    const nextWrongip = await app.client.$('div.btn-page.next.primary');
+    await nextWrongip.click();
+    await new Promise((r) => setTimeout(r, 5000));
+
+    const wrongIp = await app.client.$('div.test-infos');
+    const ipMessage = await wrongIp.getText();
+    await new Promise((r) => setTimeout(r, 2000));
+    expect(ipMessage).toEqual("Checking IP availability... IP Invalid: Invalid format"); 
+
+    const inputRightip = await app.client.$('input.ip-input');
+    await inputRightip.setValue('192.168.1.123');//set right ip 
+
+    const nextRightip = await app.client.$('div.btn-page.next.primary');
+    await nextRightip.click();
+    await checkExist('#ip-test-info',15000);
+
+    const ipInfo = await app.client.$('div#ip-test-info');
+    const ip = await ipInfo.getText();
+    await new Promise((r) => setTimeout(r, 5000));
+    expect(ip).toEqual("Checking IP availability... OK"); 
+
+    const machineInfo = await app.client.$('div#machine-test-info');
+    const machine = await machineInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
+    expect(machine).toEqual("Checking Machine Connection... OK");
+
+    const firmwareInfo = await app.client.$('div#firmware-test-info');
+    const firmware = await firmwareInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
+    expect(firmware).toEqual("Checking firmware version... 3.5.1");
+
+    const cameraInfo = await app.client.$('div#camera-test-info');
+    await new Promise((r) => setTimeout(r, 5000));
+    const camera = await cameraInfo.getText();
+    expect(camera).toEqual("Checking camera availability... OK");
+
+    const finishSetting = await app.client.$('div.btn-page.next.primary');
+    await finishSetting.click();
+
+    await checkExist('#svgcanvas',15000);
+});
+
+test('Check Connect Etherent', async function() {
+    const { app } = require('../../../test');
+    await setAppPage('#initialize/connect/select-connection-type');
+
+    const connectEtherent = await app.client.$('#connect-ether2ether');
+    await connectEtherent.click();
+
+    const nextStep = await app.client.$('div.btn-page.primary');
+    await nextStep.click();
     
-//     const nextstep = await app.client.$('div.btn-page.primary');
-//     await nextstep.click();
-    
-//     const intput = await app.client.$('input.ip-input');
-//     await intput.setValue('192.154.16.112');
-//     const nextstepaftwrongIP = await app.client.$('div.btn-page.next.primary');
-//     await nextstepaftwrongIP.click();
+    const inputWrongip = await app.client.$('input.ip-input');
+    await inputWrongip.setValue('169.254.1.1');//set wrong ip
+    const nextWrongip = await app.client.$('div.btn-page.next.primary');
+    await nextWrongip.click();
+    await new Promise((r) => setTimeout(r, 5000));
 
-//     await new Promise((r) => setTimeout(r, 15000));
+    const wrongIp = await app.client.$('div.test-infos');
+    const ipMessage = await wrongIp.getText();
+    await new Promise((r) => setTimeout(r, 5000));
+    expect(ipMessage).toEqual("Checking IP availability... IP Invalid: Starts with 169.254"); 
 
-//     const setip = await app.client.$('div#qa-ip-test-info');
-//     const ipmessage = await setip.getText();
-//     expect(ipmessage).toEqual("Checking IP availability... IP unreachable"); 
+    const inputRightip = await app.client.$('input.ip-input');
+    await inputRightip.setValue('192.168.1.123');//set right ip 
 
-//     const intput2 = await app.client.$('input.ip-input');
-//     await intput2.setValue('192.168.16.117');
+    const nextRightip = await app.client.$('div.btn-page.next.primary');
+    await nextRightip.click();
+    await checkExist('#ip-test-info',15000);
 
-//     const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
-//     await nextstepaftrightIP.click();
-//     await new Promise((r) => setTimeout(r, 3000));
+    const ipInfo = await app.client.$('div#ip-test-info');
+    const ip = await ipInfo.getText();
+    await new Promise((r) => setTimeout(r, 5000));
+    expect(ip).toEqual("Checking IP availability... OK"); 
 
-//     const nextstepatocheck = await app.client.$('div.btn-page.next.primary');
-//     await nextstepatocheck.click();
-//     await new Promise((r) => setTimeout(r, 3000));
+    const machineInfo = await app.client.$('div#machine-test-info');
+    const machine = await machineInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
+    expect(machine).toEqual("Checking Machine Connection... OK");
 
-//     const ipinfo = await app.client.$('#qa-ip-test-info');
-//     const ip = await ipinfo.getText();
-//     expect(ip).toEqual("Checking IP availability... OK"); 
-
-//     const machineinfo = await app.client.$('#qa-machine-test-info');
-//     const machine = await machineinfo.getText();
-//     expect(machine).toEqual("Checking Machine Connection... OK");
-
-//     const firmwareinfo = await app.client.$('#qa-firmware-test-info');
-//     const firmware = await firmwareinfo.getText();
-//     expect(firmware).toEqual("Checking firmware version... 3.4");
-
-//     const camerainfo = await app.client.$('#qa-camera-test-info');
-//     const camera = await camerainfo.getText();
-//     expect(camera).toEqual("Checking camera availability... OK");
-
-//     const nextstepatofinish = await app.client.$('div.btn-page.next.primary');
-//     await nextstepatofinish.click();
-
-//     await new Promise((r) => setTimeout(r, 6000));
-
-// });
+    const firmwareInfo = await app.client.$('div#firmware-test-info');
+    const firmware = await firmwareInfo.getText();
+    await new Promise((r) => setTimeout(r, 2000));
+    expect(firmware).toEqual("Checking firmware version... 3.5.1");
 
 
-// test('Check Connect Etherent', async function() {
-//     const { app } = require('../../../test');
-//     await setAppPage('#initialize/connect/select-connection-type');
+    const cameraInfo = await app.client.$('div#camera-test-info');
+    await new Promise((r) => setTimeout(r, 5000));
+    const camera = await cameraInfo.getText();
+    expect(camera).toEqual("Checking camera availability... OK");
 
-//     const connectwifi = await app.client.$('#qa-connect-ether2ether');
-//     await connectwifi.click();
-    
-//     const nextstep = await app.client.$('div.btn-page.primary');
-//     await nextstep.click();
-    
-//     const input = await app.client.$('input.ip-input');
-//     await input.setValue('192.154.16.112');
-//     const nextstepaftwrongIP = await app.client.$('div.btn-page.next.primary');
-//     await nextstepaftwrongIP.click();
+    const finishSetting = await app.client.$('div.btn-page.next.primary');
+    await finishSetting.click();
 
-//     await new Promise((r) => setTimeout(r, 15000));
-
-//     const setip = await app.client.$('#qa-ip-test-info');
-//     expect(await setip.getText()).toEqual("Checking IP availability... IP unreachable"); 
-
-//     const input2 = await app.client.$('input.ip-input');
-//     await input2.setValue('192.168.68.148');
-
-//     const nextstepaftrightIP = await app.client.$('div.btn-page.next.primary');
-//     await nextstepaftrightIP.click();
-//     await new Promise((r) => setTimeout(r, 3000));
-
-//     const nextstepatocheck = await app.client.$('div.btn-page.next.primary');
-//     await nextstepatocheck.click();
-//     await new Promise((r) => setTimeout(r, 10000));
-
-//     const ipinfo = await app.client.$('#qa-ip-test-info');
-//     const ip = await ipinfo.getText();
-//     expect(ip).toEqual("Checking IP availability... OK"); 
-
-//     const machineinfo = await app.client.$('#qa-machine-test-info');
-//     const machine = await machineinfo.getText();
-//     expect(machine).toEqual("Checking Machine Connection... OK");
-
-//     const firmwareinfo = await app.client.$('#qa-firmware-test-info');
-//     const firmware = await firmwareinfo.getText();
-//     expect(firmware).toEqual("Checking firmware version... 3.5.1");
-
-//     const camerainfo = await app.client.$('#qa-camera-test-info');
-//     const camera = await camerainfo.getText();
-//     expect(camera).toEqual("Checking camera availability... OK");
-
-//     const nextstepatofinish = await app.client.$('div.btn-page.next.primary');
-//     await nextstepatofinish.click();
-
-//     await checkExist('#svgcanvas', 15000);
-
-// });
+    await checkExist('#svgcanvas',15000);
+});

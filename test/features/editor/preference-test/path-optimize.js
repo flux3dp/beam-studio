@@ -4,10 +4,10 @@ test('Check Preference Path Optimize', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
     
-    const speedlimit = await app.client.$('select#qa-set-simplify-clipper-path option[value="TRUE"]');
+    const speedlimit = await app.client.$('select#set-simplify-clipper-path option[value="TRUE"]');
     await speedlimit.click();
 
-    const speedcheck= await app.client.$('select#qa-set-simplify-clipper-path');
+    const speedcheck= await app.client.$('select#set-simplify-clipper-path');
     const speedcheck2 = await speedcheck.getAttribute('value');
     expect(speedcheck2).toEqual('TRUE');
 

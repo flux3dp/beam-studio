@@ -4,10 +4,10 @@ test('Check Preference Bitmap Previewing Quality ', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
     
-    const downsampling = await app.client.$('select#qa-set-downsampling option[value="FALSE"]');
+    const downsampling = await app.client.$('select#set-bitmap-quality option[value="FALSE"]');
     await downsampling.click();
 
-    const downsamplingcheck= await app.client.$('select#qa-set-simplify-clipper-path');
+    const downsamplingcheck= await app.client.$('select#set-bitmap-quality');
     const downsamplingcheck2 = await downsamplingcheck.getAttribute('value');
     expect(downsamplingcheck2).toEqual('FALSE');
 

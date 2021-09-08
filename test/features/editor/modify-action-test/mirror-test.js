@@ -20,8 +20,13 @@ test('Check Horizontal Flip', async function() {
     await HorizontalFlip.click();
     const textnotransform = await app.client.$('#svg_1');
     const transformvalue = await textnotransform.getAttribute('transform');
-    // console.log(transformvalue);
-    expect(transformvalue).toEqual('matrix(-1,0,0,1,1662.203125,0) ');
+
+    if(process.platform === 'darwin'){
+        expect(transformvalue).toEqual('matrix(-1,0,0,1,1648.453125,0) ');
+    } 
+    else{
+        expect(transformvalue).toEqual('matrix(-1,0,0,1,1662.203125,0) ');
+    }
     await new Promise((r) => setTimeout(r, 1000));
 
     const HorizontalFlip_1 = await app.client.$('div#horizontal_flip.tool-btn');
@@ -38,7 +43,12 @@ test('Check Vertical Flip', async function() {
     const texttransform = await app.client.$('#svg_1');
     const transformvalue = await texttransform.getAttribute('transform');
     // console.log(transformvalue);
-    expect(transformvalue).toEqual('matrix(1,0,0,-1,0,1483.3125) ');
+    if(process.platform === 'darwin'){
+        expect(transformvalue).toEqual('matrix(1,0,0,-1,0,1636.53125) ');
+    } 
+    else{
+        expect(transformvalue).toEqual('matrix(1,0,0,-1,0,1483.3125) ');
+    }
     await new Promise((r) => setTimeout(r, 1000));
 
     const VerticalFlip_1 = await app.client.$('div#vertical_flip.tool-btn');

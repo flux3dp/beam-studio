@@ -35,7 +35,6 @@ test('Check Group', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     await checkExist('#svg_3');
-
     const select = await app.client.$('#left-Cursor');
     await select.click();
 
@@ -45,7 +44,6 @@ test('Check Group', async function() {
         { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
-
     const result = await app.client.execute(() =>{
         let g = svgCanvas.getTempGroup();
         let childNodes = Array.from(g.childNodes);
@@ -61,7 +59,7 @@ test('Check Group', async function() {
     expect(result.isEllipseInsideGroup).toBe(true);
     expect(result.ispolygonInsideGroup).toBe(true);
 
-    const group = await app.client.$('#qa-group');
+    const group = await app.client.$('#group');
     await group.click();
     await checkExist('#svg_5');
 
@@ -77,7 +75,7 @@ test('Check Group', async function() {
 test('Check Unroup', async function() {
     const { app } = require('../../../test');
 
-    const ungroup = await app.client.$('#qa-ungroup');
+    const ungroup = await app.client.$('#ungroup');
     await ungroup.click();
     await checkExist('#svg_6');
     await checknotExist('#svg_5');

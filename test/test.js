@@ -51,3 +51,7 @@ test('App Init', async function() {
 });
 
 require('./features/editor/editor-tests');
+
+/* setting */
+// require('../test/features/settings/home-lang-test');
+// require('../settings/connect-machine');

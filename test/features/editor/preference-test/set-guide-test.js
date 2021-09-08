@@ -4,26 +4,26 @@ test('Check Preference Set Guide ', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
 
-    const openguide = await app.client.$('select#qa-set-guide option[value="TRUE"]');
+    const openguide = await app.client.$('select#set-guide option[value="TRUE"]');
     await openguide.click();
 
-    const setguidecheck= await app.client.$('select#qa-set-groups-engraving');
+    const setguidecheck= await app.client.$('select#set-guide');
     const setguidecheck2 = await setguidecheck.getAttribute('value');
     expect(setguidecheck2).toEqual('TRUE');
 
-    const selectguidex = await app.client.$('input#qa-set-settings-guides-originx');
+    const selectguidex = await app.client.$('input#guide-x-input');
     await selectguidex.doubleClick();
     await app.client.keys(['Delete', '2', '0', 'Enter', "NULL"]);
 
-    const selectguidey = await app.client.$('input#qa-set-settings-guides-originy');
+    const selectguidey = await app.client.$('input#guide-y-input');
     await selectguidey.doubleClick();
     await app.client.keys(['Delete', '3', '0', 'Enter', "NULL"]);
    
-    const selectguidexcheck= await app.client.$('input#qa-set-settings-guides-originx');
+    const selectguidexcheck= await app.client.$('input#guide-x-input');
     const selectguidexcheck2 = await selectguidexcheck.getAttribute('value');
     expect(selectguidexcheck2).toEqual('20');
 
-    const selectguideycheck= await app.client.$('input#qa-set-settings-guides-originy');
+    const selectguideycheck= await app.client.$('input#guide-y-input');
     const selectguideycheck2 = await selectguideycheck.getAttribute('value');
     expect(selectguideycheck2).toEqual('30');
 

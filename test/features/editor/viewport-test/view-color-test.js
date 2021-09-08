@@ -1,5 +1,5 @@
-const { pause, checkExist, checkVisible, updateInput, setReload } = require('../../../util/utils');
-const { mouseAction, keyAction } = require('../../../util/actions');
+const { checkExist, setReload } = require('../../../util/utils');
+const { mouseAction } = require('../../../util/actions');
 
 test('Check Color of Layer & object', async function() {
     const { app } = require('../../../test');
@@ -30,9 +30,9 @@ test('Check Color of Layer & object', async function() {
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
     await mouseAction([
-        { type: 'pointerMove', x: 300, y: 300, duration: 100, },
+        { type: 'pointerMove', x: 300, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 364, y: 364, duration: 1000, },
+        { type: 'pointerMove', x: 364, y: 264, duration: 1000, },
         { type: 'pointerUp', button: 0, },
     ]);
     await checkExist('#svg_2');
@@ -42,10 +42,11 @@ test('Check Color of Layer & object', async function() {
     
     const rectLayer0= await app.client.$('#svg_1');
     const rectColor = await rectLayer0.getAttribute('stroke');
+    expect(rectColor).toEqual("#333333");
 
     const elliLayer1 = await app.client.$('#svg_2');
     const elliColor = await elliLayer1.getAttribute('stroke');
-    expect(rectColor).not.toEqual(elliColor);
+    expect(elliColor).toEqual("#3F51B5");
 
     const switchLayer4 = await app.client.$('div.tab.layers');
     await switchLayer4.click();
@@ -53,23 +54,23 @@ test('Check Color of Layer & object', async function() {
     const add2 = await app.client.$('div.add-layer-btn');
     await add2.click();
 
+    const add3 = await app.client.$('div.add-layer-btn');
+    await add3.click();
+
     const text = await app.client.$('#left-Text');
     await text.click();
     await mouseAction([
-        { type: 'pointerMove', x: 400, y: 300, duration: 100, },
+        { type: 'pointerMove', x: 400, y: 200, duration: 100, },
         { type: 'pointerDown', button: 0, },
         { type: 'pointerUp', button: 0, },
     ]);
-    await app.client.keys(['You can see the COLOR!', "NULL"]);
+    await app.client.keys(['Use Layer Color!', "NULL"]);
     await checkExist('#svg_3');
 
     const switchLayer5 = await app.client.$('div.tab.layers');
     await switchLayer5.click();
     
-    const textLayer2= await app.client.$('#svg_1');
+    const textLayer2= await app.client.$('#svg_3');
     const textColor = await textLayer2.getAttribute('stroke');
-
-    const elliLayer2 = await app.client.$('#svg_2');
-    const elliColor1 = await elliLayer2.getAttribute('stroke');
-    expect(textColor).not.toEqual(elliColor1);
+    expect(textColor).toEqual("#FFC107");
 });

@@ -15,56 +15,86 @@ test('Check Move Object', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
     await checkExist('#svg_1');
+    const rectWidth = await app.client.$('input#width');
+    await rectWidth.doubleClick();
+    await app.client.keys(['Backspace', 'Backspace','2', '0', 'Enter',"NULL"]);
+
+    const rectHeight = await app.client.$('input#height');
+    await rectHeight.doubleClick();
+    await app.client.keys(['Backspace', '2', '0', 'Enter',"NULL"]);
 
     const rectlocation = await app.client.$('#svg_1');
     await new Promise((r) => setTimeout(r, 1000));
 
-    const rectmovex = await app.client.$('input#x_position');
-    await rectmovex.doubleClick();
+    const rectMove_x = await app.client.$('input#x_position');
+    await rectMove_x.doubleClick();
     await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
 
-    const rectmovey = await app.client.$('input#y_position');
-    await rectmovey.doubleClick();
+    const rectMove_y = await app.client.$('input#y_position');
+    await rectMove_y.doubleClick();
     await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
 
-    expect(await rectlocation.getLocation('x')).toEqual(323.771484375);
-    expect(await rectlocation.getLocation('y')).toEqual(253.32861328125);
+    const x_position = await rectlocation.getAttribute("x");
+    const y_position = await rectlocation.getAttribute("y");
+    expect(Math.round(x_position)).toEqual(600);
+    expect(Math.round(y_position)).toEqual(600);
 });
 
 test('Check Rotate Object', async function() {
     const { app } = require('../../../test');
 
-    const rectmovey = await app.client.$('input#rotate');
-    await rectmovey.doubleClick();
+    const rectRotate = await app.client.$('input#rotate');
+    await rectRotate.doubleClick();
     await app.client.keys(['Backspace', '4', '5', 'Enter',"NULL"]);
 
     const rectlocation = await app.client.$('#svg_1');
-    expect(await rectlocation.getLocation('x')).toEqual(313.4161071777344);
-    expect(await rectlocation.getLocation('y')).toEqual(242.97325134277344);
-
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
+    const rotate = await rectlocation.getAttribute("transform");
+    if(process.platform === 'darwin'){
+        expect(rotate).toEqual("rotate(45 700.0000000000002,700) ");
+    } 
+    else{
+        expect(rotate).toEqual("rotate(45 700.0000000000002,699.9999999999999) ");
+    }
 });
 
 test('Check Zoom Object', async function() {
     const { app } = require('../../../test');
-    const rectzoomin = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomin.dragAndDrop({x:200, y:200});  
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
+    const select = await app.client.$('#left-Cursor');
+    await select.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 200, y: 200, duration: 100, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
+        { type: 'pointerUp', button: 0, },
+    ]);
+
+    const rectWidth = await app.client.$('input#width');
+    await rectWidth.doubleClick();
+    await app.client.keys(['Backspace', '1', '0', '0', 'Enter',"NLL"]);
 
     const rectlocation = await app.client.$('#svg_1');
-    expect(await rectlocation.getLocation('x')).toEqual(523.771484375);
-    expect(await rectlocation.getLocation('y')).toEqual(453.32861328125);
-    await new Promise((r) => setTimeout(r, 1000));
-
-    const rectzoomout = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomout.dragAndDrop({x:-300, y:-300});  
-    expect(await rectlocation.getSize('width')).toEqual(250.00010681152344);
-    expect(await rectlocation.getSize('height')).toEqual(250.00010681152344);
+    const width = await rectlocation.getAttribute("width");
+    const height= await rectlocation.getAttribute("height");
+    expect(Math.round(width)).toEqual(1000);
+    expect(Math.round(height)).toEqual(200);
 });
 
 test('Check Infill Object', async function() {
     const { app } = require('../../../test');
+    await app.client.execute(() =>{
+        svgCanvas.undoMgr.undo();
+    });
+    const select = await app.client.$('#left-Cursor');
+    await select.click();
+    await mouseAction([
+        { type: 'pointerMove', x: 200, y: 200, duration: 100, },
+        { type: 'pointerDown', button: 0, },
+        { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
+        { type: 'pointerUp', button: 0, },
+    ]);
 
     const rectlocation = await app.client.$('#svg_1');
     const rectinnofill = await rectlocation.getAttribute('fill');
@@ -79,20 +109,22 @@ test('Check Infill Object', async function() {
 
 test('Check Zoom Lock Object', async function() {
     const { app } = require('../../../test');
-
     const infillswitch = await app.client.$('div.onoffswitch');
     await infillswitch.click();
 
     const lock = await app.client.$('div.dimension-lock');
     await lock.click();
 
-    const rectzoomin = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomin.dragAndDrop({x:-200, y:-200});  
     const rect = await app.client.$('#svg_1');
     const rectlock = await rect.getAttribute('data-ratiofixed');
     expect(rectlock).toEqual("true");
-    expect(await rect.getSize('width')).toEqual(50.000099182128906);
-    expect(await rect.getSize('height')).toEqual(50.00004959106445);
-    expect(await rect.getLocation('x')).toEqual(273.771484375);
-    expect(await rect.getLocation('y')).toEqual(203.32861328125);
+
+    const rectWidth = await app.client.$('input#width');
+    await rectWidth.doubleClick();
+    await app.client.keys(['Backspace', '8', '0', 'Enter',"NLL"]);
+
+    const width = await rect.getAttribute("width");
+    const height= await rect.getAttribute("height");
+    expect(Math.round(width)).toEqual(800);
+    expect(Math.round(height)).toEqual(800);
 });

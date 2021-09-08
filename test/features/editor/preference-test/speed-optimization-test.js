@@ -4,10 +4,10 @@ test('Check Preference Speed Optimization', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
     
-    const speedoptimization = await app.client.$('select#qa-set-groups-engraving option[value="TRUE"]');
+    const speedoptimization = await app.client.$('select#set-fast-gradient option[value="TRUE"]');
     await speedoptimization.click();
 
-    const speedoptimizationcheck= await app.client.$('select#qa-set-groups-engraving');
+    const speedoptimizationcheck= await app.client.$('select#set-fast-gradient');
     const speedoptimizationcheck2 = await speedoptimizationcheck.getAttribute('value');
     expect(speedoptimizationcheck2).toEqual('TRUE');
 

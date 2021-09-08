@@ -5,6 +5,28 @@ const pause = async (t) => {
     const { app } = application;
     await app.client.pause(t);
 };
+
+const callMenuEvent = async (data) => {
+    const { app } = application;
+    await app.client.execute((data) => {
+      const currentWebContent = electron.remote.getCurrentWebContents();
+      currentWebContent.send('MENU_CLICK', data);
+    }, data);
+};
+
+const uploadFile = async (filePath) => {
+    const { app } = application;
+    await app.client.execute(async (filePath) => {
+        const resp = await fetch(filePath);
+        const fileBlob = await resp.blob();
+        const file = new File([fileBlob], filePath, { type: fileBlob.type });
+        const path = require('path');
+        const fullPath = path.join(__dirname, filePath);
+        Object.defineProperty(file, 'path', { value: fullPath });
+        svgEditor.handleFile(file);
+    }, filePath);
+};
+
 const checkExist = async (tag, time = 10000, reverse = false) => {
     const { app } = application;
     const start = Date.now();
@@ -16,6 +38,7 @@ const checkExist = async (tag, time = 10000, reverse = false) => {
     }
     throw `Element ${tag} does not exist after ${time}`;
 };
+
 const checknotExist = async (tag, time = 10000, reverse = false) => {
     const { app } = application;
     const start = Date.now();
@@ -93,16 +116,11 @@ const restartAndSetStorage = async () => {
 };
 
 const setDefaultStorage = async () => {
-    // const currentVersion = await app.client.execute(() => {
-    //     return window['FLUX'].version;
-    // });
-    // console.log(electron)
-    // console.log(currentVersion);
     await setAppStorage({
         'printer-is-ready': true,
         'enable-sentry': 0,
-        'active-lang': 'zh-tw',
-        'last-installed-version': '1.7.1-alpha',
+        'active-lang': 'en',
+        'last-installed-version': '1.8.0-alpha',
         'questionnaire-version': 1,
         'alert-config': {
             'skip-interface-tutorial': true,
@@ -119,7 +137,7 @@ const setDefaultStorage = async () => {
             use_layer_color: true,
         },
         'rating-record': {
-            version: '1.7.1-alpha',
+            version: '1.8.0-alpha',
             isVoted: true,
         },
     });
@@ -127,6 +145,7 @@ const setDefaultStorage = async () => {
 
 module.exports = {
     pause,
+    callMenuEvent,
     checkExist,
     checknotExist,
     checkVisible,
@@ -137,4 +156,5 @@ module.exports = {
     setReload,
     restartApp,
     restartAndSetStorage,
+    uploadFile,
 };

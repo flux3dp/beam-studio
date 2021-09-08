@@ -6,7 +6,7 @@ test('Check Switch Option Check Parameter', async function() {
     await checkExist('#svgcanvas',15000);
 
     /* Wood */
-    const wood3cut = await app.client.$('option[value="木板 - 3mm 切割"]');
+    const wood3cut = await app.client.$('option[value="Wood - 3mm Cutting"]');
     await wood3cut.click();
     const wood3cutpower= await app.client.$('input#power');
     const wood3cutpowernumber = await wood3cutpower.getAttribute('value');
@@ -18,7 +18,7 @@ test('Check Switch Option Check Parameter', async function() {
     const wood3cutrepeatnumber = await wood3cutrepeat.getAttribute('value');
     expect(wood3cutrepeatnumber).toEqual('1');
 
-    const wood5cut = await app.client.$('option[value="木板 - 5mm 切割"]');
+    const wood5cut = await app.client.$('option[value="Wood - 5mm Cutting"]');
     await wood5cut.click();
     const wood5cutpower= await app.client.$('input#power');
     const wood5cutpowernumber = await wood5cutpower.getAttribute('value');
@@ -30,7 +30,7 @@ test('Check Switch Option Check Parameter', async function() {
     const wood5cutrepeatnumber = await wood5cutrepeat.getAttribute('value');
     expect(wood5cutrepeatnumber).toEqual('2');
 
-    const woodEngraving = await app.client.$('option[value="木板 - 刻印"]');
+    const woodEngraving = await app.client.$('option[value="Wood - Engraving"]');
     await woodEngraving.click();
     const woodEngravingpower= await app.client.$('input#power');
     const woodEngravingpowernumber = await woodEngravingpower.getAttribute('value');
@@ -43,7 +43,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(woodEngravingrepeatnumber).toEqual('1');
 
     /* Acrylic */
-    const acrylic3cut = await app.client.$('option[value="壓克力 - 3mm 切割"]');
+    const acrylic3cut = await app.client.$('option[value="Acrylic - 3mm Cutting"]');
     await acrylic3cut.click();
     const acrylic3cutpower= await app.client.$('input#power');
     const acrylic3cutpowernumber = await acrylic3cutpower.getAttribute('value');
@@ -55,7 +55,7 @@ test('Check Switch Option Check Parameter', async function() {
     const acrylic3cutrepeatnumber = await acrylic3cutrepeat.getAttribute('value');
     expect(acrylic3cutrepeatnumber).toEqual('1');
 
-    const acrylic5cut = await app.client.$('option[value="壓克力 - 5mm 切割"]');
+    const acrylic5cut = await app.client.$('option[value="Acrylic - 5mm Cutting"]');
     await acrylic5cut.click();
     const acrylic5cutpower= await app.client.$('input#power');
     const acrylic5cutpowernumber = await acrylic5cutpower.getAttribute('value');
@@ -67,7 +67,7 @@ test('Check Switch Option Check Parameter', async function() {
     const acrylic5cutrepeatnumber = await acrylic5cutrepeat.getAttribute('value');
     expect(acrylic5cutrepeatnumber).toEqual('2');
 
-    const acrylicEngraving = await app.client.$('option[value="壓克力 - 刻印"]');
+    const acrylicEngraving = await app.client.$('option[value="Acrylic - Engraving"]');
     await acrylicEngraving.click();
     const acrylicEngravingpower= await app.client.$('input#power');
     const acrylicEngravingpowernumber = await acrylicEngravingpower.getAttribute('value');
@@ -80,7 +80,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(acrylicEngravingrepeatnumber).toEqual('1');
 
     /* Leather */
-    const leather3cut = await app.client.$('option[value="皮革 - 3mm 切割"]');
+    const leather3cut = await app.client.$('option[value="Leather - 3mm Cutting"]');
     await leather3cut.click();
     const leather3cutpower= await app.client.$('input#power');
     const leather3cutpowernumber = await leather3cutpower.getAttribute('value');
@@ -92,7 +92,7 @@ test('Check Switch Option Check Parameter', async function() {
     const leather3cutrepeatnumber = await leather3cutrepeat.getAttribute('value');
     expect(leather3cutrepeatnumber).toEqual('1');
 
-    const leather5cut = await app.client.$('option[value="皮革 - 5mm 切割"]');
+    const leather5cut = await app.client.$('option[value="Leather - 5mm Cutting"]');
     await leather5cut.click();
     const leather5cutpower= await app.client.$('input#power');
     const leather5cutpowernumber = await leather5cutpower.getAttribute('value');
@@ -104,7 +104,7 @@ test('Check Switch Option Check Parameter', async function() {
     const leather5cutrepeatnumber = await leather5cutrepeat.getAttribute('value');
     expect(leather5cutrepeatnumber).toEqual('2');
 
-    const leatherEngraving = await app.client.$('option[value="皮革 - 刻印"]');
+    const leatherEngraving = await app.client.$('option[value="Leather - Engraving"]');
     await leatherEngraving.click();
     const leatherEngravingpower= await app.client.$('input#power');
     const leatherEngravingpowernumber = await leatherEngravingpower.getAttribute('value');
@@ -117,7 +117,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(leatherEngravingrepeatnumber).toEqual('1');
 
     /* Fabric */
-    const fabric3cut = await app.client.$('option[value="布料 - 3mm 切割"]');
+    const fabric3cut = await app.client.$('option[value="Fabric - 3mm Cutting"]');
     await fabric3cut.click();
     const fabric3cutpower= await app.client.$('input#power');
     const fabric3cutpowernumber = await fabric3cutpower.getAttribute('value');
@@ -129,7 +129,7 @@ test('Check Switch Option Check Parameter', async function() {
     const fabric3cutrepeatnumber = await fabric3cutrepeat.getAttribute('value');
     expect(fabric3cutrepeatnumber).toEqual('1');
 
-    const fabric5cut = await app.client.$('option[value="布料 - 5mm 切割"]');
+    const fabric5cut = await app.client.$('option[value="Fabric - 5mm Cutting"]');
     await fabric5cut.click();
     const fabric5cutpower= await app.client.$('input#power');
     const fabric5cutpowernumber = await fabric5cutpower.getAttribute('value');
@@ -141,7 +141,7 @@ test('Check Switch Option Check Parameter', async function() {
     const fabric5cutrepeatnumber = await fabric5cutrepeat.getAttribute('value');
     expect(fabric5cutrepeatnumber).toEqual('1');
 
-    const fabricEngraving = await app.client.$('option[value="布料 - 刻印"]');
+    const fabricEngraving = await app.client.$('option[value="Fabric - Engraving"]');
     await fabricEngraving.click();
     const fabricEngravingpower= await app.client.$('input#power');
     const fabricEngravingpowernumber = await fabricEngravingpower.getAttribute('value');
@@ -154,7 +154,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(fabricEngravingrepeatnumber).toEqual('1');
 
     /* Rubber */
-    const rubberEngraving = await app.client.$('option[value="印章墊 - 刻印"]');
+    const rubberEngraving = await app.client.$('option[value="Rubber - Engraving"]');
     await rubberEngraving.click();
     const rubberEngravingpower= await app.client.$('input#power');
     const rubberEngravingpowernumber = await rubberEngravingpower.getAttribute('value');
@@ -167,7 +167,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(rubberEngravingrepeatnumber).toEqual('1');
 
     /* Glass */
-    const glassEngraving = await app.client.$('option[value="玻璃 - 刻印"]');
+    const glassEngraving = await app.client.$('option[value="Glass - Engraving"]');
     await glassEngraving.click();
     const glassEngravingpower= await app.client.$('input#power');
     const glassEngravingpowernumber = await glassEngravingpower.getAttribute('value');
@@ -180,7 +180,7 @@ test('Check Switch Option Check Parameter', async function() {
     expect(glassEngravingrepeatnumber).toEqual('1');
 
     /* Metal */
-    const metalEngraving = await app.client.$('option[value="不鏽鋼噴劑 - 刻印"]');
+    const metalEngraving = await app.client.$('option[value="Metal - Engraving"]');
     await metalEngraving.click();
     const metalEngravingpower= await app.client.$('input#power');
     const metalEngravingpowernumber = await metalEngravingpower.getAttribute('value');
@@ -192,7 +192,7 @@ test('Check Switch Option Check Parameter', async function() {
     const metalEngravingrepeatnumber = await metalEngravingrepeat.getAttribute('value');
     expect(metalEngravingrepeatnumber).toEqual('1');
 
-    const metalEngravingdiode = await app.client.$('option[value="不鏽鋼 - 刻印（二極體雷射）"]');
+    const metalEngravingdiode = await app.client.$('option[value="Metal - Engraving (Diode Laser)"]');
     await metalEngravingdiode.click();
     const metalEngravingpowerdiode= await app.client.$('input#power');
     const metalEngravingpowernumberdiode = await metalEngravingpowerdiode.getAttribute('value');

@@ -40,7 +40,6 @@ test('Check Draw Rectangle', async function() {
     expect(Math.abs(expectedY - actualY)).toBeLessThanOrEqual(0);
     expect(Math.abs(expectedW - actualW)).toBeLessThanOrEqual(0);
     expect(Math.abs(expectedH - actualH)).toBeLessThanOrEqual(0);
-
 });
 
 test('Check Rectangle Corner', async function() {

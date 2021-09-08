@@ -5,17 +5,17 @@ test('Check Preference Font Style', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
     
-    const fontfamily = await app.client.$('select#qa-set-font-family option[value="Times New Roman"]');
+    const fontfamily = await app.client.$('select#set-default-font-family option[value="Times New Roman"]');
     await fontfamily.click();
 
-    const fontstyle = await app.client.$('select#qa-set-font-style option[value="TimesNewRomanPS-ItalicMT"]');
+    const fontstyle = await app.client.$('select#set-default-font-style option[value="TimesNewRomanPS-ItalicMT"]');
     await fontstyle.click();
 
-    const fontfamilycheck= await app.client.$('select#qa-set-font-family');
+    const fontfamilycheck= await app.client.$('select#set-default-font-family');
     const fontfamilycheck2 = await fontfamilycheck.getAttribute('value');
     expect(fontfamilycheck2).toEqual('Times New Roman');
 
-    const fontstylecheck= await app.client.$('select#qa-set-font-style');
+    const fontstylecheck= await app.client.$('select#set-default-font-style');
     const fontstylecheck2 = await fontstylecheck.getAttribute('value');
     expect(fontstylecheck2).toEqual('TimesNewRomanPS-ItalicMT');
 

@@ -4,6 +4,7 @@ test('Change Power Caption', async function() {
     const { app } = require('../../../../test');
     await setReload();
     await checkExist('#svgcanvas',15000);
+
     const power = await app.client.$('input#power');
     await power.doubleClick();
     await app.client.keys(['Backspace', '7', '5', 'Enter',"NULL"]);
@@ -15,11 +16,20 @@ test('Change Power Caption', async function() {
 
     const gobutton = await app.client.$('div.go-button-container');
     await gobutton.click(); 
+    await checkExist('div.modal-body',15000);
+});
 
-    await new Promise((r) => setTimeout(r, 1000));
-    await checkExist('div#qa-power-caption',15000);
+test('Check Power Enter Text', async function() {
+    const { app } = require('../../../../test');
+
+    const modalinput = await app.client.$('input.text-input');
+    await modalinput.click();
+    await app.client.keys(['N', 'O', 'T', 'E', 'D', "NULL"]);
+    expect(await modalinput.getValue()).toEqual('NOTED');
 
     const next = await app.client.$('button.btn.btn-default.primary');
-    await next.click();    
+    await next.click(); 
 
+    await checkExist('div.device-list');
+    await new Promise((r) => setTimeout(r, 1000));
 });

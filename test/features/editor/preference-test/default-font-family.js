@@ -5,10 +5,10 @@ test('Check Preference Font Family', async function() {
     const { app } = require('../../../test');
     await setAppPage('#studio/settings');
 
-    const fontfamily = await app.client.$('select#qa-set-font-family option[value="Times New Roman"]');
+    const fontfamily = await app.client.$('select#set-default-font-family option[value="Times New Roman"]');
     await fontfamily.click();
 
-    const fontfamilycheck= await app.client.$('select#qa-set-font-family');
+    const fontfamilycheck= await app.client.$('select#set-default-font-family');
     const fontfamilycheck2 = await fontfamilycheck.getAttribute('value');
     expect(fontfamilycheck2).toEqual('Times New Roman');
 
@@ -29,5 +29,11 @@ test('Check Preference Font Family', async function() {
     await app.client.keys(['T', 'E', 'S', 'T', 'Space','F', 'O', 'N', 'T', 'F', 'Space', 'F', 'A', 'M', 'I', 'L', 'Y', "NULL"]);
     const svg_1font= await app.client.$('#svg_1');
     const fonttext = await svg_1font.getAttribute('font-family');
-    expect(fonttext).toEqual('Times New Roman');
+    
+    if(process.platform === 'darwin'){
+        expect(fonttext).toEqual('TimesNewRomanPSMT');
+    } 
+    else{
+        expect(fonttext).toEqual('Times New Roman');
+    }
 });

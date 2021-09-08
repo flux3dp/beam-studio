@@ -18,6 +18,7 @@ test('Init Editor', async function() {
 // require('./left-panels-test/rectangle-test');
 // require('./left-panels-test/select-test');
 // require('./left-panels-test/text-test');
+// require("./left-panels-test/upload-file-test");
 
 /* Modify Action */
 // require('./modify-action-test/align-test');
@@ -34,42 +35,45 @@ test('Init Editor', async function() {
 /* Other Test */
 // require('./other-test/calculate-path-time-test');
 // require('./other-test/copy-paste-test');
+// require('./other-test/stop-pause-test');
 // require('./other-test/undo-redo');
 
 /* Perefence */
 // require('./preference-test/allreset-test');
+// require('./preference-test/beambox-model-test');
+// require('./preference-test/anti-aliasing-test');
 // require('./preference-test/auto-check-update-test');
 // require('./preference-test/auto-connect-test');
-// require('./preference-test/beambox-model-test');
+// require('./preference-test/auto-save-test');
 // require('./preference-test/bitmap-previewing-quality-test');
 // require('./preference-test/continuous-drawing-test');
 // require('./preference-test/default-autofocus-test');
 // require('./preference-test/default-diode-test');
 // require('./preference-test/default-font-family');
 // require('./preference-test/default-font-style');
-// require('./preference-test/default-open-bottom-test');
 // require('./preference-test/default-units-test');
-// require('./preference-test/font-substitue-test');not yet
+// require('./preference-test/default-open-bottom-test');
+// require('./preference-test/font-substitue-test');
 // require('./preference-test/language-test');
 // require('./preference-test/loop-compensation-test');
 // require('./preference-test/notification-test');
 // require('./preference-test/path-optimize');
 // require('./preference-test/preview-camera-speed-test');
-// require('./preference-test/save-connection-ip-test');not yet
+// require('./preference-test/save-connection-ip-test');
 // require('./preference-test/set-diode-offset-test');
-// require('./preference-test/set-guide-test');not yet
+// require('./preference-test/set-guide-test');
 // require('./preference-test/speed-optimization-test');
 // require('./preference-test/vector-speed-constraint-test');
 // require('./preference-test/workarea-clipping-test');
 
+
 /* Laser-Cut-Parameter(right-panels) */
 // require('./right-panels-test/laser-cut-parameter-test/add-parameter-test');
 // require('./right-panels-test/laser-cut-parameter-test/custom-parameter-list-test');
+// require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
 // require('./right-panels-test/laser-cut-parameter-test/remove-speed-limit-test');
 // require('./right-panels-test/laser-cut-parameter-test/reset-parameter-test');
 // require('./right-panels-test/laser-cut-parameter-test/speed-caption-test');
-// require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
-// require('./right-panels-test/laser-cut-parameter-test/power-enter-text-test');
 // require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
 
 /* Layer(right-panels) */
@@ -85,22 +89,22 @@ test('Init Editor', async function() {
 // require('./right-panels-test/layer-test/switch-layer-parameter-test');
 
 /* Top-panels */
+// require('./top-panels-tset/clear-canvas-test');
 // require('./top-panels-tset/connect-test');
-// require('./top-panels-tset');
+// require('./top-panels-tset/example-test');
+// require('./top-panels-tset/document-test');
+// require('./top-panels-tset/network-test');
+// require('./top-panels-tset/preview-camera-test');
 
 /* Viewport */
-require('./viewport-test/zoom_in_out-test');
-require('./viewport-test/fit-to-window-test');
-// require('./viewport-test/auto-fit-to-window-test');not yet
-require('./viewport-test/view-color-test');
-require('./viewport-test/percentage-test');
-// require('./viewport-test');
-// require('./viewport-test');
-// require('./viewport-test');
-
-/* setting */
-// require('../settings/home-lang-test');
-// require('../settings/connect-machine');
+// require('./viewport-test/auto-fit-to-window-test');
+// require('./viewport-test/fit-to-window-test');
+// require('./viewport-test/move-zoom-canvas-test');
+// require('./viewport-test/percentage-test.js');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/preview-camera-zoom-in-test');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/zoom-in-out-test');
 
 test('End Editor', async function() {
     const { app } = application;

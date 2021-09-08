@@ -53,7 +53,7 @@ test('Check Group Layer', async function() {
         { type: 'pointerUp', button: 0, },
     ]);
 
-    const group = await app.client.$('#qa-group');
+    const group = await app.client.$('#group');
     await group.click();
     // await new Promise((r) => setTimeout(r, 50000));
     const rectlayer1= await app.client.$('#svg_1');
@@ -63,7 +63,7 @@ test('Check Group Layer', async function() {
 
 test('Check Unroup Layer', async function() {
     const { app } = require('../../../test');
-    const ungroup = await app.client.$('#qa-ungroup');
+    const ungroup = await app.client.$('#ungroup');
     await ungroup.click();
     const rectlayer1= await app.client.$('#svg_1');
     const rectcolor2 = await rectlayer1.getAttribute('stroke');

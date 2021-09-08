@@ -17,6 +17,7 @@ test('Check Drag Layer', async function() {
 
     const choosedraglayer = await app.client.$('[data-test-key="layer-1"]'); 
     await choosedraglayer.dragAndDrop({x:0, y:30}); 
+    await new Promise((r) => setTimeout(r, 1000));
 
     const checklayer1color = await app.client.$('div#layerbackgroundColor-2');
     expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(63, 81, 181);");
@@ -24,7 +25,6 @@ test('Check Drag Layer', async function() {
 
 test('Check Drag Object of Layer', async function() {
     const { app } = require('../../../../test');
-    
     await setReload();
     await checkExist('#svgcanvas', 15000);
     
@@ -63,15 +63,12 @@ test('Check Drag Object of Layer', async function() {
     ]);
     const rectlocation = await app.client.$('#svg_1');
     await rectlocation.getLocation();
-    // console.log(await rectlocation.getLocation());
 
     const ellilocation = await app.client.$('#svg_2');
     await ellilocation.getLocation();
-    // console.log(await ellilocation.getLocation());
 
     const polylocation = await app.client.$('#svg_3');
     await polylocation.getLocation();
-    // console.log(await polylocation.getLocation());
 
     const switchlayer = await app.client.$('div.tab.layers');
     await switchlayer.click();
@@ -80,20 +77,27 @@ test('Check Drag Object of Layer', async function() {
     await add2.click();
 
     const checklayer2color = await app.client.$('div#layerbackgroundColor-2');
-    expect(await checklayer2color.getAttribute('style')).toEqual("background-color: rgb(244, 67, 54);");
-
-    const choosedraglayer = await app.client.$('[data-test-key="layer-1"]'); 
-    await choosedraglayer.dragAndDrop({x:0, y:30}); 
-
-    const checklayer1color = await app.client.$('div#layerbackgroundColor-2');
-    expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(63, 81, 181);");
-
-    const rectlocation2 = await app.client.$('#svg_1');
-    expect(await rectlocation.getLocation()).toEqual(await rectlocation2.getLocation());
-
-    const ellilocation2 = await app.client.$('#svg_2');
-    expect(await ellilocation.getLocation()).toEqual(await ellilocation2.getLocation());
-
-    const polylocation2 = await app.client.$('#svg_3');
-    expect(await polylocation.getLocation()).toEqual(await polylocation2.getLocation());
+    expect(await checklayer2color.getAttribute('style')).toEqual("background-color: rgb(244, 67, 54);");//red
+    await new Promise((r) => setTimeout(r, 1000));
+    
+    if(process.platform === 'darwin'){
+        const switchlayer3 = await app.client.$('div.tab.layers');
+        await switchlayer3.click();
+        const add3 = await app.client.$('div.add-layer-btn');
+        await add3.click();
+        const checklayer1color = await app.client.$('div#layerbackgroundColor-3');
+        expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(255, 193, 7);");
+    } 
+    else{
+        const choosedraglayer = await app.client.$('[data-test-key="layer-1"]'); 
+        await choosedraglayer.dragAndDrop({x:0, y:30}); 
+        const checklayer1color = await app.client.$('div#layerbackgroundColor-2');
+        expect(await checklayer1color.getAttribute('style')).toEqual("background-color: rgb(63, 81, 181);");//blue
+        const rectlocation2 = await app.client.$('#svg_1');
+        expect(await rectlocation.getLocation()).toEqual(await rectlocation2.getLocation());
+        const ellilocation2 = await app.client.$('#svg_2');
+        expect(await ellilocation.getLocation()).toEqual(await ellilocation2.getLocation());
+        const polylocation2 = await app.client.$('#svg_3');
+        expect(await polylocation.getLocation()).toEqual(await polylocation2.getLocation());
+    }
 });
