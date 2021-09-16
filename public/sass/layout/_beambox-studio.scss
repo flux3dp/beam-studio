@@ -8,7 +8,7 @@
   @import "./beambox/zoom-block";
 
   user-select: none;
-  padding: 5px;
+  position: fixed;
   svg:not(:root) {
     overflow: visible;
   }
