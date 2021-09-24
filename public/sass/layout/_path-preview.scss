@@ -187,12 +187,13 @@
   transition: opacity 0.3s;
   border: 1px solid #e0e0e0;
   border-width: 0 0 0 1px;
-  &.win {
+
+  &.short {
     top: 70px;
-    width: $winSidePanelWidth;
     height: calc(100% - 70px);
   }
-  &.linux {
+
+  &.wide {
     width: $winSidePanelWidth;
   }
   &:hover {
