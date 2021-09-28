@@ -26,7 +26,7 @@ function buildOSXAppMenu(callback) {
   return {
     label: 'Beam Studio',
     submenu: [
-      { label: r.about, role: 'about' },
+      { id: 'ABOUT_BEAM_STUDIO', label: r.about, click: callback },
       { id: 'SWITCH_VERSION', label: switchChannelLabel, click: callback },
       {
         id: 'PREFERENCE', label: r.preferences, accelerator: 'Cmd+,', click: callback,

@@ -34,8 +34,16 @@
         width: 150px;
       }
       .value {
-        margin-left: 10px;
         width: 165px;
+        height: 32px;
+        padding-left: 10px;
+        margin-left: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #888;
+        background-color: #fff;
+        font-size: 15px;
+        line-height: 32px;
       }
       .switch-container {
         margin-left: 0;
