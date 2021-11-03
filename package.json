@@ -104,7 +104,7 @@
     "worker-loader": "^3.0.8"
   },
   "scripts": {
-    "dev": "webpack watch",
+    "dev": "./node_modules/.bin/webpack watch",
     "test-spectron": "jest ./test/test.js",
     "start": "electron .",
     "start-debug": "electron . --debug",
