@@ -2,31 +2,23 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增多邊形物件邊數設定的選項。',
-    '關於 Bema Studio 面板新增開放原始碼資訊說明。',
   ],
   fixed: [
-    '修正某些 DXF 物件路徑計算錯誤的問題。',
-    '修正讀取部分 SVG 檔顯示錯誤。',
-    '雷射參數列表新增參數圖示更正。',
+    '修正 Windows 版本顯示問題。',
+    '修正 MacOS 右鍵選單有時沒出現的問題。',
   ],
   changed: [
-    '文字縮放預設鎖定長寬比例。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the Sides option for polygon objects.',
-    'Added the information for the open-source software in the About Beam Studio.',
   ],
   fixed: [
-    'Fixed some DXF file calculate path failed problems.',
-    'Fixed some SVG files wrong display problems.',
-    'Fixed the added icon in the Preset Manage panel.',
+    'Fixed some Windows version display bug.',
+    'Fixed some MacOS context menu behavior.',
   ],
   changed: [
-    'Freeze the scale ratio for the font objects by default.',
   ],
 };
 
