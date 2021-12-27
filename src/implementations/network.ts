@@ -62,7 +62,7 @@ export default {
             resolve2({ error: 'TOMEOUT' });
             resolved = true;
           }
-        }, 2000);
+        }, 3000);
         session.pingHost(ip, (error, target: string, sent: number, rcvd: number) => {
           if (!resolved) {
             if (error) {
