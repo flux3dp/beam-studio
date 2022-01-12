@@ -68,7 +68,8 @@ export default {
     const { canceled, filePaths } = await dialog.showOpenDialog(options);
     if (canceled || !filePaths) return null;
     const filePath = filePaths[0];
-    const resp = await fetch(filePath);
+    const fetchPath = filePath.split('/').map((seg) => encodeURIComponent(seg)).join('/');
+    const resp = await fetch(fetchPath);
     const fileBlob = await resp.blob();
     const file = new File([fileBlob], filePath, { type: fileBlob.type });
     Object.defineProperty(file, 'path', {
