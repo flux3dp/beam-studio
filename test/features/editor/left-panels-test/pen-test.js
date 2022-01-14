@@ -98,8 +98,8 @@ describe('Verify Pen Tool', () => {
     await ctrlPoint.click();
     await ctrlPoint.dragAndDrop({ x: -100, y: -150 });
 
-    const ctrlPoint2Move = await app.client.$('#ctrlpointgrip_2c1');
-    await ctrlPoint2Move.dragAndDrop({ x: 100, y: -150 });
+    const ctrlPointMove = await app.client.$('#ctrlpointgrip_2c1');
+    await ctrlPointMove.dragAndDrop({ x: 100, y: -150 });
 
     const svgD = await app.client.$('#svg_1');
     const curve = await svgD.getAttribute('d');
