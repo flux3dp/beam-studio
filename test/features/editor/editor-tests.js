@@ -1,6 +1,5 @@
-const { checkExist, checknotExist, restartApp, stopApp, setAppStorage, restartAndSetStorage, setAppPage} = require('../../util/utils');
+const { checkExist, restartAndSetStorage, setAppPage} = require('../../util/utils');
 const application = require('../../../test/test');
-const request = require('request');
 
 test('Init Editor', async function() {
     const app = await restartAndSetStorage();
@@ -11,10 +10,10 @@ test('Init Editor', async function() {
 });
 
 /* Create(left-panels) */
-// require('./left-panels-test/ellipse-test');
-// require('./left-panels-test/line-test');
-// require('./left-panels-test/pen-test');
-// require('./left-panels-test/polygon-test');
+require('./left-panels-test/ellipse-test');
+require('./left-panels-test/line-test');
+require('./left-panels-test/pen-test');
+require('./left-panels-test/polygon-test');
 // require('./left-panels-test/rectangle-test');
 // require('./left-panels-test/select-test');
 // require('./left-panels-test/text-test');
@@ -89,11 +88,11 @@ test('Init Editor', async function() {
 // require('./top-panels-tset');
 
 /* Viewport */
-require('./viewport-test/zoom_in_out-test');
-require('./viewport-test/fit-to-window-test');
+// require('./viewport-test/zoom_in_out-test');
+// require('./viewport-test/fit-to-window-test');
 // require('./viewport-test/auto-fit-to-window-test');not yet
-require('./viewport-test/view-color-test');
-require('./viewport-test/percentage-test');
+// require('./viewport-test/view-color-test');
+// require('./viewport-test/percentage-test');
 // require('./viewport-test');
 // require('./viewport-test');
 // require('./viewport-test');
