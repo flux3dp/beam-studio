@@ -26,20 +26,20 @@ test('Check Draw Ellipse', async function () {
   let expectedH = Math.pow(endPoint.y - startPoint.y, 2);
   let expectedR = Math.sqrt(expectedW + expectedH) / Math.sqrt(2);
 
-  const svg_1cx = await app.client.$('#svg_1');
-  const actualCX = await svg_1cx.getAttribute('cx');
+  const svgCx = await app.client.$('#svg_1');
+  const actualCx = await svgCx.getAttribute('cx');
 
-  const svg_1cy = await app.client.$('#svg_1');
-  const actualCY = await svg_1cy.getAttribute('cy');
+  const svgCy = await app.client.$('#svg_1');
+  const actualCy = await svgCy.getAttribute('cy');
 
-  const svg_1rx = await app.client.$('#svg_1');
-  const actualR = await svg_1rx.getAttribute('rx');
+  const svgRx = await app.client.$('#svg_1');
+  const actualR = await svgRx.getAttribute('rx');
 
-  const aCX = parseFloat(actualCX).toFixed(10);
-  const aCY = parseFloat(actualCY).toFixed(10);
-  const aR = parseFloat(actualR).toFixed(10);
+  const cx = parseFloat(actualCx).toFixed(10);
+  const cy = parseFloat(actualCy).toFixed(10);
+  const rx = parseFloat(actualR).toFixed(10);
 
-  expect(Math.abs(expectedX - aCX)).toBeLessThanOrEqual(1e-10);
-  expect(Math.abs(expectedY - aCY)).toBeLessThanOrEqual(1e-10);
-  expect(Math.abs(expectedR - aR)).toBeLessThanOrEqual(1e-10);
+  expect(Math.abs(expectedX - cx)).toBeLessThanOrEqual(1e-10);
+  expect(Math.abs(expectedY - cy)).toBeLessThanOrEqual(1e-10);
+  expect(Math.abs(expectedR - rx)).toBeLessThanOrEqual(1e-10);
 });
