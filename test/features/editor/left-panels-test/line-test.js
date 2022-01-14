@@ -30,17 +30,17 @@ test('Check Draw Line', async function () {
   const eX2 = parseFloat(expectedX2).toFixed(10);
   const eY2 = parseFloat(expectedY2).toFixed(10);
 
-  const svg_1x1 = await app.client.$('#svg_1');
-  const actualX1 = await svg_1x1.getAttribute('x1');
+  const svgX1 = await app.client.$('#svg_1');
+  const actualX1 = await svgX1.getAttribute('x1');
 
-  const svg_1y1 = await app.client.$('#svg_1');
-  const actualY1 = await svg_1y1.getAttribute('y1');
+  const svgY1 = await app.client.$('#svg_1');
+  const actualY1 = await svgY1.getAttribute('y1');
 
-  const svg_1x2 = await app.client.$('#svg_1');
-  const actualX2 = await svg_1x2.getAttribute('x2');
+  const svgX2 = await app.client.$('#svg_1');
+  const actualX2 = await svgX2.getAttribute('x2');
 
-  const svg_1y2 = await app.client.$('#svg_1');
-  const actualY2 = await svg_1y2.getAttribute('y2');
+  const svgY2 = await app.client.$('#svg_1');
+  const actualY2 = await svgY2.getAttribute('y2');
 
   const aX1 = parseFloat(actualX1).toFixed(10);
   const aY1 = parseFloat(actualY1).toFixed(10);
