@@ -8,6 +8,7 @@ const CHANGES_TW = {
     '修正工作預覽在圖層速度較快時，預估時間會和計算工作時間不同的問題。',
     '修正無法讀取資料夾路徑中含有 # 字號的檔案。',
     '修正文字在旋轉並縮放之後移動會導致位置計算錯誤的問題。',
+    '修正 Windows 系統檔案匯入問題',
   ],
   changed: [
   ],
@@ -21,6 +22,7 @@ const CHANGES_EN = {
     'Fixed time estimation deviation in path preview mode when engraving speed is fast.',
     'Fixed failed to load files whose path containing #.',
     'Fixed position error when moving rotated and scaled text elements.',
+    'Fixed file import bug in Windows.',
   ],
   changed: [
   ],
