@@ -9,6 +9,8 @@ const CHANGES_TW = {
     '修正無法讀取資料夾路徑中含有 # 字號的檔案。',
     '修正文字在旋轉並縮放之後移動會導致位置計算錯誤的問題。',
     '修正 Windows 系統檔案匯入問題',
+    '修正圖層色彩面板顯示問題',
+    '修正部分 Windows 系統讀取 PDF, AI 檔時的問題',
   ],
   changed: [
   ],
@@ -23,6 +25,8 @@ const CHANGES_EN = {
     'Fixed failed to load files whose path containing #.',
     'Fixed position error when moving rotated and scaled text elements.',
     'Fixed file import bug in Windows.',
+    'Fixed layer color picker panel display bug.',
+    'Fixed AI, PDF files loading issue for certain Windows computers.',
   ],
   changed: [
   ],
