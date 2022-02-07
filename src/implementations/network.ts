@@ -56,17 +56,27 @@ export default {
       let successCount = 0;
       let totalRRT = 0;
       const doPing = () => new Promise<{ error?: string, rrt?: number }>((resolve2) => {
-        session.pingHost(ip, (error, target: string, sent: number, rcvd: number) => {
-          if (error) {
-            // console.log(`${target}: ${error.toString()}`);
-            if (error.toString().match('Invalid IP address')) {
-              resolve2({ error: 'INVALID_IP' });
-            } else {
-              resolve2({ error: error.toString() });
-            }
-          } else {
-            resolve2({ rrt: rcvd - sent });
+        let resolved = false;
+        setTimeout(() => {
+          if (!resolved) {
+            resolve2({ error: 'TOMEOUT' });
+            resolved = true;
           }
+        }, 3000);
+        session.pingHost(ip, (error, target: string, sent: number, rcvd: number) => {
+          if (!resolved) {
+            if (error) {
+              // console.log(`${target}: ${error.toString()}`);
+              if (error.toString().match('Invalid IP address')) {
+                resolve2({ error: 'INVALID_IP' });
+              } else {
+                resolve2({ error: error.toString() });
+              }
+            } else {
+              resolve2({ rrt: rcvd - sent });
+            }
+          }
+          resolved = true;
         });
       });
       while (Date.now() < start + time) {
