@@ -1,7 +1,7 @@
 {
   "name": "beam-studio",
   "productName": "Beam Studio",
-  "version": "1.8.1-alpha",
+  "version": "1.9.0-alpha",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -14,7 +14,6 @@
     "@simonwep/pickr": "^1.2.6",
     "@szhsin/react-menu": "^1.10.1",
     "@types/html2canvas": "^0.0.35",
-    "@types/jest": "^26.0.20",
     "@types/webdriverio": "^5.0.0",
     "animate.css": "^4.1.0",
     "assert": "^2.0.0",
@@ -103,7 +102,7 @@
     "worker-loader": "^3.0.8"
   },
   "scripts": {
-    "dev": "webpack watch",
+    "dev": "./node_modules/.bin/webpack watch",
     "test-spectron": "jest ./test/test.js",
     "start": "electron .",
     "start-debug": "electron . --debug",
