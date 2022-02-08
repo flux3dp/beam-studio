@@ -63,6 +63,19 @@ function menuBar() {
   });
 }
 
+const setReferer = () => {
+  const filter = {
+    urls: ['https://id.flux3dp.com/*'],
+  };
+  remote.session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+    const header = {
+      ...details.requestHeaders,
+      Referer: 'https://id.flux3dp.com',
+    };
+    callback({ requestHeaders: header });
+  });
+};
+
 export default function main(): void {
   window.FLUX.version = remote.app.getVersion();
   console.log(`Beam-Studio: ${window.FLUX.version}`);
@@ -71,7 +84,7 @@ export default function main(): void {
   //   // google analytics
   //   $.getScript('/js/helpers/analytics.js');
   // }
-
+  setReferer();
   menuBar();
   communicator.on('WINDOW_CLOSE', async () => {
     const res = await fileExportHelper.toggleUnsavedChangedDialog();

@@ -56,12 +56,13 @@ const recentMenuUpdater = {
               svgCanvas.updateRecentFiles(filePath);
               try {
                 svgCanvas.clearSelection();
+                const fetchPath = filePath.split('/').map((seg) => encodeURIComponent(seg)).join('/');
                 if (filePath.endsWith('beam')) {
-                  const resp = await fetch(filePath);
+                  const resp = await fetch(fetchPath);
                   const blob = await resp.blob();
                   await BeamFileHelper.readBeam(blob as File);
                 } else if (filePath.endsWith('bvg')) {
-                  const resp = await fetch(filePath);
+                  const resp = await fetch(fetchPath);
                   const blob = await resp.blob();
                   svgEditor.importBvg(blob);
                 }
