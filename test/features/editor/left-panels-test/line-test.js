@@ -20,10 +20,10 @@ test('Check Draw Line', async function () {
 
   const startPoint = await pageCoordtoCanvasCoord({ x: 300, y: 300 });
   const endPoint = await pageCoordtoCanvasCoord({ x: 500, y: 500 });
-  let expectedX1 = startPoint.x;
-  let expectedY1 = startPoint.y;
-  let expectedX2 = endPoint.x;
-  let expectedY2 = endPoint.y;
+  const expectedX1 = startPoint.x;
+  const expectedY1 = startPoint.y;
+  const expectedX2 = endPoint.x;
+  const expectedY2 = endPoint.y;
 
   const eX1 = parseFloat(expectedX1).toFixed(10);
   const eY1 = parseFloat(expectedY1).toFixed(10);

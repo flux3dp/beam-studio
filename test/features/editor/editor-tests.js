@@ -85,7 +85,6 @@ require('./right-panels-test/layer-test/switch-layer-parameter-test');
 
 /* Top-panels */
 require('./top-panels-tset/connect-test');
-require('./top-panels-tset');
 
 /* Viewport */
 require('./viewport-test/zoom_in_out-test');
