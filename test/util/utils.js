@@ -87,7 +87,7 @@ const setDefaultStorage = async () => {
     'printer-is-ready': true,
     'enable-sentry': 0,
     'active-lang': 'zh-tw',
-    'last-installed-version': '1.8.1-alpha',
+    'last-installed-version': '1.9.0-alpha',
     'questionnaire-version': 1,
     'alert-config': {
       'skip-interface-tutorial': true,
@@ -104,7 +104,7 @@ const setDefaultStorage = async () => {
       use_layer_color: true,
     },
     'rating-record': {
-      version: '1.8.1-alpha',
+      version: '1.9.0-alpha',
       isVoted: true,
     },
   });
