@@ -1,184 +1,189 @@
 const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-test('Check Top align', async function() {
-    const { app } = require('../../../test');
-    await setReload();
-    await checkExist('#svgcanvas',15000);
+describe('Verify Polygon Tool', () => {
+  beforeEach(() => {
+    setReload();
+    checkExist('#svgcanvas', 15000);
+  });
 
+  test('Check Top Align', async function () {
+    const { app } = require('../../../test');
     const rect = await app.client.$('#left-Rectangle');
     await rect.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 250, y: 250, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    await checkExist('#svg_1');
-    
+    drawing();
     const rect2 = await app.client.$('#left-Rectangle');
     await rect2.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 350, y: 350, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    await checkExist('#svg_2');
-    
+    drawing2();
     const rect3 = await app.client.$('#left-Rectangle');
     await rect3.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 450, y: 450, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
+    drawing3();
+    selectAll();
 
-        { type: 'pointerMove', x: 510, y: 510, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    await checkExist('#svg_3');
+    const topAlign = await app.client.$('#top_align');
+    await topAlign.click();
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('y')).toEqual(await svg2.getLocation('y'));
+    expect(await svg1.getLocation('y')).toEqual(await svg3.getLocation('y'));
+  });
 
-    const topalign = await app.client.$('#qa-top_align');
-    await topalign.click();
-    
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
-    expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
-    // console.log(await rectlocation.getLocation('y'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
-
-test('Check Middle align', async function() {
+  test('Check Middle Align', async function () {
     const { app } = require('../../../test');
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    drawing();
+    const rect2 = await app.client.$('#left-Rectangle');
+    await rect2.click();
+    drawing2();
+    const rect3 = await app.client.$('#left-Rectangle');
+    await rect3.click();
+    drawing3();
+    selectAll();
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    const middleAlign = await app.client.$('#middle_align');
+    await middleAlign.click();
 
-    const middlealign = await app.client.$('#qa-middle_align');
-    await middlealign.click();
-    
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    // console.log(await rectlocation.getLocation('y'));
-    expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
-    expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
- 
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('y')).toEqual(await svg2.getLocation('y'));
+    expect(await svg1.getLocation('y')).toEqual(await svg3.getLocation('y'));
+  });
 
-test('Check bottom align', async function() {
+  test('Check Bottom Align', async function () {
     const { app } = require('../../../test');
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    drawing();
+    const rect2 = await app.client.$('#left-Rectangle');
+    await rect2.click();
+    drawing2();
+    const rect3 = await app.client.$('#left-Rectangle');
+    await rect3.click();
+    drawing3();
+    selectAll();
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    const bottomAlign = await app.client.$('#bottom_align');
+    await bottomAlign.click();
 
-    const bottomalign = await app.client.$('#qa-bottom_align');
-    await bottomalign.click();
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('y')).toEqual(await svg2.getLocation('y'));
+    expect(await svg1.getLocation('y')).toEqual(await svg3.getLocation('y'));
+  });
 
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    // console.log(await rectlocation.getLocation('y'));
-    expect(await rectlocation.getLocation('y')).toEqual(await rect2location.getLocation('y'));
-    expect(await rectlocation.getLocation('y')).toEqual(await rect3location.getLocation('y'));
- 
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
-
-test('Check Left align', async function() {
+  test('Check Left Align', async function () {
     const { app } = require('../../../test');
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    drawing();
+    const rect2 = await app.client.$('#left-Rectangle');
+    await rect2.click();
+    drawing2();
+    const rect3 = await app.client.$('#left-Rectangle');
+    await rect3.click();
+    drawing3();
+    selectAll();
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    const leftAlign = await app.client.$('#left_align');
+    await leftAlign.click();
 
-    const leftalign = await app.client.$('#qa-left_align');
-    await leftalign.click();
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('x')).toEqual(await svg2.getLocation('x'));
+    expect(await svg1.getLocation('x')).toEqual(await svg3.getLocation('x'));
+  });
 
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
-    expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
-
-test('check Center align', async function() {
+  test('Check Center Align', async function () {
     const { app } = require('../../../test');
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    drawing();
+    const rect2 = await app.client.$('#left-Rectangle');
+    await rect2.click();
+    drawing2();
+    const rect3 = await app.client.$('#left-Rectangle');
+    await rect3.click();
+    drawing3();
+    selectAll();
 
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+    const centerAlign = await app.client.$('#center_align');
+    await centerAlign.click();
 
-    const centeralign = await app.client.$('#qa-center_align');
-    await centeralign.click();
-    
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
-    expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('x')).toEqual(await svg2.getLocation('x'));
+    expect(await svg1.getLocation('x')).toEqual(await svg3.getLocation('x'));
+  });
 
-test('check Right align', async function() {
+  test('Check Right Align', async function () {
     const { app } = require('../../../test');
-    
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    drawing();
+    const rect2 = await app.client.$('#left-Rectangle');
+    await rect2.click();
+    drawing2();
+    const rect3 = await app.client.$('#left-Rectangle');
+    await rect3.click();
+    drawing3();
+    selectAll();
+
+    const rightAlign = await app.client.$('#right_align');
+    await rightAlign.click();
+
+    const svg1 = await app.client.$('#svg_1');
+    const svg2 = await app.client.$('#svg_2');
+    const svg3 = await app.client.$('#svg_3');
+    expect(await svg1.getLocation('x')).toEqual(await svg2.getLocation('x'));
+    expect(await svg1.getLocation('x')).toEqual(await svg3.getLocation('x'));
+  });
+
+  function drawing() {
+    mouseAction([
+      { type: 'pointerMove', x: 250, y: 250, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
     ]);
-    
-    const rightalign = await app.client.$('#qa-right_align');
-    await rightalign.click();
-    
-    const rectlocation = await app.client.$('#svg_1');
-    const rect2location = await app.client.$('#svg_2');
-    const rect3location = await app.client.$('#svg_3');
-    expect(await rectlocation.getLocation('x')).toEqual(await rect2location.getLocation('x'));
-    expect(await rectlocation.getLocation('x')).toEqual(await rect3location.getLocation('x'));
-    // console.log(await rectlocation.getLocation('x'));
-    await app.client.execute(() =>{
-    svgCanvas.undoMgr.undo();
-    });
+    checkExist('#svg_1');
+  };
+
+  function drawing2() {
+    mouseAction([
+      { type: 'pointerMove', x: 350, y: 350, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 400, y: 400, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
+    ]);
+    checkExist('#svg_2');
+  };
+
+  function drawing3() {
+    mouseAction([
+      { type: 'pointerMove', x: 450, y: 450, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
+      { type: 'pointerMove', x: 510, y: 510, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerUp', button: 0, },
+    ]);
+    checkExist('#svg_3');
+  };
+
+  function selectAll() {
+    mouseAction([
+      { type: 'pointerMove', x: 100, y: 100, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 600, y: 600, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
+    ]);
+  };
 });
