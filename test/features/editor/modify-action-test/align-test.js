@@ -1,7 +1,7 @@
 const { checkExist, setReload } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-describe('Verify Polygon Tool', () => {
+describe('Verify Align Tool', () => {
   beforeEach(() => {
     setReload();
     checkExist('#svgcanvas', 15000);
