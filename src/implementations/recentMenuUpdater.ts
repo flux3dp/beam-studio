@@ -56,7 +56,7 @@ const recentMenuUpdater = {
               svgCanvas.updateRecentFiles(filePath);
               try {
                 svgCanvas.clearSelection();
-                const fetchPath = filePath.split('/').map((seg) => encodeURIComponent(seg)).join('/');
+                const fetchPath = filePath.replaceAll('#', '%23');
                 if (filePath.endsWith('beam')) {
                   const resp = await fetch(fetchPath);
                   const blob = await resp.blob();
