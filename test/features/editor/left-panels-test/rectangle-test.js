@@ -10,8 +10,6 @@ describe('Verify Rectangle Tool', () => {
 
   test('Check Draw Rectangle', async function () {
     const { app } = require('../../../test');
-    const rect = await app.client.$('#left-Rectangle');
-    await rect.click();
     drawing();
 
     const startPoint = await pageCoordtoCanvasCoord({ x: 300, y: 300 });
@@ -40,8 +38,6 @@ describe('Verify Rectangle Tool', () => {
 
   test('Check Rectangle Corner', async function () {
     const { app } = require('../../../test');
-    const rect = await app.client.$('#left-Rectangle');
-    await rect.click();
     drawing();
 
     const cornerInput = await app.client.$('div.option-input.ui.ui-control-unit-input-v2');
@@ -63,13 +59,15 @@ describe('Verify Rectangle Tool', () => {
     expect(actualInfill).toEqual("1");
   });
 
-  function drawing() {
-    mouseAction([
+  async function drawing() {
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    await mouseAction([
       { type: 'pointerMove', x: 300, y: 300, duration: 100, },
       { type: 'pointerDown', button: 0, },
       { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
       { type: 'pointerUp', button: 0, },
     ]);
-    checkExist('#svg_1');
+    await checkExist('#svg_1');
   };
 });

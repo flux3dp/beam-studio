@@ -11,20 +11,13 @@ describe('Verify Select Tool', () => {
     const { app } = require('../../../test');
     const polygon = await app.client.$('#left-Polygon');
     await polygon.click();
-
     await mouseAction([
       { type: 'pointerMove', x: 200, y: 200, duration: 100, },
       { type: 'pointerDown', button: 0, },
       { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
       { type: 'pointerUp', button: 0, },
     ]);
-
-    await mouseAction([
-      { type: 'pointerMove', x: 200, y: 200, duration: 100, },
-      { type: 'pointerDown', button: 0, },
-      { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
-      { type: 'pointerUp', button: 0, },
-    ]);
+    await selectAll();
     await new Promise((r) => setTimeout(r, 1000));
 
     const result = await app.client.execute(() => {
@@ -43,7 +36,6 @@ describe('Verify Select Tool', () => {
     const { app } = require('../../../test');
     const rect = await app.client.$('#left-Rectangle');
     await rect.click();
-
     await mouseAction([
       { type: 'pointerMove', x: 200, y: 200, duration: 100, },
       { type: 'pointerDown', button: 0, },
@@ -53,20 +45,13 @@ describe('Verify Select Tool', () => {
 
     const elli = await app.client.$('#left-Ellipse');
     await elli.click();
-
     await mouseAction([
       { type: 'pointerMove', x: 400, y: 400, duration: 100, },
       { type: 'pointerDown', button: 0, },
       { type: 'pointerMove', x: 450, y: 450, duration: 1000, },
       { type: 'pointerUp', button: 0, },
     ]);
-
-    await mouseAction([
-      { type: 'pointerMove', x: 150, y: 150, duration: 100, },
-      { type: 'pointerDown', button: 0, },
-      { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
-      { type: 'pointerUp', button: 0, },
-    ]);
+    await selectAll();
     await new Promise((r) => setTimeout(r, 1000));
 
     const result = await app.client.execute(() => {
@@ -81,4 +66,15 @@ describe('Verify Select Tool', () => {
     expect(result.isRectInsideGroup).toBe(true);
     expect(result.isEllipseInsideGroup).toBe(true);
   });
+
+  async function selectAll() {
+    const select = await app.client.$('#left-Cursor');
+    await select.click();
+    await mouseAction([
+      { type: 'pointerMove', x: 150, y: 150, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 500, y: 500, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
+    ]);
+  };
 });

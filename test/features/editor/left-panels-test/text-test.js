@@ -9,18 +9,14 @@ describe('Verify Text Tool', () => {
 
   test('Check Create Text ', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const svg = await app.client.$('#svg_1');
     expect(await svg.getText()).toEqual('TEST');
   });
 
   test('Check Text Font Style', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
 
     if (process.platform === 'darwin') {
       const optionStyle = await app.client.$('option[value="Medium"]');
@@ -39,9 +35,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Font Family', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
 
     if (process.platform === 'darwin') {
       const select = await app.client.$('div.react-select__input > input');
@@ -61,9 +55,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Font Size', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const sizeInput = await app.client.$('input#font_size');
     await sizeInput.doubleClick();
     await app.client.keys(['Backspace', 'Backspace', 'Backspace', '1', '5', '0', 'Enter', "NULL"]);
@@ -74,9 +66,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Font Letter Spacing', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const spacingInput = await app.client.$('input#letter_spacing');
     await spacingInput.doubleClick();
     await app.client.keys(['Backspace', '1', '.', '5', 'Enter', "NULL"]);
@@ -87,9 +77,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Line Spacing', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const svg = await app.client.$('#svg_1');
     await svg.doubleClick();
     await app.client.keys(['Shift', 'Enter', 'SPACING', "NULL"]);
@@ -102,9 +90,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Vertical', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const vertiSwitch = await app.client.$('div#vertical_text.onoffswitch');
     await vertiSwitch.click();
     const svg = await app.client.$('#svg_1');
@@ -114,9 +100,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Infill', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const infillSwitch = await app.client.$('div#infill.onoffswitch');
     await infillSwitch.click();
     const svg = await app.client.$('#svg_1');
@@ -126,9 +110,7 @@ describe('Verify Text Tool', () => {
 
   test('Check Text Convert To Path', async function () {
     const { app } = require('../../../test');
-    const text = await app.client.$('#left-Text');
-    await text.click();
-    typing();
+    await typing();
     const pathButton = await app.client.$('button#convert_to_path');
     await pathButton.click();
     await checkExist('#svg_2', 2000);
@@ -137,14 +119,16 @@ describe('Verify Text Tool', () => {
     expect(await md5(svgD)).toEqual('e9a2e7d2f058fafdc848814a48ed9d5f');
   });
 
-  function typing() {
+  async function typing() {
     const { app } = require('../../../test');
-    mouseAction([
+    const text = await app.client.$('#left-Text');
+    await text.click();
+    await mouseAction([
       { type: 'pointerMove', x: 300, y: 300, duration: 10, },
       { type: 'pointerDown', button: 0, },
       { type: 'pointerUp', button: 0, },
     ]);
-    app.client.keys(['T', 'E', 'S', 'T', "NULL"]);
-    checkExist('#svg_1');
+    await app.client.keys(['T', 'E', 'S', 'T', "NULL"]);
+    await checkExist('#svg_1');
   };
 });
