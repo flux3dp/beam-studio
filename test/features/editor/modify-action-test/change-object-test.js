@@ -1,7 +1,6 @@
 const { checkExist, setReload, md5 } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-
 describe('Verify Object Tool', () => {
   beforeEach(() => {
     setReload();
