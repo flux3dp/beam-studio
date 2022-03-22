@@ -1,98 +1,103 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, md5 } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-test('Check Move Object', async function() {
+
+describe('Verify Object Tool', () => {
+  beforeEach(() => {
+    setReload();
+    checkExist('#svgcanvas', 15000);
+  });
+
+  test('Check Move Object', async function () {
     const { app } = require('../../../test');
-    await setReload();
-    await checkExist('#svgcanvas',15000);
+    await drawing();
+    const svg = await app.client.$('#svg_1');
 
-    const rect = await app.client.$('#left-Rectangle');
-    await rect.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 250, y: 250, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    await checkExist('#svg_1');
+    const xInput = await app.client.$('input#x_position');
+    await xInput.doubleClick();
+    await app.client.keys(['Backspace', '6', '0', 'Enter', "NULL"]);
 
-    const rectlocation = await app.client.$('#svg_1');
-    await new Promise((r) => setTimeout(r, 1000));
+    const yInput = await app.client.$('input#y_position');
+    await yInput.doubleClick();
+    await app.client.keys(['Backspace', '6', '0', 'Enter', "NULL"]);
 
-    const rectmovex = await app.client.$('input#x_position');
-    await rectmovex.doubleClick();
-    await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
+    if (process.platform === 'darwin') {
+      expect(await svg.getLocation('x')).toBeCloseTo(320, 1);
+    } else {
+      expect(await svg.getLocation('x')).toBeCloseTo(323.77, 1);
+    };
 
-    const rectmovey = await app.client.$('input#y_position');
-    await rectmovey.doubleClick();
-    await app.client.keys(['Backspace', '6', '0', 'Enter',"NULL"]);
+    if (process.platform === 'darwin') {
+      expect(await svg.getLocation('y')).toBeCloseTo(231.75, 1);
+    } else {
+      expect(await svg.getLocation('y')).toBeCloseTo(253.3, 1);
+    };
+  });
 
-    expect(await rectlocation.getLocation('x')).toEqual(323.771484375);
-    expect(await rectlocation.getLocation('y')).toEqual(253.32861328125);
-});
-
-test('Check Rotate Object', async function() {
+  test('Check Rotate Object', async function () {
     const { app } = require('../../../test');
+    await drawing();
+    const rotateInput = await app.client.$('input#rotate');
+    await rotateInput.doubleClick();
+    await app.client.keys(['Backspace', '4', '5', 'Enter', "NULL"]);
+    const svg = await app.client.$('#svg_1');
+    expect(await md5(await svg.getLocation('transfer'))).toEqual('d41d8cd98f00b204e9800998ecf8427e');
+  });
 
-    const rectmovey = await app.client.$('input#rotate');
-    await rectmovey.doubleClick();
-    await app.client.keys(['Backspace', '4', '5', 'Enter',"NULL"]);
-
-    const rectlocation = await app.client.$('#svg_1');
-    expect(await rectlocation.getLocation('x')).toEqual(313.4161071777344);
-    expect(await rectlocation.getLocation('y')).toEqual(242.97325134277344);
-
-    await app.client.execute(() =>{
-        svgCanvas.undoMgr.undo();
-    });
-});
-
-test('Check Zoom Object', async function() {
+  test('Check Zoom Object', async function () {
     const { app } = require('../../../test');
-    const rectzoomin = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomin.dragAndDrop({x:200, y:200});  
+    await drawing();
+    const ctorGrip = await app.client.$('circle#selectorGrip_resize_se');
+    await ctorGrip.dragAndDrop({ x: 200, y: 200 });//zoom in
 
-    const rectlocation = await app.client.$('#svg_1');
-    expect(await rectlocation.getLocation('x')).toEqual(523.771484375);
-    expect(await rectlocation.getLocation('y')).toEqual(453.32861328125);
-    await new Promise((r) => setTimeout(r, 1000));
+    const svg = await app.client.$('#svg_1');
+    expect(await svg.getLocation('x')).toEqual(250);
+    expect(await svg.getLocation('y')).toEqual(250);
 
-    const rectzoomout = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomout.dragAndDrop({x:-300, y:-300});  
-    expect(await rectlocation.getSize('width')).toEqual(250.00010681152344);
-    expect(await rectlocation.getSize('height')).toEqual(250.00010681152344);
-});
+    await ctorGrip.dragAndDrop({ x: -300, y: -300 });//zoom out
+    expect(await svg.getSize('width')).toBeCloseTo(50, 1);
+    expect(await svg.getSize('height')).toBeCloseTo(50, 1);
+  });
 
-test('Check Infill Object', async function() {
+  test('Check Infill Object', async function () {
     const { app } = require('../../../test');
+    await drawing();
+    const svg = await app.client.$('#svg_1');
+    expect(await svg.getAttribute('fill')).toEqual('none');
+    const fillSwitch = await app.client.$('div.onoffswitch');
+    await fillSwitch.click();
+    expect(await svg.getAttribute('fill')).toEqual('#333333');
+  });
 
-    const rectlocation = await app.client.$('#svg_1');
-    const rectinnofill = await rectlocation.getAttribute('fill');
-    expect(rectinnofill).toEqual('none');
-
-    const infillswitch = await app.client.$('div.onoffswitch');
-    await infillswitch.click();
-    const rectlocation2 = await app.client.$('#svg_1');
-    const rectinfill = await rectlocation2.getAttribute('fill');
-    expect(rectinfill).toEqual('#333333');
-});
-
-test('Check Zoom Lock Object', async function() {
+  test('Check Zoom Lock Object', async function () {
     const { app } = require('../../../test');
-
-    const infillswitch = await app.client.$('div.onoffswitch');
-    await infillswitch.click();
+    await drawing();
+    const fillSwitch = await app.client.$('div.onoffswitch');
+    await fillSwitch.click();
 
     const lock = await app.client.$('div.dimension-lock');
     await lock.click();
 
-    const rectzoomin = await app.client.$('circle#selectorGrip_resize_se');
-    await rectzoomin.dragAndDrop({x:-200, y:-200});  
-    const rect = await app.client.$('#svg_1');
-    const rectlock = await rect.getAttribute('data-ratiofixed');
-    expect(rectlock).toEqual("true");
-    expect(await rect.getSize('width')).toEqual(50.000099182128906);
-    expect(await rect.getSize('height')).toEqual(50.00004959106445);
-    expect(await rect.getLocation('x')).toEqual(273.771484375);
-    expect(await rect.getLocation('y')).toEqual(203.32861328125);
+    const ctorGrip = await app.client.$('circle#selectorGrip_resize_se');
+    await ctorGrip.dragAndDrop({ x: -200, y: -200 });
+    const svg = await app.client.$('#svg_1');
+    expect(await svg.getAttribute('data-ratiofixed')).toEqual("true");
+    expect(await svg.getSize('width')).toEqual(150);
+    expect(await svg.getSize('height')).toEqual(150);
+    expect(await svg.getLocation('x')).toEqual(100);
+    expect(await svg.getLocation('y')).toEqual(100);
+  });
+
+  async function drawing() {
+    const { app } = require('../../../test');
+    const rect = await app.client.$('#left-Rectangle');
+    await rect.click();
+    await mouseAction([
+      { type: 'pointerMove', x: 250, y: 250, duration: 100, },
+      { type: 'pointerDown', button: 0, },
+      { type: 'pointerMove', x: 300, y: 300, duration: 1000, },
+      { type: 'pointerUp', button: 0, },
+    ]);
+    await checkExist('#svg_1');
+  };
 });
