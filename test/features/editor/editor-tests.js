@@ -1,13 +1,16 @@
-const { checkExist, restartAndSetStorage, setAppPage} = require('../../util/utils');
+const { checkExist, restartAndSetStorage, setAppPage } = require('../../util/utils');
 const application = require('../../../test/test');
 
-test('Init Editor', async function() {
-    const app = await restartAndSetStorage();
-    let isVisible = await app.browserWindow.isVisible();
-    await setAppPage('#/studio/beambox');
-    expect(isVisible).toBe(true);
-    await checkExist('#svgcanvas', 150000);
+test('Init Editor', async function () {
+  const app = await restartAndSetStorage();
+  let isVisible = await app.browserWindow.isVisible();
+  await setAppPage('#/studio/beambox');
+  expect(isVisible).toBe(true);
+  await checkExist('#svgcanvas', 150000);
 });
+
+/* Default device MacOs 13 inches of laptop & Windows 15 inches of laptop
+   if the error about md5 you can set value for conforming your laptop inches of diaplay*/
 
 /* Create(left-panels) */
 require('./left-panels-test/ellipse-test');
@@ -97,17 +100,17 @@ require('./viewport-test/percentage-test');
 require('../settings/home-lang-test');
 require('../settings/connect-machine');
 
-test('End Editor', async function() {
-    const { app } = application;
-    try {
-        // Remove unsaved changes before close
-        await app.client.execute(() => {
-            svgCanvas.setHasUnsavedChange(false);
-            return svgCanvas;
-        });
-    } catch (error) {
-        if (error.name !== 'stale element reference') {
-            throw error;
-        }
+test('End Editor', async function () {
+  const { app } = application;
+  try {
+    // Remove unsaved changes before close
+    await app.client.execute(() => {
+      svgCanvas.setHasUnsavedChange(false);
+      return svgCanvas;
+    });
+  } catch (error) {
+    if (error.name !== 'stale element reference') {
+      throw error;
     }
+  }
 });
