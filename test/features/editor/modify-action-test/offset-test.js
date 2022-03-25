@@ -1,47 +1,49 @@
-const { checkExist, setReload } = require('../../../util/utils');
+const { checkExist, setReload, md5 } = require('../../../util/utils');
 const { mouseAction } = require('../../../util/actions');
 
-test('Check Offset', async function() {
-    const { app } = require('../../../test');
-    await setReload();
-    await checkExist('#svgcanvas',15000);
+test('Check Offset', async function () {
+  const { app } = require('../../../test');
+  await setReload();
+  await checkExist('#svgcanvas', 15000);
 
-    const elli = await app.client.$('#left-Ellipse');
-    await elli.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 200, y: 200, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 264, y: 264, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
-    await checkExist('#svg_1');
+  const elli = await app.client.$('#left-Ellipse');
+  await elli.click();
+  await mouseAction([
+    { type: 'pointerMove', x: 200, y: 200, duration: 100, },
+    { type: 'pointerDown', button: 0, },
+    { type: 'pointerMove', x: 264, y: 264, duration: 1000, },
+    { type: 'pointerUp', button: 0, },
+  ]);
+  await checkExist('#svg_1');
 
-    const line = await app.client.$('#left-Line');
-    await line.click(); 
-    await mouseAction([
-        { type: 'pointerMove', x: 250, y: 150, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 190, y: 270, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+  const line = await app.client.$('#left-Line');
+  await line.click();
+  await mouseAction([
+    { type: 'pointerMove', x: 250, y: 150, duration: 100, },
+    { type: 'pointerDown', button: 0, },
+    { type: 'pointerMove', x: 190, y: 270, duration: 1000, },
+    { type: 'pointerUp', button: 0, },
+  ]);
 
-    const select = await app.client.$('#left-Cursor');
-    await select.click();
-    await mouseAction([
-        { type: 'pointerMove', x: 100, y: 100, duration: 100, },
-        { type: 'pointerDown', button: 0, },
-        { type: 'pointerMove', x: 350, y: 350, duration: 1000, },
-        { type: 'pointerUp', button: 0, },
-    ]);
+  const select = await app.client.$('#left-Cursor');
+  await select.click();
+  await mouseAction([
+    { type: 'pointerMove', x: 100, y: 100, duration: 100, },
+    { type: 'pointerDown', button: 0, },
+    { type: 'pointerMove', x: 350, y: 350, duration: 1000, },
+    { type: 'pointerUp', button: 0, },
+  ]);
 
-    const offset = await app.client.$('button#offset');
-    await offset.click();
+  const offset = await app.client.$('button#offset');
+  await offset.click();
 
-    const confirm = await app.client.$('button.btn.btn-default.primary');
-    await confirm.click();
+  const confirm = await app.client.$('button.btn.btn-default.primary');
+  await confirm.click();
 
-    const offsetpath = await app.client.$('#svg_4');
-    const pathd = await offsetpath.getAttribute('d');
-    // console.log(pathd);
-    expect(pathd).toEqual("M122.79,91.83L128.94,92.02L135.06,92.33L141.16,92.76L147.22,93.31L153.25,93.99L159.25,94.78L165.46,95.73L177.01,97.85L188.66,100.48L200.13,103.55L211.42,107.06L222.51,110.99L233.4,115.34L244.06,120.1L254.5,125.26L264.71,130.8L274.67,136.72L283.11,142.19L289.52,129.37L378.97,174.09L358.73,214.57L365.33,223.96L371.61,233.66L377.53,243.62L383.07,253.83L388.23,264.27L392.99,274.94L397.34,285.82L401.28,296.91L404.78,308.2L407.86,319.67L410.48,331.32L412.6,342.88L413.55,349.08L414.34,355.08L415.02,361.11L415.57,367.17L416,373.27L416.31,379.39L416.5,385.55L416.56,391.72L416.5,397.9L416.31,404.05L416,410.18L415.57,416.27L415.02,422.34L414.34,428.37L413.55,434.36L412.6,440.57L410.48,452.13L407.86,463.78L404.78,475.25L401.28,486.53L397.34,497.63L392.99,508.51L388.23,519.18L383.07,529.62L377.53,539.83L371.61,549.79L365.33,559.49L358.69,568.93L351.7,578.09L344.37,586.97L336.71,595.56L328.73,603.85L320.44,611.83L311.86,619.48L302.97,626.81L293.81,633.8L284.37,640.44L274.67,646.73L264.71,652.65L254.5,658.19L244.06,663.35L233.4,668.1L222.51,672.46L211.42,676.39L200.13,679.9L188.66,682.97L177.01,685.6L165.46,687.72L159.25,688.67L153.25,689.46L147.22,690.13L141.16,690.69L135.06,691.12L128.94,691.43L122.79,691.62L120.18,691.65L99.91,732.19L10.47,687.47L16.88,674.65L10.71,672.46L-0.18,668.1L-10.85,663.35L-21.29,658.19L-31.49,652.65L-41.45,646.73L-51.16,640.44L-60.6,633.8L-69.76,626.81L-78.64,619.48L-87.23,611.83L-95.52,603.85L-103.49,595.56L-111.15,586.97L-118.48,578.09L-125.47,568.93L-132.11,559.49L-138.4,549.79L-144.32,539.83L-149.86,529.62L-155.01,519.18L-159.77,508.51L-164.13,497.63L-168.06,486.53L-171.57,475.25L-174.64,463.78L-177.27,452.13L-179.39,440.57L-180.34,434.36L-181.13,428.37L-181.8,422.34L-182.36,416.27L-182.79,410.18L-183.1,404.05L-183.29,397.9L-183.35,391.72L-183.29,385.55L-183.1,379.39L-182.79,373.27L-182.36,367.17L-181.8,361.11L-181.13,355.08L-180.34,349.08L-179.39,342.88L-177.27,331.32L-174.64,319.67L-171.57,308.2L-168.06,296.91L-164.13,285.82L-159.77,274.94L-155.01,264.27L-149.86,253.83L-144.32,243.62L-138.4,233.66L-132.11,223.96L-125.47,214.52L-118.48,205.36L-111.15,196.48L-103.49,187.89L-95.52,179.6L-87.23,171.62L-78.64,163.96L-69.76,156.64L-60.6,149.65L-51.16,143L-41.45,136.72L-31.49,130.8L-21.29,125.26L-10.85,120.1L-0.18,115.34L10.71,110.99L21.8,107.06L33.08,103.55L44.56,100.48L56.2,97.85L67.76,95.73L73.97,94.78L79.96,93.99L86,93.31L92.06,92.76L98.15,92.33L104.28,92.02L110.43,91.83L116.61,91.77L122.79,91.83z");
+  const svg = await app.client.$('#svg_4');
+  if (process.platform === 'darwin') {
+    expect(await md5(await svg.getAttribute('d'))).toEqual('820f6aeb3981fe79d3fe24436a479ef6');
+  } else {
+    expect(await md5(await svg.getAttribute('d'))).toEqual('a262656506c8c74c70eee1efb66ba589');
+  };
 });
