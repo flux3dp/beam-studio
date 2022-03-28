@@ -34,33 +34,25 @@ test('Check Custom Parameter', async function () {
 
   const w5cut = await app.client.$('#wood_5mm_cutting');
   await w5cut.click();
-
-  const rew5cut = await app.client.$('div#removeselect');
-  await rew5cut.click();
+  const remove = await app.client.$('div#removeselect');
+  await remove.click();
 
   const a5cut = await app.client.$('#acrylic_5mm_cutting');
   await a5cut.click();
-
-  const rea5cut = await app.client.$('div#removeselect');
-  await rea5cut.click();
+  await remove.click();
 
   const l5cut = await app.client.$('#leather_5mm_cutting');
   await l5cut.click();
-
-  const rel5cut = await app.client.$('div#removeselect');
-  await rel5cut.click();
+  await remove.click();
 
   const f5cut = await app.client.$('#fabric_5mm_cutting');
   await f5cut.click();
-
-  const ref5cut = await app.client.$('div#removeselect');
-  await ref5cut.click();
+  await remove.click();
 
   const save = await app.client.$('button.btn.btn-default.primary');
   await save.click();
 
   const wood5cut = await app.client.$('option[value="木板 - 5mm 切割"]');
-  await wood5cut.isExisting()
   expect(await wood5cut.isExisting()).toEqual(false);
 
   const acrylic5cut = await app.client.$('option[value="壓克力 - 5mm 切割"]');
