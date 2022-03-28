@@ -27,7 +27,7 @@
     "electron-store": "^6.0.0",
     "electron-updater": "^4.2.0",
     "eventemitter3": "^4.0.7",
-    "font-scanner": "^0.1.2",
+    "font-scanner": "dkdkwizard/font-scanner",
     "fontkit": "^1.8.1",
     "gl-matrix": "^3.3.0",
     "hammerjs": "^2.0.8",

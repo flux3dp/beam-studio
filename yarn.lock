@@ -6140,10 +6140,9 @@ follow-redirects@^1.10.0:
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.0.tgz#f5d260f95c5f8c105894491feee5dc8993b402fe"
   integrity sha512-0vRwd7RKQBTt+mgu87mtYeofLFZpTas2S9zY+jIeuLJMNvudIgF52nr19q40HOwH5RrhWIPuj9puybzSJiRrVg==
 
-font-scanner@^0.1.2:
+font-scanner@dkdkwizard/font-scanner:
   version "0.1.2"
-  resolved "https://registry.yarnpkg.com/font-scanner/-/font-scanner-0.1.2.tgz#0657e109596ce9c8ef89824611cffdf3a6c664bb"
-  integrity sha512-60XIPuzqeTey3P8wo/3t2mvKnjeeKl3O9QFzwk2cypQgJaqYF4Q/eOMSCro3YxCzTDzcGA5q5TtDRZXkI3tx0g==
+  resolved "https://codeload.github.com/dkdkwizard/font-scanner/tar.gz/18ec54856c090536d4964a7a5d29d05a09e70b5b"
   dependencies:
     nan "^2.14.0"
 
