@@ -23,9 +23,9 @@ describe('Verify Group Tool', () => {
       const isPolygonInsideGroup = childNodes.includes(polygon);
       return { isRectInsideGroup, isEllipseInsideGroup, isPolygonInsideGroup };
     });
-    expect(result.isRectInsideGroup).toBe(true);
-    expect(result.isEllipseInsideGroup).toBe(true);
-    expect(result.isPolygonInsideGroup).toBe(true);
+    expect(result.isRectInsideGroup).toBeTruthy();
+    expect(result.isEllipseInsideGroup).toBeTruthy();
+    expect(result.isPolygonInsideGroup).toBeTruthy();
 
     const group = await app.client.$('#group');
     await group.click();
@@ -40,7 +40,7 @@ describe('Verify Group Tool', () => {
     expect(result2.groupVisible.length).toEqual(1);
   });
 
-  test('Check Unroup', async function () {
+  test('Check Ungroup', async function () {
     const { app } = require('../../../test');
     await drawing();
     await selectAll();
