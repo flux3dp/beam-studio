@@ -1,12 +1,12 @@
-const { checkExist, restartAndSetStorage, setAppPage} = require('../../util/utils');
+const { checkExist, restartAndSetStorage, setAppPage } = require('../../util/utils');
 const application = require('../../../test/test');
 
-test('Init Editor', async function() {
-    const app = await restartAndSetStorage();
-    let isVisible = await app.browserWindow.isVisible();
-    await setAppPage('#/studio/beambox');
-    expect(isVisible).toBe(true);
-    await checkExist('#svgcanvas', 150000);
+test('Init Editor', async function () {
+  const app = await restartAndSetStorage();
+  let isVisible = await app.browserWindow.isVisible();
+  await setAppPage('#/studio/beambox');
+  expect(isVisible).toBe(true);
+  await checkExist('#svgcanvas', 150000);
 });
 
 /* Create(left-panels) */
@@ -64,12 +64,16 @@ require('./preference-test/workarea-clipping-test');
 /* Laser-Cut-Parameter(right-panels) */
 require('./right-panels-test/laser-cut-parameter-test/add-parameter-test');
 require('./right-panels-test/laser-cut-parameter-test/custom-parameter-list-test');
-require('./right-panels-test/laser-cut-parameter-test/remove-speed-limit-test');
 require('./right-panels-test/laser-cut-parameter-test/reset-parameter-test');
-require('./right-panels-test/laser-cut-parameter-test/speed-caption-test');
+require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
+
+/* The environment of test case need to be connected to the machine can be tested */
 require('./right-panels-test/laser-cut-parameter-test/power-caption-test');
 require('./right-panels-test/laser-cut-parameter-test/power-enter-text-test');
-require('./right-panels-test/laser-cut-parameter-test/switch-parameter-test');
+require('./right-panels-test/laser-cut-parameter-test/remove-speed-limit-test');
+require('./right-panels-test/laser-cut-parameter-test/speed-caption-test');
+
+
 
 /* Layer(right-panels) */
 require('./right-panels-test/layer-test/copy-layer-test');
@@ -97,17 +101,17 @@ require('./viewport-test/percentage-test');
 require('../settings/home-lang-test');
 require('../settings/connect-machine');
 
-test('End Editor', async function() {
-    const { app } = application;
-    try {
-        // Remove unsaved changes before close
-        await app.client.execute(() => {
-            svgCanvas.setHasUnsavedChange(false);
-            return svgCanvas;
-        });
-    } catch (error) {
-        if (error.name !== 'stale element reference') {
-            throw error;
-        }
+test('End Editor', async function () {
+  const { app } = application;
+  try {
+    // Remove unsaved changes before close
+    await app.client.execute(() => {
+      svgCanvas.setHasUnsavedChange(false);
+      return svgCanvas;
+    });
+  } catch (error) {
+    if (error.name !== 'stale element reference') {
+      throw error;
     }
+  }
 });
