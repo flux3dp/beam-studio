@@ -18,7 +18,7 @@ describe('Verify Array Tool', () => {
     ]);
     await app.client.keys(['ARRAY', 'Space', 'TEST']);
     await arrayAction();
-    await checkSvg(1, 2, 4, 6);
+    await checkSvgIdExists([1, 2, 3, 4]);
 
     const svg1 = await app.client.$('#svg_1');
     const svg2 = await app.client.$('#svg_2');
@@ -49,7 +49,7 @@ describe('Verify Array Tool', () => {
     ]);
     await selectAll();
     await arrayAction();
-    await checkSvg(1, 2, 3, 4);
+    await checkSvgIdExists([1, 2, 3, 4]);
 
     const svg1 = await app.client.$('#svg_1');
     if (process.platform === 'darwin') {
@@ -92,7 +92,7 @@ describe('Verify Array Tool', () => {
     ]);
     await selectAll();
     await arrayAction();
-    await checkSvg(1, 2, 3, 4);
+    await checkSvgIdExists([1, 2, 3, 4]);
 
     const svg1 = await app.client.$('#svg_1');
     const pFsvg1 = parseFloat(await svg1.getAttribute('x1')).toFixed(7);
@@ -132,7 +132,7 @@ describe('Verify Array Tool', () => {
     ]);
     await selectAll();
     await arrayAction();
-    await checkSvg(1, 2, 4, 5, 7, 8, 10, 11);
+    await checkSvgIdExists([1, 2, 4, 5, 7, 8, 10, 11]);
 
     const svg1 = await app.client.$('#svg_1');//eill
     const svg2 = await app.client.$('#svg_2');//line
@@ -186,7 +186,7 @@ describe('Verify Array Tool', () => {
     const group = await app.client.$('#group');
     await group.click();
     await arrayAction();
-    await checkSvg(1, 2, 6, 7, 10, 11, 14, 15);
+    await checkSvgIdExists([1, 2, 6, 7, 10, 11, 14, 15]);
 
     const svg1 = await app.client.$('#svg_1');//rect
     const svg2 = await app.client.$('#svg_2');//text
@@ -257,18 +257,8 @@ describe('Verify Array Tool', () => {
     await next.click();
   };
 
-  async function checkSvg(number1, number2, number3, number4, number5, number6, number7, number8) {
-    number5 = number5 || 1;
-    number6 = number6 || 1;
-    number7 = number7 || 1;
-    number8 = number8 || 1;
-    await checkExist(`#svg_${number1}`);
-    await checkExist(`#svg_${number2}`);
-    await checkExist(`#svg_${number3}`);
-    await checkExist(`#svg_${number4}`);
-    await checkExist(`#svg_${number5}`);
-    await checkExist(`#svg_${number6}`);
-    await checkExist(`#svg_${number7}`);
-    await checkExist(`#svg_${number8}`);
+  async function checkSvgIdExists(ids) {
+    const promises = ids.map((id) => checkExist(`#svg_${id}`));
+    await Promise.all(promises);
   };
 });
