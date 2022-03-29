@@ -9,6 +9,9 @@ test('Init Editor', async function () {
   await checkExist('#svgcanvas', 150000);
 });
 
+/* Default device MacOs 13 inches of laptop & Windows 15 inches of laptop
+   if the error about md5 you can set value for conforming your laptop inches of diaplay*/
+
 /* Create(left-panels) */
 require('./left-panels-test/ellipse-test');
 require('./left-panels-test/line-test');
