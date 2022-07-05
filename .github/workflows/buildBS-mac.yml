@@ -80,6 +80,7 @@ jobs:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
           MACOSX_DEPLOYMENT_TARGET: "10.10"
+          PYTHON_VERSION: "3.7"
 
       - name: Checkout Beam Studio Core
         uses: actions/checkout@v2
