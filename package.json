@@ -17,7 +17,7 @@
     "@types/webdriverio": "^5.0.0",
     "animate.css": "^4.1.0",
     "assert": "^2.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bufferpack": "^0.0.6",
     "classnames": "^2.2.6",
     "cropperjs": "^1.5.9",
