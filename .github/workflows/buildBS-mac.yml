@@ -42,8 +42,6 @@ jobs:
           python3 --version
           python3 -m pip install --upgrade pip
           pip3 install -r requirements.txt --no-binary=lxml
-        env:
-          MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Checkout Beamify
         uses: actions/checkout@v2
