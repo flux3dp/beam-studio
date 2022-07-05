@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [12.19]
         python-version: [3.7]
-        os: [ubuntu-16.04, ubuntu-18.04]
+        os: [ubuntu-18.04, ubuntu-20.04]
 
     steps:
       - uses: actions/checkout@v2
@@ -97,11 +97,11 @@ jobs:
 
           sudo bash ./build/clearup-develop-files.sh
 
-          if [ ${{ matrix.os }} = "ubuntu-16.04" ]
+          if [ ${{ matrix.os }} = "ubuntu-18.04" ]
           then
-            export PUBLISH_PATH=""
-          else
             export PUBLISH_PATH="-18.04"
+          else
+            export PUBLISH_PATH="-20.04"
           fi
           echo $PUBLISH_PATH
 
