@@ -15,7 +15,7 @@ const CHANGES_EN = {
   added: [
   ],
   fixed: [
-    'Fixed minor color change when loading file divded layer by color.',
+    'Fixed minor color change when loading file divided layer by color.',
   ],
   changed: [
     'Changed some Japanese translations.',
