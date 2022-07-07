@@ -27,10 +27,10 @@ jobs:
 
       - name: Setup Python
         run: |
-          curl -O "https://www.python.org/ftp/python/3.7.9/python-3.7.9-macosx10.9.pkg"
-          sudo installer -pkg ./python-3.7.9-macosx10.9.pkg -target /
-          echo "/Library/Frameworks/Python.framework/Versions/3.7/bin" >> $GITHUB_PATH
-          rm -f ./python-3.7.9-macosx10.9.pkg
+          curl -O "https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.9.pkg"
+          sudo installer -pkg ./python-3.6.8-macosx10.9.pkg -target /
+          echo "/Library/Frameworks/Python.framework/Versions/3.6/bin" >> $GITHUB_PATH
+          rm -f ./python-3.6.8-macosx10.9.pkg
 
       - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -80,7 +80,6 @@ jobs:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
           MACOSX_DEPLOYMENT_TARGET: "10.10"
-          PYTHON_VERSION: "3.7"
 
       - name: Checkout Beam Studio Core
         uses: actions/checkout@v2
