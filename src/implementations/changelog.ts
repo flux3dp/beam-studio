@@ -4,7 +4,7 @@ const CHANGES_TW = {
   added: [
   ],
   fixed: [
-    '修正依顏色讀取 svg 檔時顏色與原始有些為出入。',
+    '修正依顏色讀取 svg 檔時顏色與原始有些微出入。',
   ],
   changed: [
     '變更一些日文翻譯。',
