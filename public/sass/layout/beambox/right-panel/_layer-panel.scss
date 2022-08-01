@@ -224,7 +224,7 @@
   overflow-x: hidden;
   overflow-y: scroll;
   background: white;
-  height: 240px;
+  height: 400px;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -232,7 +232,7 @@
 .add-layer-btn {
   position: absolute;
   cursor: pointer;
-  top: 215px;
+  top: 375px;
   right: 20px;
   width: 13px;
   height: 13px;
