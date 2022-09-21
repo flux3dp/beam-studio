@@ -135,7 +135,7 @@ const buildHelpMenu = (callback) => {
     { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
     { type: 'separator' },
     { id: 'FORUM', label: r.design_market, click() { shell.openExternal(r.link.design_market); } },
-    { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
+    { id: 'DESIGN_MARKET', label: r.forum, click() { shell.openExternal(r.link.forum); } },
     { type: 'separator' },
   ]);
   helpSubmenu.push(...buildAccountMenuItems(callback, accountInfo));
