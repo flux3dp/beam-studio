@@ -134,6 +134,7 @@ const buildHelpMenu = (callback) => {
     { id: 'HELP_CENTER', label: r.help_center, click() { shell.openExternal(r.link.help_center); } },
     { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
     { type: 'separator' },
+    { id: 'DESIGN_MARKET', label: r.design_market, click() { shell.openExternal(r.link.design_market); } },
     { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
     { type: 'separator' },
   ]);
