@@ -2,31 +2,29 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增多邊形物件邊數設定的選項。',
-    '關於 Bema Studio 面板新增開放原始碼資訊說明。',
+    '在說明功能表中加入 Design Market 網站連結',
+    '在功率低於 10% 時加入提示文字。',
   ],
   fixed: [
-    '修正某些 DXF 物件路徑計算錯誤的問題。',
-    '修正讀取部分 SVG 檔顯示錯誤。',
-    '雷射參數列表新增參數圖示更正。',
+    '修正某些複製的物件顏色顯示問題。',
+    '修正德文版面輸出按鈕與路徑按鈕顯示問題。',
+    '修正相機預覽時，有時無法正確顯示錯誤訊息。',
   ],
   changed: [
-    '文字縮放預設鎖定長寬比例。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the Sides option for polygon objects.',
-    'Added the information for the open-source software in the About Beam Studio.',
+    'Added Design Market link in help menu.',
+    'Added warning text in laser panel when power is lower than 10%.',
   ],
   fixed: [
-    'Fixed some DXF file calculate path failed problems.',
-    'Fixed some SVG files wrong display problems.',
-    'Fixed the added icon in the Preset Manage panel.',
+    'Fixed color display issue of some copied elements.',
+    'Fixed display issue of Go button and path preview button when language is Deutsch.',
+    'Fixed error message were not displayed correctly in some situations when performing camera preview.',
   ],
   changed: [
-    'Freeze the scale ratio for the font objects by default.',
   ],
 };
 
