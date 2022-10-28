@@ -70,7 +70,7 @@ jobs:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
-          ref: '1.9.9'
+          ref: '1.9.10'
 
       - name: Copy Beam Studio Core
         run: |
