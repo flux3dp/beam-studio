@@ -2,31 +2,29 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增多邊形物件邊數設定的選項。',
-    '關於 Bema Studio 面板新增開放原始碼資訊說明。',
   ],
   fixed: [
-    '修正某些 DXF 物件路徑計算錯誤的問題。',
-    '修正讀取部分 SVG 檔顯示錯誤。',
-    '雷射參數列表新增參數圖示更正。',
+    '修正新手教學時提示框錯位。',
+    '修正相機預覽發生錯誤時顯示方式。',
+    '修正文字旋轉後編輯錯位問題。',
+    '修正匯入的 SVG 檔案複製後導致圖片無法讀取問題。',
   ],
   changed: [
-    '文字縮放預設鎖定長寬比例。',
+    '調整 HEXA 雕刻參數',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the Sides option for polygon objects.',
-    'Added the information for the open-source software in the About Beam Studio.',
   ],
   fixed: [
-    'Fixed some DXF file calculate path failed problems.',
-    'Fixed some SVG files wrong display problems.',
-    'Fixed the added icon in the Preset Manage panel.',
+    'Fixed tutorial hint box positioning issues.',
+    'Fixed error message of camera calibration.',
+    'Fixed text positioning issue after rotating and editing.',
+    'Fixed image loading issue after copying and pasting imported SVG objects.',
   ],
   changed: [
-    'Freeze the scale ratio for the font objects by default.',
+    'Updated HEXA engraving presets.',
   ],
 };
 
