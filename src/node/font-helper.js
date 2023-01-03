@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fontScanner = require('font-scanner');
 const { ipcMain } = require('electron');
@@ -45,7 +46,7 @@ const findFontSync = (arg) => {
 };
 
 const registerEvents = () => {
-  ipcMain.on(events.GET_AVAILABLE_FONTS, (event, arg) => {
+  ipcMain.on(events.GET_AVAILABLE_FONTS, (event) => {
     const fonts = fontScanner.getAvailableFontsSync();
     fontsListCache = fonts;
     event.returnValue = fonts;
