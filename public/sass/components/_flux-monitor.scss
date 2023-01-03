@@ -66,78 +66,6 @@
         img {
           width: 100%;
         }
-        .image-wrapper {
-          position: absolute;
-          margin-left: auto;
-          margin-right: auto;
-          width: 100%;
-        }
-        .name {
-          font-size: 1rem;
-          position: absolute;
-          bottom: 0;
-          text-align: center;
-          width: 100%;
-          overflow: hidden;
-        }
-        .name.selected {
-          padding: 0 8px;
-          border-radius: 5px;
-          color: white;
-          background: #0950d0;
-        }
-        .folder {
-          color: $primaryColor;
-          display: inline-block;
-          width: 33%;
-          height: 80px;
-          position: relative;
-          background-image: url("../img/folder.svg");
-          background-repeat: no-repeat;
-          background-size: 72px 60px;
-          background-position: top;
-          margin: 10px 0;
-          cursor: pointer;
-        }
-        .folder:hover {
-          color: #333;
-        }
-        .file {
-          text-align: center;
-          color: $primaryColor;
-          display: inline-block;
-          width: 33%;
-          height: 80px;
-          position: relative;
-          background-repeat: no-repeat;
-          background-size: 72px 60px;
-          background-position: top;
-          margin: 10px 0;
-          cursor: pointer;
-          img {
-            border: 1px solid #b3b3b3;
-            width: 60px;
-          }
-          i {
-            position: absolute;
-            color: #ccc;
-            top: -8px;
-            right: 18px;
-            visibility: hidden;
-            &.selected {
-              visibility: visible;
-            }
-          }
-          i:hover {
-            color: #333 !important;
-          }
-        }
-        .file:hover {
-          color: #333;
-          i {
-            color: #ccc;
-          }
-        }
         .spinner-wrapper {
           position: absolute;
           width: calc(100% - 20px);
@@ -473,4 +401,105 @@
     width: 25%;
     float: left;
   }
+}
+
+.file-monitor-v2 {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+  .folder, .file {
+    color: $primaryColor;
+    width: 150px;
+    height: 180px;
+    text-align: center;
+
+    &:hover {
+      color: #333;
+    }
+
+    .image-wrapper {
+      width: 100%;
+      height: 135px;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      margin: 10px 0;
+      border-radius: 5px;
+
+      img {
+        width: 135px;
+        border-radius: 3px;
+      }
+    }
+
+    &.selected .image-wrapper {
+      background: #EEE;
+    }
+  }
+  .folder {
+    .image-wrapper {
+      img {
+        padding: 20px;
+      }
+    }
+  }
+  .file {
+    position: relative;
+    .image-wrapper {
+      img {
+        border: 3px solid #fff;
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+        padding: 0px;
+      }
+    }
+    i {
+      position: absolute;
+      color: #ccc;
+      top: 3px;
+      right: -7px;
+      visibility: hidden;
+      z-index: 99;
+      cursor: pointer;
+
+      &.selected {
+        visibility: visible;
+      }
+
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+  .name {
+    font-size: 1rem;
+    text-align: center;
+    padding: 0 8px;
+    overflow: hidden;
+    border-radius: 5px;
+    &.selected {
+      color: white;
+      background-color: #1890ff;
+    }
+  }
+}
+
+
+.monitor-left-text {
+  line-height: 32px;
+}
+
+.monitor-right-text {
+  line-height: 32px;
+  text-align: right;
+}
+
+.monitor-task-info-bar {
+  position: absolute;
+  bottom: 5px;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  padding: 0 8px;
 }
