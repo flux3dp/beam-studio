@@ -2,23 +2,20 @@ const { app, ipcMain, BrowserWindow, dialog } = require('electron');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.allowRendererProcessReuse = false;
 
-const FontScanner = require('font-scanner');
-const TextToSVG = require('text-to-svg');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const os = require('os');
-const exec = require('child_process').exec;
 const Store = require('electron-store');
 const Sentry = require('@sentry/electron');
 
 const BackendManager = require('./src/node/backend-manager.js');
+const fontHelper = require('./src/node/font-helper');
 const MonitorManager = require('./src/node/monitor-manager.js');
 const MenuManager = require('./src/node/menu-manager.js');
 const UpdateManager = require('./src/node/update-manager.js');
 const UglyNotify = require('./src/node/ugly-notify.js');
 const events = require('./src/node/ipc-events');
-const TTC2TTF = require('./src/node/ttc2ttf.js');
 const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
 
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -352,12 +349,6 @@ ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
     console.error('Recv async-status request but main window not exist');
   }
 });
-var fontsListCache = [];
-ipcMain.on(events.GET_AVAILABLE_FONTS, (event, arg) => {
-  const fonts = FontScanner.getAvailableFontsSync();
-  fontsListCache = fonts;
-  event.returnValue = fonts;
-});
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
   const { svgUrl: url, imgWidth: width, imgHeight: height, bb, imageRatio, id, strokeWidth } = data;
@@ -371,51 +362,7 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
   mainWindow.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
-function findFontsSync(arg) {
-  const availableFonts = FontScanner.getAvailableFontsSync();
-  const matchFamily = availableFonts.filter(font => font.family === arg.family);
-  const match = matchFamily.filter(font => {
-    result = true
-    Object.getOwnPropertyNames(arg).forEach(a => {
-      if (arg[a] !== font[a]) {
-        result = false;
-      }
-    });
-    return result;
-  });
-  return match;
-}
-
-function findFontSync(arg) {
-  arg.style = arg.style || 'Regular';
-  const availableFonts = FontScanner.getAvailableFontsSync();
-  let font = availableFonts[0];
-  let match = availableFonts.filter(font => font.family === arg.family);
-  font = match[0] || font;
-  if (arg.italic != null) {
-    match = match.filter(font => font.italic === arg.italic);
-    font = match[0] || font;
-  }
-  match = match.filter(font => font.style === arg.style);
-  font = match[0] || font;
-  if (arg.weight != null) {
-    match = match.filter(font => font.weight === arg.weight);
-  }
-  font = match[0] || font;
-  return font;
-};
-
-ipcMain.on(events.FIND_FONTS, (event, arg) => {
-  // FontScanner.findFontsSync({ family: 'Arial' });
-  const fonts = findFontsSync(arg);
-  event.returnValue = fonts;
-});
-
-ipcMain.on(events.FIND_FONT, (event, arg) => {
-  // FontScanner.findFontSync({ family: 'Arial', weight: 700 })
-  const font = findFontSync(arg);
-  event.returnValue = font;
-});
+fontHelper.registerEvents();
 
 ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, extensions, filename, file) {
   const isMac = process.platform === 'darwin';
@@ -460,123 +407,6 @@ ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, exten
   }
   event.returnValue = filePath;
 })
-
-ipcMain.on(events.REQUEST_PATH_D_OF_TEXT, async (event, { text, x, y, fontFamily, fontSize, fontStyle, letterSpacing, key }) => {
-  const substitutedFamily = (function () {
-
-    // Escape for Whitelists
-    const whiteList = ['標楷體'];
-    const whiteKeyWords = ['華康', 'Adobe', '文鼎'];
-    if (whiteList.indexOf(fontFamily) >= 0) {
-      return fontFamily;
-    }
-    for (let i = 0; i < whiteKeyWords.length; i++) {
-      let keyword = whiteKeyWords[i];
-      if (fontFamily.indexOf(keyword) >= 0) {
-        return fontFamily;
-      }
-    }
-    //if only contain basic character (123abc!@#$...), don't substitute.
-    //because my Mac cannot substituteFont properly handing font like 'Windings'
-    //but we have to subsittue text if text contain both English and Chinese
-    const textOnlyContainBasicLatin = Array.from(text).every(char => {
-      return char.charCodeAt(0) <= 0x007F;
-    });
-    if (textOnlyContainBasicLatin) {
-      return fontFamily;
-    }
-
-    const originFont = findFontSync({
-      family: fontFamily,
-      style: fontStyle
-    });
-
-    // array of used family which are in the text
-
-    const originPostscriptName = originFont.postscriptName;
-    const fontList = Array.from(text).map(char =>
-      FontScanner.substituteFontSync(originPostscriptName, char)
-    );
-    let familyList = fontList.map(font => font.family);
-    let postscriptList = fontList.map(font => font.postscriptName)
-    // make unique
-    familyList = [...new Set(familyList)];
-    postscriptList = [...new Set(postscriptList)];
-
-    if (familyList.length === 1) {
-      return familyList[0];
-    } else {
-      // Test all found fonts if they contain all
-
-      let fontIndex;
-      for (let i = 0; i < postscriptList.length; ++i) {
-        let allFit = true;
-        for (let j = 0; j < text.length; ++j) {
-          if (fontList[j].postscriptName === postscriptList[i]) {
-            continue;
-          }
-          const foundfont = FontScanner.substituteFontSync(postscriptList[i], text[j]).family;
-          if (familyList[i] !== foundfont) {
-            allFit = false;
-            break;
-          }
-        }
-        if (allFit) {
-          console.log(`Find ${familyList[i]} fit for all char`);
-          return familyList[i];
-        }
-      }
-      console.log('Cannot find a font fit for all')
-      return (familyList.filter(family => family !== fontFamily))[0];
-    }
-  })();
-
-  // Font Manager won't return PingFang Semibold if input PingFang Bold
-  if (substitutedFamily && substitutedFamily.indexOf('PingFang') > -1) {
-    switch (fontStyle) {
-      case 'Bold':
-        fontStyle = 'Semibold';
-        break;
-      case 'Italic':
-        fontStyle = 'Regular';
-        break;
-      case 'Bold Italic':
-        fontStyle = 'Semibold';
-        break;
-      default:
-        break;
-    }
-  }
-  console.log('fontstyle', fontStyle);
-  let font = findFontSync({
-    family: substitutedFamily,
-    style: fontStyle
-  });
-  let fontPath = font.path;
-  if (fontFamily.indexOf("華康") >= 0 && (fontPath.toLowerCase().indexOf("arial") > 0 || fontPath.toLowerCase().indexOf("meiryo") > 0)) {
-    // This is a hotfix for 華康系列 fonts, because fontScanner does not support
-    for (var i in fontsListCache) {
-      const fontInfo = fontsListCache[i];
-      if (fontInfo.family == fontFamily) {
-        fontPath = fontInfo.path;
-        font = fontInfo;
-      }
-    }
-  }
-  console.log("New Font path ", fontPath);
-  if (fontPath.toLowerCase().endsWith('.ttc') || fontPath.toLowerCase().endsWith('.ttcf')) {
-    fontPath = await TTC2TTF(fontPath, font.postscriptName);
-  }
-  const pathD = TextToSVG.loadSync(fontPath).getD(text, {
-    fontSize: Number(fontSize),
-    anchor: 'left baseline',
-    x: x,
-    y: y,
-    letterSpacing: letterSpacing
-  });
-
-  event.sender.send(events.RESOLVE_PATH_D_OF_TEXT + key, pathD);
-});
 
 console.log('Running Beam Studio on ', os.arch());
 
