@@ -1,7 +1,8 @@
-const fontScanner = require("font-scanner");
-const { ipcMain } = require("electron");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const fontScanner = require('font-scanner');
+const { ipcMain } = require('electron');
 
-const events = require("./ipc-events");
+const events = require('./ipc-events');
 
 let fontsListCache = [];
 
