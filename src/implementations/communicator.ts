@@ -10,6 +10,9 @@ export default {
   once(channel: string, listener: any) {
     electron.ipcRenderer.once(channel, listener);
   },
+  off(channel: string, listener: any) {
+    return electron.ipcRenderer.off(channel, listener);
+  },
   send(channel: string, ...args: any[]) {
     electron.ipcRenderer.send(channel, ...args);
   },

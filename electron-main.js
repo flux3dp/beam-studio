@@ -13,6 +13,7 @@ const BackendManager = require('./src/node/backend-manager.js');
 const fontHelper = require('./src/node/font-helper');
 const MonitorManager = require('./src/node/monitor-manager.js');
 const MenuManager = require('./src/node/menu-manager.js');
+const networkHelper = require('./src/node/network-helper');
 const UpdateManager = require('./src/node/update-manager.js');
 const UglyNotify = require('./src/node/ugly-notify.js');
 const events = require('./src/node/ipc-events');
@@ -337,6 +338,7 @@ function createWindow() {
   }
 
   updateManager.setMainWindow(mainWindow);
+  networkHelper.registerEvents(mainWindow);
 }
 
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
