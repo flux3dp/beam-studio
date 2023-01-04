@@ -28,7 +28,7 @@ export default {
       dataBits?: number;
       lock?: boolean;
     },
-    callback?: any,
+    callback?: SerialPort.ErrorCallback,
   ): SerialPort {
     return new SerialPort(
       path,
