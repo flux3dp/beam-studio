@@ -51,8 +51,11 @@ export default {
     });
     communicator.send('TEST_NETWORK', ip, time);
   }),
-  checkIPExist: async (ip: string, trial: number) => new Promise((resolve) => {
-    communicator.once('CHECK_IP_EXIST_RESULT', (e, res) => resolve(res));
+  checkIPExist: async (
+    ip: string,
+    trial: number,
+  ) => new Promise<{ error?: string, isExisting: boolean }>((resolve) => {
+    communicator.once('CHECK_IP_EXIST_RESULT', (e, res: { error?: string, isExisting: boolean }) => resolve(res));
     communicator.send('CHECK_IP_EXIST', ip, trial);
   }),
 } as INetwork;
