@@ -417,6 +417,7 @@ ipcMain.on(events.FIND_FONT, (event, arg) => {
   event.returnValue = font;
 });
 
+let editingStandardInput = false;
 ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
   console.log("Set SET_EDITING_STANDARD_INPUT", arg);
