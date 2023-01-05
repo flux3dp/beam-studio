@@ -417,6 +417,11 @@ ipcMain.on(events.FIND_FONT, (event, arg) => {
   event.returnValue = font;
 });
 
+ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
+  editingStandardInput = arg;
+  console.log("Set SET_EDITING_STANDARD_INPUT", arg);
+});
+
 ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, extensions, filename, file) {
   const isMac = process.platform === 'darwin';
   const isLinux = process.platform === 'linux';
@@ -618,19 +623,30 @@ if (os.arch() == 'ia32' || os.arch() == 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
+const onMenuClick = (data) => {
+  data = {
+    id: data.id,
+    serial: data.serial,
+  }
+  if (mainWindow) {
+    if (editingStandardInput) {
+      if (data.id === 'REDO') {
+        mainWindow.webContents.redo();
+      }
+      if (data.id === 'UNDO') {
+        mainWindow.webContents.undo();
+      }
+    } else {
+      mainWindow.webContents.send(events.MENU_CLICK, data);
+    }
+  } else {
+    console.log('Menu event triggered but window does not exist.');
+  }
+}
+
 app.on('ready', () => {
   menuManager = new MenuManager();
-  menuManager.on(events.MENU_CLICK, (data) => {
-    data = {
-      id: data.id,
-      serial: data.serial,
-    }
-    if (mainWindow) {
-      mainWindow.webContents.send(events.MENU_CLICK, data);
-    } else {
-      console.log('Menu event triggered but window does not exist.');
-    }
-  });
+  menuManager.on(events.MENU_CLICK, onMenuClick);
 
   if (!mainWindow) {
     createShadowWindow();
