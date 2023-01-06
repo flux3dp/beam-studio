@@ -1,5 +1,4 @@
 import dns from 'dns';
-import SerialPort from 'serialport';
 
 import communicator from 'implementations/communicator';
 import { INetwork } from 'interfaces/INetwork';
@@ -17,26 +16,6 @@ export default {
       ...options,
       all: true,
     });
-  },
-  listSerialPorts(): Promise<SerialPort.PortInfo[]> {
-    return SerialPort.list();
-  },
-  createSerialPort(
-    path: string,
-    options?: {
-      baudRate?: number;
-      dataBits?: number;
-      lock?: boolean;
-    },
-    callback?: SerialPort.ErrorCallback,
-  ): SerialPort {
-    return new SerialPort(
-      path,
-      {
-        ...options,
-      } as SerialPort.OpenOptions,
-      callback,
-    );
   },
   networkTest: (
     ip: string,
