@@ -26,7 +26,6 @@ module.exports = [
       dns: 'require("dns")',
       'net-ping': 'require("net-ping")',
       fontkit: 'require("fontkit")',
-      serialport: 'require("serialport")',
       child_process: 'require("child_process")',
       util: 'require("util")',
       'font-scanner': 'require("font-scanner")',
