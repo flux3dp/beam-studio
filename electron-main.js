@@ -215,7 +215,7 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    trafficLightPosition: { x: 12, y: 25 },
+    trafficLightPosition: { x: 12, y: 14 },
     vibrancy: 'light'
   });
 
