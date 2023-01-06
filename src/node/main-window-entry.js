@@ -4,9 +4,8 @@
 
 (function mainEntry(G) {
   const path = require('path');
-
   // eslint-disable-next-line import/no-extraneous-dependencies
-  const { ipcRenderer, remote } = require('electron');
+  const { ipcRenderer } = require('electron');
   // eslint-disable-next-line import/no-dynamic-require
   const events = require(path.join(__dirname, 'ipc-events'));
 
@@ -18,6 +17,5 @@
   G.electron = {
     ipc: ipcRenderer,
     events,
-    remote,
   };
 }(global));

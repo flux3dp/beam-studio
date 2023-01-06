@@ -25,11 +25,10 @@
             body = document.querySelector('body'),
             dev = localStorage['dev'] === 'true',
             getStarted = function (ghostPort) {
-                script.setAttribute('src', 'js/lib/requirejs.min.js');
+                script.setAttribute('src', 'js/lib/require.js');
                 script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
                 body.appendChild(script);
-            },
-            timer;
+            };
 
         // set global definition
         window.FLUX = {
@@ -46,7 +45,6 @@
         if (window["electron"]) {
             let ipc = electron.ipc,
                 events = electron.events;
-            let backendDownCount = 0;
 
             ipc.on(events.BACKEND_UP, (sender, status) => {
                 window.FLUX.ghostPort = status.port;

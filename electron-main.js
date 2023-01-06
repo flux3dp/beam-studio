@@ -6,6 +6,7 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const os = require('os');
+const electronRemote = require('@electron/remote/main');
 const Store = require('electron-store');
 const Sentry = require('@sentry/electron');
 
@@ -19,6 +20,7 @@ const UglyNotify = require('./src/node/ugly-notify.js');
 const events = require('./src/node/ipc-events');
 const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
 
+electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
 Sentry.captureMessage('User Census', {
   level: 'info',
@@ -172,7 +174,8 @@ const createShadowWindow = () => {
     shadowWindow = new BrowserWindow({
       show: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        contextIsolation: false,
       },
     });
     // shadowWindow.webContents.openDevTools();
@@ -208,13 +211,16 @@ function createWindow() {
     frame: process.platform !== 'win32',
     title: `Beam Studio - ${app.getVersion()}`,
     webPreferences: {
-      enableRemoteModule: true,
       preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      sandbox: false,
     },
     trafficLightPosition: { x: 12, y: 25 },
     vibrancy: 'light'
   });
+
+  electronRemote.enable(mainWindow.webContents);
 
   const store = new Store();
 

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import electron from 'electron';
+import { Menu } from '@electron/remote';
 
 import viewMenu from 'helpers/menubar/view';
 import windowLocationReload from 'app/actions/windowLocation';
@@ -8,8 +8,6 @@ import { ICustomMenuActionProvider } from 'interfaces/ICustomMenuActionProvider'
 
 import ElectronUpdater from '../electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
-
-const { Menu } = electron.remote;
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
