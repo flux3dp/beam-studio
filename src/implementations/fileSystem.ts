@@ -1,8 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/no-shadow */
-import electron from 'electron';
 import fs from 'fs';
 import path from 'path';
+import { app } from '@electron/remote';
 
 import { IFileSystem } from 'interfaces/IFileSystem';
 
@@ -51,6 +51,6 @@ export default {
     return path.join(...paths);
   },
   getPath(path: Path): string {
-    return electron.remote.app.getPath(path);
+    return app.getPath(path);
   },
 } as IFileSystem;

@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/ban-types */
-import electron from 'electron';
+import { session } from '@electron/remote';
+
 import { Cookie, CookiesFilter, ICookies } from 'interfaces/ICookies';
 
-const { cookies } = electron.remote.session.defaultSession;
+const { cookies } = session.defaultSession;
 export default {
   on(event: 'changed', listener: any): void {
     cookies.on(event, listener);

@@ -5,7 +5,7 @@ exports.default = async function notarizing(context) {
   }
   console.log("==== Begin Notarizing!!! ====");
   require('dotenv').config();
-  const { notarize } = require('electron-notarize');
+  const { notarize } = require('@electron/notarize');
 
   const appName = context.packager.appInfo.productFilename;
   const appBundleId = context.packager.appInfo.platformSpecificOptions.category;

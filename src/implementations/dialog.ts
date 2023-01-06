@@ -1,10 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import fs from 'fs';
-import { remote } from 'electron';
+import { dialog } from '@electron/remote';
 
 import { DialogFilter, IDialog, OpenDialogProperties } from 'interfaces/IDialog';
-
-const { dialog } = remote;
 
 const showSaveDialog = async (
   title?: string,
