@@ -214,7 +214,6 @@ function createWindow() {
       preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
       nodeIntegration: true,
       contextIsolation: false,
-      sandbox: false,
     },
     trafficLightPosition: { x: 12, y: 25 },
     vibrancy: 'light'
