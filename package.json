@@ -72,7 +72,7 @@
     "@typescript-eslint/parser": "^4.22.0",
     "ajv": "^5.5.2",
     "babel-loader": "^8.1.0",
-    "electron": "^14.0.0",
+    "electron": "^22.0.0",
     "electron-builder": "22.10.5",
     "electron-publisher-s3": "^19.53.1",
     "enzyme": "^3.11.0",
