@@ -628,6 +628,7 @@ const onMenuClick = (data) => {
   data = {
     id: data.id,
     serial: data.serial,
+    machineName: data.machineName,
   }
   if (mainWindow) {
     if (editingStandardInput) {
@@ -638,6 +639,7 @@ const onMenuClick = (data) => {
         mainWindow.webContents.undo();
       }
     } else {
+      console.log("Send", data);
       mainWindow.webContents.send(events.MENU_CLICK, data);
     }
   } else {
