@@ -1,6 +1,6 @@
 .modal-camera-calibration {
   .video {
-    width: 400px;
+    width: 100%;
     min-height: 225px;
   }
 
@@ -9,26 +9,7 @@
     flex-direction: column;
     align-items: center;
     .tab-container {
-      width: 400px;
-      display: flex;
-      .tab {
-        width: 50%;
-        height: 35px;
-        line-height: 35px;
-        border: 1px solid #bbbbbb;
-        cursor: pointer;
-        &.right {
-          border-width: 1px 1px 1px 0;
-        }
-        &:hover:not(.selected) {
-          background-color: #eaeaea;
-        }
-        &.selected {
-          color: #fff;
-          background-color: #444444;
-          border-color: #444444;
-        }
-      }
+      margin-top: 10px;
     }
   }
 
@@ -58,9 +39,7 @@
       margin: 0;
     }
   }
-  .left-part {
-    float: left;
-  }
+
   .checkbox-container {
     display: flex;
     align-items: center;
@@ -130,19 +109,7 @@
       }
     }
   }
-  .hint-icon {
-    position: absolute;
-    top: -36px;
-    right: 0px;
-    padding-right: 19px;
-    width: 40px;
-    height: 17px;
-    line-height: 17px;
-    color: #626262;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-  }
+
   .hint-modal-background {
     position: fixed;
     z-index: 1;
@@ -179,69 +146,13 @@
       }
     }
   }
-  .controls {
-    float: left;
-    margin-left: 20px;
-    label {
-      font-weight: bold;
-      display: inline-block;
-      color: #555;
-      width: 90px;
-    }
-    .ui-control-unit-input-v2 {
-      .unit {
-        margin-left: -30px;
-        margin-right: 30px;
-        font-size: 10px;
-      }
-    }
-    .control > div {
-      margin-right: 0;
-    }
-    .btn {
-      margin: 0;
-    }
+
+  .ant-input-number-group .ant-input-number-group-addon:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
-
-  .btn-last-config {
-    height: 25px;
-    font-size: 12px;
-    line-height: 12px;
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .button-group {
-    border: none;
-    border-top: 1px solid #e0e0df;
-    display: block;
-    height: 73px;
-    padding: 19px;
-    position: relative;
-
-    .btn {
-      margin: 0;
-      padding: 0 10px;
-      &.btn-right {
-        float: right;
-        margin-left: 20px;
-      }
-      &.pull-right {
-        margin-left: 20px;
-      }
-    }
-
-    .btn-alone-right,
-    .btn-alone-right-1 {
-      background: #555 !important;
-      border: 0;
-      color: white;
-      &.disabled {
-        opacity: 0.5;
-      }
-      &:hover:not(.disabled) {
-        opacity: 0.8;
-      }
-    }
+  .ant-input-number-group .ant-input-number:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
   }
 }
