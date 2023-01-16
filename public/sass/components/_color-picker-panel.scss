@@ -100,11 +100,13 @@
     }
   }
   .footer {
+    display: flex;
+    justify-content: flex-end;
     height: 40px;
     padding: 0px 10px 5px 10px;
-    .btn {
-      height: 30px;
-      line-height: 30px;
+
+    button:not(:first-of-type) {
+      margin-left: 8px;
     }
   }
   .modal-background {
