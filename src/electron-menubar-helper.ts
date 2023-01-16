@@ -1,7 +1,6 @@
-import { remote } from 'electron';
+import { Menu } from '@electron/remote';
 
 export const getMenuItem = (ids: string[]): Electron.MenuItem => {
-  const { Menu } = remote;
   const applicationMenu = Menu.getApplicationMenu();
   let currentItem: Electron.MenuItem;
   for (let i = 0; i < ids.length; i += 1) {

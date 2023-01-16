@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import electron from 'electron';
+import { Menu, MenuItem } from '@electron/remote';
 
 import Alert from 'app/actions/alert-caller';
 import AlertConstants from 'app/constants/alert-constants';
@@ -19,13 +19,12 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const { Menu, MenuItem } = electron.remote;
-
 const recentMenuUpdater = {
   update() {
     const recentFiles = storage.get('recent_files') || [];
     const recentMenu = Menu.getApplicationMenu().items.filter((i) => i.id === '_file')[0].submenu.items.filter((i) => i.id === 'RECENT')[0].submenu;
     recentMenu.items = [];
+    // @ts-expect-error clear is thought to be not existing but actually exist
     recentMenu.clear();
     recentFiles.forEach((filePath) => {
       let label = filePath;

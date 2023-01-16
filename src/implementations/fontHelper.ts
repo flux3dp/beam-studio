@@ -1,19 +1,20 @@
 import fontkit from 'fontkit';
-import fontScanner from 'font-scanner';
+
+import communicator from 'implementations/communicator';
 import { FontDescriptor, FontHelper } from 'interfaces/IFont';
 
 export default {
   findFont(fontDescriptor: FontDescriptor): FontDescriptor {
-    return fontScanner.findFontSync(fontDescriptor);
+    return communicator.sendSync('FIND_FONT', fontDescriptor);
   },
   findFonts(fontDescriptor: FontDescriptor): FontDescriptor[] {
-    return fontScanner.findFontsSync(fontDescriptor);
+    return communicator.sendSync('FIND_FONTS', fontDescriptor);
   },
   getAvailableFonts() {
-    return fontScanner.getAvailableFontsSync();
+    return communicator.sendSync('GET_AVAILABLE_FONTS');
   },
   substituteFont(postscriptName: string, text: string) {
-    return fontScanner.substituteFontSync(postscriptName, text);
+    return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
   },
   getFontName(font: FontDescriptor): string {
     let fontName = font.family;

@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { app, session } from '@electron/remote';
 import { Color, Titlebar } from 'custom-electron-titlebar';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { remote } from 'electron';
 
 // This module setup global window variable, Should be put at top
 import globalHelper from 'helpers/global-helper';
@@ -67,7 +66,7 @@ const setReferer = () => {
   const filter = {
     urls: ['https://id.flux3dp.com/*'],
   };
-  remote.session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+  session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
     const header = {
       ...details.requestHeaders,
       Referer: 'https://id.flux3dp.com',
@@ -77,7 +76,7 @@ const setReferer = () => {
 };
 
 export default function main(): void {
-  window.FLUX.version = remote.app.getVersion();
+  window.FLUX.version = app.getVersion();
   console.log(`Beam-Studio: ${window.FLUX.version}`);
 
   // if (allowTracking) {
