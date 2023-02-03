@@ -226,3 +226,8 @@
     background: #e0e0df;
   }
 }
+
+.ant-select .ant-select-selector {
+  border: 1px solid #d9d9d9;
+  transition: border 0.3s;
+}

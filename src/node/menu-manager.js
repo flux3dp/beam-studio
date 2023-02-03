@@ -329,21 +329,22 @@ function getDeviceMenuId(uuid, data) {
 }
 
 function buildDeviceMenu(callback, uuid, data) {
-  const { serial, source } = data;
+  const { serial, source, name } = data;
   const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
+  const machineName = name;
   const modelType = (['delta-1', 'delta-1p'].includes(data.model)) ? 'delta-series' : 'beambox-series';
   let submenu = [];
   if (modelType === 'beambox-series') {
     submenu = [
       {
-        id: 'DASHBOARD', uuid, serial, source, label: r.dashboard, click: callback,
+        id: 'DASHBOARD', uuid, serial, machineName, source, label: r.dashboard, click: callback,
       },
       {
-        id: 'MACHINE_INFO', uuid, serial, source, label: r.machine_info, click: callback,
+        id: 'MACHINE_INFO', uuid, serial, machineName, source, label: r.machine_info, click: callback,
       },
       { type: 'separator' },
       {
-        id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, source, label: r.calibrate_beambox_camera, click: callback,
+        id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, machineName, source, label: r.calibrate_beambox_camera, click: callback,
       },
     ];
 
@@ -352,6 +353,7 @@ function buildDeviceMenu(callback, uuid, data) {
         id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
         uuid,
         serial,
+        machineName,
         source,
         label: r.calibrate_beambox_camera_borderless,
         click: callback,
@@ -360,6 +362,7 @@ function buildDeviceMenu(callback, uuid, data) {
         id: 'CALIBRATE_DIODE_MODULE',
         uuid,
         serial,
+        machineName,
         source,
         label: r.calibrate_diode_module,
         click: callback,
@@ -368,41 +371,42 @@ function buildDeviceMenu(callback, uuid, data) {
     submenu = submenu.concat([
       { type: 'separator' },
       {
-        id: 'UPDATE_FIRMWARE', uuid, serial, source, label: r.update_firmware, click: callback,
+        id: 'UPDATE_FIRMWARE', uuid, serial, machineName, source, label: r.update_firmware, click: callback,
       },
       {
         id: 'DOWNLOAD_LOG',
         uuid,
         serial,
+        machineName,
         source,
         label: r.download_log,
         submenu: [
           {
-            id: 'LOG_NETWORK', label: r.log.network, uuid, serial, source, click: callback,
+            id: 'LOG_NETWORK', label: r.log.network, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_HARDWARE', label: r.log.hardware, uuid, serial, source, click: callback,
+            id: 'LOG_HARDWARE', label: r.log.hardware, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_DISCOVER', label: r.log.discover, uuid, serial, source, click: callback,
+            id: 'LOG_DISCOVER', label: r.log.discover, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_USB', label: r.log.usb, uuid, serial, source, click: callback,
+            id: 'LOG_USB', label: r.log.usb, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_USBLIST', label: r.log.usblist, uuid, serial, source, click: callback,
+            id: 'LOG_USBLIST', label: r.log.usblist, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_CAMERA', label: r.log.camera, uuid, serial, source, click: callback,
+            id: 'LOG_CAMERA', label: r.log.camera, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_CLOUD', label: r.log.cloud, uuid, serial, source, click: callback,
+            id: 'LOG_CLOUD', label: r.log.cloud, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_PLAYER', label: r.log.player, uuid, serial, source, click: callback,
+            id: 'LOG_PLAYER', label: r.log.player, uuid, serial, machineName, source, click: callback,
           },
           {
-            id: 'LOG_ROBOT', label: r.log.robot, uuid, serial, source, click: callback,
+            id: 'LOG_ROBOT', label: r.log.robot, uuid, serial, machineName, source, click: callback,
           },
         ],
       },

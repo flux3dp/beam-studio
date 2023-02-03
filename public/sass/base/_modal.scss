@@ -219,16 +219,6 @@
         }
     }
 
-    .message {
-        font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", Helvetica, Arial, "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
-        margin: 0;
-        overflow: hidden;
-        padding: 0;
-        position: relative;
-        word-break: break-all;
-        word-wrap: break-word;
-    }
-
     .btn-h-group {
         width: 100%;
 
@@ -457,4 +447,13 @@
     .button-group button.btn-default {
         margin-bottom: 15px;
     }
+}
+
+.ant-modal-content .message {
+  font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", Helvetica, Arial, "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
+  margin: 0;
+  padding: 0;
+  position: relative;
+  word-break: normal;
+  word-wrap: normal;
 }

@@ -91,12 +91,6 @@
         }
       }
 
-      .color-block {
-        width: 14px;
-        margin: 6px 0px 6px 0px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-      }
       .color-hex {
         width: 90px;
         padding-left: 10px;
@@ -183,4 +177,12 @@
       border-width: 1px 0px 0px 0px;
     }
   }
+}
+
+.config-color-block {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
 }
