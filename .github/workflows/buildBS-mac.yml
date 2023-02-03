@@ -15,7 +15,7 @@ jobs:
         os: [macOS-10.15]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       # - name: Set up Python ${{ matrix.python-version }}
       #   uses: actions/setup-python@v1
       #   with:
@@ -46,7 +46,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Checkout Beamify
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: flux3dp/beamify
           ref: master
@@ -62,7 +62,7 @@ jobs:
         uses: flux3dp/fluxsvg@master
 
       - name: Checkout FluxClient
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: flux3dp/fluxclient-dev
           ref: develop
@@ -82,7 +82,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Checkout Beam Studio Core
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
