@@ -9,6 +9,7 @@ const os = require('os');
 const electronRemote = require('@electron/remote/main');
 const Store = require('electron-store');
 const Sentry = require('@sentry/electron');
+const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
 
 const BackendManager = require('./src/node/backend-manager.js');
 const fontHelper = require('./src/node/font-helper');
@@ -29,6 +30,7 @@ Sentry.captureMessage('User Census', {
     from: 'backend',
   },
 });
+setupTitlebar();
 
 let mainWindow;
 let menuManager;
@@ -344,6 +346,7 @@ function createWindow() {
 
   updateManager.setMainWindow(mainWindow);
   networkHelper.registerEvents(mainWindow);
+  attachTitlebarToWindow(mainWindow);
 }
 
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
