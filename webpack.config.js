@@ -14,7 +14,7 @@ module.exports = [
         loader: '/src/web/loader',
         implementations: '/src/implementations',
       },
-      extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      extensions: ['.tsx', '.ts', '.jsx', '.js', 'sass'],
       symlinks: false,
     },
     externals: {
@@ -56,6 +56,24 @@ module.exports = [
               },
             },
           ],
+        },
+        {
+          test: /\.module\.s[ac]ss$/,
+          exclude: /node_modules/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: {
+                  localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                },
+              }
+            },
+            {
+              loader: 'sass-loader',
+            }
+          ]
         },
       ],
     },
@@ -129,7 +147,6 @@ module.exports = [
     plugins: [
       new MiniCssExtractPlugin(),
     ],
-
     output: {
       path: path.resolve(__dirname, 'public', 'css', 'dist'),
     },
