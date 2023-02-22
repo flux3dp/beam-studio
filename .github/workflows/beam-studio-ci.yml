@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Eslint check
         uses: reviewdog/action-eslint@v1
-        # with:
-        # remove this parameter due to this known issue: https://github.com/reviewdog/reviewdog/issues/848
-        #   fail_on_error: true
