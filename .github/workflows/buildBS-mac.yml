@@ -59,7 +59,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@master
+        uses: flux3dp/fluxsvg@support-printing
 
       - name: Checkout FluxClient
         uses: actions/checkout@v3
