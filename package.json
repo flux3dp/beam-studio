@@ -75,9 +75,10 @@
     "@types/sprintf-js": "^1.1.2",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "@wdio/cli": "^8.6.0",
+    "@wdio/cli": "^8.6.2",
     "@wdio/local-runner": "^8.6.0",
     "@wdio/mocha-framework": "^8.5.6",
+    "@wdio/sauce-service": "^8.6.2",
     "@wdio/spec-reporter": "^8.4.0",
     "ajv": "^5.5.2",
     "babel-loader": "^8.1.0",
@@ -101,6 +102,7 @@
     "q": "~1.4.1",
     "sass": "^1.58.1",
     "sass-loader": "^13.2.0",
+    "selenium-webdriver": "^4.8.1",
     "spectron": "^16.0.0",
     "style-loader": "^3.3.1",
     "ts-jest": "^26.5.5",
@@ -127,7 +129,7 @@
     "spec": "jest --config jest.config.spec.only.js --passWithNoTests",
     "integration": "jest --config jest.config.integration.only.js --passWithNoTests",
     "eslint": "eslint",
-    "wdio": "wdio run ./wdio.conf.ts"
+    "wdio": "wdio run ./test/wdio.conf.ts"
   },
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
