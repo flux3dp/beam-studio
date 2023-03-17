@@ -1094,7 +1094,7 @@
     global-agent "^3.0.0"
     global-tunnel-ng "^2.7.1"
 
-"@electron/get@^2.0.0":
+"@electron/get@^2.0.0", "@electron/get@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-2.0.2.tgz#ae2a967b22075e9c25aaf00d5941cd79c21efd7e"
   integrity sha512-eFZVFoRXb3GFGd7Ak7W4+6jBl9wBtiZ4AaYOse97ej6mKj5tkyO0dUnUChs1IhJZtx1BENo4/p4WUTXpi6vT+g==
@@ -4536,7 +4536,7 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-ci-info@^3.2.0:
+ci-info@^3.2.0, ci-info@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.8.0.tgz#81408265a5380c929f0bc665d62256628ce9ef91"
   integrity sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==
@@ -5027,6 +5027,11 @@ cropperjs@^1.5.9:
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.13.tgz#eb1682f01d17c70ed5244317091d745c9a249ef8"
   integrity sha512-by7jKAo73y5/Do0K6sxdTKHgndY0NMjG2bEdgeJxycbcmHuCiMXqw8sxy5C5Y5WTOTcDGmbT7Sr5CgKOXR06OA==
+
+cross-dirname@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/cross-dirname/-/cross-dirname-0.1.0.tgz#b899599f30a5389f59e78c150e19f957ad16a37c"
+  integrity sha512-+R08/oI0nl3vfPcqftZRpytksBXDzOUveBq/NBVx0sUp1axwzPQrKinNx5yd5sxPu8j1wIy8AfnVQ+5eFdha6Q==
 
 cross-fetch@3.1.5:
   version "3.1.5"
@@ -7920,7 +7925,7 @@ import-local@^3.0.2:
     pkg-dir "^4.2.0"
     resolve-cwd "^3.0.0"
 
-import-meta-resolve@^2.1.0, import-meta-resolve@^2.2.0:
+import-meta-resolve@^2.1.0, import-meta-resolve@^2.2.0, import-meta-resolve@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/import-meta-resolve/-/import-meta-resolve-2.2.2.tgz#75237301e72d1f0fbd74dbc6cca9324b164c2cc9"
   integrity sha512-f8KcQ1D80V7RnqVm+/lirO9zkOxjGxhaTC1IPrBGd3MEfNgmNG67tSUO9gTi2F3Blr2Az6g1vocaxzkVnWl9MA==
@@ -14406,6 +14411,20 @@ wdio-chromedriver-service@^8.1.1:
     split2 "^4.1.0"
     tcp-port-used "^1.0.2"
 
+wdio-electron-service@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/wdio-electron-service/-/wdio-electron-service-4.0.0.tgz#45a9b456d2bb5e0c17c8357998f61b6bcc74813a"
+  integrity sha512-bTbRP6FJ9knA6Kz0jH168QiYwLjwU+wjLIdQVF9RRYgwzlns0bGtAhfbeFSvzC6sKwImQIZYcXh9B2vgCMjwGw==
+  dependencies:
+    "@electron/get" "^2.0.2"
+    "@wdio/logger" "^8.1.0"
+    ci-info "^3.8.0"
+    cross-dirname "^0.1.0"
+    extract-zip "^2.0.1"
+    import-meta-resolve "^2.2.1"
+    wdio-chromedriver-service "^8.1.1"
+    webdriverio "^8.3.9"
+
 wdio-spec-reporter@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/wdio-spec-reporter/-/wdio-spec-reporter-0.1.5.tgz#6d6f865deac6b36f96988c1204cc81099b75fc7e"
@@ -14481,7 +14500,7 @@ webdriverio@7.16.13:
     serialize-error "^8.0.0"
     webdriver "7.16.13"
 
-webdriverio@8.6.2, webdriverio@^8.2.4:
+webdriverio@8.6.2, webdriverio@^8.2.4, webdriverio@^8.3.9:
   version "8.6.2"
   resolved "https://registry.yarnpkg.com/webdriverio/-/webdriverio-8.6.2.tgz#3c4f2e3e43d139edbd221c01e47da5e70bfe397e"
   integrity sha512-TZKBbGzQ6yOW9OLKmResoPWPwFvwsmdmb/PjSuVr7dCknElZ6cClLVN87IuWHBKIxenXYNGkywCfyBu+Z7aJjQ==
