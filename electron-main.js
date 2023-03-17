@@ -349,6 +349,26 @@ function createWindow() {
   attachTitlebarToWindow(mainWindow);
 }
 
+let did_get_open_file = false;
+let init_open_path = '';
+
+app.on('open-file', (event, path) => {
+  init_open_path = path
+});
+
+ipcMain.on('GET_OPEN_FILE', (evt) => {
+  if (!did_get_open_file) {
+    did_get_open_file = true;
+    if (process.platform === 'win32' && process.argv.length > 1) {
+      init_open_path = process.argv[1];
+    }
+    if (init_open_path && fs.existsSync(init_open_path)) {
+      evt.returnValue = init_open_path;
+    }
+  }
+  evt.returnValue = null;
+});
+
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
   if (mainWindow) {
     mainWindow.send(events.NOTIFY_BACKEND_STATUS, {
@@ -379,50 +399,6 @@ ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
   console.log("Set SET_EDITING_STANDARD_INPUT", arg);
 });
-
-ipcMain.on('save-dialog', function (event, title, allFiles, extensionName, extensions, filename, file) {
-  const isMac = process.platform === 'darwin';
-  const isLinux = process.platform === 'linux';
-  const options = {
-    defaultPath: isLinux ? `${filename}.${extensions[0]}` : filename,
-    title,
-    filters: [
-      { name: isMac ? `${extensionName} (*.${extensions[0]})` : extensionName, extensions },
-      { name: allFiles, extensions: ['*'] }
-    ]
-  }
-  const filePath = dialog.showSaveDialogSync(options)
-  if (!filePath) {
-    event.returnValue = false;
-    return;
-  }
-
-  switch (typeof (file)) {
-    case 'string':
-      fs.writeFile(filePath, file, function (err) {
-        if (err) {
-          dialog.showErrorBox('Error', err);
-          event.returnValue = false;
-          return;
-        }
-      });
-      break;
-    case 'object':
-      fs.writeFileSync(filePath, file, function (err) {
-        if (err) {
-          dialog.showErrorBox('Error', err);
-          event.returnValue = false;
-          return;
-        }
-      });
-      break;
-    default:
-      event.returnValue = false;
-      dialog.showErrorBox('Error: something wrong, please contact FLUX Support');
-      break;
-  }
-  event.returnValue = filePath;
-})
 
 console.log('Running Beam Studio on ', os.arch());
 

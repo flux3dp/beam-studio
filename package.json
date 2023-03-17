@@ -197,6 +197,19 @@
     "nsis": {
       "include": "win-install.nsh",
       "artifactName": "Beam Studio Installer ${version}.${ext}"
-    }
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "jpg",
+          "jpeg",
+          "png",
+          "svg",
+          "beam"
+        ],
+        "description": "Image files",
+        "role": "Editor"
+      }
+    ]
   }
 }
