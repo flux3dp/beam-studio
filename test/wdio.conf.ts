@@ -10,7 +10,7 @@ export const config: Options.Testrunner = {
     autoCompileOpts: {
         autoCompile: true,
         tsNodeOpts: {
-            project: './test/tsconfig.json',
+            project: './tsconfig.json',
             transpileOnly: true
         }
     },
@@ -33,7 +33,7 @@ export const config: Options.Testrunner = {
     // will be called from there.
     //
     specs: [
-        './test/specs/**/*.ts'
+        './specs/**/*.ts'
     ],
     // Patterns to exclude.
     exclude: [
@@ -106,7 +106,7 @@ export const config: Options.Testrunner = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    // baseUrl: 'http://localhost',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -122,7 +122,25 @@ export const config: Options.Testrunner = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['chromedriver'],
+    // services: ['chromedriver','sauce'],
+    outputDir: "all-logs",
+  services: [
+    [
+      "electron",
+      {
+        binaryPath:
+          "./node_modules/electron/dist/Electron.app/Contents/MacOS/Electron",
+        appArgs: [
+          "--disable-infobars",
+          "--disable-dev-shm-usage",
+          "--no-sandbox",
+          "--remote-debugging-port=9222",
+        ],
+        electronVersion: '22.3.3',
+      },
+    ],
+  ],
+  port: 9515,
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
