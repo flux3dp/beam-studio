@@ -2,25 +2,21 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增法文',
-    '新增荷蘭文',
   ],
   fixed: [
-    '修正匯入的 SVG 檔案複製後無法顯示問題。',
   ],
   changed: [
+    '當啟用開蓋模式時，將自動裁切超出限制範圍的工作。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Français',
-    'Added Nederlands',
   ],
   fixed: [
-    'Fixed image displaying issue after copying and pasting imported SVG objects.',
   ],
   changed: [
+    'When Open Button Add-on is enabled, Beam Studio will automatically crop the work that exceeds the workarea now.',
   ],
 };
 
