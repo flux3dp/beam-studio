@@ -62,7 +62,7 @@ export default {
     defaultPath?: string,
     filters?: DialogFilter[],
     properties?: OpenDialogProperties[],
-  }): Promise<Blob | File> {
+  }): Promise<File> {
     const { canceled, filePaths } = await dialog.showOpenDialog(options);
     if (canceled || !filePaths) return null;
     const filePath = filePaths[0];
