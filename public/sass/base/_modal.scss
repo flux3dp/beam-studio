@@ -92,6 +92,7 @@
         }
     }
 
+    // TODO: remove this class after deprecated modals are removed
     .modal-alert {
         @include flexbox();
         background: #F8F8F8;
