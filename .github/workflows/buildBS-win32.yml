@@ -95,6 +95,7 @@ jobs:
 
           $env:TMP
           cp -R $env:TMP/flux_api_swap backend/flux_api
+          cp -R lib/elevate.cmd backend/elevate.cmd
           ./backend/flux_api/flux_api --test --without_pcl
 
           cp -R util/win32 utils
