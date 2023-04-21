@@ -2,31 +2,35 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增多邊形物件邊數設定的選項。',
-    '關於 Bema Studio 面板新增開放原始碼資訊說明。',
+    '新增路徑節點編輯功能。',
+    '新增自動對焦模組偏移量設定。',
+    '新增以檔案開啟 Beam Studio 功能。',
   ],
   fixed: [
-    '修正某些 DXF 物件路徑計算錯誤的問題。',
-    '修正讀取部分 SVG 檔顯示錯誤。',
-    '雷射參數列表新增參數圖示更正。',
+    '修正跨專案複製 SVG 的問題。',
   ],
   changed: [
-    '文字縮放預設鎖定長寬比例。',
+    '更改部分 UI。',
+    '將圖層最小速度改為 1 mm/s。',
+    '使用開蓋模組時，將裁切右方灰色區塊的工作。',
+    '開啟圖層右鍵選單時，會同時選取目標圖層。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the Sides option for polygon objects.',
-    'Added the information for the open-source software in the About Beam Studio.',
+    'Added path node editing functionalities.',
+    'Added autofocus module offset setting in preference.',
+    'Added open file with Beam Studio.',
   ],
   fixed: [
-    'Fixed some DXF file calculate path failed problems.',
-    'Fixed some SVG files wrong display problems.',
-    'Fixed the added icon in the Preset Manage panel.',
+    'Fixed the problem of pasting SVG across projects.',
   ],
   changed: [
-    'Freeze the scale ratio for the font objects by default.',
+    'Changed some UI.',
+    'Changed the minimum speed to 1 mm/s.',
+    'When using the Borderless mode, the gray area on the right will be clipped.',
+    'When right-clicking on a layer, the target layer will be selected at the same time.',
   ],
 };
 
