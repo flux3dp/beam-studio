@@ -200,14 +200,23 @@
     },
     "fileAssociations": [
       {
-        "ext": [
-          "jpg",
-          "jpeg",
-          "png",
-          "svg",
-          "beam"
-        ],
-        "description": "Image files",
+        "ext": "beam",
+        "description": "Edit and cut image files",
+        "role": "Editor"
+      },
+      {
+        "ext": "svg",
+        "description": "Edit and cut image files",
+        "role": "Editor"
+      },
+      {
+        "ext": "jpg",
+        "description": "Edit and cut image files",
+        "role": "Editor"
+      },
+      {
+        "ext": "png",
+        "description": "Edit and cut image files",
         "role": "Editor"
       }
     ]
