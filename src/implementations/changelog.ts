@@ -8,7 +8,7 @@ const CHANGES_TW = {
   ],
   fixed: [
     '修正跨專案複製 SVG 的問題。',
-    '修正 Windows 版 elevate.vbs 警告問題。',
+    '修正 Windows 2.0.0 beta 版 elevate.vbs 警告問題。',
   ],
   changed: [
     '更改部分 UI。',
@@ -26,7 +26,7 @@ const CHANGES_EN = {
   ],
   fixed: [
     'Fixed the problem of pasting SVG across projects.',
-    'Fixed the missing of elevate.vbs in Windows version.',
+    'Fixed the missing of elevate.vbs in Windows 2.0.0 beta version.',
   ],
   changed: [
     'Changed some UI.',
