@@ -58,6 +58,11 @@ module.exports = [
           ],
         },
         {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+          include: [path.join(__dirname, 'node_modules/antd'), path.join(__dirname, 'node_modules/antd-mobile')],
+        },
+        {
           test: /\.module\.s[ac]ss$/,
           exclude: /node_modules/,
           use: [
