@@ -20,6 +20,8 @@
     "@types/html2canvas": "^0.0.35",
     "animate.css": "^4.1.0",
     "antd": "^5.4.0",
+    "antd-mobile": "^5.30.0",
+    "antd-mobile-icons": "^0.3.0",
     "assert": "^2.0.0",
     "axios": "^0.21.1",
     "bufferpack": "^0.0.6",

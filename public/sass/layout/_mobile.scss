@@ -1,0 +1,210 @@
+@media screen and (min-width: 601px) {
+  #mobile-tab-bar {
+    display: none;
+  }
+  .hidden-desktop {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+
+  #mobile-tab-bar {
+    display: block;
+    position: fixed;
+    width: 100%;
+    border-top: solid 1px #CCC;
+    background: #FFFFFF;
+    z-index: 998;
+    overflow-x: scroll;
+    bottom: 0;
+  }
+
+  #right-panel {
+    width: 100%;
+    display: none;
+  }
+
+  .adm-tab-bar-item[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .beambox-studio #svg_editor {
+    left: 0px;
+    width: calc(100%);
+    &.mac {
+      width: calc(100%);
+    }
+  }
+
+  .beambox-studio {
+    .element-title {
+      margin-left: 15px;
+    }
+  }
+
+  .ant-modal-content .ui-control-unit-input-v2 {
+    .unit {
+      width: 50px;
+      text-align: end;
+      margin-left: -50px;
+      display: inline-block;
+    }
+  }
+
+  .beambox-studio #right-panel {
+    width: 100vw;
+    overflow-x: hidden;
+
+    #sidepanels {
+      top: auto;
+      bottom: 49px;
+      left: 0;
+      width: 100vw !important;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      height: fit-content;
+      .right-panel-tabs {
+        display: none;
+      }
+
+      #object-panel {
+        min-height: 0;
+        width: 1200px;
+        display: flex;
+        .tool-btns-container {
+          min-width: 100vw;
+        }
+        .dimension-panel {
+          border-right: 1px solid #EEE;
+          padding: 8px;
+          display: flex;
+          min-width: 100vw;
+          .dimension-container {
+            height: 32px;
+            .label {
+              line-height: 32px;
+            }
+            input {
+              font-size: 16px;
+              width: 80px;
+            }
+            .dimension-input {
+              margin: 5px 0 0 0;
+            }
+          }
+        }
+        .options-panel {
+          border-right: 1px solid #EEE;
+          padding: 8px;
+          display: flex;
+          max-width: 150vw;
+          flex-wrap: wrap;
+          min-width: fit-content;
+          .title {
+            display: none;
+          }
+          .text-options {
+            display: flex;
+            flex-wrap: wrap;
+            width: 150vw;
+          }
+
+          .option-block {
+            margin: 0 0 5px 0;
+            .label {
+              word-break: keep-all;
+              margin: 0 5px;
+              font-size: 13px;
+              line-height: 32px;
+              height: 32px;
+            }
+            .onoffswitch {
+              width: auto;
+              margin: 0;
+            }
+            .option-input {
+              font-size: 16px;
+              width: 60px;
+              margin-top: 5px;
+              input {
+                font-size: 16px;
+                width: 40px;
+                padding: 0;
+              }
+              .unit {
+                margin-left: auto;
+              }
+            }
+            width: 45vw;
+            margin-right: 10px;
+          }
+        }
+        .tool-btns-container {
+          padding: 8px;
+          .tool-btns-row {
+            background: none;
+            height: 32px;
+            margin-bottom: 4px;
+          }
+          .tool-btns-row:last-child {
+            border-width: 0;
+          }
+
+        }
+        .actions-panel {
+          display: flex;
+          width: auto;
+          padding: 8px;
+          .title {
+            display: none;
+          }
+          .btns-container {
+            width: 100vw;
+            flex-wrap: wrap;
+            justify-content: inherit;
+
+            .btn-container {
+              &.half, &.full {
+                width: auto;
+              }
+              button.btn {
+                padding: 2px 10px;
+                height: 32px;
+                margin: 0 0 4px 0;
+                line-height: 28px;
+                width: max-content;
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
+
+      #layerpanel {
+        width: 100vw;
+        border: none;
+      }
+      #layerlist_container {
+        left: 0;
+        width: 100vw;
+        overflow-y: scroll;
+        height: fit-content;
+      }
+    }
+  }
+  #laser-panel {
+    .controls {
+      overflow-y: auto;
+    }
+  }
+  #beamboxToolPanel {
+    z-index: 999;
+  }
+  .device-list ul {
+    width: auto;
+  }
+}

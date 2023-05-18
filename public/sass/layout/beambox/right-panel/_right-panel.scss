@@ -14,7 +14,7 @@
       width: 32px;
       border: 1px solid #e0e0e0;
       border-width: 0 1px 0 0;
-      transition: all 0.2s ease-in-out;
+      transition: width 0.2s ease-in-out;
       &:last-of-type {
         border-width: 0;
       }
