@@ -149,7 +149,8 @@ class BackendManager extends EventEmitter {
 
   spawn() {
     const ghostDirectoy = path.dirname(this.ghostLocation);
-    this.proc = spawn($`"${this.ghostLocation}"`, this.args, { shell: true, cwd: ghostDirectoy });
+    const ghostExec = path.basename(this.ghostLocation);
+    this.proc = spawn(`./"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
 
     this.proc.stdout.on('data', (data) => {
       const result = uglyJsonParser(data.toString());
