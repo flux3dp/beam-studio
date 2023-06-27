@@ -684,7 +684,7 @@ module.exports = {
       camera: '카메라',
       cloud: '클라우드',
       player: '플레이어',
-      robot: '로봇'
+      robot: '로봇',
     },
     link: {
       help_center: 'https://helpcenter.flux3dp.com/',
