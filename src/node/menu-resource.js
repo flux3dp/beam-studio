@@ -676,15 +676,15 @@ module.exports = {
     download_log_canceled: '로그 다운로드 취소됨',
     download_log_error: '알 수 없는 오류가 발생했습니다. 나중에 다시 시도하세요.',
     log: {
-        network: '네트워크',
-        hardware: '하드웨어',
-        discover: '알아보기',
-        usb: 'USB',
-        usblist: 'USB 목록',
-        camera: '카메라',
-        cloud: '클라우드',
-        player: '플레이어',
-        robot: '로봇'
+      network: '네트워크',
+      hardware: '하드웨어',
+      discover: '알아보기',
+      usb: 'USB',
+      usblist: 'USB 목록',
+      camera: '카메라',
+      cloud: '클라우드',
+      player: '플레이어',
+      robot: '로봇'
     },
     link: {
       help_center: 'https://helpcenter.flux3dp.com/',
@@ -704,8 +704,8 @@ module.exports = {
     show_rulers: '눈금자 표시',
     show_layer_color: '레이어 색상 사용',
     anti_aliasing: '앤티 앨리어싱',
-    disassemble_use: '분해'
-},
+    disassemble_use: '분해',
+  },
   de: {
     preferences: 'Einstellungen',
     switch_to_latest: 'Wechsle zur stabilen Version',
