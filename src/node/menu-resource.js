@@ -567,7 +567,7 @@ module.exports = {
     anti_aliasing: 'アンチエイリアス',
     disassemble_use: '逆アセンブル',
   },
-  'kr': {
+  kr: {
     preferences: '환경설정',
     switch_to_latest: '안정 릴리스로 전환',
     switch_to_beta: '베타 릴리스로 전환',
