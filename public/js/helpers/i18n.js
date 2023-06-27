@@ -6,7 +6,7 @@ define([
     'app/lang/zh-tw',
     'app/lang/ja',
     'app/lang/zh-cn',
-], function(localStorage, AppSettings, LangDe, LangEn, LangZHTW, LangJa, LangZHCN) {
+], function(localStorage, AppSettings, LangDe, LangEn, LangZHTW, LangJa, LangZHCN, LangKr, LangPt) {
     'use strict';
 
     var ACTIVE_LANG = 'active-lang',
@@ -16,6 +16,8 @@ define([
             'zh-tw': LangZHTW,
             'ja': LangJa,
             'zh-cn': LangZHCN,
+            'kr': LangKr,
+            'pt': LangPt
         },
         activeLang = localStorage.get(ACTIVE_LANG) || AppSettings.i18n.default_lang,
         currentLang;
