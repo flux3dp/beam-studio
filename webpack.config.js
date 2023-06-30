@@ -13,6 +13,7 @@ module.exports = [
         helpers: '/src/web/helpers',
         loader: '/src/web/loader',
         implementations: '/src/implementations',
+        styles: '/src/web/styles',
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', 'sass'],
       symlinks: false,
@@ -79,6 +80,10 @@ module.exports = [
               loader: 'sass-loader',
             }
           ]
+        },
+        {
+          test: /\.svg$/,
+          use: ['@svgr/webpack'],
         },
       ],
     },
