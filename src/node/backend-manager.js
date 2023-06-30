@@ -5,6 +5,7 @@
 // Warning: Do not include any electron module here
 
 const app = require('electron').app;
+const os = require('os');
 const path = require('path');
 const EventEmitter = require('events');
 const WebSocket = require('ws');
@@ -150,7 +151,8 @@ class BackendManager extends EventEmitter {
   spawn() {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
-    this.proc = spawn(`./"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
+    if (os.platform() === 'win32') spawn(`"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
+    else this.proc = spawn(`./"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
 
     this.proc.stdout.on('data', (data) => {
       const result = uglyJsonParser(data.toString());
