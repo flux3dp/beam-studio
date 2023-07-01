@@ -151,7 +151,7 @@ class BackendManager extends EventEmitter {
   spawn() {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
-    if (os.platform() === 'win32') spawn(`"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
+    if (os.platform() === 'win32') this.proc = spawn(`"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
     else this.proc = spawn(`./"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
 
     this.proc.stdout.on('data', (data) => {
