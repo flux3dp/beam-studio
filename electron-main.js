@@ -126,8 +126,8 @@ function onDeviceUpdated(deviceInfo) {
 
   if (deviceInfo.alive) {
     if (menuManager) {
-      menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
-      if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
+      const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+      if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
   } else {
     if (global.devices[deviceID]) {
