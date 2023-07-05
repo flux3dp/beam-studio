@@ -127,11 +127,13 @@ function onDeviceUpdated(deviceInfo) {
   if (deviceInfo.alive) {
     if (menuManager) {
       menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+      if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
   } else {
     if (global.devices[deviceID]) {
       if (menuManager) {
         menuManager.removeDevice(deviceInfo.uuid, global.devices[deviceID]);
+        if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
       }
       delete global.devices[deviceID];
     }
