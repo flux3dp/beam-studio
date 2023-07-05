@@ -678,11 +678,13 @@ class MenuManager extends EventEmitter {
         if (menuitem.label !== data.name) {
           menuitem.label = data.name;
           Menu.setApplicationMenu(this.appmenu);
+          return true;
         }
-        return;
+        return false;
       }
     }
     this.appendDevice(uuid, data);
+    return true;
   }
 
   removeDevice(uuid, data) {

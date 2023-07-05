@@ -8,12 +8,19 @@ import communicator from 'implementations/communicator';
 import ElectronUpdater from '../electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
 
+const updateWindowsMenu = () => {
+  if (window.os === 'Windows') window.titlebar.updateMenu(ElectronMenu.getApplicationMenu());
+};
+
 class Menu extends AbstractMenu {
   private communicator;
 
   constructor(aCommunicator) {
     super();
     this.communicator = aCommunicator;
+    communicator.on('UPDATE_MENU', () => {
+      updateWindowsMenu();
+    });
   }
 
   init(): void {
@@ -47,9 +54,7 @@ class Menu extends AbstractMenu {
   updateLanguage(): void {
     if (this.communicator) {
       this.communicator.send('NOTIFY_LANGUAGE');
-      if (window.os === 'Windows') {
-        window.titlebar.updateMenu(ElectronMenu.getApplicationMenu());
-      }
+      updateWindowsMenu();
     }
   }
 }
