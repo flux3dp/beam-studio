@@ -3,7 +3,7 @@ name: Electron CD Windows x64
 on:
   push:
     branches:
-      - 'test-build'
+      - 'test-build-ador'
 
 jobs:
   build:
@@ -76,7 +76,7 @@ jobs:
         with:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
-          ref: develop
+          ref: dev-ador
           path: .github/actions/beam-studio-core
 
       - name: Copy Beam Studio Core
