@@ -587,7 +587,7 @@ module.exports = {
     open: '열기',
     recent: '최근 열기',
     samples: '예제',
-    import_hello_beamo: '비아모의 예',
+    import_hello_beamo: '비모 예시',
     import_hello_beambox: '빔박스 예시',
     import_material_testing_old: '재료 조각 테스트 - 클래식',
     import_material_testing_simple_cut: '재료 절단 테스트 - 간단',
