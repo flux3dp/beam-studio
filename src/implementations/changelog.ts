@@ -2,31 +2,23 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
-    '新增多邊形物件邊數設定的選項。',
-    '關於 Bema Studio 面板新增開放原始碼資訊說明。',
+    '新增圖片 AI 去背功能（需登入後使用）。',
   ],
   fixed: [
-    '修正某些 DXF 物件路徑計算錯誤的問題。',
-    '修正讀取部分 SVG 檔顯示錯誤。',
-    '雷射參數列表新增參數圖示更正。',
+    '修正 Windows 工具列機器列表需重新整理才會更新。',
   ],
   changed: [
-    '文字縮放預設鎖定長寬比例。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the Sides option for polygon objects.',
-    'Added the information for the open-source software in the About Beam Studio.',
+    'Added AI background removal function for image (need to login to use).',
   ],
   fixed: [
-    'Fixed some DXF file calculate path failed problems.',
-    'Fixed some SVG files wrong display problems.',
-    'Fixed the added icon in the Preset Manage panel.',
+    'Fixed Windows toolbar machine list need to refresh to update.',
   ],
   changed: [
-    'Freeze the scale ratio for the font objects by default.',
   ],
 };
 
