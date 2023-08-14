@@ -4,7 +4,6 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 const CHANGES_TW = {
   added: [
     '新增圖片 AI 去背功能（需登入後使用）。',
-    '新增圖片勾勒輪廓功能。',
   ],
   fixed: [
     '修正 Windows 工具列機器列表需重新整理才會更新。',
@@ -16,7 +15,6 @@ const CHANGES_TW = {
 const CHANGES_EN = {
   added: [
     'Added AI background removal function for image (need to login to use).',
-    'Added image outline action.',
   ],
   fixed: [
     'Fixed Windows toolbar machine list need to refresh to update.',
