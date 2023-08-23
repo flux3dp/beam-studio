@@ -122,13 +122,13 @@ jobs:
           APPLEID: ${{ secrets.APPLEID_DEAN }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS_DEAN }}
 
-      - name: Cleanup artifacts
-        run: |
-          mkdir artifacts
-          mv dist/*.dmg artifacts
+      # - name: Cleanup artifacts
+      #   run: |
+      #     mkdir artifacts
+      #     mv dist/*.dmg artifacts
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{matrix.os}}
-          path: artifacts
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: ${{matrix.os}}
+      #     path: artifacts

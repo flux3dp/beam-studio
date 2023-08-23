@@ -105,13 +105,13 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Cleanup artifacts
-        run: |
-          mkdir artifacts
-          mv dist/*.deb artifacts
+      # - name: Cleanup artifacts
+      #   run: |
+      #     mkdir artifacts
+      #     mv dist/*.deb artifacts
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{matrix.os}}
-          path: artifacts
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: ${{matrix.os}}
+      #     path: artifacts

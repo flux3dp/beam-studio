@@ -122,13 +122,13 @@ jobs:
           CERT_SUBJECT: ${{ secrets.CERT_SUBJECT }}
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
 
-      - name: Cleanup artifacts
-        run: |
-          mkdir artifacts
-          mv dist/*.exe artifacts
+      # - name: Cleanup artifacts
+      #   run: |
+      #     mkdir artifacts
+      #     mv dist/*.exe artifacts
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: win-x${{ matrix.arch }}
-          path: artifacts
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v1
+      #   with:
+      #     name: win-x${{ matrix.arch }}
+      #     path: artifacts
