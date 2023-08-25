@@ -2,6 +2,9 @@
   "name": "beam-studio",
   "productName": "Beam Studio",
   "version": "2.1.0-alpha",
+  "engines": {
+    "node": ">=18.16.1"
+  },
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
