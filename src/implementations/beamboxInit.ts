@@ -6,6 +6,7 @@ import AlertConfig from 'helpers/api/alert-config';
 import AlertConstants from 'app/constants/alert-constants';
 import BeamboxInit from 'app/actions/beambox/beambox-init';
 import i18n from 'helpers/i18n';
+import os, { macKernelVersionMap } from 'implementations/os';
 
 class ElectronBeamboxInit extends BeamboxInit {
   async showStartUpDialogs(): Promise<void> {
@@ -18,9 +19,10 @@ class ElectronBeamboxInit extends BeamboxInit {
     if (!AlertConfig.read('skip_os_version_warning')) {
       if (window.os === 'MacOS') {
         try {
-          const osVersion = /(?<=Mac OS X )[._\d]+/.exec(navigator.userAgent)[0];
-          const version = osVersion.split('_').map((v) => parseInt(v, 10));
-          if (version[0] === 10 && version[1] < 13) {
+          const release = os.release();
+          const version = release.split('.').map((v) => parseInt(v, 10));
+          if (version[0] < 20) {
+            const osVersion = macKernelVersionMap[release] || `Kernel Release: ${release}`;
             Alert.popUp({
               id: 'os_version_warning',
               message: sprintf(i18n.lang.message.unsupport_osx_version, osVersion),
