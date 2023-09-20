@@ -12,6 +12,7 @@ const CHANGES_TW = {
     '修正雕刻檔案時間變長問題。',
     '修正合併文字路徑問題。',
     '修正路徑預覽時有時會當機的問題。',
+    '修正移動物件圖層相關功能。',
   ],
   changed: [
   ],
@@ -28,6 +29,7 @@ const CHANGES_EN = {
     'Fixed the engraving file time issue.',
     'Fixed the merge text path issue.',
     'Fixed the path preview crash issue.',
+    'Fixed the move object layer related functions.',
   ],
   changed: [
   ],
