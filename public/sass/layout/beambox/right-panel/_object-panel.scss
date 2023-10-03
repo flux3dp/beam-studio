@@ -1,9 +1,4 @@
 #object-panel {
-  width: 100%;
-  min-height: calc(100% - 40px);
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
-  border-width: 0 0 1px 1px;
   .ui-control-unit-input-v2 {
     height: 25px;
     line-height: 25px;
@@ -168,7 +163,6 @@
         }
       }
       .select-container {
-        width: 140px;
         select {
           font-size: 12px;
           padding: 0 10px 0 5px;

@@ -6,6 +6,10 @@
   height: 250px;
   background: white;
   box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+  @media screen and (max-width: 600px) {
+    width: 240px;
+    height: 300px;
+  }
   .pcr-button {
     display: none;
   }
@@ -26,10 +30,16 @@
       width: 100%;
       height: 200px;
       padding-bottom: 5px;
+      @media screen and (max-width: 600px) {
+        height: 250px;
+      }
       .pcr-color-preview {
         width: 100%;
         height: 20px;
         margin-bottom: 5px;
+        @media screen and (max-width: 600px) {
+          margin-bottom: 8px;
+        }
         .pcr-last-color {
           border-radius: 3px 0px 0px 3px;
           margin: 0px;
@@ -37,21 +47,25 @@
           border: 0px;
           background: currentColor;
           float: left;
-          width: 90px;
-          height: 20px;
+          width: 50%;
+          height: 100%;
         }
         .pcr-current-color {
           border-radius: 0px 3px 3px 0px;
           background: currentColor;
           float: left;
-          width: 90px;
-          height: 20px;
+          width: 50%;
+          height: 100%;
         }
       }
       .pcr-color-palette {
         width: 180px;
         height: 150px;
         position: absolute;
+        @media screen and (max-width: 600px) {
+          width: 220px;
+          height: 180px;
+        }
         .pcr-palette {
           height: 100%;
           border-radius: 3px;
@@ -70,6 +84,17 @@
           height: 12px;
           width: 12px;
           top: -2px;
+        }
+        @media screen and (max-width: 600px) {
+          top: 220px;
+          width: 220px;
+          .pcr-slider {
+            height: 12px;
+          }
+          .pcr-picker {
+            height: 16px;
+            width: 16px;
+          }
         }
         .pcr-hue {
           background-image: linear-gradient(

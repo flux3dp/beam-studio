@@ -41,61 +41,6 @@
       }
     }
   }
-  #rulers {
-    pointer-events: none;
-    position: absolute;
-    z-index: 1;
-    width: calc(100vw - 308px);
-    height: 100vh;
-    &.mac {
-      width: calc(100vw - 292px);
-    }
-    div {
-      position: absolute;
-      background: #f0f0f0;
-      overflow: hidden;
-    }
-    #ruler_corner {
-      top: 0px;
-      width: 15px;
-      height: 15px;
-    }
-    #ruler_x {
-      pointer-events: initial;
-      top: 0px;
-      left: 15px;
-      right: 0px;
-      height: 15px;
-      border-bottom: 1px solid;
-      border-left: 1px solid #777;
-      canvas {
-        pointer-events: none;
-        margin-left: -16px;
-      }
-    }
-    #ruler_y {
-      pointer-events: initial;
-      top: 15px;
-      bottom: 0px;
-      left: 0px;
-      width: 15px;
-      border-right: 1px solid;
-      border-top: 1px solid #777;
-      canvas {
-        pointer-events: none;
-        margin-top: -17px;
-      }
-    }
-    #ruler_unit_shower {
-      top: 0px;
-      right: 0px;
-      height: 15px;
-      border-bottom: 1px solid #000;
-      color: #333;
-      font-size: 12px;
-      font-weight: 300;
-    }
-  }
   #main_button,
   #tools_left,
   #tools_bottom {

@@ -59,6 +59,16 @@ a {
 
 img {
   max-width: 100%;
+  // no select
+  -webkit-touch-callout: none; /* Safari Touch */
+  -webkit-user-select: none;   /* Webkit */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Edge*/
+  user-select: none;       /* Future-proof*/
+  // no drag
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
 }
 
 /**
