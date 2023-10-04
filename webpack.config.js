@@ -89,7 +89,26 @@ module.exports = [
         {
           test: /\.svg$/,
           resourceQuery: { not: [/url/] }, // exclude react component if *.svg?url
-          use: ['@svgr/webpack'],
+          use: [
+            {
+              loader: '@svgr/webpack',
+              options: {
+                svgoConfig: {
+                  plugins: [
+                    {
+                      name: 'preset-default',
+                      params: {
+                        overrides: {
+                          removeViewBox: false,
+                          convertPathData: false,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
       ],
     },
