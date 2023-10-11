@@ -19,7 +19,7 @@
     "@szhsin/react-menu": "^1.10.1",
     "@types/html2canvas": "^0.0.35",
     "animate.css": "^4.1.0",
-    "antd": "^5.4.0",
+    "antd": "5.9.4",
     "antd-mobile": "^5.30.0",
     "antd-mobile-icons": "^0.3.0",
     "assert": "^2.0.0",
@@ -199,7 +199,10 @@
     },
     "nsis": {
       "include": "win-install.nsh",
-      "artifactName": "Beam Studio Installer ${version}.${ext}"
+      "artifactName": "Beam Studio Installer ${version}.${ext}",
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
     },
     "fileAssociations": [
       {
