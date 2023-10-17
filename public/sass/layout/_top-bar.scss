@@ -7,43 +7,11 @@
   background-color: #333;
   -webkit-app-region: drag;
 
-  .right {
-    float: right;
-    display: flex;
-  }
-
   &.white {
     background-color: #f8f8f8;
     border: 1px solid #e0e0e0;
     border-width: 0 0 1px 0;
     -webkit-app-region: no-drag;
-    .preview-button-container {
-      position: relative;
-      float: left;
-      margin-left: 0px;
-      overflow: hidden;
-      min-width: 50px;
-      max-width: 50px;
-      .img-container {
-        width: 50px;
-        padding: 0 13px;
-        img {
-          padding: 12px 0;
-          width: 24px;
-          filter: brightness(0);
-        }
-      }
-      &.previewing {
-        background-color: unset;
-        min-width: 150px;
-        max-width: 270px;
-        border: 3px solid #595959;
-        border-width: 0 0 3px 0;
-        .img-container {
-          opacity: 1;
-        }
-      }
-    }
     .element-title {
       position: relative;
       float: left;
@@ -59,24 +27,6 @@
       z-index: 1;
       top: 40px;
     }
-    .path-preview-button-container {
-      .path-preview-button {
-        img {
-          filter: brightness(0);
-        }
-      }
-      &.highlighted {
-        background-color: #f8f8f8;
-        padding-top: 3px;
-        border: 3px solid #595959;
-        border-width: 0 0 3px 0;
-      }
-    }
-    .go-button-container {
-      .go-btn {
-        border-color: transparent transparent transparent #333333;
-      }
-    }
     .menu {
       &.camera {
         left: 65px;
@@ -86,135 +36,6 @@
         top: 37px;
         right: 50px;
       }
-    }
-  }
-  .preview-button-container {
-    position: absolute;
-    display: inline-flex;
-    justify-content: space-between;
-    min-width: 40px;
-    max-width: 40px;
-    height: $topBarHeight;
-    margin-left: 80px;
-    transition: all 0.1s ease-in-out;
-    .img-container {
-      width: 40px;
-      height: $topBarHeight;
-      padding: 0 10px;
-      display: inline-flex;
-      opacity: 0.7;
-      cursor: pointer;
-      img {
-        padding: 13px 0;
-      }
-      &:hover {
-        opacity: 1;
-      }
-    }
-    &.previewing {
-      min-width: 140px;
-      max-width: 260px;
-      background-color: #eeeeee;
-      img {
-        filter: brightness(0);
-      }
-    }
-    .title {
-      width: calc(100% - 40px);
-      height: 100%;
-      padding-right: 10px;
-      line-height: 40px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: #000000;
-      opacity: 0.64;
-    }
-    .cross-wrapper {
-      padding: 14px 10px;
-      opacity: 0.64;
-      width: 30px;
-      height: 100%;
-      cursor: pointer;
-      .bars {
-        display: block;
-        position: absolute;
-        background-color: #000000;
-        width: 1.5px;
-        height: 12px;
-      }
-      .bar1 {
-        transform: translateX(4.8px) rotate(45deg);
-      }
-      .bar2 {
-        transform: translateX(4.8px) rotate(-45deg);
-      }
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
-  .path-preview-button-container {
-    display: inline-flex;
-    align-items: center;
-    width: 40px;
-    height: $topBarHeight;
-    padding: 0 8px;
-    margin: 0 3px 0 0;
-    cursor: pointer;
-    .path-preview-button {
-      cursor: pointer;
-      width: 24px;
-      height: 24px;
-      img {
-        width: 24px;
-        height: 24px;
-        opacity: 0.7;
-        filter: brightness(0) invert(1);
-      }
-    }
-    &.highlighted {
-      background: #ffffff;
-      img {
-        filter: brightness(0);
-      }
-    }
-    &:hover {
-      img {
-        opacity: 1;
-      }
-    }
-  }
-  .go-button-container {
-    display: inline-flex;
-    height: $topBarHeight;
-    margin: 0 13px;
-    opacity: 0.85;
-    z-index: 1;
-    cursor: pointer;
-    .go-btn {
-      width: 0px;
-      height: 0px;
-      border-style: solid;
-      border-color: transparent transparent transparent #ffffff;
-      border-width: 7px 0px 7px 12px;
-      margin: 13px 0;
-    }
-    .go-text {
-      height: 40px;
-      margin-right: 9px;
-      line-height: 40px;
-      font-size: 13px;
-      font-weight: bold;
-      letter-spacing: 0.95px;
-      color: #353535;
-    }
-    &.no-machine {
-      opacity: 0.2;
-    }
-    &:hover:not(.no-machine) {
-      opacity: 1;
     }
   }
   .file-title {
@@ -286,84 +107,4 @@
   .modal-window {
     background: none;
   }
-}
-
-
-.device-list {
-  cursor: pointer;
-  height: 160px;
-  list-style: none;
-  margin: 0;
-  text-align: left;
-  .select-printer {
-    position: relative;
-  }
-  ul {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    color: $primaryColor;
-    font-family: Helvetica Neue;
-    font-size: 12px;
-    font-weight: 500;
-    height: 100%;
-    margin: 0;
-    overflow-y: scroll;
-    padding: 0;
-    width: 28rem;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    .spinner-roller {
-      bottom: 0;
-      left: 0;
-      margin: auto;
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    li {
-      @include flexbox();
-      line-height: 2.8rem;
-      label {
-        cursor: pointer;
-      }
-      .name {
-        padding-left: 5px;
-        width: 150px;
-      }
-      .status {
-        width: 110px;
-      }
-      .connection-type {
-        line-height: 20px;
-        padding-right: 10px;
-
-        img {
-          margin-top: 7px;
-          image-rendering: optimizeSpeed;
-          image-rendering: -moz-crisp-edges;
-          image-rendering: -webkit-optimize-contrast;
-          image-rendering: optimize-contrast;
-          image-rendering: pixelated;
-          -ms-interpolation-mode: nearest-neighbor;
-        }
-      }
-      .progress {
-        width: 50px;
-      }
-      .type {
-        padding-top: 3px;
-      }
-      &:hover {
-        background-color: $primaryColor;
-        color: #fff;
-      }
-    }
-  }
-}
-.ant-popover .ant-popover-arrow::before {
-  background: transparent !important;
-}
-.ant-popover .ant-popover-arrow::after {
-  background: white !important;
 }
