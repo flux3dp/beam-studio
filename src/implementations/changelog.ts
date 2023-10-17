@@ -1,29 +1,27 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.1.3-beta
+// 2.1.4-alpha
 const CHANGES_TW = {
   added: [
-    '新增「合併文字」功能 Icon。',
-    '新增左側形狀面板',
-    '新增視窗響應式設計。',
+    '新增「選擇機器」視窗。',
   ],
   fixed: [
-    '修正開啟開蓋模式時高解析度下工作範圍錯誤。',
+    '修正外框預覽連線錯誤時對話框不會關閉。',
   ],
   changed: [
+    '調整右側面板畫面樣式。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added icon for "Weld Text".',
-    'Added shape panel in left panel.',
-    'Added responsive design for window size.',
+    'Add "Select Machine" modal.',
   ],
   fixed: [
-    'Fixed working area issue when "Open Bottom" turned on with dpi greater than 500.',
+    'Fixed framing issue when connection failed.',
   ],
   changed: [
+    'Update Right Panel UI.',
   ],
 };
 
