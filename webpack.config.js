@@ -1,5 +1,6 @@
 const path = require('path');
 
+const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = [
@@ -116,6 +117,13 @@ module.exports = [
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'bundle.js',
     },
+    plugins: [
+      new CopyPlugin({
+        patterns: [
+          { from: path.resolve(__dirname, 'src/web/assets/video'), to: path.resolve(__dirname, 'public/video') },
+        ],
+      }),
+    ],
   },
   {
     entry: './src/shadow-window.ts',

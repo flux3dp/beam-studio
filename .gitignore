@@ -12,6 +12,7 @@ public/js/dist
 public/css/main.css
 public/css/animate/*
 public/node_modules/*
+public/video/*
 backend
 utils
 dist
