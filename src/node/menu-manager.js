@@ -332,9 +332,12 @@ function buildDeviceMenu(callback, uuid, data) {
   const { serial, source, name } = data;
   const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
   const machineName = name;
-  const modelType = (['delta-1', 'delta-1p'].includes(data.model)) ? 'delta-series' : 'beambox-series';
+  let modelType = 'beambox-series';
+  if (['delta-1', 'delta-1p'].includes(data.model)) modelType = 'delta-series';
+  else if (['ado1'].includes(data.model)) modelType = 'ador-series';
+
   let submenu = [];
-  if (modelType === 'beambox-series') {
+  if (['beambox-series', 'ador-series'].includes(modelType)) {
     submenu = [
       {
         id: 'DASHBOARD', uuid, serial, machineName, source, label: r.dashboard, click: callback,
@@ -344,7 +347,7 @@ function buildDeviceMenu(callback, uuid, data) {
       },
       { type: 'separator' },
       {
-        id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, machineName, source, label: r.calibrate_beambox_camera, click: callback,
+        id: 'CALIBRATE_BEAMBOX_CAMERA', uuid, serial, machineName, source, label: r.calibrate_camera, click: callback,
       },
     ];
 
@@ -365,6 +368,24 @@ function buildDeviceMenu(callback, uuid, data) {
         machineName,
         source,
         label: r.calibrate_diode_module,
+        click: callback,
+      });
+    } else if (modelType === 'ador-series') {
+      submenu.push({
+        id: 'CALIBRATE_PRINTER_MODULE',
+        uuid,
+        serial,
+        machineName,
+        source,
+        label: r.calibrate_printer_module,
+        click: callback,
+      }, {
+        id: 'CALIBRATE_IR_MODULE',
+        uuid,
+        serial,
+        machineName,
+        source,
+        label: r.calibrate_ir_module,
         click: callback,
       });
     }
@@ -412,6 +433,7 @@ function buildDeviceMenu(callback, uuid, data) {
       },
     ]);
   } else {
+    // delta series
     submenu = [
       {
         id: 'DASHBOARD', uuid, serial, source, label: r.dashboard, click: callback,
