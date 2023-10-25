@@ -90,7 +90,7 @@ jobs:
         run: |
           mkdir backend
 
-          yarn install
+          yarn install --network-timeout 100000
           ./node_modules/.bin/webpack
 
           $env:TMP
