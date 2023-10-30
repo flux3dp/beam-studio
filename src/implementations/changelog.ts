@@ -1,27 +1,27 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.1.4-alpha
+// 2.1.5-alpha
 const CHANGES_TW = {
   added: [
-    '新增「選擇機器」視窗。',
+    '新增輸出工作至 v3.2.6 版本以前機器時的更新提示。',
   ],
   fixed: [
-    '修正外框預覽連線錯誤時對話框不會關閉。',
+    '修正輸出旋轉過後的群組時發生的 #806 錯誤。',
   ],
   changed: [
-    '調整右側面板畫面樣式。',
+    '',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Add "Select Machine" modal.',
+    'Added update notification when exporting to machine version before v3.2.6.',
   ],
   fixed: [
-    'Fixed framing issue when connection failed.',
+    'Fixed Error #806 when exporting rotated group.',
   ],
   changed: [
-    'Update Right Panel UI.',
+    '',
   ],
 };
 
