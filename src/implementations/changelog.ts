@@ -9,7 +9,6 @@ const CHANGES_TW = {
     '修正輸出旋轉過後的群組時發生的 #806 錯誤。',
   ],
   changed: [
-    '',
   ],
 };
 
@@ -21,7 +20,6 @@ const CHANGES_EN = {
     'Fixed Error #806 when exporting rotated group.',
   ],
   changed: [
-    '',
   ],
 };
 
