@@ -30,6 +30,8 @@ class Menu extends AbstractMenu {
     updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
     const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing') !== false;
     updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
+    const isDev = localStorage.getItem('dev') === 'true';
+    this.setDevMode(isDev);
 
     this.initMenuEvents();
   }
@@ -54,6 +56,13 @@ class Menu extends AbstractMenu {
   updateLanguage(): void {
     if (this.communicator) {
       this.communicator.send('NOTIFY_LANGUAGE');
+      updateWindowsMenu();
+    }
+  }
+
+  setDevMode(isDevMode: boolean): void {
+    if (this.communicator) {
+      this.communicator.send('SET_DEV_MODE', isDevMode);
       updateWindowsMenu();
     }
   }

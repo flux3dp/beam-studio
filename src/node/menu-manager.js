@@ -328,7 +328,7 @@ function getDeviceMenuId(uuid, data) {
   return `device:${data.source}:${uuid}`;
 }
 
-function buildDeviceMenu(callback, uuid, data) {
+function buildDeviceMenu(callback, uuid, data, is_dev_mode = false) {
   const { serial, source, name } = data;
   const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
   const machineName = name;
@@ -388,6 +388,17 @@ function buildDeviceMenu(callback, uuid, data) {
         label: r.calibrate_ir_module,
         click: callback,
       });
+      if (is_dev_mode) {
+        submenu.push({
+          id: 'CATRIDGE_CHIP_SETTING',
+          uuid,
+          serial,
+          machineName,
+          source,
+          label: 'Catridge Chip Setting',
+          click: callback,
+        });
+      }
     }
     submenu = submenu.concat([
       { type: 'separator' },
@@ -535,18 +546,12 @@ function buildDeviceMenu(callback, uuid, data) {
   });
 }
 
-function buildAccountMenu(callback, account) {
-  return new MenuItem({
-    label: account.nickname,
-    click: callback,
-  });
-}
-
 class MenuManager extends EventEmitter {
   constructor() {
     super();
     this.device_list = {};
     this.constructMenu();
+    this.is_dev_mode = false;
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = store.get('active-lang') || 'en';
@@ -563,6 +568,13 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.ENABLE_MENU_ITEM, (e, ids) => {
       this.toggleMenu(ids, true);
+    });
+
+    ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
+      this.is_dev_mode = isDevMode;
+      if (this.deviceMenu?.submenu) {
+        this.constructMenu();
+      }
     });
 
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
@@ -594,15 +606,6 @@ class MenuManager extends EventEmitter {
       }
       Menu.setApplicationMenu(Menu.getApplicationMenu());
     });
-
-    // ipcMain.on(events.SET_AS_DEFAULT, (e, device) => {
-    //     this.deviceMenu.submenu.items.forEach(item => {
-    //         if(item.label === device.name) {
-    //             item.checked = true;
-    //         }
-    //     });
-    //     Menu.setApplicationMenu(this.appmenu);
-    // });
 
     ipcMain.on(events.POPUP_MENU, (e, show, options) => {
       this.popup_menu = Menu.buildFromTemplate([
@@ -637,7 +640,9 @@ class MenuManager extends EventEmitter {
     }
     for (const devMenuId in this.device_list) {
       const data = this.device_list[devMenuId];
-      const instance = buildDeviceMenu(this.on_menu_click.bind(this), data.uuid, data);
+      const instance = buildDeviceMenu(
+        this.on_menu_click.bind(this), data.uuid, data, this.is_dev_mode,
+      );
       this.deviceMenu.submenu.append(instance);
     }
     Menu.setApplicationMenu(this.appmenu);
@@ -676,7 +681,7 @@ class MenuManager extends EventEmitter {
 
     if (this.deviceMenu) {
       this.device_list[menuId] = data;
-      const instance = buildDeviceMenu(this.on_menu_click.bind(this), uuid, data);
+      const instance = buildDeviceMenu(this.on_menu_click.bind(this), uuid, data, this.is_dev_mode);
 
       if (data.source === 'h2h') {
         this.deviceMenu.submenu.insert(2, instance);
