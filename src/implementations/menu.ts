@@ -9,7 +9,7 @@ import ElectronUpdater from '../electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
 
 const updateWindowsMenu = () => {
-  if (window.os === 'Windows') window.titlebar.updateMenu(ElectronMenu.getApplicationMenu());
+  if (window.os === 'Windows') window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
 };
 
 class Menu extends AbstractMenu {
