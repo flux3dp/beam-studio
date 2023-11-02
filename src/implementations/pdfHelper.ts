@@ -7,6 +7,7 @@
 import childProcess from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import util from 'util';
 
 import i18n from 'helpers/i18n';
@@ -14,6 +15,7 @@ import { PdfHelper } from 'interfaces/IPdfHelper';
 
 // eslint-disable-next-line @typescript-eslint/dot-notation
 const resourcesRoot = localStorage.getItem('dev') === 'true' ? window.process.cwd() : window.process['resourcesPath'];
+const tempDir = os.tmpdir();
 
 let isInited = false;
 let pdf2svgPath = null;
@@ -21,7 +23,7 @@ let tempFilePath = null;
 
 const init = async () => {
   isInited = true;
-  tempFilePath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'temp.pdf');
+  tempFilePath = path.join(tempDir, 'temp.pdf');
   if (window.os === 'MacOS') {
     pdf2svgPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'pdf2svg');
   } else if (window.os === 'Windows') {
@@ -34,12 +36,12 @@ const lang = i18n.lang.beambox.popup.pdf2svg;
 const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob, errorMessage?: string }> => {
   if (!isInited) await init();
   if (pdf2svgPath) {
-    const outPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'out.svg');
+    const outPath = path.join(tempDir, 'out.svg');
     // mac or windows, using packed binary executable
     try {
       fs.copyFileSync(file.path, tempFilePath);
       const execFile = util.promisify(childProcess.execFile);
-      const { stderr } = await execFile(pdf2svgPath, ['temp.pdf', outPath], {
+      const { stderr } = await execFile(pdf2svgPath, [tempFilePath, outPath], {
         cwd: path.join(resourcesRoot, 'utils', 'pdf2svg'),
       });
       if (!stderr) {
@@ -56,7 +58,7 @@ const pdfToSvgBlob = async (file: File): Promise<{ blob?: Blob, errorMessage?: s
   } else {
     // Linux
     const exec = util.promisify(childProcess.exec);
-    const outPath = path.join('/tmp', 'out.svg');
+    const outPath = path.join(tempDir, 'out.svg');
     try {
       await exec('type pdf2svg');
     } catch (e) {
