@@ -1,69 +1,5 @@
-<svg id="svgcontent" width="4300" height="3000" viewBox="0 0 4300 3000" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-309" data-left="-499" data-zoom="0.291" data-en_af="false" data-en_diode="false" data-rotary_mode="null" data-engrave_dpi="medium">
+<svg id="svgcontent" width="4300" height="3000" viewBox="0 0 4300 3000" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-153" data-left="-168" data-zoom="0.295" data-en_af="false" data-en_diode="false" data-rotary_mode="null" data-engrave_dpi="medium">
  <defs>
-  <symbol data-bbox="{&quot;x&quot;:193.8867,&quot;y&quot;:243.91003,&quot;width&quot;:1438.41809,&quot;height&quot;:1438.41809}" id="svg_1">
-   <defs>
-    <clipPath id="def1">
-     <path d="m187.67969,237.70313l1450.83203,0l0,1450.83203l-1450.83203,0l0,-1450.83203z" id="svg_7"/>
-    </clipPath>
-    <style>*[data-color] ellipse[fill=none],
-        *[data-color] circle[fill=none],
-        *[data-color] rect[fill=none],
-        *[data-color] path[fill=none],
-        *[data-color] polygon[fill=none] {
-            fill-opacity: 0 !important;
-            stroke-width: 1px !important;
-            stroke-opacity: 1 !important;
-            vector-effect: non-scaling-stroke !important;
-        }
-
-        *[data-color] ellipse[stroke=none],
-        *[data-color] circle[stroke=none],
-        *[data-color] rect[stroke=none],
-        *[data-color] path[stroke=none],
-        *[data-color] polygon[stroke=none],
-        *[data-color] ellipse:not([stroke]),
-        *[data-color] circle:not([stroke]),
-        *[data-color] rect:not([stroke]),
-        *[data-color] path:not([stroke]),
-        *[data-color] polygon:not([stroke]) {
-            fill-opacity: 1 !important;
-            stroke-width: 0 !important;
-        }
-
-        *[data-wireframe] {
-            stroke-width: 1px !important;
-            stroke-opacity: 1.0 !important;
-            stroke-dasharray: 0 !important;
-            opacity: 1 !important;
-            vector-effect: non-scaling-stroke !important;
-            filter: none !important;
-        }
-
-        #svg_editor:not(.color) g:not(.data-fullcolor) #svg_1 * {
-            fill-opacity: 0;
-            stroke: #000 !important;
-            filter: none;
-            stroke-width: 1px !important;
-            vector-effect: non-scaling-stroke !important;
-            stroke-opacity: 1.0;
-            stroke-dasharray: 0;
-            opacity: 1;
-            filter: none;
-        }
-        #svg_1 {
-            overflow: visible;
-        }</style>
-   </defs>
-   <g style="cursor: move;" data-color="rgb(90.588235%,12.941176%,9.803922%)" transform="scale(1, 1) " id="svg_8">
-    <g style="cursor: move;" data-color="rgb(90.588235%,12.941176%,9.803922%)" id="svg_15">
-     <g style="cursor: move;" id="surface895">
-      <g style="cursor: move;" data-color="rgb(90.588235%,12.941176%,9.803922%)" clip-rule="nonzero" clip-path="url(#def1)" id="svg_16">
-       <path fill="none" stroke="#040000" stroke-miterlimit="14.11" d="m1632.30478,963.11714c0,397.16018 -322.01565,719.21099 -719.20708,719.21099c-397.19535,0 -719.21099,-322.05082 -719.21099,-719.21099c0,-397.15626 321.98051,-719.20708 719.20708,-719.20708c397.2266,0 719.20708,321.98047 719.20708,719.20708l0.00392,0l-0.00001,0z" id="svg_17" vector-effect="non-scaling-stroke"/>
-      </g>
-     </g>
-    </g>
-   </g>
-  </symbol>
   <symbol data-bbox="{&quot;x&quot;:223.97656,&quot;y&quot;:266.98047,&quot;width&quot;:1378.23438,&quot;height&quot;:1378.23438}" id="svg_3">
    <defs>
     <style>*[data-color] ellipse[fill=none],
@@ -296,20 +232,21 @@
    </g>
   </symbol>
  </defs>
- <g data-configName="0" display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="1" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="100" data-printingSpeed="60" data-speed="6" clip-path="url(#scene_mask)" data-color="#E72119" class="layer">
+ <g data-configName="木板 - 3mm 切割" display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="100" data-printingSpeed="60" data-speed="8" clip-path="url(#scene_mask)" data-color="#E72119" class="layer">
   <title>Cutting Layer</title>
   <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#E72119">
    <feColorMatrix values="1 0 0 0 0.9058823529411765, 0 1 0 0 0.12941176470588237, 0 0 1 0 0.09803921568627451, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <use data-wireframe="false" data-original-layer="切割圖層" data-xform="x=193.88670349121094 y=243.9100341796875 width=1438.4180908203125 height=1438.4180908203125 " data-ratiofixed="true" xlink:href="#svg_9" id="svg_10" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="0" x="0"/>
+  <use data-wireframe="false" data-original-layer="Cutting Layer" data-xform="x=193.88670349121094 y=243.9100341796875 width=1438.4180908203125 height=1438.4180908203125 " data-ratiofixed="true" xlink:href="#svg_9" id="svg_10" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="774.29579" x="809.45829"/>
  </g>
- <g display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="1" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="100" data-printingSpeed="60" data-speed="150" clip-path="url(#scene_mask)" data-color="#040000" class="layer" data-configName="0">
+ <g display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="70" data-printingSpeed="60" data-speed="150" clip-path="url(#scene_mask)" data-color="#040000" class="layer" data-configName="木板 - 刻印">
   <title>Engrave Layer</title>
   <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#040000">
    <feColorMatrix values="1 0 0 0 0.01568627450980392, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <use data-wireframe="false" data-xform="x=223.9765625 y=266.98046875 width=1378.234375 height=1378.234375 " data-ratiofixed="true" xlink:href="#svg_3" id="svg_5" data-original-layer="雕刻圖層" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="0" x="0"/>
-  <use data-wireframe="false" data-original-layer="雕刻圖層" data-xform="x=193.88670349121094 y=243.9100341796875 width=1438.4180908203125 height=1438.4180908203125 " data-ratiofixed="true" xlink:href="#svg_1" id="svg_2" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="0" x="0"/>
-  <use data-wireframe="false" data-original-layer="雕刻圖層" data-xform="x=672.241943359375 y=1410.12890625 width=481.484619140625 height=156.525634765625 " data-ratiofixed="true" xlink:href="#svg_4" id="svg_6" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="0" x="0"/>
+  <g data-original-layer="Engrave Layer" id="svg_8" data-ratiofixed="true">
+   <use data-wireframe="false" data-xform="x=223.9765625 y=266.98046875 width=1378.234375 height=1378.234375 " data-ratiofixed="true" xlink:href="#svg_3" id="svg_5" data-original-layer="Engrave Layer" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="774.29579" x="809.45829"/>
+   <use data-wireframe="false" data-original-layer="Engrave Layer" data-xform="x=672.241943359375 y=1410.12890625 width=481.484619140625 height=156.525634765625 " data-ratiofixed="true" xlink:href="#svg_4" id="svg_6" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="774.29579" x="809.45829"/>
+  </g>
  </g>
 </svg>
