@@ -1,27 +1,23 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.1.4-alpha
+// 2.2.9-alpha
 const CHANGES_TW = {
   added: [
-    '新增「選擇機器」視窗。',
+    '新增 Ador 機型與相關功能',
   ],
   fixed: [
-    '修正外框預覽連線錯誤時對話框不會關閉。',
   ],
   changed: [
-    '調整右側面板畫面樣式。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Add "Select Machine" modal.',
+    'Add "Ador" model and related functions.',
   ],
   fixed: [
-    'Fixed framing issue when connection failed.',
   ],
   changed: [
-    'Update Right Panel UI.',
   ],
 };
 
