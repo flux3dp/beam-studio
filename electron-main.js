@@ -17,7 +17,6 @@ const MonitorManager = require('./src/node/monitor-manager.js');
 const MenuManager = require('./src/node/menu-manager.js');
 const networkHelper = require('./src/node/network-helper');
 const UpdateManager = require('./src/node/update-manager.js');
-const UglyNotify = require('./src/node/ugly-notify.js');
 const events = require('./src/node/ipc-events');
 const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
 
@@ -104,22 +103,6 @@ function onGhostDown() {
 
 function onDeviceUpdated(deviceInfo) {
   let deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
-
-  let origDeviceInfo = global.devices[deviceID];
-  if (origDeviceInfo && origDeviceInfo.st_id !== null && origDeviceInfo.st_id !== deviceInfo.st_id) {
-    switch (deviceInfo.st_id) {
-      case 48:
-        UglyNotify.send(deviceInfo.name, 'Is paused');
-        break;
-      case 64:
-        UglyNotify.send(deviceInfo.name, 'Is completed!');
-        break;
-      case 128:
-        UglyNotify.send(deviceInfo.name, 'Is aborted');
-        break;
-    }
-  }
-
   if (mainWindow) {
     mainWindow.webContents.send('device-status', deviceInfo);
   }
