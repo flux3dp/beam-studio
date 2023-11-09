@@ -13,8 +13,7 @@ import util from 'util';
 import i18n from 'helpers/i18n';
 import { PdfHelper } from 'interfaces/IPdfHelper';
 
-// eslint-disable-next-line @typescript-eslint/dot-notation
-const resourcesRoot = localStorage.getItem('dev') === 'true' ? window.process.cwd() : window.process['resourcesPath'];
+const resourcesRoot = localStorage.getItem('dev-pdf2svg') ? window.process.cwd() : window.process.resourcesPath;
 const tempDir = os.tmpdir();
 
 let isInited = false;
