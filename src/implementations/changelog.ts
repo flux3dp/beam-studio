@@ -1,27 +1,33 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.1.4-alpha
+// 2.2.11-alpha
 const CHANGES_TW = {
   added: [
-    '新增「選擇機器」視窗。',
+    '新增偏好設定 Ador 模組「預設雷射模組」。',
+    '新增切換模組、合併圖層時的提示訊息。',
+    '新增在非 Ador 工作範圍讀取 Ador 檔案時的提示訊息。',
   ],
   fixed: [
-    '修正外框預覽連線錯誤時對話框不會關閉。',
+    '修正 Ador「走外框」功能。',
+    '修正 Ador 校正工作時的對焦文字敘述。',
   ],
   changed: [
-    '調整右側面板畫面樣式。',
+    '調整列印圖層 Multipass 的範圍',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Add "Select Machine" modal.',
+    'Added preference setting for Ador module "Default Laser Module".',
+    'Added message when switching modules or merging layers.',
+    'Added message when loading Ador workarea file when workarea is not Ador.',
   ],
   fixed: [
-    'Fixed framing issue when connection failed.',
+    'Fixed Ador "Frame" function.',
+    'Fixed Ador calibration focus text.',
   ],
   changed: [
-    'Update Right Panel UI.',
+    'Changed the range of layer "Multipass".',
   ],
 };
 
