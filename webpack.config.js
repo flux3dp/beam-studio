@@ -121,6 +121,7 @@ module.exports = [
       new CopyPlugin({
         patterns: [
           { from: path.resolve(__dirname, 'src/web/assets/video'), to: path.resolve(__dirname, 'public/video') },
+          { from: path.resolve(__dirname, 'src/web/assets/img'), to: path.resolve(__dirname, 'public/core-img') },
         ],
       }),
     ],
