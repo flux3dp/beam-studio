@@ -13,6 +13,7 @@ public/css/main.css
 public/css/animate/*
 public/node_modules/*
 public/video/*
+public/core-img/*
 backend
 utils
 dist
