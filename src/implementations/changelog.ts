@@ -10,9 +10,11 @@ const CHANGES_TW = {
   fixed: [
     '修正 Ador「走外框」功能。',
     '修正 Ador 校正工作時的對焦文字敘述。',
+    '修正列印圖層中「替換圖片」功能。',
   ],
   changed: [
-    '調整列印圖層 Multipass 的範圍',
+    '調整列印圖層多重列印值的範圍。',
+    '調整新增機器流程。',
   ],
 };
 
@@ -25,9 +27,11 @@ const CHANGES_EN = {
   fixed: [
     'Fixed Ador "Frame" function.',
     'Fixed Ador calibration focus text.',
+    'Fixed "Replace with..." function in printing layer.',
   ],
   changed: [
-    'Changed the range of layer "Multipass".',
+    'Changed the value range of printing layer "Multipass".',
+    'Changed the process of adding machine.',
   ],
 };
 
