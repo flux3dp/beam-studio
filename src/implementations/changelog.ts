@@ -14,7 +14,7 @@ const CHANGES_TW = {
   ],
   changed: [
     '調整列印圖層多重列印值的範圍。',
-    '調整新增機器流程。',
+    '調整「新增或設定機器」流程。',
   ],
 };
 
@@ -31,7 +31,7 @@ const CHANGES_EN = {
   ],
   changed: [
     'Changed the value range of printing layer "Multipass".',
-    'Changed the process of adding machine.',
+    'Changed the process of "Machine Setup".',
   ],
 };
 
