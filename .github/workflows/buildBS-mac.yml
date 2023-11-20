@@ -81,7 +81,7 @@ jobs:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
-          ref: 2.2.11
+          ref: develop
 
       - name: Copy Beam Studio Core
         run: |
