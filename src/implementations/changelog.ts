@@ -1,41 +1,37 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.2.15-alpha
+// 2.2.13-alpha
 const CHANGES_TW = {
   added: [
-    '新增 非工作區域文字。',
+    '新增 Ador 根據機器加速度調整加速度區間。',
+    '新增 送出 Ador 工作時韌體版本檢查，請使用 5.1.12 以上韌體版本以送出工作。',
+    '新增 波蘭文。',
   ],
   fixed: [
-    '修正 「檢視」裡的勾選狀態。',
-    '修正 多物件無法同時移動圖層。',
-    '修正 勾勒輪廓時卡頓問題。',
-    '修正 匯入 PDF 檔案問題。',
-    '修正 匯入 SVG 檔案問題。',
-    '修正 相機校正進度條顯示。',
-    '修正 列印預噴區取消遮蔽後未正常復原。',
+    '修正 多次移動圖層後圖層不可點選的問題。',
+    '修正 Ador 影像描圖功能。',
+    '修正 Ador 工作範圍邊界的圖形不會被雕刻的問題。',
   ],
   changed: [
-    '變更 物件群組邏輯。',
-    '變更 Ador 最小加速度區間。',
+    '變更 Ador 紅外線模組工作範圍。',
+    '變更 部分西班牙文翻譯。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added non-workarea text.',
+    'Added Ador acceleration area adjustment according to the machine setting.',
+    'Added firmware version check when sending task to Ador. Please use firmware version 5.1.12 or above to send task.',
+    'Added Polish language.',
   ],
   fixed: [
-    'Fixed check status in the View menu.',
-    'Fixed the issue where multiple selected objects could not be moved to another layer.',
-    'Fixed the lag issue when performing image outlining.',
-    'Fixed the issue with PDF file importing.',
-    'Fixed the issue with SVG file importing.',
-    'Fixed the display of the camera calibration progress bar.',
-    'Fixed the pre-spray area after undoing the hiding layer.',
+    'Fixed the issue that the layer cannot be selected after moving the layer multiple times.',
+    'Fixed the image tracing function for Ador.',
+    'Fixed the issue that the path on the boundary of Ador work area will not be engraved.',
   ],
   changed: [
-    'Changed the behavior of grouping objects.',
-    'Changed the minimum engraving padding for Ador.',
+    'Changed the work area of Ador infrared module.',
+    'Changed part of the Spanish translation.',
   ],
 };
 
