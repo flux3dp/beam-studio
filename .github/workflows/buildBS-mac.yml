@@ -56,7 +56,7 @@ jobs:
         uses: ./.github/actions/beamify
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.2
+        uses: flux3dp/fluxsvg@2.7.3
 
       - name: Checkout FluxClient
         uses: actions/checkout@v3
