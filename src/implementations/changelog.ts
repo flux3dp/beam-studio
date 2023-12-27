@@ -1,37 +1,35 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.2.13-alpha
+// 2.2.14-alpha
 const CHANGES_TW = {
   added: [
-    '新增 Ador 根據機器加速度調整加速度區間。',
-    '新增 送出 Ador 工作時韌體版本檢查，請使用 5.1.12 以上韌體版本以送出工作。',
-    '新增 波蘭文。',
+    '新增 多國語翻譯。',
+    '新增 支援換頭鎖 Z 軸馬達。',
   ],
   fixed: [
-    '修正 多次移動圖層後圖層不可點選的問題。',
-    '修正 Ador 影像描圖功能。',
-    '修正 Ador 工作範圍邊界的圖形不會被雕刻的問題。',
+    '修正 部分語言翻譯。',
+    '修正 SVG 匯入相關問題。',
+    '修正 刪除列印圖層後復原，預噴區圖案未復原。',
+    '修正 匯入含有點陣圖的 SVG 時，點陣圖層參數未正確初始化。',
   ],
   changed: [
-    '變更 Ador 紅外線模組工作範圍。',
-    '變更 部分西班牙文翻譯。',
+    '變更 Ador 新增機器圖片。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Ador acceleration area adjustment according to the machine setting.',
-    'Added firmware version check when sending task to Ador. Please use firmware version 5.1.12 or above to send task.',
-    'Added Polish language.',
+    'Added multi-language support.',
+    'Added support for locking the Z-axis motor when changing module.',
   ],
   fixed: [
-    'Fixed the issue that the layer cannot be selected after moving the layer multiple times.',
-    'Fixed the image tracing function for Ador.',
-    'Fixed the issue that the path on the boundary of Ador work area will not be engraved.',
+    'Fixed some translations.',
+    'Fixed importing SVG related issues.',
+    'Fixed the issue that pre-spary area is not restored after undoing the deletion of printing layer.',
+    'Fixed the issue that the parameters of bitmap layer are not correctly initialized when importing SVG with bitmap.',
   ],
   changed: [
-    'Changed the work area of Ador infrared module.',
-    'Changed part of the Spanish translation.',
+    'Changed the images in Ador setup pages.',
   ],
 };
 
