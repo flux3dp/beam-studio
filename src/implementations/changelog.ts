@@ -11,6 +11,7 @@ const CHANGES_TW = {
     '修正 SVG 匯入相關問題。',
     '修正 刪除列印圖層後復原，預噴區圖案未復原。',
     '修正 匯入含有點陣圖的 SVG 時，點陣圖層參數未正確初始化。',
+    '修正 相機預覽時啟動失敗問題。',
   ],
   changed: [
     '變更 Ador 新增機器圖片。',
@@ -27,6 +28,7 @@ const CHANGES_EN = {
     'Fixed importing SVG related issues.',
     'Fixed the issue that pre-spary area is not restored after undoing the deletion of printing layer.',
     'Fixed the issue that the parameters of bitmap layer are not correctly initialized when importing SVG with bitmap.',
+    'Fixed the issue that sometimes the camera preview cannot be started.',
   ],
   changed: [
     'Changed the images in Ador Machine Setup pages.',
