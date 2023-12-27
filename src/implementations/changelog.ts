@@ -29,7 +29,7 @@ const CHANGES_EN = {
     'Fixed the issue that the parameters of bitmap layer are not correctly initialized when importing SVG with bitmap.',
   ],
   changed: [
-    'Changed the images in Ador setup pages.',
+    'Changed the images in Ador Machine Setup pages.',
   ],
 };
 
