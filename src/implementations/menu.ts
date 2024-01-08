@@ -24,15 +24,14 @@ class Menu extends AbstractMenu {
   }
 
   init(): void {
+    const isDev = localStorage.getItem('dev') === 'true';
+    this.setDevMode(isDev);
     const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
     updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color') !== false;
     updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
     const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing') !== false;
     updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
-    const isDev = localStorage.getItem('dev') === 'true';
-    this.setDevMode(isDev);
-
     this.initMenuEvents();
   }
 

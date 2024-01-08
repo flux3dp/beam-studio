@@ -332,7 +332,7 @@ function getDeviceMenuId(uuid, data) {
   return `device:${data.source}:${uuid}`;
 }
 
-function buildDeviceMenu(callback, uuid, data, is_dev_mode = false) {
+function buildDeviceMenu(callback, uuid, data, isDevMode = false) {
   const { serial, source, name } = data;
   const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
   const machineName = name;
@@ -392,7 +392,7 @@ function buildDeviceMenu(callback, uuid, data, is_dev_mode = false) {
         label: r.calibrate_ir_module,
         click: callback,
       });
-      if (is_dev_mode) {
+      if (isDevMode) {
         submenu.push({
           id: 'CATRIDGE_CHIP_SETTING',
           uuid,
@@ -555,7 +555,7 @@ class MenuManager extends EventEmitter {
     super();
     this.device_list = {};
     this.constructMenu();
-    this.is_dev_mode = false;
+    this.isDevMode = false;
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = store.get('active-lang') || 'en';
@@ -575,8 +575,9 @@ class MenuManager extends EventEmitter {
     });
 
     ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
-      this.is_dev_mode = isDevMode;
-      if (this.deviceMenu?.submenu) {
+      const hasChanged = this.isDevMode !== isDevMode;
+      this.isDevMode = isDevMode;
+      if (hasChanged && this.deviceMenu?.submenu) {
         this.constructMenu();
       }
     });
@@ -645,7 +646,7 @@ class MenuManager extends EventEmitter {
     for (const devMenuId in this.device_list) {
       const data = this.device_list[devMenuId];
       const instance = buildDeviceMenu(
-        this.on_menu_click.bind(this), data.uuid, data, this.is_dev_mode,
+        this.on_menu_click.bind(this), data.uuid, data, this.isDevMode,
       );
       this.deviceMenu.submenu.append(instance);
     }
@@ -685,7 +686,7 @@ class MenuManager extends EventEmitter {
 
     if (this.deviceMenu) {
       this.device_list[menuId] = data;
-      const instance = buildDeviceMenu(this.on_menu_click.bind(this), uuid, data, this.is_dev_mode);
+      const instance = buildDeviceMenu(this.on_menu_click.bind(this), uuid, data, this.isDevMode);
 
       if (data.source === 'h2h') {
         this.deviceMenu.submenu.insert(2, instance);
