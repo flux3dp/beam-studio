@@ -38,18 +38,15 @@ class Menu extends AbstractMenu {
   attach(enabledItems: string[]) {
     super.attach(enabledItems);
     ElectronUpdater.autoCheck();
+    updateWindowsMenu();
   }
 
   enable(items: string[]): void {
-    if (this.communicator) {
-      this.communicator.send('ENABLE_MENU_ITEM', items);
-    }
+    this.communicator?.send('ENABLE_MENU_ITEM', items);
   }
 
   disable(items: string[]): void {
-    if (this.communicator) {
-      this.communicator.send('DISABLE_MENU_ITEM', items);
-    }
+    this.communicator?.send('DISABLE_MENU_ITEM', items);
   }
 
   updateLanguage(): void {
