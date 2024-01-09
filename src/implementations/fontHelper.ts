@@ -40,4 +40,7 @@ export default {
     }
     return fontName;
   },
+  applyMonotypeStyle(font: FontDescriptor) {
+    return { success: true };
+  },
 } as FontHelper;
