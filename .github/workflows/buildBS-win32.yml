@@ -52,13 +52,13 @@ jobs:
         uses: ./.github/actions/beamify
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.3
+        uses: flux3dp/fluxsvg@2.7.4
 
       - name: Checkout FluxClient
         uses: actions/checkout@v3
         with:
           repository: flux3dp/fluxclient-dev
-          ref: 2.5.9
+          ref: 2.5.10
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/fluxclient
 
