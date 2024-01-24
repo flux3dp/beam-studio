@@ -2078,10 +2078,10 @@
   resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.1.tgz#810cbc595a21f0f94641eb2d7e8264063a3f84de"
   integrity sha512-bGX4/yB2bPZwXm1DsxgoABgH0Cz7oFtXJgkerB8VrStYdTyvhGAULzNLRn9rVmeAuC3VUDXaXpZIlZAZHpsLIA==
 
-"@electron/remote@^2.0.9":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.0.9.tgz#092ff085407bc907f45b89a72c36faa773ccf2d9"
-  integrity sha512-LR0W0ID6WAKHaSs0x5LX9aiG+5pFBNAJL6eQAJfGkCuZPUa6nZz+czZLdlTDETG45CgF/0raSvCtYOYUpr6c+A==
+"@electron/remote@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@electron/remote/-/remote-2.1.1.tgz#c1a95464957bfd38cfb79c6514f08b04a4db02dc"
+  integrity sha512-Lfxul2yBxL+FBVaKszNAkuUqSIDbUQ1I7BC394iRXyqA2XGz7im2bAxroNIM51jhySSPKUaOLHaFLxfV6pC9VQ==
 
 "@electron/universal@1.0.4":
   version "1.0.4"
