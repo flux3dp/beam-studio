@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-2019
     strategy:
       matrix:
-        node-version: [16.17]
+        node-version: [18.16]
         python-version: [3.7]
         arch: [64]
 

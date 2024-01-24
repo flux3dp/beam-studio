@@ -7,7 +7,7 @@ Beam Studio is the companion application for [FLUX Beam Series](http://flux3dp.c
 
 ## Requirement
 
-* [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node). Current node version: v16.17
+* [Nodejs and npm](https://docs.npmjs.com/getting-started/installing-node). Current node version: v18.16
 * FLUX Studio requires websocket api to run. Dowload the source code of [FLUXGhost](https://github.com/flux3dp/fluxghost).
 * [FLUXClient](https://github.com/flux3dp/fluxclient) or [FLUXClient-dev](https://github.com/flux3dp/fluxclient-dev) (for developers)
 * [FluxSVG](https://github.com/flux3dp/fluxsvg) calculate SVG when importing SVG files and exporting tasks. (for developers)
