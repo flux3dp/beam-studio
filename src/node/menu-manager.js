@@ -59,6 +59,12 @@ function buildFileMenu(fnKey, callback) {
     {
       id: 'SAVE_AS', label: r.save_as, click: callback, accelerator: `Shift+${fnKey}+S`,
     },
+    {
+      id: 'SAVE_TO_CLOUD',
+      label: r.save_to_cloud,
+      click: callback,
+      icon: 'public/img/icon-flux-plus@4x.png',
+    },
     { type: 'separator' },
     {
       id: 'SAMPLES',
@@ -114,13 +120,29 @@ function buildAccountMenuItems(callback, accInfo) {
   const signoutLabel = accInfo ? `${r.sign_out} (${accInfo.email})` : r.sign_out;
   return [
     {
-      id: 'MANAGE_ACCOUNT', label: r.manage_account, click: callback, enabled: !!accInfo,
+      id: 'SIGN_IN',
+      label: r.sign_in,
+      click: callback,
+      visible: !accInfo,
     },
     {
-      id: 'SIGN_IN', label: r.sign_in, click: callback, visible: !accInfo,
+      id: 'SIGN_OUT',
+      label: signoutLabel,
+      click: callback,
+      visible: !!accInfo,
     },
     {
-      id: 'SIGN_OUT', label: signoutLabel, click: callback, visible: !!accInfo,
+      id: 'MANAGE_ACCOUNT',
+      label: r.manage_account,
+      click: callback,
+      enabled: !!accInfo,
+    },
+    {
+      id: 'DESIGN_MARKET',
+      label: r.design_market,
+      click() {
+        shell.openExternal(r.link.design_market);
+      },
     },
   ];
 }
@@ -138,11 +160,9 @@ const buildHelpMenu = (callback) => {
     { id: 'HELP_CENTER', label: r.help_center, click() { shell.openExternal(r.link.help_center); } },
     { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
     { type: 'separator' },
-    { id: 'DESIGN_MARKET', label: r.design_market, click() { shell.openExternal(r.link.design_market); } },
     { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
     { type: 'separator' },
   ]);
-  helpSubmenu.push(...buildAccountMenuItems(callback, accountInfo));
   helpSubmenu.push({ id: 'UPDATE_BS', label: r.update, click: callback });
   if (process.platform !== 'darwin') {
     const currentChannel = app.getVersion().split('-')[1] || 'latest';
@@ -304,6 +324,13 @@ function buildMenuItems(callback) {
       { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
       { type: 'separator' },
     ],
+  });
+
+  const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
+  menuItems.push({
+    id: '_account',
+    label: r.account,
+    submenu: accountSubmenu,
   });
 
   if (process.platform === 'darwin') {
@@ -584,16 +611,16 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
       accountInfo = info;
-      const helpSubmenu = Menu.getApplicationMenu().items.find((i) => i.id === '_help').submenu;
+      const accountSubmenu = Menu.getApplicationMenu().items.find((i) => i.id === '_account').submenu;
       const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
-      const current = helpSubmenu.items;
-      helpSubmenu.items = [];
-      helpSubmenu.clear();
+      const current = accountSubmenu.items;
+      accountSubmenu.items = [];
+      accountSubmenu.clear();
 
       for (const menuitem of current) {
         if (menuitem.id === 'SIGN_IN') {
           menuitem.visible = !info;
-          helpSubmenu.append(menuitem);
+          accountSubmenu.append(menuitem);
         } else if (menuitem.id === 'SIGN_OUT') {
           const newSignOut = new MenuItem({
             id: 'SIGN_OUT',
@@ -601,12 +628,12 @@ class MenuManager extends EventEmitter {
             click: menuitem.click,
             label: signoutLabel,
           });
-          helpSubmenu.append(newSignOut);
+          accountSubmenu.append(newSignOut);
         } else if (menuitem.id === 'MANAGE_ACCOUNT') {
           menuitem.enabled = !!info;
-          helpSubmenu.append(menuitem);
+          accountSubmenu.append(menuitem);
         } else {
-          helpSubmenu.append(menuitem);
+          accountSubmenu.append(menuitem);
         }
       }
       Menu.setApplicationMenu(Menu.getApplicationMenu());
