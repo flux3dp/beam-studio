@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [18.16]
+        node-version: [20.11]
         python-version: [3.7]
         os: [ubuntu-20.04, ubuntu-22.04]
 
