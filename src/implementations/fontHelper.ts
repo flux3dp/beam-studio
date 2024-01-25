@@ -15,7 +15,7 @@ export default {
   },
   substituteFont(
     postscriptName: string,
-    text: string
+    text: string,
   ): Promise<FontDescriptor[]> {
     return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
   },
@@ -52,7 +52,9 @@ export default {
     try {
       // Font Collection
       return fontkit.openSync(font.path, font.postscriptName);
-    } catch {}
-    return fontkit.openSync(font.path);
+    } catch {
+      // Single Font
+      return fontkit.openSync(font.path);
+    }
   },
 } as FontHelper;
