@@ -88,7 +88,7 @@
     "chromedriver": "^111.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "electron": "^26.0.0",
-    "electron-builder": "22.10.5",
+    "electron-builder": "24.9.1",
     "electron-chromedriver": "^23.0.0",
     "electron-publisher-s3": "^19.53.1",
     "enzyme": "^3.11.0",
