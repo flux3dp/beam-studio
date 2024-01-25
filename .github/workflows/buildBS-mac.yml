@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - 'update-electron'
 
 jobs:
   build:
@@ -115,8 +113,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ""
-          APPLEID: ${{ secrets.APPLEID_DEAN }}
-          APPLEIDPASS: ${{ secrets.APPLEIDPASS_DEAN }}
+          APPLE_ID: ${{ secrets.APPLEID_DEAN }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
 
       # - name: Cleanup artifacts
       #   run: |
