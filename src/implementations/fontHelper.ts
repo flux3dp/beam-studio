@@ -4,16 +4,19 @@ import communicator from 'implementations/communicator';
 import { FontDescriptor, FontHelper } from 'interfaces/IFont';
 
 export default {
-  findFont(fontDescriptor: FontDescriptor): FontDescriptor {
+  findFont(fontDescriptor: FontDescriptor): Promise<FontDescriptor> {
     return communicator.sendSync('FIND_FONT', fontDescriptor);
   },
-  findFonts(fontDescriptor: FontDescriptor): FontDescriptor[] {
+  findFonts(fontDescriptor: FontDescriptor): Promise<FontDescriptor[]> {
     return communicator.sendSync('FIND_FONTS', fontDescriptor);
   },
-  getAvailableFonts() {
+  getAvailableFonts(): Promise<FontDescriptor[]> {
     return communicator.sendSync('GET_AVAILABLE_FONTS');
   },
-  substituteFont(postscriptName: string, text: string) {
+  substituteFont(
+    postscriptName: string,
+    text: string
+  ): Promise<FontDescriptor[]> {
     return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
   },
   getFontName(font: FontDescriptor): string {
@@ -40,7 +43,16 @@ export default {
     }
     return fontName;
   },
-  applyMonotypeStyle(font: FontDescriptor) {
+  async applyMonotypeStyle(font: FontDescriptor) {
     return { success: true };
+  },
+  getWebFontPreviewUrl: () => null,
+  getMonotypeUrl: () => null,
+  getLocalFont: (font: FontDescriptor) => {
+    try {
+      // Font Collection
+      return fontkit.openSync(font.path, font.postscriptName);
+    } catch {}
+    return fontkit.openSync(font.path);
   },
 } as FontHelper;
