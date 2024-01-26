@@ -41,6 +41,9 @@ module.exports = [
         {
           test: /\.worker\.ts$/,
           loader: 'worker-loader',
+          options: {
+            filename: "[name].[contenthash].worker.js",
+          },
         },
         {
           test: /\.(js|jsx)$/,
