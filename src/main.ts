@@ -10,6 +10,7 @@ import globalEvents from 'app/actions/global';
 import router from 'app/router';
 
 import communicator from 'implementations/communicator';
+import initBackendEvents from './init-backend-events';
 import loaderResult from './loader';
 
 globalHelper.setWindowMember();
@@ -79,10 +80,6 @@ export default function main(): void {
   window.FLUX.version = app.getVersion();
   console.log(`Beam-Studio: ${window.FLUX.version}`);
 
-  // if (allowTracking) {
-  //   // google analytics
-  //   $.getScript('/js/helpers/analytics.js');
-  // }
   setReferer();
   menuBar();
   communicator.on('WINDOW_CLOSE', async () => {
@@ -95,4 +92,5 @@ export default function main(): void {
   });
 }
 
+initBackendEvents();
 main();
