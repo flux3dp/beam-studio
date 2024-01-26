@@ -19,73 +19,37 @@
 <script>
     window.requireNode = window.require;
     function launch() {
-        var script = document.createElement('script'),
-            cssLink = document.createElement('link'),
-            head = document.querySelector('head'),
-            body = document.querySelector('body'),
-            dev = localStorage['dev'] === 'true',
-            getStarted = function (ghostPort) {
-                script.setAttribute('src', 'js/lib/requirejs.min.js');
-                script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
-                body.appendChild(script);
-            };
+      const script = document.createElement('script');
+      const cssLink = document.createElement('link');
+      const head = document.querySelector('head');
+      const body = document.querySelector('body');
+      const dev = localStorage['dev'] === 'true';
+      const getStarted = () => {
+        script.setAttribute('src', 'js/lib/requirejs.min.js');
+        script.dataset.main = 'js/requireConfig.js?v=' + (dev ? '' : window.FLUX.timestamp);
+        body.appendChild(script);
+      };
 
-        // set global definition
-        window.FLUX = {
-            debug: location.search.indexOf('debug') !== -1 || dev,
-            timestamp: (new Date()).getTime(),
-            onLine: navigator.onLine,
-            os: ('undefined' === typeof nw ? undefined : os),
-            ghostPort: 8000,
-            allowTracking: false,
-            dev: dev
-        };
+      // set global definition
+      window.FLUX = {
+        debug: location.search.indexOf('debug') !== -1 || dev,
+        timestamp: (new Date()).getTime(),
+        onLine: navigator.onLine,
+        os: ('undefined' === typeof nw ? undefined : os),
+        ghostPort: 8000,
+        allowTracking: false,
+        dev: dev,
+      };
+      getStarted();
 
-        // Add electron listener
-        if (window["electron"]) {
-            let ipc = electron.ipc,
-                events = electron.events;
+      cssLink.setAttribute('rel', 'stylesheet');
+      cssLink.setAttribute('href', 'css/dist/main.css?v=' + window.FLUX.timestamp);
+      head.appendChild(cssLink);
+      head.appendChild(cssLink);
 
-            ipc.on(events.BACKEND_UP, (sender, status) => {
-                window.FLUX.ghostPort = status.port;
-                window.FLUX.logfile = status.logfile;
-                window.FLUX.backendAlive = status.alive;
-                console.log(`Backend start at ${status.port}`);
-            });
-
-            ipc.on(events.BACKEND_DOWN, (sender) => {
-                window.FLUX.backendAlive = false;
-            });
-
-            ipc.on(events.NOTIFY_BACKEND_STATUS, (sender, status) => {
-                console.log(status);
-                window.FLUX.ghostPort = status.backend.port;
-                window.FLUX.logfile = status.backend.logfile;
-                window.FLUX.backendAlive = status.backend.alive;
-                getStarted(status.backend.port);
-                if (status.backend.alive) {
-                    console.log(`Backend ready at ${status.backend.port}`);
-                } else {
-                    console.log('Backend Down');
-                }
-            });
-
-            ipc.send(events.CHECK_BACKEND_STATUS);
-            ipc.send(events.NOTIFY_LANGUAGE);
-
-        } else {
-            window.process = {}
-            getStarted();
-        }
-
-        cssLink.setAttribute('rel', 'stylesheet');
-        cssLink.setAttribute('href', 'css/dist/main.css?v=' + window.FLUX.timestamp);
-        head.appendChild(cssLink);
-        head.appendChild(cssLink);
-
-        if (localStorage.getItem('poke-ip-addr') == 'undefined') {
-            localStorage.setItem('poke-ip-addr', '192.168.1.1')
-        }
+      if (localStorage.getItem('poke-ip-addr') == 'undefined') {
+        localStorage.setItem('poke-ip-addr', '192.168.1.1')
+      }
     }
     launch();
 
