@@ -172,7 +172,7 @@
       ],
       "icon": "public/logo.icns",
       "notarize": {
-        "teamId": "${env.APPLE_TEAM_ID}"
+        "teamId": "4Y92JWKV94"
       }
     },
     "linux": {
