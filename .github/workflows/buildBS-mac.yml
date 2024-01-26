@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - test-build-mac
 
 jobs:
   build:
@@ -106,14 +108,14 @@ jobs:
           codesign --force --verbose -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" $f; done
 
           chmod -R 777 node_modules/font-scanner
-
+          echo $APPLE_TEAM_ID
           yarn dist --publish always
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ""
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_TEAM_ID: "${{ secrets.APPLE_TEAM_ID }}"
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
 
