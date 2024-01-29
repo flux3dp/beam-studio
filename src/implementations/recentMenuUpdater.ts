@@ -9,6 +9,7 @@ import i18n from 'helpers/i18n';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
 import { IRecentMenuUpdater } from 'interfaces/IRecentMenuUpdater';
 
+import communicator from './communicator';
 import fs from './fileSystem';
 import storage from './storage';
 
@@ -97,5 +98,9 @@ const recentMenuUpdater = {
     }
   },
 };
+
+communicator.on('NEW_APP_MENU', () => {
+  recentMenuUpdater.update();
+});
 
 export default recentMenuUpdater as IRecentMenuUpdater;
