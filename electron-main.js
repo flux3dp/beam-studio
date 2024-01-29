@@ -463,6 +463,9 @@ const onMenuClick = (data) => {
 app.on('ready', () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
+  menuManager.on('NEW_APP_MENU', () => {
+    mainWindow?.webContents.send('NEW_APP_MENU');
+  });
 
   if (!mainWindow) {
     createShadowWindow();

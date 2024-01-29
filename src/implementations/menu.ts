@@ -21,19 +21,26 @@ class Menu extends AbstractMenu {
     communicator.on('UPDATE_MENU', () => {
       updateWindowsMenu();
     });
+    communicator.on('NEW_APP_MENU', () => {
+      this.initCheckboxs();
+    });
   }
 
   init(): void {
     const isDev = localStorage.getItem('dev') === 'true';
     this.setDevMode(isDev);
+    this.initCheckboxs();
+    this.initMenuEvents();
+  }
+
+  initCheckboxs = (): void => {
     const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
     updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color') !== false;
     updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
     const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing') !== false;
     updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
-    this.initMenuEvents();
-  }
+  };
 
   attach(enabledItems: string[]) {
     super.attach(enabledItems);

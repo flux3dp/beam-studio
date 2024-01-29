@@ -651,6 +651,7 @@ class MenuManager extends EventEmitter {
       this.deviceMenu.submenu.append(instance);
     }
     Menu.setApplicationMenu(this.appmenu);
+    this.emit('NEW_APP_MENU');
   }
 
   toggleMenu(ids, enabled) {
