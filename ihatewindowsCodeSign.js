@@ -65,8 +65,9 @@ exports.getCertInfo = getCertInfo;
 async function getCertificateFromStoreInfo(options, vm) {
     // Disable getCertificateFromStoreInfo for github action
 
-    // const certificateSubjectName = options.certificateSubjectName;
-    // const certificateSha1 = options.certificateSha1 ? options.certificateSha1.toUpperCase() : options.certificateSha1;
+    const certificateSubjectName = options.certificateSubjectName;
+    const certificateSha1 = options.certificateSha1 ? options.certificateSha1.toUpperCase() : options.certificateSha1;
+    const rawResult = 'Skipped';
     // // ExcludeProperty doesn't work, so, we cannot exclude RawData, it is ok
     // // powershell can return object if the only item
     // const rawResult = await vm.exec("powershell.exe", [
