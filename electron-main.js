@@ -460,7 +460,8 @@ const onMenuClick = (data) => {
   }
 }
 
-app.on('ready', () => {
+const init = () => {
+  console.trace('init');
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
@@ -474,7 +475,15 @@ app.on('ready', () => {
     console.log("MainWindow instance", mainWindow);
     mainWindow.focus();
   }
+}
+
+app.on('ready', () => {
+  init();
 });
+
+setTimeout(() => {
+  init();
+}, 30000);
 
 
 // app.on('window-all-closed', function () {
