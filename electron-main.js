@@ -189,6 +189,7 @@ const loadShadowWindow = () => {
 
 function createWindow() {
   // Create the browser window.
+  console.log('Creating main window');
   mainWindow = new BrowserWindow({
     width: 1300,
     height: 650,
@@ -205,6 +206,8 @@ function createWindow() {
     trafficLightPosition: { x: 12, y: 14 },
     vibrancy: 'light'
   });
+  console.log(mainWindow);
+  mainWindow.show();
 
   electronRemote.enable(mainWindow.webContents);
 
