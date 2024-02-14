@@ -206,8 +206,6 @@ function createWindow() {
     trafficLightPosition: { x: 12, y: 14 },
     vibrancy: 'light'
   });
-  console.log(mainWindow);
-  mainWindow.show();
 
   electronRemote.enable(mainWindow.webContents);
 
@@ -464,7 +462,6 @@ const onMenuClick = (data) => {
 }
 
 const init = () => {
-  console.trace('init');
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
@@ -489,10 +486,6 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 });
-
-setTimeout(() => {
-  init();
-}, 30000);
 
 app.on('window-all-closed',() => {
   if (process.platform !== 'darwin') app.quit()
