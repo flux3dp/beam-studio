@@ -477,25 +477,22 @@ const init = () => {
   }
 }
 
-app.on('ready', () => {
+app.whenReady().then(() => {
   init();
+
+  app.on('activate',() => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
 });
 
 setTimeout(() => {
   init();
 }, 30000);
 
-
-// app.on('window-all-closed', function () {
-// });
-
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
+app.on('window-all-closed',() => {
+  if (process.platform !== 'darwin') app.quit()
 });
 
 app.on('before-quit', function () {
