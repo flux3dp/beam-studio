@@ -95,7 +95,8 @@ async function getCertificateFromStoreInfo(options, vm) {
     //         isLocalMachineStore,
     //     };
     // }
-    throw new Error(`Cannot find certificate ${certificateSubjectName || certificateSha1}, all certs: ${rawResult}`);
+    return {}
+    // throw new Error(`Cannot find certificate ${certificateSubjectName || certificateSha1}, all certs: ${rawResult}`);
 }
 exports.getCertificateFromStoreInfo = getCertificateFromStoreInfo;
 // Custom doSign function to use curl to sign the file
