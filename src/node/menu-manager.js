@@ -9,6 +9,7 @@ const {
   BrowserWindow,
   Menu,
   MenuItem,
+  nativeImage,
   shell,
   ipcMain,
 } = require('electron');
@@ -63,6 +64,7 @@ function buildFileMenu(fnKey, callback) {
       id: 'SAVE_TO_CLOUD',
       label: r.save_to_cloud,
       click: callback,
+      icon: '../../public/img/icon-flux-plus@4x.png',
     },
     { type: 'separator' },
     {
