@@ -189,6 +189,7 @@ const loadShadowWindow = () => {
 
 function createWindow() {
   // Create the browser window.
+  console.log('Creating main window');
   mainWindow = new BrowserWindow({
     width: 1300,
     height: 650,
@@ -460,7 +461,7 @@ const onMenuClick = (data) => {
   }
 }
 
-app.on('ready', () => {
+const init = () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
@@ -474,19 +475,20 @@ app.on('ready', () => {
     console.log("MainWindow instance", mainWindow);
     mainWindow.focus();
   }
+}
+
+app.whenReady().then(() => {
+  init();
+
+  app.on('activate',() => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
 });
 
-
-// app.on('window-all-closed', function () {
-// });
-
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow();
-  }
+app.on('window-all-closed',() => {
+  if (process.platform !== 'darwin') app.quit()
 });
 
 app.on('before-quit', function () {
