@@ -6,6 +6,7 @@ import AlertConstants from 'app/constants/alert-constants';
 import BeamFileHelper from 'helpers/beam-file-helper';
 import FileExportHelper from 'helpers/file-export-helper';
 import i18n from 'helpers/i18n';
+import importBvg from 'app/svgedit/operations/import/importBvg';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
 import { IRecentMenuUpdater } from 'interfaces/IRecentMenuUpdater';
 
@@ -64,7 +65,7 @@ const recentMenuUpdater = {
                 } else if (filePath.endsWith('bvg')) {
                   const resp = await fetch(fetchPath);
                   const blob = await resp.blob();
-                  svgEditor.importBvg(blob);
+                  importBvg(blob);
                 }
                 svgCanvas.setHasUnsavedChange(false);
               } finally {
