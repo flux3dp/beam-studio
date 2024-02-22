@@ -14,6 +14,7 @@ public/css/animate/*
 public/node_modules/*
 public/video/*
 public/core-img/*
+public/fcode/*
 backend
 utils
 dist
