@@ -1,37 +1,50 @@
-import fontkit from "fontkit";
+import fontkit from 'fontkit';
 
-import communicator from "implementations/communicator";
-import { FontDescriptor, LocalFontHelper } from "interfaces/IFont";
+import communicator from 'implementations/communicator';
+import { FontDescriptor, LocalFontHelper } from 'interfaces/IFont';
+
+interface Font extends fontkit.Font {
+  name?: {
+    records: {
+      fontFamily: {
+        [key: string]: string;
+      };
+    };
+  };
+}
+
+interface GeneralFont extends Font {
+  fonts?: Font[];
+}
 
 export default {
   findFont(fontDescriptor: FontDescriptor): FontDescriptor {
-    return communicator.sendSync("FIND_FONT", fontDescriptor);
+    return communicator.sendSync('FIND_FONT', fontDescriptor);
   },
   findFonts(fontDescriptor: FontDescriptor): FontDescriptor[] {
-    return communicator.sendSync("FIND_FONTS", fontDescriptor);
+    return communicator.sendSync('FIND_FONTS', fontDescriptor);
   },
   getAvailableFonts(): FontDescriptor[] {
-    return communicator.sendSync("GET_AVAILABLE_FONTS");
+    return communicator.sendSync('GET_AVAILABLE_FONTS');
   },
   substituteFont(postscriptName: string, text: string): FontDescriptor[] {
-    return communicator.sendSync("SUBSTITUTE_FONT", postscriptName, text);
+    return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
   },
   getFontName(font: FontDescriptor): string {
     let fontName = font.family;
     try {
-      let fontInfo = fontkit.openSync(font.path);
+      let fontInfo: GeneralFont = fontkit.openSync(font.path);
       if (fontInfo.fonts && fontInfo.fonts[0]) {
         fontInfo =
           fontInfo.fonts.find((f) => {
             if (f.familyName === font.family) return true;
-            if (f.name.records.fontFamily[navigator.language] === font.family)
-              return true;
+            if (f.name.records.fontFamily[navigator.language] === font.family) return true;
             return false;
           }) || fontInfo.fonts[0];
       }
       if (fontInfo) {
         const firstNotEn = Object.keys(fontInfo.name.records.fontFamily).find(
-          (key) => key !== "en"
+          (key) => key !== 'en'
         );
         fontName =
           fontInfo.name.records.fontFamily[navigator.language] ||
