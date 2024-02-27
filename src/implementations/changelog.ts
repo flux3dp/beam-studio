@@ -1,41 +1,33 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.2.15-alpha
+// 2.2.16-alpha
 const CHANGES_TW = {
   added: [
-    '新增 非工作區域文字。',
+    '新增 QR code generator',
+    '新增 webp 檔案格式的匯入',
   ],
   fixed: [
-    '修正 「檢視」裡的勾選狀態。',
-    '修正 多物件無法同時移動圖層。',
-    '修正 勾勒輪廓時卡頓問題。',
-    '修正 匯入 PDF 檔案問題。',
-    '修正 匯入 SVG 檔案問題。',
-    '修正 相機校正進度條顯示。',
-    '修正 列印預噴區取消遮蔽後未正常復原。',
+    '修正 問卷回饋無法使用的問題。',
+    '修正 部分無法 Undo 的操作行為。',
   ],
   changed: [
-    '變更 物件群組邏輯。',
-    '變更 Ador 最小加速度區間。',
+    '變更 CMYK 後展開為單色圖層後，不開放 「展開圖層」選項。',
+    '變更 圖層被鎖定後，「鎖定」選項改為「解鎖」。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added non-workarea text.',
+    'Added QR code generator.',
+    'Added support for importing webp file format.',
   ],
   fixed: [
-    'Fixed check status in the View menu.',
-    'Fixed the issue where multiple selected objects could not be moved to another layer.',
-    'Fixed the lag issue when performing image outlining.',
-    'Fixed the issue with PDF file importing.',
-    'Fixed the issue with SVG file importing.',
-    'Fixed the display of the camera calibration progress bar.',
-    'Fixed the pre-spray area after undoing the hiding layer.',
+    'Fixed the Feedback Questionnaire in the help menu.',
+    'Fixe some undo operations.',
   ],
   changed: [
-    'Changed the behavior of grouping objects.',
-    'Changed the minimum engraving padding for Ador.',
+    'Changed the “Expand Layer” option to be disabled after expanding a full-color layer.',
+    'Changed the option to “Unlock” after layer locking.',
   ],
 };
 
