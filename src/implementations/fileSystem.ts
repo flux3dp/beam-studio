@@ -53,4 +53,10 @@ export default {
   getPath(path: Path): string {
     return app.getPath(path);
   },
+  readdirSync(path: Path): string[] {
+    return fs.readdirSync(path);
+  },
+  delete(path: Path): void {
+    fs.unlinkSync(path);
+  },
 } as IFileSystem;
