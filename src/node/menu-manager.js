@@ -12,7 +12,6 @@ const {
   shell,
   ipcMain,
 } = require('electron');
-const path = require('path');
 const Store = require('electron-store');
 const resource = require('./menu-resource');
 const events = require('./ipc-events');
@@ -61,10 +60,7 @@ function buildFileMenu(fnKey, callback) {
       id: 'SAVE_AS', label: r.save_as, click: callback, accelerator: `Shift+${fnKey}+S`,
     },
     {
-      id: 'SAVE_TO_CLOUD',
-      label: r.save_to_cloud,
-      click: callback,
-      icon: path.join(__dirname, '../..', 'public/img/icon-flux-plus@4x.png'),
+      id: 'SAVE_TO_CLOUD', label: r.save_to_cloud, click: callback,
     },
     { type: 'separator' },
     {
