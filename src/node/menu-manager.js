@@ -12,7 +12,6 @@ const {
   shell,
   ipcMain,
 } = require('electron');
-const path = require('path');
 const Store = require('electron-store');
 const resource = require('./menu-resource');
 const events = require('./ipc-events');
