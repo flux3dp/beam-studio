@@ -125,6 +125,7 @@ module.exports = [
         patterns: [
           { from: path.resolve(__dirname, 'src/web/assets/video'), to: path.resolve(__dirname, 'public/video') },
           { from: path.resolve(__dirname, 'src/web/assets/img'), to: path.resolve(__dirname, 'public/core-img') },
+          { from: path.resolve(__dirname, 'src/web/assets/fcode'), to: path.resolve(__dirname, 'public/fcode') },
         ],
       }),
     ],
