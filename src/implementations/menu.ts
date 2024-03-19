@@ -34,6 +34,8 @@ class Menu extends AbstractMenu {
   }
 
   initCheckboxs = (): void => {
+    const shouldShowGrids = !!BeamboxPreference.read('show_grids');
+    updateCheckbox(['_view', 'SHOW_GRIDS'], shouldShowGrids);
     const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
     updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color') !== false;
