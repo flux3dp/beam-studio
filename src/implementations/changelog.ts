@@ -5,17 +5,16 @@ const CHANGES_TW = {
   added: [
     '新增 文字轉路徑 2.0。',
     '新增 我的雲端功能。',
-    '新增 Boxgen功能。',
-    '新增 Web字型。',
-    '新增 字體搜尋功能。',
+    '新增 Boxgen 功能。',
+    '新增 網頁字型。',
+    '新增 字型搜尋功能。',
     '新增 帳戶圖示和彈出視窗。',
-    '新增 錯誤代碼文章連結於錯誤代碼視窗。',
+    '新增 錯誤代碼的文章連結於錯誤代碼視窗。',
     '新增 活動推播通知。',
     '新增 在右鍵點擊物件後移動圖層的選項。',
   ],
   fixed: [
-    '修正 使用筆具工具後無法點擊圖層面板的問題。',
-    '修正 物件在執行復原後可能造成物件損壞的問題。',
+    '修正 使用鉛筆工具後點擊圖層面板沒有反應的問題。',
   ],
   changed: [
     '變更 自動儲存檔案的命名規則。',
@@ -36,8 +35,7 @@ const CHANGES_EN = {
     'Added Option to move layers after right-clicking on object.',
   ],
   fixed: [
-    'Fixed Layer panel can\'t be clicked after using pen tool.',
-    'Fixed the issue of potential object damage after performing an undo operation.',
+    'Fixed "Layers" button doesn’t show the layer panel after Pen tool was used.',
   ],
   changed: [
     'Changed the naming of automatically saved files.',
