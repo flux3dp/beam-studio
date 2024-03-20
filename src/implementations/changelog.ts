@@ -1,6 +1,6 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.0-alpha
+// 2.3.0-beta
 const CHANGES_TW = {
   added: [
     '新增 文字轉路徑 2.0。',
