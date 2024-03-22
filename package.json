@@ -1,7 +1,7 @@
 {
   "name": "beam-studio",
   "productName": "Beam Studio",
-  "version": "2.2.17-alpha",
+  "version": "2.3.0-alpha",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -36,7 +36,7 @@
     "eventemitter3": "^4.0.7",
     "exifr": "^7.1.3",
     "font-scanner": "^0.2.1",
-    "fontkit": "^2.0.2",
+    "fontkit": "EstherFu/fontkit",
     "gl-matrix": "^3.3.0",
     "hammerjs": "^2.0.8",
     "jimp": "^0.10.3",
