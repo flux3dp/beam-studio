@@ -439,8 +439,25 @@ function buildDeviceMenu(callback, uuid, data, isDevMode = false) {
         });
       }
     }
+    submenu.push({ type: 'separator' });
+    if (modelType === 'ador-series') {
+      submenu.push({
+        id: 'CAMERA_CALIBRATION_DATA',
+        label: r.camera_calibration_data,
+        uuid,
+        serial,
+        source,
+        submenu: [
+          {
+            id: 'UPLOAD_CALIBRATION_DATA', label: r.upload_data, uuid, serial, source, click: callback,
+          },
+          {
+            id: 'DOWNLOAD_CALIBRATION_DATA', label: r.download_data, uuid, serial, source, click: callback,
+          },
+        ],
+      });
+    }
     submenu = submenu.concat([
-      { type: 'separator' },
       {
         id: 'UPDATE_FIRMWARE', uuid, serial, machineName, source, label: r.update_firmware, click: callback,
       },
