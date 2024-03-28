@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Menu } from '@electron/remote';
-
 import viewMenu from 'helpers/menubar/view';
 import windowLocationReload from 'app/actions/windowLocation';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
@@ -22,7 +19,7 @@ export default {
       UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ALIGN_TO_EDGES: () => {
         const isBezierPathAlignToEdge = svgCanvas.toggleBezierPathAlignToEdge();
-        Menu.getApplicationMenu().items.filter((i) => i.id === '_edit')[0].submenu.items.filter((i) => i.id === 'ALIGN_TO_EDGES')[0].checked = isBezierPathAlignToEdge;
+        updateCheckbox(['_view', 'ALIGN_TO_EDGES'], isBezierPathAlignToEdge);
       },
       ANTI_ALIASING: () => {
         const newValue = viewMenu.toggleAntiAliasing();

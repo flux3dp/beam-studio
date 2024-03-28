@@ -34,14 +34,18 @@ class Menu extends AbstractMenu {
   }
 
   initCheckboxs = (): void => {
-    const shouldShowGrids = !!BeamboxPreference.read('show_grids');
+    const shouldZoomWithWindow = BeamboxPreference.read('zoom_with_window');
+    updateCheckbox(['_view', 'ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
+    const shouldShowGrids = BeamboxPreference.read('show_grids');
     updateCheckbox(['_view', 'SHOW_GRIDS'], shouldShowGrids);
-    const shouldShowRulers = !!BeamboxPreference.read('show_rulers');
+    const shouldShowRulers = BeamboxPreference.read('show_rulers');
     updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
-    const isUsingLayerColor = BeamboxPreference.read('use_layer_color') !== false;
+    const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
     updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
-    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing') !== false;
+    const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
     updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
+    const shouldShowAlignLines = BeamboxPreference.read('show_align_lines');
+    updateCheckbox(['_view', 'ALIGN_TO_EDGES'], shouldShowAlignLines);
   };
 
   attach(enabledItems: string[]) {
