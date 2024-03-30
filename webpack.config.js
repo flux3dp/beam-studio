@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = [
   {
     entry: './src/main.ts',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     mode: 'development',
     resolve: {
       alias: {
@@ -119,6 +119,7 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'bundle.js',
+      clean: true,
     },
     plugins: [
       new CopyPlugin({
@@ -132,7 +133,7 @@ module.exports = [
   },
   {
     entry: './src/shadow-window.ts',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     mode: 'development',
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js'],
@@ -169,6 +170,7 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'shadow-window.js',
+      clean: true,
     },
   },
   {
