@@ -262,10 +262,6 @@ function buildMenuItems(callback) {
       },
       { type: 'separator' },
       {
-        id: 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type: 'checkbox',
-      },
-      { type: 'separator' },
-      {
         id: 'OPTIMIZATION',
         label: r.optimization,
         submenu: [
@@ -304,6 +300,9 @@ function buildMenuItems(callback) {
       },
       {
         id: 'SHOW_LAYER_COLOR', label: r.show_layer_color || 'Show Layer Color', click: callback, type: 'checkbox',
+      },
+      {
+        id: 'ALIGN_TO_EDGES', label: r.align_to_edges, enabled: false, click: callback, type: 'checkbox',
       },
       {
         id: 'ANTI_ALIASING', label: r.anti_aliasing, click: callback, type: 'checkbox',
