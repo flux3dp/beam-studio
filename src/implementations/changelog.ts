@@ -1,6 +1,6 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.1-alpha
+// 2.3.1-beta
 const CHANGES_TW = {
   added: [
     '新增 元素圖案。',
