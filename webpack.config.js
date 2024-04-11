@@ -42,7 +42,7 @@ module.exports = [
           test: /\.worker\.ts$/,
           loader: 'worker-loader',
           options: {
-            filename: "[name].[contenthash].worker.js",
+            filename: "[name].worker.js",
           },
         },
         {
@@ -119,7 +119,6 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'bundle.js',
-      clean: true,
     },
     plugins: [
       new CopyPlugin({
@@ -170,7 +169,6 @@ module.exports = [
     output: {
       path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'shadow-window.js',
-      clean: true,
     },
   },
   {
