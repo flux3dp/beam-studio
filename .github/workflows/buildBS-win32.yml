@@ -78,7 +78,7 @@ jobs:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
-          ref: feat/fisheye-calibration-pnp
+          ref: 2.3.1
 
       - name: Copy Beam Studio Core
         run: |
