@@ -1,45 +1,37 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.0-beta
+// 2.3.1-alpha
 const CHANGES_TW = {
   added: [
-    '新增 文字轉路徑 2.0。',
-    '新增 我的雲端功能。',
-    '新增 Boxgen 功能。',
-    '新增 網頁字型。',
-    '新增 字型搜尋功能。',
-    '新增 帳戶圖示和彈出視窗。',
-    '新增 錯誤代碼的文章連結於錯誤代碼視窗。',
-    '新增 活動推播通知。',
-    '新增 在右鍵點擊物件後移動圖層的選項。',
+    '新增 元素圖案。',
+    '新增 相機預覽照片透明度調整。',
+    '新增 下載與上傳機器原始照片功能 （Ador only）。',
   ],
   fixed: [
-    '修正 使用鉛筆工具後點擊圖層面板沒有反應的問題。',
+    '修復「檢視」中的設定未被正確存取。',
+    '修復  圖層參數無法復原。',
   ],
   changed: [
-    '變更 自動儲存檔案的命名規則。',
-    '變更 將帳戶資料改為獨立選單。',
+    '取消 功率 70% 以上的警告訊息。',
+    '變更 「速度」下限為 0.5mm/s。',
+    '變更  「編輯」中的「貼齊端點」至「檢視」列表。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Text to Path Converter 2.0.',
-    'Added My cloud function.',
-    'Added Boxgen function.',
-    'Added Web font.',
-    'Added Font search function.',
-    'Added Account icon and modal.',
-    'Added Error code article link.',
-    'Added Event push notification.',
-    'Added Option to move layers after right-clicking on object.',
+    'Added Element icons.',
+    'Added Preview Opacity setting for camera preview photos.',
+    'Added Functionality to download and upload raw photo data (Ador only).',
   ],
   fixed: [
-    'Fixed "Layers" button doesn’t show the layer panel after Pen tool was used.',
+    'Fixed the issue of settings not being saved correctly in “View”.',
+    'Fixed the issue where layer parameters couldn’t be undone.',
   ],
   changed: [
-    'Changed the naming of automatically saved files.',
-    'Changed the Account content to be an independent menu.',
+    'Cancelled the warning message with power over 70%.',
+    'Changed the lower limit of “speed” to 0.5mm/s.',
+    'Moved the “Snap To Vertices” from “Edit” to “View”.',
   ],
 };
 
