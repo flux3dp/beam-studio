@@ -88,32 +88,25 @@ jobs:
           cp -R .github/actions/beam-studio-core/public/js/lib ./public/js/
 
       - name: Build Beam Studio
+        shell: bash
         run: |
           mkdir backend
-
           yarn install --network-timeout 100000
           ./node_modules/.bin/webpack
 
-          $env:TMP
-          cp -R $env:TMP/flux_api_swap backend/flux_api
+          cp -R $TMP/flux_api_swap backend/flux_api
           cp -R lib/elevate.cmd backend/elevate.cmd
           cp -R lib/elevate.vbs backend/elevate.vbs
           ./backend/flux_api/flux_api --test --without_pcl
 
           cp -R util/win32 utils
-          cp -Force ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
+          cp ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
 
-          ./build/clearup-develop-files
+          bash ./build/clearup-develop-files.sh
 
-          if (${{ matrix.arch }} -eq 64) {
-            echo 64
-            yarn dist --win --x64 --publish always
-          }
-          else {
-            echo 32
-            $env:PUBLISH_PATH = "-x86"
-            yarn dist --win --ia32 --publish always
-          }
+          echo 32
+          export PUBLISH_PATH="-x86"
+          yarn dist --win --ia32 --publish always
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
