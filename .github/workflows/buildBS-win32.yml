@@ -92,7 +92,7 @@ jobs:
         run: |
           mkdir backend
           yarn install --network-timeout 100000
-          ./node_modules/.bin/webpack
+          yarn build
 
           cp -R $TMP/flux_api_swap backend/flux_api
           cp -R lib/elevate.cmd backend/elevate.cmd

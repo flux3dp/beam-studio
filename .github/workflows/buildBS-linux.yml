@@ -82,7 +82,7 @@ jobs:
           mkdir backend
 
           yarn install
-          webpack
+          yarn build
 
           cp -R $HOME/flux_api_swap backend/flux_api
           ./backend/flux_api/flux_api --test --without_pcl
