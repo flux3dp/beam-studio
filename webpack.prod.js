@@ -16,4 +16,4 @@ const prodConfig = config.map((c) => {
   });
 });
 
-export default prodConfig;
+module.exports = prodConfig;
