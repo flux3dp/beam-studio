@@ -11,6 +11,7 @@ const prodConfig = config.map((c) => {
         org: "flux3dp",
         project: "beam-studio",
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        telemetry: false,
       }),
     ] : undefined,
   });
