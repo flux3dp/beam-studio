@@ -116,6 +116,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       # - name: Cleanup artifacts
       #   run: |
