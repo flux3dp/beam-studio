@@ -400,21 +400,12 @@ function buildDeviceMenu(callback, uuid, data, isDevMode = false) {
     } else if (modelType === 'ador-series') {
       if (isDevMode) {
         submenu.push({
-          id: 'CALIBRATE_CAMERA_V2',
-          uuid,
-          serial,
-          machineName,
-          source,
-          label: r.calibrate_camera_v2,
-          click: callback,
-        });
-        submenu.push({
           id: 'CALIBRATE_CAMERA_V2_FACTORY',
           uuid,
           serial,
           machineName,
           source,
-          label: `${r.calibrate_camera_v2} (Factory)`,
+          label: `${r.calibrate_camera} (Factory)`,
           click: callback,
         });
       }
