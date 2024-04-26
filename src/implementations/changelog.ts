@@ -21,7 +21,7 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
   added: [
-    'Added Ador camera exposure value (requires firmware 5.1.18 or above)',
+    'Added Ador camera exposure value (requires firmware 5.1.19 or above)',
     'Added Ador low laser while frame preview.',
     'Added Ador halftone option for printing.',
     'Added firmware update reminded.',
