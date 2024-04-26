@@ -16,6 +16,7 @@ const CHANGES_TW = {
   changed: [
     '改善 Ador 列印顏色偏深的問題。',
     '變更 Ador 相機校正流程。',
+    '變更 Ador 切割路徑的移動速度。',
   ],
 };
 
@@ -34,6 +35,7 @@ const CHANGES_EN = {
   changed: [
     'Improved the issue with Ador prints being too dark.',
     'Changed the Camera Calibration process for Ador.',
+    'Changed the travel speed of cutting path for Ador.',
   ],
 };
 
