@@ -1,6 +1,17 @@
 @font-face {
-    font-family: 'Harlow Solid Italic';
-    src: local('Harlow Solid Italic'), local('Harlow Solid');
+  font-family: 'Harlow Solid Italic';
+  src: local('Harlow Solid Italic'), local('Harlow Solid');
+}
+
+@font-face {
+  font-family: 'Rockwell-ExtraBold';
+  src: local('Rockwell-ExtraBold'), local('Rockwell Extra Bold');
+}
+
+@font-face {
+  font-family: 'Rockwell Extra Bold';
+  font-weight: 800;
+  src: local('Rockwell Extra Bold'), local('Rockwell');
 }
 
 // latin
