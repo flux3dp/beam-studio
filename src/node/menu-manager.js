@@ -261,14 +261,6 @@ function buildMenuItems(callback) {
         ],
       },
       { type: 'separator' },
-      {
-        id: 'OPTIMIZATION',
-        label: r.optimization,
-        submenu: [
-          { id: 'SVG_NEST', label: r.arrangement_optimization, click: callback },
-        ],
-      },
-      { type: 'separator' },
       { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
       { type: 'separator' },
       {
