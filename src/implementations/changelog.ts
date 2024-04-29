@@ -1,45 +1,43 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.0-beta
+// 2.3.2-beta
 const CHANGES_TW = {
   added: [
-    '新增 文字轉路徑 2.0。',
-    '新增 我的雲端功能。',
-    '新增 Boxgen 功能。',
-    '新增 網頁字型。',
-    '新增 字型搜尋功能。',
-    '新增 帳戶圖示和彈出視窗。',
-    '新增 錯誤代碼的文章連結於錯誤代碼視窗。',
-    '新增 活動推播通知。',
-    '新增 在右鍵點擊物件後移動圖層的選項。',
+    '新增 Ador 相機曝光值調整。',
+    '新增 Ador 外框預覽時弱出光',
+    '新增 Ador 列印半色調選項。',
+    '新增 韌體更新提示。',
   ],
   fixed: [
-    '修正 使用鉛筆工具後點擊圖層面板沒有反應的問題。',
+    '修正 材質參數選單的位置。',
+    '修正 多邊形元素在變更邊長時位置會被移到左上方的問題。',
+    '修正 計算工作時間造成視窗卡住。',
+    '改善 Ador 列印顏色偏深的問題。',
+    '修正 2.3.2 beta 版本中 Ador 路徑加速度限制套用到雕刻上。',
   ],
   changed: [
-    '變更 自動儲存檔案的命名規則。',
-    '變更 將帳戶資料改為獨立選單。',
+    '變更 Ador 相機校正流程。',
+    '變更 Ador 切割路徑的移動速度。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Text to Path Converter 2.0.',
-    'Added My cloud function.',
-    'Added Boxgen function.',
-    'Added Web font.',
-    'Added Font search function.',
-    'Added Account icon and modal.',
-    'Added Error code article link.',
-    'Added Event push notification.',
-    'Added Option to move layers after right-clicking on object.',
+    'Added Ador camera exposure value (requires firmware 5.1.19 or above)',
+    'Added Ador low laser while frame preview.',
+    'Added Ador halftone option for printing.',
+    'Added firmware update reminded.',
   ],
   fixed: [
-    'Fixed "Layers" button doesn’t show the layer panel after Pen tool was used.',
+    'Fixed the position of the material parameter drop down menu.',
+    'Fixed the issue where the polygon element would be moved to the top left corner when its changed.',
+    'Fixed the issue where estimate times causes the window to freeze.',
+    'Improved the issue with Ador prints being too dark.',
+    'Fixed the issue where path acceleration limits for Ador were applied to engraving in version 2.3.2 beta.',
   ],
   changed: [
-    'Changed the naming of automatically saved files.',
-    'Changed the Account content to be an independent menu.',
+    'Changed the Camera Calibration process for Ador.',
+    'Changed the travel speed of cutting path for Ador.',
   ],
 };
 
