@@ -34,7 +34,6 @@ requirejs.config({
         layer: '../lib/svgeditor/layer',
         path: '../lib/svgeditor/path',
         svgcanvas: '../lib/svgeditor/svgcanvas',
-        clipper_unminified: '../lib/clipper_unminified',
         svgnest: '../lib/svg-nest/svgnest',
         svgnestGeoUtil: '../lib/svg-nest/util/geometryutil',
         svgnestParallel: '../lib/svg-nest/util/parallel',
@@ -119,11 +118,8 @@ requirejs.config({
         path: {
             deps: ['layer']
         },
-        clipper_unminified: {
-            deps: ['path']
-        },
         svgnest: {
-            deps: ['clipper_unminified']
+            deps: ['path']
         },
         svgnestGeoUtil: {
             deps: ['svgnest']
