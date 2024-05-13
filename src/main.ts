@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { app, session } from '@electron/remote';
-import { Color, Titlebar } from 'custom-electron-titlebar';
+import { TitlebarColor, Titlebar } from 'custom-electron-titlebar';
 
 // This module setup global window variable, Should be put at top
 import globalHelper from 'helpers/global-helper';
@@ -52,13 +52,13 @@ function menuBar() {
 
   $('.content').css({ height: 'calc(100% - 30px)' });
   const titlebar = new Titlebar({
-    backgroundColor: Color.fromHex('#333'),
+    backgroundColor: TitlebarColor.fromHex('#333'),
     shadow: false,
     icon: 'win-title-icon.png',
   });
   titlebar.updateTitle(' ');
   window.titlebar = titlebar;
-  communicator.on('UPDATE_CUSTOM_TITLEBAR', (e) => {
+  communicator.on('UPDATE_CUSTOM_TITLEBAR', () => {
     window.dispatchEvent(new Event('mousedown'));
   });
 }
