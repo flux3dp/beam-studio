@@ -3,41 +3,35 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 // 2.3.2-beta
 const CHANGES_TW = {
   added: [
-    '新增 Ador 相機曝光值調整。',
-    '新增 Ador 外框預覽時弱出光',
-    '新增 Ador 列印半色調選項。',
-    '新增 韌體更新提示。',
   ],
   fixed: [
-    '修正 材質參數選單的位置。',
-    '修正 多邊形元素在變更邊長時位置會被移到左上方的問題。',
-    '修正 計算工作時間造成視窗卡住。',
-    '改善 Ador 列印顏色偏深的問題。',
-    '修正 2.3.2 beta 版本中 Ador 路徑加速度限制套用到雕刻上。',
+    '修正 讀取 beam 檔時會清除相機預覽畫面的錯誤。',
+    '修正 部分 beam 檔讀取問題。',
+    '修正 一些點陣圖顯示錯誤。',
+    '修正 在對複雜的路徑進行位移複製時，畫面卡住的問題。',
+    '修正 清除場景的對話窗內容沒有被翻譯的問題。',
   ],
   changed: [
-    '變更 Ador 相機校正流程。',
-    '變更 Ador 切割路徑的移動速度。',
+    '變更 初次使用時相機校正以及新手導覽對話窗內容。',
+    '變更 右側面板在選取及取消選取物件時將不再自動切換。',
+    '變更 將自動排列功能從上方選單移到物件操作面板。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Ador camera exposure value (requires firmware 5.1.19 or above)',
-    'Added Ador low laser while frame preview.',
-    'Added Ador halftone option for printing.',
-    'Added firmware update reminded.',
   ],
   fixed: [
-    'Fixed the position of the material parameter drop down menu.',
-    'Fixed the issue where the polygon element would be moved to the top left corner when its changed.',
-    'Fixed the issue where estimate times causes the window to freeze.',
-    'Improved the issue with Ador prints being too dark.',
-    'Fixed the issue where path acceleration limits for Ador were applied to engraving in version 2.3.2 beta.',
+    'Fixed the issue where the camera preview would be cleared when loading a beam file.',
+    'Fixed some beam file loading issue.',
+    'Fixed some bitmap image display issues.',
+    'Fixed applying offset to complex path causes the window to freeze.',
+    'Fixed the issue where the content of the clear scene dialog was not translated.',
   ],
   changed: [
-    'Changed the Camera Calibration process for Ador.',
-    'Changed the travel speed of cutting path for Ador.',
+    'Changed the contents of the camera calibration and tutorial dialogs for the first use.',
+    'Changed the right panel behavior, the right panel will no longer automatically switch when selecting and deselecting objects.',
+    'Changed the auto-arrange function from the menu bar to the object panel.',
   ],
 };
 
