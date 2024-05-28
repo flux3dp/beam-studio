@@ -209,6 +209,11 @@ function createWindow() {
 
   electronRemote.enable(mainWindow.webContents);
 
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // Prevent the new window from early input files
+    if (url.startsWith('file://')) {
+      return { action: 'deny' };
+    }
   const store = new Store();
 
   if (!store.get('poke-ip-addr')) {
