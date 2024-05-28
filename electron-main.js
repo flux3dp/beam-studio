@@ -214,6 +214,9 @@ function createWindow() {
     if (url.startsWith('file://')) {
       return { action: 'deny' };
     }
+    return { action: 'allow' };
+  });
+
   const store = new Store();
 
   if (!store.get('poke-ip-addr')) {
