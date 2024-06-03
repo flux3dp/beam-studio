@@ -9,7 +9,6 @@ requirejs.config({
         svgeditor: '../lib/svgeditor',
         imagetracer: '../lib/svgeditor/imagetracer',
         cssHome: '../../css/3rd-party-plugins',
-        freetrans: '../plugins/freetrans/jquery.freetrans',
         dxf2svg: '../lib/dxf2svg',
         // SVG Editor Libraries Begin
         jsHotkeys: '../lib/svgeditor/js-hotkeys/jquery.hotkeys.min',
@@ -135,7 +134,6 @@ requirejs.config({
               'css!svgeditor/svg-editor',
               'css!svgeditor/jgraduate/css/jPicker',
               'css!svgeditor/jgraduate/css/jgraduate',
-              'css!svgeditor/spinbtn/JQuerySpinBtn',
               'canvg',
               'rgbcolor',
             ]
