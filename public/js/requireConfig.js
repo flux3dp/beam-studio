@@ -17,7 +17,6 @@ requirejs.config({
         jquerybbq: '../lib/svgeditor/jquerybbq/jquery.bbq.min',
         svgicons: '../lib/svgeditor/svgicons/jquery.svgicons',
         jgraduate: '../lib/svgeditor/jgraduate/jquery.jgraduate.min',
-        spinbtn: '../lib/svgeditor/spinbtn/JQuerySpinBtn.min',
         touch: '../lib/svgeditor/touch',
         svgedit: '../lib/svgeditor/svgedit',
         jquerySvg: '../lib/svgeditor/jquery-svg',
@@ -73,11 +72,8 @@ requirejs.config({
         jgraduate: {
             deps: ['svgicons']
         },
-        spinbtn: {
-            deps: ['jgraduate']
-        },
         touch: {
-            deps: ['spinbtn']
+            deps: ['jgraduate']
         },
         jquerySvg: {
             deps: ['touch']
