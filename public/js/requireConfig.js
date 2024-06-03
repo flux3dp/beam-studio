@@ -10,7 +10,6 @@ requirejs.config({
         imagetracer: '../lib/svgeditor/imagetracer',
         cssHome: '../../css/3rd-party-plugins',
         freetrans: '../plugins/freetrans/jquery.freetrans',
-        jqueryGrowl: '../lib/jquery.growl',
         dxf2svg: '../lib/dxf2svg',
         // SVG Editor Libraries Begin
         jsHotkeys: '../lib/svgeditor/js-hotkeys/jquery.hotkeys.min',
