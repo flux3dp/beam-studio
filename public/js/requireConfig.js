@@ -14,7 +14,6 @@ requirejs.config({
         jsHotkeys: '../lib/svgeditor/js-hotkeys/jquery.hotkeys.min',
         jquerybbq: '../lib/svgeditor/jquerybbq/jquery.bbq.min',
         svgicons: '../lib/svgeditor/svgicons/jquery.svgicons',
-        jgraduate: '../lib/svgeditor/jgraduate/jquery.jgraduate.min',
         touch: '../lib/svgeditor/touch',
         svgedit: '../lib/svgeditor/svgedit',
         jquerySvg: '../lib/svgeditor/jquery-svg',
@@ -36,7 +35,6 @@ requirejs.config({
         svgnestParallel: '../lib/svg-nest/util/parallel',
         svgnestEval: '../lib/svg-nest/util/eval',
         jqueryUi: '../lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min',
-        jpicker: '../lib/svgeditor/jgraduate/jpicker',
         canvg: '../lib/svgeditor/canvg/canvg',
         rgbcolor: '../lib/svgeditor/canvg/rgbcolor'
         // SVG Editor Libraries End
@@ -67,11 +65,8 @@ requirejs.config({
         svgicons: {
             deps: ['jquerybbq']
         },
-        jgraduate: {
-            deps: ['svgicons']
-        },
         touch: {
-            deps: ['jgraduate']
+            deps: ['svgicons']
         },
         jquerySvg: {
             deps: ['touch']
@@ -125,15 +120,10 @@ requirejs.config({
             deps: ['svgnestParallel']
         },
         jqueryUi: {
-            deps: ['svgnestEval']
-        },
-        jpicker: {
             deps: [
-              'jqueryUi',
+              'svgnestEval',
               'svgedit',
               'css!svgeditor/svg-editor',
-              'css!svgeditor/jgraduate/css/jPicker',
-              'css!svgeditor/jgraduate/css/jgraduate',
               'canvg',
               'rgbcolor',
             ]
@@ -165,7 +155,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 
 // Load main
 
-requirejs(['jpicker', 'jquery'], function (jpicker, $) {
+requirejs(['jqueryUi', 'jquery'], function (jqueryUi, $) {
   window.$ = $;
   window.jQuery = $;
   const body = document.querySelector('body');
