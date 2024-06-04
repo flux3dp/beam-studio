@@ -3,7 +3,7 @@
  <g data-zstep="0" data-diode="0" data-height="-3" class="layer" data-color="#FE0000" data-speed="5" data-strength="60" data-repeat="1" clip-path="url(#scene_mask)">
   <title>Cutting</title>
   <g data-original-layer="Cutting" id="svg_3"/>
-  <rect data-original-layer="Cutting" rx="30" fill="#FE0000" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_4" stroke="#FE0000" height="255.66541" width="926.7871" y="151.80275" x="115.63276"/>
+  <rect data-original-layer="Cutting" rx="30" fill="none" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_4" stroke="#FE0000" height="255.66541" width="926.7871" y="151.80275" x="115.63276"/>
  </g>
  <g data-zstep="0" data-diode="0" data-height="-3" class="layer" data-color="#000000" data-speed="150" data-strength="20" data-repeat="1" clip-path="url(#scene_mask)">
   <title>Engraving</title>
