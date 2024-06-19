@@ -1,29 +1,3 @@
-#layerpanel {
-  background-color: $backgroundColor;
-  display: block;
-  overflow: initial;
-  border: 1px $panelBorderColor solid;
-  border-width: 0 0 1px 0;
-}
-#layerlist_container {
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  background: white;
-  height: 400px;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-#layer-laser-panel-placeholder {
-  background-color: #f8f8f8;
-  height: 100%;
-  margin-top: -1px;
-  border: 1px $panelBorderColor solid;
-  border-width: 1px 0 0 0;
-  border-radius: 4px;
-}
-
 #layerlist {
   width: 100%;
 }

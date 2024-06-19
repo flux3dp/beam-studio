@@ -45,13 +45,6 @@
   }
 
   #sidepanels {
-    #layer-and-laser-panel {
-      width: 100%;
-      min-height: calc(100% - 40px);
-      background-color: #f8f8f8;
-      border: 1px solid #e0e0e0;
-      border-width: 0 0 1px 1px;
-    }
     #sidepanel_handle {
       @include force-hide();
     }

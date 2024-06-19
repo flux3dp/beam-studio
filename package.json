@@ -53,6 +53,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.3",
+    "react-resizable": "^3.0.5",
     "react-router-dom": "^5.2.0",
     "request": "^2.88.2",
     "rxjs": "^7.1.0",
