@@ -1,5 +1,6 @@
 const { app, ipcMain, BrowserWindow, dialog } = require('electron');
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
+app.commandLine.appendSwitch('--no-sandbox')
 app.allowRendererProcessReuse = false;
 
 const path = require('path');
@@ -74,7 +75,7 @@ function createLogFile() {
 var DEBUG = false;
 logger = process.stderr.isTTY ? process.stderr : createLogFile();
 
-if (process.argv.indexOf('--debug') > 0) {
+if (process.argv.indexOf('--debug-mode') > 0) {
   DEBUG = true;
   console.log('DEBUG Mode');
   // require('electron-reload')(__dirname);
