@@ -48,6 +48,9 @@ function buildOSXAppMenu(callback) {
 function buildFileMenu(fnKey, callback) {
   const menuItems = [
     {
+      id: 'CLEAR_SCENE', label: r.clear_scene || 'Clear Scene', enabled: false, click: callback, accelerator: `${fnKey}+N`,
+    },
+    {
       id: 'OPEN', label: r.open || 'Open', click: callback, accelerator: `${fnKey}+O`,
     },
     { id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
@@ -155,6 +158,7 @@ const buildHelpMenu = (callback) => {
     { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
     { id: 'CHANGE_LOGS', label: r.change_logs, click: callback },
     { id: 'HELP_CENTER', label: r.help_center, click() { shell.openExternal(r.link.help_center); } },
+    { id: 'KEYBOARD_SHORTCUTS', label: r.keyboard_shortcuts, click() { shell.openExternal(r.link.shortcuts); } },
     { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
     { type: 'separator' },
     { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
@@ -262,10 +266,6 @@ function buildMenuItems(callback) {
       },
       { type: 'separator' },
       { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
-      { type: 'separator' },
-      {
-        id: 'CLEAR_SCENE', label: r.clear_scene || 'Clear Scene', enabled: false, click: callback, accelerator: `${fnKey}+Shift+X`,
-      },
     ],
   });
 
@@ -307,7 +307,7 @@ function buildMenuItems(callback) {
     label: r.machines || 'Machines',
     submenu: [
       {
-        id: 'ADD_NEW_MACHINE', label: r.add_new_machine || 'Add New Machine', accelerator: `${fnKey}+N`, click: callback,
+        id: 'ADD_NEW_MACHINE', label: r.add_new_machine || 'Add New Machine', accelerator: `${fnKey}+M`, click: callback,
       },
       { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
       { type: 'separator' },
