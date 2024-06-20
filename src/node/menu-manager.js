@@ -158,6 +158,7 @@ const buildHelpMenu = (callback) => {
     { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
     { id: 'CHANGE_LOGS', label: r.change_logs, click: callback },
     { id: 'HELP_CENTER', label: r.help_center, click() { shell.openExternal(r.link.help_center); } },
+    { id: 'KEYBOARD_SHORTCUTS', label: r.keyboard_shortcuts, click() { shell.openExternal(r.link.shortcuts); } },
     { id: 'CONTACT_US', label: r.contact, click() { shell.openExternal(r.link.contact_us); } },
     { type: 'separator' },
     { id: 'FORUM', label: r.forum, click() { shell.openExternal(r.link.forum); } },
