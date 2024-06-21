@@ -4,6 +4,7 @@ import { Menu, MenuItem } from '@electron/remote';
 import Alert from 'app/actions/alert-caller';
 import AlertConstants from 'app/constants/alert-constants';
 import BeamFileHelper from 'helpers/beam-file-helper';
+import currentFileManager from 'app/svgedit/currentFileManager';
 import FileExportHelper from 'helpers/file-export-helper';
 import i18n from 'helpers/i18n';
 import importBvg from 'app/svgedit/operations/import/importBvg';
@@ -15,10 +16,8 @@ import fs from './fileSystem';
 import storage from './storage';
 
 let svgCanvas;
-let svgEditor;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
-  svgEditor = globalSVG.Editor;
 });
 
 const recentMenuUpdater = {
@@ -40,20 +39,11 @@ const recentMenuUpdater = {
           const res = await FileExportHelper.toggleUnsavedChangedDialog();
           if (res) {
             if (fs.exists(filePath)) {
-              let fileName;
-              if (window.os === 'Windows') {
-                fileName = filePath.split('\\');
-              } else {
-                fileName = filePath.split('/');
-              }
               Alert.popUp({
                 id: 'load-recent',
                 message: i18n.lang.beambox.popup.loading_image,
               });
-              fileName = fileName[fileName.length - 1];
-              fileName = fileName.slice(0, fileName.lastIndexOf('.')).replace(':', '/');
-              svgCanvas.setLatestImportFileName(fileName);
-              svgCanvas.currentFilePath = filePath;
+              currentFileManager.setLocalFile(filePath);
               svgCanvas.updateRecentFiles(filePath);
               try {
                 svgCanvas.clearSelection();
