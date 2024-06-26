@@ -1,43 +1,40 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.2-beta
+// 2.3.6-beta
 const CHANGES_TW = {
   added: [
-    '新增 Ador 相機曝光值調整。',
-    '新增 Ador 外框預覽時弱出光',
-    '新增 Ador 列印半色調選項。',
-    '新增 韌體更新提示。',
+    '新增 圖層面板與物件面板的快捷鍵 。',
+    '新增 「快捷鍵」文章連結於「說明」中。',
+    '新增 圖層面板的擴展功能。',
+    '新增「新增檔案」選項於「檔案」中。',
+    '在畫布上新增當前 DPI 設定。',
   ],
   fixed: [
-    '修正 材質參數選單的位置。',
-    '修正 多邊形元素在變更邊長時位置會被移到左上方的問題。',
-    '修正 計算工作時間造成視窗卡住。',
-    '改善 Ador 列印顏色偏深的問題。',
-    '修正 2.3.2 beta 版本中 Ador 路徑加速度限制套用到雕刻上。',
+    '修正「不分層」匯入圖檔時物件填充狀態的相關問題。',
+    '修正 文件標題包含文件路徑的問題。',
+    '修正 選取狀態下的 svg 物件在路徑預覽時會消失的問題。',
   ],
   changed: [
-    '變更 Ador 相機校正流程。',
-    '變更 Ador 切割路徑的移動速度。',
+    '移除「清除場景」選項。',
+    '變更 部分快捷鍵按鈕。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Ador camera exposure value (requires firmware 5.1.19 or above)',
-    'Added Ador low laser while frame preview.',
-    'Added Ador halftone option for printing.',
-    'Added firmware update reminded.',
+    'Added hot keys for the Layer panel and Object panel.',
+    'Added “Keyboard Shortcuts” article link in “Help” menu.',
+    'Added “New” as create new files in “File” menu.',
+    'Added current DPI settings on the canvas.',
   ],
   fixed: [
-    'Fixed the position of the material parameter drop down menu.',
-    'Fixed the issue where the polygon element would be moved to the top left corner when its changed.',
-    'Fixed the issue where estimate times causes the window to freeze.',
-    'Improved the issue with Ador prints being too dark.',
-    'Fixed the issue where path acceleration limits for Ador were applied to engraving in version 2.3.2 beta.',
+    'Fixed issues related to object fill status when importing svg by single layer.',
+    'Fixed the issue where the file title included the file path.',
+    'Fixed the issue where selected SVG objects would disappear during path preview.',
   ],
   changed: [
-    'Changed the Camera Calibration process for Ador.',
-    'Changed the travel speed of cutting path for Ador.',
+    'Removed the “Clear Scene” option.',
+    'Changed some hot key buttons.',
   ],
 };
 
