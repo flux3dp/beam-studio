@@ -17,6 +17,7 @@ const CHANGES_TW = {
   changed: [
     '移除「清除場景」選項。',
     '變更 部分快捷鍵按鈕。',
+    '加回 beamo 及 Beambox 機種功率 70% 以上的警告訊息',
   ],
 };
 
@@ -35,6 +36,7 @@ const CHANGES_EN = {
   changed: [
     'Removed the “Clear Scene” option.',
     'Changed some hot key buttons.',
+    'Added back the warning message with power over 70% for beamo and beambox',
   ],
 };
 
