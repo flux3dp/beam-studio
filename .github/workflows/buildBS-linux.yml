@@ -12,13 +12,13 @@ jobs:
     strategy:
       matrix:
         node-version: [20.11]
-        python-version: [3.7]
+        python-version: [3.8]
         os: [ubuntu-20.04, ubuntu-22.04]
 
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 

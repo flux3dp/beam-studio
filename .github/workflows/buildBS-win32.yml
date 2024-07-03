@@ -11,13 +11,13 @@ jobs:
     strategy:
       matrix:
         node-version: [20.11]
-        python-version: [3.7]
+        python-version: [3.8]
         arch: [32]
 
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x86'
