@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [20.11]
         python-version: [3.8]
-        os: [macOS-13]
+        os: [macOS-12]
 
     steps:
       - uses: actions/checkout@v3
