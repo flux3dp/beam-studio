@@ -1,4 +1,3 @@
-altgraph==0.16.1
 astroid==2.2.5
 cairocffi==1.2.0
 cffi==1.14.5
