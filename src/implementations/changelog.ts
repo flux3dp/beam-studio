@@ -3,7 +3,7 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 // 2.3.7-beta
 const CHANGES_TW = {
   added: [
-    '新增 廣域雕刻功能 (用於 Ador 擴展底座)',
+    '新增 廣域雕刻功能 (用於 Ador 擴充底座)',
   ],
   fixed: [
     '修正 滑鼠滯留觸發右鍵選單。',
