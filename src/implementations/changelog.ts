@@ -1,31 +1,33 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.7-beta
+// 2.3.8-beta
 const CHANGES_TW = {
   added: [
-    '新增 廣域雕刻功能 (用於 Ador 擴展底座)',
+    '新增 自動對位功能。',
+    '新增 支援 Ador 旋轉軸 (需搭配韌體 v5.3.3)',
   ],
   fixed: [
-    '修正 滑鼠滯留觸發右鍵選單。',
-    '修正 Windows 系統右鍵選單顯示問題。',
-    '修正 尺規偏移。',
-    '修正 取消路徑預覽後，再執行路徑預覽出現 #806 錯誤。',
+    '修正 點陣圖旋轉特定角度後送出工作位置錯誤。',
+    '修正 部分圖檔直角計算錯誤問題。',
   ],
   changed: [
+    '自動記住第三方登入資訊',
+    '將「自動排列」更名為「智慧排版」',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added passthrough feature (For Ador Extension base).',
+    'Added Auto Fit feature.',
+    'Added support for Ador Rotary (need to use firmware v5.3.3)',
   ],
   fixed: [
-    'Fixed the right-click menu being activated incorrectly when the mouse is stationary.',
-    'Fixed the display issue of the right-click menu in Windows.',
-    'Fixed the ruler discrepancy issue.',
-    'Fixed the #806 error that occurs when re-executing path preview after canceling path preview.',
+    'Fixed issue with incorrect positions after rotating images by specific angles.',
+    'Fixed calculation error for right angles in some image files.',
   ],
   changed: [
+    'Auto-save third-party login information',
+    'Renamed “Auto Arrange” to “Smart Nest”',
   ],
 };
 
