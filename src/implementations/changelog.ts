@@ -3,7 +3,6 @@ import { IChangeLog } from 'interfaces/IChangeLog';
 // 2.3.8-beta
 const CHANGES_TW = {
   added: [
-    '新增 自動對位功能。',
     '新增 支援 Ador 旋轉軸 (需搭配韌體 v5.3.3)',
   ],
   fixed: [
@@ -18,7 +17,6 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
   added: [
-    'Added Auto Fit feature.',
     'Added support for Ador Rotary (need to use firmware v5.3.3)',
   ],
   fixed: [
