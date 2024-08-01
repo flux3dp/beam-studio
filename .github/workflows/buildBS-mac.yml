@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+    branches:
+      - 'test-build'
 
 jobs:
   build:
@@ -82,7 +84,7 @@ jobs:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
-          ref: develop
+          ref: 2.3.8
 
       - name: Copy Beam Studio Core
         run: |
