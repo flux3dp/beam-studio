@@ -1,19 +1,21 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const fontScanner = require('font-scanner');
-const { ipcMain } = require('electron');
+import fontScanner from 'font-scanner';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ipcMain } from 'electron';
 
-const events = require('./ipc-events');
+import Font from 'interfaces/Fonts';
 
-let fontsListCache = [];
+import events from './ipc-events';
 
-const findFontsSync = (arg) => {
+let fontsListCache: Font[] = [];
+
+const findFontsSync = (arg: Font) => {
   const availableFonts = fontsListCache || fontScanner.getAvailableFontsSync();
   const matchFamily = availableFonts.filter((font) => font.family === arg.family);
   const match = matchFamily.filter((font) => {
     let result = true;
     Object.getOwnPropertyNames(arg).forEach((a) => {
-      if (arg[a] !== font[a]) {
+      if (arg[a as keyof Font] !== font[a as keyof Font]) {
         result = false;
       }
     });
@@ -22,7 +24,7 @@ const findFontsSync = (arg) => {
   return match;
 };
 
-const findFontSync = (arg) => {
+const findFontSync = (arg: Font) => {
   if (arg.postscriptName) {
     return fontScanner.findFontSync(arg);
   }
@@ -45,7 +47,7 @@ const findFontSync = (arg) => {
   return font;
 };
 
-const registerEvents = () => {
+const registerEvents = (): void => {
   ipcMain.on(events.GET_AVAILABLE_FONTS, (event) => {
     const fonts = fontScanner.getAvailableFontsSync();
     fontsListCache = fonts;
@@ -68,6 +70,6 @@ const registerEvents = () => {
   });
 };
 
-module.exports = {
+export default {
   registerEvents,
 };

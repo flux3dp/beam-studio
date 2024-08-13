@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const ping = require('net-ping');
-const { ipcMain } = require('electron');
+import ping from 'net-ping';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { BrowserWindow, ipcMain } from 'electron';
 
-const events = require('./ipc-events');
+import events from './ipc-events';
 
-const testNetwork = async (ip, time, mainWindow) => {
-  let session;
+const testNetwork = async (ip: string, time: number, mainWindow: BrowserWindow) => {
+  let session: Session;
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const createSession = () => {
@@ -30,30 +30,31 @@ const testNetwork = async (ip, time, mainWindow) => {
     let pingCount = 0;
     let successCount = 0;
     let totalRRT = 0;
-    const doPing = () => new Promise((resolve2) => {
-      let resolved = false;
-      setTimeout(() => {
-        if (!resolved) {
-          resolve2({ error: 'TOMEOUT' });
-          resolved = true;
-        }
-      }, 3000);
-      session.pingHost(ip, (error, target, sent, rcvd) => {
-        if (!resolved) {
-          if (error) {
-            // console.log(`${target}: ${error.toString()}`);
-            if (error.toString().match('Invalid IP address')) {
-              resolve2({ error: 'INVALID_IP' });
-            } else {
-              resolve2({ error: error.toString() });
-            }
-          } else {
-            resolve2({ rrt: rcvd - sent });
+    const doPing = () =>
+      new Promise<{ error?: string; rrt?: number }>((resolve2) => {
+        let resolved = false;
+        setTimeout(() => {
+          if (!resolved) {
+            resolve2({ error: 'TOMEOUT' });
+            resolved = true;
           }
-        }
-        resolved = true;
+        }, 3000);
+        session.pingHost(ip, (error, target, sent, rcvd) => {
+          if (!resolved) {
+            if (error) {
+              // console.log(`${target}: ${error.toString()}`);
+              if (error.toString().match('Invalid IP address')) {
+                resolve2({ error: 'INVALID_IP' });
+              } else {
+                resolve2({ error: error.toString() });
+              }
+            } else {
+              resolve2({ rrt: rcvd - sent });
+            }
+          }
+          resolved = true;
+        });
       });
-    });
     while (Date.now() < start + time) {
       const elapsedTime = Date.now() - start;
       const percentage = Math.round((100 * elapsedTime) / time);
@@ -80,13 +81,13 @@ const testNetwork = async (ip, time, mainWindow) => {
   });
 };
 
-const checkIPExist = async (ip, trial) => {
+const checkIPExist = async (ip: string, trial: number) => {
   try {
     const session = ping.createSession();
     session.on('error', (error) => {
       throw error;
     });
-    return new Promise((resolve) => {
+    const res = await new Promise<{ isExisting: boolean }>((resolve) => {
       let failed = 0;
       const doPing = () => {
         session.pingHost(ip, (error) => {
@@ -106,6 +107,7 @@ const checkIPExist = async (ip, trial) => {
       };
       doPing();
     });
+    return res;
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log(err);
@@ -113,7 +115,7 @@ const checkIPExist = async (ip, trial) => {
   }
 };
 
-const registerEvents = (mainWindow) => {
+const registerEvents = (mainWindow: BrowserWindow): void => {
   ipcMain.removeAllListeners(events.TEST_NETWORK);
   ipcMain.on(events.TEST_NETWORK, async (event, ip, time) => {
     const res = await testNetwork(ip, time, mainWindow);
@@ -129,6 +131,6 @@ const registerEvents = (mainWindow) => {
   });
 };
 
-module.exports = {
+export default {
   registerEvents,
 };

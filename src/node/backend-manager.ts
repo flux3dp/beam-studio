@@ -1,39 +1,58 @@
-'use strict';
+import EventEmitter from 'events';
+import os from 'os';
+import path from 'path';
+import WebSocket from 'ws';
+import { ChildProcess, spawn } from 'child_process';
 
-// Warning: Do not include any electron module here
-// Warning: Do not include any electron module here
-// Warning: Do not include any electron module here
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { app } from 'electron';
 
-const app = require('electron').app;
-const os = require('os');
-const path = require('path');
-const EventEmitter = require('events');
-const WebSocket = require('ws');
-const spawn = require('child_process').spawn;
-
-function uglyJsonParser(data) {
+function uglyJsonParser(data: string): any {
   try {
     return JSON.parse(data);
   } catch (err) {
+    const error = err as Error;
     console.log(data);
-    if (err.name === 'SyntaxError') {
-      const offset = Number(err.message.split(' ').reverse()[0]);
+    if (error.name === 'SyntaxError') {
+      const offset = Number(error.message.split(' ').reverse()[0]);
       if (offset && data.substr(offset, 3) === 'NaN') {
         return uglyJsonParser(`${data.substr(0, offset)}null${data.substr(offset + 3)}`);
       }
     }
   }
+  return {};
 }
 
 class BackendManager extends EventEmitter {
-  constructor(options) {
+  private args: string[];
+
+  private ghostLocation: string;
+
+  private isRunning: boolean;
+
+  private port?: number;
+
+  private recoverTimer?: NodeJS.Timeout;
+
+  private proc?: ChildProcess;
+
+  private ws?: WebSocket;
+
+  private wsConn?: WebSocket;
+
+  private wsTime?: number;
+
+  constructor(options: {
+    location?: string;
+    trace_pid?: number;
+    on_ready?: (sender: any) => void;
+    on_device_updated?: (sender: any, deviceProfile: any) => void;
+    on_stderr?: (sender: any, data: any) => void;
+    on_stopped?: (sender: any) => void;
+    debug?: boolean;
+    server?: boolean;
+  }) {
     super();
-    // location: exec path
-    // trace_pid: optional
-    // on_ready: callback, (sender) => {}
-    // on_device_updated, callback (sender, deviceProfile) => {}
-    // on_stderr: callback, (sender, data) => {}
-    // on_stopped: callback, (sender) => {}
     if (options.server) {
       this.args = ['--ip', '0.0.0.0'];
       this.args = this.args.concat(['--port', '8000']);
@@ -47,11 +66,11 @@ class BackendManager extends EventEmitter {
       this.args.push('--debug');
     }
 
-    if (!options.location) { throw 'backend location not given'; }
+    if (!options.location) throw Error('backend location not given');
     this.ghostLocation = options.location;
 
     if (options.trace_pid) {
-      this.args = this.args.concat(['--trace-pid', options.trace_pid]);
+      this.args = this.args.concat(['--trace-pid', options.trace_pid.toString()]);
     }
 
     if (options.on_ready) {
@@ -74,10 +93,8 @@ class BackendManager extends EventEmitter {
     this.wsConn = undefined;
   }
 
-  setRecover() {
-    if (this.recoverTimer) {
-      return;
-    }
+  setRecover(): void {
+    if (this.recoverTimer) return;
 
     console.log('Backend manager recover set.');
     this.recoverTimer = setTimeout(() => {
@@ -88,7 +105,7 @@ class BackendManager extends EventEmitter {
           this.spawn();
         } else if (!this.ws) {
           console.log('Backend manager recover from websocket.');
-          this.prepare_discover();
+          this.prepareDiscover();
         } else {
           console.log('Nothing to recover in backend manager');
         }
@@ -98,32 +115,34 @@ class BackendManager extends EventEmitter {
     }, 2500);
   }
 
-  prepare_discover() {
+  prepareDiscover(): void {
     this.ws = new WebSocket(`ws://127.0.0.1:${this.port}/ws/discover`);
     console.log('Backend start connect!?');
-    this.ws.on('open', (conn) => {
+    this.ws.on('open', (conn: WebSocket) => {
       console.log('Backend connection!');
       this.wsConn = conn;
-      this.wsTime = new Date();
-      this.ws.on('message', (message) => {
+      this.wsTime = Date.now();
+      this.ws?.on('message', (message) => {
         // prevent timeout disconnect
-        const now = new Date();
-        if (now - this.wsTime > 30000) {
-          this.ws.send('ping');
+        const now = Date.now();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (now - this.wsTime! > 30000) {
+          this.ws?.send('ping');
           this.wsTime = now;
         }
 
         let devInfo;
 
         try {
-          devInfo = uglyJsonParser(message);
+          // for non string message the catch block will handle it
+          devInfo = uglyJsonParser(message as unknown as string);
           if (devInfo.status === 'pong') return;
         } catch (err) {
           console.error('Can not parse backend stout: %s', err);
         }
         this.emit('device_updated', devInfo);
       });
-      this.ws.on('close', () => {
+      this.ws?.on('close', () => {
         this.wsConn = undefined;
         this.ws = undefined;
         if (this.isRunning) {
@@ -151,22 +170,23 @@ class BackendManager extends EventEmitter {
   spawn() {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
-    if (os.platform() === 'win32') this.proc = spawn(`"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
+    if (os.platform() === 'win32')
+      this.proc = spawn(`"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
     else this.proc = spawn(`./"${ghostExec}"`, this.args, { shell: true, cwd: ghostDirectoy });
 
-    this.proc.stdout.on('data', (data) => {
+    this.proc.stdout?.on('data', (data) => {
       const result = uglyJsonParser(data.toString());
       if (result && result.type === 'ready') {
         try {
           this.emit('ready', result);
         } finally {
           this.port = result.port;
-          this.prepare_discover();
+          this.prepareDiscover();
         }
       }
     });
 
-    this.proc.stderr.on('data', (data) => {
+    this.proc.stderr?.on('data', (data) => {
       this.emit('stderr', data);
     });
 
@@ -183,14 +203,14 @@ class BackendManager extends EventEmitter {
     });
   }
 
-  start() {
+  start(): void {
     if (!this.isRunning) {
       this.isRunning = true;
       this.spawn();
     }
   }
 
-  stop() {
+  stop(): void {
     if (this.isRunning) {
       this.isRunning = false;
       if (this.proc) {
@@ -199,7 +219,7 @@ class BackendManager extends EventEmitter {
     }
   }
 
-  poke(ipaddr) {
+  poke(ipaddr: string): boolean {
     if (this.wsConn !== undefined) {
       console.log('wsconn is', this.wsConn);
       this.wsConn.send(ipaddr);
@@ -209,4 +229,4 @@ class BackendManager extends EventEmitter {
   }
 }
 
-module.exports = BackendManager;
+export default BackendManager;

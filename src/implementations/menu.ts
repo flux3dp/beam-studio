@@ -5,7 +5,7 @@ import AbstractMenu from 'helpers/menubar/AbstractMenu';
 import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 
 import communicator from 'implementations/communicator';
-import ElectronUpdater from '../electron-updater';
+import ElectronUpdater from './electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
 
 const updateWindowsMenu = () => {
