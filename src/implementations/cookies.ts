@@ -5,6 +5,9 @@ import { session } from '@electron/remote';
 import { Cookie, CookiesFilter, ICookies } from 'interfaces/ICookies';
 
 const { cookies } = session.defaultSession;
+window.addEventListener('beforeunload', () => {
+  cookies.removeAllListeners();
+});
 export default {
   on(event: 'changed', listener: any): void {
     cookies.on(event, listener);
