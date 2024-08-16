@@ -1,8 +1,14 @@
-const { app, ipcMain, BrowserWindow } = require('electron');
-const { autoUpdater } = require('electron-updater');
-const events = require('./ipc-events');
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { autoUpdater } from 'electron-updater';
 
-class AutoUpdateManager {
+import events from './ipc-events';
+
+class UpdateManager {
+  mainWindow: BrowserWindow | null;
+
+  isDownloading: boolean;
+
   constructor() {
     this.mainWindow = null;
     this.isDownloading = false;
@@ -17,7 +23,7 @@ class AutoUpdateManager {
       if (this.mainWindow) {
         this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
       } else {
-        BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
       }
     });
     autoUpdater.on('update-not-available', (info) => {
@@ -27,7 +33,7 @@ class AutoUpdateManager {
       if (this.mainWindow) {
         this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
       } else {
-        BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
       }
     });
     autoUpdater.on('update-downloaded', (info) => {
@@ -36,7 +42,7 @@ class AutoUpdateManager {
       if (this.mainWindow) {
         this.mainWindow.webContents.send(events.UPDATE_DOWNLOADED, info);
       } else {
-        BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_DOWNLOADED, info);
+        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_DOWNLOADED, info);
       }
     });
     autoUpdater.on('download-progress', (progress) => {
@@ -44,7 +50,7 @@ class AutoUpdateManager {
       if (this.mainWindow) {
         this.mainWindow.webContents.send(events.DOWNLOAD_PROGRESS, progress);
       } else {
-        BrowserWindow.getFocusedWindow().webContents.send(events.DOWNLOAD_PROGRESS, progress);
+        BrowserWindow.getFocusedWindow()?.webContents.send(events.DOWNLOAD_PROGRESS, progress);
       }
     });
     ipcMain.on(events.CHECK_FOR_UPDATE, (event, channel) => {
@@ -66,7 +72,7 @@ class AutoUpdateManager {
     });
   }
 
-  checkForUpdates = async () => {
+  checkForUpdates = async (): Promise<void> => {
     let res;
     try {
       res = await autoUpdater.checkForUpdates();
@@ -77,13 +83,13 @@ class AutoUpdateManager {
     if (this.mainWindow) {
       this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
     } else {
-      BrowserWindow.getFocusedWindow().webContents.send(events.UPDATE_AVAILABLE, res);
+      BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
     }
   };
 
-  setMainWindow = (mainWindow) => {
+  setMainWindow = (mainWindow: BrowserWindow): void => {
     this.mainWindow = mainWindow;
   };
 }
 
-module.exports = AutoUpdateManager;
+export default UpdateManager;

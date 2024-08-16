@@ -3,7 +3,10 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const nodeConfig = require('./webpack.node.js');
+
 module.exports = [
+  ...nodeConfig,
   {
     entry: './src/main.ts',
     devtool: 'source-map',

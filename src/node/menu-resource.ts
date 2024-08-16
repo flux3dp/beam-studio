@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   en: {
     preferences: 'Preferences',
     switch_to_latest: 'Switch To Stable Release',
@@ -682,6 +682,9 @@ module.exports = {
     machines: '기계',
     add_new_machine: '기계 설정',
     show_start_tutorial: '시작 튜토리얼 보기',
+    show_ui_intro: '인터페이스 소개 표시',
+    questionnaire: '피드백 설문지',
+    change_logs: '변경 로그',
     help_center: '도움말 센터',
     contact: '문의하기',
     tutorial: 'Delta Family 인쇄 튜토리얼 시작하기',

@@ -9,6 +9,7 @@ _tools/build
 public/lib
 public/js/jsx
 public/js/dist
+public/js/node
 public/css/main.css
 public/css/animate/*
 public/node_modules/*

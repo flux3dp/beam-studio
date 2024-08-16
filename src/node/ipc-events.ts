@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   NOTIFY_LANGUAGE: 'NOTIFY_LANGUAGE',
   NOTIFY_MACHINE_STATUS: 'NOTIFY_MACHINE_STATUS',
 

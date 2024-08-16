@@ -1,25 +1,33 @@
-const { app, ipcMain, BrowserWindow, dialog } = require('electron');
+/* eslint-disable no-param-reassign */
+/* eslint-disable import/first */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { app, BrowserWindow, ipcMain } from 'electron';
+
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('--no-sandbox')
-app.allowRendererProcessReuse = false;
+app.commandLine.appendSwitch('--no-sandbox');
+// app.allowRendererProcessReuse = false;
 
-const path = require('path');
-const url = require('url');
-const fs = require('fs');
-const os = require('os');
-const electronRemote = require('@electron/remote/main');
-const Store = require('electron-store');
-const Sentry = require('@sentry/electron');
-const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import url from 'url';
 
-const BackendManager = require('./src/node/backend-manager.js');
-const fontHelper = require('./src/node/font-helper');
-const MonitorManager = require('./src/node/monitor-manager.js');
-const MenuManager = require('./src/node/menu-manager.js');
-const networkHelper = require('./src/node/network-helper');
-const UpdateManager = require('./src/node/update-manager.js');
-const events = require('./src/node/ipc-events');
-const { getDeeplinkUrl, handleDeepLinkUrl } = require('./src/node/deep-link-helper');
+import Sentry from '@sentry/electron';
+import Store from 'electron-store';
+import * as electronRemote from '@electron/remote/main';
+import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
+
+import DeviceInfo from 'interfaces/DeviceInfo';
+
+import BackendManager from './backend-manager';
+import bootstrap from './bootstrap';
+import events from './ipc-events';
+import fontHelper from './font-helper';
+import MenuManager from './menu-manager';
+import MonitorManager from './monitor-manager';
+import networkHelper from './network-helper';
+import UpdateManager from './update-manager';
+import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 
 electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -32,47 +40,57 @@ Sentry.captureMessage('User Census', {
 });
 setupTitlebar();
 
-let mainWindow;
-let menuManager;
+let mainWindow: BrowserWindow | null;
+let menuManager: MenuManager | null;
 
-global.backend = { alive: false };
-global.devices = {};
+const globalData: {
+  backend: {
+    alive: boolean;
+    port?: number;
+    logfile?: string;
+  };
+  devices: { [key: string]: DeviceInfo };
+} = {
+  backend: {
+    alive: false,
+  },
+  devices: {},
+};
 
-let logger = null;
+let logger: { write: (data: string) => void };
 function createLogFile() {
-  var storageDir = app.getPath('userData');
+  const storageDir = app.getPath('userData');
 
-  function chkDir(target) {
+  function chkDir(target: string) {
     if (fs.existsSync(target)) {
       return;
-    } else {
-      chkDir(path.dirname(target));
-      fs.mkdirSync(target);
     }
-
+    chkDir(path.dirname(target));
+    fs.mkdirSync(target);
   }
   chkDir(storageDir);
 
-  let filename = path.join(app.getPath('userData'), 'backend.log');
-  global.backend.logfile = filename;
+  const filename = path.join(app.getPath('userData'), 'backend.log');
+  globalData.backend.logfile = filename;
+  // global.backend.logfile = filename;
   let writeStream = fs.createWriteStream(filename, { flags: 'w' });
   logger = writeStream;
-  console._stdout = writeStream;
-  console._stderr = writeStream;
+  console.log = (...args) => writeStream.write(`${args.join(' ')}\n`);
+  console.error = console.log;
   const setCloseEventHandler = () => {
     writeStream.on('close', () => {
       writeStream = fs.createWriteStream(filename, { flags: 'a' });
       logger = writeStream;
-      console._stdout = writeStream;
-      console._stderr = writeStream;
+      console.log = (...args) => writeStream.write(`${args.join(' ')}\n`);
+      console.error = console.log;
       setCloseEventHandler();
     });
-  }
+  };
   setCloseEventHandler();
   return writeStream;
 }
 
-var DEBUG = false;
+let DEBUG = false;
 logger = process.stderr.isTTY ? process.stderr : createLogFile();
 
 if (process.argv.indexOf('--debug-mode') > 0) {
@@ -86,24 +104,19 @@ if (process.platform === 'linux') {
   app.disableHardwareAcceleration();
 }
 
-function onGhostUp(data) {
-  global.backend.alive = true;
-  global.backend.port = data.port;
-  if (mainWindow) {
-    mainWindow.webContents.send(events.BACKEND_UP, global.backend);
-  }
+function onGhostUp(data: { port: number }) {
+  globalData.backend.alive = true;
+  globalData.backend.port = data.port;
+  mainWindow?.webContents?.send(events.BACKEND_UP, globalData.backend);
 }
 
 function onGhostDown() {
-  global.backend.alive = false;
-  global.backend.port = undefined;
-  if (mainWindow) {
-    //mainWindow.webContents.send(events.BACKEND_DOWN);
-  }
+  globalData.backend.alive = false;
+  globalData.backend.port = undefined;
 }
 
-function onDeviceUpdated(deviceInfo) {
-  let deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
+function onDeviceUpdated(deviceInfo: DeviceInfo) {
+  const deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
   if (mainWindow) {
     mainWindow.webContents.send('device-status', deviceInfo);
   }
@@ -113,20 +126,17 @@ function onDeviceUpdated(deviceInfo) {
       const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
       if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
-  } else {
-    if (global.devices[deviceID]) {
-      if (menuManager) {
-        menuManager.removeDevice(deviceInfo.uuid, global.devices[deviceID]);
-        if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
-      }
-      delete global.devices[deviceID];
+  } else if (globalData.devices[deviceID]) {
+    if (menuManager) {
+      menuManager.removeDevice(deviceInfo.uuid, globalData.devices[deviceID]);
+      if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
+    delete globalData.devices[deviceID];
   }
-
-  global.devices[deviceID] = deviceInfo;
+  globalData.devices[deviceID] = deviceInfo;
 }
 
-require('./src/node/bootstrap.js');
+bootstrap();
 
 const updateManager = new UpdateManager();
 const backendManager = new BackendManager({
@@ -138,24 +148,34 @@ const backendManager = new BackendManager({
   on_stderr: (data) => logger.write(`${data}`),
   on_stopped: onGhostDown,
   debug: DEBUG,
-  c: console,
 });
 backendManager.start();
 
-//Run monitorexe api
-monitorManager = null;
+// Run monitorexe api
+let monitorManager: MonitorManager | null = null;
 if (process.argv.includes('--monitor')) {
   console.log('Starting Monitor');
   monitorManager = new MonitorManager({
-    location: process.env.BACKEND
+    location: process.env.BACKEND || '',
   });
-  //kill process first, in case last time shut down
+  // kill process first, in case last time shut down
   monitorManager.killProcSync();
   monitorManager.startProc();
 }
 
-let shadowWindow;
+let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
+
+const loadShadowWindow = () => {
+  if (shadowWindow) {
+    shadowWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../../shadow-index.html'),
+        protocol: 'file:',
+      })
+    );
+  }
+};
 
 const createShadowWindow = () => {
   if (!shadowWindow) {
@@ -169,7 +189,7 @@ const createShadowWindow = () => {
     // shadowWindow.webContents.openDevTools();
     loadShadowWindow();
 
-    shadowWindow.on('close', function (e) {
+    shadowWindow.on('close', (e) => {
       if (!shouldCloseShadowWindow) {
         e.preventDefault();
       } else {
@@ -178,15 +198,6 @@ const createShadowWindow = () => {
     });
   }
 };
-
-const loadShadowWindow = () => {
-  if (shadowWindow) {
-    shadowWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'public/shadow-index.html'),
-      protocol: 'file:'
-    }));
-  }
-}
 
 function createWindow() {
   // Create the browser window.
@@ -200,21 +211,19 @@ function createWindow() {
     frame: process.platform !== 'win32',
     title: `Beam Studio - ${app.getVersion()}`,
     webPreferences: {
-      preload: path.join(__dirname, 'src/node', 'main-window-entry.js'),
+      preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
       nodeIntegration: true,
       contextIsolation: false,
     },
     trafficLightPosition: { x: 12, y: 14 },
-    vibrancy: 'light'
+    // vibrancy: 'light',
   });
 
   electronRemote.enable(mainWindow.webContents);
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  mainWindow.webContents.setWindowOpenHandler(({ url: openUrl }) => {
     // Prevent the new window from early input files
-    if (url.startsWith('file://')) {
-      return { action: 'deny' };
-    }
+    if (openUrl.startsWith('file://')) return { action: 'deny' };
     return { action: 'allow' };
   });
 
@@ -225,32 +234,38 @@ function createWindow() {
   }
 
   if (!store.get('customizedLaserConfigs')) {
-    mainWindow.webContents
-      .executeJavaScript('({...localStorage});', true)
-      .then(localStorage => {
-        const keysNeedParse = ['auto_check_update', 'auto_connect', 'guessing_poke', 'loop_compensation', 'notification', 'printer-is-ready'];
-        for (let key in localStorage) {
-          if (keysNeedParse.includes(key)) {
-            try {
-              localStorage[key] = JSON.parse(localStorage[key]);
-              console.log(key, localStorage[key]);
-            } catch (e) {
-              console.log(key, e);
-              // Error when parsing
-            }
+    mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
+      const keysNeedParse = [
+        'auto_check_update',
+        'auto_connect',
+        'guessing_poke',
+        'loop_compensation',
+        'notification',
+        'printer-is-ready',
+      ];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const key in localStorage) {
+        if (keysNeedParse.includes(key)) {
+          try {
+            localStorage[key] = JSON.parse(localStorage[key]);
+            console.log(key, localStorage[key]);
+          } catch (e) {
+            console.log(key, e);
+            // Error when parsing
           }
         }
-        store.set(localStorage);
-      });
+      }
+      store.set(localStorage);
+    });
   }
 
-  // mainWindow.maximize();
-
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'public/index.html'),
-    protocol: 'file:',
-    slashes: true,
-  }));
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, '../../index.html'),
+      protocol: 'file:',
+      slashes: true,
+    })
+  );
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -258,11 +273,12 @@ function createWindow() {
     isFrontEndReady = true;
   });
 
-  mainWindow.on('close', function (e) {
+  mainWindow.on('close', (evt) => {
     if (isFrontEndReady && !isCloseConfirmed) {
-      e.preventDefault();
-      mainWindow.webContents.send('WINDOW_CLOSE');
-      // if save dialog does not pop in 10 seconds, something may goes wrong in frontend, close the app
+      evt.preventDefault();
+      mainWindow?.webContents.send('WINDOW_CLOSE');
+      // if save dialog does not pop in 10 seconds
+      // something may goes wrong in frontend, close the app
       let isSaveDialogPopped = false;
       ipcMain.once('SAVE_DIALOG_POPPED', () => {
         isSaveDialogPopped = true;
@@ -273,29 +289,23 @@ function createWindow() {
           monitorManager.killProc();
         }
         backendManager.stop();
-        mainWindow.close();
+        mainWindow?.close();
         shouldCloseShadowWindow = true;
         try {
           shadowWindow.close();
-        } catch (e) {
-          console.log(e);
+        } catch (error) {
+          console.log(error);
         }
-      }
+      };
 
       setTimeout(() => {
-        if (!isSaveDialogPopped) {
-          closeBeamStudio();
-        }
+        if (!isSaveDialogPopped) closeBeamStudio();
       }, 10000);
       ipcMain.once('CLOSE_REPLY', (event, reply) => {
-        if (reply) {
-          closeBeamStudio();
-        }
+        if (reply) closeBeamStudio();
       });
     } else {
-      if (monitorManager) {
-        monitorManager.killProc();
-      }
+      if (monitorManager) monitorManager.killProc();
       backendManager.stop();
       shouldCloseShadowWindow = true;
       try {
@@ -306,34 +316,33 @@ function createWindow() {
     }
   });
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     mainWindow = null;
 
-    if (process.platform === 'darwin' && DEBUG) {
-      console.log('Main window closed.');
-    } else {
-      app.quit();
-    }
+    if (process.platform === 'darwin' && DEBUG) console.log('Main window closed.');
+    else app.quit();
   });
 
-  mainWindow.on('page-title-updated', function (event) {
+  mainWindow.on('page-title-updated', (event) => {
     event.preventDefault();
   });
 
-  menuManager.on('DEBUG-RELOAD', () => {
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'public/index.html'),
-      protocol: 'file:',
-      slashes: true,
-    }));
+  menuManager?.on('DEBUG-RELOAD', () => {
+    mainWindow?.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../../index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
     loadShadowWindow();
   });
 
-  menuManager.on('DEBUG-INSPECT', () => {
-    mainWindow.webContents.openDevTools();
+  menuManager?.on('DEBUG-INSPECT', () => {
+    mainWindow?.webContents.openDevTools();
   });
   ipcMain.on('DEBUG-INSPECT', () => {
-    mainWindow.webContents.openDevTools();
+    mainWindow?.webContents.openDevTools();
   });
   if (!process.argv.includes('--test') && (process.defaultApp || DEBUG)) {
     mainWindow.webContents.openDevTools();
@@ -344,21 +353,21 @@ function createWindow() {
   attachTitlebarToWindow(mainWindow);
 }
 
-let did_get_open_file = false;
-let init_open_path = '';
+let didGetOpenFile = false;
+let initOpenPath = '';
 
-app.on('open-file', (event, path) => {
-  init_open_path = path
+app.on('open-file', (event, filePath) => {
+  initOpenPath = filePath;
 });
 
 ipcMain.on('GET_OPEN_FILE', (evt) => {
-  if (!did_get_open_file) {
-    did_get_open_file = true;
+  if (!didGetOpenFile) {
+    didGetOpenFile = true;
     if (process.platform === 'win32' && process.argv.length > 1) {
-      init_open_path = process.argv[1];
+      [, initOpenPath] = process.argv;
     }
-    if (init_open_path && fs.existsSync(init_open_path)) {
-      evt.returnValue = init_open_path;
+    if (initOpenPath && fs.existsSync(initOpenPath)) {
+      evt.returnValue = initOpenPath;
     }
   }
   evt.returnValue = null;
@@ -366,9 +375,9 @@ ipcMain.on('GET_OPEN_FILE', (evt) => {
 
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
   if (mainWindow) {
-    mainWindow.send(events.NOTIFY_BACKEND_STATUS, {
-      backend: global.backend,
-      devices: global.devices
+    mainWindow.webContents.send(events.NOTIFY_BACKEND_STATUS, {
+      backend: globalData.backend,
+      devices: globalData.devices,
     });
   } else {
     console.error('Recv async-status request but main window not exist');
@@ -377,7 +386,7 @@ ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
   const {
-    svgUrl: url,
+    svgUrl,
     imgWidth: width,
     imgHeight: height,
     bb,
@@ -387,16 +396,22 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
     fullColor,
   } = data;
   if (shadowWindow) {
-    shadowWindow.send(
-      events.SVG_URL_TO_IMG_URL,
-      { url, width, height, bb, imageRatio, id, strokeWidth, fullColor }
-    );
+    shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, {
+      url: svgUrl,
+      width,
+      height,
+      bb,
+      imageRatio,
+      id,
+      strokeWidth,
+      fullColor,
+    });
   }
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
   const { imageUrl, id } = data;
-  mainWindow.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
+  mainWindow?.webContents.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
@@ -404,7 +419,7 @@ fontHelper.registerEvents();
 let editingStandardInput = false;
 ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
-  console.log("Set SET_EDITING_STANDARD_INPUT", arg);
+  console.log('Set SET_EDITING_STANDARD_INPUT', arg);
 });
 
 console.log('Running Beam Studio on ', os.arch());
@@ -417,7 +432,6 @@ console.log('hasLock', hasLock);
 if (process.platform === 'win32' && !hasLock && getDeeplinkUrl(process.argv)) {
   // if primary instance exists and open from deep link, return
   app.quit();
-  return;
 }
 
 // win32 deep link handler
@@ -430,29 +444,29 @@ app.on('second-instance', (e, argv) => {
     }
     mainWindow.focus();
   }
-  const url = getDeeplinkUrl(argv);
-  handleDeepLinkUrl(mainWindow, url);
+  const linkUrl = getDeeplinkUrl(argv);
+  if (linkUrl) handleDeepLinkUrl(mainWindow, linkUrl);
 });
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
-  app.on('open-url', (event, url) => {
-    handleDeepLinkUrl(mainWindow, url);
+  app.on('open-url', (event, openUrl) => {
+    handleDeepLinkUrl(mainWindow, openUrl);
   });
 });
 
-if (os.arch() == 'ia32' || os.arch() == 'x32') {
+if (os.arch() === 'ia32' || os.arch() === 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');
 } else {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
-const onMenuClick = (data) => {
+const onMenuClick = (data: { id: string; serial: string; machineName: string; }) => {
   data = {
     id: data.id,
     serial: data.serial,
     machineName: data.machineName,
-  }
+  };
   if (mainWindow) {
     if (editingStandardInput) {
       if (data.id === 'REDO') {
@@ -462,13 +476,13 @@ const onMenuClick = (data) => {
         mainWindow.webContents.undo();
       }
     } else {
-      console.log("Send", data);
+      console.log('Send', data);
       mainWindow.webContents.send(events.MENU_CLICK, data);
     }
   } else {
     console.log('Menu event triggered but window does not exist.');
   }
-}
+};
 
 const init = () => {
   menuManager = new MenuManager();
@@ -481,24 +495,23 @@ const init = () => {
     createShadowWindow();
     createWindow();
   } else {
-    console.log("MainWindow instance", mainWindow);
+    console.log('MainWindow instance', mainWindow);
     mainWindow.focus();
   }
-}
+};
 
 app.whenReady().then(() => {
   init();
 
-  app.on('activate',() => {
+  app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 });
 
-app.on('window-all-closed',() => {
-  if (process.platform !== 'darwin') app.quit()
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('before-quit', function () {
-});
+app.on('before-quit', () => {});

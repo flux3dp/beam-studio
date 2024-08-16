@@ -3,7 +3,7 @@ import windowLocationReload from 'app/actions/windowLocation';
 import { getSVGAsync } from 'helpers/svg-editor-helper';
 import { ICustomMenuActionProvider } from 'interfaces/ICustomMenuActionProvider';
 
-import ElectronUpdater from '../electron-updater';
+import ElectronUpdater from './electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
 
 let svgCanvas;
