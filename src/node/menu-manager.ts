@@ -17,12 +17,12 @@ import {
 } from 'electron';
 
 import DeviceInfo from 'interfaces/DeviceInfo';
+import i18n from 'helpers/i18n';
 
 import events from './ipc-events';
-import resource from './menu-resource';
 
 const store = new Store();
-let r = resource.en;
+let r = i18n.lang.topbar.menu;
 let accountInfo: { email: string } | null = null;
 
 function buildOSXAppMenu(callback: (event: { id: string }) => void) {
@@ -525,429 +525,232 @@ function buildDeviceMenu(
   const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
   const machineName = name;
   let modelType = 'beambox-series';
-  if (['delta-1', 'delta-1p'].includes(data.model)) modelType = 'delta-series';
-  else if (['ado1'].includes(data.model)) modelType = 'ador-series';
+  if (['ado1'].includes(data.model)) modelType = 'ador-series';
 
-  let submenu: any[] = [];
-  if (['beambox-series', 'ador-series'].includes(modelType)) {
-    submenu = [
-      {
-        id: 'DASHBOARD',
-        uuid,
-        serial,
-        machineName,
-        source,
-        label: r.dashboard,
-        click: callback,
-      },
-      {
-        id: 'MACHINE_INFO',
-        uuid,
-        serial,
-        machineName,
-        source,
-        label: r.machine_info,
-        click: callback,
-      },
-      { type: 'separator' },
-      {
-        id: 'CALIBRATE_BEAMBOX_CAMERA',
-        uuid,
-        serial,
-        machineName,
-        source,
-        label: r.calibrate_camera,
-        click: callback,
-      },
-    ];
+  let submenu: any[] = [
+    {
+      id: 'DASHBOARD',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.dashboard,
+      click: callback,
+    },
+    {
+      id: 'MACHINE_INFO',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.machine_info,
+      click: callback,
+    },
+    { type: 'separator' },
+    {
+      id: 'CALIBRATE_BEAMBOX_CAMERA',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.calibrate_beambox_camera,
+      click: callback,
+    },
+  ];
 
-    if (data.model === 'fbm1') {
+  if (data.model === 'fbm1') {
+    submenu.push({
+      id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.calibrate_beambox_camera_borderless,
+      click: callback,
+    });
+    submenu.push({
+      id: 'CALIBRATE_DIODE_MODULE',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.calibrate_diode_module,
+      click: callback,
+    });
+  } else if (modelType === 'ador-series') {
+    if (isDevMode) {
       submenu.push({
-        id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
+        id: 'CALIBRATE_CAMERA_V2_FACTORY',
         uuid,
         serial,
         machineName,
         source,
-        label: r.calibrate_beambox_camera_borderless,
+        label: `${r.calibrate_beambox_camera} (Factory)`,
         click: callback,
       });
-      submenu.push({
-        id: 'CALIBRATE_DIODE_MODULE',
+    }
+    submenu.push(
+      {
+        id: 'CALIBRATE_PRINTER_MODULE',
         uuid,
         serial,
         machineName,
         source,
-        label: r.calibrate_diode_module,
+        label: r.calibrate_printer_module,
         click: callback,
-      });
-    } else if (modelType === 'ador-series') {
-      if (isDevMode) {
-        submenu.push({
-          id: 'CALIBRATE_CAMERA_V2_FACTORY',
-          uuid,
-          serial,
-          machineName,
-          source,
-          label: `${r.calibrate_camera} (Factory)`,
-          click: callback,
-        });
+      },
+      {
+        id: 'CALIBRATE_IR_MODULE',
+        uuid,
+        serial,
+        machineName,
+        source,
+        label: r.calibrate_ir_module,
+        click: callback,
       }
-      submenu.push(
+    );
+    if (isDevMode) {
+      submenu.push({
+        id: 'CATRIDGE_CHIP_SETTING',
+        uuid,
+        serial,
+        machineName,
+        source,
+        label: 'Catridge Chip Setting',
+        click: callback,
+      });
+    }
+  }
+  submenu.push({ type: 'separator' });
+  if (modelType === 'ador-series') {
+    submenu.push({
+      id: 'CAMERA_CALIBRATION_DATA',
+      label: r.camera_calibration_data,
+      uuid,
+      serial,
+      source,
+      submenu: [
         {
-          id: 'CALIBRATE_PRINTER_MODULE',
+          id: 'UPLOAD_CALIBRATION_DATA',
+          label: r.upload_data,
           uuid,
           serial,
-          machineName,
           source,
-          label: r.calibrate_printer_module,
           click: callback,
         },
         {
-          id: 'CALIBRATE_IR_MODULE',
+          id: 'DOWNLOAD_CALIBRATION_DATA',
+          label: r.download_data,
           uuid,
           serial,
-          machineName,
           source,
-          label: r.calibrate_ir_module,
           click: callback,
-        }
-      );
-      if (isDevMode) {
-        submenu.push({
-          id: 'CATRIDGE_CHIP_SETTING',
-          uuid,
-          serial,
-          machineName,
-          source,
-          label: 'Catridge Chip Setting',
-          click: callback,
-        });
-      }
-    }
-    submenu.push({ type: 'separator' });
-    if (modelType === 'ador-series') {
-      submenu.push({
-        id: 'CAMERA_CALIBRATION_DATA',
-        label: r.camera_calibration_data,
-        uuid,
-        serial,
-        source,
-        submenu: [
-          {
-            id: 'UPLOAD_CALIBRATION_DATA',
-            label: r.upload_data,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'DOWNLOAD_CALIBRATION_DATA',
-            label: r.download_data,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-        ],
-      });
-    }
-    submenu = submenu.concat([
-      {
-        id: 'UPDATE_FIRMWARE',
-        uuid,
-        serial,
-        machineName,
-        source,
-        label: r.update_firmware,
-        click: callback,
-      },
-      {
-        id: 'DOWNLOAD_LOG',
-        uuid,
-        serial,
-        machineName,
-        source,
-        label: r.download_log,
-        submenu: [
-          {
-            id: 'LOG_NETWORK',
-            label: r.log.network,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_HARDWARE',
-            label: r.log.hardware,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_DISCOVER',
-            label: r.log.discover,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_USB',
-            label: r.log.usb,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_USBLIST',
-            label: r.log.usblist,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_CAMERA',
-            label: r.log.camera,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_CLOUD',
-            label: r.log.cloud,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_PLAYER',
-            label: r.log.player,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_ROBOT',
-            label: r.log.robot,
-            uuid,
-            serial,
-            machineName,
-            source,
-            click: callback,
-          },
-        ],
-      },
-    ]);
-  } else {
-    // delta series
-    submenu = [
-      {
-        id: 'DASHBOARD',
-        uuid,
-        serial,
-        source,
-        label: r.dashboard,
-        click: callback,
-      },
-      {
-        id: 'MACHINE_INFO',
-        uuid,
-        serial,
-        source,
-        label: r.machine_info,
-        click: callback,
-      },
-      {
-        id: 'TOOLHEAD_INFO',
-        uuid,
-        serial,
-        source,
-        label: r.toolhead_info,
-        click: callback,
-      },
-      { type: 'separator' },
-      {
-        id: 'CHANGE_FILAMENT',
-        uuid,
-        serial,
-        source,
-        label: r.change_material,
-        click: callback,
-      },
-      {
-        id: 'AUTO_LEVELING',
-        uuid,
-        serial,
-        source,
-        label: r.run_leveling,
-        click: callback,
-      },
-      {
-        id: 'COMMANDS',
-        uuid,
-        serial,
-        source,
-        label: r.commands,
-        submenu: [
-          {
-            id: 'CALIBRATE_ORIGIN',
-            label: r.calibrate_origin,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'MOVEMENT_TEST',
-            label: r.movement_test,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'TURN_ON_LASER',
-            label: r.turn_on_laser,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'AUTO_LEVELING_CLEAN',
-            label: r.auto_leveling_clean,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'SET_TOOLHEAD_TEMPERATURE',
-            label: r.set_toolhead_temperature,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-        ],
-      },
-      { type: 'separator' },
-      {
-        id: 'UPDATE_FIRMWARE_PARENT',
-        uuid,
-        serial,
-        source,
-        label: r.update_firmware,
-        submenu: [
-          {
-            id: 'UPDATE_FIRMWARE',
-            label: r.update_delta,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'UPDATE_TOOLHEAD',
-            label: r.update_toolhead,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-        ],
-      },
-      {
-        id: 'DOWNLOAD_LOG',
-        uuid,
-        serial,
-        source,
-        label: r.download_log,
-        submenu: [
-          {
-            id: 'LOG_NETWORK',
-            label: r.log.network,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_HARDWARE',
-            label: r.log.hardware,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_DISCOVER',
-            label: r.log.discover,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_USB',
-            label: r.log.usb,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_CAMERA',
-            label: r.log.camera,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_CLOUD',
-            label: r.log.cloud,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_PLAYER',
-            label: r.log.player,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-          {
-            id: 'LOG_ROBOT',
-            label: r.log.robot,
-            uuid,
-            serial,
-            source,
-            click: callback,
-          },
-        ],
-      },
-    ];
+        },
+      ],
+    });
   }
+  submenu = submenu.concat([
+    {
+      id: 'UPDATE_FIRMWARE',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.update_firmware,
+      click: callback,
+    },
+    {
+      id: 'DOWNLOAD_LOG',
+      uuid,
+      serial,
+      machineName,
+      source,
+      label: r.download_log,
+      submenu: [
+        {
+          id: 'LOG_NETWORK',
+          label: r.log.network,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_HARDWARE',
+          label: r.log.hardware,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_DISCOVER',
+          label: r.log.discover,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_USB',
+          label: r.log.usb,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_USBLIST',
+          label: r.log.usblist,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_CAMERA',
+          label: r.log.camera,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_CLOUD',
+          label: r.log.cloud,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_PLAYER',
+          label: r.log.player,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+        {
+          id: 'LOG_ROBOT',
+          label: r.log.robot,
+          uuid,
+          serial,
+          machineName,
+          source,
+          click: callback,
+        },
+      ],
+    },
+  ]);
 
   return new MenuItem({
     label: menuLabel,
@@ -976,8 +779,8 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = (store.get('active-lang') as string) || 'en';
-      r = resource[language as keyof typeof resource];
-      if (!r) r = resource.en;
+      i18n.setActiveLang(language);
+      r = i18n.lang.topbar.menu;
       this.constructMenu();
     });
 

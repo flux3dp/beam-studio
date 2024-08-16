@@ -10,6 +10,10 @@ module.exports = [
     resolve: {
       alias: {
         node: '/src/node',
+        app: '/src/web/app',
+        helpers: '/src/web/helpers',
+        implementations: '/src/implementations',
+
       },
       extensions: ['.ts', '.js'],
       symlinks: false,

@@ -9,12 +9,28 @@
     "baseUrl": ".",
     "paths": {
       "interfaces/*": [
-        "interfaces/*",
+        "./interfaces/*",
+        "../web/interfaces/*"
+      ],
+      "app/*": [
+        "../web/app/*"
+      ],
+      "helpers/*": [
+        "../web/helpers/*",
+      ],
+      "implementations/*": [
+        "../implementations/*",
+      ],
+      "node/*": [
+        "./*"
       ],
     }
   },
   "include": [
-    "./**/*.ts"
+    "./**/*.ts",
+    "../web/helpers/i18n.ts",
+    "../web/app/lang/*.ts",
+    "../web/interfaces/ILang.d.ts",
   ],
   "exclude": [
     "node_modules"
