@@ -803,18 +803,16 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
       accountInfo = info;
-      const accountSubmenu = Menu.getApplicationMenu()?.items.find(
-        (i) => i.id === '_account'
-      )?.submenu;
-      const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
+      const item = Menu.getApplicationMenu()?.items.find((i) => i.id === '_account');
+      const accountSubmenu = item?.submenu;
       if (accountSubmenu) {
-        const current = accountSubmenu.items;
-        accountSubmenu.items = [];
-        // accountSubmenu.clear();
-        for (const menuitem of current) {
+        const newMenu = Menu.buildFromTemplate([]);
+        const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
+        accountSubmenu.items.forEach((menuitem) => {
           if (menuitem.id === 'SIGN_IN') {
+            // eslint-disable-next-line no-param-reassign
             menuitem.visible = !info;
-            accountSubmenu.append(menuitem);
+            newMenu.append(menuitem);
           } else if (menuitem.id === 'SIGN_OUT') {
             const newSignOut = new MenuItem({
               id: 'SIGN_OUT',
@@ -822,14 +820,17 @@ class MenuManager extends EventEmitter {
               click: menuitem.click as () => void,
               label: signoutLabel,
             });
-            accountSubmenu.append(newSignOut);
+            newMenu.append(newSignOut);
           } else if (menuitem.id === 'MANAGE_ACCOUNT') {
+            // eslint-disable-next-line no-param-reassign
             menuitem.enabled = !!info;
-            accountSubmenu.append(menuitem);
+            newMenu.append(menuitem);
           } else {
-            accountSubmenu.append(menuitem);
+            newMenu.append(menuitem);
           }
-        }
+        });
+        delete item.submenu;
+        item.submenu = newMenu;
       }
       Menu.setApplicationMenu(Menu.getApplicationMenu());
     });
@@ -924,16 +925,13 @@ class MenuManager extends EventEmitter {
     const menuId = getDeviceMenuId(uuid, data);
     delete this.deviceList[menuId];
 
-    if (this.deviceMenu && this.deviceMenu.submenu) {
-      const current = this.deviceMenu.submenu.items;
-      this.deviceMenu.submenu.items = [];
-      // this.deviceMenu.submenu.clear();
-
-      for (const menuitem of current) {
-        if (menuitem.id !== menuId) {
-          this.deviceMenu.submenu.append(menuitem);
-        }
-      }
+    if (this.deviceMenu?.submenu) {
+      const newMenu = Menu.buildFromTemplate([]);
+      this.deviceMenu.submenu.items.forEach((item) => {
+        if (item.id !== menuId) newMenu.append(item);
+      });
+      delete this.deviceMenu.submenu;
+      this.deviceMenu.submenu = newMenu;
       Menu.setApplicationMenu(this.appmenu);
     }
   }
