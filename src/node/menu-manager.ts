@@ -290,7 +290,7 @@ const buildHelpMenu = (callback: (event: { id: string }) => void) => {
   return helpSubmenu;
 };
 
-function buildMenuItems(callback: (event: { id: string }) => void): MenuItemConstructorOptions[] {
+function buildMenuItems(callback: (event: { id: string }) => void, isDevMode = false): MenuItemConstructorOptions[] {
   const menuItems = [];
   const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
   const deleteKey = 'Delete';
@@ -405,7 +405,8 @@ function buildMenuItems(callback: (event: { id: string }) => void): MenuItemCons
       },
       { type: 'separator' },
       { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
-    ],
+      (isDevMode ? { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback } : null),
+    ].filter((item) => !!item),
   });
 
   menuItems.push({
@@ -835,7 +836,7 @@ class MenuManager extends EventEmitter {
   }
 
   constructMenu(): void {
-    this.appmenu = Menu.buildFromTemplate(buildMenuItems(this.onMenuClick));
+    this.appmenu = Menu.buildFromTemplate(buildMenuItems(this.onMenuClick, this.isDevMode));
 
     for (const i in this.appmenu.items) {
       if (this.appmenu.items[i].id === '_machines') {
