@@ -52,6 +52,7 @@
     "prop-types": "^15.7.2",
     "rc-table": "^7.28.3",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.3",
     "react-resizable": "^3.0.5",
