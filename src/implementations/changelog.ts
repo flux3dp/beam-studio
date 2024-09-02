@@ -34,6 +34,7 @@ const CHANGES_EN = {
     'Changed the functionality and style of the parameter management panel.',
     'Changed the style of the document settings panel.',
     'Improved the calculation speed of the tool path for infilled objects.',
+    'Renamed “Execute” to “Pass Count”',
   ],
 };
 
