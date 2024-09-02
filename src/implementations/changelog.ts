@@ -1,33 +1,39 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.3.9-beta
+// 2.4.0 beta
 const CHANGES_TW = {
   added: [
-    '新增 自動對位功能 (Beta)。',
-    '新增 漸層圖片的深度模式。',
-    '新增 自動切換圖層與物件面板選項於偏好設定。',
-    '新增 相機預覽拼接照片時的羽化效果。',
+    '新增 漸層圖片的深度模式（需搭配韌體 4.3.4 / 5.3.4 或以上版本）。',
+    '新增 深度模式下的最小功率參數 （需搭配韌體 4.3.4 / 5.3.4 或以上版本）。',
+    '新增 文件設定 功能於上方工具列。',
+    '新增 Ador 白墨選項 （需搭配 Ador 韌體 5.3.4 或以上版本）。',
+    '新增 Ador 彩色圖層的單色圖層選項。',
+    '新增 Ador 自訂列印參數選項。',
   ],
   fixed: [
   ],
   changed: [
-    '在物件面板上的輸入欄位可使用逗號作為小數點。',
-    '改善計算多圖層工作路徑時記憶體使用量。',
+    '變更 參數管理面板功能與樣式。',
+    '變更 文件設定面板樣式。',
+    '改善 填充物件的工作路徑計算速度。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Auto Fit feature (Beta).',
-    'Added Depth Mode for gradient image.',
-    'Added an option to automatically switch layers and object panels in the preferences.',
-    'Added feathering effect when stitching photos in the camera preview.',
+    'Added gradient image depth mode (requires firmware version 4.3.4 / 5.3.4 or above).',
+    'Added minimum power parameters in depth mode (requires firmware version 4.3.4 / 5.3.4 or above).',
+    'Added document settings feature to the top toolbar.',
+    'Added Ador white ink option (requires Ador firmware version 5.3.4 or above).',
+    'Added single-layer option for Ador full color layers.',
+    'Added Ador custom print parameter options.',
   ],
   fixed: [
   ],
   changed: [
-    'The input fields in the object panel can use a comma as a decimal point.',
-    'Improve memory usage when calculating task path with lots of layer.',
+    'Changed the functionality and style of the parameter management panel.',
+    'Changed the style of the document settings panel.',
+    'Improved the calculation speed of the tool path for infilled objects.',
   ],
 };
 
