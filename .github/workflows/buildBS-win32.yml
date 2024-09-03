@@ -105,7 +105,7 @@ jobs:
 
           echo 32
           export PUBLISH_PATH="-x86"
-          yarn dist --win --ia32 --publish always
+          yarn dist --win --ia32 --publish always -c.npmRebuild=false -c.buildDependenciesFromSource=true
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
