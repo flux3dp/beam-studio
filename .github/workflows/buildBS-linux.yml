@@ -59,7 +59,7 @@ jobs:
         uses: ./.github/actions/fluxclient
 
       - name: Build Flux Api
-        uses: flux3dp/fluxghost@2.3.1
+        uses: flux3dp/fluxghost@2.3.2
         env:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
