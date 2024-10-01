@@ -1,41 +1,27 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.4.0 beta
+// 2.4.1 beta
 const CHANGES_TW = {
   added: [
-    '新增 漸層圖片的深度模式（需搭配韌體 4.3.4 / 5.3.4 或以上版本）。',
-    '新增 深度模式下的最小功率參數 （需搭配韌體 4.3.4 / 5.3.4 或以上版本）。',
-    '新增 文件設定 功能於上方工具列。',
-    '新增 Ador 白墨選項 （需搭配 Ador 韌體 5.3.4 或以上版本）。',
-    '新增 Ador 彩色圖層的單色圖層選項。',
-    '新增 Ador 自訂列印參數選項。',
+    '新增 當前位置雕刻功能（需搭配韌體 4.3.5 / 5.3.5 或以上版本）。',
+    '新增 外框預覽的工作區域檢查與凸包模式。',
+    '新增 降低焦距及每次遞降功能於自動對焦機型（需搭配韌體 4.3.5 / 5.3.5 或以上版本）。',
   ],
-  fixed: [
-  ],
-  changed: [
-    '變更 參數管理面板功能與樣式。',
-    '變更 文件設定面板樣式。',
-    '改善 填充物件的工作路徑計算速度。',
-  ],
+  fixed: ['修正 Ador 在路徑計算後匯入圖檔的相關問題。', '修正 Ador 模組頭錯誤時的終止工作'],
+  changed: ['更新 捷克文翻譯。', '更新 參數管理面板。'],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added gradient image depth mode (requires firmware version 4.3.4 / 5.3.4 or above).',
-    'Added minimum power parameters in depth mode (requires firmware version 4.3.4 / 5.3.4 or above).',
-    'Added document settings feature to the top toolbar.',
-    'Added Ador white ink option (requires Ador firmware version 5.3.4 or above).',
-    'Added single-layer option for Ador full color layers.',
-    'Added Ador custom print parameter options.',
+    'Added Job Origin feature (requires firmware version 4.3.5 / 5.3.5 or above).',
+    'Added Area check and Hull mode for frame preview.',
+    'Added lower focus and z step feature for auto-focus models (requires firmware version 4.3.5 / 5.3.5 or above).',
   ],
   fixed: [
+    'Fixed issues related to importing image files after path calculation in Ador.',
+    'Fixed job termination when encountering an Ador tool head error.',
   ],
-  changed: [
-    'Changed the functionality and style of the parameter management panel.',
-    'Changed the style of the document settings panel.',
-    'Improved the calculation speed of the tool path for infilled objects.',
-    'Renamed “Execute” to “Pass Count”',
-  ],
+  changed: ['Updated Czech translation.', 'Updated Parameter management panel.'],
 };
 
 export default {
