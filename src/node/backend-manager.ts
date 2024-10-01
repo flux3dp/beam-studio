@@ -34,7 +34,11 @@ class BackendManager extends EventEmitter {
 
   private recoverTimer?: NodeJS.Timeout;
 
+  private recoverTimerSwiftray?: NodeJS.Timeout;
+
   private proc?: ChildProcess;
+
+  private swiftrayProc?: ChildProcess;
 
   private ws?: WebSocket;
 
@@ -115,6 +119,25 @@ class BackendManager extends EventEmitter {
     }, 2500);
   }
 
+  setRecoverSwiftray(): void {
+    if (this.recoverTimerSwiftray) return;
+
+    console.log('Swiftray recover set.');
+    this.recoverTimerSwiftray = setTimeout(() => {
+      this.recoverTimerSwiftray = undefined;
+      if (this.isRunning) {
+        if (!this.swiftrayProc) {
+          console.log('Swiftray recover from spawn.');
+          this.spawnSwiftray();
+        } else {
+          console.log('Nothing to recover in swiftray');
+        }
+      } else {
+        console.log('Swiftray recover ignored.');
+      }
+    }, 2500);
+  }
+
   prepareDiscover(): void {
     this.ws = new WebSocket(`ws://127.0.0.1:${this.port}/ws/discover`);
     console.log('Backend start connect!?');
@@ -167,7 +190,7 @@ class BackendManager extends EventEmitter {
     });
   }
 
-  spawn() {
+  spawn(): void {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
     if (os.platform() === 'win32')
@@ -203,19 +226,52 @@ class BackendManager extends EventEmitter {
     });
   }
 
+  spawnSwiftray(): void {
+    if (!process.env.BACKEND_ROOT) {
+      console.error('spawnSwiftray: BACKEND_ROOT not set');
+      return;
+    }
+    let swiftrayDir: string;
+    let swiftrayExec: string;
+    if (os.platform() === 'win32') {
+      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
+      swiftrayExec = 'swiftray.exe';
+      this.swiftrayProc = spawn(`"${swiftrayExec}"`, ['--daemon'], { shell: true, cwd: swiftrayDir });
+    } else if (os.platform() === 'darwin') {
+      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
+      swiftrayExec = 'Swiftray';
+      this.swiftrayProc = spawn(`./"${swiftrayExec}"`, ['--daemon'], { shell: true, cwd: swiftrayDir });
+    } else {
+      console.error('spawnSwiftray: Unsupported platform');
+    }
+    if (this.swiftrayProc) {
+      this.swiftrayProc.stdout?.on('data', (data) => {
+        console.log(`Swiftray: ${data}`);
+      });
+      this.swiftrayProc.stderr?.on('data', (data) => {
+        console.error(`Swiftray: ${data}`);
+      });
+      this.swiftrayProc.on('exit', () => {
+        console.error('Swiftray terminated unexpectedly!');
+        this.swiftrayProc = undefined;
+        if (this.isRunning) this.setRecoverSwiftray();
+      });
+    }
+  }
+
   start(): void {
     if (!this.isRunning) {
       this.isRunning = true;
       this.spawn();
+      this.spawnSwiftray();
     }
   }
 
   stop(): void {
     if (this.isRunning) {
       this.isRunning = false;
-      if (this.proc) {
-        this.proc.kill();
-      }
+      this.proc?.kill();
+      this.swiftrayProc?.kill();
     }
   }
 
