@@ -126,25 +126,35 @@ async function doSign(configuration, packager) {
   }
 
   const { exec } = require('child_process');
+  const { statSync } = require('fs');
 
   await new Promise((resolve) => {
     let retryTime = 0;
-    const doCodeSign = () => {
-      exec(`curl.exe -F file="@${args[args.length-1]}" -o "${args[args.length-1]}" ${env.WIN_CODESIGN_SERVER}`,  { timeout, env }, (err, stdout, stderr) => {
-        console.log(stdout);
-        if(err) {
-          console.log(err);
-          console.log(stderr);
-          retryTime += 1;
-          if (retryTime > 5) {
-            throw err;
+    const doCodeSign = async () => {
+      const filePath = args[args.length-1];
+      const fileSize = statSync(filePath).size;
+      const fileName = path.basename(filePath);
+      const contentType = 'application/octet-stream';
+      console.log('Signing file:', filePath, 'with size:', fileSize);
+      exec(
+        `curl -X POST -H "Content-Length: ${fileSize}" -H "Content-Type: ${contentType}" -H "File-Name: ${fileName}" --data-binary "@${filePath}" -o "${filePath}" ${env.WIN_CODESIGN_SERVER}`,
+        { timeout, env },
+        (err, stdout, stderr) => {
+          console.log(stdout);
+          if (err) {
+            console.log(err);
+            console.log(stderr);
+            retryTime += 1;
+            if (retryTime > 5) {
+              throw err;
+            } else {
+              doCodeSign();
+            }
           } else {
-            doCodeSign();
+            resolve();
           }
-        } else {
-          resolve();
-        }
-      });
+        },
+      );
     }
     doCodeSign();
   });
