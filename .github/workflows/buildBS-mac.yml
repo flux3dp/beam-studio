@@ -94,6 +94,8 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 
+      # It is said codesign --deep is not a good practice, but it is the only way to sign Swiftray successfully
+      # https://developer.apple.com/forums/thread/129980
       - name: Build Beam Studio
         run: |
           mkdir backend
