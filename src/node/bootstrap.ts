@@ -11,6 +11,7 @@ function bootstrapMacos() {
   console.log('Bootstrap macos');
   process.env.BACKEND =
     process.env.BACKEND || path.join(resourcesRoot, 'backend', 'flux_api', 'flux_api');
+  process.env.BACKEND_ROOT = path.join(resourcesRoot, 'backend');
   console.log(`### backend: ${process.env.BACKEND}`);
 }
 
@@ -35,6 +36,7 @@ function bootstrapWindows() {
   console.log('Bootstrap windows');
   process.env.BACKEND =
     process.env.BACKEND || path.join(resourcesRoot, 'backend', 'flux_api', 'flux_api.exe');
+  process.env.BACKEND_ROOT = path.join(resourcesRoot, 'backend');
   console.log(`### backend: ${process.env.BACKEND}`);
 
   try {

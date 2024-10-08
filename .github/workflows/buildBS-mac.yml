@@ -94,6 +94,8 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
 
+      # It is said codesign --deep is not a good practice, but it is the only way to sign Swiftray successfully
+      # https://developer.apple.com/forums/thread/129980
       - name: Build Beam Studio
         run: |
           mkdir backend
@@ -105,6 +107,13 @@ jobs:
           cp -R lib/monitorexe-osx backend/monitorexe-osx
           ./backend/flux_api/flux_api --test --without_pcl
 
+          curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/mac/swiftray-daemon.zip --output swiftray.zip
+          mkdir swiftray
+          tar -xf swiftray.zip -C ./swiftray
+          cp -R ./swiftray/Swiftray.app backend
+          find ./backend/Swiftray.app -name "*.txt" -delete
+          find ./backend/Swiftray.app -name "*.gcode" -delete
+
           cp -R util/mac utils
 
           sudo bash ./build/clearup-develop-files.sh
@@ -112,6 +121,8 @@ jobs:
           echo "Signing *.so files..."
           find ./backend -name "*.so" | while read f ; do
           codesign --force --verbose -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" $f; done
+          echo "Signing Swiftray.app..."
+          codesign --deep --force --verbose -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" ./backend/Swiftray.app
 
           chmod -R 777 node_modules/font-scanner
 
