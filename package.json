@@ -1,14 +1,30 @@
 {
   "name": "beam-studio",
-  "productName": "Beam Studio",
   "version": "2.4.2-alpha",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
   },
-  "description": "Beam Studio",
-  "private": true,
   "main": "public/js/node/main.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "build-node": "webpack --config webpack.node.js",
+    "dev": "webpack watch",
+    "dist": "electron-builder",
+    "eslint": "eslint",
+    "postinstall": "electron-rebuild",
+    "integration": "jest --config jest.config.integration.only.js --passWithNoTests",
+    "pack": "electron-builder --dir",
+    "spec": "jest --config jest.config.spec.only.js --passWithNoTests",
+    "start": "electron .",
+    "start-debug": "electron . --debug",
+    "start-monitor": "electron . --monitor",
+    "start-server": "electron . --server",
+    "test": "jest --passWithNoTests",
+    "test-debug": "DEBUG_MODE=1 jest --passWithNoTests",
+    "test-spectron": "jest ./test/test.js",
+    "wdio": "wdio run ./test/wdio.conf.ts"
+  },
   "dependencies": {
     "@ant-design/cssinjs": "^1.3.2",
     "@ant-design/icons": "^5.0.1",
@@ -127,25 +143,7 @@
     "webpack-node-externals": "^3.0.0",
     "worker-loader": "^3.0.8"
   },
-  "scripts": {
-    "dev": "webpack watch",
-    "build": "webpack --config webpack.prod.js",
-    "build-node": "webpack --config webpack.node.js",
-    "test-spectron": "jest ./test/test.js",
-    "start": "electron .",
-    "start-debug": "electron . --debug",
-    "start-server": "electron . --server",
-    "start-monitor": "electron . --monitor",
-    "postinstall": "electron-rebuild",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "test": "jest --passWithNoTests",
-    "test-debug": "DEBUG_MODE=1 jest --passWithNoTests",
-    "spec": "jest --config jest.config.spec.only.js --passWithNoTests",
-    "integration": "jest --config jest.config.integration.only.js --passWithNoTests",
-    "eslint": "eslint",
-    "wdio": "wdio run ./test/wdio.conf.ts"
-  },
+  "packageManager": "yarn@1.22.22",
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
     "protocols": {
@@ -237,5 +235,6 @@
         "role": "Editor"
       }
     ]
-  }
+  },
+  "productName": "Beam Studio"
 }
