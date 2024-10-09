@@ -723,15 +723,6 @@ function buildDeviceMenu(
           click: callback,
         },
         {
-          id: 'LOG_CLOUD',
-          label: r.log.cloud,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
-        },
-        {
           id: 'LOG_PLAYER',
           label: r.log.player,
           uuid,

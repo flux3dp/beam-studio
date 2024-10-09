@@ -117,11 +117,8 @@ function onGhostDown() {
 
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
   const deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
-  if (mainWindow) {
-    mainWindow.webContents.send('device-status', deviceInfo);
-  }
-
-  if (deviceInfo.alive) {
+  if (deviceInfo.source !== 'lan') console.log(deviceID, deviceInfo);
+  if (deviceInfo.alive || deviceInfo.source !== 'lan') {
     if (menuManager) {
       const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
       if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
@@ -144,7 +141,6 @@ const backendManager = new BackendManager({
   trace_pid: process.pid,
   server: process.argv.indexOf('--server') > 0,
   on_ready: onGhostUp,
-  on_device_updated: onDeviceUpdated,
   on_stderr: (data) => logger.write(`${data}`),
   on_stopped: onGhostDown,
   debug: DEBUG,
@@ -373,6 +369,11 @@ ipcMain.on('GET_OPEN_FILE', (evt) => {
   evt.returnValue = null;
 });
 
+
+ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
+  onDeviceUpdated(deviceInfo);
+});
+
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
   if (mainWindow) {
     mainWindow.webContents.send(events.NOTIFY_BACKEND_STATUS, {
@@ -461,7 +462,7 @@ if (os.arch() === 'ia32' || os.arch() === 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
-const onMenuClick = (data: { id: string; serial: string; machineName: string; }) => {
+const onMenuClick = (data: { id: string; serial: string; machineName: string }) => {
   data = {
     id: data.id,
     serial: data.serial,

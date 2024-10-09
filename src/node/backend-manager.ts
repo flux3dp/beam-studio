@@ -50,7 +50,6 @@ class BackendManager extends EventEmitter {
     location?: string;
     trace_pid?: number;
     on_ready?: (sender: any) => void;
-    on_device_updated?: (sender: any, deviceProfile: any) => void;
     on_stderr?: (sender: any, data: any) => void;
     on_stopped?: (sender: any) => void;
     debug?: boolean;
@@ -83,9 +82,6 @@ class BackendManager extends EventEmitter {
     if (options.on_stderr) {
       this.on('stderr', options.on_stderr);
     }
-    if (options.on_device_updated) {
-      this.on('device_updated', options.on_device_updated);
-    }
     if (options.on_stopped) {
       this.on('stopped', options.on_stopped);
     }
@@ -109,7 +105,6 @@ class BackendManager extends EventEmitter {
           this.spawn();
         } else if (!this.ws) {
           console.log('Backend manager recover from websocket.');
-          this.prepareDiscover();
         } else {
           console.log('Nothing to recover in backend manager');
         }
@@ -138,58 +133,6 @@ class BackendManager extends EventEmitter {
     }, 2500);
   }
 
-  prepareDiscover(): void {
-    this.ws = new WebSocket(`ws://127.0.0.1:${this.port}/ws/discover`);
-    console.log('Backend start connect!?');
-    this.ws.on('open', (conn: WebSocket) => {
-      console.log('Backend connection!');
-      this.wsConn = conn;
-      this.wsTime = Date.now();
-      this.ws?.on('message', (message) => {
-        // prevent timeout disconnect
-        const now = Date.now();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (now - this.wsTime! > 30000) {
-          this.ws?.send('ping');
-          this.wsTime = now;
-        }
-
-        let devInfo;
-
-        try {
-          // for non string message the catch block will handle it
-          devInfo = uglyJsonParser(message as unknown as string);
-          if (devInfo.status === 'pong') return;
-        } catch (err) {
-          console.error('Can not parse backend stout: %s', err);
-        }
-        this.emit('device_updated', devInfo);
-      });
-      this.ws?.on('close', () => {
-        this.wsConn = undefined;
-        this.ws = undefined;
-        if (this.isRunning) {
-          console.error('Discover WebSocket close unexpectedly.');
-          this.setRecover();
-        }
-      });
-    });
-    this.ws.on('connectFailed', (error) => {
-      this.ws = undefined;
-      if (this.isRunning) {
-        console.error('Discover connect failed: %s', error);
-        this.setRecover();
-      }
-    });
-    this.ws.on('error', (error) => {
-      console.error('Discover WebSocket error: %s', error);
-      this.ws = undefined;
-      if (this.isRunning) {
-        this.setRecover();
-      }
-    });
-  }
-
   spawn(): void {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
@@ -204,7 +147,6 @@ class BackendManager extends EventEmitter {
           this.emit('ready', result);
         } finally {
           this.port = result.port;
-          this.prepareDiscover();
         }
       }
     });
