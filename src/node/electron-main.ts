@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -369,6 +369,11 @@ ipcMain.on('GET_OPEN_FILE', (evt) => {
   evt.returnValue = null;
 });
 
+ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
+  const res = await systemPreferences.askForMediaAccess(key);
+  console.log('ask for permission', key, res);
+  event.returnValue = res;
+});
 
 ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
   onDeviceUpdated(deviceInfo);
