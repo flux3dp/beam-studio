@@ -102,7 +102,8 @@ jobs:
           mkdir swiftray
           unzip swiftray.zip -d swiftray
           rm -rf swiftray/__MACOSX
-          cp -R ./swiftray backend/swiftray
+          mv ./swiftray backend
+          rm ./swiftray.zip
 
           cp -R util/win32 utils
           cp ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js

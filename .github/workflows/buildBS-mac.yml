@@ -110,9 +110,8 @@ jobs:
           curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/mac/swiftray-daemon.zip --output swiftray.zip
           mkdir swiftray
           tar -xf swiftray.zip -C ./swiftray
-          cp -R ./swiftray/Swiftray.app backend
+          mv ./swiftray/Swiftray.app backend
           rm ./swiftray.zip
-          rm -rf ./swiftray
           find ./backend/Swiftray.app -name "*.txt" -delete
           find ./backend/Swiftray.app -name "*.gcode" -delete
 
