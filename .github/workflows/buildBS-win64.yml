@@ -103,6 +103,8 @@ jobs:
           unzip swiftray.zip -d swiftray
           rm -rf swiftray/__MACOSX
           cp -R ./swiftray backend/swiftray
+          rm ./swiftray.zip
+          rm -rf ./swiftray
 
           cp -R util/win64 utils
           cp ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js

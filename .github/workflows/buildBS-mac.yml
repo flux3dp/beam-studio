@@ -111,6 +111,8 @@ jobs:
           mkdir swiftray
           tar -xf swiftray.zip -C ./swiftray
           cp -R ./swiftray/Swiftray.app backend
+          rm ./swiftray.zip
+          rm -rf ./swiftray
           find ./backend/Swiftray.app -name "*.txt" -delete
           find ./backend/Swiftray.app -name "*.gcode" -delete
 
