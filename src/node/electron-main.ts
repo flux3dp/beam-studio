@@ -117,7 +117,6 @@ function onGhostDown() {
 
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
   const deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
-  if (deviceInfo.source !== 'lan') console.log(deviceID, deviceInfo);
   if (deviceInfo.alive || deviceInfo.source !== 'lan') {
     if (menuManager) {
       const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
