@@ -116,15 +116,20 @@ function onGhostDown() {
 }
 
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
-  const deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
-  if (deviceInfo.alive || deviceInfo.source !== 'lan') {
+  const { alive, source, uuid, serial } = deviceInfo;
+  const deviceID = `${source}:${uuid}`;
+
+  if (alive || source !== 'lan') {
     if (menuManager) {
-      const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+      if (globalData.devices[deviceID] && globalData.devices[deviceID].serial !== serial) {
+        menuManager.removeDevice(uuid, globalData.devices[deviceID]);
+      }
+      const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
       if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
-      menuManager.removeDevice(deviceInfo.uuid, globalData.devices[deviceID]);
+      menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
