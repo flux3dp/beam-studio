@@ -12,7 +12,5 @@
     <true/>
     <key>com.apple.security.device.camera</key>
     <true/>
-    <key>NSCameraUsageDescription</key>
-    <string>Beam Studio needs access to your camera to perform camera preview with some devices.</string>
   </dict>
 </plist>
