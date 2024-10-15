@@ -173,6 +173,9 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Beam Studio need to use USB camera to preview certain devices."
+      },
       "target": [
         "dmg",
         "zip"
