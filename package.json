@@ -223,6 +223,11 @@
         "role": "Editor"
       },
       {
+        "ext": "bvg",
+        "description": "Edit and cut image files",
+        "role": "Editor"
+      },
+      {
         "ext": "svg",
         "description": "Edit and cut image files",
         "role": "Editor"
