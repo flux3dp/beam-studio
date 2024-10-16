@@ -374,9 +374,19 @@ ipcMain.on('GET_OPEN_FILE', (evt) => {
 });
 
 ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
-  const res = await systemPreferences.askForMediaAccess(key);
-  console.log('ask for permission', key, res);
-  event.returnValue = res;
+  if (process.platform === 'darwin') {
+    const res = await systemPreferences.askForMediaAccess(key);
+    console.log('ask for permission', key, res);
+    event.returnValue = res;
+    return;
+  }
+  if (process.platform === 'win32') {
+    const res = systemPreferences.getMediaAccessStatus(key);
+    console.log('ask for permission', key, res);
+    event.returnValue = res !== 'denied';
+    return;
+  }
+  event.returnValue = true;
 });
 
 ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
