@@ -481,7 +481,12 @@ if (os.arch() === 'ia32' || os.arch() === 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
-const onMenuClick = (data: { id: string; serial?: string; uuid?: string; machineName?: string }) => {
+const onMenuClick = (data: {
+  id: string;
+  serial?: string;
+  uuid?: string;
+  machineName?: string;
+}) => {
   data = {
     id: data.id,
     serial: data.serial,

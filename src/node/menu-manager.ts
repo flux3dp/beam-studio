@@ -25,7 +25,15 @@ const store = new Store();
 let r = i18n.lang.topbar.menu;
 let accountInfo: { email: string } | null = null;
 
-function buildOSXAppMenu(callback: (event: { id: string }) => void) {
+interface MenuData extends MenuItem {
+  id: string;
+  uuid?: string;
+  serial?: string;
+  machineName?: string;
+  source?: string;
+}
+
+function buildOSXAppMenu(callback: (data: MenuData) => void) {
   const currentChannel = app.getVersion().split('-')[1] || 'latest';
   const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
   return {
@@ -56,7 +64,7 @@ function buildOSXAppMenu(callback: (event: { id: string }) => void) {
   };
 }
 
-function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (event: { id: string }) => void) {
+function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void) {
   const menuItems = [
     {
       id: 'CLEAR_SCENE',
@@ -184,7 +192,7 @@ function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (event: { id: string }) 
 }
 
 function buildAccountMenuItems(
-  callback: (event: { id: string }) => void,
+  callback: (data: MenuData) => void,
   accInfo: { email: string } | null
 ) {
   const signoutLabel = accInfo ? `${r.sign_out} (${accInfo.email})` : r.sign_out;
@@ -217,7 +225,7 @@ function buildAccountMenuItems(
   ];
 }
 
-const buildHelpMenu = (callback: (event: { id: string }) => void) => {
+const buildHelpMenu = (callback: (data: MenuData) => void) => {
   const helpSubmenu = [];
   if (process.platform !== 'darwin') {
     helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback });
@@ -290,7 +298,10 @@ const buildHelpMenu = (callback: (event: { id: string }) => void) => {
   return helpSubmenu;
 };
 
-function buildMenuItems(callback: (event: { id: string }) => void, isDevMode = false): MenuItemConstructorOptions[] {
+function buildMenuItems(
+  callback: (data: MenuData) => void,
+  isDevMode = false
+): MenuItemConstructorOptions[] {
   const menuItems = [];
   const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
   const deleteKey = 'Delete';
@@ -405,7 +416,9 @@ function buildMenuItems(callback: (event: { id: string }) => void, isDevMode = f
       },
       { type: 'separator' },
       { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
-      (isDevMode ? { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback } : null),
+      isDevMode
+        ? { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback }
+        : null,
     ].filter((item) => !!item),
   });
 
@@ -512,12 +525,12 @@ function buildMenuItems(callback: (event: { id: string }) => void, isDevMode = f
   return menuItems as MenuItemConstructorOptions[];
 }
 
-function getDeviceMenuId(uuid: string, data: DeviceInfo) {
+function getDeviceMenuId(uuid: string, data: { source: string }): string {
   return `device:${data.source}:${uuid}`;
 }
 
 function buildDeviceMenu(
-  callback: (event: { id: string }) => void,
+  callback: (data: MenuData) => void,
   uuid: string,
   data: DeviceInfo,
   isDevMode = false
@@ -527,98 +540,62 @@ function buildDeviceMenu(
   const machineName = name;
   let modelType = 'beambox-series';
   if (['ado1'].includes(data.model)) modelType = 'ador-series';
-
-  let submenu: any[] = [
+  const handleClick = (item: MenuItem) => callback({ ...item, uuid, serial, machineName, source });
+  let submenu: MenuItemConstructorOptions[] = [
     {
       id: 'DASHBOARD',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.dashboard,
-      click: callback,
+      click: handleClick,
     },
     {
       id: 'MACHINE_INFO',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.machine_info,
-      click: callback,
+      click: handleClick,
     },
     { type: 'separator' },
     {
       id: 'CALIBRATE_BEAMBOX_CAMERA',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.calibrate_beambox_camera,
-      click: callback,
+      click: handleClick,
     },
   ];
 
   if (data.model === 'fbm1') {
     submenu.push({
       id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.calibrate_beambox_camera_borderless,
-      click: callback,
+      click: handleClick,
     });
     submenu.push({
       id: 'CALIBRATE_DIODE_MODULE',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.calibrate_diode_module,
-      click: callback,
+      click: handleClick,
     });
   } else if (modelType === 'ador-series') {
     if (isDevMode) {
       submenu.push({
         id: 'CALIBRATE_CAMERA_V2_FACTORY',
-        uuid,
-        serial,
-        machineName,
-        source,
         label: `${r.calibrate_beambox_camera} (Factory)`,
-        click: callback,
+        click: handleClick,
       });
     }
     submenu.push(
       {
         id: 'CALIBRATE_PRINTER_MODULE',
-        uuid,
-        serial,
-        machineName,
-        source,
         label: r.calibrate_printer_module,
-        click: callback,
+        click: handleClick,
       },
       {
         id: 'CALIBRATE_IR_MODULE',
-        uuid,
-        serial,
-        machineName,
-        source,
         label: r.calibrate_ir_module,
-        click: callback,
+        click: handleClick,
       }
     );
     if (isDevMode) {
       submenu.push({
         id: 'CATRIDGE_CHIP_SETTING',
-        uuid,
-        serial,
-        machineName,
-        source,
         label: 'Catridge Chip Setting',
-        click: callback,
+        click: handleClick,
       });
     }
   }
@@ -627,25 +604,16 @@ function buildDeviceMenu(
     submenu.push({
       id: 'CAMERA_CALIBRATION_DATA',
       label: r.camera_calibration_data,
-      uuid,
-      serial,
-      source,
       submenu: [
         {
           id: 'UPLOAD_CALIBRATION_DATA',
           label: r.upload_data,
-          uuid,
-          serial,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'DOWNLOAD_CALIBRATION_DATA',
           label: r.download_data,
-          uuid,
-          serial,
-          source,
-          click: callback,
+          click: handleClick,
         },
       ],
     });
@@ -653,92 +621,52 @@ function buildDeviceMenu(
   submenu = submenu.concat([
     {
       id: 'UPDATE_FIRMWARE',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.update_firmware,
-      click: callback,
+      click: handleClick,
     },
     {
       id: 'DOWNLOAD_LOG',
-      uuid,
-      serial,
-      machineName,
-      source,
       label: r.download_log,
       submenu: [
         {
           id: 'LOG_NETWORK',
           label: r.log.network,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_HARDWARE',
           label: r.log.hardware,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_DISCOVER',
           label: r.log.discover,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_USB',
           label: r.log.usb,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_USBLIST',
           label: r.log.usblist,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_CAMERA',
           label: r.log.camera,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_PLAYER',
           label: r.log.player,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
         {
           id: 'LOG_ROBOT',
           label: r.log.robot,
-          uuid,
-          serial,
-          machineName,
-          source,
-          click: callback,
+          click: handleClick,
         },
       ],
     },
@@ -756,8 +684,6 @@ class MenuManager extends EventEmitter {
   public appmenu: Menu | null = null;
 
   private deviceMenu?: MenuItem;
-
-  private accountMenu?: MenuItem;
 
   private deviceList: { [uuid: string]: DeviceInfo };
 
@@ -833,8 +759,6 @@ class MenuManager extends EventEmitter {
     for (const i in this.appmenu.items) {
       if (this.appmenu.items[i].id === '_machines') {
         this.deviceMenu = this.appmenu.items[i];
-      } else if (this.appmenu.items[i].id === '_account') {
-        this.accountMenu = this.appmenu.items[i];
       }
     }
     for (const devMenuId in this.deviceList) {
@@ -860,9 +784,17 @@ class MenuManager extends EventEmitter {
     Menu.setApplicationMenu(this.appmenu);
   }
 
-  onMenuClick = (event: { id: string }): void => {
-    if (event.id) {
-      this.emit(events.MENU_CLICK, event, this.appmenu);
+  onMenuClick = (data: MenuData): void => {
+    if (data.id) {
+      const eventData: MenuData = {...data};
+      if (data.uuid && data.source) {
+        const menuId = getDeviceMenuId(data.uuid, { source: data.source });
+        if (this.deviceList[menuId]) {
+          eventData.serial = this.deviceList[menuId].serial;
+          eventData.machineName = this.deviceList[menuId].name;
+        }
+      }
+      this.emit(events.MENU_CLICK, eventData, this.appmenu);
     }
     if (process.platform === 'win32') {
       this.reset_custom_electron_titlebar();
@@ -875,9 +807,8 @@ class MenuManager extends EventEmitter {
 
   appendDevice(uuid: string, data: DeviceInfo): void {
     const menuId = getDeviceMenuId(uuid, data);
-
+    this.deviceList[menuId] = data;
     if (this.deviceMenu) {
-      this.deviceList[menuId] = data;
       const instance = buildDeviceMenu(this.onMenuClick, uuid, data, this.isDevMode);
 
       if (data.source === 'h2h') {
@@ -886,8 +817,6 @@ class MenuManager extends EventEmitter {
         this.deviceMenu.submenu?.append(instance);
       }
       if (this.appmenu) Menu.setApplicationMenu(this.appmenu);
-    } else {
-      this.deviceList[menuId] = data;
     }
   }
 
@@ -895,7 +824,6 @@ class MenuManager extends EventEmitter {
     const menuId = getDeviceMenuId(uuid, data);
     this.deviceList[menuId] = data;
 
-    // var labelName = data.source === 'h2h' ? `${data.name} (USB)` : data.name;
     if (this.deviceMenu?.submenu) {
       for (const menuitem of this.deviceMenu.submenu.items) {
         if (menuitem.id === menuId) {
@@ -923,6 +851,7 @@ class MenuManager extends EventEmitter {
       });
       delete this.deviceMenu.submenu;
       this.deviceMenu.submenu = newMenu;
+      if (this.appmenu) this.appmenu = Menu.buildFromTemplate(this.appmenu.items);
       Menu.setApplicationMenu(this.appmenu);
     }
   }
