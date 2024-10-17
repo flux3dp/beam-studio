@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -116,19 +116,20 @@ function onGhostDown() {
 }
 
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
-  const deviceID = `${deviceInfo.source}:${deviceInfo.uuid}`;
-  if (mainWindow) {
-    mainWindow.webContents.send('device-status', deviceInfo);
-  }
+  const { alive, source, uuid, serial } = deviceInfo;
+  const deviceID = `${source}:${uuid}`;
 
-  if (deviceInfo.alive) {
+  if (alive || source !== 'lan') {
     if (menuManager) {
-      const didUpdated = menuManager.updateDevice(deviceInfo.uuid, deviceInfo);
+      if (globalData.devices[deviceID] && globalData.devices[deviceID].serial !== serial) {
+        menuManager.removeDevice(uuid, globalData.devices[deviceID]);
+      }
+      const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
       if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
-      menuManager.removeDevice(deviceInfo.uuid, globalData.devices[deviceID]);
+      menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
@@ -144,7 +145,6 @@ const backendManager = new BackendManager({
   trace_pid: process.pid,
   server: process.argv.indexOf('--server') > 0,
   on_ready: onGhostUp,
-  on_device_updated: onDeviceUpdated,
   on_stderr: (data) => logger.write(`${data}`),
   on_stopped: onGhostDown,
   debug: DEBUG,
@@ -373,6 +373,26 @@ ipcMain.on('GET_OPEN_FILE', (evt) => {
   evt.returnValue = null;
 });
 
+ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
+  if (process.platform === 'darwin') {
+    const res = await systemPreferences.askForMediaAccess(key);
+    console.log('ask for permission', key, res);
+    event.returnValue = res;
+    return;
+  }
+  if (process.platform === 'win32') {
+    const res = systemPreferences.getMediaAccessStatus(key);
+    console.log('ask for permission', key, res);
+    event.returnValue = res !== 'denied';
+    return;
+  }
+  event.returnValue = true;
+});
+
+ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
+  onDeviceUpdated(deviceInfo);
+});
+
 ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
   if (mainWindow) {
     mainWindow.webContents.send(events.NOTIFY_BACKEND_STATUS, {
@@ -461,10 +481,16 @@ if (os.arch() === 'ia32' || os.arch() === 'x32') {
   app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 }
 
-const onMenuClick = (data: { id: string; serial: string; machineName: string; }) => {
+const onMenuClick = (data: {
+  id: string;
+  serial?: string;
+  uuid?: string;
+  machineName?: string;
+}) => {
   data = {
     id: data.id,
     serial: data.serial,
+    uuid: data.uuid,
     machineName: data.machineName,
   };
   if (mainWindow) {
