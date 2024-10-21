@@ -22,7 +22,7 @@ import i18n from 'helpers/i18n';
 import events from './ipc-events';
 
 const store = new Store();
-let r = i18n.lang.topbar.menu;
+const r = i18n.lang.topbar.menu;
 let accountInfo: { email: string } | null = null;
 
 interface MenuData extends MenuItem {
@@ -495,6 +495,16 @@ function buildMenuItems(
       { type: 'separator' },
     ],
   });
+
+  menuItems.push({
+    id: '_tools',
+    label: r.tools.title,
+    submenu: [
+      { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
+      { id: 'QR_CODE_GENERATOR', label: r.tools.qr_code_generator, click: callback },
+      { id: 'BOX_GEN', label: r.tools.boxgen, click: callback }
+    ]
+  })
 
   const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
   menuItems.push({
