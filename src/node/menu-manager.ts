@@ -22,7 +22,7 @@ import i18n from 'helpers/i18n';
 import events from './ipc-events';
 
 const store = new Store();
-const r = i18n.lang.topbar.menu;
+let r = i18n.lang.topbar.menu;
 let accountInfo: { email: string } | null = null;
 
 interface MenuData extends MenuItem {
