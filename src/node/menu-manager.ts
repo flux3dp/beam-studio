@@ -416,9 +416,7 @@ function buildMenuItems(
       },
       { type: 'separator' },
       { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
-      isDevMode
-        ? { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback }
-        : null,
+      { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback },
     ].filter((item) => !!item),
   });
 
