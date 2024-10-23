@@ -1,27 +1,39 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.4.1 beta
+// 2.4.2 beta
 const CHANGES_TW = {
   added: [
-    '新增 當前位置雕刻功能（需搭配韌體 4.3.5 / 5.3.5 或以上版本）。',
-    '新增 外框預覽的工作區域檢查與凸包模式。',
-    '新增 降低焦距及每次遞降功能於自動對焦機型（需搭配韌體 4.3.5 / 5.3.5 或以上版本）。',
+    '新增 支援夾爪旋轉軸套件 (需搭配韌體 4.3.5 / 5.3.5 或以上版本)。',
+    '新增「旋轉軸設定」於上層選單的編輯列表中。',
+    '新增 點陣圖的「梯形變形」功能。',
+    '新增「工具」列表於上層選單。',
+    '新增 材質測試生成器到工具列表。',
   ],
-  fixed: ['修正 Ador 在路徑計算後匯入圖檔的相關問題。', '修正 Ador 模組頭錯誤時的終止工作'],
-  changed: ['更新 捷克文翻譯。', '更新 參數管理面板。'],
+  fixed: [
+    '修正「選擇機器」視窗開啟一段時間時會跳出 #801 錯誤。',
+    '修正 Ador 模組頭錯誤時的終止工作',
+  ],
+  changed: [
+    '匯入 SVG 時，記住上一次選擇的選項。',
+    '將 QR 碼產生器和 Boxgen 移動到工具列表。',
+  ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Job Origin feature (requires firmware version 4.3.5 / 5.3.5 or above).',
-    'Added Area check and Hull mode for frame preview.',
-    'Added lower focus and z step feature for auto-focus models (requires firmware version 4.3.5 / 5.3.5 or above).',
+    'Added support for Rotary Chuck (requires firmware version 4.3.5 / 5.3.5 or above).',
+    'Added “Rotary Setup” to the edit menu in the top bar.',
+    'Added “Rotary Warped” feature for bitmap image.',
+    'Added tool menu to the top bar.',
+    'Added material test generator to the tool menu.'
   ],
   fixed: [
-    'Fixed issues related to importing image files after path calculation in Ador.',
-    'Fixed job termination when encountering an Ador tool head error.',
+    'Fixed #801 error that occurred when the select machine window was open for an extended period.',
   ],
-  changed: ['Updated Czech translation.', 'Updated Parameter management panel.'],
+  changed: [
+    'Retain previously selected options when importing SVG files.',
+    'Moved QR code generator and Boxgen to the tool menu.',
+  ],
 };
 
 export default {
