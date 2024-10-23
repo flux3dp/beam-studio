@@ -77,7 +77,7 @@ jobs:
           repository: flux3dp/beam-studio-core
           token: ${{ secrets.REPO_TOKEN }}
           path: .github/actions/beam-studio-core
-          ref: develop
+          ref: 2.4.2
 
       - name: Copy Beam Studio Core
         run: |
@@ -97,13 +97,6 @@ jobs:
           cp -R lib/elevate.cmd backend/elevate.cmd
           cp -R lib/elevate.vbs backend/elevate.vbs
           ./backend/flux_api/flux_api --test --without_pcl
-
-          curl.exe https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/win/swiftray-daemon.zip --output swiftray.zip
-          mkdir swiftray
-          unzip swiftray.zip -d swiftray
-          rm -rf swiftray/__MACOSX
-          mv ./swiftray backend
-          rm ./swiftray.zip
 
           cp -R util/win32 utils
           cp ./ihatewindowsCodeSign.js ./node_modules/app-builder-lib/out/codeSign/windowsCodeSign.js
