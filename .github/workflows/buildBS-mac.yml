@@ -54,7 +54,7 @@ jobs:
           python3 setup.py install --verbose || echo "Failed to install beamify"
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.6
+        uses: flux3dp/fluxsvg@2.7.7
 
       - name: Checkout FluxClient
         uses: actions/checkout@v3
