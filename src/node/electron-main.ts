@@ -493,17 +493,18 @@ const onMenuClick = (data: {
     uuid: data.uuid,
     machineName: data.machineName,
   };
-  if (mainWindow) {
+  const window = BrowserWindow.getFocusedWindow();
+  if (window) {
     if (editingStandardInput) {
       if (data.id === 'REDO') {
-        mainWindow.webContents.redo();
+        window.webContents.redo();
       }
       if (data.id === 'UNDO') {
-        mainWindow.webContents.undo();
+        window.webContents.undo();
       }
     } else {
       console.log('Send', data);
-      mainWindow.webContents.send(events.MENU_CLICK, data);
+      window.webContents.send(events.MENU_CLICK, data);
     }
   } else {
     console.log('Menu event triggered but window does not exist.');
