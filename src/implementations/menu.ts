@@ -24,6 +24,9 @@ class Menu extends AbstractMenu {
     communicator.on('NEW_APP_MENU', () => {
       this.initCheckboxs();
     });
+    communicator.on('TAB_FOCUSED', () => {
+      this.initCheckboxs();
+    });
   }
 
   init(): void {

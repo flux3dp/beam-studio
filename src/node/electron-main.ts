@@ -1,7 +1,16 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain, systemPreferences } from 'electron';
+import {
+  app,
+  BaseWindow,
+  BrowserWindow,
+  ipcMain,
+  IpcMainEvent,
+  systemPreferences,
+  WebContents,
+  WebContentsView,
+} from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -40,8 +49,20 @@ Sentry.captureMessage('User Census', {
 });
 setupTitlebar();
 
-let mainWindow: BrowserWindow | null;
+let focusedId = 0;
+const tabViews: { [id: number]: WebContentsView } = {};
+let mainWindow: BaseWindow | null;
 let menuManager: MenuManager | null;
+
+const sendToAllViews = (event: string, data?: any) => {
+  const allViews = Object.values(tabViews);
+  allViews.forEach((view) => view.webContents.send(event, data));
+};
+const sendToFocusedView = (event: string, data?: any) => {
+  if (focusedId && tabViews[focusedId]) {
+    tabViews[focusedId].webContents.send(event, data);
+  }
+};
 
 const globalData: {
   backend: {
@@ -107,7 +128,7 @@ if (process.platform === 'linux') {
 function onGhostUp(data: { port: number }) {
   globalData.backend.alive = true;
   globalData.backend.port = data.port;
-  mainWindow?.webContents?.send(events.BACKEND_UP, globalData.backend);
+  sendToAllViews(events.BACKEND_UP, globalData.backend);
 }
 
 function onGhostDown() {
@@ -118,6 +139,7 @@ function onGhostDown() {
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
   const { alive, source, uuid, serial } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
+  sendToFocusedView('device-status', deviceInfo);
 
   if (alive || source !== 'lan') {
     if (menuManager) {
@@ -125,12 +147,12 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
-      if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
+      if (didUpdated) sendToFocusedView('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
-      if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
+      sendToFocusedView('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
   }
@@ -167,14 +189,12 @@ let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
 
 const loadShadowWindow = () => {
-  if (shadowWindow) {
-    shadowWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../../shadow-index.html'),
-        protocol: 'file:',
-      })
-    );
-  }
+  shadowWindow?.loadURL(
+    url.format({
+      pathname: path.join(__dirname, '../../shadow-index.html'),
+      protocol: 'file:',
+    })
+  );
 };
 
 const createShadowWindow = () => {
@@ -199,42 +219,13 @@ const createShadowWindow = () => {
   }
 };
 
-function createWindow() {
-  // Create the browser window.
-  console.log('Creating main window');
-  mainWindow = new BrowserWindow({
-    width: 1300,
-    height: 650,
-    minWidth: 800,
-    minHeight: 400,
-    titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
-    frame: process.platform !== 'win32',
-    title: `Beam Studio - ${app.getVersion()}`,
-    webPreferences: {
-      preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-    trafficLightPosition: { x: 12, y: 14 },
-    // vibrancy: 'light',
-  });
-
-  electronRemote.enable(mainWindow.webContents);
-
-  mainWindow.webContents.setWindowOpenHandler(({ url: openUrl }) => {
-    // Prevent the new window from early input files
-    if (openUrl.startsWith('file://')) return { action: 'deny' };
-    return { action: 'allow' };
-  });
-
+const initStore = (webContents: WebContents) => {
   const store = new Store();
 
-  if (!store.get('poke-ip-addr')) {
-    store.set('poke-ip-addr', '192.168.1.1');
-  }
+  if (!store.get('poke-ip-addr')) store.set('poke-ip-addr', '192.168.1.1');
 
   if (!store.get('customizedLaserConfigs')) {
-    mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
+    webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
       const keysNeedParse = [
         'auto_check_update',
         'auto_connect',
@@ -258,14 +249,128 @@ function createWindow() {
       store.set(localStorage);
     });
   }
+};
 
-  mainWindow.loadURL(
+const focusTab = (id: number) => {
+  if (tabViews[id]) {
+    focusedId = id;
+    Object.values(tabViews).forEach((view) => view.setVisible(view.webContents.id === id));
+    tabViews[id].webContents.focus();
+    tabViews[id].webContents.send('TAB_FOCUSED');
+  }
+};
+
+const createTab = () => {
+  const tabView = new WebContentsView({
+    webPreferences: {
+      preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+  mainWindow?.contentView.addChildView(tabView);
+  const { webContents } = tabView;
+  electronRemote.enable(webContents);
+  webContents.setWindowOpenHandler(({ url: openUrl }) => {
+    // Prevent the new window from early input files
+    if (openUrl.startsWith('file://')) return { action: 'deny' };
+    return { action: 'allow' };
+  });
+  initStore(webContents);
+  webContents.loadURL(
     url.format({
       pathname: path.join(__dirname, '../../index.html'),
       protocol: 'file:',
       slashes: true,
     })
   );
+  const { id } = webContents;
+  if (!process.argv.includes('--test') && (process.defaultApp || DEBUG)) webContents.openDevTools();
+  tabViews[id] = tabView;
+  console.log(tabViews);
+  const bound = mainWindow?.getContentBounds();
+  if (bound) tabView.setBounds({ ...bound, x: 0, y: 0 });
+  focusedId = id;
+  focusTab(id);
+};
+
+const closeWebContentsView = async (view: WebContentsView): Promise<boolean> =>
+  new Promise<boolean>((resolve) => {
+    const { id } = view.webContents;
+    const closeHandler = () => {
+      mainWindow?.contentView.removeChildView(view);
+      view.webContents.close();
+      delete tabViews[id];
+      resolve(true);
+    };
+    let eventReceivced = false;
+    const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
+      if (evt.sender === view.webContents) {
+        eventReceivced = true;
+        ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
+        if (focusedId !== id) focusTab(id);
+      }
+    };
+    const closeReplyHander = (event: IpcMainEvent, reply: boolean) => {
+      if (event.sender === view.webContents) {
+        eventReceivced = true;
+        if (reply) closeHandler();
+        else resolve(false);
+        ipcMain.removeListener('CLOSE_REPLY', closeReplyHander);
+        ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
+      }
+    };
+    ipcMain.on('CLOSE_REPLY', closeReplyHander);
+    ipcMain.on('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
+    view.webContents.send('WINDOW_CLOSE');
+    // if no event received in 10 seconds
+    // something may goes wrong in frontend, close the view
+    setTimeout(() => {
+      if (!eventReceivced) closeHandler();
+    }, 10000);
+  });
+
+const closeTab = async (id: number): Promise<boolean> => {
+  if (tabViews[id] && Object.keys(tabViews).length > 1) {
+    const res = await closeWebContentsView(tabViews[id]);
+    if (res && focusedId === id) {
+      const ids = Object.keys(tabViews);
+      if (ids.length) {
+        focusedId = parseInt(ids[0], 10);
+        focusTab(focusedId);
+      }
+    }
+    return res;
+  }
+  return false;
+};
+
+ipcMain.on('focus-tab', (e, id) => {
+  focusTab(id);
+});
+
+ipcMain.on('create-tab', () => {
+  createTab();
+});
+
+ipcMain.on('close-tab', (e, id) => {
+  closeTab(id);
+});
+
+function createWindow() {
+  // Create the browser window.
+  console.log('Creating main window');
+  mainWindow = new BaseWindow({
+    width: 1300,
+    height: 650,
+    minWidth: 800,
+    minHeight: 400,
+    titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
+    frame: process.platform !== 'win32',
+    title: `Beam Studio - ${app.getVersion()}`,
+    trafficLightPosition: { x: 12, y: 14 },
+  });
+  createTab();
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -273,46 +378,31 @@ function createWindow() {
     isFrontEndReady = true;
   });
 
-  mainWindow.on('close', (evt) => {
+  const doClose = () => {
+    monitorManager?.killProc();
+    backendManager.stop();
+    shouldCloseShadowWindow = true;
+    try {
+      shadowWindow.close();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  mainWindow.on('close', async (evt) => {
+    console.log('Main window close event', isFrontEndReady, isCloseConfirmed);
     if (isFrontEndReady && !isCloseConfirmed) {
       evt.preventDefault();
-      mainWindow?.webContents.send('WINDOW_CLOSE');
-      // if save dialog does not pop in 10 seconds
-      // something may goes wrong in frontend, close the app
-      let isSaveDialogPopped = false;
-      ipcMain.once('SAVE_DIALOG_POPPED', () => {
-        isSaveDialogPopped = true;
-      });
-      const closeBeamStudio = () => {
-        isCloseConfirmed = true;
-        if (monitorManager) {
-          monitorManager.killProc();
-        }
-        backendManager.stop();
-        mainWindow?.close();
-        shouldCloseShadowWindow = true;
-        try {
-          shadowWindow.close();
-        } catch (error) {
-          console.log(error);
-        }
-      };
-
-      setTimeout(() => {
-        if (!isSaveDialogPopped) closeBeamStudio();
-      }, 10000);
-      ipcMain.once('CLOSE_REPLY', (event, reply) => {
-        if (reply) closeBeamStudio();
-      });
-    } else {
-      if (monitorManager) monitorManager.killProc();
-      backendManager.stop();
-      shouldCloseShadowWindow = true;
-      try {
-        shadowWindow.close();
-      } catch (e) {
-        console.log(e);
+      const allTabViews = Object.values(tabViews);
+      for (let i = 0; i < allTabViews.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        const res = await closeWebContentsView(allTabViews[i]);
+        if (!res) return;
       }
+      isCloseConfirmed = true;
+      mainWindow?.close();
+    } else {
+      doClose();
     }
   });
 
@@ -323,34 +413,44 @@ function createWindow() {
     else app.quit();
   });
 
-  mainWindow.on('page-title-updated', (event) => {
-    event.preventDefault();
+  mainWindow.on('resized', () => {
+    const bound = mainWindow?.getContentBounds();
+    if (bound) {
+      bound.x = 0;
+      bound.y = 0;
+      Object.values(tabViews).forEach((view) => view.setBounds(bound));
+    }
   });
 
   menuManager?.on('DEBUG-RELOAD', () => {
-    mainWindow?.loadURL(
+    console.log('DEBUG-RELOAD', tabViews[focusedId]);
+    tabViews[focusedId]?.webContents.loadURL(
       url.format({
         pathname: path.join(__dirname, '../../index.html'),
         protocol: 'file:',
         slashes: true,
       })
     );
-    loadShadowWindow();
+    // loadShadowWindow();
+  });
+
+  mainWindow.on('new-window-for-tab', () => {
+    createTab();
   });
 
   menuManager?.on('DEBUG-INSPECT', () => {
-    mainWindow?.webContents.openDevTools();
+    console.log('DEBUG-INSPECT', tabViews[focusedId]);
+    tabViews[focusedId]?.webContents.openDevTools();
   });
-  ipcMain.on('DEBUG-INSPECT', () => {
-    mainWindow?.webContents.openDevTools();
+  ipcMain.on('DEBUG-INSPECT', (evt) => {
+    evt.sender.openDevTools();
   });
-  if (!process.argv.includes('--test') && (process.defaultApp || DEBUG)) {
-    mainWindow.webContents.openDevTools();
-  }
 
-  updateManager.setMainWindow(mainWindow);
-  networkHelper.registerEvents(mainWindow);
-  attachTitlebarToWindow(mainWindow);
+  // TODO: handle this
+  updateManager.setWebContents(tabViews[focusedId]?.webContents);
+  networkHelper.registerEvents();
+  // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
+  // attachTitlebarToWindow(mainWindow);
 }
 
 let didGetOpenFile = false;
@@ -393,9 +493,9 @@ ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
   onDeviceUpdated(deviceInfo);
 });
 
-ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
+ipcMain.on(events.CHECK_BACKEND_STATUS, (evt) => {
   if (mainWindow) {
-    mainWindow.webContents.send(events.NOTIFY_BACKEND_STATUS, {
+    evt.sender.send(events.NOTIFY_BACKEND_STATUS, {
       backend: globalData.backend,
       devices: globalData.devices,
     });
@@ -416,6 +516,7 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
     fullColor,
   } = data;
   if (shadowWindow) {
+    const senderId = e.sender.id;
     shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, {
       url: svgUrl,
       width,
@@ -425,13 +526,14 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
       id,
       strokeWidth,
       fullColor,
+      senderId,
     });
   }
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
-  const { imageUrl, id } = data;
-  mainWindow?.webContents.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
+  const { imageUrl, id, senderId } = data;
+  tabViews[senderId].webContents.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
@@ -465,13 +567,13 @@ app.on('second-instance', (e, argv) => {
     mainWindow.focus();
   }
   const linkUrl = getDeeplinkUrl(argv);
-  if (linkUrl) handleDeepLinkUrl(mainWindow, linkUrl);
+  if (linkUrl) handleDeepLinkUrl(Object.values(tabViews), linkUrl);
 });
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
   app.on('open-url', (event, openUrl) => {
-    handleDeepLinkUrl(mainWindow, openUrl);
+    handleDeepLinkUrl(Object.values(tabViews), openUrl);
   });
 });
 
@@ -497,14 +599,14 @@ const onMenuClick = (data: {
   if (window) {
     if (editingStandardInput) {
       if (data.id === 'REDO') {
-        window.webContents.redo();
+        tabViews[focusedId].webContents.redo();
       }
       if (data.id === 'UNDO') {
-        window.webContents.undo();
+        tabViews[focusedId].webContents.undo();
       }
     } else {
       console.log('Send', data);
-      window.webContents.send(events.MENU_CLICK, data);
+      sendToFocusedView(events.MENU_CLICK, data);
     }
   } else {
     console.log('Menu event triggered but window does not exist.');
@@ -515,7 +617,8 @@ const init = () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
-    mainWindow?.webContents.send('NEW_APP_MENU');
+    // mainWindow?.webContents.send('NEW_APP_MENU');
+    sendToAllViews('NEW_APP_MENU');
   });
 
   if (!mainWindow) {
