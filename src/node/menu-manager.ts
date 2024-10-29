@@ -18,6 +18,7 @@ import {
 
 import DeviceInfo from 'interfaces/DeviceInfo';
 import i18n from 'helpers/i18n';
+import { adorModels, promarkModels } from 'app/actions/beambox/constant';
 
 import events from './ipc-events';
 
@@ -500,9 +501,9 @@ function buildMenuItems(
     submenu: [
       { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
       { id: 'QR_CODE_GENERATOR', label: r.tools.qr_code_generator, click: callback },
-      { id: 'BOX_GEN', label: r.tools.boxgen, click: callback }
-    ]
-  })
+      { id: 'BOX_GEN', label: r.tools.boxgen, click: callback },
+    ],
+  });
 
   const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
   menuItems.push({
@@ -543,90 +544,82 @@ function buildDeviceMenu(
   data: DeviceInfo,
   isDevMode = false
 ) {
-  const { serial, source, name } = data;
-  const menuLabel = data.source === 'lan' ? data.name : `${data.name} (USB)`;
+  const { serial, source, name, model } = data;
+  const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
-  let modelType = 'beambox-series';
-  if (['ado1'].includes(data.model)) modelType = 'ador-series';
+  const isAdor = adorModels.has(model);
+  const isPromark = promarkModels.has(model);
+  const isBeamo = model === 'fbm1';
   const handleClick = (item: MenuItem) => callback({ ...item, uuid, serial, machineName, source });
-  let submenu: MenuItemConstructorOptions[] = [
-    {
-      id: 'DASHBOARD',
-      label: r.dashboard,
-      click: handleClick,
-    },
-    {
-      id: 'MACHINE_INFO',
-      label: r.machine_info,
-      click: handleClick,
-    },
+  const submenu: MenuItemConstructorOptions[] = [
+    { id: 'DASHBOARD', label: r.dashboard, click: handleClick },
+    { id: 'MACHINE_INFO', label: r.machine_info, click: handleClick },
+    isPromark
+      ? { id: 'PROMARK_SETTINGS', label: i18n.lang.promark_settings?.title, click: handleClick }
+      : null,
     { type: 'separator' },
-    {
-      id: 'CALIBRATE_BEAMBOX_CAMERA',
-      label: r.calibrate_beambox_camera,
-      click: handleClick,
-    },
-  ];
-
-  if (data.model === 'fbm1') {
-    submenu.push({
-      id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
-      label: r.calibrate_beambox_camera_borderless,
-      click: handleClick,
-    });
-    submenu.push({
-      id: 'CALIBRATE_DIODE_MODULE',
-      label: r.calibrate_diode_module,
-      click: handleClick,
-    });
-  } else if (modelType === 'ador-series') {
-    if (isDevMode) {
-      submenu.push({
-        id: 'CALIBRATE_CAMERA_V2_FACTORY',
-        label: `${r.calibrate_beambox_camera} (Factory)`,
-        click: handleClick,
-      });
-    }
-    submenu.push(
-      {
-        id: 'CALIBRATE_PRINTER_MODULE',
-        label: r.calibrate_printer_module,
-        click: handleClick,
-      },
-      {
-        id: 'CALIBRATE_IR_MODULE',
-        label: r.calibrate_ir_module,
-        click: handleClick,
-      }
-    );
-    if (isDevMode) {
-      submenu.push({
-        id: 'CATRIDGE_CHIP_SETTING',
-        label: 'Catridge Chip Setting',
-        click: handleClick,
-      });
-    }
-  }
-  submenu.push({ type: 'separator' });
-  if (modelType === 'ador-series') {
-    submenu.push({
-      id: 'CAMERA_CALIBRATION_DATA',
-      label: r.camera_calibration_data,
-      submenu: [
-        {
-          id: 'UPLOAD_CALIBRATION_DATA',
-          label: r.upload_data,
+    { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
+    isBeamo
+      ? {
+          id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
+          label: r.calibrate_beambox_camera_borderless,
           click: handleClick,
-        },
-        {
-          id: 'DOWNLOAD_CALIBRATION_DATA',
-          label: r.download_data,
+        }
+      : null,
+    isBeamo
+      ? {
+          id: 'CALIBRATE_DIODE_MODULE',
+          label: r.calibrate_diode_module,
           click: handleClick,
-        },
-      ],
-    });
-  }
-  submenu = submenu.concat([
+        }
+      : null,
+    isAdor && isDevMode
+      ? {
+          id: 'CALIBRATE_CAMERA_V2_FACTORY',
+          label: `${r.calibrate_beambox_camera} (Factory)`,
+          click: handleClick,
+        }
+      : null,
+    isAdor
+      ? {
+          id: 'CALIBRATE_PRINTER_MODULE',
+          label: r.calibrate_printer_module,
+          click: handleClick,
+        }
+      : null,
+    isAdor
+      ? {
+          id: 'CALIBRATE_IR_MODULE',
+          label: r.calibrate_ir_module,
+          click: handleClick,
+        }
+      : null,
+    isAdor && isDevMode
+      ? {
+          id: 'CATRIDGE_CHIP_SETTING',
+          label: 'Catridge Chip Setting',
+          click: handleClick,
+        }
+      : null,
+    { type: 'separator' },
+    isAdor
+      ? {
+          id: 'CAMERA_CALIBRATION_DATA',
+          label: r.camera_calibration_data,
+          submenu: [
+            {
+              id: 'UPLOAD_CALIBRATION_DATA',
+              label: r.upload_data,
+              click: handleClick,
+            },
+            {
+              id: 'DOWNLOAD_CALIBRATION_DATA',
+              label: r.download_data,
+              click: handleClick,
+            },
+          ],
+        }
+      : null,
     {
       id: 'UPDATE_FIRMWARE',
       label: r.update_firmware,
@@ -678,7 +671,7 @@ function buildDeviceMenu(
         },
       ],
     },
-  ]);
+  ].filter(Boolean) as MenuItemConstructorOptions[];
 
   return new MenuItem({
     label: menuLabel,
@@ -794,7 +787,7 @@ class MenuManager extends EventEmitter {
 
   onMenuClick = (data: MenuData): void => {
     if (data.id) {
-      const eventData: MenuData = {...data};
+      const eventData: MenuData = { ...data };
       if (data.uuid && data.source) {
         const menuId = getDeviceMenuId(data.uuid, { source: data.source });
         if (this.deviceList[menuId]) {
