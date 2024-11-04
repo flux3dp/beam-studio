@@ -1,11 +1,15 @@
-import EventEmitter from 'events';
+import fs from 'fs'
 import os from 'os';
 import path from 'path';
-import WebSocket from 'ws';
 import { ChildProcess, spawn } from 'child_process';
 
+import WebSocket from 'ws';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app } from 'electron';
+import { app, ipcMain } from 'electron';
+
+import EventEmitter from 'events';
+
+
 
 function uglyJsonParser(data: string): any {
   try {
@@ -91,6 +95,10 @@ class BackendManager extends EventEmitter {
     this.proc = undefined;
     this.ws = undefined;
     this.wsConn = undefined;
+    ipcMain.on('CHECK_SWIFTRAY', (event) => {
+      // eslint-disable-next-line no-param-reassign
+      event.returnValue = this.checkSwiftrayExists();
+    });
   }
 
   setRecover(): void {
@@ -166,6 +174,23 @@ class BackendManager extends EventEmitter {
         }
       }
     });
+  }
+
+  checkSwiftrayExists = (): boolean => {
+    if (!process.env.BACKEND_ROOT) return false;
+    let swiftrayDir: string;
+    let swiftrayExec: string;
+    if (os.platform() === 'win32') {
+      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
+      swiftrayExec = 'swiftray.exe';
+    } else if (os.platform() === 'darwin') {
+      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
+      swiftrayExec = 'Swiftray';
+    } else {
+      console.error('checkSwiftrayExists: Unsupported platform');
+      return false;
+    }
+    return fs.existsSync(path.join(swiftrayDir, swiftrayExec));
   }
 
   spawnSwiftray(): void {
