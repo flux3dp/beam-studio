@@ -1,7 +1,7 @@
 import fs from 'fs'
 import os from 'os';
 import path from 'path';
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess, execSync, spawn } from 'child_process';
 
 import WebSocket from 'ws';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -182,7 +182,7 @@ class BackendManager extends EventEmitter {
     let swiftrayExec: string;
     if (os.platform() === 'win32') {
       swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
-      swiftrayExec = 'swiftray.exe';
+      swiftrayExec = 'Swiftray.exe';
     } else if (os.platform() === 'darwin') {
       swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
       swiftrayExec = 'Swiftray';
@@ -202,7 +202,7 @@ class BackendManager extends EventEmitter {
     let swiftrayExec: string;
     if (os.platform() === 'win32') {
       swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
-      swiftrayExec = 'swiftray.exe';
+      swiftrayExec = 'Swiftray.exe';
       this.swiftrayProc = spawn(`"${swiftrayExec}"`, ['--daemon'], { shell: true, cwd: swiftrayDir });
     } else if (os.platform() === 'darwin') {
       swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
@@ -226,6 +226,18 @@ class BackendManager extends EventEmitter {
     }
   }
 
+  killSwiftray(): void {
+    if (this.swiftrayProc) {
+      if (os.platform() === 'win32' && this.swiftrayProc.pid) {
+        console.log(this.swiftrayProc.pid);
+        const res = execSync(`taskkill /PID ${this.swiftrayProc.pid} /T /F`);
+        console.log(res.toString());
+      } else {
+        this.swiftrayProc.kill();
+      }
+    }
+  }
+
   start(): void {
     if (!this.isRunning) {
       this.isRunning = true;
@@ -238,7 +250,7 @@ class BackendManager extends EventEmitter {
     if (this.isRunning) {
       this.isRunning = false;
       this.proc?.kill();
-      this.swiftrayProc?.kill();
+      this.killSwiftray();
     }
   }
 
