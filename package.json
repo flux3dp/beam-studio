@@ -59,6 +59,7 @@
     "hammerjs": "^2.0.8",
     "jimp": "^0.10.3",
     "jquery": "^1.11.0",
+    "jsbarcode": "^3.11.6",
     "jsencrypt": "3.0.0-rc.1",
     "jszip": "^3.10.1",
     "mini-css-extract-plugin": "^1.6.0",

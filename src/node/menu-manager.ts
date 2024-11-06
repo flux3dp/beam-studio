@@ -501,7 +501,7 @@ function buildMenuItems(
     label: r.tools.title,
     submenu: [
       { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
-      { id: 'QR_CODE_GENERATOR', label: r.tools.qr_code_generator, click: callback },
+      { id: 'CODE_GENERATOR', label: r.tools.code_generator, click: callback },
       { id: 'BOX_GEN', label: r.tools.box_generator, click: callback },
     ],
   });
