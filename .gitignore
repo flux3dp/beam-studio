@@ -16,6 +16,7 @@ public/node_modules/*
 public/video/*
 public/core-img/*
 public/fcode/*
+public/assets/*
 backend
 utils
 dist
