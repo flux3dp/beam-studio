@@ -1,4 +1,4 @@
-import fontkit from 'fontkit';
+import fontkit, { FontCollection } from 'fontkit';
 
 import communicator from 'implementations/communicator';
 import { FontDescriptor, LocalFontHelper } from 'interfaces/IFont';
@@ -60,8 +60,20 @@ export default {
   },
   getLocalFont: (font: FontDescriptor) => {
     try {
+      const getFontDirectly = fontkit.openSync(font.path, font.postscriptName)
+
+      if (getFontDirectly) {
+        return getFontDirectly;
+      }
+
+      const getFontFromPath = fontkit.openSync(font.path);
+
+      if (["TTF" , "WOFF" , "WOFF2"].includes(getFontFromPath.type)) {
+        return getFontFromPath;
+      }
+
       // Font Collection
-      return fontkit.openSync(font.path, font.postscriptName);
+      return (getFontFromPath as FontCollection).fonts[0];
     } catch {
       // Single Font
       return fontkit.openSync(font.path);
