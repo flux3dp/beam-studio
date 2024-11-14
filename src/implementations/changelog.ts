@@ -1,38 +1,42 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.4.2 beta
+// 2.4.3 beta
 const CHANGES_TW = {
   added: [
-    '新增 支援夾爪旋轉軸套件 (需搭配韌體 4.3.5 / 5.3.5 或以上版本)。',
-    '新增「旋轉軸設定」於上層選單的編輯列表中。',
-    '新增 點陣圖的「梯形變形」功能。',
-    '新增「工具」列表於上層選單。',
-    '新增 材質測試生成器到工具列表。',
+    '新增 點陣圖的梯形變形功能。',
+    '新增 支援 Promark 機型。',
+    '新增 條碼生成器。',
+    '新增 路徑計算加速選項於偏好設定 (Beta)。',
+    '新增 外框預覽（F1）與開始工作（F2) 快捷鍵。',
   ],
   fixed: [
-    '修正「選擇機器」視窗開啟一段時間時會跳出 #801 錯誤。',
-    '修正 Ador 模組頭錯誤時的終止工作',
+    '修正 Ador 相機校正參數。',
+    '修正 命名圖層時使用快捷鍵儲存會造成上層選單無反應的問題。',
+    '修正 部分翻譯。',
+    '修正 「逐步對焦」在沒有勾選「降低焦距」時沒有作用。',
   ],
   changed: [
-    '匯入 SVG 時，記住上一次選擇的選項。',
-    '將 QR 碼產生器和 Boxgen 移動到工具列表。',
+    '複選物件時可以選到所有物件圖層。',
+    '調整機器設定的 USB 連線頁面。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added support for Rotary Chuck (requires firmware version 4.3.5 / 5.3.5 or above).',
-    'Added “Rotary Setup” to the edit menu in the top bar.',
     'Added “Rotary Warped” feature for bitmap image.',
-    'Added tool menu to the top bar.',
-    'Added material test generator to the tool menu.'
+    'Added Barcode generator.',
+    'Added Path Calculation Acceleration option in preference (Beta).',
+    'Add shortcut keys for running frame (F1) and start work (F2).',
   ],
   fixed: [
-    'Fixed #801 error that occurred when the select machine window was open for an extended period.',
+    'Fixed Ador camera calibration parameter',
+    'Fixed part of translation',
+    'Fixed an issue where using a shortcut to save while naming a layer caused the top menu to become unresponsive.',
+    'Fix the issue where “Stepwise Focusing” does not work when “Lower Focus”  is not selected.',
   ],
   changed: [
-    'Retain previously selected options when importing SVG files.',
-    'Moved QR code generator and Boxgen to the tool menu.',
+    'Select all object layers when multiple objects are chosen.',
+    'Adjust USB connection page in machine setup.',
   ],
 };
 
