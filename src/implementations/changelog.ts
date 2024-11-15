@@ -18,6 +18,7 @@ const CHANGES_TW = {
   changed: [
     '複選物件時可以選到所有物件圖層。',
     '調整機器設定的 USB 連線頁面。',
+    '調整 盒子產生器的切口補償預設值變更為 0.1mm。',
   ],
 };
 
@@ -37,6 +38,7 @@ const CHANGES_EN = {
   changed: [
     'Select all object layers when multiple objects are chosen.',
     'Adjust USB connection page in machine setup.',
+    'Changed the default Kerf compensation in Box generator to 0.1mm',
   ],
 };
 
