@@ -1,6 +1,6 @@
-<svg id="svgcontent" width="7400" height="4100" viewBox="0 0 7400 4100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-1593" data-left="-696" data-zoom="0.102" data-workarea="fhexa1" data-en_af="false" data-en_diode="false" data-rotary_mode="null" data-engrave_dpi="medium">
+<svg id="svgcontent" width="7400" height="4100" viewBox="0 0 7400 4100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-2602" data-left="-626" data-zoom="0.101" data-workarea="fhexa1" data-en_af="false" data-en_diode="false" data-rotary_mode="null" data-engrave_dpi="medium">
  <defs>
-  <symbol id="svg_1" data-bbox="{&quot;x&quot;:26.2461,&quot;y&quot;:24.37501,&quot;width&quot;:900.01178,&quot;height&quot;:350.02737}" data-image-symbol="svg_1_image">
+  <symbol data-image-symbol="svg_1_image" data-bbox="{&quot;x&quot;:26.2461,&quot;y&quot;:24.37501,&quot;width&quot;:900.01178,&quot;height&quot;:350.02737}" id="svg_1">
    <defs>
     <style>*[data-color] ellipse[fill=none],
         *[data-color] circle[fill=none],
@@ -51,77 +51,65 @@
             overflow: visible;
         }</style>
    </defs>
-   <g style="cursor: move;" id="svg_3" transform="scale(1, 1) ">
+   <g style="cursor: move;" transform="scale(1, 1) " id="svg_3">
     <g style="cursor: move;" id="surface17">
-     <path id="svg_4" d="m904.0274,374.40237l-855.55475,0c-12.27734,0 -22.22655,-9.94922 -22.22655,-22.22655l0,-305.57426c0,-12.27734 9.94922,-22.22655 22.22655,-22.22655l855.55866,0c12.27734,0 22.22655,9.94922 22.22655,22.22655l0,305.50392c-0.00392,12.31251 -9.95313,22.2969 -22.23047,22.2969l0.00001,-0.00001z" stroke-miterlimit="10" stroke="#3F51B5" fill="none"/>
+     <path fill="none" stroke="#3F51B5" stroke-miterlimit="10" d="m904.0274,374.40237l-855.55475,0c-12.27734,0 -22.22655,-9.94922 -22.22655,-22.22655l0,-305.57426c0,-12.27734 9.94922,-22.22655 22.22655,-22.22655l855.55866,0c12.27734,0 22.22655,9.94922 22.22655,22.22655l0,305.50392c-0.00392,12.31251 -9.95313,22.2969 -22.23047,22.2969l0.00001,-0.00001z" id="svg_4"/>
     </g>
    </g>
   </symbol>
-  <symbol data-fullcolor="0" data-stroke-width="15.7585" overflow="visible" id="svg_1_image" data-origin-symbol="svg_1">
-   <image href="blob:file:///3b4d1a97-f577-47cc-9799-401c63684747" id="svg_5" x="26.2461" y="24.37501" width="900.01178" height="350.02737" filter="url(#filter#b29cd0)"/>
+  <symbol data-fullcolor="0" data-stroke-width="21.378" data-origin-symbol="svg_1" id="svg_1_image" overflow="visible">
+   <image href="blob:file:///3aba85ae-f2d0-455f-be73-d6e90d12da4c" filter="url(#filter#b29cd0)" height="350.02737" width="900.01178" y="24.37501" x="26.2461" id="svg_5"/>
   </symbol>
  </defs>
- <g clip-path="url(#scene_mask)" class="layer" data-color="#b29cd0" data-speed="6" data-strength="40" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="wood_3mm_cutting" display="inline" data-module="15">
+ <g data-module="15" display="inline" data-configName="wood_3mm_cutting" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-strength="40" data-speed="6" data-color="#b29cd0" class="layer" clip-path="url(#scene_mask)">
   <title>cut</title>
-  <filter id="filter#b29cd0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.6980392156862745, 0 1 0 0 0.611764705882353, 0 0 1 0 0.8156862745098039, 0 0 0 1 0"/>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#b29cd0">
+   <feColorMatrix values="1 0 0 0 0.6980392156862745, 0 1 0 0 0.611764705882353, 0 0 1 0 0.8156862745098039, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <use data-wireframe="false" transform="matrix(0.9999863629622466,0,0,0.9999856212251996,-4641.419509503129,-2648.9193450367425) " id="svg_2" xlink:href="#svg_1" data-ratiofixed="true" data-xform="x=26.246103286743164 y=24.3750057220459 width=900.0117797851562 height=350.0273742675781 " data-original-layer="cut" y="2724.58401" x="4715.23827"/>
+  <use data-wireframe="false" x="4715.23827" y="2724.58401" data-original-layer="cut" data-xform="x=26.246103286743164 y=24.3750057220459 width=900.0117797851562 height=350.0273742675781 " data-ratiofixed="true" xlink:href="#svg_1" id="svg_2" transform="matrix(0.9999863629622466,0,0,0.9999856212251996,-4641.419509503129,-2648.9193450367425) "/>
  </g>
- <g class="layer" data-color="#92b2df" data-speed="20" data-strength="15" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" display="inline" clip-path="url(#scene_mask)" data-module="15">
-  <title>path thin</title>
-  <filter id="filter#92b2df" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.5725490196078431, 0 1 0 0 0.6980392156862745, 0 0 1 0 0.8745098039215686, 0 0 0 1 0"/>
+ <g data-module="15" clip-path="url(#scene_mask)" display="inline" data-configName="0" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-strength="15" data-speed="20" data-color="#92b2df" class="layer">
+  <title>path</title>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#92b2df">
+   <feColorMatrix values="1 0 0 0 0.5725490196078431, 0 1 0 0 0.6980392156862745, 0 0 1 0 0.8745098039215686, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <path d="m765.22554,365.35963l0,-5.57416c0,-2.92964 1.76559,-5.6093 4.51556,-6.70303l70.06156,-27.90584c2.01169,-0.81247 4.19916,0.63672 4.2343,2.82028l0,6.42177" stroke-miterlimit="10" stroke="#92b2df" fill="none" id="svg_67" data-original-layer="path thin" vector-effect="non-scaling-stroke"/>
-  <path vector-effect="non-scaling-stroke" d="m890.27818,229.00407c0,2.91793 -6.63273,2.91793 -6.63273,0c0,-2.91401 6.63273,-2.91401 6.63273,0" stroke-miterlimit="10" stroke="#92b2df" fill="none" data-original-layer="path thin" id="svg_17" fill-opacity="0"/>
-  <path vector-effect="non-scaling-stroke" d="m839.7281,198.45374l21.09346,-8.25379l20.95672,26.24569l-21.02703,8.92568l-21.02315,-26.91758z" stroke-miterlimit="10" stroke="#92b2df" fill="none" data-original-layer="path thin" id="svg_16" fill-opacity="0"/>
-  <path vector-effect="non-scaling-stroke" d="m846.85299,256.44898l-147.77533,59.90152c-3.5273,1.4101 -7.55068,0.35154 -9.9139,-2.60936l-30.51521,-38.45258c-1.94138,-2.43357 -0.9883,-6.03114 1.9062,-7.23036l146.96287,-59.65538c3.52727,-1.41014 7.55069,-0.35158 9.9139,2.60931l31.32772,38.20649c1.93747,2.4687 0.98435,6.06631 -1.90624,7.23036l-0.00001,0z" stroke-miterlimit="10" stroke="#92b2df" fill="none" data-original-layer="path thin" id="svg_15" fill-opacity="0"/>
- </g>
- <g class="layer" data-color="#b7e188" data-speed="20" data-strength="15" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" display="inline" clip-path="url(#scene_mask)" data-module="15">
-  <title>path thick</title>
-  <filter id="filter#b7e188" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.7176470588235294, 0 1 0 0 0.8823529411764706, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
-  </filter>
-  <path vector-effect="non-scaling-stroke" d="m954.98078,425.0111l-809.96557,0c-11.04282,0 -20.00365,-8.96081 -20.00365,-20.00362l0,-259.99237c0,-11.04281 8.96083,-20.00359 20.00365,-20.00359l809.96557,0c11.04282,0 20.00365,8.96078 20.00365,20.00359l0,259.99237c0,11.04281 -8.96083,20.00362 -20.00365,20.00362z" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_41" data-original-layer="path thick"/>
-  <path d="m125.01156,246.79099l424.98643,0" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_53" data-original-layer="path thick" vector-effect="non-scaling-stroke"/>
-  <path d="m549.99799,125.0154l0,299.99571" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_55" data-original-layer="path thick" vector-effect="non-scaling-stroke"/>
-  <g data-original-layer="path thick" data-ratiofixed="true" id="svg_26">
-   <path vector-effect="non-scaling-stroke" d="m612.36822,246.5449l226.9735,-88.08855c4.02338,-1.55079 8.60925,-0.3867 11.32405,2.96478l66.28429,80.36215c2.25778,2.7148 3.45696,6.17179 3.42182,9.70298l-0.56249,53.12814l-229.75862,89.35419" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_61" data-original-layer="path thick"/>
-   <path vector-effect="non-scaling-stroke" d="m819.9045,193.41676l51.22193,64.17098c1.90624,2.3984 3.03512,5.32803 3.24608,8.3944l0.56249,8.57411" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_68" data-original-layer="path thick" data-segInfo="{}" data-nodeTypes="{&quot;0&quot;:0,&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:0}"/>
-   <path vector-effect="non-scaling-stroke" d="m690.12108,393.96858l-79.05752,-93.13147l0,-51.82347c0,-2.78514 3.49213,-4.05854 5.2929,-1.94138l70.55372,86.81906c2.29296,2.7148 3.56248,6.13663 3.56248,9.70298l0,50.23368c0,0.17579 -0.2461,0.28123 -0.35158,0.14061l0,-0.00001z" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_60" data-original-layer="path thick"/>
-   <path vector-effect="non-scaling-stroke" d="m690.47266,348.28173l229.68827,-91.89712" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_63" data-original-layer="path thick"/>
-   <path vector-effect="non-scaling-stroke" d="m633.11015,266.82979l229.76249,-90.66277" stroke-miterlimit="10" stroke="#b7e188" fill="none" id="svg_62" data-original-layer="path thick"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="path thin" id="svg_67" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m765.22554,365.35963l0,-5.57416c0,-2.92964 1.76559,-5.6093 4.51556,-6.70303l70.06156,-27.90584c2.01169,-0.81247 4.19916,0.63672 4.2343,2.82028l0,6.42177"/>
+  <path fill-opacity="0" id="svg_17" data-original-layer="path thin" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m890.27818,229.00407c0,2.91793 -6.63273,2.91793 -6.63273,0c0,-2.91401 6.63273,-2.91401 6.63273,0" vector-effect="non-scaling-stroke"/>
+  <path fill-opacity="0" id="svg_16" data-original-layer="path thin" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m839.7281,198.45374l21.09346,-8.25379l20.95672,26.24569l-21.02703,8.92568l-21.02315,-26.91758z" vector-effect="non-scaling-stroke"/>
+  <path fill-opacity="0" id="svg_15" data-original-layer="path thin" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m846.85299,256.44898l-147.77533,59.90152c-3.5273,1.4101 -7.55068,0.35154 -9.9139,-2.60936l-30.51521,-38.45258c-1.94138,-2.43357 -0.9883,-6.03114 1.9062,-7.23036l146.96287,-59.65538c3.52727,-1.41014 7.55069,-0.35158 9.9139,2.60931l31.32772,38.20649c1.93747,2.4687 0.98435,6.06631 -1.90624,7.23036l-0.00001,0z" vector-effect="non-scaling-stroke"/>
+  <path data-original-layer="path thick" id="svg_41" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m954.98078,425.0111l-809.96557,0c-11.04282,0 -20.00365,-8.96081 -20.00365,-20.00362l0,-259.99237c0,-11.04281 8.96083,-20.00359 20.00365,-20.00359l809.96557,0c11.04282,0 20.00365,8.96078 20.00365,20.00359l0,259.99237c0,11.04281 -8.96083,20.00362 -20.00365,20.00362z" vector-effect="non-scaling-stroke"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="path thick" id="svg_53" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m125.01156,246.79099l424.98643,0"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="path thick" id="svg_55" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m549.99799,125.0154l0,299.99571"/>
+  <g id="svg_26" data-ratiofixed="true" data-original-layer="path thick">
+   <path data-original-layer="path thick" id="svg_61" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m612.36822,246.5449l226.9735,-88.08855c4.02338,-1.55079 8.60925,-0.3867 11.32405,2.96478l66.28429,80.36215c2.25778,2.7148 3.45696,6.17179 3.42182,9.70298l-0.56249,53.12814l-229.75862,89.35419" vector-effect="non-scaling-stroke"/>
+   <path data-nodeTypes="{&quot;0&quot;:0,&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:0}" data-segInfo="{}" data-original-layer="path thick" id="svg_68" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m819.9045,193.41676l51.22193,64.17098c1.90624,2.3984 3.03512,5.32803 3.24608,8.3944l0.56249,8.57411" vector-effect="non-scaling-stroke"/>
+   <path data-original-layer="path thick" id="svg_60" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m690.12108,393.96858l-79.05752,-93.13147l0,-51.82347c0,-2.78514 3.49213,-4.05854 5.2929,-1.94138l70.55372,86.81906c2.29296,2.7148 3.56248,6.13663 3.56248,9.70298l0,50.23368c0,0.17579 -0.2461,0.28123 -0.35158,0.14061l0,-0.00001z" vector-effect="non-scaling-stroke"/>
+   <path data-original-layer="path thick" id="svg_63" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m690.47266,348.28173l229.68827,-91.89712" vector-effect="non-scaling-stroke"/>
+   <path data-original-layer="path thick" id="svg_62" fill="none" stroke="#92b2df" stroke-miterlimit="10" d="m633.11015,266.82979l229.76249,-90.66277" vector-effect="non-scaling-stroke"/>
   </g>
-  <line vector-effect="non-scaling-stroke" data-original-layer="path thick" fill="none" stroke="#b7e188" id="svg_13" y2="395.0745" x2="497.26715" y1="395.0745" x1="176.35679"/>
+  <line x1="176.35679" y1="395.0745" x2="497.26715" y2="395.0745" id="svg_13" stroke="#92b2df" fill="none" data-original-layer="path thick" vector-effect="non-scaling-stroke"/>
+  <path fill-opacity="0" stroke="#92b2df" vector-effect="non-scaling-stroke" id="svg_19" data-original-layer="text line" fill-rule="nonzero" fill="none" d="m228.26798,159.761l9.55846,0l0,22.5778l25.92934,0l0,-22.5778l9.55846,0l0,54.32734l-9.55846,0l0,-22.8942l-25.96059,0l0,22.8942l-9.52331,0l-0.0039,-54.32734z"/>
+  <path fill-opacity="0" stroke="#92b2df" vector-effect="non-scaling-stroke" id="svg_18" data-original-layer="text line" fill-rule="nonzero" fill="none" d="m287.25155,159.761l40.28851,0l0,8.53894l-30.72614,0l0,14.10918l27.23401,0l0,8.53894l-27.23401,0l0,14.60526l31.11286,0l0,8.53894l-40.67523,-0.00391l0,-54.32734l0,-0.00001z"/>
+  <path fill-opacity="0" stroke="#92b2df" vector-effect="non-scaling-stroke" id="svg_36" data-original-layer="text line" fill-rule="nonzero" fill="none" d="m385.1838,159.761l-18.94505,26.56212l19.71848,27.80038l-11.25375,0l-14.35918,-20.74189l-14.28887,20.74189l-10.93735,0l19.64817,-27.62069l-18.87474,-26.70665l11.25375,0l13.51154,19.71847l13.58184,-19.71847l10.93735,0l0.00781,-0.03516z"/>
+  <path fill-opacity="0" stroke="#92b2df" vector-effect="non-scaling-stroke" id="svg_35" data-original-layer="text line" fill-rule="nonzero" fill="none" d="m413.96857,159.37428l8.85535,0l23.91764,54.71405l-10.08971,0l-5.50382,-13.12481l-25.68325,0l-5.57413,13.12481l-9.77331,0l23.85123,-54.71405zm13.68731,33.15968l-9.38268,-21.73016l-9.31237,21.73016l18.69506,0l-0.00001,0z"/>
  </g>
- <g class="layer" data-color="#e8d54f" clip-path="url(#scene_mask)" data-speed="20" data-strength="15" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" display="inline" data-module="15">
-  <title>text line</title>
-  <filter filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB" id="filter#e8d54f">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.9098039215686274, 0 1 0 0 0.8352941176470589, 0 0 1 0 0.30980392156862746, 0 0 0 1 0" id="svg_14"/>
-  </filter>
-  <path d="m228.26798,159.761l9.55846,0l0,22.5778l25.92934,0l0,-22.5778l9.55846,0l0,54.32734l-9.55846,0l0,-22.8942l-25.96059,0l0,22.8942l-9.52331,0l-0.0039,-54.32734z" fill="none" fill-rule="nonzero" data-original-layer="text line" id="svg_19" vector-effect="non-scaling-stroke" stroke="#e8d54f" fill-opacity="0"/>
-  <path d="m287.25155,159.761l40.28851,0l0,8.53894l-30.72614,0l0,14.10918l27.23401,0l0,8.53894l-27.23401,0l0,14.60526l31.11286,0l0,8.53894l-40.67523,-0.00391l0,-54.32734l0,-0.00001z" fill="none" fill-rule="nonzero" data-original-layer="text line" id="svg_18" vector-effect="non-scaling-stroke" stroke="#e8d54f" fill-opacity="0"/>
-  <path d="m385.1838,159.761l-18.94505,26.56212l19.71848,27.80038l-11.25375,0l-14.35918,-20.74189l-14.28887,20.74189l-10.93735,0l19.64817,-27.62069l-18.87474,-26.70665l11.25375,0l13.51154,19.71847l13.58184,-19.71847l10.93735,0l0.00781,-0.03516z" fill="none" fill-rule="nonzero" data-original-layer="text line" id="svg_36" vector-effect="non-scaling-stroke" stroke="#e8d54f" fill-opacity="0"/>
-  <path d="m413.96857,159.37428l8.85535,0l23.91764,54.71405l-10.08971,0l-5.50382,-13.12481l-25.68325,0l-5.57413,13.12481l-9.77331,0l23.85123,-54.71405zm13.68731,33.15968l-9.38268,-21.73016l-9.31237,21.73016l18.69506,0l-0.00001,0z" fill="none" fill-rule="nonzero" data-original-layer="text line" id="svg_35" vector-effect="non-scaling-stroke" stroke="#e8d54f" fill-opacity="0"/>
- </g>
- <g class="layer" data-color="#eac7a2" data-speed="300" data-strength="30" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" display="inline" clip-path="url(#scene_mask)" data-module="15">
+ <g data-module="15" clip-path="url(#scene_mask)" display="inline" data-configName="0" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-strength="30" data-speed="300" data-color="#eac7a2" class="layer">
   <title>text engrave</title>
-  <filter id="filter#eac7a2" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.9176470588235294, 0 1 0 0 0.7803921568627451, 0 0 1 0 0.6352941176470588, 0 0 0 1 0"/>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#eac7a2">
+   <feColorMatrix values="1 0 0 0 0.9176470588235294, 0 1 0 0 0.7803921568627451, 0 0 1 0 0.6352941176470588, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <path d="m287.25155,159.761l40.28851,0l0,8.53894l-30.72614,0l0,14.10918l27.23401,0l0,8.53894l-27.23401,0l0,14.60526l31.11286,0l0,8.53894l-40.67523,-0.00391l0,-54.32734l0,-0.00001z" fill="#eac7a2" fill-rule="nonzero" id="svg_57" data-original-layer="text engrave" vector-effect="non-scaling-stroke"/>
-  <path d="m228.26798,159.761l9.55846,0l0,22.5778l25.92934,0l0,-22.5778l9.55846,0l0,54.32734l-9.55846,0l0,-22.8942l-25.96059,0l0,22.8942l-9.52331,0l-0.0039,-54.32734z" fill="#eac7a2" fill-rule="nonzero" id="svg_56" data-original-layer="text engrave" vector-effect="non-scaling-stroke"/>
-  <path d="m413.96857,159.37428l8.85535,0l23.91764,54.71405l-10.08971,0l-5.50382,-13.12481l-25.68325,0l-5.57413,13.12481l-9.77331,0l23.85123,-54.71405zm13.68731,33.15968l-9.38268,-21.73016l-9.31237,21.73016l18.69506,0l-0.00001,0z" fill="#eac7a2" fill-rule="nonzero" id="svg_59" data-original-layer="text engrave" vector-effect="non-scaling-stroke"/>
-  <path d="m385.1838,159.761l-18.94505,26.56212l19.71848,27.80038l-11.25375,0l-14.35918,-20.74189l-14.28887,20.74189l-10.93735,0l19.64817,-27.62069l-18.87474,-26.70665l11.25375,0l13.51154,19.71847l13.58184,-19.71847l10.93735,0l0.00781,-0.03516z" fill="#eac7a2" fill-rule="nonzero" id="svg_58" data-original-layer="text engrave" vector-effect="non-scaling-stroke"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="text engrave" id="svg_57" fill-rule="nonzero" fill="#eac7a2" d="m287.25155,159.761l40.28851,0l0,8.53894l-30.72614,0l0,14.10918l27.23401,0l0,8.53894l-27.23401,0l0,14.60526l31.11286,0l0,8.53894l-40.67523,-0.00391l0,-54.32734l0,-0.00001z"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="text engrave" id="svg_56" fill-rule="nonzero" fill="#eac7a2" d="m228.26798,159.761l9.55846,0l0,22.5778l25.92934,0l0,-22.5778l9.55846,0l0,54.32734l-9.55846,0l0,-22.8942l-25.96059,0l0,22.8942l-9.52331,0l-0.0039,-54.32734z"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="text engrave" id="svg_59" fill-rule="nonzero" fill="#eac7a2" d="m413.96857,159.37428l8.85535,0l23.91764,54.71405l-10.08971,0l-5.50382,-13.12481l-25.68325,0l-5.57413,13.12481l-9.77331,0l23.85123,-54.71405zm13.68731,33.15968l-9.38268,-21.73016l-9.31237,21.73016l18.69506,0l-0.00001,0z"/>
+  <path vector-effect="non-scaling-stroke" data-original-layer="text engrave" id="svg_58" fill-rule="nonzero" fill="#eac7a2" d="m385.1838,159.761l-18.94505,26.56212l19.71848,27.80038l-11.25375,0l-14.35918,-20.74189l-14.28887,20.74189l-10.93735,0l19.64817,-27.62069l-18.87474,-26.70665l11.25375,0l13.51154,19.71847l13.58184,-19.71847l10.93735,0l0.00781,-0.03516z"/>
  </g>
- <g display="inline" class="layer" data-color="#dd8489" data-speed="300" data-strength="20" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" clip-path="url(#scene_mask)" data-module="15">
+ <g data-module="15" clip-path="url(#scene_mask)" data-configName="0" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-strength="20" data-speed="300" data-color="#dd8489" class="layer" display="inline">
   <title>machine engrave</title>
-  <filter id="filter#dd8489" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-   <feColorMatrix type="matrix" values="1 0 0 0 0.8666666666666667, 0 1 0 0 0.5176470588235295, 0 0 1 0 0.5372549019607843, 0 0 0 1 0"/>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#dd8489">
+   <feColorMatrix values="1 0 0 0 0.8666666666666667, 0 1 0 0 0.5176470588235295, 0 0 1 0 0.5372549019607843, 0 0 0 1 0" type="matrix"/>
   </filter>
-  <g data-original-layer="machine engrave" id="svg_20">
-   <path vector-effect="non-scaling-stroke" id="svg_21" fill="#dd8489" stroke="#dd8489" d="m917.00355,241.97456l-66.28694,-80.53916a9.94833,9.94833 0 0 0 -11.32417,-2.96333l-225.84833,87.66528a3.52778,3.52778 0 0 0 -1.02306,0.38806l0,0a2.89278,2.89278 0 0 0 -1.41111,2.50472l0,51.82305l78.88111,92.81583l0,0.21167l0,0s0.35278,0 0.35278,0l0,0l229.30555,-89.2175l0.56444,-53.12833a14.95778,14.95778 0 0 0 -3.21028,-9.56028l0.00001,-0.00001zm-70.02639,14.49917l0,0l-147.77861,59.97222a8.5725,8.5725 0 0 1 -9.91306,-2.61056l-30.51528,-38.45278a4.65667,4.65667 0 0 1 1.905,-7.23194l146.89666,-59.72528a8.5725,8.5725 0 0 1 9.91306,2.61056l31.32667,38.20583a4.65667,4.65667 0 0 1 -1.83444,7.23194l0,0.00001zm13.89944,-31.07972l-21.16667,-26.91694l21.16667,-8.255l20.955,26.24667l-20.955,8.92528l0,-0.00001zm22.89528,3.52778c0,-2.89278 6.63222,-2.89278 6.63222,0s-6.70278,3.03389 -6.70278,0.10583l0.07056,-0.10583z" class="cls-1"/>
+  <g id="svg_20" data-original-layer="machine engrave">
+   <path class="cls-1" d="m917.00355,241.97456l-66.28694,-80.53916a9.94833,9.94833 0 0 0 -11.32417,-2.96333l-225.84833,87.66528a3.52778,3.52778 0 0 0 -1.02306,0.38806l0,0a2.89278,2.89278 0 0 0 -1.41111,2.50472l0,51.82305l78.88111,92.81583l0,0.21167l0,0s0.35278,0 0.35278,0l0,0l229.30555,-89.2175l0.56444,-53.12833a14.95778,14.95778 0 0 0 -3.21028,-9.56028l0.00001,-0.00001zm-70.02639,14.49917l0,0l-147.77861,59.97222a8.5725,8.5725 0 0 1 -9.91306,-2.61056l-30.51528,-38.45278a4.65667,4.65667 0 0 1 1.905,-7.23194l146.89666,-59.72528a8.5725,8.5725 0 0 1 9.91306,2.61056l31.32667,38.20583a4.65667,4.65667 0 0 1 -1.83444,7.23194l0,0.00001zm13.89944,-31.07972l-21.16667,-26.91694l21.16667,-8.255l20.955,26.24667l-20.955,8.92528l0,-0.00001zm22.89528,3.52778c0,-2.89278 6.63222,-2.89278 6.63222,0s-6.70278,3.03389 -6.70278,0.10583l0.07056,-0.10583z" stroke="#dd8489" fill="#dd8489" id="svg_21" vector-effect="non-scaling-stroke"/>
   </g>
  </g>
 </svg>
