@@ -81,7 +81,6 @@ function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void
       accelerator: `${fnKey}+O`,
     },
     { id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
-    // { id: 'TASK_INTERPRETER', label: 'Task Interpreter', click: callback},
     { type: 'separator' },
     {
       id: 'SAVE_SCENE',
@@ -105,51 +104,67 @@ function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void
       id: 'SAMPLES',
       label: r.samples || 'Examples',
       submenu: [
-        { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example, click: callback },
         {
-          id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
-          label: r.import_ador_printing_example_single,
-          click: callback,
+          id: 'EXAMPLE_FILES',
+          label: r.example_files || 'Example Files',
+          submenu: [
+            {
+              id: 'IMPORT_EXAMPLE_ADOR_LASER',
+              label: r.import_ador_laser_example,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
+              label: r.import_ador_printing_example_single,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
+              label: r.import_ador_printing_example_full,
+              click: callback,
+            },
+            { id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
+            { id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
+            { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example, click: callback },
+            { id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example, click: callback },
+            { id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example, click: callback },
+          ],
         },
         {
-          id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
-          label: r.import_ador_printing_example_full,
-          click: callback,
-        },
-        { id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
-        { id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
-        { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example, click: callback },
-        { id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example, click: callback },
-        { id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example, click: callback },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_ENGRAVE',
-          label: r.import_material_testing_engrave,
-          click: callback,
-        },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_OLD',
-          label: r.import_material_testing_old,
-          click: callback,
-        },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_CUT',
-          label: r.import_material_testing_cut,
-          click: callback,
-        },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT',
-          label: r.import_material_testing_simple_cut,
-          click: callback,
-        },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_LINE',
-          label: r.import_material_testing_line,
-          click: callback,
-        },
-        {
-          id: 'IMPORT_MATERIAL_TESTING_PRINT',
-          label: r.import_material_printing_test,
-          click: callback,
+          id: 'MATERIAL_TEST',
+          label: r.material_test || 'Material Test',
+          submenu: [
+            {
+              id: 'IMPORT_MATERIAL_TESTING_ENGRAVE',
+              label: r.import_material_testing_engrave,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_MATERIAL_TESTING_OLD',
+              label: r.import_material_testing_old,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_MATERIAL_TESTING_CUT',
+              label: r.import_material_testing_cut,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT',
+              label: r.import_material_testing_simple_cut,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_MATERIAL_TESTING_LINE',
+              label: r.import_material_testing_line,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_MATERIAL_TESTING_PRINT',
+              label: r.import_material_printing_test,
+              click: callback,
+            },
+          ],
         },
         { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
       ],
@@ -554,75 +569,71 @@ function buildDeviceMenu(
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
   const handleClick = (item: MenuItem) => callback({ ...item, uuid, serial, machineName, source });
-  const submenu: MenuItemConstructorOptions[] = [
+  const submenu = [
     { id: 'DASHBOARD', label: r.dashboard, click: handleClick },
     { id: 'MACHINE_INFO', label: r.machine_info, click: handleClick },
-    isPromark
-      ? { id: 'PROMARK_SETTINGS', label: i18n.lang.promark_settings?.title, click: handleClick }
-      : null,
+    isPromark && {
+      id: 'PROMARK_SETTINGS',
+      label: i18n.lang.promark_settings?.title,
+      click: handleClick,
+    },
     { type: 'separator' },
-    { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
-    isBeamo
-      ? {
+    {
+      id: 'CALIBRATION',
+      label: r.calibration,
+      submenu: [
+        { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
+        isBeamo && {
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
           label: r.calibrate_beambox_camera_borderless,
           click: handleClick,
-        }
-      : null,
-    isBeamo
-      ? {
+        },
+        isBeamo && {
           id: 'CALIBRATE_DIODE_MODULE',
           label: r.calibrate_diode_module,
           click: handleClick,
-        }
-      : null,
-    isAdor && isDevMode
-      ? {
-          id: 'CALIBRATE_CAMERA_V2_FACTORY',
-          label: `${r.calibrate_beambox_camera} (Factory)`,
-          click: handleClick,
-        }
-      : null,
-    isAdor
-      ? {
+        },
+        isAdor &&
+          isDevMode && {
+            id: 'CALIBRATE_CAMERA_V2_FACTORY',
+            label: `${r.calibrate_beambox_camera} (Factory)`,
+            click: handleClick,
+          },
+        isAdor && {
           id: 'CALIBRATE_PRINTER_MODULE',
           label: r.calibrate_printer_module,
           click: handleClick,
-        }
-      : null,
-    isAdor
-      ? {
+        },
+        isAdor && {
           id: 'CALIBRATE_IR_MODULE',
           label: r.calibrate_ir_module,
           click: handleClick,
-        }
-      : null,
-    isAdor && isDevMode
-      ? {
-          id: 'CATRIDGE_CHIP_SETTING',
-          label: 'Catridge Chip Setting',
-          click: handleClick,
-        }
-      : null,
+        },
+        isAdor &&
+          isDevMode && {
+            id: 'CATRIDGE_CHIP_SETTING',
+            label: 'Catridge Chip Setting',
+            click: handleClick,
+          },
+      ].filter(Boolean),
+    },
     { type: 'separator' },
-    isAdor
-      ? {
-          id: 'CAMERA_CALIBRATION_DATA',
-          label: r.camera_calibration_data,
-          submenu: [
-            {
-              id: 'UPLOAD_CALIBRATION_DATA',
-              label: r.upload_data,
-              click: handleClick,
-            },
-            {
-              id: 'DOWNLOAD_CALIBRATION_DATA',
-              label: r.download_data,
-              click: handleClick,
-            },
-          ],
-        }
-      : null,
+    isAdor && {
+      id: 'CAMERA_CALIBRATION_DATA',
+      label: r.camera_calibration_data,
+      submenu: [
+        {
+          id: 'UPLOAD_CALIBRATION_DATA',
+          label: r.upload_data,
+          click: handleClick,
+        },
+        {
+          id: 'DOWNLOAD_CALIBRATION_DATA',
+          label: r.download_data,
+          click: handleClick,
+        },
+      ],
+    },
     {
       id: 'UPDATE_FIRMWARE',
       label: r.update_firmware,
