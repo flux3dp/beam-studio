@@ -118,6 +118,7 @@ function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void
         },
         { id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
         { id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
+        { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example, click: callback },
         { id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example, click: callback },
         { id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example, click: callback },
         {
