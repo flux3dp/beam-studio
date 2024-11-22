@@ -583,6 +583,7 @@ function buildDeviceMenu(
       label: r.calibration,
       submenu: [
         { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
+        model === 'fbb2' && { id: 'CALIBRATE_CAMERA_ADVANCED', label: r.calibrate_camera_advanced, click: handleClick },
         isBeamo && {
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
           label: r.calibrate_beambox_camera_borderless,
