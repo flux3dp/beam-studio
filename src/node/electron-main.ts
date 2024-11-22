@@ -595,21 +595,16 @@ const onMenuClick = (data: {
     uuid: data.uuid,
     machineName: data.machineName,
   };
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
-    if (editingStandardInput) {
-      if (data.id === 'REDO') {
-        tabViews[focusedId].webContents.redo();
-      }
-      if (data.id === 'UNDO') {
-        tabViews[focusedId].webContents.undo();
-      }
-    } else {
-      console.log('Send', data);
-      sendToFocusedView(events.MENU_CLICK, data);
+  if (editingStandardInput) {
+    if (data.id === 'REDO') {
+      tabViews[focusedId].webContents.redo();
+    }
+    if (data.id === 'UNDO') {
+      tabViews[focusedId].webContents.undo();
     }
   } else {
-    console.log('Menu event triggered but window does not exist.');
+    console.log('Send', data);
+    sendToFocusedView(events.MENU_CLICK, data);
   }
 };
 
