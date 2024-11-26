@@ -94,6 +94,7 @@ jobs:
 
           cp -R $TMP/flux_api_swap backend/flux_api
           cp -R lib/monitorexe-win64 backend/monitorexe-win64
+          cp lib/CypressDriverInstaller.exe backend/CypressDriverInstaller.exe
           cp -R lib/elevate.cmd backend/elevate.cmd
           cp -R lib/elevate.vbs backend/elevate.vbs
           ./backend/flux_api/flux_api --test --without_pcl
