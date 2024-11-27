@@ -1,6 +1,6 @@
 {
   "name": "beam-studio",
-  "version": "2.4.4-beta",
+  "version": "2.4.4-bb2",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -165,7 +165,7 @@
       {
         "provider": "s3",
         "bucket": "beamstudio",
-        "path": "/${os}${env.PUBLISH_PATH}"
+        "path": "/${os}${env.PUBLISH_PATH}-bb2"
       }
     ],
     "mac": {
