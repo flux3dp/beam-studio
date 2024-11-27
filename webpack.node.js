@@ -13,7 +13,6 @@ module.exports = [
         app: '/src/web/app',
         helpers: '/src/web/helpers',
         implementations: '/src/implementations',
-
       },
       extensions: ['.ts', '.js'],
       symlinks: false,
