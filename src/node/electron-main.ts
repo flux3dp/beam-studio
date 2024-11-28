@@ -6,10 +6,7 @@ import {
   BaseWindow,
   BrowserWindow,
   ipcMain,
-  IpcMainEvent,
   systemPreferences,
-  WebContents,
-  WebContentsView,
 } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
@@ -22,7 +19,6 @@ import path from 'path';
 import url from 'url';
 
 import Sentry from '@sentry/electron';
-import Store from 'electron-store';
 import * as electronRemote from '@electron/remote/main';
 import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
 
@@ -35,6 +31,7 @@ import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
+import TabManager from './tab-manager';
 import UpdateManager from './update-manager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 
@@ -49,20 +46,9 @@ Sentry.captureMessage('User Census', {
 });
 setupTitlebar();
 
-let focusedId = 0;
-const tabViews: { [id: number]: WebContentsView } = {};
 let mainWindow: BaseWindow | null;
 let menuManager: MenuManager | null;
-
-const sendToAllViews = (event: string, data?: any) => {
-  const allViews = Object.values(tabViews);
-  allViews.forEach((view) => view.webContents.send(event, data));
-};
-const sendToFocusedView = (event: string, data?: any) => {
-  if (focusedId && tabViews[focusedId]) {
-    tabViews[focusedId].webContents.send(event, data);
-  }
-};
+let tabManager: TabManager | null;
 
 const globalData: {
   backend: {
@@ -128,7 +114,7 @@ if (process.platform === 'linux') {
 function onGhostUp(data: { port: number }) {
   globalData.backend.alive = true;
   globalData.backend.port = data.port;
-  sendToAllViews(events.BACKEND_UP, globalData.backend);
+  tabManager?.sendToAllViews(events.BACKEND_UP, globalData.backend);
 }
 
 function onGhostDown() {
@@ -139,7 +125,7 @@ function onGhostDown() {
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
   const { alive, source, uuid, serial } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
-  sendToFocusedView('device-status', deviceInfo);
+  tabManager?.sendToFocusedView('device-status', deviceInfo);
 
   if (alive || source !== 'lan') {
     if (menuManager) {
@@ -147,12 +133,12 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
-      if (didUpdated) sendToFocusedView('UPDATE_MENU');
+      if (didUpdated) tabManager?.sendToFocusedView('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
-      sendToFocusedView('UPDATE_MENU');
+      tabManager?.sendToFocusedView('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
   }
@@ -219,144 +205,6 @@ const createShadowWindow = () => {
   }
 };
 
-const initStore = (webContents: WebContents) => {
-  const store = new Store();
-
-  if (!store.get('poke-ip-addr')) store.set('poke-ip-addr', '192.168.1.1');
-
-  if (!store.get('customizedLaserConfigs')) {
-    webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
-      const keysNeedParse = [
-        'auto_check_update',
-        'auto_connect',
-        'guessing_poke',
-        'loop_compensation',
-        'notification',
-        'printer-is-ready',
-      ];
-      // eslint-disable-next-line no-restricted-syntax
-      for (const key in localStorage) {
-        if (keysNeedParse.includes(key)) {
-          try {
-            localStorage[key] = JSON.parse(localStorage[key]);
-            console.log(key, localStorage[key]);
-          } catch (e) {
-            console.log(key, e);
-            // Error when parsing
-          }
-        }
-      }
-      store.set(localStorage);
-    });
-  }
-};
-
-const focusTab = (id: number) => {
-  if (tabViews[id]) {
-    focusedId = id;
-    Object.values(tabViews).forEach((view) => view.setVisible(view.webContents.id === id));
-    tabViews[id].webContents.focus();
-    tabViews[id].webContents.send('TAB_FOCUSED');
-  }
-};
-
-const createTab = () => {
-  const tabView = new WebContentsView({
-    webPreferences: {
-      preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-  mainWindow?.contentView.addChildView(tabView);
-  const { webContents } = tabView;
-  electronRemote.enable(webContents);
-  webContents.setWindowOpenHandler(({ url: openUrl }) => {
-    // Prevent the new window from early input files
-    if (openUrl.startsWith('file://')) return { action: 'deny' };
-    return { action: 'allow' };
-  });
-  initStore(webContents);
-  webContents.loadURL(
-    url.format({
-      pathname: path.join(__dirname, '../../index.html'),
-      protocol: 'file:',
-      slashes: true,
-    })
-  );
-  const { id } = webContents;
-  if (!process.argv.includes('--test') && (process.defaultApp || DEBUG)) webContents.openDevTools();
-  tabViews[id] = tabView;
-  console.log(tabViews);
-  const bound = mainWindow?.getContentBounds();
-  if (bound) tabView.setBounds({ ...bound, x: 0, y: 0 });
-  focusedId = id;
-  focusTab(id);
-};
-
-const closeWebContentsView = async (view: WebContentsView): Promise<boolean> =>
-  new Promise<boolean>((resolve) => {
-    const { id } = view.webContents;
-    const closeHandler = () => {
-      mainWindow?.contentView.removeChildView(view);
-      view.webContents.close();
-      delete tabViews[id];
-      resolve(true);
-    };
-    let eventReceivced = false;
-    const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
-      if (evt.sender === view.webContents) {
-        eventReceivced = true;
-        ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
-        if (focusedId !== id) focusTab(id);
-      }
-    };
-    const closeReplyHander = (event: IpcMainEvent, reply: boolean) => {
-      if (event.sender === view.webContents) {
-        eventReceivced = true;
-        if (reply) closeHandler();
-        else resolve(false);
-        ipcMain.removeListener('CLOSE_REPLY', closeReplyHander);
-        ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
-      }
-    };
-    ipcMain.on('CLOSE_REPLY', closeReplyHander);
-    ipcMain.on('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
-    view.webContents.send('WINDOW_CLOSE');
-    // if no event received in 10 seconds
-    // something may goes wrong in frontend, close the view
-    setTimeout(() => {
-      if (!eventReceivced) closeHandler();
-    }, 10000);
-  });
-
-const closeTab = async (id: number): Promise<boolean> => {
-  if (tabViews[id] && Object.keys(tabViews).length > 1) {
-    const res = await closeWebContentsView(tabViews[id]);
-    if (res && focusedId === id) {
-      const ids = Object.keys(tabViews);
-      if (ids.length) {
-        focusedId = parseInt(ids[0], 10);
-        focusTab(focusedId);
-      }
-    }
-    return res;
-  }
-  return false;
-};
-
-ipcMain.on('focus-tab', (e, id) => {
-  focusTab(id);
-});
-
-ipcMain.on('create-tab', () => {
-  createTab();
-});
-
-ipcMain.on('close-tab', (e, id) => {
-  closeTab(id);
-});
-
 function createWindow() {
   // Create the browser window.
   console.log('Creating main window');
@@ -370,7 +218,8 @@ function createWindow() {
     title: `Beam Studio - ${app.getVersion()}`,
     trafficLightPosition: { x: 12, y: 14 },
   });
-  createTab();
+  tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
+  tabManager.createTab();
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -393,10 +242,8 @@ function createWindow() {
     console.log('Main window close event', isFrontEndReady, isCloseConfirmed);
     if (isFrontEndReady && !isCloseConfirmed) {
       evt.preventDefault();
-      const allTabViews = Object.values(tabViews);
-      for (let i = 0; i < allTabViews.length; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        const res = await closeWebContentsView(allTabViews[i]);
+      if (tabManager) {
+        const res = await tabManager.closeAllTabs();
         if (!res) return;
       }
       isCloseConfirmed = true;
@@ -413,18 +260,9 @@ function createWindow() {
     else app.quit();
   });
 
-  mainWindow.on('resized', () => {
-    const bound = mainWindow?.getContentBounds();
-    if (bound) {
-      bound.x = 0;
-      bound.y = 0;
-      Object.values(tabViews).forEach((view) => view.setBounds(bound));
-    }
-  });
 
   menuManager?.on('DEBUG-RELOAD', () => {
-    console.log('DEBUG-RELOAD', tabViews[focusedId]);
-    tabViews[focusedId]?.webContents.loadURL(
+    tabManager?.getFocusedView()?.webContents.loadURL(
       url.format({
         pathname: path.join(__dirname, '../../index.html'),
         protocol: 'file:',
@@ -435,22 +273,21 @@ function createWindow() {
   });
 
   mainWindow.on('new-window-for-tab', () => {
-    createTab();
+    tabManager?.createTab();
   });
 
   menuManager?.on('DEBUG-INSPECT', () => {
-    console.log('DEBUG-INSPECT', tabViews[focusedId]);
-    tabViews[focusedId]?.webContents.openDevTools();
+    tabManager?.getFocusedView()?.webContents.openDevTools();
   });
   ipcMain.on('DEBUG-INSPECT', (evt) => {
     evt.sender.openDevTools();
   });
+  networkHelper.registerEvents();
+  updateManager.setSend(tabManager.sendToFocusedView);
 
   // TODO: handle this
-  updateManager.setWebContents(tabViews[focusedId]?.webContents);
-  networkHelper.registerEvents();
   // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
-  // attachTitlebarToWindow(mainWindow);
+  attachTitlebarToWindow(mainWindow as BrowserWindow);
 }
 
 let didGetOpenFile = false;
@@ -533,7 +370,7 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
   const { imageUrl, id, senderId } = data;
-  tabViews[senderId].webContents.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
+  tabManager?.sendToView(senderId, events.SVG_URL_TO_IMG_URL_DONE, imageUrl);
 });
 
 fontHelper.registerEvents();
@@ -567,13 +404,13 @@ app.on('second-instance', (e, argv) => {
     mainWindow.focus();
   }
   const linkUrl = getDeeplinkUrl(argv);
-  if (linkUrl) handleDeepLinkUrl(Object.values(tabViews), linkUrl);
+  if (linkUrl) handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
 });
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
   app.on('open-url', (event, openUrl) => {
-    handleDeepLinkUrl(Object.values(tabViews), openUrl);
+    handleDeepLinkUrl(tabManager?.getAllViews() || [], openUrl);
   });
 });
 
@@ -597,14 +434,14 @@ const onMenuClick = (data: {
   };
   if (editingStandardInput) {
     if (data.id === 'REDO') {
-      tabViews[focusedId].webContents.redo();
+      tabManager?.getFocusedView()?.webContents.redo();
     }
     if (data.id === 'UNDO') {
-      tabViews[focusedId].webContents.undo();
+      tabManager?.getFocusedView()?.webContents.undo();
     }
   } else {
     console.log('Send', data);
-    sendToFocusedView(events.MENU_CLICK, data);
+    tabManager?.sendToFocusedView(events.MENU_CLICK, data);
   }
 };
 
@@ -612,8 +449,7 @@ const init = () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
-    // mainWindow?.webContents.send('NEW_APP_MENU');
-    sendToAllViews('NEW_APP_MENU');
+    tabManager?.sendToAllViews('NEW_APP_MENU');
   });
 
   if (!mainWindow) {
