@@ -577,6 +577,11 @@ function buildDeviceMenu(
       label: i18n.lang.promark_settings?.title,
       click: handleClick,
     },
+    isPromark && {
+      id: 'Z_AXIS_ADJUSTMENT',
+      label: i18n.lang.promark_settings?.z_axis_adjustment.title,
+      click: handleClick,
+    },
     { type: 'separator' },
     {
       id: 'CALIBRATION',
