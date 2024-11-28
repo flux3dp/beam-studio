@@ -40,6 +40,17 @@ class TabManager {
       this.closeTab(id);
     });
 
+    ipcMain.on('get-tab-id', (e) => {
+      e.returnValue = e.sender.id;
+    });
+
+    ipcMain.on('get-all-tabs', (e) => {
+      e.returnValue = Object.keys(this.tabsMap).map((id: string) => {
+        const intId = parseInt(id, 10);
+        return { id: intId, title: this.tabsMap[intId].title, isFocused: intId === this.focusedId };
+      });
+    });
+
     this.mainWindow?.on('resized', () => {
       const bound = this.mainWindow?.getContentBounds();
       if (bound) {
