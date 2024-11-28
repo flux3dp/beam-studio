@@ -568,6 +568,7 @@ function buildDeviceMenu(
   const isAdor = adorModels.has(model);
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
+  const isBb2 = model === 'fbb2';
   const handleClick = (item: MenuItem) => callback({ ...item, uuid, serial, machineName, source });
   const submenu = [
     { id: 'DASHBOARD', label: r.dashboard, click: handleClick },
@@ -619,7 +620,7 @@ function buildDeviceMenu(
       ].filter(Boolean),
     },
     { type: 'separator' },
-    isAdor && {
+    (isAdor || isBb2) && {
       id: 'CAMERA_CALIBRATION_DATA',
       label: r.camera_calibration_data,
       submenu: [
