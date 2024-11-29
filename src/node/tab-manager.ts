@@ -16,6 +16,7 @@ class TabManager {
     {
       view: WebContentsView;
       title: string;
+      isCloud: boolean;
     }
   > = {};
   private focusedId = -1;
@@ -43,11 +44,23 @@ class TabManager {
     ipcMain.on('get-tab-id', (e) => {
       e.returnValue = e.sender.id;
     });
+    ipcMain.on('set-tab-title', (e, title: string, isCloud) => {
+      const { id } = e.sender;
+      if (this.tabsMap[id]) {
+        this.tabsMap[id].title = title;
+        this.tabsMap[id].isCloud = isCloud;
+      }
+    });
 
     ipcMain.on('get-all-tabs', (e) => {
       e.returnValue = Object.keys(this.tabsMap).map((id: string) => {
         const intId = parseInt(id, 10);
-        return { id: intId, title: this.tabsMap[intId].title, isFocused: intId === this.focusedId };
+        return {
+          id: intId,
+          title: this.tabsMap[intId].title,
+          isFocused: intId === this.focusedId,
+          isCloud: this.tabsMap[intId].isCloud,
+        };
       });
     });
 
@@ -90,7 +103,7 @@ class TabManager {
     if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug))
       webContents.openDevTools();
     const title = i18n.lang.topbar.untitled;
-    this.tabsMap[id] = { view: tabView, title };
+    this.tabsMap[id] = { view: tabView, title, isCloud: false };
     console.log('createTab', id, this.tabsMap);
     const bound = this.mainWindow?.getContentBounds();
     if (bound) tabView.setBounds({ ...bound, x: 0, y: 0 });
