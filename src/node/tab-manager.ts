@@ -18,7 +18,7 @@ class TabManager {
       title: string;
     }
   > = {};
-  private focusedId: number = -1;
+  private focusedId = -1;
   private isDebug = false;
 
   constructor(mainWindow: BaseWindow, { isDebug = false } = {}) {
@@ -27,7 +27,7 @@ class TabManager {
     this.setupEvents();
   }
 
-  setupEvents = () => {
+  setupEvents = (): void => {
     ipcMain.on('focus-tab', (e, id: number) => {
       this.focusTab(id);
     });
@@ -62,7 +62,7 @@ class TabManager {
     });
   };
 
-  createTab = () => {
+  createTab = (): void => {
     const tabView = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
@@ -97,7 +97,7 @@ class TabManager {
     this.focusTab(id);
   };
 
-  focusTab = (id: number) => {
+  focusTab = (id: number): void => {
     if (this.tabsMap[id]) {
       this.focusedId = id;
       Object.values(this.tabsMap).forEach(({ view }) =>
@@ -109,15 +109,15 @@ class TabManager {
     }
   };
 
-  getFocusedView = () => {
+  getFocusedView = (): WebContentsView | null => {
     const { focusedId, tabsMap } = this;
     if (tabsMap[focusedId]) return tabsMap[focusedId].view;
     return null;
   };
 
-  getAllViews = () => Object.values(this.tabsMap).map(({ view }) => view);
+  getAllViews = (): WebContentsView[] => Object.values(this.tabsMap).map(({ view }) => view);
 
-  closeWebContentsView = (view: WebContentsView) => {
+  private closeWebContentsView = (view: WebContentsView) => {
     const { id } = view.webContents;
     return new Promise<boolean>((resolve) => {
       const closeHandler = () => {
@@ -170,27 +170,28 @@ class TabManager {
     return false;
   };
 
-  closeAllTabs = async () => {
+  closeAllTabs = async (): Promise<boolean> => {
     const ids = Object.keys(this.tabsMap);
     for (let i = 0; i < ids.length; i += 1) {
       const id = parseInt(ids[i], 10);
       console.log(this.tabsMap[id]);
+      // eslint-disable-next-line no-await-in-loop
       const res = await this.closeTab(id, true);
       if (!res) return false;
     }
     return true;
   };
 
-  sendToView = (id: number, event: string, data?: any) => {
+  sendToView = (id: number, event: string, data?: unknown): void => {
     if (this.tabsMap[id]) this.tabsMap[id].view.webContents.send(event, data);
   };
 
-  sendToAllViews = (event: string, data?: any) => {
+  sendToAllViews = (event: string, data?: unknown): void => {
     const allViews = Object.values(this.tabsMap).map(({ view }) => view);
     allViews.forEach((view) => view.webContents.send(event, data));
   };
 
-  sendToFocusedView = (event: string, data?: any) => {
+  sendToFocusedView = (event: string, data?: unknown): void => {
     const { focusedId, tabsMap } = this;
     if (tabsMap[focusedId]) tabsMap[focusedId].view.webContents.send(event, data);
   };
