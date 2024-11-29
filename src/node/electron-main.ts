@@ -369,8 +369,8 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
-  const { imageUrl, senderId } = data;
-  tabManager?.sendToView(senderId, events.SVG_URL_TO_IMG_URL_DONE, imageUrl);
+  const { imageUrl, id, senderId } = data;
+  tabManager?.sendToView(senderId, `${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
