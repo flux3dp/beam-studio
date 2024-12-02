@@ -6,21 +6,14 @@
 import EventEmitter from 'events';
 
 import Store from 'electron-store';
-import {
-  app,
-  BrowserWindow,
-  Menu,
-  MenuItemConstructorOptions,
-  MenuItem,
-  shell,
-  ipcMain,
-} from 'electron';
+import { app, Menu, MenuItemConstructorOptions, MenuItem, shell, ipcMain } from 'electron';
 
 import DeviceInfo from 'interfaces/DeviceInfo';
 import i18n from 'helpers/i18n';
 import { adorModels, promarkModels } from 'app/actions/beambox/constant';
 
 import events from './ipc-events';
+import TabManager from './tab-manager';
 
 const store = new Store();
 let r = i18n.lang.topbar.menu;
@@ -245,319 +238,6 @@ function buildAccountMenuItems(
   ];
 }
 
-const buildHelpMenu = (callback: (data: MenuData) => void) => {
-  const helpSubmenu = [];
-  if (process.platform !== 'darwin') {
-    helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback });
-  }
-  helpSubmenu.push(
-    ...[
-      { id: 'START_TUTORIAL', label: r.show_start_tutorial, click: callback },
-      { id: 'START_UI_INTRO', label: r.show_ui_intro, click: callback },
-      { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
-      { id: 'CHANGE_LOGS', label: r.change_logs, click: callback },
-      {
-        id: 'HELP_CENTER',
-        label: r.help_center,
-        click() {
-          shell.openExternal(r.link.help_center);
-        },
-      },
-      {
-        id: 'KEYBOARD_SHORTCUTS',
-        label: r.keyboard_shortcuts,
-        click() {
-          shell.openExternal(r.link.shortcuts);
-        },
-      },
-      {
-        id: 'CONTACT_US',
-        label: r.contact,
-        click() {
-          shell.openExternal(r.link.contact_us);
-        },
-      },
-      { type: 'separator' },
-      {
-        id: 'FORUM',
-        label: r.forum,
-        click() {
-          shell.openExternal(r.link.forum);
-        },
-      },
-      {
-        id: 'FOLLOW_US',
-        label: r.follow_us,
-        click: callback,
-      },
-      { type: 'separator' },
-    ]
-  );
-  helpSubmenu.push({ id: 'UPDATE_BS', label: r.update, click: callback });
-  if (process.platform !== 'darwin') {
-    const currentChannel = app.getVersion().split('-')[1] || 'latest';
-    const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
-    helpSubmenu.push({ id: 'SWITCH_VERSION', label: switchChannelLabel, click: callback });
-  }
-  helpSubmenu.push(
-    ...[
-      { type: 'separator' },
-      { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
-      {
-        id: 'DEV_TOOL',
-        label: r.dev_tool || 'Debug Tool',
-        click() {
-          BrowserWindow.getFocusedWindow()?.webContents.openDevTools();
-        },
-        accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J',
-      },
-      {
-        id: 'BEAM_STUDIO_API',
-        label: r.using_beam_studio_api || 'Using Beam Studio API',
-        click() {
-          shell.openExternal(r.link.beam_studio_api);
-        },
-      },
-    ]
-  );
-  return helpSubmenu;
-};
-
-function buildMenuItems(
-  callback: (data: MenuData) => void,
-  isDevMode = false
-): MenuItemConstructorOptions[] {
-  const menuItems = [];
-  const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
-  const deleteKey = 'Delete';
-
-  if (process.platform === 'darwin') {
-    menuItems.push(buildOSXAppMenu(callback));
-  }
-
-  menuItems.push(buildFileMenu(fnKey, callback));
-
-  menuItems.push({
-    id: '_edit',
-    label: r.edit,
-    submenu: [
-      {
-        id: 'UNDO',
-        label: r.undo || 'Undo',
-        click: callback,
-        accelerator: `${fnKey}+Z`,
-      },
-      {
-        id: 'REDO',
-        label: r.redo || 'Redo',
-        click: callback,
-        accelerator: `${fnKey}+Shift+Z`,
-      },
-      { type: 'separator' },
-      { id: 'CUT', label: r.cut, role: 'cut' },
-      { id: 'COPY', label: r.copy, role: 'copy' },
-      { id: 'PASTE', label: r.paste, role: 'paste' },
-      {
-        id: 'PASTE_IN_PLACE',
-        label: r.paste_in_place,
-        click: callback,
-        accelerator: `${fnKey}+Shift+V`,
-      },
-      {
-        id: 'DUPLICATE',
-        label: r.duplicate || 'Duplicate',
-        enabled: false,
-        click: callback,
-        accelerator: `${fnKey}+D`,
-      },
-      {
-        id: 'DELETE',
-        label: r.delete || 'Delete',
-        enabled: false,
-        click: callback,
-        accelerator: deleteKey,
-      },
-      { type: 'separator' },
-      {
-        id: 'GROUP',
-        label: r.group || 'Group',
-        enabled: false,
-        click: callback,
-        accelerator: `${fnKey}+G`,
-      },
-      {
-        id: 'UNGROUP',
-        label: r.ungroup || 'Ungroup',
-        enabled: false,
-        click: callback,
-        accelerator: `${fnKey}+Shift+G`,
-      },
-      { type: 'separator' },
-      {
-        id: 'PATH',
-        label: r.path,
-        enabled: false,
-        submenu: [
-          { id: 'OFFSET', label: r.offset || 'Offset', click: callback },
-          {
-            id: 'DECOMPOSE_PATH',
-            label: r.decompose_path,
-            enabled: false,
-            click: callback,
-          },
-        ],
-      },
-      {
-        id: 'PHOTO_EDIT',
-        label: r.photo_edit || 'Edit Photo',
-        enabled: false,
-        submenu: [
-          { id: 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
-          { id: 'IMAGE_CROP', label: r.image_crop, click: callback },
-          { id: 'IMAGE_INVERT', label: r.image_invert, click: callback },
-          { id: 'IMAGE_STAMP', label: r.image_stamp, click: callback },
-          { id: 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
-          { id: 'IMAGE_CURVE', label: r.image_curve, click: callback },
-        ],
-      },
-      {
-        id: 'SVG_EDIT',
-        label: r.svg_edit || 'Edit Photo',
-        enabled: false,
-        submenu: [
-          { id: 'DISASSEMBLE_USE', label: r.disassemble_use || 'Disassemble SVG', click: callback },
-        ],
-      },
-      {
-        id: 'LAYER',
-        label: r.layer_setting,
-        submenu: [
-          {
-            id: 'LAYER_COLOR_CONFIG',
-            label: r.layer_color_config || 'Color Configuration',
-            click: callback,
-          },
-        ],
-      },
-      { type: 'separator' },
-      { id: 'DOCUMENT_SETTING', label: r.document_setting || 'Document Setting', click: callback },
-      { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback },
-    ].filter((item) => !!item),
-  });
-
-  menuItems.push({
-    id: '_view',
-    label: r.view,
-    submenu: [
-      {
-        id: 'ZOOM_IN',
-        label: r.zoom_in || 'Zoom In',
-        click: callback,
-        accelerator: process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus',
-      },
-      {
-        id: 'ZOOM_OUT',
-        label: r.zoom_out || 'Zoom Out',
-        click: callback,
-        accelerator: `${fnKey}+-`,
-      },
-      { id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback },
-      {
-        id: 'ZOOM_WITH_WINDOW',
-        label: r.zoom_with_window || 'Zoom With Window',
-        click: callback,
-        type: 'checkbox',
-      },
-      { type: 'separator' },
-      {
-        id: 'SHOW_GRIDS',
-        label: r.show_grids || 'Show Grids',
-        click: callback,
-        type: 'checkbox',
-        checked: true,
-      },
-      {
-        id: 'SHOW_RULERS',
-        label: r.show_rulers,
-        click: callback,
-        type: 'checkbox',
-      },
-      {
-        id: 'SHOW_LAYER_COLOR',
-        label: r.show_layer_color || 'Show Layer Color',
-        click: callback,
-        type: 'checkbox',
-      },
-      {
-        id: 'ALIGN_TO_EDGES',
-        label: r.align_to_edges,
-        enabled: false,
-        click: callback,
-        type: 'checkbox',
-      },
-      {
-        id: 'ANTI_ALIASING',
-        label: r.anti_aliasing,
-        click: callback,
-        type: 'checkbox',
-      },
-    ],
-  });
-
-  menuItems.push({
-    id: '_machines',
-    label: r.machines || 'Machines',
-    submenu: [
-      {
-        id: 'ADD_NEW_MACHINE',
-        label: r.add_new_machine || 'Add New Machine',
-        accelerator: `${fnKey}+M`,
-        click: callback,
-      },
-      { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
-      { type: 'separator' },
-    ],
-  });
-
-  menuItems.push({
-    id: '_tools',
-    label: r.tools.title,
-    submenu: [
-      { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
-      { id: 'CODE_GENERATOR', label: r.tools.code_generator, click: callback },
-      { id: 'BOX_GEN', label: r.tools.box_generator, click: callback },
-    ],
-  });
-
-  const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
-  menuItems.push({
-    id: '_account',
-    label: r.account,
-    submenu: accountSubmenu,
-  });
-
-  if (process.platform === 'darwin') {
-    menuItems.push({
-      label: r.window,
-      role: 'window',
-      submenu: [
-        { label: r.minimize, role: 'minimize' },
-        { label: r.close, role: 'close' },
-      ],
-    });
-  }
-
-  const helpSubmenu = buildHelpMenu(callback);
-  menuItems.push({
-    id: '_help',
-    label: r.help || 'Help',
-    role: 'help',
-    submenu: helpSubmenu,
-  });
-
-  return menuItems as MenuItemConstructorOptions[];
-}
-
 function getDeviceMenuId(uuid: string, data: { source: string }): string {
   return `device:${data.source}:${uuid}`;
 }
@@ -710,11 +390,9 @@ function buildDeviceMenu(
 
 class MenuManager extends EventEmitter {
   public appmenu: Menu | null = null;
-
   private deviceMenu?: MenuItem;
-
   private deviceList: { [uuid: string]: DeviceInfo };
-
+  private tabManager?: TabManager;
   private isDevMode: boolean;
 
   constructor() {
@@ -781,8 +459,12 @@ class MenuManager extends EventEmitter {
     });
   }
 
+  setTabManager(tabManager: TabManager): void {
+    this.tabManager = tabManager;
+  }
+
   constructMenu(): void {
-    this.appmenu = Menu.buildFromTemplate(buildMenuItems(this.onMenuClick, this.isDevMode));
+    this.appmenu = Menu.buildFromTemplate(this.buildMenuItems(this.onMenuClick));
 
     for (const i in this.appmenu.items) {
       if (this.appmenu.items[i].id === '_machines') {
@@ -830,7 +512,8 @@ class MenuManager extends EventEmitter {
   };
 
   reset_custom_electron_titlebar(): void {
-    BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
+    const view = this.tabManager?.getFocusedView();
+    if (view) view.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
   }
 
   appendDevice(uuid: string, data: DeviceInfo): void {
@@ -883,6 +566,326 @@ class MenuManager extends EventEmitter {
       Menu.setApplicationMenu(this.appmenu);
     }
   }
+
+  private buildMenuItems(callback: (data: MenuData) => void): MenuItemConstructorOptions[] {
+    const menuItems = [];
+    const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
+    const deleteKey = 'Delete';
+
+    if (process.platform === 'darwin') {
+      menuItems.push(buildOSXAppMenu(callback));
+    }
+
+    menuItems.push(buildFileMenu(fnKey, callback));
+
+    menuItems.push({
+      id: '_edit',
+      label: r.edit,
+      submenu: [
+        {
+          id: 'UNDO',
+          label: r.undo || 'Undo',
+          click: callback,
+          accelerator: `${fnKey}+Z`,
+        },
+        {
+          id: 'REDO',
+          label: r.redo || 'Redo',
+          click: callback,
+          accelerator: `${fnKey}+Shift+Z`,
+        },
+        { type: 'separator' },
+        { id: 'CUT', label: r.cut, role: 'cut' },
+        { id: 'COPY', label: r.copy, role: 'copy' },
+        { id: 'PASTE', label: r.paste, role: 'paste' },
+        {
+          id: 'PASTE_IN_PLACE',
+          label: r.paste_in_place,
+          click: callback,
+          accelerator: `${fnKey}+Shift+V`,
+        },
+        {
+          id: 'DUPLICATE',
+          label: r.duplicate || 'Duplicate',
+          enabled: false,
+          click: callback,
+          accelerator: `${fnKey}+D`,
+        },
+        {
+          id: 'DELETE',
+          label: r.delete || 'Delete',
+          enabled: false,
+          click: callback,
+          accelerator: deleteKey,
+        },
+        { type: 'separator' },
+        {
+          id: 'GROUP',
+          label: r.group || 'Group',
+          enabled: false,
+          click: callback,
+          accelerator: `${fnKey}+G`,
+        },
+        {
+          id: 'UNGROUP',
+          label: r.ungroup || 'Ungroup',
+          enabled: false,
+          click: callback,
+          accelerator: `${fnKey}+Shift+G`,
+        },
+        { type: 'separator' },
+        {
+          id: 'PATH',
+          label: r.path,
+          enabled: false,
+          submenu: [
+            { id: 'OFFSET', label: r.offset || 'Offset', click: callback },
+            {
+              id: 'DECOMPOSE_PATH',
+              label: r.decompose_path,
+              enabled: false,
+              click: callback,
+            },
+          ],
+        },
+        {
+          id: 'PHOTO_EDIT',
+          label: r.photo_edit || 'Edit Photo',
+          enabled: false,
+          submenu: [
+            { id: 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
+            { id: 'IMAGE_CROP', label: r.image_crop, click: callback },
+            { id: 'IMAGE_INVERT', label: r.image_invert, click: callback },
+            { id: 'IMAGE_STAMP', label: r.image_stamp, click: callback },
+            { id: 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
+            { id: 'IMAGE_CURVE', label: r.image_curve, click: callback },
+          ],
+        },
+        {
+          id: 'SVG_EDIT',
+          label: r.svg_edit || 'Edit Photo',
+          enabled: false,
+          submenu: [
+            {
+              id: 'DISASSEMBLE_USE',
+              label: r.disassemble_use || 'Disassemble SVG',
+              click: callback,
+            },
+          ],
+        },
+        {
+          id: 'LAYER',
+          label: r.layer_setting,
+          submenu: [
+            {
+              id: 'LAYER_COLOR_CONFIG',
+              label: r.layer_color_config || 'Color Configuration',
+              click: callback,
+            },
+          ],
+        },
+        { type: 'separator' },
+        {
+          id: 'DOCUMENT_SETTING',
+          label: r.document_setting || 'Document Setting',
+          click: callback,
+        },
+        { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback },
+      ].filter((item) => !!item),
+    });
+
+    menuItems.push({
+      id: '_view',
+      label: r.view,
+      submenu: [
+        {
+          id: 'ZOOM_IN',
+          label: r.zoom_in || 'Zoom In',
+          click: callback,
+          accelerator: process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus',
+        },
+        {
+          id: 'ZOOM_OUT',
+          label: r.zoom_out || 'Zoom Out',
+          click: callback,
+          accelerator: `${fnKey}+-`,
+        },
+        { id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback },
+        {
+          id: 'ZOOM_WITH_WINDOW',
+          label: r.zoom_with_window || 'Zoom With Window',
+          click: callback,
+          type: 'checkbox',
+        },
+        { type: 'separator' },
+        {
+          id: 'SHOW_GRIDS',
+          label: r.show_grids || 'Show Grids',
+          click: callback,
+          type: 'checkbox',
+          checked: true,
+        },
+        {
+          id: 'SHOW_RULERS',
+          label: r.show_rulers,
+          click: callback,
+          type: 'checkbox',
+        },
+        {
+          id: 'SHOW_LAYER_COLOR',
+          label: r.show_layer_color || 'Show Layer Color',
+          click: callback,
+          type: 'checkbox',
+        },
+        {
+          id: 'ALIGN_TO_EDGES',
+          label: r.align_to_edges,
+          enabled: false,
+          click: callback,
+          type: 'checkbox',
+        },
+        {
+          id: 'ANTI_ALIASING',
+          label: r.anti_aliasing,
+          click: callback,
+          type: 'checkbox',
+        },
+      ],
+    });
+
+    menuItems.push({
+      id: '_machines',
+      label: r.machines || 'Machines',
+      submenu: [
+        {
+          id: 'ADD_NEW_MACHINE',
+          label: r.add_new_machine || 'Add New Machine',
+          accelerator: `${fnKey}+M`,
+          click: callback,
+        },
+        { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
+        { type: 'separator' },
+      ],
+    });
+
+    menuItems.push({
+      id: '_tools',
+      label: r.tools.title,
+      submenu: [
+        { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
+        { id: 'CODE_GENERATOR', label: r.tools.code_generator, click: callback },
+        { id: 'BOX_GEN', label: r.tools.box_generator, click: callback },
+      ],
+    });
+
+    const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
+    menuItems.push({
+      id: '_account',
+      label: r.account,
+      submenu: accountSubmenu,
+    });
+
+    if (process.platform === 'darwin') {
+      menuItems.push({
+        label: r.window,
+        role: 'window',
+        submenu: [
+          { label: r.minimize, role: 'minimize' },
+          { label: r.close, role: 'close' },
+        ],
+      });
+    }
+
+    const helpSubmenu = this.buildHelpMenu(callback);
+    menuItems.push({
+      id: '_help',
+      label: r.help || 'Help',
+      role: 'help',
+      submenu: helpSubmenu,
+    });
+
+    return menuItems as MenuItemConstructorOptions[];
+  }
+
+  private buildHelpMenu = (callback: (data: MenuData) => void) => {
+    const helpSubmenu = [];
+    if (process.platform !== 'darwin') {
+      helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback });
+    }
+    helpSubmenu.push(
+      ...[
+        { id: 'START_TUTORIAL', label: r.show_start_tutorial, click: callback },
+        { id: 'START_UI_INTRO', label: r.show_ui_intro, click: callback },
+        { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
+        { id: 'CHANGE_LOGS', label: r.change_logs, click: callback },
+        {
+          id: 'HELP_CENTER',
+          label: r.help_center,
+          click() {
+            shell.openExternal(r.link.help_center);
+          },
+        },
+        {
+          id: 'KEYBOARD_SHORTCUTS',
+          label: r.keyboard_shortcuts,
+          click() {
+            shell.openExternal(r.link.shortcuts);
+          },
+        },
+        {
+          id: 'CONTACT_US',
+          label: r.contact,
+          click() {
+            shell.openExternal(r.link.contact_us);
+          },
+        },
+        { type: 'separator' },
+        {
+          id: 'FORUM',
+          label: r.forum,
+          click() {
+            shell.openExternal(r.link.forum);
+          },
+        },
+        {
+          id: 'FOLLOW_US',
+          label: r.follow_us,
+          click: callback,
+        },
+        { type: 'separator' },
+      ]
+    );
+    helpSubmenu.push({ id: 'UPDATE_BS', label: r.update, click: callback });
+    if (process.platform !== 'darwin') {
+      const currentChannel = app.getVersion().split('-')[1] || 'latest';
+      const switchChannelLabel =
+        currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
+      helpSubmenu.push({ id: 'SWITCH_VERSION', label: switchChannelLabel, click: callback });
+    }
+    helpSubmenu.push(
+      ...[
+        { type: 'separator' },
+        { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
+        {
+          id: 'DEV_TOOL',
+          label: r.dev_tool || 'Debug Tool',
+          click:() => {
+            const view = this.tabManager?.getFocusedView();
+            if (view) view.webContents.openDevTools();
+          },
+          accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J',
+        },
+        {
+          id: 'BEAM_STUDIO_API',
+          label: r.using_beam_studio_api || 'Using Beam Studio API',
+          click() {
+            shell.openExternal(r.link.beam_studio_api);
+          },
+        },
+      ]
+    );
+    return helpSubmenu;
+  };
 }
 
 export default MenuManager;

@@ -214,6 +214,7 @@ function createWindow() {
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
+  menuManager?.setTabManager(tabManager);
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -372,6 +373,10 @@ let editingStandardInput = false;
 ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
   console.log('Set SET_EDITING_STANDARD_INPUT', arg);
+});
+
+ipcMain.on('OPEN_RECENT_FILES', (event, filePath: string) => {
+  tabManager?.sendToFocusedView('OPEN_RECENT_FILES', filePath);
 });
 
 console.log('Running Beam Studio on ', os.arch());
