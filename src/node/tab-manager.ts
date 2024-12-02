@@ -6,6 +6,7 @@ import { BaseWindow, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
 import { enable as enableRemote } from '@electron/remote/main';
 
 import i18n from 'helpers/i18n';
+import tabConstants from 'app/constants/tab-constants';
 
 import initStore from './helpers/init-store';
 
@@ -112,14 +113,21 @@ class TabManager {
     return tab;
   };
 
+  private createPreloadedTab = (): void => {
+    if (!this.preloadedTab && tabConstants.maxTab && Object.keys(this.tabsMap).length < tabConstants.maxTab) {
+      this.preloadedTab = this.createTab();
+    }
+  };
+
   addNewTab = (): void => {
     if (this.preloadedTab) {
       console.log('using preloaded tab', this.preloadedTab.view.webContents.id, this.tabsMap);
     }
     const newTab = this.preloadedTab ?? this.createTab();
+    this.preloadedTab = null;
     const { id } = newTab.view.webContents;
     this.tabsMap[id] = newTab;
-    this.preloadedTab = this.createTab();
+    this.createPreloadedTab();
     this.focusTab(id);
     console.log('addNewTab', this.tabsMap);
   };
@@ -127,9 +135,6 @@ class TabManager {
   focusTab = (id: number): void => {
     if (this.tabsMap[id]) {
       this.focusedId = id;
-      Object.values(this.tabsMap).forEach(({ view }) =>
-        view.setVisible(view.webContents.id === id)
-      );
       const { view } = this.tabsMap[id];
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
@@ -186,13 +191,18 @@ class TabManager {
     const { tabsMap, focusedId } = this;
     if (tabsMap[id] && (allowEmpty || Object.keys(tabsMap).length > 1)) {
       const res = await this.closeWebContentsView(tabsMap[id].view);
-      if (res && focusedId === id) {
-        const ids = Object.keys(tabsMap);
-        if (ids.length) {
-          const targetId = parseInt(ids[0], 10);
-          this.focusTab(targetId);
+      if (res) {
+        if (focusedId === id) {
+          const ids = Object.keys(tabsMap);
+          if (ids.length) {
+            const targetId = parseInt(ids[0], 10);
+            this.focusTab(targetId);
+          }
+        } else {
+          this.focusTab(focusedId);
         }
       }
+      this.createPreloadedTab();
       return res;
     }
     return false;
