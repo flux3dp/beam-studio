@@ -4,10 +4,6 @@
     border: 1px solid #e0e0e0;
     border-width: 0 0 1px 0;
 
-    .hint-container {
-      z-index: 1;
-      top: 40px;
-    }
     .menu {
       &.camera {
         left: 65px;
@@ -20,19 +16,6 @@
     }
   }
 
-  .hint-container {
-    position: absolute;
-    z-index: 1;
-    top: 80px;
-    margin-left: 70px;
-    height: 40px;
-    line-height: 40px;
-    color: #333333;
-    font-weight: bold;
-    font-size: 13px;
-    letter-spacing: 0.95px;
-    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
-  }
   .menu {
     background: #fff;
     position: fixed;
