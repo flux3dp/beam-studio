@@ -7,6 +7,7 @@ import { enable as enableRemote } from '@electron/remote/main';
 
 import i18n from 'helpers/i18n';
 import tabConstants from 'app/constants/tab-constants';
+import { Tab as FrontendTab } from 'interfaces/Tab';
 
 import initStore from './helpers/init-store';
 
@@ -18,10 +19,7 @@ interface Tab {
 
 class TabManager {
   private mainWindow: BaseWindow;
-  private tabsMap: Record<
-    number,
-    Tab
-  > = {};
+  private tabsMap: Record<number, Tab> = {};
   private preloadedTab: Tab | null = null;
   private focusedId = -1;
   private isDebug = false;
@@ -48,24 +46,12 @@ class TabManager {
     ipcMain.on('get-tab-id', (e) => {
       e.returnValue = e.sender.id;
     });
-    ipcMain.on('set-tab-title', (e, title: string, isCloud) => {
-      const { id } = e.sender;
-      if (this.tabsMap[id]) {
-        this.tabsMap[id].title = title;
-        this.tabsMap[id].isCloud = isCloud;
-      }
+    ipcMain.on('set-tab-title', (e, title: string, isCloud: boolean) => {
+      this.onTabTitleChanged(e.sender.id, title, isCloud);
     });
 
     ipcMain.on('get-all-tabs', (e) => {
-      e.returnValue = Object.keys(this.tabsMap).map((id: string) => {
-        const intId = parseInt(id, 10);
-        return {
-          id: intId,
-          title: this.tabsMap[intId].title,
-          isFocused: intId === this.focusedId,
-          isCloud: this.tabsMap[intId].isCloud,
-        };
-      });
+      e.returnValue = this.serializeTabs();
     });
 
     this.mainWindow?.on('resized', () => {
@@ -77,6 +63,28 @@ class TabManager {
         views.forEach((view) => view.setBounds(bound));
       }
     });
+  };
+
+  private onTabTitleChanged = (id: number, title: string, isCloud: boolean): void => {
+    if (this.tabsMap[id]) {
+      this.tabsMap[id].title = title;
+      this.tabsMap[id].isCloud = isCloud;
+      this.notifyTabUpdated();
+    }
+  };
+
+  private serializeTabs = (): Array<FrontendTab> =>
+    Object.keys(this.tabsMap).map((id: string) => {
+      const intId = parseInt(id, 10);
+      return {
+        id: intId,
+        title: this.tabsMap[intId].title,
+        isCloud: this.tabsMap[intId].isCloud,
+      };
+    });
+
+  private notifyTabUpdated = (): void => {
+    this.sendToAllViews('TABS_UPDATED', this.serializeTabs());
   };
 
   private createTab = (): Tab => {
@@ -114,7 +122,11 @@ class TabManager {
   };
 
   private createPreloadedTab = (): void => {
-    if (!this.preloadedTab && tabConstants.maxTab && Object.keys(this.tabsMap).length < tabConstants.maxTab) {
+    if (
+      !this.preloadedTab &&
+      tabConstants.maxTab &&
+      Object.keys(this.tabsMap).length < tabConstants.maxTab
+    ) {
       this.preloadedTab = this.createTab();
     }
   };
@@ -129,6 +141,7 @@ class TabManager {
     this.tabsMap[id] = newTab;
     this.createPreloadedTab();
     this.focusTab(id);
+    this.notifyTabUpdated();
     console.log('addNewTab', this.tabsMap);
   };
 
@@ -203,6 +216,7 @@ class TabManager {
         }
       }
       this.createPreloadedTab();
+      this.notifyTabUpdated();
       return res;
     }
     return false;
