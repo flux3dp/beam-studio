@@ -1,13 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {
-  app,
-  BaseWindow,
-  BrowserWindow,
-  ipcMain,
-  systemPreferences,
-} from 'electron';
+import { app, BaseWindow, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -219,7 +213,7 @@ function createWindow() {
     trafficLightPosition: { x: 12, y: 14 },
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
-  tabManager.createTab();
+  tabManager.addNewTab();
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -260,7 +254,6 @@ function createWindow() {
     else app.quit();
   });
 
-
   menuManager?.on('DEBUG-RELOAD', () => {
     tabManager?.getFocusedView()?.webContents.loadURL(
       url.format({
@@ -273,7 +266,7 @@ function createWindow() {
   });
 
   mainWindow.on('new-window-for-tab', () => {
-    tabManager?.createTab();
+    tabManager?.addNewTab();
   });
 
   menuManager?.on('DEBUG-INSPECT', () => {

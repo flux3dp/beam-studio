@@ -9,16 +9,19 @@ import i18n from 'helpers/i18n';
 
 import initStore from './helpers/init-store';
 
+interface Tab {
+  view: WebContentsView;
+  title: string;
+  isCloud: boolean;
+}
+
 class TabManager {
   private mainWindow: BaseWindow;
   private tabsMap: Record<
     number,
-    {
-      view: WebContentsView;
-      title: string;
-      isCloud: boolean;
-    }
+    Tab
   > = {};
+  private preloadedTab: Tab | null = null;
   private focusedId = -1;
   private isDebug = false;
 
@@ -33,8 +36,8 @@ class TabManager {
       this.focusTab(id);
     });
 
-    ipcMain.on('create-tab', () => {
-      this.createTab();
+    ipcMain.on('add-new-tab', () => {
+      this.addNewTab();
     });
 
     ipcMain.on('close-tab', (e, id: number) => {
@@ -75,7 +78,7 @@ class TabManager {
     });
   };
 
-  createTab = (): void => {
+  private createTab = (): Tab => {
     const tabView = new WebContentsView({
       webPreferences: {
         preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
@@ -99,15 +102,26 @@ class TabManager {
         slashes: true,
       })
     );
-    const { id } = webContents;
     if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug))
       webContents.openDevTools();
     const title = i18n.lang.topbar.untitled;
-    this.tabsMap[id] = { view: tabView, title, isCloud: false };
-    console.log('createTab', id, this.tabsMap);
+    const tab = { view: tabView, title, isCloud: false };
     const bound = this.mainWindow?.getContentBounds();
     if (bound) tabView.setBounds({ ...bound, x: 0, y: 0 });
+    console.log('createTab', tab, tabView.webContents.id);
+    return tab;
+  };
+
+  addNewTab = (): void => {
+    if (this.preloadedTab) {
+      console.log('using preloaded tab', this.preloadedTab.view.webContents.id, this.tabsMap);
+    }
+    const newTab = this.preloadedTab ?? this.createTab();
+    const { id } = newTab.view.webContents;
+    this.tabsMap[id] = newTab;
+    this.preloadedTab = this.createTab();
     this.focusTab(id);
+    console.log('addNewTab', this.tabsMap);
   };
 
   focusTab = (id: number): void => {
@@ -117,6 +131,7 @@ class TabManager {
         view.setVisible(view.webContents.id === id)
       );
       const { view } = this.tabsMap[id];
+      this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
       view.webContents.send('TAB_FOCUSED');
     }
