@@ -1,4 +1,5 @@
 import Store from 'electron-store';
+
 import { IStorage } from 'interfaces/IStorage';
 
 class ElectronStorage implements IStorage {
@@ -11,8 +12,9 @@ class ElectronStorage implements IStorage {
     this.storeCache = this.store.store;
   }
 
-  get = (name: string): any => {
-    let item: any = name ? this.storeCache[name] : this.storeCache;
+  get = (name: string, useCache = true): any => {
+    const store = useCache ? this.storeCache : this.store.store;
+    let item: any = name ? store[name] : store;
 
     item = (item === null ? '' : item);
 
