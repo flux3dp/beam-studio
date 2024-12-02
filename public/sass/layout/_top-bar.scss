@@ -3,18 +3,7 @@
     background-color: #f8f8f8;
     border: 1px solid #e0e0e0;
     border-width: 0 0 1px 0;
-    -webkit-app-region: no-drag;
-    .element-title {
-      position: relative;
-      float: left;
-      top: 0;
-      border: 3px solid #595959;
-      border-width: 0 0 3px 0;
-      margin-left: 0;
-      padding: 0 5px;
-      z-index: 1;
-      text-shadow: none;
-    }
+
     .hint-container {
       z-index: 1;
       top: 40px;
@@ -30,20 +19,7 @@
       }
     }
   }
-  .element-title {
-    pointer-events: none;
-    position: absolute;
-    z-index: 1;
-    top: 45px;
-    margin-left: 70px;
-    height: 40px;
-    line-height: 40px;
-    color: #333333;
-    font-weight: bold;
-    font-size: 13px;
-    letter-spacing: 0.95px;
-    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
-  }
+
   .hint-container {
     position: absolute;
     z-index: 1;
