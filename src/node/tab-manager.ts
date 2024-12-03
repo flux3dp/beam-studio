@@ -20,6 +20,7 @@ interface Tab {
 class TabManager {
   private mainWindow: BaseWindow;
   private tabsMap: Record<number, Tab> = {};
+  private tabsList: number[] = [];
   private preloadedTab: Tab | null = null;
   private focusedId = -1;
   private isDebug = false;
@@ -41,6 +42,10 @@ class TabManager {
 
     ipcMain.on('close-tab', (e, id: number) => {
       this.closeTab(id);
+    });
+
+    ipcMain.on('move-tab', (e, srcIdx: number, dstIdx: number) => {
+      this.moveTab(srcIdx, dstIdx);
     });
 
     ipcMain.on('get-tab-id', (e) => {
@@ -74,14 +79,11 @@ class TabManager {
   };
 
   private serializeTabs = (): Array<FrontendTab> =>
-    Object.keys(this.tabsMap).map((id: string) => {
-      const intId = parseInt(id, 10);
-      return {
-        id: intId,
-        title: this.tabsMap[intId].title,
-        isCloud: this.tabsMap[intId].isCloud,
-      };
-    });
+    this.tabsList.map((id: number) => ({
+      id,
+      title: this.tabsMap[id].title,
+      isCloud: this.tabsMap[id].isCloud,
+    }));
 
   private notifyTabUpdated = (): void => {
     this.sendToAllViews('TABS_UPDATED', this.serializeTabs());
@@ -124,8 +126,7 @@ class TabManager {
   private createPreloadedTab = (): void => {
     if (
       !this.preloadedTab &&
-      tabConstants.maxTab &&
-      Object.keys(this.tabsMap).length < tabConstants.maxTab
+      (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)
     ) {
       this.preloadedTab = this.createTab();
     }
@@ -139,6 +140,7 @@ class TabManager {
     this.preloadedTab = null;
     const { id } = newTab.view.webContents;
     this.tabsMap[id] = newTab;
+    this.tabsList.push(id);
     this.createPreloadedTab();
     this.focusTab(id);
     this.notifyTabUpdated();
@@ -169,7 +171,6 @@ class TabManager {
       const closeHandler = () => {
         this.mainWindow?.contentView.removeChildView(view);
         view.webContents.close();
-        delete this.tabsMap[id];
         resolve(true);
       };
       let eventReceivced = false;
@@ -205,6 +206,8 @@ class TabManager {
     if (tabsMap[id] && (allowEmpty || Object.keys(tabsMap).length > 1)) {
       const res = await this.closeWebContentsView(tabsMap[id].view);
       if (res) {
+        delete this.tabsMap[id];
+        this.tabsList = this.tabsList.filter((tabId) => tabId !== id);
         if (focusedId === id) {
           const ids = Object.keys(tabsMap);
           if (ids.length) {
@@ -233,6 +236,15 @@ class TabManager {
     }
     return true;
   };
+
+  moveTab = (srcIdx: number, dstIdx: number): void => {
+    const { tabsList } = this;
+    if (srcIdx !== dstIdx) {
+      const [tabId] = tabsList.splice(srcIdx, 1);
+      tabsList.splice(dstIdx, 0, tabId);
+      this.notifyTabUpdated();
+    }
+  }
 
   sendToView = (id: number, event: string, data?: unknown): void => {
     if (this.tabsMap[id]) this.tabsMap[id].view.webContents.send(event, data);
