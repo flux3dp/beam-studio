@@ -7,6 +7,7 @@ app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
 // app.allowRendererProcessReuse = false;
 
+import dgram from 'dgram';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -39,6 +40,18 @@ Sentry.captureMessage('User Census', {
   },
 });
 setupTitlebar();
+
+function requestLocalNetworkPermission() {
+  const socket = dgram.createSocket('udp4');
+  socket.bind(0, () => {
+    socket.setBroadcast(true);
+    socket.send(Buffer.from('Hello'), 41234, '255.255.255.255', (err) => {
+      console.log(err);
+      socket.close();
+      if (err) console.error('Error sending UDP packet:', err);
+    });
+  });
+}
 
 let mainWindow: BrowserWindow | null;
 let menuManager: MenuManager | null;
@@ -351,6 +364,7 @@ function createWindow() {
   updateManager.setMainWindow(mainWindow);
   networkHelper.registerEvents(mainWindow);
   attachTitlebarToWindow(mainWindow);
+  requestLocalNetworkPermission();
 }
 
 let didGetOpenFile = false;
