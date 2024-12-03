@@ -167,6 +167,7 @@ function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void
           ],
         },
         { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
+        { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe, click: callback },
       ],
     },
     { type: 'separator' },

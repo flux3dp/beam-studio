@@ -1,0 +1,30 @@
+<svg id="svgcontent" width="6000" height="3750" viewBox="0 0 6000 3750" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-1051" data-left="-158" data-zoom="0.127" data-workarea="fbb2" data-en_af="false" data-en_diode="false" data-rotary_mode="0" data-engrave_dpi="medium">
+ <defs>
+  <symbol overflow="visible" id="svg_1" data-bbox="{&quot;x&quot;:0,&quot;y&quot;:0,&quot;width&quot;:300,&quot;height&quot;:500}" data-image-symbol="svg_1_image">
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m280,300.0494l0,-91.5236" id="svg_29"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m290,198.5258c-2.6522,0 -5.1957,1.0535 -7.0711,2.9289c-1.8753,1.8754 -2.9289,4.4189 -2.9289,7.0711" id="svg_27"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m290,198.5258c2.6522,0 5.1957,-1.0536 7.0711,-2.929c1.8753,-1.8753 2.9289,-4.4189 2.9289,-7.071l0,-70c0,-2.6522 -1.0536,-5.1957 -2.9289,-7.0711c-1.8754,-1.8754 -4.4189,-2.9289 -7.0711,-2.9289" id="svg_25"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m280,98.5258c0,2.6521 1.0536,5.1957 2.9289,7.071c1.8754,1.8754 4.4189,2.929 7.0711,2.929" id="svg_23"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m280,98.5258l0,-88.5258c0,-2.6522 -1.0536,-5.1957 -2.9289,-7.0711c-1.8754,-1.8753 -4.4189,-2.9289 -7.0711,-2.9289l-260,0c-2.6522,0 -5.1957,1.0536 -7.0711,2.9289c-1.8753,1.8754 -2.9289,4.4189 -2.9289,7.0711l0,480c0,2.6522 1.0536,5.1957 2.9289,7.0711c1.8754,1.8753 4.4189,2.9289 7.0711,2.9289l22,0c2.6522,0 5.1957,-1.0536 7.0711,-2.9289c1.8753,-1.8754 2.9289,-4.4189 2.9289,-7.0711l0,-32.9979" id="svg_21"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m48.5798,447.6051c-2.4922,0.9071 -4.522,2.7671 -5.6429,5.1708c-0.6171,1.3234 -0.9369,2.7659 -0.9369,4.2262" id="svg_19"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m48.5798,447.6051l106.8404,-38.8867c2.4922,-0.9071 4.522,-2.767 5.6429,-5.1707c0.6171,-1.3234 0.9369,-2.766 0.9369,-4.2262l0,-42.3194" id="svg_17"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m273.4202,309.4464l-104.8404,38.1587c-2.4922,0.9071 -4.522,2.7671 -5.6429,5.1708c-0.6171,1.3234 -0.9369,2.7659 -0.9369,4.2262" id="svg_15"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m273.4202,309.4464c2.4922,-0.9071 4.522,-2.7671 5.6429,-5.1708c0.6171,-1.3234 0.9369,-2.7659 0.9369,-4.2262" id="svg_13"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m87,60c0,-0.3978 -0.158,-0.7794 -0.4393,-1.0607c-0.2813,-0.2813 -0.6629,-0.4393 -1.0607,-0.4393c-0.3978,0 -0.7794,0.158 -1.0607,0.4393c-0.2813,0.2813 -0.4393,0.6629 -0.4393,1.0607c0,14.8521 5.9,29.0959 16.402,39.598c10.5021,10.502 24.7459,16.402 39.598,16.402c0.3978,0 0.7794,-0.158 1.0607,-0.4393c0.1291,-0.1292 0.2336,-0.2809 0.3083,-0.4476l7.1826,-16.0379c10.3633,-2.268 19.4013,-8.56 25.1256,-17.4917c5.7243,-8.9318 7.666,-19.7717 5.398,-30.1351c-2.268,-10.3633 -8.56,-19.4013 -17.4917,-25.1256c-8.9318,-5.7243 -19.7717,-7.666 -30.1351,-5.398c-10.3633,2.268 -19.4013,8.56 -25.1256,17.4917c-5.7243,8.9318 -7.666,19.7717 -5.398,30.1351c2.268,10.3633 8.56,19.4013 17.4917,25.1256c5.0147,3.2138 10.6837,5.2672 16.5933,6.0103" id="svg_11"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m87,60c0,14.0565 5.5839,27.5372 15.5233,37.4767c9.7025,9.7024 22.7898,15.2639 36.5089,15.5145" id="svg_9"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m144.9902,99.6875l-5.958,13.3037" id="svg_7"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m144.9902,99.6875c-0.0829,-1.3235 -0.6881,-2.5598 -1.6825,-3.4371c-0.9945,-0.8772 -2.2967,-1.3235 -3.6202,-1.2406c-1.3235,0.0829 -2.5598,0.6881 -3.4371,1.6825c-0.7347,0.8329 -1.1712,1.8867 -1.2406,2.9952" id="svg_5"/>
+   <path fill="none" stroke="#F5222D" vector-effect="non-scaling-stroke" d="m100,235l0,10c0,10.6087 4.2143,20.7828 11.7157,28.2843c7.5015,7.5014 17.6756,11.7157 28.2843,11.7157c10.6087,0 20.7828,-4.2143 28.2843,-11.7157c7.5014,-7.5015 11.7157,-17.6756 11.7157,-28.2843l0,-10c0,-10.6087 -4.2143,-20.7828 -11.7157,-28.2843c-7.5015,-7.5014 -17.6756,-11.7157 -28.2843,-11.7157c-10.6087,0 -20.7828,4.2143 -28.2843,11.7157c-7.5014,7.5015 -11.7157,17.6756 -11.7157,28.2843z" id="svg_3"/>
+  </symbol>
+  <symbol data-fullcolor="0" data-stroke-width="19.7299" overflow="visible" id="svg_1_image" data-origin-symbol="svg_1">
+   <image href="blob:file:///48a97471-225d-44d1-ac11-87c1f00951fb" x="0" y="0" width="300" height="500" filter="url(#filter#F5222D)"/>
+  </symbol>
+ </defs>
+ <g class="layer" data-color="#F5222D" data-speed="10" data-printingSpeed="60" data-strength="55" data-minPower="0" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="acrylic_3mm_cutting" data-module="15" data-backlash="0" data-multipass="3" data-uv="0" data-halftone="1" data-wSpeed="100" data-wInk="-12" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-printingStrength="100" data-focus="-2" data-focusStep="-2" data-fillInterval="0.01" data-fillAngle="0" data-frequency="27" data-pulseWidth="100">
+  <title>Cut</title>
+  <filter id="filter#F5222D" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9607843137254902, 0 1 0 0 0.13333333333333333, 0 0 1 0 0.17647058823529413, 0 0 0 1 0"/>
+  </filter>
+  <use id="svg_30" xlink:href="#svg_1" data-dxf="true" data-ratiofixed="true" data-xform="x=0 y=0 width=300 height=500" y="500" x="1000"/>
+ </g>
+</svg>
