@@ -170,7 +170,6 @@ export const updateRecentMenu = (updateWindowMenu = true): void => {
     const { platform } = process;
     const store = new ElectronStore();
     const recentFiles = (store.get('recent_files') || []) as string[];
-    console.log(recentFiles);
     // @ts-expect-error clear is thought to be not existing but actually exist
     recentMenu.clear();
     recentMenu.items = [];
