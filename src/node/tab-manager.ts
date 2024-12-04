@@ -2,7 +2,7 @@ import path from 'path';
 import url from 'url';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { BaseWindow, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
+import { BaseWindow, globalShortcut, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
 import { enable as enableRemote } from '@electron/remote/main';
 
 import i18n from 'helpers/i18n';
@@ -41,7 +41,7 @@ class TabManager {
     });
 
     ipcMain.on('close-tab', (e, id: number) => {
-      this.closeTab(id);
+      this.closeTab(id, { allowEmpty: true, shouldCloseWindow: true });
     });
 
     ipcMain.on('move-tab', (e, srcIdx: number, dstIdx: number) => {
@@ -67,6 +67,14 @@ class TabManager {
         const views = Object.values(this.tabsMap).map(({ view }) => view);
         views.forEach((view) => view.setBounds(bound));
       }
+    });
+
+    globalShortcut.register('CommandOrControl+T', () => {
+      this.addNewTab();
+    });
+
+    globalShortcut.register('CommandOrControl+W', () => {
+      this.closeTab(this.focusedId, { allowEmpty: true, shouldCloseWindow: true });
     });
   };
 
@@ -119,11 +127,10 @@ class TabManager {
     const tab = { view: tabView, title, isCloud: false };
     const bound = this.mainWindow?.getContentBounds();
     if (bound) tabView.setBounds({ ...bound, x: 0, y: 0 });
-    console.log('createTab', tab, tabView.webContents.id);
     return tab;
   };
 
-  private createPreloadedTab = (): void => {
+  private preloadTab = (): void => {
     if (
       !this.preloadedTab &&
       (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)
@@ -141,10 +148,9 @@ class TabManager {
     const { id } = newTab.view.webContents;
     this.tabsMap[id] = newTab;
     this.tabsList.push(id);
-    this.createPreloadedTab();
+    this.preloadTab();
     this.focusTab(id);
     this.notifyTabUpdated();
-    console.log('addNewTab', this.tabsMap);
   };
 
   focusTab = (id: number): void => {
@@ -201,7 +207,23 @@ class TabManager {
     });
   };
 
-  closeTab = async (id: number, allowEmpty = false): Promise<boolean> => {
+  /**
+   * @param id tab webcontents id
+   * @param opts options
+   * @param opts.allowEmpty whether allow to close the last tab
+   * @param opts.shouldCloseWindow whether close the window when the tab is closed
+   * @returns boolean whether the tab is closed
+   */
+  closeTab = async (
+    id: number,
+    {
+      allowEmpty = false,
+      shouldCloseWindow = false,
+    }: {
+      allowEmpty?: boolean;
+      shouldCloseWindow?: boolean;
+    } = {}
+  ): Promise<boolean> => {
     const { tabsMap, focusedId } = this;
     if (tabsMap[id] && (allowEmpty || Object.keys(tabsMap).length > 1)) {
       const res = await this.closeWebContentsView(tabsMap[id].view);
@@ -218,20 +240,31 @@ class TabManager {
           this.focusTab(focusedId);
         }
       }
-      this.createPreloadedTab();
-      this.notifyTabUpdated();
+      if (this.tabsList.length > 0) {
+        this.notifyTabUpdated();
+        this.preloadTab();
+      } else if (shouldCloseWindow) {
+        this.mainWindow.close();
+      }
       return res;
     }
     return false;
   };
 
-  closeAllTabs = async (): Promise<boolean> => {
+  /**
+   * @param opts.closeWindow whether close the window when the tab is closed
+   * @returns boolean whether all tabs are closed
+   */
+  closeAllTabs = async ({
+    shouldCloseWindow = false,
+  }: {
+    shouldCloseWindow?: boolean;
+  } = {}): Promise<boolean> => {
     const ids = Object.keys(this.tabsMap);
     for (let i = 0; i < ids.length; i += 1) {
       const id = parseInt(ids[i], 10);
-      console.log(this.tabsMap[id]);
       // eslint-disable-next-line no-await-in-loop
-      const res = await this.closeTab(id, true);
+      const res = await this.closeTab(id, { allowEmpty: true, shouldCloseWindow });
       if (!res) return false;
     }
     return true;
@@ -244,7 +277,7 @@ class TabManager {
       tabsList.splice(dstIdx, 0, tabId);
       this.notifyTabUpdated();
     }
-  }
+  };
 
   sendToView = (id: number, event: string, data?: unknown): void => {
     if (this.tabsMap[id]) this.tabsMap[id].view.webContents.send(event, data);
@@ -253,6 +286,7 @@ class TabManager {
   sendToAllViews = (event: string, data?: unknown): void => {
     const allViews = Object.values(this.tabsMap).map(({ view }) => view);
     allViews.forEach((view) => view.webContents.send(event, data));
+    this.preloadedTab?.view.webContents.send(event, data);
   };
 
   sendToFocusedView = (event: string, data?: unknown): void => {
