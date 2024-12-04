@@ -3,48 +3,5 @@
     background-color: #f8f8f8;
     border: 1px solid #e0e0e0;
     border-width: 0 0 1px 0;
-
-    .menu {
-      &.camera {
-        left: 65px;
-        top: 80px;
-      }
-      &.export {
-        top: 37px;
-        right: 50px;
-      }
-    }
-  }
-
-  .menu {
-    background: #fff;
-    position: fixed;
-    z-index: 99;
-    border-radius: 2px;
-    &.camera {
-      left: 65px;
-      top: 50px;
-    }
-    &.export {
-      top: 7px;
-      right: 50px;
-    }
-    .arrow {
-      min-width: 10px;
-      min-height: 10px;
-      width: 13px;
-      height: 26px;
-      position: absolute;
-      top: 0;
-      &.arrow-right {
-        left: 100%;
-      }
-      &.arrow-left {
-        right: 100%;
-      }
-    }
-  }
-  .modal-window {
-    background: none;
   }
 }
