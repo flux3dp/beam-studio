@@ -21,6 +21,7 @@ import DeviceInfo from 'interfaces/DeviceInfo';
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import events from './ipc-events';
+import focusedViewHelper from './helpers/focused-view-helper';
 import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
@@ -214,7 +215,7 @@ function createWindow() {
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
-  menuManager?.setTabManager(tabManager);
+  focusedViewHelper.setTabManager(tabManager);
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
@@ -373,10 +374,6 @@ let editingStandardInput = false;
 ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
   console.log('Set SET_EDITING_STANDARD_INPUT', arg);
-});
-
-ipcMain.on('OPEN_RECENT_FILES', (event, filePath: string) => {
-  tabManager?.sendToFocusedView('OPEN_RECENT_FILES', filePath);
 });
 
 console.log('Running Beam Studio on ', os.arch());

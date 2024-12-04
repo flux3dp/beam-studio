@@ -11,21 +11,15 @@ import { app, Menu, MenuItemConstructorOptions, MenuItem, shell, ipcMain } from 
 import DeviceInfo from 'interfaces/DeviceInfo';
 import i18n from 'helpers/i18n';
 import { adorModels, promarkModels } from 'app/actions/beambox/constant';
+import { MenuData } from 'interfaces/Menu';
 
 import events from './ipc-events';
-import TabManager from './tab-manager';
+import { buildFileMenu, updateRecentMenu } from './menu/file-menu';
+import { getFocusedView } from './helpers/focused-view-helper';
 
 const store = new Store();
 let r = i18n.lang.topbar.menu;
 let accountInfo: { email: string } | null = null;
-
-interface MenuData extends MenuItem {
-  id: string;
-  uuid?: string;
-  serial?: string;
-  machineName?: string;
-  source?: string;
-}
 
 function buildOSXAppMenu(callback: (data: MenuData) => void) {
   const currentChannel = app.getVersion().split('-')[1] || 'latest';
@@ -55,152 +49,6 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
       },
       { label: r.quit, role: 'quit' },
     ],
-  };
-}
-
-function buildFileMenu(fnKey: 'Cmd' | 'Ctrl', callback: (data: MenuData) => void) {
-  const menuItems = [
-    {
-      id: 'CLEAR_SCENE',
-      label: r.clear_scene || 'Clear Scene',
-      enabled: false,
-      click: callback,
-      accelerator: `${fnKey}+N`,
-    },
-    {
-      id: 'OPEN',
-      label: r.open || 'Open',
-      click: callback,
-      accelerator: `${fnKey}+O`,
-    },
-    { id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
-    { type: 'separator' },
-    {
-      id: 'SAVE_SCENE',
-      label: r.save_scene || 'Save Scene',
-      click: callback,
-      accelerator: `${fnKey}+S`,
-    },
-    {
-      id: 'SAVE_AS',
-      label: r.save_as,
-      click: callback,
-      accelerator: `Shift+${fnKey}+S`,
-    },
-    {
-      id: 'SAVE_TO_CLOUD',
-      label: r.save_to_cloud,
-      click: callback,
-    },
-    { type: 'separator' },
-    {
-      id: 'SAMPLES',
-      label: r.samples || 'Examples',
-      submenu: [
-        {
-          id: 'EXAMPLE_FILES',
-          label: r.example_files || 'Example Files',
-          submenu: [
-            {
-              id: 'IMPORT_EXAMPLE_ADOR_LASER',
-              label: r.import_ador_laser_example,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
-              label: r.import_ador_printing_example_single,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
-              label: r.import_ador_printing_example_full,
-              click: callback,
-            },
-            { id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo, click: callback },
-            { id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox, click: callback },
-            { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example, click: callback },
-            { id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example, click: callback },
-            { id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example, click: callback },
-          ],
-        },
-        {
-          id: 'MATERIAL_TEST',
-          label: r.material_test || 'Material Test',
-          submenu: [
-            {
-              id: 'IMPORT_MATERIAL_TESTING_ENGRAVE',
-              label: r.import_material_testing_engrave,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_MATERIAL_TESTING_OLD',
-              label: r.import_material_testing_old,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_MATERIAL_TESTING_CUT',
-              label: r.import_material_testing_cut,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_MATERIAL_TESTING_SIMPLECUT',
-              label: r.import_material_testing_simple_cut,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_MATERIAL_TESTING_LINE',
-              label: r.import_material_testing_line,
-              click: callback,
-            },
-            {
-              id: 'IMPORT_MATERIAL_TESTING_PRINT',
-              label: r.import_material_printing_test,
-              click: callback,
-            },
-          ],
-        },
-        { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
-        { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe, click: callback },
-      ],
-    },
-    { type: 'separator' },
-    {
-      id: 'EXPORT_TO',
-      label: r.export_to || 'Export to',
-      submenu: [
-        { id: 'EXPORT_BVG', label: 'BVG', click: callback },
-        { id: 'EXPORT_SVG', label: r.export_SVG, click: callback },
-        { id: 'EXPORT_PNG', label: 'PNG', click: callback },
-        { id: 'EXPORT_JPG', label: 'JPG', click: callback },
-        {
-          id: 'EXPORT_FLUX_TASK',
-          label: r.export_flux_task,
-          click: callback,
-          accelerator: `${fnKey}+E`,
-        },
-      ],
-    },
-  ];
-
-  if (process.platform !== 'darwin') {
-    menuItems.push({
-      id: 'PREFERENCE',
-      label: r.preferences,
-      accelerator: `${fnKey}+,`,
-      click: callback,
-    });
-    menuItems.push({
-      id: 'RELOAD_APP',
-      label: r.reload_app,
-      accelerator: `${fnKey}+R`,
-      click: callback,
-    });
-  }
-
-  return {
-    id: '_file',
-    label: r.file,
-    submenu: menuItems,
   };
 }
 
@@ -275,7 +123,11 @@ function buildDeviceMenu(
       label: r.calibration,
       submenu: [
         { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
-        isBb2 && { id: 'CALIBRATE_CAMERA_ADVANCED', label: r.calibrate_camera_advanced, click: handleClick },
+        isBb2 && {
+          id: 'CALIBRATE_CAMERA_ADVANCED',
+          label: r.calibrate_camera_advanced,
+          click: handleClick,
+        },
         isBeamo && {
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
           label: r.calibrate_beambox_camera_borderless,
@@ -392,7 +244,6 @@ class MenuManager extends EventEmitter {
   public appmenu: Menu | null = null;
   private deviceMenu?: MenuItem;
   private deviceList: { [uuid: string]: DeviceInfo };
-  private tabManager?: TabManager;
   private isDevMode: boolean;
 
   constructor() {
@@ -459,10 +310,6 @@ class MenuManager extends EventEmitter {
     });
   }
 
-  setTabManager(tabManager: TabManager): void {
-    this.tabManager = tabManager;
-  }
-
   constructMenu(): void {
     this.appmenu = Menu.buildFromTemplate(this.buildMenuItems(this.onMenuClick));
 
@@ -477,6 +324,7 @@ class MenuManager extends EventEmitter {
       this.deviceMenu?.submenu?.append(instance);
     }
     Menu.setApplicationMenu(this.appmenu);
+    updateRecentMenu(false);
     this.emit('NEW_APP_MENU');
   }
 
@@ -512,7 +360,7 @@ class MenuManager extends EventEmitter {
   };
 
   reset_custom_electron_titlebar(): void {
-    const view = this.tabManager?.getFocusedView();
+    const view = getFocusedView();
     if (view) view.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
   }
 
@@ -576,8 +424,7 @@ class MenuManager extends EventEmitter {
       menuItems.push(buildOSXAppMenu(callback));
     }
 
-    menuItems.push(buildFileMenu(fnKey, callback));
-
+    menuItems.push(buildFileMenu(fnKey, r, callback));
     menuItems.push({
       id: '_edit',
       label: r.edit,
@@ -869,8 +716,8 @@ class MenuManager extends EventEmitter {
         {
           id: 'DEV_TOOL',
           label: r.dev_tool || 'Debug Tool',
-          click:() => {
-            const view = this.tabManager?.getFocusedView();
+          click: () => {
+            const view = getFocusedView();
             if (view) view.webContents.openDevTools();
           },
           accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J',

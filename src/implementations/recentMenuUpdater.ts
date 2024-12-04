@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Menu, MenuItem } from '@electron/remote';
-
 import Alert from 'app/actions/alert-caller';
 import AlertConstants from 'app/constants/alert-constants';
 import BeamFileHelper from 'helpers/beam-file-helper';
@@ -20,51 +17,9 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const recentMenuUpdater = {
-  update() {
-    const recentFiles = storage.get('recent_files', false) || [];
-    const recentMenu = Menu.getApplicationMenu()
-      .items.filter((i) => i.id === '_file')[0]
-      .submenu.items.filter((i) => i.id === 'RECENT')[0].submenu;
-    recentMenu.items = [];
-    // @ts-expect-error clear is thought to be not existing but actually exist
-    recentMenu.clear();
-    recentFiles.forEach((filePath) => {
-      let label = filePath;
-      if (window.os !== 'Windows') {
-        label = filePath.replace(':', '/');
-      }
-      recentMenu.append(
-        new MenuItem({
-          id: label,
-          label,
-          click: () => {
-            communicator.send('OPEN_RECENT_FILES', filePath);
-          },
-        })
-      );
-    });
-    recentMenu.append(new MenuItem({ type: 'separator' }));
-    recentMenu.append(
-      new MenuItem({
-        id: 'CLEAR_RECENT',
-        label: i18n.lang.topmenu.file.clear_recent,
-        click: () => {
-          storage.set('recent_files', []);
-          recentMenuUpdater.update();
-        },
-      })
-    );
-    Menu.setApplicationMenu(Menu.getApplicationMenu());
-    if (window.os === 'Windows' && window.titlebar) {
-      window.titlebar.updateMenu(Menu.getApplicationMenu());
-    }
-  },
+const update = () => {
+  communicator.send('UPDATE_RECENT_FILES_MENU');
 };
-
-communicator.on('NEW_APP_MENU', () => {
-  recentMenuUpdater.update();
-});
 
 communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
   const res = await FileExportHelper.toggleUnsavedChangedDialog();
@@ -102,9 +57,11 @@ communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
         'recent_files',
         storage.get('recent_files', false).filter((path) => path !== filePath)
       );
-      recentMenuUpdater.update();
+      update();
     }
   }
 });
 
-export default recentMenuUpdater as IRecentMenuUpdater;
+export default {
+  update,
+} as IRecentMenuUpdater;
