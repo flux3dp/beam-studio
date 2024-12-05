@@ -14,7 +14,7 @@ import url from 'url';
 
 import Sentry from '@sentry/electron';
 import * as electronRemote from '@electron/remote/main';
-import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
+import { setupTitlebar } from 'custom-electron-titlebar/main';
 
 import DeviceInfo from 'interfaces/DeviceInfo';
 
@@ -280,9 +280,30 @@ function createWindow() {
   networkHelper.registerEvents();
   updateManager.setSend(tabManager.sendToFocusedView);
 
-  // TODO: handle this
-  // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
-  attachTitlebarToWindow(mainWindow as BrowserWindow);
+
+  if (process.platform === 'win32') {
+    // original attachTitlebarToWindow for windows
+    // eslint-disable-next-line max-len
+    // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
+    mainWindow.on('enter-full-screen', () => {
+      tabManager?.sendToAllViews('window-fullscreen', true);
+    });
+    mainWindow.on('leave-full-screen', () => {
+      tabManager?.sendToAllViews('window-fullscreen', false);
+    });
+    mainWindow.on('focus', () => {
+      tabManager?.sendToFocusedView('window-focus', true);
+    });
+    mainWindow.on('blur', () => {
+      tabManager?.sendToFocusedView('window-focus', false);
+    });
+    mainWindow.on('maximize', () => {
+      tabManager?.sendToAllViews('window-maximize', true);
+    });
+    mainWindow.on('unmaximize', () => {
+      tabManager?.sendToAllViews('window-maximize', false);
+    });
+  }
 }
 
 let didGetOpenFile = false;
