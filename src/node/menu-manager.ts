@@ -15,7 +15,7 @@ import { MenuData } from 'interfaces/Menu';
 
 import events from './ipc-events';
 import { buildFileMenu, updateRecentMenu } from './menu/file-menu';
-import { getFocusedView } from './helpers/focused-view-helper';
+import { getFocusedView } from './helpers/focusedViewHelper';
 
 const store = new Store();
 let r = i18n.lang.topbar.menu;

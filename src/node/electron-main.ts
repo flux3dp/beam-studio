@@ -21,7 +21,7 @@ import DeviceInfo from 'interfaces/DeviceInfo';
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import events from './ipc-events';
-import focusedViewHelper from './helpers/focused-view-helper';
+import focusedViewHelper from './helpers/focusedViewHelper';
 import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';

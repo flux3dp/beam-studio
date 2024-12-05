@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store';
 import { ipcMain, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 
 import i18n from 'helpers/i18n';
-import { getFocusedView } from 'node/helpers/focused-view-helper';
+import { getFocusedView } from 'node/helpers/focusedViewHelper';
 import { ILang } from 'interfaces/ILang';
 import { MenuData } from 'interfaces/Menu';
 
