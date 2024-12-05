@@ -2,7 +2,7 @@ import path from 'path';
 import url from 'url';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { BaseWindow, globalShortcut, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
+import { BaseWindow, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
 import { enable as enableRemote } from '@electron/remote/main';
 
 import i18n from 'helpers/i18n';
@@ -67,14 +67,6 @@ class TabManager {
         const views = Object.values(this.tabsMap).map(({ view }) => view);
         views.forEach((view) => view.setBounds(bound));
       }
-    });
-
-    globalShortcut.register('CommandOrControl+T', () => {
-      this.addNewTab();
-    });
-
-    globalShortcut.register('CommandOrControl+W', () => {
-      this.closeTab(this.focusedId, { allowEmpty: true, shouldCloseWindow: true });
     });
   };
 

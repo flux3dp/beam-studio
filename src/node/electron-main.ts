@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BaseWindow, BrowserWindow, globalShortcut, ipcMain, systemPreferences } from 'electron';
+import { app, BaseWindow, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -471,7 +471,3 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {});
-
-app.on('will-quit', () => {
-  globalShortcut.unregisterAll();
-});
