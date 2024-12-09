@@ -28,7 +28,7 @@ import networkHelper from './network-helper';
 import TabManager from './tabManager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import { setTabManager } from './helpers/tabHelper';
-import { UpdateManager } from './update-manager';
+import { UpdateManager } from './updateManager';
 
 electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
