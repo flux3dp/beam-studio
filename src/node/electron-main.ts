@@ -26,9 +26,9 @@ import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
 import TabManager from './tabManager';
-import UpdateManager from './update-manager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import { setTabManager } from './helpers/tabHelper';
+import { UpdateManager } from './update-manager';
 
 electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -142,7 +142,7 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
 
 bootstrap();
 
-const updateManager = new UpdateManager();
+UpdateManager.init();
 const backendManager = new BackendManager({
   location: process.env.BACKEND,
   trace_pid: process.pid,
@@ -274,8 +274,6 @@ function createWindow() {
     evt.sender.openDevTools();
   });
   networkHelper.registerEvents();
-  updateManager.setSend(tabManager.sendToFocusedView);
-
 
   if (process.platform === 'win32') {
     // original attachTitlebarToWindow for windows

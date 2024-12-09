@@ -3,10 +3,18 @@ import { app, ipcMain, WebContents } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 import events from './ipc-events';
+import { getFocusedView } from './helpers/tabHelper';
 
-class UpdateManager {
+export class UpdateManager {
   isDownloading: boolean;
-  send: (event: string, data: unknown) => void = () => {};
+
+  static instance: UpdateManager;
+
+  static init = (): void => {
+    UpdateManager.instance = new UpdateManager();
+  };
+
+  static getInstance = (): UpdateManager => UpdateManager.instance;
 
   constructor() {
     this.isDownloading = false;
@@ -65,8 +73,8 @@ class UpdateManager {
     else this.send(events.UPDATE_AVAILABLE, res);
   };
 
-  setSend = (send: (event: string, data: unknown) => void): void => {
-    this.send = send;
+  private send = (event: string, data: unknown): void => {
+    getFocusedView()?.webContents.send(event, data);
   };
 }
 
