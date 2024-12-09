@@ -79,7 +79,7 @@ class TabManager {
   private updateViewsBounds = (views: WebContentsView[]): void => {
     const bound = this.mainWindow?.getContentBounds();
     if (bound) {
-      views.forEach((view) => view.setBounds({...bound, x: 0, y: 0}));
+      views.forEach((view) => view.setBounds({ ...bound, x: 0, y: 0 }));
     }
   };
 
@@ -180,7 +180,7 @@ class TabManager {
     const res = Object.values(this.tabsMap).map(({ view }) => view);
     if (shouldIncludePreloaded && this.preloadedTab) res.push(this.preloadedTab.view);
     return res;
-  }
+  };
 
   private closeWebContentsView = (view: WebContentsView) => {
     const { id } = view.webContents;
@@ -259,6 +259,13 @@ class TabManager {
     }
     return false;
   };
+
+  closeFocusedTab = async (
+    opts: {
+      allowEmpty?: boolean;
+      shouldCloseWindow?: boolean;
+    } = {}
+  ): Promise<boolean> => this.closeTab(this.focusedId, opts);
 
   /**
    * @param opts.closeWindow whether close the window when the tab is closed

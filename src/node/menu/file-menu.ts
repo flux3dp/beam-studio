@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store';
 import { ipcMain, Menu, MenuItem, MenuItemConstructorOptions } from 'electron';
 
 import i18n from 'helpers/i18n';
-import { getFocusedView } from 'node/helpers/focusedViewHelper';
+import { getFocusedView, getTabManager } from 'node/helpers/tabHelper';
 import { ILang } from 'interfaces/ILang';
 import { MenuData } from 'interfaces/Menu';
 
@@ -48,6 +48,21 @@ export function buildFileMenu(
       id: 'SAVE_TO_CLOUD',
       label: r.save_to_cloud,
       click: callback,
+    },
+    // hidden items for shortcuts
+    {
+      id: 'NEW_TAB',
+      label: 'New Tab',
+      accelerator: 'CmdOrCtrl+T',
+      visible: false,
+      click: () => getTabManager()?.addNewTab(),
+    },
+    {
+      id: 'CLOSE_TAB',
+      label: 'Close Tab',
+      accelerator: 'CmdOrCtrl+W',
+      visible: false,
+      click: () => getTabManager()?.closeFocusedTab({ allowEmpty: true, shouldCloseWindow: true }),
     },
     { type: 'separator' },
     {
@@ -117,7 +132,11 @@ export function buildFileMenu(
           ],
         },
         { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
-        { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe, click: callback },
+        {
+          id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE',
+          label: r.import_beambox_2_focus_probe,
+          click: callback,
+        },
       ],
     },
     { type: 'separator' },
