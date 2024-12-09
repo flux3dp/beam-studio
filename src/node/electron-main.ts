@@ -218,10 +218,6 @@ function createWindow() {
   setTabManager(tabManager);
 
   let isCloseConfirmed = false;
-  let isFrontEndReady = false;
-  ipcMain.on(events.FRONTEND_READY, () => {
-    isFrontEndReady = true;
-  });
 
   const doClose = () => {
     monitorManager?.killProc();
@@ -235,8 +231,8 @@ function createWindow() {
   };
 
   mainWindow.on('close', async (evt) => {
-    console.log('Main window close event', isFrontEndReady, isCloseConfirmed);
-    if (isFrontEndReady && !isCloseConfirmed) {
+    console.log('Main window close event', isCloseConfirmed);
+    if (!isCloseConfirmed) {
       evt.preventDefault();
       if (tabManager) {
         const res = await tabManager.closeAllTabs();

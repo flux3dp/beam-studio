@@ -9,12 +9,14 @@ import i18n from 'helpers/i18n';
 import tabConstants from 'app/constants/tab-constants';
 import { Tab as FrontendTab } from 'interfaces/Tab';
 
+import events from './ipc-events';
 import initStore from './helpers/initStore';
 
 interface Tab {
   view: WebContentsView;
   title: string;
   isCloud: boolean;
+  isFrontendReady?: boolean;
 }
 
 class TabManager {
@@ -58,6 +60,15 @@ class TabManager {
     ipcMain.on('get-all-tabs', (e) => {
       e.returnValue = this.serializeTabs();
     });
+
+    ipcMain.on(events.FRONTEND_READY, (e) => {
+      if (this.tabsMap[e.sender.id]) {
+        this.tabsMap[e.sender.id].isFrontendReady = true;
+      } else if (this.preloadedTab?.view.webContents.id === e.sender.id) {
+        this.preloadedTab.isFrontendReady = true;
+      }
+    });
+
     const handleWindowSizeChanged = () => {
       const views = this.getAllViews();
       this.updateViewsBounds(views);
@@ -182,7 +193,7 @@ class TabManager {
     return res;
   };
 
-  private closeWebContentsView = (view: WebContentsView) => {
+  private closeWebContentsView = (view: WebContentsView, force = false) => {
     const { id } = view.webContents;
     return new Promise<boolean>((resolve) => {
       const closeHandler = () => {
@@ -190,6 +201,10 @@ class TabManager {
         view.webContents.close();
         resolve(true);
       };
+      if (force) {
+        closeHandler();
+        return;
+      }
       let eventReceivced = false;
       const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
         if (evt.sender === view.webContents) {
@@ -237,7 +252,7 @@ class TabManager {
   ): Promise<boolean> => {
     const { tabsMap, focusedId } = this;
     if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
-      const res = await this.closeWebContentsView(tabsMap[id].view);
+      const res = await this.closeWebContentsView(tabsMap[id].view, !tabsMap[id].isFrontendReady);
       if (res) {
         delete this.tabsMap[id];
         this.tabsList = this.tabsList.filter((tabId) => tabId !== id);
