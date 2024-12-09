@@ -17,6 +17,7 @@ interface Tab {
   title: string;
   isCloud: boolean;
   isFrontendReady?: boolean;
+  isPreviewing?: boolean;
 }
 
 class TabManager {
@@ -62,9 +63,11 @@ class TabManager {
     });
 
     ipcMain.on(events.FRONTEND_READY, (e) => {
-      if (this.tabsMap[e.sender.id]) {
-        this.tabsMap[e.sender.id].isFrontendReady = true;
-      } else if (this.preloadedTab?.view.webContents.id === e.sender.id) {
+      const { id } = e.sender;
+      if (this.tabsMap[id]) {
+        this.tabsMap[id].isFrontendReady = true;
+        this.notifyTabUpdated();
+      } else if (this.preloadedTab?.view.webContents.id === id) {
         this.preloadedTab.isFrontendReady = true;
       }
     });
@@ -103,11 +106,16 @@ class TabManager {
   };
 
   private serializeTabs = (): Array<FrontendTab> =>
-    this.tabsList.map((id: number) => ({
-      id,
-      title: this.tabsMap[id].title,
-      isCloud: this.tabsMap[id].isCloud,
-    }));
+    this.tabsList.map((id: number) => {
+      const { title, isCloud, isFrontendReady, isPreviewing } = this.tabsMap[id];
+      return {
+        id,
+        title,
+        isCloud,
+        isLoading: !isFrontendReady,
+        isPreviewing,
+      };
+    });
 
   private notifyTabUpdated = (): void => {
     this.sendToAllViews('TABS_UPDATED', this.serializeTabs());
@@ -167,7 +175,7 @@ class TabManager {
     this.tabsMap[id] = newTab;
     this.tabsList.push(id);
     this.preloadTab();
-    this.focusTab(id);
+    this.focusTab(newTab.isFrontendReady ? id : this.focusedId);
     this.notifyTabUpdated();
   };
 
@@ -255,10 +263,11 @@ class TabManager {
       const res = await this.closeWebContentsView(tabsMap[id].view, !tabsMap[id].isFrontendReady);
       if (res) {
         delete this.tabsMap[id];
+        const origIdx = this.tabsList.indexOf(id);
         this.tabsList = this.tabsList.filter((tabId) => tabId !== id);
         if (focusedId === id) {
           if (this.tabsList.length) {
-            this.focusTab(this.tabsList[0]);
+            this.focusTab(this.tabsList[origIdx] || this.tabsList[origIdx - 1]);
           }
         } else {
           this.focusTab(focusedId);
