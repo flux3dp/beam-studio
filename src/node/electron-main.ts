@@ -26,7 +26,7 @@ import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
-import TabManager from './tab-manager';
+import TabManager from './tabManager';
 import UpdateManager from './update-manager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 

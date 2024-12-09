@@ -5,7 +5,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { WebContentsView } from 'electron';
 
-import TabManager from 'node/tab-manager';
+import TabManager from 'node/tabManager';
 
 let currentTabManager: TabManager | null = null;
 
