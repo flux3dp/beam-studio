@@ -21,7 +21,7 @@ import DeviceInfo from 'interfaces/DeviceInfo';
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import events from './ipc-events';
-import focusedViewHelper from './helpers/focusedViewHelper';
+import tabHelper from './helpers/tabHelper';
 import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
@@ -215,7 +215,7 @@ function createWindow() {
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
-  focusedViewHelper.setTabManager(tabManager);
+  tabHelper.setTabManager(tabManager);
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;

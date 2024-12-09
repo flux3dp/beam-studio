@@ -9,7 +9,7 @@ import i18n from 'helpers/i18n';
 import tabConstants from 'app/constants/tab-constants';
 import { Tab as FrontendTab } from 'interfaces/Tab';
 
-import initStore from './helpers/init-store';
+import initStore from './helpers/initStore';
 
 interface Tab {
   view: WebContentsView;
