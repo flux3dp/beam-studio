@@ -5,8 +5,9 @@ import url from 'url';
 import { BaseWindow, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
 import { enable as enableRemote } from '@electron/remote/main';
 
+import CanvasMode from 'app/constants/canvasMode';
 import i18n from 'helpers/i18n';
-import tabConstants from 'app/constants/tab-constants';
+import tabConstants, { TabEvents } from 'app/constants/tabConstants';
 import { Tab as FrontendTab } from 'interfaces/Tab';
 
 import events from './ipc-events';
@@ -31,30 +32,38 @@ class TabManager {
   }
 
   setupEvents = (): void => {
-    ipcMain.on('focus-tab', (e, id: number) => {
+    ipcMain.on(TabEvents.FocusTab, (e, id: number) => {
       this.focusTab(id);
     });
 
-    ipcMain.on('add-new-tab', () => {
+    ipcMain.on(TabEvents.AddNewTab, () => {
       this.addNewTab();
     });
 
-    ipcMain.on('close-tab', (e, id: number) => {
+    ipcMain.on(TabEvents.CloseTab, (e, id: number) => {
       this.closeTab(id, { allowEmpty: true, shouldCloseWindow: true });
     });
 
-    ipcMain.on('move-tab', (e, srcIdx: number, dstIdx: number) => {
+    ipcMain.on(TabEvents.MoveTab, (e, srcIdx: number, dstIdx: number) => {
       this.moveTab(srcIdx, dstIdx);
     });
 
-    ipcMain.on('get-tab-id', (e) => {
+    ipcMain.on(TabEvents.GetTabId, (e) => {
       e.returnValue = e.sender.id;
     });
-    ipcMain.on('set-tab-title', (e, title: string, isCloud: boolean) => {
+
+    ipcMain.on(TabEvents.SetTabMode, (e, mode: CanvasMode) => {
+      if (this.tabsMap[e.sender.id]) {
+        this.tabsMap[e.sender.id].mode = mode;
+        this.notifyTabUpdated();
+      }
+    });
+
+    ipcMain.on(TabEvents.SetTabTitle, (e, title: string, isCloud: boolean) => {
       this.onTabTitleChanged(e.sender.id, title, isCloud);
     });
 
-    ipcMain.on('get-all-tabs', (e) => {
+    ipcMain.on(TabEvents.GetAllTabs, (e) => {
       e.returnValue = this.serializeTabs();
     });
 
@@ -108,7 +117,7 @@ class TabManager {
     });
 
   private notifyTabUpdated = (): void => {
-    this.sendToAllViews('TABS_UPDATED', this.serializeTabs());
+    this.sendToAllViews(TabEvents.TabUpdated, this.serializeTabs());
   };
 
   private createTab = (): Tab => {
@@ -169,7 +178,11 @@ class TabManager {
     this.tabsMap[id] = newTab;
     this.tabsList.push(id);
     this.preloadTab();
-    this.focusTab((newTab.isFrontendReady || this.focusedId < 0) ? id : this.focusedId);
+    if (!newTab.isLoading || this.focusedId < 0) {
+      this.focusTab(id);
+    } else {
+      this.focusTab(this.focusedId);
+    }
     this.notifyTabUpdated();
   };
 
@@ -179,7 +192,7 @@ class TabManager {
       const { view } = this.tabsMap[id];
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
-      view.webContents.send('TAB_FOCUSED');
+      view.webContents.send(TabEvents.TabFocused);
     }
   };
 
