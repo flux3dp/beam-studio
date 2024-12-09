@@ -21,7 +21,6 @@ import DeviceInfo from 'interfaces/DeviceInfo';
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import events from './ipc-events';
-import tabHelper from './helpers/tabHelper';
 import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
@@ -29,6 +28,7 @@ import networkHelper from './network-helper';
 import TabManager from './tabManager';
 import UpdateManager from './update-manager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
+import { setTabManager } from './helpers/tabHelper';
 
 electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -215,7 +215,7 @@ function createWindow() {
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
-  tabHelper.setTabManager(tabManager);
+  setTabManager(tabManager);
 
   let isCloseConfirmed = false;
   let isFrontEndReady = false;
