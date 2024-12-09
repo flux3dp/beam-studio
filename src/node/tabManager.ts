@@ -73,7 +73,7 @@ class TabManager {
         this.tabsMap[id].isLoading = false;
         this.notifyTabUpdated();
       } else if (this.preloadedTab?.view.webContents.id === id) {
-        this.preloadedTab.isLoading = true;
+        this.preloadedTab.isLoading = false;
       }
     });
 
