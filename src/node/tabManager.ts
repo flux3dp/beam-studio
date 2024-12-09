@@ -12,12 +12,8 @@ import { Tab as FrontendTab } from 'interfaces/Tab';
 import events from './ipc-events';
 import initStore from './helpers/initStore';
 
-interface Tab {
+interface Tab extends FrontendTab {
   view: WebContentsView;
-  title: string;
-  isCloud: boolean;
-  isFrontendReady?: boolean;
-  isPreviewing?: boolean;
 }
 
 class TabManager {
@@ -65,10 +61,10 @@ class TabManager {
     ipcMain.on(events.FRONTEND_READY, (e) => {
       const { id } = e.sender;
       if (this.tabsMap[id]) {
-        this.tabsMap[id].isFrontendReady = true;
+        this.tabsMap[id].isLoading = false;
         this.notifyTabUpdated();
       } else if (this.preloadedTab?.view.webContents.id === id) {
-        this.preloadedTab.isFrontendReady = true;
+        this.preloadedTab.isLoading = true;
       }
     });
 
@@ -107,14 +103,8 @@ class TabManager {
 
   private serializeTabs = (): Array<FrontendTab> =>
     this.tabsList.map((id: number) => {
-      const { title, isCloud, isFrontendReady, isPreviewing } = this.tabsMap[id];
-      return {
-        id,
-        title,
-        isCloud,
-        isLoading: !isFrontendReady,
-        isPreviewing,
-      };
+      const { title, isCloud, isLoading, mode } = this.tabsMap[id];
+      return { id, title, isCloud, isLoading, mode };
     });
 
   private notifyTabUpdated = (): void => {
@@ -151,7 +141,13 @@ class TabManager {
       this.updateViewsBounds([tabView]);
     });
     const title = i18n.lang.topbar.untitled;
-    const tab = { view: tabView, title, isCloud: false };
+    const tab: Tab = {
+      id: tabView.webContents.id,
+      view: tabView,
+      title,
+      isCloud: false,
+      isLoading: true,
+    };
     this.updateViewsBounds([tabView]);
     return tab;
   };
@@ -167,9 +163,6 @@ class TabManager {
   };
 
   addNewTab = (): void => {
-    if (this.preloadedTab) {
-      console.log('using preloaded tab', this.preloadedTab.view.webContents.id, this.tabsMap);
-    }
     const newTab = this.preloadedTab ?? this.createTab();
     this.preloadedTab = null;
     const { id } = newTab.view.webContents;
@@ -261,7 +254,7 @@ class TabManager {
   ): Promise<boolean> => {
     const { tabsMap, focusedId } = this;
     if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
-      const res = await this.closeWebContentsView(tabsMap[id].view, !tabsMap[id].isFrontendReady);
+      const res = await this.closeWebContentsView(tabsMap[id].view, tabsMap[id].isLoading);
       if (res) {
         delete this.tabsMap[id];
         const origIdx = this.tabsList.indexOf(id);
