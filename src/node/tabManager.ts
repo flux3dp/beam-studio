@@ -175,7 +175,7 @@ class TabManager {
     this.tabsMap[id] = newTab;
     this.tabsList.push(id);
     this.preloadTab();
-    this.focusTab(newTab.isFrontendReady ? id : this.focusedId);
+    this.focusTab((newTab.isFrontendReady || this.focusedId < 0) ? id : this.focusedId);
     this.notifyTabUpdated();
   };
 
