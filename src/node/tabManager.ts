@@ -162,6 +162,7 @@ class TabManager {
       (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)
     ) {
       this.preloadedTab = this.createTab();
+      this.focusTab(this.focusedId);
     }
   };
 
