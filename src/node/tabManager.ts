@@ -13,7 +13,7 @@ import { Tab as FrontendTab } from 'interfaces/Tab';
 import events from './ipc-events';
 import initStore from './helpers/initStore';
 
-interface Tab extends FrontendTab {
+interface Tab extends Omit<FrontendTab, 'id'> {
   view: WebContentsView;
 }
 
@@ -22,6 +22,7 @@ class TabManager {
   private tabsMap: Record<number, Tab> = {};
   private tabsList: number[] = [];
   private preloadedTab: Tab | null = null;
+  private focusOnReadyId = -1;
   private focusedId = -1;
   private isDebug = false;
 
@@ -69,17 +70,23 @@ class TabManager {
 
     ipcMain.on(events.FRONTEND_READY, (e) => {
       const { id } = e.sender;
+      let tab: Tab | null = null;
       if (this.tabsMap[id]) {
-        this.tabsMap[id].isLoading = false;
+        tab = this.tabsMap[id];
+      }
+      if (tab) {
+        tab.isLoading = false;
+        this.updateTabBounds([tab]);
+        if (id === this.focusOnReadyId) {
+          this.focusTab(id);
+        }
         this.notifyTabUpdated();
-      } else if (this.preloadedTab?.view.webContents.id === id) {
-        this.preloadedTab.isLoading = false;
       }
     });
 
     const handleWindowSizeChanged = () => {
-      const views = this.getAllViews();
-      this.updateViewsBounds(views);
+      const tabs = Object.values(this.tabsMap);
+      this.updateTabBounds(tabs);
     };
     this.mainWindow.on('resized', handleWindowSizeChanged);
     this.mainWindow.on('enter-full-screen', handleWindowSizeChanged);
@@ -91,14 +98,24 @@ class TabManager {
       this.tabsList.forEach((id) => {
         this.tabsMap[id].view.webContents.close();
       });
-      this.preloadedTab?.view.webContents.close();
     });
   };
 
-  private updateViewsBounds = (views: WebContentsView[]): void => {
+  private updateTabBounds = (tabs: Tab[]): void => {
     const bound = this.mainWindow?.getContentBounds();
     if (bound) {
-      views.forEach((view) => view.setBounds({ ...bound, x: 0, y: 0 }));
+      const { width, height } = bound;
+      const topBarHeight = 40;
+      const isAnyTabReady = this.tabsList.some((id) => !this.tabsMap[id].isLoading);
+      tabs.forEach(({ view, isLoading }) => {
+        const shouldSetY = isLoading && isAnyTabReady;
+        view.setBounds({
+          x: 0,
+          width,
+          y: shouldSetY ? topBarHeight : 0,
+          height,
+        });
+      });
     }
   };
 
@@ -113,7 +130,7 @@ class TabManager {
   private serializeTabs = (): Array<FrontendTab> =>
     this.tabsList.map((id: number) => {
       const { title, isCloud, isLoading, mode } = this.tabsMap[id];
-      return { id, title, isCloud, isLoading, mode };
+      return { id, title, isCloud, isFocused: id === this.focusedId, isLoading, mode };
     });
 
   private notifyTabUpdated = (): void => {
@@ -146,18 +163,18 @@ class TabManager {
     );
     if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug))
       webContents.openDevTools();
-    webContents.on('devtools-closed', () => {
-      this.updateViewsBounds([tabView]);
-    });
     const title = i18n.lang.topbar.untitled;
     const tab: Tab = {
-      id: tabView.webContents.id,
       view: tabView,
       title,
       isCloud: false,
       isLoading: true,
     };
-    this.updateViewsBounds([tabView]);
+    webContents.on('devtools-closed', () => {
+      this.updateTabBounds([tab]);
+    });
+    this.updateTabBounds([tab]);
+    this.tabsMap[tabView.webContents.id] = tab;
     return tab;
   };
 
@@ -175,13 +192,13 @@ class TabManager {
     const newTab = this.preloadedTab ?? this.createTab();
     this.preloadedTab = null;
     const { id } = newTab.view.webContents;
-    this.tabsMap[id] = newTab;
     this.tabsList.push(id);
     this.preloadTab();
     if (!newTab.isLoading || this.focusedId < 0) {
       this.focusTab(id);
     } else {
       this.focusTab(this.focusedId);
+      this.focusOnReadyId = id;
     }
     this.notifyTabUpdated();
   };
@@ -193,6 +210,7 @@ class TabManager {
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
       view.webContents.send(TabEvents.TabFocused);
+      this.focusOnReadyId = -1;
     }
   };
 
@@ -202,9 +220,8 @@ class TabManager {
     return null;
   };
 
-  getAllViews = (shouldIncludePreloaded = true): WebContentsView[] => {
+  getAllViews = (): WebContentsView[] => {
     const res = Object.values(this.tabsMap).map(({ view }) => view);
-    if (shouldIncludePreloaded && this.preloadedTab) res.push(this.preloadedTab.view);
     return res;
   };
 
@@ -267,7 +284,10 @@ class TabManager {
   ): Promise<boolean> => {
     const { tabsMap, focusedId } = this;
     if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
-      const res = await this.closeWebContentsView(tabsMap[id].view, tabsMap[id].isLoading);
+      const res = await this.closeWebContentsView(
+        tabsMap[id].view,
+        tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab
+      );
       if (res) {
         delete this.tabsMap[id];
         const origIdx = this.tabsList.indexOf(id);
