@@ -285,6 +285,11 @@ const buildHelpMenu = (callback: (data: MenuData) => void) => {
           shell.openExternal(r.link.forum);
         },
       },
+      {
+        id: 'FOLLOW_US',
+        label: r.follow_us,
+        click: callback,
+      },
       { type: 'separator' },
     ]
   );
