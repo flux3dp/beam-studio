@@ -36,7 +36,7 @@
         timestamp: (new Date()).getTime(),
         onLine: navigator.onLine,
         os: ('undefined' === typeof nw ? undefined : os),
-        ghostPort: 8000,
+        ghostPort: dev ? 8000 : undefined,
         allowTracking: false,
         dev: dev,
       };
