@@ -1,36 +1,42 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.4.4 beta
+// 2.4.5 beta
 const CHANGES_TW = {
   added: [
-    '新增 支援 Beambox II機型。',
-    '新增 Promark 機器設定時的參數設定畫面。',
-    '新增 Promark Mopa 材質測試工具的頻率與脈寬選項。',
-    '新增 Promark 相機校正動畫。',
+    '新增 Beambox II 相機校正資料的下載與上傳功能。',
+    '新增 Beambox II 對焦尺檔案。',
+    '新增 Promark Z 軸調整功能於機器設定。',
+    '新增 Promark 點陣圖打點時間參數。',
+    '新增 Promark 的路徑「填充間隔」參數於材質測試工具。',
+    '新增 Promark 填充路徑的雙向填充及交叉填充選項。',
+    '新增 ESC 鍵可終止相機預覽序列或退出預覽模式。',
+    '新增 「追蹤我們」於說明選單中。',
   ],
   fixed: [
-    '修正 Promark 相關問題。',
-    '修正 可以在不同 Beam Studio App 中複製貼上物件。',
-    '修正 勾選偏好設定中「路徑計算加速」選項時的相關問題。',
-    '修正 SVG 物件在解散圖檔後會被填充。',
+    '修正 Promark 參數紅光桶型。',
+    '修正 Promark 預估工作時間。',
+    '修正 Promark 在點陣圖漸層及非漸層的打標行為。',
+    '修正 參數管理預設值無法正確儲存的問題。',
   ],
   changed: [
-    '變更 部分上層選單的分類方式。',
-    '變更 偏好設定中「相機預覽移動速度」的敘述與速度設定。',
+    '更新 Beambox II 範例檔。',
+    '更新 Beambox II 機器設定畫面。',
+    '更新 Promark MOPA 60W 預設參數。',
+    '改善 Promark 紅光預覽時容易與後端斷線的問題。',
+    '更新「管理我的帳號」按鈕的目標網址。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
+    'Added “Follow Us” in help menu.',
+    'Added an ESC shortcut key to stop the camera preview sequence or exit the preview mode.',
   ],
   fixed: [
-    'Fixed an issue where objects could not be copied and pasted between different Beam Studio apps.',
-    'Fixed issues related to enabling the “Path Calculation Acceleration” option in preferences.',
-    'Fixed SVG objects being filled after disassembling.',
+    'Fixed the issue where default values in parameter management could not be saved correctly.',
   ],
   changed: [
-    'Updated the categorization of some top-level menu items.',
-    'Changed the description and speed setting of Camera’s “preview movement speed” in preference.',
+    'Changed the target URL of the “Manage My Account” button.',
   ],
 };
 
