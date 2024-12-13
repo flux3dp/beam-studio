@@ -449,7 +449,6 @@ const onMenuClick = (data: {
       tabManager?.getFocusedView()?.webContents.undo();
     }
   } else {
-    console.log('Send', data);
     tabManager?.sendToFocusedView(events.MENU_CLICK, data);
   }
 };
