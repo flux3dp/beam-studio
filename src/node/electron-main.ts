@@ -128,12 +128,12 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
-      if (didUpdated) tabManager?.sendToFocusedView('UPDATE_MENU');
+      if (didUpdated) tabManager?.sendToAllViews('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
-      tabManager?.sendToFocusedView('UPDATE_MENU');
+      tabManager?.sendToAllViews('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
   }
