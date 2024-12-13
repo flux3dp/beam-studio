@@ -14,7 +14,7 @@ import { adorModels, promarkModels } from 'app/actions/beambox/constant';
 import { MenuData } from 'interfaces/Menu';
 
 import events from './ipc-events';
-import { buildFileMenu, updateRecentMenu } from './menu/file-menu';
+import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
 import { getFocusedView } from './helpers/tabHelper';
 
 const store = new Store();
