@@ -69,8 +69,7 @@ export class UpdateManager {
       console.error(error);
       res = { error, isUpdateAvailable: true };
     }
-    if (webContents) webContents?.send(events.UPDATE_AVAILABLE, res);
-    else this.send(events.UPDATE_AVAILABLE, res);
+    webContents.send(events.UPDATE_AVAILABLE, res);
   };
 
   private send = (event: string, data: unknown): void => {
