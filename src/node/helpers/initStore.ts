@@ -1,7 +1,8 @@
 import ElectronStore from 'electron-store';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { WebContents } from 'electron';
 
-const initStore = (webContents: WebContents) => {
+const initStore = (webContents: WebContents): void => {
   const store = new ElectronStore();
 
   if (!store.get('poke-ip-addr')) store.set('poke-ip-addr', '192.168.1.1');

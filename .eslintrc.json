@@ -58,6 +58,7 @@
     "@typescript-eslint/comma-dangle": "off",
     "react/require-default-props": "off",
     "no-console": "off",
-    "no-underscore-dangle": ["error", { "allowAfterThis": true }]
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
+    "@typescript-eslint/lines-between-class-members": ["error", { "exceptAfterOverload": true }]
   }
 }
