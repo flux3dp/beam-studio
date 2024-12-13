@@ -260,7 +260,6 @@ function createWindow() {
         slashes: true,
       })
     );
-    // loadShadowWindow();
   });
 
   mainWindow.on('new-window-for-tab', () => {
