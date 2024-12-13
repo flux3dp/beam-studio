@@ -24,6 +24,7 @@ class Menu extends AbstractMenu {
       updateWindowsMenu();
     });
     communicator.on('NEW_APP_MENU', () => {
+      updateWindowsMenu();
       this.initCheckboxs();
     });
     communicator.on(TabEvents.TabFocused, () => {
