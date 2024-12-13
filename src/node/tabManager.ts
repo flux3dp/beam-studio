@@ -105,7 +105,7 @@ class TabManager {
     const bound = this.mainWindow?.getContentBounds();
     if (bound) {
       const { width, height } = bound;
-      const topBarHeight = 40;
+      const topBarHeight = process.platform === 'win32' ? 70 : 40;
       const isAnyTabReady = this.tabsList.some((id) => !this.tabsMap[id].isLoading);
       tabs.forEach(({ view, isLoading }) => {
         const shouldSetY = isLoading && isAnyTabReady;
