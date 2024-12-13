@@ -5,6 +5,8 @@ import AbstractMenu from 'helpers/menubar/AbstractMenu';
 import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 
 import communicator from 'implementations/communicator';
+import { TabEvents } from 'app/constants/tabConstants';
+
 import ElectronUpdater from './electron-updater';
 import { updateCheckbox } from '../electron-menubar-helper';
 
@@ -24,7 +26,7 @@ class Menu extends AbstractMenu {
     communicator.on('NEW_APP_MENU', () => {
       this.initCheckboxs();
     });
-    communicator.on('TAB_FOCUSED', () => {
+    communicator.on(TabEvents.TabFocused, () => {
       this.initCheckboxs();
     });
   }
