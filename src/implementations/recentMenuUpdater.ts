@@ -43,7 +43,7 @@ communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
           const blob = await resp.blob();
           importBvg(blob);
         }
-        svgCanvas.setHasUnsavedChange(false);
+        currentFileManager.setHasUnsavedChanges(false);
       } finally {
         Alert.popById('load-recent');
       }
