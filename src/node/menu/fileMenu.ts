@@ -131,6 +131,37 @@ export function buildFileMenu(
             },
           ],
         },
+        {
+          id: 'PROMARK_COLOR_TEST',
+          label: r.promark_color_test,
+          submenu: [
+            {
+              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
+              label: r.import_promark_mopa_20w_color,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
+              label: r.import_promark_mopa_60w_color,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
+              label: `${r.import_promark_mopa_60w_color} - 2`,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
+              label: r.import_promark_mopa_100w_color,
+              click: callback,
+            },
+            {
+              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
+              label: `${r.import_promark_mopa_100w_color} - 2`,
+              click: callback,
+            },
+          ],
+        },
         { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe, click: callback },
         {
           id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE',
