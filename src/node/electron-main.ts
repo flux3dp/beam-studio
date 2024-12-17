@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/first */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain, systemPreferences } from 'electron';
+import { app, BaseWindow, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
@@ -13,9 +13,8 @@ import path from 'path';
 import url from 'url';
 
 import Sentry from '@sentry/electron';
-import Store from 'electron-store';
 import * as electronRemote from '@electron/remote/main';
-import { attachTitlebarToWindow, setupTitlebar } from 'custom-electron-titlebar/main';
+import { setupTitlebar } from 'custom-electron-titlebar/main';
 
 import DeviceInfo from 'interfaces/DeviceInfo';
 
@@ -26,8 +25,10 @@ import fontHelper from './font-helper';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
-import UpdateManager from './update-manager';
+import TabManager from './tabManager';
 import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
+import { setTabManager } from './helpers/tabHelper';
+import { UpdateManager } from './updateManager';
 
 electronRemote.initialize();
 Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
@@ -40,8 +41,9 @@ Sentry.captureMessage('User Census', {
 });
 setupTitlebar();
 
-let mainWindow: BrowserWindow | null;
+let mainWindow: BaseWindow | null;
 let menuManager: MenuManager | null;
+let tabManager: TabManager | null;
 
 const globalData: {
   backend: {
@@ -107,7 +109,7 @@ if (process.platform === 'linux') {
 function onGhostUp(data: { port: number }) {
   globalData.backend.alive = true;
   globalData.backend.port = data.port;
-  mainWindow?.webContents?.send(events.BACKEND_UP, globalData.backend);
+  tabManager?.sendToAllViews(events.BACKEND_UP, globalData.backend);
 }
 
 function onGhostDown() {
@@ -118,6 +120,7 @@ function onGhostDown() {
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
   const { alive, source, uuid, serial } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
+  tabManager?.sendToFocusedView('device-status', deviceInfo);
 
   if (alive || source !== 'lan') {
     if (menuManager) {
@@ -125,12 +128,12 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
-      if (didUpdated && mainWindow) mainWindow.webContents.send('UPDATE_MENU');
+      if (didUpdated) tabManager?.sendToAllViews('UPDATE_MENU');
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
-      if (mainWindow) mainWindow.webContents.send('UPDATE_MENU');
+      tabManager?.sendToAllViews('UPDATE_MENU');
     }
     delete globalData.devices[deviceID];
   }
@@ -139,7 +142,7 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
 
 bootstrap();
 
-const updateManager = new UpdateManager();
+UpdateManager.init();
 const backendManager = new BackendManager({
   location: process.env.BACKEND,
   trace_pid: process.pid,
@@ -167,14 +170,12 @@ let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
 
 const loadShadowWindow = () => {
-  if (shadowWindow) {
-    shadowWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../../shadow-index.html'),
-        protocol: 'file:',
-      })
-    );
-  }
+  shadowWindow?.loadURL(
+    url.format({
+      pathname: path.join(__dirname, '../../shadow-index.html'),
+      protocol: 'file:',
+    })
+  );
 };
 
 const createShadowWindow = () => {
@@ -202,7 +203,7 @@ const createShadowWindow = () => {
 function createWindow() {
   // Create the browser window.
   console.log('Creating main window');
-  mainWindow = new BrowserWindow({
+  mainWindow = new BaseWindow({
     width: 1300,
     height: 650,
     minWidth: 800,
@@ -210,109 +211,37 @@ function createWindow() {
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     frame: process.platform !== 'win32',
     title: `Beam Studio - ${app.getVersion()}`,
-    webPreferences: {
-      preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
     trafficLightPosition: { x: 12, y: 14 },
-    // vibrancy: 'light',
   });
-
-  electronRemote.enable(mainWindow.webContents);
-
-  mainWindow.webContents.setWindowOpenHandler(({ url: openUrl }) => {
-    // Prevent the new window from early input files
-    if (openUrl.startsWith('file://')) return { action: 'deny' };
-    return { action: 'allow' };
-  });
-
-  const store = new Store();
-
-  if (!store.get('poke-ip-addr')) {
-    store.set('poke-ip-addr', '192.168.1.1');
-  }
-
-  if (!store.get('customizedLaserConfigs')) {
-    mainWindow.webContents.executeJavaScript('({...localStorage});', true).then((localStorage) => {
-      const keysNeedParse = [
-        'auto_check_update',
-        'auto_connect',
-        'guessing_poke',
-        'loop_compensation',
-        'notification',
-        'printer-is-ready',
-      ];
-      // eslint-disable-next-line no-restricted-syntax
-      for (const key in localStorage) {
-        if (keysNeedParse.includes(key)) {
-          try {
-            localStorage[key] = JSON.parse(localStorage[key]);
-            console.log(key, localStorage[key]);
-          } catch (e) {
-            console.log(key, e);
-            // Error when parsing
-          }
-        }
-      }
-      store.set(localStorage);
-    });
-  }
-
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, '../../index.html'),
-      protocol: 'file:',
-      slashes: true,
-    })
-  );
+  tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
+  tabManager.addNewTab();
+  setTabManager(tabManager);
 
   let isCloseConfirmed = false;
-  let isFrontEndReady = false;
-  ipcMain.on(events.FRONTEND_READY, () => {
-    isFrontEndReady = true;
-  });
 
-  mainWindow.on('close', (evt) => {
-    if (isFrontEndReady && !isCloseConfirmed) {
+  const doClose = () => {
+    monitorManager?.killProc();
+    backendManager.stop();
+    shouldCloseShadowWindow = true;
+    try {
+      shadowWindow.close();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  mainWindow.on('close', async (evt) => {
+    console.log('Main window close event', isCloseConfirmed);
+    if (!isCloseConfirmed) {
       evt.preventDefault();
-      mainWindow?.webContents.send('WINDOW_CLOSE');
-      // if save dialog does not pop in 10 seconds
-      // something may goes wrong in frontend, close the app
-      let isSaveDialogPopped = false;
-      ipcMain.once('SAVE_DIALOG_POPPED', () => {
-        isSaveDialogPopped = true;
-      });
-      const closeBeamStudio = () => {
-        isCloseConfirmed = true;
-        if (monitorManager) {
-          monitorManager.killProc();
-        }
-        backendManager.stop();
-        mainWindow?.close();
-        shouldCloseShadowWindow = true;
-        try {
-          shadowWindow.close();
-        } catch (error) {
-          console.log(error);
-        }
-      };
-
-      setTimeout(() => {
-        if (!isSaveDialogPopped) closeBeamStudio();
-      }, 10000);
-      ipcMain.once('CLOSE_REPLY', (event, reply) => {
-        if (reply) closeBeamStudio();
-      });
-    } else {
-      if (monitorManager) monitorManager.killProc();
-      backendManager.stop();
-      shouldCloseShadowWindow = true;
-      try {
-        shadowWindow.close();
-      } catch (e) {
-        console.log(e);
+      if (tabManager) {
+        const res = await tabManager.closeAllTabs();
+        if (!res) return;
       }
+      isCloseConfirmed = true;
+      mainWindow?.close();
+    } else {
+      doClose();
     }
   });
 
@@ -323,34 +252,51 @@ function createWindow() {
     else app.quit();
   });
 
-  mainWindow.on('page-title-updated', (event) => {
-    event.preventDefault();
-  });
-
   menuManager?.on('DEBUG-RELOAD', () => {
-    mainWindow?.loadURL(
+    tabManager?.getFocusedView()?.webContents.loadURL(
       url.format({
         pathname: path.join(__dirname, '../../index.html'),
         protocol: 'file:',
         slashes: true,
       })
     );
-    loadShadowWindow();
+  });
+
+  mainWindow.on('new-window-for-tab', () => {
+    tabManager?.addNewTab();
   });
 
   menuManager?.on('DEBUG-INSPECT', () => {
-    mainWindow?.webContents.openDevTools();
+    tabManager?.getFocusedView()?.webContents.openDevTools();
   });
-  ipcMain.on('DEBUG-INSPECT', () => {
-    mainWindow?.webContents.openDevTools();
+  ipcMain.on('DEBUG-INSPECT', (evt) => {
+    evt.sender.openDevTools();
   });
-  if (!process.argv.includes('--test') && (process.defaultApp || DEBUG)) {
-    mainWindow.webContents.openDevTools();
-  }
+  networkHelper.registerEvents();
 
-  updateManager.setMainWindow(mainWindow);
-  networkHelper.registerEvents(mainWindow);
-  attachTitlebarToWindow(mainWindow);
+  if (process.platform === 'win32') {
+    // original attachTitlebarToWindow for windows
+    // eslint-disable-next-line max-len
+    // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
+    mainWindow.on('enter-full-screen', () => {
+      tabManager?.sendToAllViews('window-fullscreen', true);
+    });
+    mainWindow.on('leave-full-screen', () => {
+      tabManager?.sendToAllViews('window-fullscreen', false);
+    });
+    mainWindow.on('focus', () => {
+      tabManager?.sendToFocusedView('window-focus', true);
+    });
+    mainWindow.on('blur', () => {
+      tabManager?.sendToFocusedView('window-focus', false);
+    });
+    mainWindow.on('maximize', () => {
+      tabManager?.sendToAllViews('window-maximize', true);
+    });
+    mainWindow.on('unmaximize', () => {
+      tabManager?.sendToAllViews('window-maximize', false);
+    });
+  }
 }
 
 let didGetOpenFile = false;
@@ -393,9 +339,9 @@ ipcMain.on('DEVICE_UPDATED', (event, deviceInfo: DeviceInfo) => {
   onDeviceUpdated(deviceInfo);
 });
 
-ipcMain.on(events.CHECK_BACKEND_STATUS, () => {
+ipcMain.on(events.CHECK_BACKEND_STATUS, (evt) => {
   if (mainWindow) {
-    mainWindow.webContents.send(events.NOTIFY_BACKEND_STATUS, {
+    evt.sender.send(events.NOTIFY_BACKEND_STATUS, {
       backend: globalData.backend,
       devices: globalData.devices,
     });
@@ -416,6 +362,7 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
     fullColor,
   } = data;
   if (shadowWindow) {
+    const senderId = e.sender.id;
     shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, {
       url: svgUrl,
       width,
@@ -425,13 +372,14 @@ ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
       id,
       strokeWidth,
       fullColor,
+      senderId,
     });
   }
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
-  const { imageUrl, id } = data;
-  mainWindow?.webContents.send(`${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
+  const { imageUrl, id, senderId } = data;
+  tabManager?.sendToView(senderId, `${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
@@ -465,13 +413,13 @@ app.on('second-instance', (e, argv) => {
     mainWindow.focus();
   }
   const linkUrl = getDeeplinkUrl(argv);
-  if (linkUrl) handleDeepLinkUrl(mainWindow, linkUrl);
+  if (linkUrl) handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
 });
 
 // macOS deep link handler
 app.on('will-finish-launching', () => {
   app.on('open-url', (event, openUrl) => {
-    handleDeepLinkUrl(mainWindow, openUrl);
+    handleDeepLinkUrl(tabManager?.getAllViews() || [], openUrl);
   });
 });
 
@@ -493,21 +441,15 @@ const onMenuClick = (data: {
     uuid: data.uuid,
     machineName: data.machineName,
   };
-  const window = BrowserWindow.getFocusedWindow();
-  if (window) {
-    if (editingStandardInput) {
-      if (data.id === 'REDO') {
-        window.webContents.redo();
-      }
-      if (data.id === 'UNDO') {
-        window.webContents.undo();
-      }
-    } else {
-      console.log('Send', data);
-      window.webContents.send(events.MENU_CLICK, data);
+  if (editingStandardInput) {
+    if (data.id === 'REDO') {
+      tabManager?.getFocusedView()?.webContents.redo();
+    }
+    if (data.id === 'UNDO') {
+      tabManager?.getFocusedView()?.webContents.undo();
     }
   } else {
-    console.log('Menu event triggered but window does not exist.');
+    tabManager?.sendToFocusedView(events.MENU_CLICK, data);
   }
 };
 
@@ -515,7 +457,7 @@ const init = () => {
   menuManager = new MenuManager();
   menuManager.on(events.MENU_CLICK, onMenuClick);
   menuManager.on('NEW_APP_MENU', () => {
-    mainWindow?.webContents.send('NEW_APP_MENU');
+    tabManager?.sendToAllViews('NEW_APP_MENU');
   });
 
   if (!mainWindow) {

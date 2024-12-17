@@ -1,15 +1,20 @@
 import Store from 'electron-store';
+
 import { IStorage } from 'interfaces/IStorage';
 
 class ElectronStorage implements IStorage {
   private store: Store;
 
+  private storeCache: any;
+
   constructor() {
     this.store = new Store();
+    this.storeCache = this.store.store;
   }
 
-  get = (name: string): any => {
-    let item: any = this.store.get(name || '');
+  get = (name: string, useCache = true): any => {
+    const store = useCache ? this.storeCache : this.store.store;
+    let item: any = name ? store[name] : store;
 
     item = (item === null ? '' : item);
 
@@ -27,16 +32,19 @@ class ElectronStorage implements IStorage {
 
   set = (name: string, val: any): IStorage => {
     this.store.set(name || '', val);
+    this.storeCache[name] = val;
     return this;
   };
 
   removeAt = (name: string): IStorage => {
     this.store.delete(name);
+    delete this.storeCache[name];
     return this;
   };
 
   clearAll = (): IStorage => {
     this.store.clear();
+    this.storeCache = {};
     return this;
   };
 
@@ -47,9 +55,9 @@ class ElectronStorage implements IStorage {
     return this;
   };
 
-  isExisting = (key: string): boolean => this.store.has(key);
+  isExisting = (key: string): boolean => this.storeCache[key] !== undefined;
 
-  getStore = () => this.store.store;
+  getStore = () => this.storeCache;
 }
 
 const storage = new ElectronStorage();

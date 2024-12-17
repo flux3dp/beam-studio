@@ -1,10 +1,10 @@
 import ping from 'ping';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { BrowserWindow, ipcMain } from 'electron';
+import { ipcMain, WebContents } from 'electron';
 
 import events from './ipc-events';
 
-const testNetwork = async (ip: string, time: number, mainWindow: BrowserWindow) => {
+const testNetwork = async (ip: string, time: number, webContents: WebContents) => {
   const start = Date.now();
   let pingCount = 0;
   let successCount = 0;
@@ -12,7 +12,7 @@ const testNetwork = async (ip: string, time: number, mainWindow: BrowserWindow) 
   while (Date.now() < start + time) {
     const elapsedTime = Date.now() - start;
     const percentage = Math.round((100 * elapsedTime) / time);
-    mainWindow.webContents.send(events.TEST_NETWORK_PROGRESS, percentage);
+    webContents.send(events.TEST_NETWORK_PROGRESS, percentage);
     // wait for the network to be ready
     pingCount += 1;
     // eslint-disable-next-line no-await-in-loop
@@ -55,19 +55,21 @@ const checkIPExist = async (ip: string, trial: number) => {
   }
 };
 
-const registerEvents = (mainWindow: BrowserWindow): void => {
+const registerEvents = (): void => {
   ipcMain.removeAllListeners(events.TEST_NETWORK);
   ipcMain.on(events.TEST_NETWORK, async (event, ip, time) => {
-    const res = await testNetwork(ip, time, mainWindow);
-    mainWindow.webContents.send(events.TEST_NETWORK_RESULT, res);
+    const { sender } = event;
+    const res = await testNetwork(ip, time, sender);
+    event.sender.send(events.TEST_NETWORK_RESULT, res);
     // eslint-disable-next-line no-param-reassign
     event.returnValue = res;
   });
 
   ipcMain.removeAllListeners(events.CHECK_IP_EXIST);
   ipcMain.on(events.CHECK_IP_EXIST, async (event, ip, trial) => {
+    const { sender } = event;
     const res = await checkIPExist(ip, trial);
-    mainWindow.webContents.send(events.CHECK_IP_EXIST_RESULT, res);
+    sender.send(events.CHECK_IP_EXIST_RESULT, res);
     // eslint-disable-next-line no-param-reassign
     event.returnValue = res;
   });

@@ -1,57 +1,46 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, ipcMain, WebContents } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
 import events from './ipc-events';
+import { getFocusedView } from './helpers/tabHelper';
 
-class UpdateManager {
-  mainWindow: BrowserWindow | null;
-
+export class UpdateManager {
   isDownloading: boolean;
 
+  static instance: UpdateManager;
+
+  static init = (): void => {
+    UpdateManager.instance = new UpdateManager();
+  };
+
+  static getInstance = (): UpdateManager => UpdateManager.instance;
+
   constructor() {
-    this.mainWindow = null;
     this.isDownloading = false;
     autoUpdater.autoDownload = false;
     autoUpdater.allowDowngrade = true;
     autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.on('checking-for-update', () => {
-    });
+    autoUpdater.on('checking-for-update', () => {});
     autoUpdater.on('update-available', (info) => {
       console.log('Update Available, Info:', info);
       const res = { info, isUpdateAvailable: true };
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
-      } else {
-        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
-      }
+      this.send(events.UPDATE_AVAILABLE, res);
     });
     autoUpdater.on('update-not-available', (info) => {
       console.log('Update Not Available, Info:', info);
       this.isDownloading = false;
       const res = { info, isUpdateAvailable: false };
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
-      } else {
-        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
-      }
+      this.send(events.UPDATE_AVAILABLE, res);
     });
     autoUpdater.on('update-downloaded', (info) => {
       console.log('Update Downloaded, Info:', info);
       this.isDownloading = false;
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(events.UPDATE_DOWNLOADED, info);
-      } else {
-        BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_DOWNLOADED, info);
-      }
+      this.send(events.UPDATE_DOWNLOADED, info);
     });
     autoUpdater.on('download-progress', (progress) => {
       console.log(progress);
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(events.DOWNLOAD_PROGRESS, progress);
-      } else {
-        BrowserWindow.getFocusedWindow()?.webContents.send(events.DOWNLOAD_PROGRESS, progress);
-      }
+      this.send(events.DOWNLOAD_PROGRESS, progress);
     });
     ipcMain.on(events.CHECK_FOR_UPDATE, (event, channel) => {
       if (channel) {
@@ -59,7 +48,7 @@ class UpdateManager {
       } else {
         autoUpdater.channel = app.getVersion().split('-')[1] || 'latest';
       }
-      this.checkForUpdates();
+      this.checkForUpdates(event.sender);
     });
     ipcMain.on(events.DOWNLOAD_UPDATE, () => {
       if (!this.isDownloading) {
@@ -72,7 +61,7 @@ class UpdateManager {
     });
   }
 
-  checkForUpdates = async (): Promise<void> => {
+  checkForUpdates = async (webContents: WebContents): Promise<void> => {
     let res;
     try {
       res = await autoUpdater.checkForUpdates();
@@ -80,15 +69,11 @@ class UpdateManager {
       console.error(error);
       res = { error, isUpdateAvailable: true };
     }
-    if (this.mainWindow) {
-      this.mainWindow.webContents.send(events.UPDATE_AVAILABLE, res);
-    } else {
-      BrowserWindow.getFocusedWindow()?.webContents.send(events.UPDATE_AVAILABLE, res);
-    }
+    webContents.send(events.UPDATE_AVAILABLE, res);
   };
 
-  setMainWindow = (mainWindow: BrowserWindow): void => {
-    this.mainWindow = mainWindow;
+  private send = (event: string, data: unknown): void => {
+    getFocusedView()?.webContents.send(event, data);
   };
 }
 

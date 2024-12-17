@@ -5,7 +5,7 @@ const main = async () => {
   const { ipcRenderer: ipc } = electron;
   ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {
     const {
-      url, width, height, id, strokeWidth, fullColor,
+      url, width, height, id, strokeWidth, fullColor, senderId,
     } = data;
     // console.log(data);
     const img = new Image(width + parseInt(strokeWidth, 10), height + parseInt(strokeWidth, 10));
@@ -27,7 +27,7 @@ const main = async () => {
       const res = await fetch(imageBase64);
       const imageBlob = await res.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
-      ipc.send('SVG_URL_TO_IMG_URL_DONE', { imageUrl, id });
+      ipc.send('SVG_URL_TO_IMG_URL_DONE', { imageUrl, senderId, id });
     };
     img.src = url;
   });
