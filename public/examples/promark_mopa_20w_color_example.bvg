@@ -1,0 +1,781 @@
+<svg id="svgcontent" width="1100" height="1100" viewBox="0 0 1100 1100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" data-top="-304" data-left="-68" data-zoom="0.395" data-workarea="fpm1" data-en_af="false" data-en_diode="false" data-rotary_mode="0" data-engrave_dpi="medium">
+
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.02" data-frequency="450">
+  <title>FI0.02-F450</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="692.93948" width="30" height="30" stroke="#F44336" id="svg_3076" fill="#F44336" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.02" data-frequency="417">
+  <title>FI0.02-F417</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="692.93948" width="30" height="30" stroke="#FFC107" id="svg_3077" fill="#FFC107" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.02" data-frequency="384">
+  <title>FI0.02-F384</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="692.93948" width="30" height="30" stroke="#8BC34A" id="svg_3078" fill="#8BC34A" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.02" data-frequency="350">
+  <title>FI0.02-F350</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="692.93948" width="30" height="30" stroke="#2196F3" id="svg_3079" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.02" data-frequency="317">
+  <title>FI0.02-F317</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="692.93948" width="30" height="30" stroke="#009688" id="svg_3080" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.02" data-frequency="284">
+  <title>FI0.02-F284</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="692.93948" width="30" height="30" stroke="#FF9800" id="svg_3081" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.02" data-frequency="250">
+  <title>FI0.02-F250</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="692.93948" width="30" height="30" stroke="#CDDC39" id="svg_3082" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.02" data-frequency="217">
+  <title>FI0.02-F217</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="692.93948" width="30" height="30" stroke="#00BCD4" id="svg_3083" fill="#00BCD4" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.02" data-frequency="184">
+  <title>FI0.02-F184</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="692.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3084" fill="#FFEB3B" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.02" data-frequency="150">
+  <title>FI0.02-F150</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="692.93948" width="30" height="30" stroke="#E91E63" id="svg_3085" fill="#E91E63" vector-effect="non-scaling-stroke" data-original-layer="FI0.02-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0186" data-frequency="450">
+  <title>FI0.0186-F450</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="652.93948" width="30" height="30" stroke="#673AB7" id="svg_3086" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0186" data-frequency="417">
+  <title>FI0.0186-F417</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="652.93948" width="30" height="30" stroke="#03A9F4" id="svg_3087" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0186" data-frequency="384">
+  <title>FI0.0186-F384</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="652.93948" width="30" height="30" stroke="#9C27B0" id="svg_3088" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0186" data-frequency="350">
+  <title>FI0.0186-F350</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="652.93948" width="30" height="30" stroke="#607D8B" id="svg_3089" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0186" data-frequency="317">
+  <title>FI0.0186-F317</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="652.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3090" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#333333" data-fillInterval="0.0186" data-frequency="284">
+  <title>FI0.0186-F284</title>
+  <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="652.93948" width="30" height="30" stroke="#333333" id="svg_3091" fill="#333333" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#3F51B5" data-fillInterval="0.0186" data-frequency="250">
+  <title>FI0.0186-F250</title>
+  <filter id="filter#3F51B5" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.3176470588235294, 0 0 1 0 0.7098039215686275, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="525.85143" y="652.93948" width="30" height="30" stroke="#3F51B5" id="svg_3092" fill="#3F51B5" data-original-layer="FI0.0186-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.0186" data-frequency="217">
+  <title>FI0.0186-F217</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="652.93948" width="30" height="30" stroke="#F44336" id="svg_3093" fill="#F44336" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.0186" data-frequency="184">
+  <title>FI0.0186-F184</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="652.93948" width="30" height="30" stroke="#FFC107" id="svg_3094" fill="#FFC107" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.0186" data-frequency="150">
+  <title>FI0.0186-F150</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="652.93948" width="30" height="30" stroke="#8BC34A" id="svg_3095" fill="#8BC34A" vector-effect="non-scaling-stroke" data-original-layer="FI0.0186-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.0172" data-frequency="450">
+  <title>FI0.0172-F450</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="612.93948" width="30" height="30" stroke="#2196F3" id="svg_3096" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.0172" data-frequency="417">
+  <title>FI0.0172-F417</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="612.93948" width="30" height="30" stroke="#009688" id="svg_3097" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.0172" data-frequency="384">
+  <title>FI0.0172-F384</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="612.93948" width="30" height="30" stroke="#FF9800" id="svg_3098" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.0172" data-frequency="350">
+  <title>FI0.0172-F350</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="612.93948" width="30" height="30" stroke="#CDDC39" id="svg_3099" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.0172" data-frequency="317">
+  <title>FI0.0172-F317</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="605.85143" y="612.93948" width="30" height="30" stroke="#00BCD4" id="svg_3100" fill="#00BCD4" data-original-layer="FI0.0172-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.0172" data-frequency="284">
+  <title>FI0.0172-F284</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="565.85143" y="612.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3101" fill="#FFEB3B" data-original-layer="FI0.0172-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.0172" data-frequency="250">
+  <title>FI0.0172-F250</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="525.85143" y="612.93948" width="30" height="30" stroke="#E91E63" id="svg_3102" fill="#E91E63" data-original-layer="FI0.0172-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0172" data-frequency="217">
+  <title>FI0.0172-F217</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="612.93948" width="30" height="30" stroke="#673AB7" id="svg_3103" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0172" data-frequency="184">
+  <title>FI0.0172-F184</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="612.93948" width="30" height="30" stroke="#03A9F4" id="svg_3104" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0172" data-frequency="150">
+  <title>FI0.0172-F150</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="612.93948" width="30" height="30" stroke="#9C27B0" id="svg_3105" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0172-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0158" data-frequency="450">
+  <title>FI0.0158-F450</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="572.93948" width="30" height="30" stroke="#607D8B" id="svg_3106" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0158" data-frequency="417">
+  <title>FI0.0158-F417</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="572.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3107" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#333333" data-fillInterval="0.0158" data-frequency="384">
+  <title>FI0.0158-F384</title>
+  <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="572.93948" width="30" height="30" stroke="#333333" id="svg_3108" fill="#333333" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#3F51B5" data-fillInterval="0.0158" data-frequency="350">
+  <title>FI0.0158-F350</title>
+  <filter id="filter#3F51B5" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.3176470588235294, 0 0 1 0 0.7098039215686275, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="572.93948" width="30" height="30" stroke="#3F51B5" id="svg_3109" fill="#3F51B5" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.0158" data-frequency="317">
+  <title>FI0.0158-F317</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="572.93948" width="30" height="30" stroke="#F44336" id="svg_3110" fill="#F44336" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.0158" data-frequency="284">
+  <title>FI0.0158-F284</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="572.93948" width="30" height="30" stroke="#FFC107" id="svg_3111" fill="#FFC107" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.0158" data-frequency="250">
+  <title>FI0.0158-F250</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="572.93948" width="30" height="30" stroke="#8BC34A" id="svg_3112" fill="#8BC34A" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.0158" data-frequency="217">
+  <title>FI0.0158-F217</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="572.93948" width="30" height="30" stroke="#2196F3" id="svg_3113" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.0158" data-frequency="184">
+  <title>FI0.0158-F184</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="572.93948" width="30" height="30" stroke="#009688" id="svg_3114" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.0158" data-frequency="150">
+  <title>FI0.0158-F150</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="572.93948" width="30" height="30" stroke="#FF9800" id="svg_3115" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.0158-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.0144" data-frequency="450">
+  <title>FI0.0144-F450</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="532.93948" width="30" height="30" stroke="#CDDC39" id="svg_3116" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.0144" data-frequency="417">
+  <title>FI0.0144-F417</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="532.93948" width="30" height="30" stroke="#00BCD4" id="svg_3117" fill="#00BCD4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.0144" data-frequency="384">
+  <title>FI0.0144-F384</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="532.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3118" fill="#FFEB3B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.0144" data-frequency="350">
+  <title>FI0.0144-F350</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="532.93948" width="30" height="30" stroke="#E91E63" id="svg_3119" fill="#E91E63" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0144" data-frequency="317">
+  <title>FI0.0144-F317</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="532.93948" width="30" height="30" stroke="#673AB7" id="svg_3120" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0144" data-frequency="284">
+  <title>FI0.0144-F284</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="532.93948" width="30" height="30" stroke="#03A9F4" id="svg_3121" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0144" data-frequency="250">
+  <title>FI0.0144-F250</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="532.93948" width="30" height="30" stroke="#9C27B0" id="svg_3122" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0144" data-frequency="217">
+  <title>FI0.0144-F217</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="532.93948" width="30" height="30" stroke="#607D8B" id="svg_3123" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0144" data-frequency="184">
+  <title>FI0.0144-F184</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="532.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3124" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#333333" data-fillInterval="0.0144" data-frequency="150">
+  <title>FI0.0144-F150</title>
+  <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="532.93948" width="30" height="30" stroke="#333333" id="svg_3125" fill="#333333" vector-effect="non-scaling-stroke" data-original-layer="FI0.0144-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#3F51B5" data-fillInterval="0.0131" data-frequency="450">
+  <title>FI0.0131-F450</title>
+  <filter id="filter#3F51B5" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.3176470588235294, 0 0 1 0 0.7098039215686275, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="492.93948" width="30" height="30" stroke="#3F51B5" id="svg_3126" fill="#3F51B5" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.0131" data-frequency="417">
+  <title>FI0.0131-F417</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="492.93948" width="30" height="30" stroke="#F44336" id="svg_3127" fill="#F44336" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.0131" data-frequency="384">
+  <title>FI0.0131-F384</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="492.93948" width="30" height="30" stroke="#FFC107" id="svg_3128" fill="#FFC107" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.0131" data-frequency="350">
+  <title>FI0.0131-F350</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="492.93948" width="30" height="30" stroke="#8BC34A" id="svg_3129" fill="#8BC34A" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.0131" data-frequency="317">
+  <title>FI0.0131-F317</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="492.93948" width="30" height="30" stroke="#2196F3" id="svg_3130" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.0131" data-frequency="284">
+  <title>FI0.0131-F284</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="492.93948" width="30" height="30" stroke="#009688" id="svg_3131" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.0131" data-frequency="250">
+  <title>FI0.0131-F250</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="492.93948" width="30" height="30" stroke="#FF9800" id="svg_3132" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.0131" data-frequency="217">
+  <title>FI0.0131-F217</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="492.93948" width="30" height="30" stroke="#CDDC39" id="svg_3133" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.0131" data-frequency="184">
+  <title>FI0.0131-F184</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="492.93948" width="30" height="30" stroke="#00BCD4" id="svg_3134" fill="#00BCD4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.0131" data-frequency="150">
+  <title>FI0.0131-F150</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="492.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3135" fill="#FFEB3B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0131-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.0117" data-frequency="450">
+  <title>FI0.0117-F450</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="452.93948" width="30" height="30" stroke="#E91E63" id="svg_3136" fill="#E91E63" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0117" data-frequency="417">
+  <title>FI0.0117-F417</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="452.93948" width="30" height="30" stroke="#673AB7" id="svg_3137" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0117" data-frequency="384">
+  <title>FI0.0117-F384</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="452.93948" width="30" height="30" stroke="#03A9F4" id="svg_3138" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0117" data-frequency="350">
+  <title>FI0.0117-F350</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="452.93948" width="30" height="30" stroke="#9C27B0" id="svg_3139" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0117" data-frequency="317">
+  <title>FI0.0117-F317</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="452.93948" width="30" height="30" stroke="#607D8B" id="svg_3140" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0117" data-frequency="284">
+  <title>FI0.0117-F284</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="452.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3141" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#333333" data-fillInterval="0.0117" data-frequency="250">
+  <title>FI0.0117-F250</title>
+  <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="452.93948" width="30" height="30" stroke="#333333" id="svg_3142" fill="#333333" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#3F51B5" data-fillInterval="0.0117" data-frequency="217">
+  <title>FI0.0117-F217</title>
+  <filter id="filter#3F51B5" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.3176470588235294, 0 0 1 0 0.7098039215686275, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="452.93948" width="30" height="30" stroke="#3F51B5" id="svg_3143" fill="#3F51B5" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.0117" data-frequency="184">
+  <title>FI0.0117-F184</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="452.93948" width="30" height="30" stroke="#F44336" id="svg_3144" fill="#F44336" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.0117" data-frequency="150">
+  <title>FI0.0117-F150</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="452.93948" width="30" height="30" stroke="#FFC107" id="svg_3145" fill="#FFC107" vector-effect="non-scaling-stroke" data-original-layer="FI0.0117-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.0103" data-frequency="450">
+  <title>FI0.0103-F450</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="412.93948" width="30" height="30" stroke="#8BC34A" id="svg_3146" fill="#8BC34A" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.0103" data-frequency="417">
+  <title>FI0.0103-F417</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="412.93948" width="30" height="30" stroke="#2196F3" id="svg_3147" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.0103" data-frequency="384">
+  <title>FI0.0103-F384</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="412.93948" width="30" height="30" stroke="#009688" id="svg_3148" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.0103" data-frequency="350">
+  <title>FI0.0103-F350</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="412.93948" width="30" height="30" stroke="#FF9800" id="svg_3149" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.0103" data-frequency="317">
+  <title>FI0.0103-F317</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="412.93948" width="30" height="30" stroke="#CDDC39" id="svg_3150" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.0103" data-frequency="284">
+  <title>FI0.0103-F284</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="412.93948" width="30" height="30" stroke="#00BCD4" id="svg_3151" fill="#00BCD4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.0103" data-frequency="250">
+  <title>FI0.0103-F250</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="525.85143" y="412.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3152" fill="#FFEB3B" data-original-layer="FI0.0103-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.0103" data-frequency="217">
+  <title>FI0.0103-F217</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="485.85143" y="412.93948" width="30" height="30" stroke="#E91E63" id="svg_3153" fill="#E91E63" data-original-layer="FI0.0103-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0103" data-frequency="184">
+  <title>FI0.0103-F184</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="412.93948" width="30" height="30" stroke="#673AB7" id="svg_3154" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0103" data-frequency="150">
+  <title>FI0.0103-F150</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="412.93948" width="30" height="30" stroke="#03A9F4" id="svg_3155" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0103-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0089" data-frequency="450">
+  <title>FI0.0089-F450</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="372.93948" width="30" height="30" stroke="#9C27B0" id="svg_3156" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0089" data-frequency="417">
+  <title>FI0.0089-F417</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="372.93948" width="30" height="30" stroke="#607D8B" id="svg_3157" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0089" data-frequency="384">
+  <title>FI0.0089-F384</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="372.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3158" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#333333" data-fillInterval="0.0089" data-frequency="350">
+  <title>FI0.0089-F350</title>
+  <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="372.93948" width="30" height="30" stroke="#333333" id="svg_3159" fill="#333333" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#3F51B5" data-fillInterval="0.0089" data-frequency="317">
+  <title>FI0.0089-F317</title>
+  <filter id="filter#3F51B5" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.3176470588235294, 0 0 1 0 0.7098039215686275, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="605.85143" y="372.93948" width="30" height="30" stroke="#3F51B5" id="svg_3160" fill="#3F51B5" data-original-layer="FI0.0089-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#F44336" data-fillInterval="0.0089" data-frequency="284">
+  <title>FI0.0089-F284</title>
+  <filter id="filter#F44336" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9568627450980393, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.21176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="565.85143" y="372.93948" width="30" height="30" stroke="#F44336" id="svg_3161" fill="#F44336" data-original-layer="FI0.0089-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFC107" data-fillInterval="0.0089" data-frequency="250">
+  <title>FI0.0089-F250</title>
+  <filter id="filter#FFC107" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.7568627450980392, 0 0 1 0 0.027450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="525.85143" y="372.93948" width="30" height="30" stroke="#FFC107" id="svg_3162" fill="#FFC107" data-original-layer="FI0.0089-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#8BC34A" data-fillInterval="0.0089" data-frequency="217">
+  <title>FI0.0089-F217</title>
+  <filter id="filter#8BC34A" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.5450980392156862, 0 1 0 0 0.7647058823529411, 0 0 1 0 0.2901960784313726, 0 0 0 1 0"/>
+  </filter>
+  <rect vector-effect="non-scaling-stroke" x="485.85143" y="372.93948" width="30" height="30" stroke="#8BC34A" id="svg_3163" fill="#8BC34A" data-original-layer="FI0.0089-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#2196F3" data-fillInterval="0.0089" data-frequency="184">
+  <title>FI0.0089-F184</title>
+  <filter id="filter#2196F3" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="372.93948" width="30" height="30" stroke="#2196F3" id="svg_3164" fill="#2196F3" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#009688" data-fillInterval="0.0089" data-frequency="150">
+  <title>FI0.0089-F150</title>
+  <filter id="filter#009688" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.5333333333333333, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="372.93948" width="30" height="30" stroke="#009688" id="svg_3165" fill="#009688" vector-effect="non-scaling-stroke" data-original-layer="FI0.0089-F150"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FF9800" data-fillInterval="0.0075" data-frequency="450">
+  <title>FI0.0075-F450</title>
+  <filter id="filter#FF9800" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.596078431372549, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <rect x="765.85143" y="332.93948" width="30" height="30" stroke="#FF9800" id="svg_3166" fill="#FF9800" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F450"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#CDDC39" data-fillInterval="0.0075" data-frequency="417">
+  <title>FI0.0075-F417</title>
+  <filter id="filter#CDDC39" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.803921568627451, 0 1 0 0 0.8627450980392157, 0 0 1 0 0.2235294117647059, 0 0 0 1 0"/>
+  </filter>
+  <rect x="725.85143" y="332.93948" width="30" height="30" stroke="#CDDC39" id="svg_3167" fill="#CDDC39" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F417"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#00BCD4" data-fillInterval="0.0075" data-frequency="384">
+  <title>FI0.0075-F384</title>
+  <filter id="filter#00BCD4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0.7372549019607844, 0 0 1 0 0.8313725490196079, 0 0 0 1 0"/>
+  </filter>
+  <rect x="685.85143" y="332.93948" width="30" height="30" stroke="#00BCD4" id="svg_3168" fill="#00BCD4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F384"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#FFEB3B" data-fillInterval="0.0075" data-frequency="350">
+  <title>FI0.0075-F350</title>
+  <filter id="filter#FFEB3B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 1, 0 1 0 0 0.9215686274509803, 0 0 1 0 0.23137254901960785, 0 0 0 1 0"/>
+  </filter>
+  <rect x="645.85143" y="332.93948" width="30" height="30" stroke="#FFEB3B" id="svg_3169" fill="#FFEB3B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F350"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#E91E63" data-fillInterval="0.0075" data-frequency="317">
+  <title>FI0.0075-F317</title>
+  <filter id="filter#E91E63" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.9137254901960784, 0 1 0 0 0.11764705882352941, 0 0 1 0 0.38823529411764707, 0 0 0 1 0"/>
+  </filter>
+  <rect x="605.85143" y="332.93948" width="30" height="30" stroke="#E91E63" id="svg_3170" fill="#E91E63" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F317"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#673AB7" data-fillInterval="0.0075" data-frequency="284">
+  <title>FI0.0075-F284</title>
+  <filter id="filter#673AB7" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.403921568627451, 0 1 0 0 0.22745098039215686, 0 0 1 0 0.7176470588235294, 0 0 0 1 0"/>
+  </filter>
+  <rect x="565.85143" y="332.93948" width="30" height="30" stroke="#673AB7" id="svg_3171" fill="#673AB7" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F284"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#03A9F4" data-fillInterval="0.0075" data-frequency="250">
+  <title>FI0.0075-F250</title>
+  <filter id="filter#03A9F4" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.011764705882352941, 0 1 0 0 0.6627450980392157, 0 0 1 0 0.9568627450980393, 0 0 0 1 0"/>
+  </filter>
+  <rect x="525.85143" y="332.93948" width="30" height="30" stroke="#03A9F4" id="svg_3172" fill="#03A9F4" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F250"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9C27B0" data-fillInterval="0.0075" data-frequency="217">
+  <title>FI0.0075-F217</title>
+  <filter id="filter#9C27B0" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.611764705882353, 0 1 0 0 0.15294117647058825, 0 0 1 0 0.6901960784313725, 0 0 0 1 0"/>
+  </filter>
+  <rect x="485.85143" y="332.93948" width="30" height="30" stroke="#9C27B0" id="svg_3173" fill="#9C27B0" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F217"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#607D8B" data-fillInterval="0.0075" data-frequency="184">
+  <title>FI0.0075-F184</title>
+  <filter id="filter#607D8B" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.3764705882352941, 0 1 0 0 0.49019607843137253, 0 0 1 0 0.5450980392156862, 0 0 0 1 0"/>
+  </filter>
+  <rect x="445.85143" y="332.93948" width="30" height="30" stroke="#607D8B" id="svg_3174" fill="#607D8B" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F184"/>
+ </g>
+ <g data-pulseWidth="25" data-speed="500" data-strength="100" data-module="15" class="layer" data-color="#9E9E9E" data-fillInterval="0.0075" data-frequency="150">
+  <title>FI0.0075-F150</title>
+  <filter id="filter#9E9E9E" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0.6196078431372549, 0 1 0 0 0.6196078431372549, 0 0 1 0 0.6196078431372549, 0 0 0 1 0"/>
+  </filter>
+  <rect x="405.85143" y="332.93948" width="30" height="30" stroke="#9E9E9E" id="svg_3175" fill="#9E9E9E" vector-effect="non-scaling-stroke" data-original-layer="FI0.0075-F150"/>
+ </g>
+ <g data-configName="stainless_steel_dark" data-fillInterval="0.01" data-frequency="25" data-pulseWidth="350" data-repeat="1" data-strength="30" data-speed="150" data-module="15" class="layer" data-color="#000">
+  <title>Material Test - Frame</title>
+  <filter id="filter#000" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+ </g>
+ <g data-configName="stainless_steel_dark" data-fillInterval="0.01" data-frequency="25" data-pulseWidth="350" data-repeat="1" data-module="15" class="layer" data-color="#000" data-strength="30" data-speed="150">
+  <title>Material Test - Info</title>
+  <filter id="filter#000" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+   <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0"/>
+  </filter>
+  <text vector-effect="non-scaling-stroke" fill="#000" x="981.5458" y="234.63987" id="svg_3177" font-size="130" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" font-style="normal" font-weight="400" transform="matrix(0.39618870184929234,0,0,0.3879945062564321,13.28921959819786,102.98165815466226) " stroke="#000" data-original-layer="Material Test - Info">
+   <tspan id="svg_1" vector-effect="non-scaling-stroke" x="981.5458" y="234.63987">Frequency (kHz)</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" x="923.98919" y="726.61623" id="svg_3178" font-size="130" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(-90 189.3772125244141,501.1181335449219) matrix(0.3964779796400109,0,0,0.3952240685441382,-376.97847110125923,232.41148331023393) " font-style="normal" font-weight="400" stroke="#000" data-original-layer="Material Test - Info">
+   <tspan id="svg_2" vector-effect="non-scaling-stroke" x="923.98919" y="726.61623">Fill Interval (mm)</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="380.35143" y="282.93948" id="svg_3179" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 420.23968505859375,265.8108520507813) " data-original-layer="Material Test - Info">
+   <tspan id="svg_3" vector-effect="non-scaling-stroke" x="380.35143" y="282.93948">150</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="420.35143" y="282.93948" id="svg_3180" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 460.23968505859375,265.8108520507813) " data-original-layer="Material Test - Info">
+   <tspan id="svg_4" vector-effect="non-scaling-stroke" x="420.35143" y="282.93948">184</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="460.35143" y="282.93948" id="svg_3181" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 500.2396545410156,265.8108520507813) " data-original-layer="Material Test - Info">
+   <tspan id="svg_5" vector-effect="non-scaling-stroke" x="460.35143" y="282.93948">217</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="500.35143" y="282.93948" id="svg_3182" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 540.2396850585939,265.8108520507813) " data-original-layer="Material Test - Info">
+   <tspan id="svg_6" vector-effect="non-scaling-stroke" x="500.35143" y="282.93948">250</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="540.35136" y="282.93954" id="svg_3183" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 580.2396240234376,265.81091308593756) " data-original-layer="Material Test - Info">
+   <tspan id="svg_7" vector-effect="non-scaling-stroke" x="540.35136" y="282.93954">284</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="580.35136" y="282.93954" id="svg_3184" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 620.2396240234376,265.81091308593756) " data-original-layer="Material Test - Info">
+   <tspan id="svg_8" vector-effect="non-scaling-stroke" x="580.35136" y="282.93954">317</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="620.35136" y="282.93954" id="svg_3185" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 660.2395629882814,265.81091308593756) " data-original-layer="Material Test - Info">
+   <tspan id="svg_9" vector-effect="non-scaling-stroke" x="620.35136" y="282.93954">350</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="660.35143" y="282.93948" id="svg_3186" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 700.2396850585939,265.8108520507813) " data-original-layer="Material Test - Info">
+   <tspan id="svg_10" vector-effect="non-scaling-stroke" x="660.35143" y="282.93948">384</tspan>
+  </text>
+  <text transform="rotate(90 740.2372436523439,265.20422363281256) " stroke-width="2" font-weight="400" font-style="normal" vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="700.35143" y="282.93948" id="svg_3187" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_11" vector-effect="non-scaling-stroke" x="700.35143" y="282.94">417</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="740.35136" y="282.93954" id="svg_3188" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" transform="rotate(90 780.2396240234375,265.8109130859376) " data-original-layer="Material Test - Info">
+   <tspan id="svg_12" vector-effect="non-scaling-stroke" x="740.35136" y="282.93954">450</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="367.93948" id="svg_3189" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_13" vector-effect="non-scaling-stroke" x="235.85143" y="367.93948">0.0075</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="407.93948" id="svg_3190" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_14" vector-effect="non-scaling-stroke" x="235.85143" y="407.93948">0.0089</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="447.93948" id="svg_3191" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_15" vector-effect="non-scaling-stroke" x="235.85143" y="447.93948">0.0103</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="487.93948" id="svg_3192" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_16" vector-effect="non-scaling-stroke" x="235.85143" y="487.93948">0.0117</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="527.93948" id="svg_3193" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_17" vector-effect="non-scaling-stroke" x="235.85143" y="527.93948">0.0131</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="567.93948" id="svg_3194" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_18" vector-effect="non-scaling-stroke" x="235.85143" y="567.93948">0.0144</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="607.93948" id="svg_3195" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_19" vector-effect="non-scaling-stroke" x="235.85143" y="607.93948">0.0158</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="647.93948" id="svg_3196" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_20" vector-effect="non-scaling-stroke" x="235.85143" y="647.93948">0.0172</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="687.93948" id="svg_3197" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_21" vector-effect="non-scaling-stroke" x="235.85143" y="687.93948">0.0186</tspan>
+  </text>
+  <text vector-effect="non-scaling-stroke" fill="#000" stroke="#000" x="235.85143" y="727.93948" id="svg_3198" font-size="48" font-family="&#x27;STHeitiTC-Light'" font-postscript="STHeitiTC-Light" text-anchor="start" data-ratiofixed="true" xml:space="preserve" data-original-layer="Material Test - Info">
+   <tspan id="svg_22" vector-effect="non-scaling-stroke" x="235.85143" y="727.93948">0.02</tspan>
+  </text>
+ </g>
+</svg>
