@@ -205,10 +205,12 @@ class TabManager {
 
   focusTab = (id: number): void => {
     if (this.tabsMap[id]) {
+      const oldId = this.focusedId;
       this.focusedId = id;
       const { view } = this.tabsMap[id];
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
+      if (oldId !== id) this.sendToView(oldId, TabEvents.TabBlurred);
       view.webContents.send(TabEvents.TabFocused);
       this.focusOnReadyId = -1;
     }
