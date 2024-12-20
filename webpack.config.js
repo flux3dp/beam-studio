@@ -11,6 +11,7 @@ module.exports = [
     entry: './src/main.ts',
     devtool: 'source-map',
     mode: 'development',
+    target: 'electron30-renderer',
     resolve: {
       alias: {
         app: '/src/web/app',
@@ -29,8 +30,6 @@ module.exports = [
       os: 'require("os")',
       path: 'require("path")',
       dns: 'require("dns")',
-      'net-ping': 'require("net-ping")',
-      fontkit: 'require("fontkit")',
       child_process: 'require("child_process")',
       util: 'require("util")',
       'font-scanner': 'require("font-scanner")',
