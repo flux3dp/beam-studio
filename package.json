@@ -175,7 +175,8 @@
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
       "extendInfo": {
-        "NSCameraUsageDescription": "Beam Studio need to use USB camera to preview certain devices."
+        "NSCameraUsageDescription": "Beam Studio need to use USB camera to preview certain devices.",
+        "NSLocalNetworkUsageDescription": "Beam Studio need to use local network to connect to certain devices."
       },
       "target": [
         "dmg",
