@@ -12276,9 +12276,9 @@ restore-cursor@^3.1.0:
     signal-exit "^3.0.2"
 
 restructure@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/restructure/-/restructure-3.0.1.tgz#d610105f09978a42c806c1fc2048ff56900e6a21"
-  integrity sha512-6neDpI/yE9eogQo22qmWwKIA9wFPRyYjQleDEh6zaNAf2ZPqLJYUvNBJBWEWNoBlCeQMQkvIOe2YI/K2GOag+g==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/restructure/-/restructure-3.0.2.tgz#e6b2fad214f78edee21797fa8160fef50eb9b49a"
+  integrity sha512-gSfoiOEA0VPE6Tukkrr7I0RBdE0s7H1eFCDBk05l1KIQT1UIKNc5JZy6jdyW6eYH3aR3g5b3PuL77rq0hvwtAw==
 
 ret@~0.1.10:
   version "0.1.15"
