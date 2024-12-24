@@ -54,7 +54,7 @@
     "eventemitter3": "^4.0.7",
     "exifr": "^7.1.3",
     "font-scanner": "^0.2.1",
-    "fontkit": "EstherFu/fontkit",
+    "fontkit": "^2.0.4",
     "gl-matrix": "^3.3.0",
     "hammerjs": "^2.0.8",
     "jimp": "^0.10.3",
