@@ -160,6 +160,6 @@ requirejs(['jqueryUi', 'jquery'], function (jqueryUi, $) {
   window.jQuery = $;
   const body = document.querySelector('body');
   const mainScript = document.createElement('script');
-  mainScript.setAttribute('src', 'js/dist/bundle.js');
+  mainScript.setAttribute('src', 'js/dist/main.bundle.js');
   body.appendChild(mainScript);
 });

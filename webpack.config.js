@@ -8,7 +8,14 @@ const nodeConfig = require('./webpack.node.js');
 module.exports = [
   ...nodeConfig,
   {
-    entry: './src/main.ts',
+    entry: {
+      main: './src/main.ts',
+      ['preprocess.url.worker']: './src/web/helpers/image-edit-panel/preprocess.url.worker.ts',
+      ['potrace.worker']: './src/web/helpers/potrace/potrace.worker.ts',
+      ['clipper.worker']: './src/web/helpers/clipper/clipper.worker.ts',
+      ['image-symbol.worker']:'./src/web/helpers/symbol-helper/image-symbol.worker.ts',
+      ['calculateBase64.worker']:'./src/web/helpers/image-edit-panel/calculateBase64.worker.ts',
+    },
     devtool: 'source-map',
     mode: 'development',
     target: 'electron30-renderer',
@@ -40,13 +47,6 @@ module.exports = [
     },
     module: {
       rules: [
-        {
-          test: /\.worker\.ts$/,
-          loader: 'worker-loader',
-          options: {
-            filename: "[name].worker.js",
-          },
-        },
         {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
@@ -123,8 +123,9 @@ module.exports = [
       ],
     },
     output: {
-      path: path.resolve(__dirname, 'public', 'js', 'dist'),
-      filename: 'bundle.js',
+      publicPath: 'auto',
+      path: path.resolve(__dirname, 'public/js/dist'),
+      filename: '[name].bundle.js',
     },
     plugins: [
       new CopyPlugin({
