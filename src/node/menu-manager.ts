@@ -45,7 +45,7 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
         id: 'RELOAD_APP',
         label: r.reload_app,
         accelerator: 'Cmd+R',
-        click: callback,
+        click: () => getFocusedView()?.webContents.reload(),
       },
       { label: r.quit, role: 'quit' },
     ],
