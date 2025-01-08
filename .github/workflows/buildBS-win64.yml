@@ -121,7 +121,7 @@ jobs:
           CERT_SUBJECT: ${{ secrets.CERT_SUBJECT }}
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.3.3
+          SWIFTRAY_DAEMON_VERSION: 1.3.4
 
       # - name: Cleanup artifacts
       #   run: |
