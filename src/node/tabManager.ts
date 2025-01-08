@@ -80,6 +80,7 @@ class TabManager {
         if (id === this.focusOnReadyId) {
           this.focusTab(id);
         }
+        if (id === this.focusedId) this.sendToView(id, TabEvents.TabFocused);
         this.notifyTabUpdated();
       }
     });
