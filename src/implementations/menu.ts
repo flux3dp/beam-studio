@@ -7,12 +7,15 @@ import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 import communicator from 'implementations/communicator';
 import { TabEvents } from 'app/constants/tabConstants';
 
+import eventEmitterFactory from 'helpers/eventEmitterFactory';
 import ElectronUpdater from './electron-updater';
-import { updateCheckbox } from '../electron-menubar-helper';
+import { changeMenuItemVisibility, updateCheckbox } from '../electron-menubar-helper';
 
 const updateWindowsMenu = () => {
   if (window.os === 'Windows') window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
 };
+
+const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -25,21 +28,22 @@ class Menu extends AbstractMenu {
     });
     communicator.on('NEW_APP_MENU', () => {
       updateWindowsMenu();
-      this.initCheckboxs();
+      this.initMenuItemStatus();
     });
     communicator.on(TabEvents.TabFocused, () => {
-      this.initCheckboxs();
+      this.initMenuItemStatus();
     });
   }
 
   init(): void {
     const isDev = localStorage.getItem('dev') === 'true';
     this.setDevMode(isDev);
-    this.initCheckboxs();
+    this.initMenuItemStatus();
     this.initMenuEvents();
   }
 
-  initCheckboxs = (): void => {
+  initMenuItemStatus = (): void => {
+    // checkboxes
     const shouldZoomWithWindow = BeamboxPreference.read('zoom_with_window');
     updateCheckbox(['_view', 'ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
     const shouldShowGrids = BeamboxPreference.read('show_grids');
@@ -52,6 +56,27 @@ class Menu extends AbstractMenu {
     updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
     const shouldShowAlignLines = BeamboxPreference.read('show_align_lines');
     updateCheckbox(['_view', 'ALIGN_TO_EDGES'], shouldShowAlignLines);
+    // visibility
+    const isBb2 = BeamboxPreference.read('model') === 'fbb2';
+
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'EXAMPLE_FILES', 'IMPORT_EXAMPLE_BEAMBOX_2'], isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2'], isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2'], isBb2);
+
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_ENGRAVE'], !isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_CUT'], !isBb2);
+
+    canvasEvent.on('model-changed',(model) => {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      const isBb2 = model === 'fbb2';
+      changeMenuItemVisibility(['_file', 'SAMPLES', 'EXAMPLE_FILES', 'IMPORT_EXAMPLE_BEAMBOX_2'], isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2'], isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2'], isBb2);
+
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_ENGRAVE'], !isBb2);
+    changeMenuItemVisibility(['_file', 'SAMPLES', 'MATERIAL_TEST', 'IMPORT_MATERIAL_TESTING_CUT'], !isBb2);
+    })
+
   };
 
   attach(enabledItems: string[]) {

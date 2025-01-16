@@ -104,6 +104,12 @@ export function buildFileMenu(
               label: r.import_material_testing_engrave,
               click: callback,
             },
+            // bb2
+            {
+              id: 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2',
+              label: r.import_material_testing_engrave,
+              click: callback,
+            },
             {
               id: 'IMPORT_MATERIAL_TESTING_OLD',
               label: r.import_material_testing_old,
@@ -111,6 +117,12 @@ export function buildFileMenu(
             },
             {
               id: 'IMPORT_MATERIAL_TESTING_CUT',
+              label: r.import_material_testing_cut,
+              click: callback,
+            },
+            // bb2
+            {
+              id: 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2',
               label: r.import_material_testing_cut,
               click: callback,
             },
