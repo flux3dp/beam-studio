@@ -104,7 +104,6 @@ export function buildFileMenu(
               label: r.import_material_testing_engrave,
               click: callback,
             },
-            // bb2
             {
               id: 'IMPORT_MATERIAL_TESTING_ENGRAVE_BEAMBOX_2',
               label: r.import_material_testing_engrave,
@@ -120,7 +119,6 @@ export function buildFileMenu(
               label: r.import_material_testing_cut,
               click: callback,
             },
-            // bb2
             {
               id: 'IMPORT_MATERIAL_TESTING_CUT_BEAMBOX_2',
               label: r.import_material_testing_cut,
@@ -146,6 +144,7 @@ export function buildFileMenu(
         {
           id: 'PROMARK_COLOR_TEST',
           label: r.promark_color_test,
+          type: 'submenu',
           submenu: [
             {
               id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',

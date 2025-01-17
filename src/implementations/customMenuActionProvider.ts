@@ -4,7 +4,7 @@ import { getSVGAsync } from 'helpers/svg-editor-helper';
 import { ICustomMenuActionProvider } from 'interfaces/ICustomMenuActionProvider';
 
 import ElectronUpdater from './electron-updater';
-import { updateCheckbox } from '../electron-menubar-helper';
+import { changeMenuItemChecked } from '../electron-menubar-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -19,27 +19,27 @@ export default {
       UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ALIGN_TO_EDGES: () => {
         const isBezierPathAlignToEdge = svgCanvas.toggleBezierPathAlignToEdge();
-        updateCheckbox(['_view', 'ALIGN_TO_EDGES'], isBezierPathAlignToEdge);
+        changeMenuItemChecked(['ALIGN_TO_EDGES'], isBezierPathAlignToEdge);
       },
       ANTI_ALIASING: () => {
         const newValue = viewMenu.toggleAntiAliasing();
-        updateCheckbox(['_view', 'ANTI_ALIASING'], newValue);
+        changeMenuItemChecked(['ANTI_ALIASING'], newValue);
       },
       SHOW_GRIDS: () => {
         const showGrid = viewMenu.toggleGrid();
-        updateCheckbox(['_view', 'SHOW_GRIDS'], showGrid);
+        changeMenuItemChecked(['SHOW_GRIDS'], showGrid);
       },
       SHOW_LAYER_COLOR: () => {
         const isUsingLayerColor = viewMenu.toggleLayerColor();
-        updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
+        changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
       },
       SHOW_RULERS: () => {
         const shouldShowRulers = viewMenu.toggleRulers();
-        updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
+        changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
       },
       ZOOM_WITH_WINDOW: () => {
         const zoomWithWindow = viewMenu.toggleZoomWithWindow();
-        updateCheckbox(['_view', 'ZOOM_WITH_WINDOW'], zoomWithWindow);
+        changeMenuItemChecked(['ZOOM_WITH_WINDOW'], zoomWithWindow);
       },
     };
   },
