@@ -1,12 +1,9 @@
 # Folder view configuration files
-.DS_Store
 Desktop.ini
-node_modules
 bower_components
 !/public/node_modules
 _tools/nwjs*
 _tools/build
-public/lib
 public/js/jsx
 public/js/dist
 public/js/node
@@ -21,10 +18,6 @@ backend
 utils
 dist
 tmp/*
-
-# core files
-src/web
-public/js/lib
 
 fluxhald.pid
 fluxrobot.pid
@@ -90,6 +83,3 @@ build-script.sh
 curl.exe
 
 **/top-menu/black/**
-
-coverage
-yarn-error.log

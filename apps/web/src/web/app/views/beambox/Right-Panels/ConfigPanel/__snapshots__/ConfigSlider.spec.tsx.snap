@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ConfigSlider should work 1`] = `
+<div>
+  <div
+    class="container"
+    id="mock-id"
+  >
+    <div>
+      Mock Antd ConfigProvider
+      <p>
+        theme: 
+        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+      </p>
+      <div>
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          100
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          10
+        </p>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test ConfigSlider should work 2`] = `
+<div>
+  <div
+    class="container limit"
+    id="mock-id"
+  >
+    <div>
+      Mock Antd ConfigProvider
+      <p>
+        theme: 
+        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+      </p>
+      <div>
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          100
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          7
+        </p>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test ConfigSlider should work 3`] = `
+<div>
+  <div
+    class="container limit"
+    id="mock-id"
+  >
+    <div>
+      Mock Antd ConfigProvider
+      <p>
+        theme: 
+        {"token":{"colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949","colorPrimary":"#494949"},"components":{"Slider":{"handleColor":"#cecece","handleActiveColor":"#494949","dotActiveBorderColor":"#494949","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}}}
+      </p>
+      <div>
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          100
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          88
+        </p>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

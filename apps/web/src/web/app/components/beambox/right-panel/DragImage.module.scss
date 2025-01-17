@@ -1,0 +1,81 @@
+.container {
+  position: fixed;
+  z-index: -1;
+  width: 242px;
+  background-color: transparent;
+
+  .back {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    background-color: #444;
+    border: 1px solid #fff;
+  }
+
+  .layer {
+    position: absolute;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 40px;
+    color: white;
+    background-color: #444;
+    border: 1px solid #fff;
+    font-weight: normal;
+
+    .row {
+      display: flex;
+      align-items: center;
+      min-height: 30px;
+    }
+
+    .sensor-area {
+      width: 100%;
+      height: 5px;
+    }
+
+    .color {
+      width: 24px;
+      height: 24px;
+      padding: 4px;
+      margin-left: 6px;
+    }
+
+    .vis {
+      text-align: center;
+      margin: 0 5px;
+      &.invis {
+        i {
+          display: none;
+        }
+      }
+    }
+
+    .name {
+      width: 150px;
+      padding: 3px 0px;
+      margin-left: 10px;
+      text-align: center;
+    }
+
+    .lock {
+      width: 14px;
+      margin: 0 5px;
+      cursor: pointer;
+      img {
+        display: none;
+        height: 13px;
+        filter: brightness(0%);
+      }
+    }
+
+    &.sel {
+      .lock {
+        img {
+          filter: brightness(0%) invert(100%);
+        }
+      }
+    }
+  }
+}

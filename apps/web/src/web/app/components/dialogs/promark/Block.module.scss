@@ -1,0 +1,88 @@
+@use 'styles/variables' as v;
+
+@mixin title-text {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+@mixin connector {
+  height: 1px;
+  background-color: v.$panelBorderColor;
+}
+
+.full-row {
+  grid-column: 1 / span 2;
+}
+
+.title {
+  @include title-text;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+
+  &::after {
+    content: ' ';
+    @include connector;
+  }
+}
+
+.lens-title {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+
+  .connector {
+    @include connector;
+  }
+
+  .title {
+    display: block;
+  }
+}
+
+.subtitle {
+  @include title-text;
+}
+
+.block {
+  flex-grow: 1;
+
+  &.left-border {
+    border: 1px solid v.$panelBorderColor;
+    border-width: 0 0 0 1px;
+    padding: 0 0 0 10px;
+    border-radius: 12px;
+  }
+}
+
+.row {
+  .label {
+    display: inline-flex;
+    align-items: center;
+
+    .icon {
+      font-size: 14px;
+      margin-right: 4px;
+    }
+
+    &::after {
+      content: ':';
+    }
+  }
+
+  .tooltip {
+    font-size: 14px;
+    margin-left: 4px;
+  }
+
+  .input {
+    width: 132px;
+
+    &.short {
+      width: 92px;
+    }
+  }
+}

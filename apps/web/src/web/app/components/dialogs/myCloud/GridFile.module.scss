@@ -1,0 +1,92 @@
+@use 'styles/variables' as variables;
+@use './variables' as myCloudVariables;
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  .img-container {
+    max-width: 100%;
+    width: myCloudVariables.$grid-width;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .guide-lines {
+      position: relative;
+      width: 90%;
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+
+      > img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .overlay {
+        position: absolute;
+        inset: 8px 8px auto auto !important;
+        @media screen and (max-width: 600px) {
+          right: auto !important;
+        }
+      }
+      .trigger {
+        width: 32px;
+        height: 18px;
+        border-radius: 60px;
+        background: #fff;
+        box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.16);
+        display: none;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      @media screen and (min-width: 601px) {
+        &:hover .trigger {
+          display: flex;
+        }
+      }
+    }
+  }
+
+  .name {
+    max-width: min(myCloudVariables.$grid-width, 100%);
+    .display {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      font-weight: 700;
+      max-width: 100%;
+      line-height: 24px;
+      padding: 0 4px;
+    }
+    .edit {
+      height: 24px;
+      width: myCloudVariables.$grid-width;
+      max-width: 100%;
+    }
+  }
+  .info {
+    font-size: 11px;
+    text-align: center;
+    line-height: 14px;
+  }
+
+  &.selected {
+    .img-container {
+      background: #eeeeee;
+      border-radius: 12px;
+    }
+
+    .name {
+      color: white;
+      background-color: variables.$primary-blue;
+      border-radius: 5px;
+    }
+  }
+}

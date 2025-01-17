@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubMenu tests should render correctly 1`] = `
+<div>
+  <nav
+    aria-haspopup="true"
+    class="react-contextmenu-submenu"
+    role="menuitem"
+    style="position: relative;"
+    tabindex="-1"
+  >
+    <div
+      class="react-contextmenu-item"
+    >
+      foo
+    </div>
+    <nav
+      class="react-contextmenu"
+      role="menu"
+      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      tabindex="-1"
+    />
+  </nav>
+</div>
+`;
+
+exports[`SubMenu tests should render correctly after onMouseEnter 1`] = `
+<div>
+  <nav
+    aria-haspopup="true"
+    class="react-contextmenu-submenu"
+    role="menuitem"
+    style="position: relative;"
+    tabindex="-1"
+  >
+    <div
+      class="react-contextmenu-item"
+    >
+      foo
+    </div>
+    <nav
+      class="react-contextmenu"
+      role="menu"
+      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      tabindex="-1"
+    />
+  </nav>
+</div>
+`;
+
+exports[`SubMenu tests should render correctly after onMouseEnter when disabled 1`] = `
+<div>
+  <nav
+    aria-haspopup="true"
+    class="react-contextmenu-submenu"
+    role="menuitem"
+    style="position: relative;"
+    tabindex="-1"
+  >
+    <div
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+    >
+      foo
+    </div>
+    <nav
+      class="react-contextmenu"
+      role="menu"
+      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      tabindex="-1"
+    />
+  </nav>
+</div>
+`;
+
+exports[`SubMenu tests should render correctly when disabled 1`] = `
+<div>
+  <nav
+    aria-haspopup="true"
+    class="react-contextmenu-submenu"
+    role="menuitem"
+    style="position: relative;"
+    tabindex="-1"
+  >
+    <div
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+    >
+      foo
+    </div>
+    <nav
+      class="react-contextmenu"
+      role="menu"
+      style="position: absolute; top: 0px; left: 100%; white-space: nowrap;"
+      tabindex="-1"
+    />
+  </nav>
+</div>
+`;

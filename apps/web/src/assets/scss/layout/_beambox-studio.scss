@@ -1,0 +1,42 @@
+@import "./beambox/top-bar";
+
+.beambox-studio {
+  @import "./beambox/left-toolbar";
+  @import "./beambox/path-preview";
+  @import "./beambox/right-panel/right-panel";
+  @import "./beambox/svg-editor";
+  @import "./beambox/tool-panels";
+
+  user-select: none;
+  position: fixed;
+
+  svg:not(:root) {
+    overflow: visible;
+  }
+
+  #svg_editor:not(.color) #svgcontent {
+    filter: saturate(0%);
+  }
+
+  #svgcontent {
+    *[data-tempgroup="true"] {
+
+      rect,
+      path,
+      ellipse,
+      circle,
+      polygon,
+      g,
+      line,
+      text {
+        stroke: #0091ff !important;
+      }
+    }
+
+    .layer {
+      &[data-lock="true"] {
+        pointer-events: none !important;
+      }
+    }
+  }
+}

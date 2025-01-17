@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Alert should render correctly 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash container ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  Hello World
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <img
+                  class="icon"
+                  src="https://www.flux3dp.com/icon.svg"
+                />
+                <div
+                  class="message-container"
+                >
+                  <div
+                    class="message"
+                  >
+                    Yes or No
+                  </div>
+                </div>
+                <div
+                  class="links"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link link"
+                    type="button"
+                  >
+                    <span>
+                      link1
+                    </span>
+                    <svgr-url
+                      classname="icon"
+                    />
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link link"
+                    type="button"
+                  >
+                    <span>
+                      link2
+                    </span>
+                    <svgr-url
+                      classname="icon"
+                    />
+                  </button>
+                </div>
+                <div
+                  class="checkbox"
+                >
+                  <label
+                    class="ant-checkbox-wrapper css-dev-only-do-not-override-hash"
+                  >
+                    <span
+                      class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash"
+                    >
+                      <input
+                        class="ant-checkbox-input"
+                        type="checkbox"
+                      />
+                      <span
+                        class="ant-checkbox-inner"
+                      />
+                    </span>
+                    <span>
+                      checkbox
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    Yes
+                  </span>
+                </button>
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    No
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test Alert should render correctly with help center link 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash container ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  Hello World
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <img
+                  class="icon"
+                  src="https://www.flux3dp.com/icon.svg"
+                />
+                <div
+                  class="message-container"
+                >
+                  <div
+                    class="message"
+                  >
+                    #801 error
+                  </div>
+                </div>
+                <div
+                  class="links"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link link"
+                    type="button"
+                  >
+                    <span>
+                      Learn more
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="checkbox"
+                >
+                  <label
+                    class="ant-checkbox-wrapper css-dev-only-do-not-override-hash"
+                  >
+                    <span
+                      class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash"
+                    >
+                      <input
+                        class="ant-checkbox-input"
+                        type="checkbox"
+                      />
+                      <span
+                        class="ant-checkbox-inner"
+                      />
+                    </span>
+                    <span>
+                      checkbox
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    Yes
+                  </span>
+                </button>
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    No
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

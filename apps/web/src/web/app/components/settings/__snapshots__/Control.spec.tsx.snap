@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Control should render correctly 1`] = `
+<div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Flux
+      </label>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <div>
+        Hello World
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Control should render correctly 2`] = `
+<div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Flux
+      </label>
+      <span
+        class="info-icon-small"
+      >
+        <img
+          src="img/info.svg"
+        />
+      </span>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <div>
+        Hello World
+      </div>
+      <img
+        src="img/warning.svg"
+        title="Warning!!"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Control should render correctly in mobile 1`] = `
+<div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin"
+    >
+      <label
+        class="font2"
+      >
+        Flux
+      </label>
+    </div>
+    <div
+      class="font3"
+    >
+      <div>
+        Hello World
+      </div>
+    </div>
+  </div>
+</div>
+`;

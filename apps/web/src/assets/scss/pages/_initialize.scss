@@ -1,0 +1,771 @@
+.initialization {
+  // local varibles
+  $primary-font-color: #808080;
+  $primary-background-color: #f8f8f8;
+
+  background: $primary-background-color;
+  color: $primary-font-color;
+  position: absolute;
+  height: 100%;
+  z-index: 0;
+
+  .brand-image {
+    height: 52px;
+    left: 15px;
+    position: absolute;
+    top: 15px;
+    width: 52px;
+    display: none;
+  }
+
+  .headline {
+    font-size: 24px;
+    font-weight: 200;
+  }
+
+  select {
+    background: url("#{$s3}/images/arrow-down.png") #fff no-repeat;
+    background-position: calc(100% - 5px) center;
+    background-size: 16px 10px;
+    border: none;
+    border-radius: 0;
+    height: 36px;
+    padding: 0 0 0 10px;
+    width: 250px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .home {
+    .language {
+      margin: 0 0 8px 0;
+    }
+  }
+
+  .connect-machine {
+    .main-title {
+      margin-bottom: 50px;
+      font-size: 30px;
+      color: #333333;
+    }
+
+    .btn-h-group {
+      margin: 0 auto 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .btn-action {
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      background: transparent;
+      opacity: 1;
+      font-size: 30px;
+      color: #333333;
+      font-weight: 700;
+      text-align: start;
+
+      .sub {
+        font-size: 16px;
+      }
+    }
+
+    .btn-action:hover {
+      background-color: #333333;
+      color: #f8f8f8;
+      box-shadow: none;
+    }
+
+    .select-machine-type {
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 60px 0;
+
+      .main-title {
+        text-align: center;
+      }
+
+      .btn-h-group {
+        width: 240px;
+      }
+
+      .btn-action {
+        width: 240px;
+        height: 54px;
+        line-height: 54px;
+        padding-left: 30px;
+        margin: 0 0 10px 0;
+      }
+    }
+
+    .skip-connect-machine {
+      padding: 0 0 60px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .text-content {
+        padding-bottom: 30px;
+        font-size: 14px;
+        letter-spacing: 0.1px;
+        white-space: pre-wrap;
+        color: #999999;
+      }
+
+      .btn-action {
+        padding: 5px 15px;
+      }
+    }
+
+    .select-connection-type {
+      padding: 0 0 60px 0;
+
+      .btn-container {
+        width: 100%;
+        display: flex;
+        margin: 0 0 10px 0;
+
+        .connect-btn-icon {
+          margin: 0 25px 0 0;
+          width: 40px;
+        }
+      }
+
+      .btn-action {
+        width: 100%;
+        height: 54px;
+        line-height: 54px;
+        padding: 0 30px;
+      }
+    }
+
+    .connection-wired,
+    .connection-wifi,
+    .connection-ethernet,
+    .connection-usb,
+    .connection-machine-ip {
+      margin-top: 150px;
+      height: 480px;
+
+      .image-container {
+        float: left;
+        width: 200px;
+
+        .touch-panel-icon {
+          width: 200px;
+          box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+        }
+
+        .hint-circle {
+          position: absolute;
+          width: 122px;
+          height: 122px;
+          border-radius: 61px;
+          border: 5px solid #0091ff;
+          margin: 210px 0 0 -6px;
+
+          &.ip {
+            width: 160px;
+            height: 20px;
+            border-radius: 10px;
+            margin: 74px 0 0 -10px;
+
+            &.wired {
+              margin: 122px 0 0 -10px;
+            }
+          }
+
+          animation: pulse 4s cubic-bezier(0.5, 0, 0.5, 1) alternate infinite;
+        }
+
+        &.ether {
+          margin-top: -60px;
+        }
+
+        &.usb {
+          width: 300px;
+          margin-top: -60px;
+          .c1 {
+            margin: 32px 0 0 82px;
+          }
+          .c2 {
+            margin: -133px 0px 0px 177px;
+          }
+        }
+
+        .ethernet-icon {
+          width: 138px;
+          margin: -98px 0px 0 26px;
+          position: relative;
+        }
+
+        .usb-cable-icon {
+          width: 300px;
+          margin: -126px 0px 0 26px;
+          position: relative;
+        }
+
+        .circle {
+          width: 98px;
+          height: 98px;
+          border-radius: 50px;
+          z-index: -1;
+          position: relative;
+          animation: pulse 4s cubic-bezier(0.5, 0, 0.5, 1) alternate infinite;
+        }
+
+        .c1 {
+          background-color: #f7b500;
+        }
+
+        .c2 {
+          margin: -98px 0px 0px 98px;
+          background-color: #0091ff;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: (scale(0.8));
+          }
+
+          100% {
+            opacity: 0.8;
+            transform: scale(1);
+          }
+        }
+      }
+
+      .text-container {
+        margin-left: 80px;
+        width: 500px;
+        float: right;
+
+        .title {
+          font-size: 30px;
+          font-weight: bold;
+          letter-spacing: 0.5px;
+          color: #333333;
+          padding-bottom: 25px;
+
+          .sub {
+            font-size: 18px;
+          }
+        }
+
+        .contents {
+          font-size: 12px;
+          line-height: 23px;
+          letter-spacing: 0.1px;
+          white-space: pre;
+          color: #999999;
+
+          a {
+            color: #999999;
+          }
+
+          .link {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+
+          &.tutorial {
+            padding-bottom: 25px;
+          }
+
+          &.what-if {
+            transition: all 0.3s ease;
+
+            .collapse-title {
+              width: fit-content;
+              height: 23px;
+              line-height: 23px;
+              cursor: pointer;
+              font-weight: 500;
+            }
+
+            .collapse-arrow {
+              transform: rotate(90deg);
+              float: right;
+              border-style: solid;
+              border-color: transparent transparent transparent #999999;
+              border-width: 4px 0 4px 4px;
+              margin: 7.5px 0 7.5px 10px;
+            }
+
+            .collapse-contents {
+              overflow: hidden;
+              white-space: pre-wrap;
+              padding: 5px 0 10px 10px;
+              animation: slideDown 300ms linear;
+            }
+
+            &.collapsed {
+              .collapse-arrow {
+                transform: rotate(0deg);
+              }
+
+              .collapse-contents {
+                display: none;
+              }
+            }
+          }
+
+          .test-infos {
+            font-weight: 600;
+            height: 100%;
+
+            .test-info {
+              padding: 5px 0;
+              color: #333333;
+            }
+          }
+        }
+
+        .ip-input {
+          width: 100%;
+          background-color: unset;
+          color: #333333;
+          border-radius: 0px;
+          border-width: 0px;
+          border-bottom-width: 1px;
+          font-size: 30px;
+          padding: 10px 0;
+          height: 50px;
+          margin-bottom: 10px;
+
+          &.disabled {
+            pointer-events: none;
+          }
+
+          &:focus {
+            border-radius: 0px;
+            border-width: 0px;
+            border-bottom-width: 1px;
+            outline: none;
+          }
+        }
+      }
+    }
+
+    .connection-machine-ip {
+      &.usb {
+        margin-top: 220px;
+      }
+    }
+
+    .btn-page-container {
+      position: absolute;
+      right: 60px;
+      bottom: 55px;
+      display: flex;
+
+      .btn-page {
+        cursor: pointer;
+        height: 72px;
+        padding: 0px 20px;
+        margin-left: 35px;
+        font-size: 27px;
+        line-height: 72px;
+        font-weight: bold;
+        color: #333333;
+
+        &.primary {
+          border-radius: 8px;
+          background-color: #333333;
+          color: #f8f8f8;
+        }
+
+        &.disabled {
+          cursor: unset;
+          opacity: 0.3;
+        }
+
+        .left-arrow {
+          float: left;
+          border-style: solid;
+          border-color: transparent #333333 transparent transparent;
+          border-width: 13px 21px 13px 0;
+          margin: 6.5px 20px 6.5px 0;
+        }
+
+        .right-arrow {
+          float: right;
+          border-style: solid;
+          border-color: transparent transparent transparent #333333;
+          border-width: 13px 0 13px 21px;
+          margin: 6.5px 0 6.5px 20px;
+        }
+
+        &:hover:not(.disabled) {
+          border-radius: 8px;
+          background-color: #333333;
+          color: #f8f8f8;
+
+          .left-arrow {
+            border-color: transparent #f8f8f8 transparent transparent;
+          }
+
+          .right-arrow {
+            border-color: transparent transparent transparent #f8f8f8;
+          }
+
+          &.primary {
+            background-color: #000000;
+            color: #f8f8f8;
+          }
+        }
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        max-height: 0;
+      }
+
+      to {
+        max-height: 400px;
+      }
+    }
+  }
+
+  .connect-beambox {
+    .main-title {
+      margin-bottom: 50px;
+    }
+
+    .tutorial {
+      white-space: pre;
+      border: 2px solid #333;
+      background-color: #fafafa;
+      padding: 20px;
+      line-height: 2em;
+      text-align: left;
+      margin: 20px 0;
+    }
+
+    .tutorial-video {
+      a {
+        font-size: 20px;
+
+        &:hover {
+          color: #666;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .select-wifi {
+    .notice {
+      margin: 0 0 34px 0;
+
+      P {
+        line-height: 2rem;
+        margin: 0;
+      }
+    }
+
+    .modal-body {
+      box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-ap-mode {
+      padding: 25px 25px 0 25px;
+
+      h2 {
+        margin: 0 0 10px 0;
+      }
+
+      .h-control {
+        @include flexbox();
+        align-items: center;
+        margin: 0 0 10px 0;
+      }
+
+      .error {
+        border: 2px solid #c00;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .header {
+        font-size: 14px;
+        line-height: 16.8px;
+        flex: 1.5;
+        margin: 0 10px 0 0;
+        text-align: right;
+      }
+
+      input {
+        border: 2px solid #e0e0df;
+        flex: 2;
+        height: 36px;
+        padding: 0 0 0 5px;
+      }
+    }
+
+    .form-wifi-password {
+      width: 300px;
+    }
+
+    .form-ap-mode {
+      width: 400px;
+
+      input {
+        flex: 3;
+        border: 2px solid #e0e0df;
+      }
+    }
+
+    .form-wifi-password,
+    .form-ap-mode {
+      background: $primary-background-color;
+      overflow: scroll;
+
+      .notice {
+        color: #989898;
+        font-size: 14px;
+        line-height: 16.8px;
+        margin: 20px 0;
+      }
+
+      .password-input {
+        height: 36px;
+        margin: 0 0 10px 0;
+        padding: 0 0 0 5px;
+        width: 250px;
+      }
+    }
+
+    .wifi-list {
+      height: 175px;
+      overflow: scroll;
+      position: relative;
+      width: 250px;
+
+      &.active {
+        background: #f9f9f9;
+      }
+
+      .spinner-roller {
+        height: 5em;
+        position: absolute;
+        width: 5em;
+      }
+
+      .row-fluid {
+        @include flexbox();
+        cursor: pointer;
+        height: 100%;
+        margin: 0;
+        padding: 0 10px;
+        flex: 2;
+        justify-content: space-between;
+      }
+
+      .wifi-ssid {
+        text-overflow: ellipsis;
+        width: calc(100% - 50px);
+      }
+
+      li {
+        text-align: left;
+
+        &:hover {
+          background: #bbb;
+          color: #f8f8f8;
+        }
+      }
+
+      span {
+        display: block;
+        line-height: 40px;
+        padding-left: 10px;
+      }
+
+      input[type="radio"] {
+        display: none;
+
+        &:checked+.row-fluid {
+          background: #b2b2b2;
+          color: white;
+        }
+      }
+
+      .fa {
+        font-size: 1.2405951937882669rem;
+      }
+    }
+
+    .btn-set-station-mode {
+      line-height: 25px;
+    }
+
+    .btn-set-client-mode {
+      line-height: 40px;
+    }
+  }
+
+  .connecting-wifi {
+    position: relative;
+
+    .spinner-roller {
+      height: 52px;
+      margin: 0 auto 20px auto;
+      width: 52px;
+    }
+  }
+
+  .setting-completed {
+    .headline {
+      margin: 0 0 12px 0;
+    }
+
+    .notice {
+      font-size: 14px;
+      line-height: 20px;
+      margin: 0 0 20px 0;
+      padding: 20px;
+      width: 451px;
+    }
+  }
+
+  .h-form {
+    width: 416px;
+
+    .control {
+      @include flexbox();
+      margin: 0 0 10px 0;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .error {
+        border: 2px solid #c00;
+      }
+
+      input {
+        height: 36px;
+        width: 250px;
+        flex: 3;
+      }
+
+      label,
+      .input-head {
+        font-weight: 200;
+        flex: 1;
+        margin: 0 10px 0 0;
+        text-align: right;
+
+        &.padleft {
+          flex: 2;
+          margin-left: -106px;
+        }
+      }
+
+      .error-message {
+        color: #c00;
+        font-size: 12px;
+        line-height: 20px;
+        padding: 0 0 0 104px;
+        text-align: left;
+        width: 100%;
+      }
+    }
+
+    .controls {
+      overflow: visible;
+      margin-bottom: 10px;
+      margin-left: -35px;
+    }
+  }
+
+  .device-not-found {
+    .not-found-img {
+      width: 60%;
+      margin-bottom: 50px;
+    }
+  }
+
+  .notice-from-device {
+    .headline {
+      color: #666;
+      font-size: 24px;
+      line-height: 1.2em;
+    }
+
+    .subtitle {
+      color: #808080;
+      font-size: 15px;
+      font-weight: normal;
+      margin: 0 0 55px 0;
+    }
+
+    .signal-description {
+      text-align: left;
+    }
+
+    .signal-position {
+      height: 207px;
+      margin: 0 30px 0 0;
+      width: 207px;
+    }
+
+    .green-light {
+      background: #4d4d4d;
+      border-radius: 50%;
+      height: 35px;
+      overflow: hidden;
+      position: relative;
+      transform: translateY(50%);
+      width: 35px;
+
+      &::before,
+      &::after {
+        content: "";
+        border-radius: 50%;
+        display: block;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+
+      &::after {
+        border: 4px solid #4d4d4d;
+      }
+
+      &::before {
+        background: #99e046;
+      }
+    }
+
+    .breathing {
+      &::before {
+        -webkit-animation: breath 4s infinite ease;
+        animation: breath 4s infinite ease;
+      }
+    }
+
+    .green-light-desc {
+      margin: 0 0 25px 0;
+      padding: 0 0 0 36px;
+      font-size: 24px;
+      font-weight: normal;
+
+      p {
+        font-size: 15px;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+#machine_ip_init {
+  margin-left: 10px;
+}

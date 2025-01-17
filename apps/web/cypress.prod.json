@@ -1,0 +1,13 @@
+{
+  "projectId": "fc84dg",
+  "baseUrl": "http://studio.flux3dp.com",
+  "env": {
+    "cypressDownloadPath": "./cypress/downloads/download.json",
+    "cypressDownloadBeamPath": "./cypress/downloads/untitled.beam",
+    "cypressDownloadNewBeamPath": "./cypress/downloads/untitled.beam",
+    "cypressDownloadBvgPath": "./cypress/downloads/untitled.bvg",
+    "cypressDownloadSvgPath": "./cypress/downloads/untitled.svg",
+    "cypressDownloadPngPath": "./cypress/downloads/untitled.png",
+    "cypressDownloadJpgPath": "./cypress/downloads/untitled.jpeg"
+  }
+}

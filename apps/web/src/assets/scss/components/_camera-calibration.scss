@@ -1,0 +1,178 @@
+.modal-camera-calibration {
+  .video {
+    width: 100%;
+    min-height: 225px;
+  }
+
+  .video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .tab-container {
+      margin-top: 10px;
+    }
+  }
+
+  .modal-alert {
+    width: 480px;
+    /* min-height: 320px; */
+    padding: 22px 0 0 0;
+  }
+
+  .caption {
+    margin: 0 0 20px 0;
+    padding: 0 19px;
+    color: #626262;
+    font-size: 15px;
+    line-height: 17px;
+    text-align: left;
+  }
+
+  .message {
+    overflow: visible;
+    padding: 0 19px;
+    margin: 0px 0px 10px 0px;
+    font-size: 15px;
+    line-height: 21px;
+    text-align: center;
+    color: #989898;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 0;
+    margin: 10px 0 0 0;
+
+    .title {
+      color: #555;
+      font-size: 13px;
+    }
+  }
+
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin: 0 5px 0 0;
+  }
+
+  .img-center {
+    background-size: cover !important;
+    background-position: 50% 50% !important;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 15px;
+    position: relative;
+
+    .virtual-square {
+      position: absolute;
+      border: 3px dashed #ff3300;
+
+      &.last-config {
+        opacity: 0.5;
+        border-color: grey;
+      }
+    }
+
+    .camera-control {
+      position: absolute;
+      border-style: solid;
+      width: 0px;
+      height: 0px;
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      &:active {
+        opacity: 1;
+      }
+
+      &.up {
+        border-color: transparent transparent #333333 transparent;
+        border-width: 0px 10px 16px 10px;
+        top: 5px;
+        left: 90px;
+      }
+
+      &.down {
+        border-color: #333333 transparent transparent transparent;
+        border-width: 16px 10px 0px 10px;
+        bottom: 5px;
+        left: 90px;
+      }
+
+      &.left {
+        border-color: transparent #333333 transparent transparent;
+        border-width: 10px 16px 10px 0px;
+        top: 90px;
+        left: 5px;
+      }
+
+      &.right {
+        border-color: transparent transparent transparent #333333;
+        border-width: 10px 0px 10px 16px;
+        top: 90px;
+        right: 5px;
+      }
+    }
+  }
+
+  .hint-modal-background {
+    position: fixed;
+    z-index: 1;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+
+    .hint-box {
+      position: absolute;
+
+      .arrowup {
+        margin-left: 3px;
+        width: 0px;
+        height: 0px;
+        border-width: 0px 5px 7px 5px;
+        border-style: solid;
+        border-color: transparent transparent #ffffff transparent;
+      }
+
+      .arrowdown {
+        margin-left: 3px;
+        width: 0px;
+        height: 0px;
+        border-width: 7px 5px 0px 5px;
+        border-style: solid;
+        border-color: #ffffff transparent transparent transparent;
+      }
+
+      .hint-body {
+        height: 40px;
+        background: #fff;
+        padding: 10px;
+        color: #626262;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .ant-input-number-group .ant-input-number-group-addon:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .ant-input-number-group .ant-input-number:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

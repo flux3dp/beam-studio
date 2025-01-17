@@ -1,0 +1,55 @@
+@use '../_mixins.scss' as mixins;
+
+.container {
+  @include mixins.item-group();
+}
+
+.panel {
+  width: 100%;
+  padding: 8px 8px 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-width: 0 0 1px 0;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .dimensions {
+      display: flex;
+      flex-wrap: wrap;
+      width: 180px;
+      gap: 2px 8px;
+    }
+
+    .dimension {
+      display: inline-flex;
+      align-items: center;
+      width: 86px;
+      height: 26px;
+
+      .label {
+        width: 20px;
+        color: #494949;
+
+        &.img {
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .input {
+        :global(.ant-input-number-input) {
+          padding: 1px 24px 1px 4px;
+        }
+      }
+
+      :global(.ui-control-unit-input-v2) {
+        input {
+          width: 66px;
+        }
+      }
+    }
+  }
+}

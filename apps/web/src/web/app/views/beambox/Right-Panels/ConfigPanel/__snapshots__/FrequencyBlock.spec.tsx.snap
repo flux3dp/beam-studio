@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FrequencyBlock should render correctly 1`] = `
+<div>
+  <div
+    class="panel without-drag"
+  >
+    <span
+      class="title"
+    >
+      Frequency
+    </span>
+    <div>
+      MockUnitInput
+      <p>
+        min: 
+        27
+      </p>
+      <p>
+        max: 
+        60
+      </p>
+      <p>
+        unit: 
+        kHz
+      </p>
+      <p>
+        defaultValue: 
+        40
+      </p>
+      <p>
+        decimal: 
+        0
+      </p>
+      <p>
+        displayMultiValue: 
+        N
+      </p>
+      <input
+        data-testid="frequency"
+        id="frequency"
+        type="number"
+        value="40"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test FrequencyBlock should render correctly when type is panel-item 1`] = `
+<div>
+  <div
+    class="object-panel-item"
+    id="frequency"
+  >
+    <div
+      class="main"
+    >
+      <button
+        class="adm-button adm-button-default adm-button-fill-outline adm-button-mini adm-button-shape-rounded number-item"
+        type="button"
+      >
+        <span>
+          40
+        </span>
+      </button>
+    </div>
+    <div
+      class="label"
+    >
+      Frequency
+    </div>
+  </div>
+</div>
+`;

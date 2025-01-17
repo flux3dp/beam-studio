@@ -1,0 +1,275 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ColorPickerMobile should render correctly 1`] = `
+<body>
+  <div>
+    <div
+      class="ant-popover-open"
+    />
+    <span
+      class="ant-popover-open"
+    />
+    <div
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker mobile-container css-dev-only-do-not-override-hash mobile-container css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
+    >
+      <div
+        class="ant-popover-content"
+      >
+        <div
+          class="ant-popover-inner"
+          role="tooltip"
+        >
+          <div
+            class="ant-popover-inner-content"
+          >
+            <div
+              class="ant-color-picker-inner"
+            >
+              <div>
+                <div
+                  class="panel with-clear"
+                >
+                  <div
+                    class="ant-color-picker-inner-content"
+                  >
+                    <div
+                      class="ant-color-picker-panel"
+                    >
+                      <div
+                        class="ant-color-picker-select"
+                      >
+                        <div
+                          class="ant-color-picker-palette"
+                          style="position: relative;"
+                        >
+                          <div
+                            style="position: absolute; left: 0%; top: 80%; z-index: 1; transform: translate(-50%, -50%);"
+                          >
+                            <div
+                              class="ant-color-picker-handler"
+                              style="background-color: rgb(51, 51, 51);"
+                            />
+                          </div>
+                          <div
+                            class="ant-color-picker-saturation"
+                            style="background-color: rgb(255, 0, 0);"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="ant-color-picker-slider-container"
+                      >
+                        <div
+                          class="ant-color-picker-slider-group ant-color-picker-slider-group-disabled-alpha"
+                        >
+                          <div
+                            class="ant-slider ant-color-picker-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
+                          >
+                            <div
+                              class="ant-slider-rail ant-color-picker-slider-rail"
+                            />
+                            <div
+                              class="ant-slider-step"
+                            />
+                            <div
+                              aria-disabled="false"
+                              aria-orientation="horizontal"
+                              aria-valuemax="359"
+                              aria-valuemin="0"
+                              aria-valuenow="0"
+                              class="ant-slider-handle ant-slider-handle-1 ant-color-picker-slider-handle"
+                              role="slider"
+                              style="left: 0%; transform: translateX(-50%); background: rgb(255, 0, 0);"
+                              tabindex="0"
+                            />
+                          </div>
+                        </div>
+                        <div
+                          class="ant-color-picker-color-block"
+                        >
+                          <div
+                            class="ant-color-picker-color-block-inner"
+                            style="background: rgb(51, 51, 51);"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="ant-color-picker-input-container"
+                    >
+                      <div
+                        class="ant-select ant-select-sm ant-select-borderless ant-color-picker-format-select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
+                      >
+                        <div
+                          class="ant-select-selector"
+                        >
+                          <span
+                            class="ant-select-selection-wrap"
+                          >
+                            <span
+                              class="ant-select-selection-search"
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-controls="rc_select_TEST_OR_SSR_list"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-owns="rc_select_TEST_OR_SSR_list"
+                                autocomplete="off"
+                                class="ant-select-selection-search-input"
+                                id="rc_select_TEST_OR_SSR"
+                                readonly=""
+                                role="combobox"
+                                style="opacity: 0;"
+                                type="search"
+                                unselectable="on"
+                                value=""
+                              />
+                            </span>
+                            <span
+                              class="ant-select-selection-item"
+                              title="HEX"
+                            >
+                              HEX
+                            </span>
+                          </span>
+                        </div>
+                        <span
+                          aria-hidden="true"
+                          class="ant-select-arrow"
+                          style="user-select: none;"
+                          unselectable="on"
+                        >
+                          <span
+                            aria-label="down"
+                            class="anticon anticon-down ant-select-suffix"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </div>
+                      <div
+                        class="ant-color-picker-input"
+                      >
+                        <span
+                          class="ant-input-affix-wrapper ant-input-affix-wrapper-sm css-dev-only-do-not-override-hash ant-input-outlined ant-color-picker-hex-input"
+                        >
+                          <span
+                            class="ant-input-prefix"
+                          >
+                            #
+                          </span>
+                          <input
+                            class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+                            type="text"
+                            value="333333"
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="clear-button color defalut"
+                >
+                  <div
+                    class="clear"
+                  />
+                </div>
+                <div
+                  class="footer"
+                >
+                  <span
+                    class="ant-input-affix-wrapper ant-input-affix-wrapper-sm css-dev-only-do-not-override-hash ant-input-outlined input"
+                  >
+                    <span
+                      class="ant-input-prefix"
+                    >
+                      <span
+                        class="prefix"
+                      >
+                        #
+                      </span>
+                    </span>
+                    <input
+                      class="ant-input ant-input-sm css-dev-only-do-not-override-hash"
+                      maxlength="6"
+                      type="text"
+                      value="333333"
+                    />
+                  </span>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-default ant-btn-color-default ant-btn-variant-outlined btn"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-primary ant-btn-color-primary ant-btn-variant-solid btn"
+                    type="button"
+                  >
+                    <span>
+                      OK
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash mask-container css-dev-only-do-not-override-hash ant-popover-placement-top"
+      style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
+    >
+      <div
+        class="ant-popover-content"
+      >
+        <div
+          class="ant-popover-inner"
+          role="tooltip"
+        >
+          <div
+            class="ant-popover-inner-content"
+          >
+            <div
+              class="top-mask white"
+            />
+            <div
+              class="bottom-mask"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test ColorPickerMobile should render correctly when closed 1`] = `
+<body>
+  <div>
+    <div />
+    <span />
+  </div>
+</body>
+`;

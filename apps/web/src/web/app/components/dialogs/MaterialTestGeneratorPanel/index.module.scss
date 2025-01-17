@@ -1,0 +1,36 @@
+@use 'styles/variables' as variables;
+
+.modal-wrap {
+  overflow: unset;
+}
+
+.params {
+  padding-right: 30px;
+}
+
+.header {
+  height: 32px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .title {
+    font-weight: 700;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.preview-subtext {
+  font-size: 12px;
+  color: #7c7c7c;
+}
+
+.mb-28 {
+  margin-bottom: 28px;
+}

@@ -1,0 +1,14 @@
+@use './mixins' as mixins;
+
+.panel {
+  @include mixins.panel;
+}
+
+.icon {
+  // Same as ConfigPanelIcons.ColorAdjustment
+  color: #ababab;
+}
+
+.panel-icon {
+  font-size: 22px;
+}

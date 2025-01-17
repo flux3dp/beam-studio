@@ -1,0 +1,37 @@
+@use 'styles/variables' as variables;
+
+.hide {
+  display: none;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+
+  .item {
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+
+    .description {
+      text-align: center;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .name {
+      color: variables.$primary-blue;
+      font-weight: 700;
+      margin-top: auto;
+      cursor: pointer;
+    }
+  }
+
+  :global(.ant-divider) {
+    height: auto;
+  }
+}

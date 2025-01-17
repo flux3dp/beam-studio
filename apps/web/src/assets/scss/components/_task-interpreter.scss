@@ -1,0 +1,287 @@
+.task-interpreter-panel {
+  width: 85vw;
+  padding: 20px 20px 20px 20px;
+  background: #f8f8f8;
+  text-align: center;
+  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+
+  .btn {
+    height: 31px;
+    padding: 3px 5px 3px 5px;
+    line-height: 23px;
+
+    &.tab-button {
+      outline-offset: -2px;
+      height: 20px;
+      padding: 2px 3px;
+      line-height: 14px;
+      margin: 0px;
+      border-width: 2px 1px 0px 1px;
+      font-size: 11px;
+
+      &:first-child {
+        border-left-width: 2px;
+      }
+
+      &:last-child {
+        border-right-width: 2px;
+      }
+
+      &.selected {
+        color: #333333;
+        border-color: #333333;
+      }
+    }
+
+    &.disabled {
+      &:hover {
+        color: #b3b3b3;
+        border-color: #c0c0c0;
+      }
+    }
+  }
+
+  .select-port {
+    margin: 0px 0px 20px 0px;
+    height: 31px;
+
+    .pull-right {
+      margin: 0px 0px 0px 10px;
+    }
+
+    select {
+      width: 70%;
+      line-height: 23px;
+      font-size: 15px;
+      padding: 3px 3px 3px 7px;
+      margin: 0px;
+      float: left;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+  }
+
+  .file-input {
+    margin: 0px 0px 20px 0px;
+    height: 31px;
+
+    input {
+      width: 70%;
+      border: 2px solid #ccc;
+      padding: 3px;
+      float: left;
+    }
+
+    .pull-right {
+      margin: 0px 0px 0px 10px;
+    }
+  }
+
+  .main-content {
+    height: 240px;
+    margin: 0px 0px 20px 0px;
+
+    .left-part {
+      float: left;
+      width: 50%;
+      height: 100%;
+    }
+
+    .right-part {
+      float: left;
+      width: calc(50% - 20px);
+      height: 100%;
+      margin: 0px 0px 0px 20px;
+
+      canvas {
+        border: 2px solid #ccc;
+      }
+    }
+
+    .tab-control {
+      height: 20px;
+    }
+
+    .gcode-command-list {
+      overflow: scroll;
+      width: calc(100% - 20px);
+      float: left;
+      height: 220px;
+      border: 2px solid #ccc;
+
+      .gcode-command-container {
+        height: 20px;
+        line-height: 15px;
+        font-size: 15px;
+        border-bottom: solid 1px #ccc;
+
+        &.current {
+          background: #eeeeee;
+        }
+
+        .line-index {
+          border-right: solid 1px #ccc;
+          padding: 2px 2px 2px 0px;
+          font-size: 11px;
+          font-weight: 300;
+          float: left;
+          width: 45px;
+          text-align: right;
+          color: #777777;
+        }
+
+        .gcode-command {
+          overflow: scroll;
+          white-space: nowrap;
+          padding: 2px 10px 2px 10px;
+          text-align: left;
+          color: #777777;
+        }
+      }
+    }
+
+    .scroll-bar {
+      width: 20px;
+      height: 220px;
+      float: right;
+      border: 2px solid #ccc;
+      border-left: 0px;
+
+      .slider {
+        width: 100%;
+        background: #ddd;
+        position: relative;
+
+        &:hover {
+          background: #bfbfbf;
+        }
+      }
+    }
+
+    .console-tab {
+      width: 100%;
+      height: 220px;
+      border: 2px solid #ccc;
+      display: grid;
+
+      .console {
+        width: 100%;
+        height: 196px;
+        border: 0px;
+        font-size: 13px;
+        line-height: 15px;
+        resize: none;
+      }
+
+      .console-input {
+        height: 20px;
+        padding: 3px;
+        font-size: 14px;
+        line-height: 14px;
+        border-radius: 0px;
+        border-width: 1px 0px 0px 0px;
+      }
+    }
+
+    .move-tab {
+      width: 100%;
+      height: 220px;
+      border: 2px solid #ccc;
+
+      .speed-container,
+      .distance-container {
+        width: 20%;
+        height: 100%;
+        float: left;
+
+        .title {
+          height: 24px;
+          line-height: 24px;
+          font-size: 13px;
+          color: #333333;
+        }
+
+        .vertical-slider {
+          padding: 0px 10px;
+        }
+
+        .slider-track {
+          margin: 0px;
+          position: relative;
+          height: 156px;
+          width: 6px;
+          left: calc(50% - 3px);
+          background: #d0d0d0;
+        }
+
+        .slider-bar {
+          background: #777777;
+          border: 6px solid #a0a0a0;
+          border-radius: 12px;
+          padding-top: -3px;
+          margin-left: -3px;
+          position: relative;
+        }
+
+        .input-value {
+          padding-top: 8px;
+          width: 100%;
+          height: 36px;
+
+          input {
+            padding: 3px;
+            width: 50px;
+            font-size: 14px;
+            line-height: 14px;
+            height: 22px;
+            text-align: center;
+            border: 1px #e0e0e0 solid;
+            border-radius: 2px;
+          }
+        }
+      }
+
+      .move-buttons {
+        float: left;
+        width: 60%;
+        height: 100%;
+
+        .row {
+          height: 50px;
+          width: 100%;
+          margin-bottom: 13px;
+
+          &:first-child {
+            margin-top: 20px;
+          }
+
+          &:last-child {
+            margin-bottom: 20px;
+          }
+        }
+
+        .btn {
+          width: 24%;
+          height: 50px;
+        }
+
+        .pull-left {
+          margin-right: 5%;
+
+          &:first-child {
+            margin-left: 9%;
+          }
+
+          &:last-child {
+            margin-right: 9%;
+          }
+        }
+      }
+    }
+  }
+
+  .footer {
+    margin: 0px;
+    height: 31px;
+  }
+}

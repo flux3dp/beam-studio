@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ParameterTitle should render correctly 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="title"
+    >
+      parameters
+    </div>
+    <div>
+      <div>
+        MockSaveConfigButton
+      </div>
+      <button
+        title="preset_management_title"
+        type="button"
+      >
+        <svgr-url />
+      </button>
+    </div>
+  </div>
+</div>
+`;

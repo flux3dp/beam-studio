@@ -1,0 +1,42 @@
+.pagination {
+  text-align: center;
+  a {
+    text-decoration: none;
+  }
+}
+
+.form-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 40px;
+  margin-bottom: 20px;
+  .form-item {
+    margin-bottom: 0;
+    input {
+      width: 100px;
+    }
+  }
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    .form-item {
+      :global(.ant-form-item-label.ant-col) {
+        flex: none;
+        padding: 0;
+        min-width: 80px;
+        text-align: end;
+        ::after {
+          visibility: visible;
+        }
+      }
+      :global(.ant-form-item-control.ant-col) {
+        flex: none;
+      }
+    }
+  }
+}

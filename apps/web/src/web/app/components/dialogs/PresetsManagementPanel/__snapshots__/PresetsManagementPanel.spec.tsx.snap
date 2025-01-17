@@ -1,0 +1,592 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test PresetsManagementPanel should render correctly 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <button
+                aria-label="Close"
+                class="ant-modal-close"
+                type="button"
+              >
+                <span
+                  class="ant-modal-close-x"
+                >
+                  <span
+                    aria-label="close"
+                    class="anticon anticon-close ant-modal-close-icon"
+                    role="img"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      data-icon="close"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </button>
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  title
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <div
+                  class="container"
+                >
+                  <div>
+                    MockPresetList
+                    <div
+                      data-selected="true"
+                      id="pre1"
+                    >
+                      pre1
+                      <button
+                        id="hide"
+                        type="button"
+                      >
+                        hide
+                      </button>
+                    </div>
+                    <div
+                      data-selected="false"
+                      id="pre2"
+                    >
+                      pre2
+                      <button
+                        id="hide"
+                        type="button"
+                      >
+                        hide
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="controls"
+                  >
+                    <div>
+                      <button
+                        class="add"
+                        type="button"
+                      >
+                        <span
+                          aria-label="plus-circle"
+                          class="anticon anticon-plus-circle icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="plus-circle"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm192 472c0 4.4-3.6 8-8 8H544v152c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V544H328c-4.4 0-8-3.6-8-8v-48c0-4.4 3.6-8 8-8h152V328c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v152h152c4.4 0 8 3.6 8 8v48z"
+                            />
+                          </svg>
+                        </span>
+                        add_new
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        title="import"
+                        type="button"
+                      >
+                        <span
+                          aria-label="upload"
+                          class="anticon anticon-upload icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="upload"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M400 317.7h73.9V656c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V317.7H624c6.7 0 10.4-7.7 6.3-12.9L518.3 163a8 8 0 00-12.6 0l-112 141.7c-4.1 5.3-.4 13 6.3 13zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <button
+                        title="export"
+                        type="button"
+                      >
+                        <span
+                          aria-label="download"
+                          class="anticon anticon-download icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="download"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <svgr-url
+                        classname="ant-dropdown-trigger icon"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="detail"
+                  >
+                    <div
+                      class="header"
+                    >
+                      <div
+                        class="title"
+                      >
+                        pre1
+                      </div>
+                      <div
+                        class="ant-select ant-select-outlined css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
+                      >
+                        <div
+                          class="ant-select-selector"
+                        >
+                          <span
+                            class="ant-select-selection-wrap"
+                          >
+                            <span
+                              class="ant-select-selection-search"
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-controls="rc_select_TEST_OR_SSR_list"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-owns="rc_select_TEST_OR_SSR_list"
+                                autocomplete="off"
+                                class="ant-select-selection-search-input"
+                                id="rc_select_TEST_OR_SSR"
+                                readonly=""
+                                role="combobox"
+                                style="opacity: 0;"
+                                type="search"
+                                unselectable="on"
+                                value=""
+                              />
+                            </span>
+                            <span
+                              class="ant-select-selection-item"
+                              title="10W Diode Laser"
+                            >
+                              10W Diode Laser
+                            </span>
+                          </span>
+                        </div>
+                        <span
+                          aria-hidden="true"
+                          class="ant-select-arrow"
+                          style="user-select: none;"
+                          unselectable="on"
+                        >
+                          <span
+                            aria-label="down"
+                            class="anticon anticon-down ant-select-suffix"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="down"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      MockLaserInputs
+                      <p>
+                        preset: 
+                        {"key":"pre1","isDefault":true,"hide":false,"name":"pre1","power":50,"speed":50}
+                      </p>
+                      <p>
+                        maxSpeed: 
+                        400
+                      </p>
+                      <p>
+                        minSpeed: 
+                        0.5
+                      </p>
+                      <p>
+                        lengthUnit: 
+                        mm
+                      </p>
+                      <input
+                        data-testid="power"
+                        value="50"
+                      />
+                      <input
+                        data-testid="speed"
+                        value="50"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <div>
+                  MockFooter
+                  <button
+                    id="footer-save"
+                    type="button"
+                  >
+                    handleSave
+                  </button>
+                  <button
+                    id="footer-reset"
+                    type="button"
+                  >
+                    handleReset
+                  </button>
+                  <button
+                    id="footer-close"
+                    type="button"
+                  >
+                    onClose
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test PresetsManagementPanel should render correctly with print module 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <button
+                aria-label="Close"
+                class="ant-modal-close"
+                type="button"
+              >
+                <span
+                  class="ant-modal-close-x"
+                >
+                  <span
+                    aria-label="close"
+                    class="anticon anticon-close ant-modal-close-icon"
+                    role="img"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      data-icon="close"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </button>
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  title
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <div
+                  class="container"
+                >
+                  <div>
+                    MockPresetList
+                    <div
+                      data-selected="true"
+                      id="name1"
+                    >
+                      name1
+                      <button
+                        id="hide"
+                        type="button"
+                      >
+                        hide
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="controls"
+                  >
+                    <div>
+                      <button
+                        class="add"
+                        type="button"
+                      >
+                        <span
+                          aria-label="plus-circle"
+                          class="anticon anticon-plus-circle icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="plus-circle"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm192 472c0 4.4-3.6 8-8 8H544v152c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V544H328c-4.4 0-8-3.6-8-8v-48c0-4.4 3.6-8 8-8h152V328c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v152h152c4.4 0 8 3.6 8 8v48z"
+                            />
+                          </svg>
+                        </span>
+                        add_new
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        title="import"
+                        type="button"
+                      >
+                        <span
+                          aria-label="upload"
+                          class="anticon anticon-upload icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="upload"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M400 317.7h73.9V656c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V317.7H624c6.7 0 10.4-7.7 6.3-12.9L518.3 163a8 8 0 00-12.6 0l-112 141.7c-4.1 5.3-.4 13 6.3 13zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <button
+                        title="export"
+                        type="button"
+                      >
+                        <span
+                          aria-label="download"
+                          class="anticon anticon-download icon"
+                          role="img"
+                        >
+                          <svg
+                            aria-hidden="true"
+                            data-icon="download"
+                            fill="currentColor"
+                            focusable="false"
+                            height="1em"
+                            viewBox="64 64 896 896"
+                            width="1em"
+                          >
+                            <path
+                              d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <svgr-url
+                        classname="ant-dropdown-trigger icon"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="detail"
+                  >
+                    <div
+                      class="header"
+                    >
+                      <div
+                        class="title"
+                      >
+                        name1
+                      </div>
+                      <button
+                        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-dangerous ant-btn-color-dangerous ant-btn-variant-outlined"
+                        data-testid="delete"
+                        type="button"
+                      >
+                        <span>
+                          delete
+                        </span>
+                      </button>
+                    </div>
+                    <div>
+                      MockLaserInputs
+                      <p>
+                        preset: 
+                        {"name":"name1","module":2}
+                      </p>
+                      <p>
+                        maxSpeed: 
+                        400
+                      </p>
+                      <p>
+                        minSpeed: 
+                        0.5
+                      </p>
+                      <p>
+                        lengthUnit: 
+                        mm
+                      </p>
+                      <input
+                        data-testid="power"
+                        value="15"
+                      />
+                      <input
+                        data-testid="speed"
+                        value="30"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <div>
+                  MockFooter
+                  <button
+                    id="footer-save"
+                    type="button"
+                  >
+                    handleSave
+                  </button>
+                  <button
+                    id="footer-reset"
+                    type="button"
+                  >
+                    handleReset
+                  </button>
+                  <button
+                    id="footer-close"
+                    type="button"
+                  >
+                    onClose
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

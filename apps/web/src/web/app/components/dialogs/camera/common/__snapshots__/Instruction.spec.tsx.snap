@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Instruction should render correctly 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash container ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 400px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  title
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                text
+                <video
+                  autoplay=""
+                  class="video"
+                  loop=""
+                >
+                  <source
+                    src="video.webm"
+                    type="image/webm"
+                  />
+                </video>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    label
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

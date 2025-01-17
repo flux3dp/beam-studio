@@ -1,0 +1,111 @@
+.top-bar {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: $topBarHeight;
+  background-color: #333;
+  -webkit-app-region: drag;
+
+  &.white {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-width: 0 0 1px 0;
+    -webkit-app-region: no-drag;
+
+    .element-title {
+      position: relative;
+      float: left;
+      top: 0;
+      border: 3px solid #595959;
+      border-width: 0 0 3px 0;
+      margin-left: 0;
+      padding: 0 5px;
+      z-index: 1;
+      text-shadow: none;
+    }
+
+    .hint-container {
+      z-index: 1;
+      top: 40px;
+    }
+
+    .menu {
+      &.camera {
+        left: 65px;
+        top: 80px;
+      }
+
+      &.export {
+        top: 37px;
+        right: 50px;
+      }
+    }
+  }
+
+  .element-title {
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+    top: 45px;
+    margin-left: 70px;
+    height: 40px;
+    line-height: 40px;
+    color: #333333;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 0.95px;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  }
+
+  .hint-container {
+    position: absolute;
+    z-index: 1;
+    top: 80px;
+    margin-left: 70px;
+    height: 40px;
+    line-height: 40px;
+    color: #333333;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 0.95px;
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  }
+
+  .menu {
+    background: #fff;
+    position: fixed;
+    z-index: 99;
+    border-radius: 2px;
+
+    &.camera {
+      left: 65px;
+      top: 50px;
+    }
+
+    &.export {
+      top: 7px;
+      right: 50px;
+    }
+
+    .arrow {
+      min-width: 10px;
+      min-height: 10px;
+      width: 13px;
+      height: 26px;
+      position: absolute;
+      top: 0;
+
+      &.arrow-right {
+        left: 100%;
+      }
+
+      &.arrow-left {
+        right: 100%;
+      }
+    }
+  }
+  .modal-window {
+    background: none;
+  }
+}

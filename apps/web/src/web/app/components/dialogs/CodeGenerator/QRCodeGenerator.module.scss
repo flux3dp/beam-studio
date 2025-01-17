@@ -1,0 +1,62 @@
+$border-width: 1px;
+$padding: 12px;
+
+.input {
+  margin-bottom: 20px;
+  resize: none;
+  height: 200px;
+}
+
+.content {
+  display: flex;
+  align-content: center;
+  gap: 0 24px;
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+  }
+
+  .qrcode-container {
+    display: flex;
+    justify-content: center;
+
+    --code-size: 200px;
+    @media screen and (max-width: 600px) {
+      --code-size: 100px;
+    }
+
+    .qrcode {
+      width: var(--code-size) !important;
+      height: var(--code-size) !important;
+
+      canvas {
+        width: calc(var(--code-size) - $padding * 2 - $border-width * 2) !important;
+        height: calc(var(--code-size) - $padding * 2 - $border-width * 2) !important;
+      }
+    }
+
+    .placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--code-size);
+      height: var(--code-size);
+      color: #acacac;
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      border: $border-width solid rgba(5, 5, 5, 0.06);
+    }
+  }
+
+  .settings {
+    margin: 58px auto;
+
+    .label {
+      font-weight: 600;
+    }
+
+    .checkbox {
+      margin-top: 20px;
+    }
+  }
+}

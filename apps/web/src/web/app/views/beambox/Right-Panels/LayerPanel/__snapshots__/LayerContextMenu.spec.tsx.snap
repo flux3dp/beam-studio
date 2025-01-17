@@ -1,0 +1,418 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test LayerContextMenu should render correctly in mobile 1`] = `
+<div>
+  <div
+    class="item-group"
+  >
+    <div
+      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    />
+    <div
+      class="object-panel-item"
+      id="deletelayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        del
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="merge_down_layer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        merge_down
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="locklayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        lock
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="dupelayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        dupe
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="renameLayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        rename
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test LayerContextMenu should render correctly when multiselecting 1`] = `
+<div>
+  <nav
+    class="react-contextmenu"
+    role="menu"
+    style="position: fixed; opacity: 0; pointer-events: none;"
+    tabindex="-1"
+  >
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="renameLayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      rename
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="dupelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      dupe
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="locklayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      lock
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="deletelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      del
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_down_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_down
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_all_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_all
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="merge_selected_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_selected
+    </div>
+  </nav>
+</div>
+`;
+
+exports[`test LayerContextMenu should render correctly when selecting last 1`] = `
+<div>
+  <nav
+    class="react-contextmenu"
+    role="menu"
+    style="position: fixed; opacity: 0; pointer-events: none;"
+    tabindex="-1"
+  >
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="renameLayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      rename
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="dupelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      dupe
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="locklayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      lock
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="deletelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      del
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_down_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_down
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="merge_all_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_all
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_selected_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_selected
+    </div>
+  </nav>
+</div>
+`;
+
+exports[`test LayerContextMenu should render correctly when selecting printing layer 1`] = `
+<div>
+  <nav
+    class="react-contextmenu"
+    role="menu"
+    style="position: fixed; opacity: 0; pointer-events: none;"
+    tabindex="-1"
+  >
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="renameLayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      rename
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="dupelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      dupe
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="locklayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      lock
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="deletelayer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      del
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_down_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_down
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="merge_all_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_all
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="merge_selected_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      merge_selected
+    </div>
+    <div
+      aria-disabled="false"
+      class="react-contextmenu-item"
+      id="toggle_fullcolor_layer"
+      role="menuitem"
+      tabindex="-1"
+    >
+      switchToFullColor
+    </div>
+    <div
+      aria-disabled="true"
+      class="react-contextmenu-item react-contextmenu-item--disabled"
+      id="split_color"
+      role="menuitem"
+      tabindex="-1"
+    >
+      splitFullColor
+    </div>
+  </nav>
+</div>
+`;
+
+exports[`test LayerContextMenu unlock layers should work 1`] = `
+<div>
+  <div
+    class="item-group"
+  >
+    <div
+      class="adm-divider adm-divider-vertical adm-divider-center divider"
+    />
+    <div
+      class="object-panel-item"
+      id="deletelayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        del
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="merge_down_layer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        merge_down
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="locklayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        unlock
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="dupelayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        dupe
+      </div>
+    </div>
+    <div
+      class="object-panel-item"
+      id="renameLayer"
+    >
+      <div
+        class="main"
+      >
+        <svgr-url />
+      </div>
+      <div
+        class="label"
+      >
+        rename
+      </div>
+    </div>
+  </div>
+</div>
+`;

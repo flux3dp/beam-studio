@@ -1,0 +1,66 @@
+.block {
+  margin: 7px 0;
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+
+  .label {
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  .input {
+    width: 40px;
+    height: 20px;
+    line-height: 20px;
+    margin: 0px;
+    input {
+      height: 20px;
+    }
+  }
+
+  .controls {
+    margin-left: 10px;
+    display: flex;
+    gap: 6px;
+    overflow-x: scroll;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.back {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.colors {
+  display: flex;
+  padding: 0 16px 20px;
+  margin-bottom: -12px;
+  overflow-x: scroll;
+  > div {
+    &.color {
+      min-width: 40px;
+      &:not(:first-child) {
+        margin-left: 8px;
+      }
+    }
+    &:empty {
+      display: none;
+    }
+  }
+}

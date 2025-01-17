@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ConfigValueDisplay when type is not panel-item should render correctly 1`] = `
+<div>
+  <div>
+    MockUnitInput
+    <p>
+      id: 
+      mock-input-id
+    </p>
+    <p>
+      min: 
+      0
+    </p>
+    <p>
+      max: 
+      100
+    </p>
+    <p>
+      unit: 
+      mm
+    </p>
+    <p>
+      defaultValue: 
+      5
+    </p>
+    <p>
+      decimal: 
+      2
+    </p>
+    <p>
+      displayMultiValue: 
+    </p>
+    <p>
+      disabled: 
+      n
+    </p>
+    <button
+      type="button"
+    >
+      change
+    </button>
+  </div>
+</div>
+`;
+
+exports[`test ConfigValueDisplay when type is panel-item should render correctly 1`] = `
+<div>
+  <div>
+    <p>
+      Props: 
+      {"theme":{"token":{"borderRadius":100}}}
+    </p>
+    <div>
+      Mock InputNumber
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        controls: 
+        n
+      </p>
+      <input
+        class="input"
+        max="100"
+        min="0"
+        type="number"
+        value="5"
+      />
+    </div>
+  </div>
+</div>
+`;

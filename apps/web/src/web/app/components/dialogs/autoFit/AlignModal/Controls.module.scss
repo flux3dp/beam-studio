@@ -1,0 +1,45 @@
+@use 'styles/variables' as variables;
+
+.container {
+  flex: 0 0 auto;
+  width: 270px;
+  border: 1px solid #dddddd;
+  border-width: 0 1px 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 20px;
+
+  .title {
+    font-weight: bold;
+    color: #333333;
+  }
+
+  .steps {
+    color: variables.$secondary-gray;
+    margin: 0;
+    padding-left: 1.5em;
+
+    li {
+      &:not(:last-child) {
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .input {
+      width: 132px;
+    }
+  }
+
+  .info {
+    color: variables.$secondary-gray;
+    font-size: 12px;
+    font-style: italic;
+  }
+}

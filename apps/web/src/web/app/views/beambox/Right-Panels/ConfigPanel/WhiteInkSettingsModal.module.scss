@@ -1,0 +1,7 @@
+@use "./mixins" as mixins;
+
+.panel {
+  @include mixins.panel;
+
+  padding: 0;
+}

@@ -1,0 +1,112 @@
+@use 'styles/variables' as variables;
+@use './connection_setting_page' as connectionSettingPage;
+
+.container {
+  @include connectionSettingPage.container;
+
+  @media screen and (max-width: 600px) {
+    > .btns > .btn.primary {
+      background-color: #333333;
+
+      &:hover:not(.disabled) {
+        background-color: #000000;
+      }
+    }
+  }
+
+  .title {
+    color: #2d2d2d;
+    text-align: center;
+  }
+
+  .main {
+    @media screen and (max-width: 600px) {
+      padding: 0;
+      margin: 0 8px;
+    }
+
+    .btns {
+      margin-top: 40px;
+      display: flex;
+      gap: 0 20px;
+
+      @media screen and (max-width: 600px) {
+        height: calc(100vh - 220px);
+        margin-top: 0px;
+        flex-direction: column;
+        gap: 8px 0;
+        align-items: center;
+      }
+
+      .btn {
+        width: 152px;
+        height: 152px;
+        background-color: #ffffff;
+        border: 2px solid #ffffff;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d2d2d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 20px 0;
+        text-align: center;
+        cursor: pointer;
+
+        &:hover {
+          border: 2px solid variables.$primary-blue;
+        }
+
+        @media screen and (max-width: 600px) {
+          width: calc(100vw - 40px);
+          height: 80px;
+          padding: 0 0 0 32px;
+          flex-direction: row;
+          gap: 28px;
+          font-size: 16px;
+          text-align: start;
+          min-width: 280px;
+          max-width: 320px;
+        }
+
+        .label {
+          &.bb {
+            margin-top: -10px;
+
+            @media screen and (max-width: 600px) {
+              margin-top: 0px;
+            }
+          }
+        }
+      }
+
+      .btn-real {
+        width: 320px;
+        height: 200px;
+
+        padding: 40px 20px 0;
+
+        @media screen and (max-width: 600px) {
+          height: 156px;
+          padding: 24px 40px 0;
+          flex-direction: column;
+          gap: 0;
+          text-align: center;
+        }
+      }
+
+      .image {
+        width: 250px;
+        height: 100px;
+
+        margin-bottom: 12px;
+
+        @media screen and (max-width: 600px) {
+          width: 200px;
+          height: 80px;
+        }
+      }
+    }
+  }
+}

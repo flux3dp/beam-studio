@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Sider should render correctly 1`] = `
+<div>
+  <div
+    class="sider class"
+  >
+    Sider
+  </div>
+</div>
+`;
+
+exports[`test Sider should render correctly 2`] = `
+<div>
+  <div
+    class="sider mobile windows desktop class class2"
+  >
+    Sider
+  </div>
+</div>
+`;

@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly in mobile type is gridArray 1`] = `<div />`;
+
+exports[`should render correctly in mobile type is gridArray 2`] = `
+<ArrayModal
+  onCancel={[Function]}
+  onOk={[Function]}
+/>
+`;
+
+exports[`should render correctly in mobile type is offset 1`] = `<div />`;
+
+exports[`should render correctly in mobile type is offset 2`] = `
+<OffsetModal
+  onCancel={[Function]}
+  onOk={[Function]}
+/>
+`;
+
+exports[`should render correctly type is gridArray 1`] = `
+<div>
+  <div
+    class="tool-panels en"
+    id="beamboxToolPanel"
+    style="position: absolute; z-index: 999; bottom: 10px; left: 50px;"
+  >
+    <div
+      class="tool-panel"
+    >
+      <label
+        class="controls accordion"
+      >
+        <input
+          checked=""
+          class="accordion-switcher"
+          type="checkbox"
+        />
+        <p
+          class="caption"
+        >
+          <span
+            class="value"
+          >
+            Create Grid Array
+          </span>
+        </p>
+      </label>
+    </div>
+    <dummy-row-column
+      column="1"
+      row="1"
+    />
+    <dummy-interval
+      dx="0"
+      dy="0"
+    />
+    <div
+      class="tool-block"
+    >
+      <div
+        class="btn-h-group"
+      >
+        <button
+          class="btn btn-default primary"
+          type="button"
+        >
+          Confirm
+        </button>
+        <button
+          class="btn btn-default"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly type is nest 1`] = `
+<div>
+  <div
+    class="tool-panels en"
+    id="beamboxToolPanel"
+    style="position: absolute; z-index: 999; bottom: 10px; left: 50px;"
+  >
+    <div
+      class="tool-panel"
+    >
+      <label
+        class="controls accordion"
+      >
+        <input
+          checked=""
+          class="accordion-switcher"
+          type="checkbox"
+        />
+        <p
+          class="caption"
+        >
+          <span
+            class="value"
+          />
+        </p>
+      </label>
+    </div>
+    <dummy-nest-spacing-panel
+      spacing="0"
+    />
+    <dummy-nest-rotation-panel
+      rotations="1"
+    />
+    <div>
+      dummy-nest-ga-panel nestOptions: 
+      {"spacing":0,"generations":3,"population":10,"rotations":1}
+    </div>
+    <div
+      class="tool-block"
+    >
+      <div
+        class="btn-h-group"
+      >
+        <button
+          class="btn btn-default primary"
+          type="button"
+        >
+          Confirm
+        </button>
+        <button
+          class="btn btn-default"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly type is offset 1`] = `
+<div>
+  <div
+    class="tool-panels en"
+    id="beamboxToolPanel"
+    style="position: absolute; z-index: 999; bottom: 10px; left: 50px;"
+  >
+    <div
+      class="tool-panel"
+    >
+      <label
+        class="controls accordion"
+      >
+        <input
+          checked=""
+          class="accordion-switcher"
+          type="checkbox"
+        />
+        <p
+          class="caption"
+        >
+          <span
+            class="value"
+          >
+            Offset
+          </span>
+        </p>
+      </label>
+    </div>
+    <dummy-offset-direction-panel
+      dir="1"
+    />
+    <dummy-offset-corner-panel
+      cornertype="sharp"
+    />
+    <dummy-offset-distance-panel
+      distance="5"
+    />
+    <div
+      class="tool-block"
+    >
+      <div
+        class="btn-h-group"
+      >
+        <button
+          class="btn btn-default primary"
+          type="button"
+        >
+          Confirm
+        </button>
+        <button
+          class="btn btn-default"
+          type="button"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

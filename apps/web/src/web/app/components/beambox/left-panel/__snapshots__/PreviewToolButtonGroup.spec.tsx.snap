@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test PreviewToolButtonGroup should render correctly 1`] = `
+<div>
+  <div
+    class="left-toolbar"
+  >
+    <div
+      class="container"
+      id="preview-back"
+      title="End Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container active"
+      id="preview-shoot"
+      title="Camera Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="image-trace"
+      title="Trace Image"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="clear-preview"
+      title="Clear Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewToolButtonGroup should render correctly when isNorthAmerica 1`] = `
+<div>
+  <div
+    class="left-toolbar"
+  >
+    <div
+      class="container"
+      id="preview-back"
+      title="End Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container active"
+      id="preview-shoot"
+      title="Camera Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="image-trace"
+      title="Trace Image"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="clear-preview"
+      title="Clear Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+  </div>
+</div>
+`;

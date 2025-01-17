@@ -1,0 +1,7 @@
+// Add antd default margin between buttons in modal footer
+// if buttons are wrapped in another element
+@mixin footer {
+  button + button {
+    margin-inline-start: 8px;
+  }
+}

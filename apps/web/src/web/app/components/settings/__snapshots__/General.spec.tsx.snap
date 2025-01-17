@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly desktop version 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    General
+  </div>
+  <div>
+    mock-select-control id:
+    select-lang
+    label:
+    Language
+    options:
+    [{"value":"de","label":"Deutsche","selected":false},{"value":"en","label":"English","selected":true},{"value":"es","label":"Español","selected":false},{"value":"zh-tw","label":"繁體中文","selected":false},{"value":"ja","label":"日本語","selected":false},{"value":"zh-cn","label":"简体中文","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-notifications
+    label:
+    Desktop Notifications
+    options:
+    [{"value":"TRUE","label":"On","selected":true},{"value":"FALSE","label":"Off","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;
+
+exports[`should render correctly web version 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    General
+  </div>
+  <div>
+    mock-select-control id:
+    select-lang
+    label:
+    Language
+    options:
+    [{"value":"de","label":"Deutsche","selected":false},{"value":"en","label":"English","selected":true},{"value":"es","label":"Español","selected":false},{"value":"zh-tw","label":"繁體中文","selected":false},{"value":"ja","label":"日本語","selected":false},{"value":"zh-cn","label":"简体中文","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;

@@ -1,0 +1,59 @@
+.icon {
+  width: 100%;
+  height: 60px;
+  margin: 15px 0;
+}
+
+$icon-size: 28px;
+$icon-margin: 8px;
+
+.message-container {
+  display: flex;
+  justify-content: space-between;
+
+  .icon {
+    width: $icon-size;
+    height: $icon-size;
+    margin: 0 $icon-margin 0 0;
+  }
+
+  .message {
+    font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", Helvetica, Arial, "Lucida Grande",
+      sans-serif, "Microsoft JhengHei", "微軟正黑體";
+    margin: 0;
+    padding: 0;
+    position: relative;
+    word-break: normal;
+    word-wrap: normal;
+
+    &.with-icon {
+      width: calc(100% - #{$icon-size + $icon-margin});
+    }
+
+    a {
+      font-size: inherit;
+    }
+  }
+}
+
+.container {
+  .links {
+    margin-top: 10px;
+
+    .link {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+
+      .icon {
+        width: 1em;
+        height: 1em;
+        margin: 0 0 0 5px;
+      }
+    }
+  }
+
+  .checkbox {
+    margin-top: 10px;
+  }
+}

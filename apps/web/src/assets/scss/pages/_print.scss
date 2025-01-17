@@ -1,0 +1,160 @@
+/*for toggle switch*/
+input.switch:empty {
+  display: none;
+}
+
+input.switch:empty~label {
+  cursor: pointer;
+  float: left;
+  line-height: 1.4em;
+  margin: 0.2em 0;
+  position: relative;
+  text-indent: 4em;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input.switch:empty~label:before,
+input.switch:empty~label:after {
+  background-color: #999;
+  border-radius: 1em;
+  bottom: 0;
+  content: ' ';
+  display: block;
+  left: 0;
+  position: absolute;
+  top: 0;
+  -webkit-transition: all 100ms ease-in;
+  transition: all 100ms ease-in;
+  width: 2.8em;
+}
+
+input.switch:empty~label:after {
+  background-color: #fff;
+  border-radius: 0.5em;
+  bottom: 0.1em;
+  margin-left: 0.15em;
+  margin-top: 0.05em;
+  top: 0.1em;
+  width: 1em;
+}
+
+input.switch:checked~label:before {
+  background-color: #393;
+}
+
+input.switch:checked~label:after {
+  margin-left: 1.6em;
+  margin-top: 0.05em;
+}
+
+.box-shadow .modal-body {
+  box-shadow: 0 7px 15px rgba(0, 0, 0, .2), 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+  cursor: pointer;
+  height: 25px;
+  opacity: 0.5;
+  position: absolute;
+  width: 25px;
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+.close:before,
+.close:after {
+  background-color: #333;
+  content: ' ';
+  height: 25px;
+  left: 15px;
+  position: absolute;
+  width: 2.5px;
+}
+
+.close:before {
+  transform: rotate(45deg);
+}
+
+.close:after {
+  transform: rotate(-45deg);
+}
+
+// on off switch
+.onoffswitch {
+  position: relative;
+  width: 50px;
+}
+
+.onoffswitch-checkbox {
+  display: none;
+}
+
+.onoffswitch-label {
+  border: 2px solid #E0E0DF;
+  border-radius: 14px;
+  cursor: pointer;
+  display: block;
+  overflow: hidden;
+}
+
+.onoffswitch-inner {
+  display: block;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+  width: 200%;
+}
+
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
+  box-sizing: border-box;
+  color: white;
+  display: block;
+  float: left;
+  font-family: Trebuchet, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  height: 18px;
+  line-height: 18px;
+  padding: 0;
+  width: 50%;
+}
+
+.onoffswitch-inner:before {
+  background-color: #999;
+  color: #FFFFFF;
+  content: "";
+  padding-left: 10px;
+}
+
+.onoffswitch-inner:after {
+  background-color: #E0E0DF;
+  color: #E0E0DF;
+  content: "";
+  padding-right: 10px;
+  text-align: right;
+}
+
+.onoffswitch-switch {
+  background: #FFFFFF;
+  border: 2px solid #E0E0DF;
+  border-radius: 14px;
+  bottom: 0;
+  display: block;
+  margin: 1px;
+  position: absolute;
+  right: 31px;
+  top: 0;
+  transition: all .3s ease-in 0s;
+  width: 20px;
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
+  right: 0;
+}

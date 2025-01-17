@@ -1,0 +1,84 @@
+@mixin clear-box() {
+  overflow: hidden;
+  position: relative;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: 1px;
+    top: 0;
+    display: block;
+    width: 40px;
+    height: 2px;
+    transform-origin: right;
+    transform: rotate(-45deg);
+    background-color: #f5222d;
+  }
+}
+
+.color {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid #cecece;
+  background: #ffffff;
+
+  > div {
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-radius: 3px;
+
+    &.full-color {
+      background: rgb(255, 0, 0);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 0, 0, 1) 0%,
+        rgba(255, 255, 0, 1) 20%,
+        rgba(0, 255, 19, 1) 40%,
+        rgba(0, 255, 254, 1) 60%,
+        rgba(0, 16, 255, 1) 80%,
+        rgba(246, 0, 255, 1) 100%
+      );
+    }
+
+    &.clear {
+      @include clear-box();
+    }
+  }
+
+  &.mini {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border-width: 0.5px;
+    > div {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+  }
+
+  &.small {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    > div {
+      border-radius: 2px;
+    }
+  }
+
+  &.large {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    > div {
+      border-radius: 6px;
+    }
+  }
+}

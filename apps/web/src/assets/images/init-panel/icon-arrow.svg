@@ -1,0 +1,23 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52.3444 27.1938">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke-width: 3px;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #1d1d1b;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2 {
+        fill: #1d1d1b;
+      }
+    </style>
+  </defs>
+  <title>arrow</title>
+  <path class="cls-1" d="M54.07,0a28.3388,28.3388,0,0,1-.3463,4.6451C53.3655,6.9075,51.91,16.11,44.8093,21.5008c-7.1136,5.401-17.661,5.4607-25.4457.81C11.2147,17.4433,8.912,9.1,8.4457,7.2382" transform="translate(-3.2261 0.0115)"/>
+  <polygon class="cls-2" points="1.786 1.546 13.584 9.761 0.571 15.871 1.786 1.546"/>
+  <path class="cls-1" d="M52.832,8.6969" transform="translate(-3.2261 0.0115)"/>
+</svg>

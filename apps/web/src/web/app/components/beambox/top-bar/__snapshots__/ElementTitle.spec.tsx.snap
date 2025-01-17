@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly multiple selections 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Multiple Objects
+  </div>
+</div>
+`;
+
+exports[`should render correctly no selected element 1`] = `<div />`;
+
+exports[`should render correctly single selection data-textpath-g 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Layer 1 &gt; Text on Path
+  </div>
+</div>
+`;
+
+exports[`should render correctly single selection dxf 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Layer 1 &gt; DXF Object
+  </div>
+</div>
+`;
+
+exports[`should render correctly single selection imported object 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Layer 1 &gt; Imported Object
+  </div>
+</div>
+`;
+
+exports[`should render correctly single selection no layer title given 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+     &gt; Imported Object
+  </div>
+</div>
+`;
+
+exports[`should render correctly single selection not use 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Layer 1 &gt; Rectangle
+  </div>
+</div>
+`;
+
+exports[`should render correctly single selection svg 1`] = `
+<div>
+  <div
+    class="element-title"
+  >
+    Layer 1 &gt; SVG Object
+  </div>
+</div>
+`;

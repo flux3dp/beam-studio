@@ -1,0 +1,23 @@
+<svg id="svgcontent" width="3000" height="2100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-top="-56" data-left="-329" data-zoom="0.276" data-en_af="undefined" data-en_diode="undefined" data-rotary_mode="false" data-engrave_dpi="medium" style="will-change: scroll-position, contents, transform;">
+ <defs>
+  <symbol data-image-symbol="svg_1_image" data-bbox="{&quot;x&quot;:0,&quot;y&quot;:0,&quot;width&quot;:100,&quot;height&quot;:316}" id="svg_1" overflow="visible">
+   <path id="svg_2" d="m100,50c0,-13.2608 -5.2678,-25.9785 -14.6447,-35.3553c-9.3768,-9.3769 -22.0945,-14.6447 -35.3553,-14.6447c-13.2608,0 -25.9785,5.2678 -35.3553,14.6447c-9.3769,9.3768 -14.6447,22.0945 -14.6447,35.3553l0,216c0,13.2608 5.2678,25.9785 14.6447,35.3553c9.3768,9.3769 22.0945,14.6447 35.3553,14.6447c13.2608,0 25.9785,-5.2678 35.3553,-14.6447c9.3769,-9.3768 14.6447,-22.0945 14.6447,-35.3553l0,-216z" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_3" d="m84.5634,59.7046c2.5739,-9.1668 1.4008,-18.9806 -3.2612,-27.2825c-4.6619,-8.3018 -12.4308,-14.4117 -21.5976,-16.9855c-0.2749,-0.0772 -0.5507,-0.1511 -0.8273,-0.2217" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_4" d="m84.5634,59.7046c-3.6587,1.6284 -6.5208,4.6435 -7.9565,8.382c-0.8548,2.2259 -1.1703,4.6226 -0.9208,6.9939" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_5" d="m24.3139,75.0805c6.6517,6.8124 15.7373,10.7034 25.2579,10.8169c9.5206,0.1136 18.6963,-3.5595 25.5087,-10.2113c0.2043,-0.1994 0.4062,-0.4013 0.6056,-0.6056" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_6" d="m24.3139,75.0805c0.4191,-3.9828 -0.761,-7.9689 -3.2808,-11.0816c-1.5003,-1.8532 -3.4181,-3.3248 -5.5965,-4.2943" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_7" d="m41.1227,15.2149c-9.2256,2.3544 -17.138,8.2772 -21.9967,16.4655c-4.8586,8.1883 -6.2655,17.9713 -3.9111,27.1969c0.0706,0.2766 0.1445,0.5524 0.2217,0.8273" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+   <path id="svg_8" d="m41.1227,15.2149c3.2396,2.3544 7.2818,3.3255 11.2373,2.6995c2.3551,-0.3726 4.5885,-1.2977 6.5173,-2.6995" vector-effect="non-scaling-stroke" stroke-width="1px" stroke="#000000" fill="none"/>
+  </symbol>
+  <symbol data-origin-symbol="svg_1" id="svg_1_image" overflow="visible">
+   <image href="blob:file:///8e5469ed-cb45-41cb-a75d-10e8d99af1d7" height="316" width="100" y="0" x="0"/>
+  </symbol>
+ </defs>
+ <g data-configName="壓克力 - 3mm 切割" data-zstep="0" data-diode="0" data-height="-3" data-repeat="1" data-strength="55" data-speed="4" clip-path="url(#scene_mask)" data-color="#000000" class="layer">
+  <title>Cut</title>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#000">
+   <feColorMatrix values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <use x="100" y="100" data-xform="x=0 y=0 width=100 height=316 " data-ratiofixed="true" data-dxf="true" xlink:href="#svg_1_image" id="svg_9"/>
+ </g>
+</svg>

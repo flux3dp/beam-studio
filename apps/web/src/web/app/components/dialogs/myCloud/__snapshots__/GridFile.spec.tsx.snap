@@ -1,0 +1,915 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test GridFile should behave correctly 1`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url?lastmod=2024-01-09T06:42:04.824942Z"
+        />
+        <div
+          class="ant-dropdown-trigger overlay trigger"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+        </div>
+        <span />
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridFile should behave correctly 2`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url?lastmod=2024-01-09T06:42:04.824942Z"
+        />
+        <div
+          class="ant-dropdown-trigger overlay trigger ant-dropdown-open"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+        </div>
+        <span />
+        <div
+          class="ant-dropdown ant-slide-up-appear ant-slide-up-appear-prepare ant-slide-up overlay css-dev-only-do-not-override-hash ant-dropdown-placement-bottomRight"
+          style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
+        >
+          <ul
+            class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light css-dev-only-do-not-override-hash"
+            data-menu-list="true"
+            role="menu"
+            tabindex="0"
+          >
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-open"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="arrow-right"
+                class="anticon anticon-arrow-right ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="arrow-right"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.8 9.2-5.2 14l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h585.1L386.9 854c-5.6 4.9-2.2 14 5.2 14h91.5c1.9 0 3.8-.7 5.2-2L869 536.2a32.07 32.07 0 000-48.4z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Open
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-rename"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="edit"
+                class="anticon anticon-edit ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="edit"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Rename
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-duplicate"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="copy"
+                class="anticon anticon-copy ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="copy"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Duplicate
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-download"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="download"
+                class="anticon anticon-download ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="download"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Download
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item ant-dropdown-menu-item-danger"
+              data-menu-id="rc-menu-uuid-test-delete"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="delete"
+                class="anticon anticon-delete ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="delete"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Delete
+              </span>
+            </li>
+          </ul>
+          <div
+            aria-hidden="true"
+            style="display: none;"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridFile should behave correctly 3`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url?lastmod=2024-01-09T06:42:04.824942Z"
+        />
+        <div
+          class="ant-dropdown-trigger overlay trigger"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+        </div>
+        <span />
+        <div
+          class="ant-dropdown ant-dropdown-hidden overlay css-dev-only-do-not-override-hash ant-dropdown-placement-bottomRight"
+          style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: 0px; box-sizing: border-box; right: 0px; pointer-events: none;"
+        >
+          <ul
+            class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light css-dev-only-do-not-override-hash"
+            data-menu-list="true"
+            role="menu"
+            tabindex="0"
+          >
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-open"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="arrow-right"
+                class="anticon anticon-arrow-right ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="arrow-right"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.8 9.2-5.2 14l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h585.1L386.9 854c-5.6 4.9-2.2 14 5.2 14h91.5c1.9 0 3.8-.7 5.2-2L869 536.2a32.07 32.07 0 000-48.4z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Open
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-rename"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="edit"
+                class="anticon anticon-edit ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="edit"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Rename
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-duplicate"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="copy"
+                class="anticon anticon-copy ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="copy"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Duplicate
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-download"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="download"
+                class="anticon anticon-download ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="download"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Download
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item ant-dropdown-menu-item-danger"
+              data-menu-id="rc-menu-uuid-test-delete"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="delete"
+                class="anticon anticon-delete ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="delete"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Delete
+              </span>
+            </li>
+          </ul>
+          <div
+            aria-hidden="true"
+            style="display: none;"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <input
+        class="ant-input ant-input-sm css-dev-only-do-not-override-hash ant-input-outlined edit"
+        maxlength="255"
+        type="text"
+        value="File name"
+      />
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridFile should behave correctly 4`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url?lastmod=2024-01-09T06:42:04.824942Z"
+        />
+        <div
+          class="ant-dropdown-trigger overlay trigger"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+        </div>
+        <span
+          class="ant-popover-open"
+        />
+        <div
+          class="ant-dropdown ant-dropdown-hidden overlay css-dev-only-do-not-override-hash ant-dropdown-placement-bottomRight"
+          style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: 0px; box-sizing: border-box; right: 0px; pointer-events: none;"
+        >
+          <ul
+            class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light css-dev-only-do-not-override-hash"
+            data-menu-list="true"
+            role="menu"
+            tabindex="0"
+          >
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-open"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="arrow-right"
+                class="anticon anticon-arrow-right ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="arrow-right"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M869 487.8L491.2 159.9c-2.9-2.5-6.6-3.9-10.5-3.9h-88.5c-7.4 0-10.8 9.2-5.2 14l350.2 304H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h585.1L386.9 854c-5.6 4.9-2.2 14 5.2 14h91.5c1.9 0 3.8-.7 5.2-2L869 536.2a32.07 32.07 0 000-48.4z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Open
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-rename"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="edit"
+                class="anticon anticon-edit ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="edit"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Rename
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-duplicate"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="copy"
+                class="anticon anticon-copy ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="copy"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M832 64H296c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h496v688c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V96c0-17.7-14.3-32-32-32zM704 192H192c-17.7 0-32 14.3-32 32v530.7c0 8.5 3.4 16.6 9.4 22.6l173.3 173.3c2.2 2.2 4.7 4 7.4 5.5v1.9h4.2c3.5 1.3 7.2 2 11 2H704c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32zM350 856.2L263.9 770H350v86.2zM664 888H414V746c0-22.1-17.9-40-40-40H232V264h432v624z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Duplicate
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item"
+              data-menu-id="rc-menu-uuid-test-download"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="download"
+                class="anticon anticon-download ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="download"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M505.7 661a8 8 0 0012.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Download
+              </span>
+            </li>
+            <li
+              class="ant-dropdown-menu-item ant-dropdown-menu-item-danger"
+              data-menu-id="rc-menu-uuid-test-delete"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <span
+                aria-label="delete"
+                class="anticon anticon-delete ant-dropdown-menu-item-icon"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="delete"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
+                  />
+                </svg>
+              </span>
+              <span
+                class="ant-dropdown-menu-title-content"
+              >
+                Delete
+              </span>
+            </li>
+          </ul>
+          <div
+            aria-hidden="true"
+            style="display: none;"
+          />
+        </div>
+        <div
+          class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-popconfirm overlay css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-top"
+          style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
+        >
+          <div
+            class="ant-popover-content"
+          >
+            <div
+              class="ant-popover-inner"
+              role="tooltip"
+            >
+              <div
+                class="ant-popover-inner-content"
+              >
+                <div
+                  class="ant-popconfirm-inner-content"
+                >
+                  <div
+                    class="ant-popconfirm-message"
+                  >
+                    <span
+                      class="ant-popconfirm-message-icon"
+                    >
+                      <span
+                        aria-label="exclamation-circle"
+                        class="anticon anticon-exclamation-circle"
+                        role="img"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          data-icon="exclamation-circle"
+                          fill="currentColor"
+                          focusable="false"
+                          height="1em"
+                          viewBox="64 64 896 896"
+                          width="1em"
+                        >
+                          <path
+                            d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 010-96 48.01 48.01 0 010 96z"
+                          />
+                        </svg>
+                      </span>
+                    </span>
+                    <div
+                      class="ant-popconfirm-message-text"
+                    >
+                      <div
+                        class="ant-popconfirm-title"
+                      >
+                        Are you sure you want to delete this file?
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="ant-popconfirm-buttons"
+                  >
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-sm"
+                      type="button"
+                    >
+                      <span>
+                        Cancel
+                      </span>
+                    </button>
+                    <button
+                      class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-sm"
+                      type="button"
+                    >
+                      <span>
+                        OK
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test GridFile should rendered correctly in mobile 1`] = `
+<div>
+  <div
+    class="grid"
+  >
+    <div
+      class="img-container"
+    >
+      <div
+        class="guide-lines"
+        style="background: url(core-img/flux-plus/guide-lines.png);"
+      >
+        <img
+          src="https://s3/url?lastmod=2024-01-09T06:42:04.824942Z"
+        />
+        <div
+          class="ant-dropdown-trigger overlay trigger"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+        </div>
+        <span />
+      </div>
+    </div>
+    <div
+      class="name"
+    >
+      <div
+        class="display"
+      >
+        File name
+      </div>
+    </div>
+    <div
+      class="info"
+    >
+      <div>
+        HEXA
+         • 
+        5.8KB
+      </div>
+      01/09/2024 02:42 PM
+    </div>
+  </div>
+</div>
+`;

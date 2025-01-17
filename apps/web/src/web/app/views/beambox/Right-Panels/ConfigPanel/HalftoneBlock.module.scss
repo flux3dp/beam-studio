@@ -1,0 +1,18 @@
+@use "./mixins" as mixins;
+
+.panel {
+  @include mixins.panel;
+
+  .title {
+    display: inline-flex;
+    align-items: center;
+
+    .icon {
+      cursor: pointer;
+      color: #ababab;
+      line-height: 16px;
+      height: 16px;
+      margin: 0 6px;
+    }
+  }
+}

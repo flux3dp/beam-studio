@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<!-- removed for now, causes problems in Firefox: manifest="svg-editor.manifest" -->
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<link rel="icon" type="image/png" href="images/logo.png"/>
+<link rel="stylesheet" href="svg-editor.css" type="text/css"/>
+<link rel="stylesheet" href="custom.css" type="text/css"/>
+<!--{if jquery_release}>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<!{else}-->
+  <script src="jquery.js"></script>
+<!--{endif}-->
+
+<script src="js-hotkeys/jquery.hotkeys.min.js"></script>
+<script src="jquerybbq/jquery.bbq.min.js"></script>
+<script src="svgicons/jquery.svgicons.js"></script>
+<script src="spinbtn/JQuerySpinBtn.min.js"></script>
+<script src="touch.js"></script>
+
+<!--{if svg_edit_release}>
+  <script src="svgedit.compiled.js"></script>
+<!{else}-->
+  <script src="svgedit.js"></script>
+  <script src="jquery-svg.js"></script>
+  <script src="contextmenu/jquery.contextMenu.js"></script>
+  <script src="pathseg.js"></script>
+  <script src="browser.js"></script>
+  <script src="svgtransformlist.js"></script>
+  <script src="math.js"></script>
+  <script src="units.js"></script>
+  <script src="svgutils.js"></script>
+  <script src="sanitize.js"></script>
+  <script src="history.js"></script>
+  <script src="historyrecording.js"></script>
+  <script src="coords.js"></script>
+  <script src="recalculate.js"></script>
+  <script src="select.js"></script>
+  <script src="draw.js"></script>
+  <script src="layer.js"></script>
+  <script src="path.js"></script>
+  <script src="svgcanvas.js"></script>
+  <script src="svg-editor.js"></script>
+  <script src="locale/locale.js"></script>
+  <script src="contextmenu.js"></script>
+<!--{endif}-->
+
+<!-- always minified scripts -->
+<script src="jquery-ui/jquery-ui-1.8.17.custom.min.js"></script>
+
+<!-- If you do not wish to add extensions by URL, you can load them
+by creating the following file and adding by calls to svgEditor.setConfig -->
+<script src="config.js"></script>
+
+<!-- feeds -->
+<link rel="alternate" type="application/atom+xml" title="SVG-edit General Discussion" href="http://groups.google.com/group/svg-edit/feed/atom_v1_0_msgs.xml" />
+<link rel="alternate" type="application/atom+xml" title="SVG-edit Updates (Issues/Fixes/Commits)" href="http://code.google.com/feeds/p/svg-edit/updates/basic" />
+
+<!-- Add script with custom handlers here -->
+<title>SVG-edit</title>
+</head>
+<body>
+<div id="svg_editor">
+
+<div id="workarea">
+<style id="styleoverrides" type="text/css" media="screen" scoped="scoped"></style>
+<div id="svgcanvas" style="position:relative">
+
+</div>
+</div>
+
+<div id="sidepanels">
+	<div id="layerpanel">
+		<h3 id="layersLabel">Layers</h3>
+
+		<table id="layerlist">
+			<tr class="layer">
+				<td class="layervis"></td>
+				<td class="layername">Layer 1</td>
+			</tr>
+		</table>
+	</div>
+	<div id="sidepanel_handle" title="Drag left/right to resize side panel [X]">L a y e r s</div>
+</div>
+	<div id="cur_context_panel">
+
+	</div>
+<div id="option_lists" class="dropdown">
+</div>
+
+</div> <!-- svg_editor -->
+
+<div id="svg_prefs">
+	<div class="overlay"></div>
+	<div id="svg_prefs_container">
+		<fieldset>
+			<label><span id="svginfo_lang">Language:</span>
+				<!-- Source: http://en.wikipedia.org/wiki/Language_names -->
+				<select id="lang_select">
+					<option id="lang_ar" value="ar">العربية</option>
+					<option id="lang_cs" value="cs">Čeština</option>
+					<option id="lang_de" value="de">Deutsch</option>
+					<option id="lang_en" value="en" selected="selected">English</option>
+					<option id="lang_es" value="es">Español</option>
+					<option id="lang_fa" value="fa">فارسی</option>
+					<option id="lang_fr" value="fr">Français</option>
+					<option id="lang_fy" value="fy">Frysk</option>
+					<option id="lang_hi" value="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;, &#2361;&#2367;&#2306;&#2342;&#2368;</option>
+					<option id="lang_it" value="it">Italiano</option>
+					<option id="lang_ja" value="ja">日本語</option>
+					<option id="lang_nl" value="nl">Nederlands</option>
+					<option id="lang_pl" value="pl">Polski</option>
+					<option id="lang_pt-BR" value="pt-BR">Português (BR)</option>
+					<option id="lang_ro" value="ro">Română</option>
+					<option id="lang_ru" value="ru">Русский</option>
+					<option id="lang_sk" value="sk">Slovenčina</option>
+					<option id="lang_sl" value="sl">Slovenščina</option>
+					<option id="lang_zh-CN" value="zh-CN">简体中文</option>
+					<option id="lang_zh-TW" value="zh-TW">繁體中文</option>
+				</select>
+			</label>
+
+			<fieldset id="units_rulers">
+				<legend id="svginfo_units_rulers">Units &amp; Rulers</legend>
+				<label><span id="svginfo_rulers_onoff">Show rulers</span><input type="checkbox" value="show_rulers" id="show_rulers" checked="checked"/></label>
+				<label>
+					<span id="svginfo_unit">Base Unit:</span>
+					<select id="base_unit">
+						<option value="px">Pixels</option>
+						<option value="cm">Centimeters</option>
+						<option value="mm">Millimeters</option>
+						<option value="in">Inches</option>
+						<option value="pt">Points</option>
+						<option value="pc">Picas</option>
+						<option value="em">Ems</option>
+						<option value="ex">Exs</option>
+					</select>
+				</label>
+				<!-- Should this be an export option instead? -->
+<!--
+				<span id="svginfo_unit_system">Unit System:</span>
+				<label>
+					<input type="radio" name="unit_system" value="single" checked="checked"/>
+					<span id="svginfo_single_type_unit">Single type unit</span>
+					<small id="svginfo_single_type_unit_sub">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>
+				</label>
+				<label>
+					<input type="radio" name="unit_system" value="multi"/>
+					<span id="svginfo_multi_units">Multiple CSS units</span>
+					<small id="svginfo_single_type_unit_sub">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>
+				</label>
+ -->
+			</fieldset>
+
+		</fieldset>
+
+	</div>
+</div>
+
+<div id="dialog_box">
+	<div class="overlay"></div>
+	<div id="dialog_container">
+		<div id="dialog_content"></div>
+		<div id="dialog_buttons"></div>
+	</div>
+</div>
+
+<ul id="cmenu_canvas" class="contextMenu">
+	<li><a href="#cut">Cut</a></li>
+	<li><a href="#copy">Copy</a></li>
+	<li><a href="#paste">Paste</a></li>
+	<li><a href="#paste_in_place">Paste in Place</a></li>
+	<li class="separator"><a href="#delete">Delete</a></li>
+	<li class="separator"><a href="#group">Group<span class="shortcut">G</span></a></li>
+	<li><a href="#ungroup">Ungroup<span class="shortcut">G</span></a></li>
+	<li class="separator"><a href="#move_front">Bring to Front<span class="shortcut">SHFT+CTRL+]</span></a></li>
+	<li><a href="#move_up">Bring Forward<span class="shortcut">CTRL+]</span></a></li>
+	<li><a href="#move_down">Send Backward<span class="shortcut">CTRL+[</span></a></li>
+	<li><a href="#move_back">Send to Back<span class="shortcut">SHFT+CTRL+[</span></a></li>
+</ul>
+
+
+<ul id="cmenu_layers" class="contextMenu">
+	<li><a href="#dupe">Duplicate Layer...</a></li>
+	<li><a href="#delete">Delete Layer</a></li>
+	<li><a href="#merge_down">Merge Down</a></li>
+	<li><a href="#merge_all">Merge All</a></li>
+</ul>
+
+</body>
+</html>

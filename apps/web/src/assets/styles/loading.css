@@ -1,0 +1,44 @@
+/* Loading Animation */
+.loading-icon {
+  margin: auto;
+  display: inline-block;
+  margin: 10px 0 0 10px;
+  width: 20px;
+  height: 20px;
+}
+.loading-icon .rect {
+  background-color: black;
+  height: 100%;
+  width: 4px;
+  float: left;
+  -webkit-animation: loading-rect 0.6s infinite ease-in-out;
+  -moz-animation: loading-rect 0.6s infinite ease-in-out;
+  -o-animation: loading-rect 0.6s infinite ease-in-out;
+  animation: loading-rect 0.6s infinite ease-in-out;
+}
+.loading-icon .rect ~ .rect {
+  margin-left: 4px;
+}
+.loading-icon .rect1 {
+  -webkit-animation-delay: -0.3s;
+  -moz-animation-delay: -0.3s;
+  -o-animation-delay: -0.3s;
+  animation-delay: -0.3s;
+}
+.loading-icon .rect2 {
+  -webkit-animation-delay: -0.2s;
+  -moz-animation-delay: -0.2s;
+  -o-animation-delay: -0.2s;
+  animation-delay: -0.2s;
+}
+.loading-icon .rect3 {
+  -webkit-animation-delay: -0.1s;
+  -moz-animation-delay: -0.1s;
+  -o-animation-delay: -0.1s;
+  animation-delay: -0.1s;
+}
+@-webkit-keyframes loading-rect{ 0%, 100% { -webkit-transform: scaleY(0.2); opacity: 0.2; } 50% { -webkit-transform: scaleY(1.0); opacity: 1; }}
+@-moz-keyframes loading-rect{ 0%, 100% { -moz-transform: scaleY(0.2); opacity: 0.2; } 50% { -moz-transform: scaleY(1.0); opacity: 1; }}
+@-o-keyframes loading-rect{ 0%, 100% { -o-transform: scaleY(0.2); opacity: 0.2; } 50% { -o-transform: scaleY(1.0); opacity: 1; }}
+@keyframes loading-rect{ 0%, 100% {-webkit-transform: scaleY(0.2);-moz-transform: scaleY(0.2);-ms-transform: scaleY(0.2);transform: scaleY(0.2); opacity: 0.2; } 50% {-webkit-transform: scaleY(1.0);-moz-transform: scaleY(1.0);-ms-transform: scaleY(1.0);transform: scaleY(1.0); opacity: 1; };
+}

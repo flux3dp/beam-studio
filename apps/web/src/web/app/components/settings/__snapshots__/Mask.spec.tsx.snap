@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Workarea Clipping
+  </div>
+  <div>
+    mock-select-control id:
+    set-mask
+    label:
+    Workarea Clipping
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004408876
+    options:
+    [{"value":"TRUE","label":"On","selected":true},{"value":"FALSE","label":"Off","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;

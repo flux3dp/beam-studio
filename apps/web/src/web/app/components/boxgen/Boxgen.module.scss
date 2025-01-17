@@ -1,0 +1,10 @@
+.canvas {
+  position: relative;
+  flex: 1 1 auto;
+  @media screen and (max-width: 600px) {
+    border-bottom: 1px solid #ddd;
+    border-left: 0;
+    width: 100vw;
+    height: 250px;
+  }
+}

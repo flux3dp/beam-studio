@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly has buttons 1`] = `
+<div>
+  <div
+    class="button-group flux"
+  >
+    <a
+      class="btn btn-test pull-right"
+      data-abc="123"
+      data-test-key="btn-label"
+      href="https://flux3dp.com/"
+    >
+      BTN-LABEL
+    </a>
+    <button
+      class="btn btn-default"
+      data-test-key="icon-label"
+      title="flux3dp"
+      type="button"
+    >
+      icon-label
+    </button>
+    <button
+      class="btn btn-default"
+      data-test-key="button-label"
+      title="flux3dp"
+      type="button"
+    >
+      button-label
+    </button>
+  </div>
+</div>
+`;
+
+exports[`should render correctly no buttons 1`] = `
+<div>
+  <span />
+</div>
+`;

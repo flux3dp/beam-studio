@@ -1,0 +1,11 @@
+.img-container {
+  display: flex;
+  min-height: 360px;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    object-fit: contain;
+    height: 360px;
+  }
+}

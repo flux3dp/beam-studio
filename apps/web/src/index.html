@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="msapplication-TileColor" content="#333333" />
+    <meta name="theme-color" content="#333333" />
+    <link rel="stylesheet" href="/styles/loading.css" />
+    <script defer src="/vendor/jimp@0.16.1.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2CP9BWHZ3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-J2CP9BWHZ3');
+    </script>
+    <title>Beam Studio Web</title>
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+    <div id="root">
+      <div style="padding: 15px; position: fixed">
+        Waiting Beam Studio Web to be Ready ... <br />
+        <div class="loading-icon">
+          <div class="rect rect1"></div>
+          <div class="rect rect2"></div>
+          <div class="rect rect3"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    function launch() {
+      window.FLUX = {
+        version: 'web',
+      };
+
+      if (localStorage.getItem('poke-ip-addr') == 'undefined') {
+        localStorage.setItem('poke-ip-addr', '192.168.1.1');
+      }
+    }
+    launch();
+  </script>
+  <script defer src="/vendor/require.min.js"></script>
+</html>

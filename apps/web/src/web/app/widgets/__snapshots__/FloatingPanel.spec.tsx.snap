@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FloatingPanel should render correctly 1`] = `
+<div>
+  <div
+    class="adm-floating-panel mock-class panel"
+    data-animating="true"
+    style="height: 0px; transform: translateY(calc(100% + (0px)));"
+  >
+    <div
+      class="adm-floating-panel-mask"
+      style="display: none;"
+    />
+    <div
+      class="adm-floating-panel-header"
+    >
+      <div
+        class="adm-floating-panel-bar"
+      />
+    </div>
+    <div
+      class="adm-floating-panel-content"
+    >
+      <span
+        class="anticon close-icon"
+        role="img"
+        tabindex="-1"
+      >
+        <svgr-url
+          aria-hidden="true"
+          classname=""
+          fill="currentColor"
+          focusable="false"
+          height="1em"
+          width="1em"
+        />
+      </span>
+      <div
+        class="title"
+      >
+        mock-title
+      </div>
+      <div>
+        fixed
+      </div>
+      <div
+        class="scroll-content"
+      >
+        <div>
+          children
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

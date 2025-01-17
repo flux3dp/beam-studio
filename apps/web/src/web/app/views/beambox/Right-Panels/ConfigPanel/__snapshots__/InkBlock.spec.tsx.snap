@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test InkBlock should render correctly 1`] = `
+<div>
+  <div
+    class="panel default"
+  >
+    <span
+      class="title"
+    >
+      ink_saturation
+      <span
+        class="icon"
+        title="color_adjustment"
+      >
+        <svgr-url />
+      </span>
+    </span>
+    <div>
+      MockConfigValueDisplay
+      <p>
+        inputId: 
+        saturation-input
+      </p>
+      <p>
+        type: 
+        default
+      </p>
+      <p>
+        max: 
+        15
+      </p>
+      <p>
+        min: 
+        1
+      </p>
+      <p>
+        value: 
+        7
+      </p>
+      <p>
+        unit: 
+      </p>
+      <p>
+        hasMultiValue: 
+      </p>
+      <p>
+        decimal: 
+        0
+      </p>
+      <p>
+        options: 
+        [{"value":1,"label":"very_low"},{"value":2,"label":"low"},{"value":3,"label":"regular"},{"value":4,"label":"high"},{"value":5,"label":"very_high"}]
+      </p>
+      <button
+        type="button"
+      >
+        MockConfigValueDisplayButton
+      </button>
+    </div>
+    <input
+      class="mock-config-slider"
+      id="saturation"
+      max="15"
+      min="1"
+      step="0.1"
+      type="range"
+      value="7"
+    />
+  </div>
+</div>
+`;

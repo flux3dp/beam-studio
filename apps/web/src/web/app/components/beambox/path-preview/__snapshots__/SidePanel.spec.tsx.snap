@@ -1,0 +1,404 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`side panel test should render correctly when disabled 1`] = `
+<div>
+  <div
+    class="wide"
+    id="path-preview-side-panel"
+  >
+    <div
+      class="title"
+    >
+      Preview Information
+    </div>
+    <div
+      class="datas"
+    >
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Size
+        </div>
+        <div
+          class="value"
+        >
+          100 x 100 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Total Time Estimated
+        </div>
+        <div
+          class="value"
+        >
+          60 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Time
+        </div>
+        <div
+          class="value"
+        >
+          30 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Time
+        </div>
+        <div
+          class="value"
+        >
+          10 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Distance
+        </div>
+        <div
+          class="value"
+        >
+          50 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Distance
+        </div>
+        <div
+          class="value"
+        >
+          30 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Current Position
+        </div>
+        <div
+          class="value"
+        >
+          50, 50 mm
+        </div>
+      </div>
+    </div>
+    <div
+      class="remark"
+    >
+      * All pieces of information are estimated value for reference.
+    </div>
+    <div
+      class="buttons"
+    >
+      <div
+        class="btn btn-default primary disabled"
+      >
+        Start Here
+      </div>
+      <div
+        class="btn btn-default"
+      >
+        End Preview
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`side panel test should render correctly when enabled 1`] = `
+<div>
+  <div
+    class="wide"
+    id="path-preview-side-panel"
+  >
+    <div
+      class="title"
+    >
+      Preview Information
+    </div>
+    <div
+      class="datas"
+    >
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Size
+        </div>
+        <div
+          class="value"
+        >
+          100 x 100 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Total Time Estimated
+        </div>
+        <div
+          class="value"
+        >
+          60 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Time
+        </div>
+        <div
+          class="value"
+        >
+          30 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Time
+        </div>
+        <div
+          class="value"
+        >
+          10 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Distance
+        </div>
+        <div
+          class="value"
+        >
+          50 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Distance
+        </div>
+        <div
+          class="value"
+        >
+          30 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Current Position
+        </div>
+        <div
+          class="value"
+        >
+          50, 50 mm
+        </div>
+      </div>
+    </div>
+    <div
+      class="remark"
+    >
+      * All pieces of information are estimated value for reference.
+    </div>
+    <div
+      class="buttons"
+    >
+      <div
+        class="btn btn-default primary"
+      >
+        Start Here
+      </div>
+      <div
+        class="btn btn-default"
+      >
+        End Preview
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`side panel test should render correctly with Swiftray engine 1`] = `
+<div>
+  <div
+    class="wide"
+    id="path-preview-side-panel"
+  >
+    <div
+      class="title"
+    >
+      Preview Information
+    </div>
+    <div
+      class="datas"
+    >
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Size
+        </div>
+        <div
+          class="value"
+        >
+          100 x 100 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Total Time Estimated
+        </div>
+        <div
+          class="value"
+        >
+          60 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Time
+        </div>
+        <div
+          class="value"
+        >
+          30 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Time
+        </div>
+        <div
+          class="value"
+        >
+          10 s
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Cut Distance
+        </div>
+        <div
+          class="value"
+        >
+          50 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Travel Distance
+        </div>
+        <div
+          class="value"
+        >
+          30 mm
+        </div>
+      </div>
+      <div
+        class="data-block"
+      >
+        <div
+          class="item"
+        >
+          Current Position
+        </div>
+        <div
+          class="value"
+        >
+          50, 50 mm
+        </div>
+      </div>
+    </div>
+    <div
+      class="remark"
+    >
+      * All pieces of information are estimated value for reference.
+    </div>
+    <div
+      class="buttons"
+    >
+      <div
+        class="btn btn-default"
+      >
+        End Preview
+      </div>
+    </div>
+  </div>
+</div>
+`;

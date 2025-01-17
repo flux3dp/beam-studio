@@ -1,0 +1,27 @@
+.media-tutorial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .media-container {
+    height: 200px;
+    margin: 0 0 20px;
+    img {
+      width: 200px;
+      height: 200px;
+    }
+    video {
+      width: 200px;
+      height: 200px;
+    }
+  }
+  .description {
+    width: 240px;
+    min-height: 50px;
+    margin: 0 0 10px;
+  }
+  .step {
+    margin: 0 0 20px;
+  }
+}

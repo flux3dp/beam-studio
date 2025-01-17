@@ -1,0 +1,24 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "module": "esnext",
+    "moduleResolution": "nodenext",
+    "paths": {
+      "@core/*": ["packages/core/src/web/*"],
+      "@app/*": ["apps/app/src/*"]
+    },
+    "resolveJsonModule": true,
+    "declaration": false,
+    "importHelpers": true,
+    "sourceMap": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,10 @@
+@use "./item" as item;
+
+.container {
+  @include item.container;
+  .img-container {
+    > img {
+      padding: 20px;
+    }
+  }
+}

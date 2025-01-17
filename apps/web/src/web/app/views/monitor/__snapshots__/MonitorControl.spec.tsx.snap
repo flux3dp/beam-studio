@@ -1,0 +1,447 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test MonitorControl should render correctly in mobile mode is preview 1`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Start
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly in mobile mode is working 1`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        disabled=""
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Start
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly in mobile mode is working 2`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+        type="button"
+      >
+        <span
+          aria-label="stop"
+          class="anticon anticon-stop"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="stop"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm234.8 736.5L223.5 277.2c16-19.7 34-37.7 53.7-53.7l523.3 523.3c-16 19.6-34 37.7-53.7 53.7z"
+            />
+          </svg>
+        </span>
+        <span>
+          Stop
+        </span>
+      </button>
+    </div>
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="pause-circle"
+          class="anticon anticon-pause-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="pause-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-80 600c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V360c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v304zm224 0c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V360c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v304z"
+            />
+          </svg>
+        </span>
+        <span>
+          Pause
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly in mobile mode is working 3`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+        type="button"
+      >
+        <span
+          aria-label="stop"
+          class="anticon anticon-stop"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="stop"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm234.8 736.5L223.5 277.2c16-19.7 34-37.7 53.7-53.7l523.3 523.3c-16 19.6-34 37.7-53.7 53.7z"
+            />
+          </svg>
+        </span>
+        <span>
+          Stop
+        </span>
+      </button>
+    </div>
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-round ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Resume
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly mode is preview 1`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Start
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly mode is working 1`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        disabled=""
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Start
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly mode is working 2`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+        type="button"
+      >
+        <span
+          aria-label="stop"
+          class="anticon anticon-stop"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="stop"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm234.8 736.5L223.5 277.2c16-19.7 34-37.7 53.7-53.7l523.3 523.3c-16 19.6-34 37.7-53.7 53.7z"
+            />
+          </svg>
+        </span>
+        <span>
+          Stop
+        </span>
+      </button>
+    </div>
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="pause-circle"
+          class="anticon anticon-pause-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="pause-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-80 600c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V360c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v304zm224 0c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V360c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v304z"
+            />
+          </svg>
+        </span>
+        <span>
+          Pause
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorControl should render correctly mode is working 3`] = `
+<div>
+  <div
+    class="ant-space css-dev-only-do-not-override-hash ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small"
+  >
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+        type="button"
+      >
+        <span
+          aria-label="stop"
+          class="anticon anticon-stop"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="stop"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm234.8 736.5L223.5 277.2c16-19.7 34-37.7 53.7-53.7l523.3 523.3c-16 19.6-34 37.7-53.7 53.7z"
+            />
+          </svg>
+        </span>
+        <span>
+          Stop
+        </span>
+      </button>
+    </div>
+    <div
+      class="ant-space-item"
+    >
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+        type="button"
+      >
+        <span
+          aria-label="play-circle"
+          class="anticon anticon-play-circle"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="play-circle"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm144.1 454.9L437.7 677.8a8.02 8.02 0 01-12.7-6.5V353.7a8 8 0 0112.7-6.5L656.1 506a7.9 7.9 0 010 12.9z"
+            />
+          </svg>
+        </span>
+        <span>
+          Resume
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,2 @@
+import './externals';
+import './global';

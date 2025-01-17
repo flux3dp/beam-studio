@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly desktop version 1`] = `<div />`;
+
+exports[`should render correctly desktop version 2`] = `
+<div>
+  <div
+    id="12345"
+  >
+    <div>
+      Hello World
+    </div>
+  </div>
+  <div
+    id="67890"
+  >
+    <span>
+      Hello Flux
+    </span>
+  </div>
+  <div
+    id="flux-id-login"
+  >
+    <span>
+      Flux Login
+    </span>
+  </div>
+</div>
+`;
+
+exports[`should render correctly desktop version 3`] = `
+<div>
+  <div
+    id="12345"
+  >
+    <div>
+      Hello World
+    </div>
+  </div>
+  <div
+    id="flux-id-login"
+  >
+    <span>
+      Flux Login
+    </span>
+  </div>
+</div>
+`;
+
+exports[`should render correctly desktop version 4`] = `
+<div>
+  <div
+    id="12345"
+  >
+    <div>
+      Hello World
+    </div>
+  </div>
+  <div
+    id="flux-id-login"
+  >
+    <span>
+      Flux Login
+    </span>
+  </div>
+</div>
+`;
+
+exports[`should render correctly desktop version 5`] = `<div />`;
+
+exports[`should render correctly web version 1`] = `
+<div>
+  <div
+    id="flux-id-login"
+  >
+    <span>
+      Flux Login
+    </span>
+  </div>
+</div>
+`;
+
+exports[`should render correctly web version 2`] = `<div />`;

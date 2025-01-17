@@ -1,0 +1,20 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button();
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .text {
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 22px;
+    margin-right: 4px;
+    min-width: 126px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

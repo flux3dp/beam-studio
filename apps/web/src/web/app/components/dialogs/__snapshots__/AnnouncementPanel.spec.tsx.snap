@@ -1,0 +1,273 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test AnnouncementPanel should render correctly 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash announcement ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <button
+                aria-label="Close"
+                class="ant-modal-close"
+                type="button"
+              >
+                <span
+                  class="ant-modal-close-x"
+                >
+                  <span
+                    aria-label="close"
+                    class="anticon anticon-close ant-modal-close-icon"
+                    role="img"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      data-icon="close"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </button>
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  mock title
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <div
+                  class="main-content"
+                >
+                  <div>
+                    mock content
+                  </div>
+                  <div
+                    class="checkbox"
+                  >
+                    <label
+                      class="ant-checkbox-wrapper css-dev-only-do-not-override-hash"
+                    >
+                      <span
+                        class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash"
+                      >
+                        <input
+                          class="ant-checkbox-input"
+                          type="checkbox"
+                        />
+                        <span
+                          class="ant-checkbox-inner"
+                        />
+                      </span>
+                      <span>
+                        Don't show again
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                  type="button"
+                >
+                  <span>
+                    mock link content 
+                  </span>
+                  <span
+                    aria-label="export"
+                    class="anticon anticon-export"
+                    role="img"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      data-icon="export"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M880 912H144c-17.7 0-32-14.3-32-32V144c0-17.7 14.3-32 32-32h360c4.4 0 8 3.6 8 8v56c0 4.4-3.6 8-8 8H184v656h656V520c0-4.4 3.6-8 8-8h56c4.4 0 8 3.6 8 8v360c0 17.7-14.3 32-32 32zM770.87 199.13l-52.2-52.2a8.01 8.01 0 014.7-13.6l179.4-21c5.1-.6 9.5 3.7 8.9 8.9l-21 179.4c-.8 6.6-8.9 9.4-13.6 4.7l-52.4-52.4-256.2 256.2a8.03 8.03 0 01-11.3 0l-42.4-42.4a8.03 8.03 0 010-11.3l256.1-256.3z"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test AnnouncementPanel should render correctly without button link 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="ant-modal-root css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="ant-modal-mask"
+      />
+      <div
+        class="ant-modal-wrap ant-modal-centered"
+        tabindex="-1"
+      >
+        <div
+          aria-labelledby="test-id"
+          aria-modal="true"
+          class="ant-modal css-dev-only-do-not-override-hash announcement ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          role="dialog"
+          style="width: 520px;"
+        >
+          <div
+            style="outline: none;"
+            tabindex="0"
+          >
+            <div
+              class="ant-modal-content"
+            >
+              <button
+                aria-label="Close"
+                class="ant-modal-close"
+                type="button"
+              >
+                <span
+                  class="ant-modal-close-x"
+                >
+                  <span
+                    aria-label="close"
+                    class="anticon anticon-close ant-modal-close-icon"
+                    role="img"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      data-icon="close"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                      />
+                    </svg>
+                  </span>
+                </span>
+              </button>
+              <div
+                class="ant-modal-header"
+              >
+                <div
+                  class="ant-modal-title"
+                  id="test-id"
+                >
+                  mock title
+                </div>
+              </div>
+              <div
+                class="ant-modal-body"
+              >
+                <div
+                  class="main-content"
+                >
+                  <div>
+                    mock content
+                  </div>
+                  <div
+                    class="checkbox"
+                  >
+                    <label
+                      class="ant-checkbox-wrapper css-dev-only-do-not-override-hash"
+                    >
+                      <span
+                        class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash"
+                      >
+                        <input
+                          class="ant-checkbox-input"
+                          type="checkbox"
+                        />
+                        <span
+                          class="ant-checkbox-inner"
+                        />
+                      </span>
+                      <span>
+                        Don't show again
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="ant-modal-footer"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                  type="button"
+                >
+                  <span>
+                    Close
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            style="width: 0px; height: 0px; overflow: hidden; outline: none;"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

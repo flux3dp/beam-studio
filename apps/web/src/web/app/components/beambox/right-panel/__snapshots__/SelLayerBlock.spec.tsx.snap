@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelLayerBlock should render correctly when layer is less than 1 1`] = `<div />`;
+
+exports[`SelLayerBlock should render correctly when layer is more than 1 and selected elemented is none 1`] = `<div />`;
+
+exports[`SelLayerBlock should render correctly when layer is more than 1 and selected elemented is not in a temp group 1`] = `
+<div>
+  <div
+    class="controls container"
+  >
+    <span
+      class="label"
+    >
+      move_elems_to
+    </span>
+    <select
+      class="select"
+      title="Move selected elements to a different layer"
+    >
+      <option
+        value="layer2"
+      >
+        layer2
+      </option>
+      <option
+        value="layer1"
+      >
+        layer1
+      </option>
+    </select>
+  </div>
+</div>
+`;

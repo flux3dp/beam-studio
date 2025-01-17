@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FlipButtons should render correctly when in mobile 1`] = `
+<div>
+  <div
+    id="flip"
+  >
+    <div>
+      <svgr-url />
+      hflip
+    </div>
+    <div>
+      <svgr-url />
+      vflip
+    </div>
+    <svgr-url />
+    flip
+  </div>
+</div>
+`;
+
+exports[`test FlipButtons should render correctly when not in mobile 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <button
+      class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+      id="horizontal_flip"
+      title="hflip"
+      type="button"
+    >
+      <span
+        class="ant-btn-icon"
+      >
+        <svgr-url />
+      </span>
+    </button>
+    <button
+      class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+      id="vertical_flip"
+      title="vflip"
+      type="button"
+    >
+      <span
+        class="ant-btn-icon"
+      >
+        <svgr-url />
+      </span>
+    </button>
+  </div>
+</div>
+`;

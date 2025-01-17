@@ -1,0 +1,74 @@
+{
+  "eslint.workingDirectories": [{ "directory": ".", "changeProcessCWD": true }],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.markdownlint": "explicit"
+  },
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.formatOnSave": true, "editor.defaultFormatter": "redhat.vscode-yaml" },
+  "cSpell.words": [
+    "ADOR",
+    "authed",
+    "bbox",
+    "Beambox",
+    "beamo",
+    "borderless",
+    "Elems",
+    "Feedrate",
+    "fhpath",
+    "Filelist",
+    "fluxghost",
+    "FLUXMONITOR",
+    "hexa",
+    "ipaddr",
+    "ISVG",
+    "Lazervida",
+    "Lightbox",
+    "LINECHECK",
+    "LINKTYPE",
+    "lsusb",
+    "pathedit",
+    "Promark",
+    "raspberrypi",
+    "resps",
+    "Showable",
+    "sprintf",
+    "svgcanvas",
+    "svgcontent",
+    "svgdoc",
+    "svgedit",
+    "svgeditor",
+    "svgroot",
+    "swiftray",
+    "taskcode",
+    "Touchpad",
+    "transformlist",
+    "undoable",
+    "ungroup",
+    "Ungrouping",
+    "unnotified",
+    "unsupport",
+    "Upnp",
+    "workarea",
+    "xform",
+    "XLINK"
+  ]
+}

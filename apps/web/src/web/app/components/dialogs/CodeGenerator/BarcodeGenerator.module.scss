@@ -1,0 +1,54 @@
+.icon {
+  width: 100%;
+  height: 60px;
+  margin: 15px 0;
+}
+
+$icon-size: 28px;
+$icon-margin: 8px;
+
+.check-text-option {
+  border-color: #1890ff;
+}
+
+.flex-child {
+  width: 220px;
+}
+
+.family-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  .img-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    max-width: 190px;
+    > img {
+      max-height: 18px;
+      min-height: 16px;
+      object-fit: cover;
+      object-position: left;
+      overflow: visible;
+    }
+  }
+  > svg {
+    font-size: 24px;
+    min-width: 24px;
+  }
+}
+
+.barcode-container {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}

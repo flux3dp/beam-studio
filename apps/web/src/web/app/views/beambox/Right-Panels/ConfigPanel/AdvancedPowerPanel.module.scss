@@ -1,0 +1,33 @@
+@use "./mixins" as mixins;
+
+.desc {
+  white-space: pre-line;
+
+  .gray {
+    margin-top: 1em;
+    color: #949494;
+  }
+}
+
+.block {
+  @include mixins.modal-block;
+  margin: 18px 0;
+
+  .one-side-slider {
+    :global(.ant-slider-handle-2) {
+      pointer-events: none;
+
+      &::after {
+        box-shadow: 0 0 0 2px #cecece !important;
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    font-weight: 600;
+  }
+}

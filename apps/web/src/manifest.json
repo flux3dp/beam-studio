@@ -1,0 +1,30 @@
+{
+  "name": "Beam Studio Web",
+  "short_name": "Beam Studio",
+  "display": "standalone",
+  "start_url": "/",
+  "theme_color": "#333333",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "img/icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "img/screenshot-wide.png",
+      "type": "image/png",
+      "sizes": "2100x1506",
+      "form_factor": "wide"
+    },
+    {
+      "src": "img/screenshot-narrow.png",
+      "type": "image/png",
+      "sizes": "628x1354",
+      "form_factor": "narrow"
+    }
+  ],
+  "description": "Beam Studio Web is a web-based vector editor for laser cutting and engraving."
+}

@@ -1,0 +1,60 @@
+@use '../connection_setting_page' as connectionSettingPage;
+
+.container {
+  @include connectionSettingPage.container;
+
+  .main {
+    .image {
+      width: 300px;
+      margin-top: -60px;
+
+      img {
+        width: 300px;
+        margin: 0 0 0 26px;
+        position: relative;
+      }
+
+      @media screen and (max-width: 600px) {
+        width: 100%;
+        margin-top: 0;
+
+        img {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+.title {
+  font-size: 30px;
+  line-height: 30px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #333333;
+  padding-bottom: 25px;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000000;
+}
+
+.space-divider {
+  height: 80px;
+  left: -4px;
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.mb-12px {
+  margin-bottom: 12px;
+}
+
+.mb-32px {
+  margin-bottom: 32px;
+}

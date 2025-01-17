@@ -1,0 +1,18 @@
+.nonstop {
+  [class~="ant-modal-title"] {
+    text-align: center;
+  }
+  [class~="ant-modal-footer"]{
+    text-align: center;
+  }
+
+  .spinner-container {
+    margin: 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .caption {
+    text-align: center;
+  }
+}

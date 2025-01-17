@@ -1,0 +1,109 @@
+.prompt-dialog-container {
+  display: block;
+  background-color: #ffffff;
+  padding: 0px 20px;
+  border-radius: 3px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+  animation-duration: 0.3s;
+
+  .caption {
+    padding: 15px 0px;
+    font-size: 12px;
+    letter-spacing: 1.1px;
+    color: #bbbbbb;
+  }
+
+  .text-input {
+    width: 300px;
+    border: 0px;
+    border-bottom: 1px solid #cccccc;
+    border-radius: 0px;
+    font-size: 13px;
+  }
+
+  .button-group {
+    width: 100%;
+    padding: 10px 0px;
+    display: flex;
+
+    &.btn-right {
+      justify-content: flex-end;
+    }
+
+    &.btn-center {
+      justify-content: center;
+    }
+
+    &.btn-left {
+      justify-content: flex-start;
+    }
+  }
+
+  .btn-default {
+    font-size: 13px;
+    height: 29px;
+    line-height: 25px;
+  }
+}
+
+.confirm-prompt-dialog-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  width: 440px;
+  display: flex;
+  padding: 0px 20px;
+  border-radius: 3px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15);
+  animation-duration: 0.3s;
+
+  .caption {
+    width: 100%;
+    padding: 15px 0px;
+    font-size: 24px;
+    letter-spacing: 1.1px;
+    text-align: center;
+    color: #626262;
+  }
+
+  .message {
+    width: 100%;
+    padding: 0 0 10px 10px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    color: #333333;
+    font-size: 16px;
+  }
+
+  .text-input {
+    width: 100%;
+    border: 0px;
+    border-bottom: 1px solid #cccccc;
+    border-radius: 0px;
+    font-size: 16px;
+  }
+
+  .button-group {
+    width: 100%;
+    padding: 10px 0px;
+    display: flex;
+
+    &.btn-right {
+      justify-content: flex-end;
+    }
+
+    &.btn-center {
+      justify-content: center;
+    }
+
+    &.btn-left {
+      justify-content: flex-start;
+    }
+  }
+
+  .btn-default {
+    font-size: 13px;
+    height: 29px;
+    line-height: 25px;
+  }
+}

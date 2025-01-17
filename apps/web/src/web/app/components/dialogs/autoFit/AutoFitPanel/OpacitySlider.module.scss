@@ -1,0 +1,38 @@
+.container {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+
+  display: flex;
+  width: 240px;
+  height: 40px;
+  padding: 0px 16px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 60px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+
+  .icon {
+    font-size: 22px;
+  }
+
+  .slider {
+    width: 120px;
+  }
+
+  .value {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  @media screen and (max-width: 600px) {
+    height: 30px;
+
+    .icon {
+      font-size: 18px;
+    }
+  }
+}

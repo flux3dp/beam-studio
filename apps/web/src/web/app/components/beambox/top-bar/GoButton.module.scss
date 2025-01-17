@@ -1,0 +1,16 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button();
+  display: flex;
+  align-items: center;
+
+  // only exist in white mode
+  .text {
+    margin-right: -4px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.95px;
+    color: #353535;
+  }
+}

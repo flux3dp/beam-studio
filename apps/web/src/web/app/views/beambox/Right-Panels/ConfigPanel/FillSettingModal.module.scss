@@ -1,0 +1,25 @@
+@use './mixins' as mixins;
+
+.container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  > div {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .input {
+      @include mixins.input;
+    }
+  }
+}
+
+.hint {
+  font-size: 14px;
+  color: #ababab;
+  line-height: 1.2;
+}

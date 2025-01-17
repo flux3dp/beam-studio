@@ -1,0 +1,11 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button();
+
+  &.highlighted {
+    opacity: 1;
+    background: #ffffff;
+    color: #000000;
+  }
+}

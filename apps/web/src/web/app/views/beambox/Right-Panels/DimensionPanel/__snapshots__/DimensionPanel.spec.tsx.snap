@@ -1,0 +1,495 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test DimensionPanel no elements 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="row"
+    >
+      <div
+        class="dimensions"
+      >
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            x
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <button
+            id="position-x"
+            type="button"
+          >
+            position-
+            x
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            y
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <button
+            id="position-y"
+            type="button"
+          >
+            position-
+            y
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            w
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <input
+            id="size-w"
+          />
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            h
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <input
+            id="size-h"
+          />
+        </div>
+      </div>
+      <div>
+        <div>
+          Mock RatioLock
+        </div>
+        <p>
+          isLocked: 
+          false
+        </p>
+        <button
+          type="button"
+        >
+          lock
+        </button>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div>
+        <div>
+          Mock Rotation
+        </div>
+        <p>
+          value: 
+        </p>
+        <button
+          type="button"
+        >
+          rotation
+        </button>
+      </div>
+      <div>
+        Mock FlipButtons
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test DimensionPanel shoud render correctly on desktop 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="row"
+    >
+      <div
+        class="dimensions"
+      >
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            x
+          </div>
+          <p>
+            value: 
+            0.1
+          </p>
+          <button
+            id="position-x"
+            type="button"
+          >
+            position-
+            x
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            y
+          </div>
+          <p>
+            value: 
+            0.2
+          </p>
+          <button
+            id="position-y"
+            type="button"
+          >
+            position-
+            y
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            w
+          </div>
+          <p>
+            value: 
+            0.3
+          </p>
+          <input
+            id="size-w"
+          />
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            h
+          </div>
+          <p>
+            value: 
+            0.4
+          </p>
+          <input
+            id="size-h"
+          />
+        </div>
+      </div>
+      <div>
+        <div>
+          Mock RatioLock
+        </div>
+        <p>
+          isLocked: 
+          true
+        </p>
+        <button
+          type="button"
+        >
+          lock
+        </button>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div>
+        <div>
+          Mock Rotation
+        </div>
+        <p>
+          value: 
+          0
+        </p>
+        <button
+          type="button"
+        >
+          rotation
+        </button>
+      </div>
+      <div>
+        Mock FlipButtons
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test DimensionPanel shoud render correctly on mobile 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="row"
+    >
+      <div
+        class="dimensions"
+      >
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            x
+          </div>
+          <p>
+            value: 
+            0.1
+          </p>
+          <button
+            id="position-x"
+            type="button"
+          >
+            position-
+            x
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            y
+          </div>
+          <p>
+            value: 
+            0.2
+          </p>
+          <button
+            id="position-y"
+            type="button"
+          >
+            position-
+            y
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            w
+          </div>
+          <p>
+            value: 
+            0.3
+          </p>
+          <input
+            id="size-w"
+          />
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            h
+          </div>
+          <p>
+            value: 
+            0.4
+          </p>
+          <input
+            id="size-h"
+          />
+        </div>
+      </div>
+      <div>
+        <div>
+          Mock RatioLock
+        </div>
+        <p>
+          isLocked: 
+          true
+        </p>
+        <button
+          type="button"
+        >
+          lock
+        </button>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div>
+        <div>
+          Mock Rotation
+        </div>
+        <p>
+          value: 
+          0
+        </p>
+        <button
+          type="button"
+        >
+          rotation
+        </button>
+      </div>
+      <div>
+        Mock FlipButtons
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test DimensionPanel unsupported element 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="row"
+    >
+      <div
+        class="dimensions"
+      >
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            x
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <button
+            id="position-x"
+            type="button"
+          >
+            position-
+            x
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock PositionInput
+          </div>
+          <div>
+            type: 
+            y
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <button
+            id="position-y"
+            type="button"
+          >
+            position-
+            y
+          </button>
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            w
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <input
+            id="size-w"
+          />
+        </div>
+        <div>
+          <div>
+            Mock SizeInput
+          </div>
+          <div>
+            type: 
+            h
+          </div>
+          <p>
+            value: 
+            0
+          </p>
+          <input
+            id="size-h"
+          />
+        </div>
+      </div>
+      <div>
+        <div>
+          Mock RatioLock
+        </div>
+        <p>
+          isLocked: 
+          false
+        </p>
+        <button
+          type="button"
+        >
+          lock
+        </button>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div>
+        <div>
+          Mock Rotation
+        </div>
+        <p>
+          value: 
+        </p>
+        <button
+          type="button"
+        >
+          rotation
+        </button>
+      </div>
+      <div>
+        Mock FlipButtons
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test useCamera failed to get exposure setting 1`] = `
+<div>
+  <div>
+    <p>
+      exposureSetting: 
+      null
+    </p>
+    <button
+      type="button"
+    >
+      Take Picture
+    </button>
+  </div>
+</div>
+`;
+
+exports[`test useCamera init setup 1`] = `
+<div>
+  <div>
+    <p>
+      exposureSetting: 
+      null
+    </p>
+    <button
+      type="button"
+    >
+      Take Picture
+    </button>
+  </div>
+</div>
+`;

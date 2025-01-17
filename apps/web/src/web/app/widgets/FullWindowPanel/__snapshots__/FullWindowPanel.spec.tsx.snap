@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FullWindowPanel should render correctly in desktop 1`] = `
+<div>
+  <div
+    class="container windows"
+  >
+    <div>
+      Desktop Contents
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test FullWindowPanel should render correctly in mobile 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div>
+      title: 
+      mobile title
+    </div>
+    <div>
+      anchors: 
+      0 768
+    </div>
+    <div>
+      <div>
+        Mobile Fixed Content
+      </div>
+    </div>
+    <button
+      type="button"
+    >
+      close
+    </button>
+    <div>
+      Mobile Contents
+    </div>
+  </div>
+</div>
+`;
