@@ -1,0 +1,10 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button();
+
+  svg {
+    width: 30px;
+    height: 30px;
+  }
+}

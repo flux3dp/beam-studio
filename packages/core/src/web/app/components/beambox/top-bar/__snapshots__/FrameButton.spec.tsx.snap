@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FrameButton should render correctly 1`] = `
+<div>
+  <div
+    class="button"
+    title="frame_task"
+  >
+    <svgr-url />
+  </div>
+</div>
+`;
+
+exports[`test FrameButton should render correctly with previewing mode 1`] = `
+<div>
+  <div
+    class="button disabled"
+    title="frame_task"
+  >
+    <svgr-url />
+  </div>
+</div>
+`;

@@ -1,0 +1,33 @@
+@use './_mixins.scss' as mixins;
+
+.container {
+  @include mixins.item-group();
+}
+
+.panel {
+  padding: 8px;
+  transition: height 0.1s ease-in 0s;
+
+  .title {
+    @include mixins.title();
+  }
+
+  .btns-container {
+    width: 100%;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .btn-container {
+      width: 100%;
+      margin-bottom: 8px;
+      &.half {
+        width: calc(50% - 4px);
+      }
+
+      .btn {
+        @include mixins.text-button();
+      }
+    }
+  }
+}

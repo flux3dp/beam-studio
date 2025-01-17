@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test FileName should render correctly 1`] = `
+<div>
+  <div
+    class="file-name"
+  >
+    abc*
+  </div>
+</div>
+`;
+
+exports[`test FileName should render correctly 2`] = `
+<div>
+  <div
+    class="file-name"
+  >
+    Untitled
+  </div>
+</div>
+`;
+
+exports[`test FileName should render correctly 3`] = `
+<div>
+  <div
+    class="title"
+  >
+    Untitled
+  </div>
+</div>
+`;
+
+exports[`test FileName should render correctly with cloud file 1`] = `
+<div>
+  <div
+    class="file-name"
+  >
+    <svgr-url
+      classname="cloud"
+    />
+    abc*
+  </div>
+</div>
+`;
+
+exports[`test FileName should render correctly with cloud file 2`] = `
+<div>
+  <div
+    class="file-name"
+  >
+    <svgr-url
+      classname="cloud"
+    />
+    Untitled
+  </div>
+</div>
+`;
+
+exports[`test FileName should render correctly with cloud file 3`] = `
+<div>
+  <div
+    class="title"
+  >
+    <svgr-url
+      classname="cloud"
+    />
+    Untitled
+  </div>
+</div>
+`;

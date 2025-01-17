@@ -1,0 +1,22 @@
+.wrapper {
+  flex: 1;
+  padding: 20px 40px 0;
+  overflow: hidden;
+
+  @media screen and (max-width: 600px) {
+    padding: 12px 12px 0;
+  }
+
+  .hint-text {
+    color: #7c7c7c;
+    font-size: 14px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+
+    .icon {
+      font-size: 16px;
+    }
+  }
+}

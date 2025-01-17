@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <clipPath id="clip-icon-trace">
+      <rect width="32" height="32"/>
+    </clipPath>
+  </defs>
+  <g id="icon-trace" clip-path="url(#clip-icon-trace)">
+    <g id="Group_40" data-name="Group 40" transform="translate(-876.143 -208.95)">
+      <path id="Path_1" data-name="Path 1" d="M884.018,273.173v-3.765h-1.875v3.765a2.894,2.894,0,0,0,2.89,2.89h3.785v-1.874h-3.785a1.014,1.014,0,0,1-1.015-1.013Z" transform="translate(0 -41.115)" fill="currentColor"/>
+      <path id="Path_2" data-name="Path 2" d="M941.478,273.173a1.013,1.013,0,0,1-1.01,1.016h-3.74v1.875h3.719a2.894,2.894,0,0,0,2.89-2.89v-3.766h-1.874Z" transform="translate(-41.211 -41.115)" fill="currentColor"/>
+      <path id="Path_3" data-name="Path 3" d="M940.462,214.95h-3.734v1.875h3.719a1.014,1.014,0,0,1,1.016,1.012v3.768h1.875V217.84a2.871,2.871,0,0,0-2.852-2.89Z" transform="translate(-41.211 0)" fill="currentColor"/>
+      <path id="Path_4" data-name="Path 4" d="M884.018,217.84a1.014,1.014,0,0,1,1.013-1.015h3.786V214.95h-3.785a2.894,2.894,0,0,0-2.89,2.89v3.766h1.875Z" transform="translate(0 0)" fill="currentColor"/>
+      <path id="Path_67" data-name="Path 67" d="M895.917,251.951v1.875h1.969a4.883,4.883,0,0,0,9.578-.015h1.953v-1.875Z" transform="translate(-10.399 -27.924)" fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0.1"/>
+      <path id="Path_6" data-name="Path 6" d="M933.59,240.248a.4.4,0,0,0,.3.156.384.384,0,0,0,.3-.609,5.008,5.008,0,0,0-1.156-1.14.382.382,0,1,0-.437.626A4.206,4.206,0,0,1,933.59,240.248Z" transform="translate(-37.964 -17.845)" fill="currentColor"/>
+      <path id="Path_7" data-name="Path 7" d="M921.321,236.131a4,4,0,0,1,1.36.156.23.23,0,0,0,.11.015.384.384,0,0,0,.359-.265.379.379,0,0,0-.26-.468h0a5.086,5.086,0,0,0-1.609-.172.391.391,0,0,0-.36.391.372.372,0,0,0,.4.344Z" transform="translate(-29.273 -15.431)" fill="currentColor"/>
+      <path id="Path_8" data-name="Path 8" d="M910.178,238.245a.383.383,0,0,0,.25-.091,3.763,3.763,0,0,1,1.172-.719.372.372,0,0,0-.281-.688,4.851,4.851,0,0,0-1.372.859.373.373,0,0,0-.035.527l0,0A.342.342,0,0,0,910.178,238.245Z" transform="translate(-20.895 -16.436)" fill="currentColor"/>
+      <path id="Subtraction_5" data-name="Subtraction 5" d="M913.416,246.354l-.781,0-.078-.366a.37.37,0,0,1,.025-.287.379.379,0,0,1,.225-.183.391.391,0,0,1,.115-.017.366.366,0,0,1,.353.267,3.624,3.624,0,0,1,.138.577Zm-9.656.013.014-.068a5.138,5.138,0,0,1,.562-1.532.374.374,0,0,1,.323-.194.388.388,0,0,1,.193.054.366.366,0,0,1,.153.494l-.013.022a4.4,4.4,0,0,0-.451,1.234Z" transform="translate(-16.32 -22.365)" fill="currentColor"/>
+    </g>
+  </g>
+</svg>

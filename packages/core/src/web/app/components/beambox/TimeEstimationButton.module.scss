@@ -1,0 +1,23 @@
+.btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 22px;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+
+  @media screen and (max-width: 600px) {
+    height: 30px;
+    font-size: 18px;
+  }
+}
+
+.result {
+  font-size: 14px;
+  color: #333333;
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}

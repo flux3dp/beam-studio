@@ -1,0 +1,59 @@
+@use 'styles/variables' as variables;
+
+.container {
+  flex: 1 1 auto;
+  overflow: scroll;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 20px 40px 40px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .content {
+    color: variables.$secondary-gray;
+
+    .link {
+      color: variables.$primary-blue;
+      border: none;
+      background: none;
+      padding: 0 0 20px;
+      line-height: 16px;
+      display: inline-flex;
+      align-items: center;
+
+      .icon {
+        font-size: 12px;
+      }
+    }
+
+    .steps {
+      margin: 0;
+      padding: 0 0 0 16px;
+
+      li {
+        &:not(:last-child) {
+          margin-bottom: 16px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .artwork {
+    .text {
+      color: #1e1e1e;
+      margin: 12px 0;
+    }
+
+    .svg {
+      width: 180px;
+      height: 180px;
+      border: 1px solid #dddddd;
+      pointer-events: none;
+    }
+  }
+}

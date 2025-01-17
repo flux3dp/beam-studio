@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  align-items: center;
+
+  .btn {
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    border: 1px solid #bbbbbb;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: #eeeeee;
+    }
+
+    > img {
+      padding: 4px;
+    }
+  }
+}

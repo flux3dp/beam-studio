@@ -1,0 +1,36 @@
+.value {
+  float: right;
+  line-height: 32px;
+  font-size: 12px;
+}
+
+.input {
+  width: 80px;
+  float: right;
+
+  > input {
+    width: 100%;
+    height: 30px;
+    padding: 1px 1px 0px;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+    background-color: unset;
+
+    &:disabled {
+      border: none;
+    }
+  }
+
+  > span {
+    width: 25px;
+    font-size: 9px;
+    margin-left: -25px;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.25);
+    @media screen and (max-width: 600px) {
+      width: fit-content;
+    }
+  }
+}

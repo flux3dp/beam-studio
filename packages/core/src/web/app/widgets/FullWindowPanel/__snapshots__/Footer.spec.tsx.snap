@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Footer should render correctly 1`] = `
+<div>
+  <div
+    class="footer class"
+  >
+    Footer
+  </div>
+</div>
+`;
+
+exports[`test Footer should render correctly 2`] = `
+<div>
+  <div
+    class="footer mobile windows desktop class class2"
+  >
+    Footer
+  </div>
+</div>
+`;

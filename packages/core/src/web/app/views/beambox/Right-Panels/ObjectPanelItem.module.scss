@@ -1,0 +1,155 @@
+$active-color: #0091ff;
+.object-panel-item {
+  min-width: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &[id='lock'] {
+    min-width: auto;
+    .main {
+      font-size: 14px;
+    }
+  }
+  &.active {
+    color: $active-color;
+    .number-item,
+    .select-button {
+      color: $active-color;
+      --border-color: #0091ff;
+    }
+  }
+  .number-item,
+  .select-button {
+    min-width: 48px;
+    height: 28px;
+    --border-color: #7c7c7c;
+    .selected-content {
+      display: flex;
+      column-gap: 12px;
+      white-space: nowrap;
+      justify-content: space-between;
+      height: 20px;
+      align-items: center;
+    }
+  }
+  .main {
+    display: flex;
+    height: 32px;
+    font-size: 32px;
+    align-items: center;
+  }
+  .label {
+    flex-grow: 1;
+    margin-top: 2px;
+    line-height: 12px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}
+div.divider {
+  height: 40px;
+  margin: auto 0;
+  &:first-child {
+    margin-left: 10px;
+  }
+  &:last-child {
+    margin-right: 10px;
+  }
+}
+.number-keyboard {
+  .input-keys {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    > button {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      font-size: 16px;
+      .icon {
+        font-size: 36px;
+      }
+    }
+  }
+  .step-buttons {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+    > button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background-color: #f5f5f5;
+      .icon {
+        font-size: 31px;
+      }
+    }
+  }
+}
+.action-list {
+  :global(.adm-popover-inner-content) {
+    padding: 8px 0;
+  }
+  .action {
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    padding: 0 18px;
+    &.disabled {
+      opacity: 0.7;
+    }
+    &.active {
+      background-color: $active-color;
+      color: white;
+    }
+    .label {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  }
+}
+.select {
+  --z-index: 100;
+  :global(.adm-popover-inner-content) {
+    padding: 8px 0;
+  }
+  .select-options {
+    overflow: scroll;
+    max-height: 256px;
+    &[id='font_family-options'] {
+      > div {
+        padding-right: 10px;
+        > span {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 4px 18px;
+    &.active {
+      background-color: $active-color;
+      color: white;
+      img {
+        filter: invert(1) brightness(1.1);
+      }
+    }
+    img {
+      vertical-align: middle;
+      max-height: 20px;
+      min-height: 16px;
+    }
+  }
+}
+div.mask {
+  width: 100vw;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  &.hide {
+    display: none;
+  }
+}

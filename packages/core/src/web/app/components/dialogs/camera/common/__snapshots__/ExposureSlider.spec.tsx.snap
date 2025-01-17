@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ExposureSlider should render correctly 1`] = `
+<div>
+  <div
+    class="container test-class"
+  >
+    <div
+      title="exposure"
+    >
+      <svgr-url
+        classname="icon"
+      />
+    </div>
+    <div
+      class="slider"
+    >
+      <h1>
+        Mock Slider
+      </h1>
+      <p>
+        min: 
+        250
+      </p>
+      <p>
+        max: 
+        650
+      </p>
+      <p>
+        step: 
+        1
+      </p>
+      <input
+        value="300"
+      />
+      <button
+        type="button"
+      >
+        Mock After Change
+      </button>
+    </div>
+  </div>
+</div>
+`;

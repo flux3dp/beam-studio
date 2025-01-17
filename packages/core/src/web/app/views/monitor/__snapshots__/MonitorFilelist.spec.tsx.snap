@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test MonitorFilelist should popUpError when ls get error 1`] = `
+<div>
+  <div>
+    <div>
+      Dummy Breadcrumbs
+    </div>
+    <div
+      class="container"
+    />
+  </div>
+</div>
+`;
+
+exports[`test MonitorFilelist should remove usb folder when path is empty and unable to list USB 1`] = `
+<div>
+  <div>
+    <div>
+      Dummy Breadcrumbs
+    </div>
+    <div
+      class="container"
+    >
+      <div
+        class="dir"
+      >
+        da
+      </div>
+      <div
+        class="dir"
+      >
+        db
+      </div>
+      <div
+        class="dir"
+      >
+        dc
+      </div>
+      <div
+        class="file"
+      >
+        /
+        fa
+      </div>
+      <div
+        class="file"
+      >
+        /
+        fb
+      </div>
+      <div
+        class="file"
+      >
+        /
+        fc
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MonitorFilelist should render correctly 1`] = `
+<div>
+  <div>
+    <div>
+      Dummy Breadcrumbs
+    </div>
+    <div
+      class="container"
+    >
+      <div
+        class="dir"
+      >
+        da
+      </div>
+      <div
+        class="dir"
+      >
+        db
+      </div>
+      <div
+        class="dir"
+      >
+        dc
+      </div>
+      <div
+        class="file"
+      >
+        path
+        /
+        fa
+      </div>
+      <div
+        class="file"
+      >
+        path
+        /
+        fb
+      </div>
+      <div
+        class="file"
+      >
+        path
+        /
+        fc
+      </div>
+    </div>
+  </div>
+</div>
+`;

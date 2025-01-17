@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ColorBlock full color 1`] = `
+<div>
+  <div
+    class="color defalut"
+  >
+    <div
+      class="full-color"
+    />
+  </div>
+</div>
+`;
+
+exports[`test ColorBlock no color 1`] = `
+<div>
+  <div
+    class="color defalut"
+  >
+    <div
+      class="clear"
+    />
+  </div>
+</div>
+`;
+
+exports[`test ColorBlock should render correctly 1`] = `
+<div>
+  <div
+    class="mock-class color small"
+    id="mock-id"
+  >
+    <div
+      class=""
+      style="background-color: rgb(51, 51, 51);"
+    />
+  </div>
+</div>
+`;

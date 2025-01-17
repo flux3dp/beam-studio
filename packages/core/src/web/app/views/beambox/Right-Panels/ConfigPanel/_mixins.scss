@@ -1,0 +1,159 @@
+@mixin input {
+  width: 80px;
+  float: right;
+
+  > input {
+    width: 100%;
+    height: 30px;
+    padding: 1px 1px 0px;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+    background-color: unset;
+
+    &:disabled {
+      border: none;
+    }
+  }
+
+  > span {
+    width: 25px;
+    font-size: 9px;
+    margin-left: -25px;
+    text-align: right;
+    color: rgba(0, 0, 0, 0.25);
+  }
+}
+
+@mixin panel {
+  padding: 0 20px;
+  clear: both;
+
+  .title {
+    line-height: 32px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+
+    &.panel-item {
+      margin-top: 0;
+      width: 80vw;
+      .title {
+        font-weight: bold;
+      }
+    }
+
+    &.light {
+      font-weight: 400;
+    }
+
+    .icon {
+      cursor: pointer;
+      line-height: 16px;
+      height: 16px;
+      margin: 0 6px;
+    }
+  }
+
+  .hint {
+    font-size: 14px;
+    color: #ababab;
+    margin-left: 7px;
+  }
+
+  .input {
+    @include input;
+  }
+
+  .value {
+    float: right;
+    line-height: 32px;
+  }
+
+  &.without-drag {
+    height: 32px;
+
+    .title {
+      line-height: 32px;
+    }
+  }
+
+  &.switch {
+    height: 16px;
+    line-height: 16px;
+
+    .title {
+      line-height: 16px;
+    }
+
+    > .switch {
+      float: right;
+
+      &.partial {
+        opacity: 0.5;
+      }
+    }
+
+    .hint {
+      padding: 1px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .inline-select {
+    float: right;
+  }
+
+  .warning {
+    display: flex;
+    margin-top: 15px;
+
+    .warning-icon {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #333333;
+      border-radius: 10px;
+      line-height: 18px;
+      text-align: center;
+    }
+
+    .warning-text {
+      width: calc(100% - 20px);
+      padding-left: 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+@mixin modal-block {
+  margin-top: 18px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .input {
+      border: 1px solid #e6e6e6;
+      border-width: 0 0 1px;
+
+      .unit {
+        font-size: 10px;
+        color: #bbbbbb;
+      }
+
+      &.disabled {
+        background: none;
+      }
+    }
+  }
+}
+
+// Fix padding inside AdvancedBlock.tsx
+@mixin hint-overlay {
+  :global(.ant-tooltip-inner) {
+    padding: 6px 8px;
+  }
+}

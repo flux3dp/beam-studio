@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<div>
+  <div>
+    <div
+      class="label pull-left"
+    />
+    <div
+      class="path-preview-slider-container"
+      id="progress-bar"
+    >
+      <input
+        class="slider"
+        max="60000"
+        min="0"
+        step="100"
+        style="--percentage: 50%;"
+        type="range"
+        value="30000"
+      />
+    </div>
+  </div>
+</div>
+`;

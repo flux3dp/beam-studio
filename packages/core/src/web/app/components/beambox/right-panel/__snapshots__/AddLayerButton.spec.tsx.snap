@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test AddLayerButton should render correctly 1`] = `
+<div>
+  <button
+    class="btn"
+    type="button"
+  >
+    <span
+      class="anticon"
+      role="img"
+    >
+      <svgr-url
+        aria-hidden="true"
+        classname=""
+        fill="currentColor"
+        focusable="false"
+        height="1em"
+        width="1em"
+      />
+    </span>
+  </button>
+</div>
+`;

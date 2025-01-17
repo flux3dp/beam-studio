@@ -1,0 +1,16 @@
+.btn {
+  font-size: 20px;
+  margin: 0 0 0 12px;
+  border: none;
+  background: none;
+
+  &:disabled {
+    opacity: 0.3;
+  }
+
+  &:not(:disabled) {
+    &:hover {
+      color: #4096ff;
+    }
+  }
+}

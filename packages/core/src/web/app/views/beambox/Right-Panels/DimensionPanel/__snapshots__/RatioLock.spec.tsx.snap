@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test RatioLock should render correctly on desktop 1`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+    id="lock"
+    title="lock_aspect"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <svgr-url />
+    </span>
+  </button>
+</div>
+`;
+
+exports[`test RatioLock should render correctly on desktop 2`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+    id="lock"
+    title="unlock_aspect"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <svgr-url />
+    </span>
+  </button>
+</div>
+`;
+
+exports[`test RatioLock should render correctly on mobile 1`] = `
+<div>
+  <div
+    id="lock"
+  >
+    <div>
+      <svgr-url />
+    </div>
+    <button
+      type="button"
+    />
+  </div>
+</div>
+`;
+
+exports[`test RatioLock should render correctly on mobile 2`] = `
+<div>
+  <div
+    id="lock"
+  >
+    <div>
+      <svgr-url />
+    </div>
+    <button
+      type="button"
+    />
+  </div>
+</div>
+`;

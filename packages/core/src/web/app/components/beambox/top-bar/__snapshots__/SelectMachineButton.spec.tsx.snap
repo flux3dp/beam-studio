@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test SelectMachineButton mobile 1`] = `
+<div>
+  <div
+    class="button"
+  >
+    <svgr-url />
+  </div>
+</div>
+`;
+
+exports[`test SelectMachineButton should render correctly 1`] = `
+<div>
+  <div
+    class="button"
+  >
+    <svgr-url />
+    <span
+      class="text"
+      data-testid="select-machine"
+    >
+      Select a machine
+    </span>
+  </div>
+</div>
+`;
+
+exports[`test SelectMachineButton when previewing 1`] = `
+<div>
+  <div
+    class="button"
+  >
+    <svgr-url />
+    <span
+      class="text"
+      data-testid="select-machine"
+    >
+      Select a machine
+    </span>
+  </div>
+</div>
+`;
+
+exports[`test SelectMachineButton with device 1`] = `
+<div>
+  <div
+    class="button"
+  >
+    <svgr-url />
+    <span
+      class="text"
+      data-testid="select-machine"
+    >
+      device name
+    </span>
+  </div>
+</div>
+`;

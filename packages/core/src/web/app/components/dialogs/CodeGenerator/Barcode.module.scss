@@ -1,0 +1,24 @@
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: inline-block;
+}
+
+.error-span {
+  vertical-align: middle;
+  text-align: center;
+  color: red;
+}
+
+.container {
+  display: flex;
+  min-height: 200px;
+  justify-content: center;
+  align-items: center;
+}
+
+.barcode-svg {
+  max-width: 1000px;
+}

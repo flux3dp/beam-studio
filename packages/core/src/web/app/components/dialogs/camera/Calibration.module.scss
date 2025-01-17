@@ -1,0 +1,6 @@
+@use 'styles/variables' as variables;
+
+.link {
+  color: variables.$primary-blue;
+  cursor: pointer;
+}

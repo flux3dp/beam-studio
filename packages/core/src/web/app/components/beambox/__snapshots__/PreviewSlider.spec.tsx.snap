@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test PreviewSlider should render correctly when is previewing 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly when is previewing Ador 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Exposure
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          250
+        </p>
+        <p>
+          max: 
+          650
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          450
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        450
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly when is previewing Ador 2`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Exposure
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          250
+        </p>
+        <p>
+          max: 
+          650
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        0.25
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly with preview image 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Opacity
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          1
+        </p>
+        <p>
+          step: 
+          0.25
+        </p>
+        <p>
+          value: 
+          1
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        100
+        %
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly with preview image 2`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Opacity
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          1
+        </p>
+        <p>
+          step: 
+          0.25
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onAfterChange
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        25
+        %
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly without background image 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+  </div>
+</div>
+`;

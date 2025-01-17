@@ -1,0 +1,110 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test StartOffsetBlock should render correctly 1`] = `
+<div>
+  <div
+    class="option-block"
+  >
+    <div
+      class="label"
+    >
+      Text Offset
+    </div>
+    <div>
+      mock-unit-input min:
+      0
+      max:
+      100
+      decimal:
+      0
+      defaultValue:
+      0
+      className:
+      {"option-input":true}
+      <input
+        class="unit-input"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test StartOffsetBlock should render correctly 2`] = `
+<div>
+  <div
+    class="option-block"
+  >
+    <div
+      class="label"
+    >
+      Text Offset
+    </div>
+    <div>
+      mock-unit-input min:
+      0
+      max:
+      100
+      decimal:
+      0
+      defaultValue:
+      0
+      className:
+      {"option-input":true}
+      <input
+        class="unit-input"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test StartOffsetBlock should render correctly 3`] = `
+<div>
+  <div
+    class="option-block"
+  >
+    <div
+      class="label"
+    >
+      Text Offset
+    </div>
+    <div>
+      mock-unit-input min:
+      0
+      max:
+      100
+      decimal:
+      0
+      defaultValue:
+      0
+      className:
+      {"option-input":true}
+      <input
+        class="unit-input"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test StartOffsetBlock should render correctly in mobile 1`] = `
+<div>
+  <div>
+    mock-number-item id:
+    start_offset
+    label:
+    Text Offset
+    min:
+    0
+    max:
+    100
+    decimal:
+    0
+    value:
+    0
+    <input
+      class="unit-input"
+    />
+  </div>
+</div>
+`;

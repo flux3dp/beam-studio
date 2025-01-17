@@ -1,0 +1,84 @@
+$number-per-row: 8;
+$number-per-row-mobile: 6;
+$margin-x: 30px;
+$gap: 8px;
+// space for scroll bar not overlap on icons
+$scrollbar-x: 20px;
+
+// clear scroll setting of floating panel
+.panel [class*='scroll-content']:not(.scroll-content) {
+  overflow: hidden;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.tabs > div {
+  border-bottom: none;
+  @media screen and (min-width: 601px) {
+    margin: 20px 0;
+    padding: 0;
+    :global(.adm-capsule-tabs-tab) {
+      padding: 8px 16px;
+      font-size: 13px;
+      line-height: normal;
+    }
+  }
+  @media screen and (max-width: 600px) {
+    margin: 0 $margin-x 8px;
+    border-bottom: none;
+  }
+}
+
+.shadow-container {
+  position: relative;
+  .shadow {
+    position: absolute;
+    bottom: 0;
+    left: calc($gap / -2);
+    width: calc(100% + $gap);
+    height: 27px;
+    background: linear-gradient(0, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+  }
+  @media screen and (max-width: 600px) {
+    height: 100%;
+    .shadow {
+      left: 0;
+      width: 100%;
+    }
+  }
+}
+
+.scroll-content {
+  height: 400px;
+  overflow-y: scroll;
+  margin: 0 (-$scrollbar-x);
+  padding: 0 $scrollbar-x;
+  @media screen and (max-width: 600px) {
+    height: 100%;
+    margin: 0;
+    padding: 0 0 10px 0;
+  }
+}
+
+.icon-list {
+  display: grid;
+  grid-template-columns: repeat($number-per-row, 1fr);
+  justify-items: center;
+  gap: $gap;
+  @media screen and (max-width: 600px) {
+    grid-template-columns: repeat($number-per-row-mobile, 1fr);
+    margin: 0 $margin-x;
+    font-size: calc(
+      (100vw - $margin-x * 2 - $gap * ($number-per-row-mobile - 1)) / $number-per-row-mobile
+    );
+  }
+
+  .label {
+    width: 100%;
+    grid-column: 1 / -1;
+    color: #999;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 10px;
+  }
+}

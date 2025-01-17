@@ -1,0 +1,5 @@
+@use '../mixins' as mixins;
+
+.item-group {
+  @include mixins.item-group();
+}

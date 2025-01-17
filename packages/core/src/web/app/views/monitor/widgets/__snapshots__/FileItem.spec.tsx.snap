@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly should render correctly 1`] = `
+<div>
+  <div
+    class="container"
+    data-filename="file"
+    data-test-key="file"
+    title="file"
+  >
+    <div
+      class="img-container selected"
+    >
+      <img
+        src="mock-url"
+      />
+      <i
+        class="fa fa-times-circle-o"
+      />
+    </div>
+    <div
+      class="name selected"
+    >
+      file
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly should render correctly 2`] = `
+<div>
+  <div
+    class="container"
+    data-filename="file2"
+    data-test-key="file2"
+    title="file2"
+  >
+    <div
+      class="img-container selected"
+    >
+      <img
+        src="mock-url2"
+      />
+      <i
+        class="fa fa-times-circle-o"
+      />
+    </div>
+    <div
+      class="name selected"
+    >
+      file2
+    </div>
+  </div>
+</div>
+`;

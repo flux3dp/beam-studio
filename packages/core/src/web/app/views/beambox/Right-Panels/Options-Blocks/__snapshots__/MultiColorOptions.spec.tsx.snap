@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test MultiColorOptions editing color in use element should work 1`] = `
+<p>
+  initColor: 
+  #AAAAFF
+</p>
+`;
+
+exports[`test MultiColorOptions mobile should render correctly 1`] = `
+<div>
+  <div
+    class="object-panel-item"
+    id="color"
+  >
+    <div
+      class="main"
+    >
+      <svgr-url />
+    </div>
+    <div
+      class="label"
+    >
+      Color
+    </div>
+  </div>
+  <div>
+    Mock Floating Panel
+    <p>
+      title: 
+      Color
+    </p>
+    <button
+      type="button"
+    >
+      onClose
+    </button>
+    <div
+      class="colors"
+    >
+      <div
+        class="color color large"
+      >
+        <div
+          class=""
+          style="background-color: rgb(170, 255, 255);"
+        />
+      </div>
+      <div
+        class="color color large"
+      >
+        <div
+          class=""
+          style="background-color: rgb(255, 170, 255);"
+        />
+      </div>
+      <div>
+        Mock ColorPicker Mobile
+        <p>
+          color: 
+          #AAFFFF
+        </p>
+        <p>
+          open: 
+          t
+        </p>
+        <button
+          type="button"
+        >
+          onPreview
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onClose
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test MultiColorOptions should render correctly 1`] = `
+<div>
+  <div
+    class="block"
+  >
+    <div
+      class="label"
+    >
+      Color
+    </div>
+    <div
+      class="controls"
+    >
+      <div>
+        Mock ColorPicker
+        <p>
+          allowClear: 
+          f
+        </p>
+        <p>
+          initColor: 
+          #AAFFFF
+        </p>
+        <p>
+          triggerType: 
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+      <div>
+        Mock ColorPicker
+        <p>
+          allowClear: 
+          f
+        </p>
+        <p>
+          initColor: 
+          #FFAAFF
+        </p>
+        <p>
+          triggerType: 
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

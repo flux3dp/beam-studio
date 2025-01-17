@@ -1,0 +1,93 @@
+@use '../_mixins.scss' as mixins;
+
+.font-family-dropdown {
+  :global(.ant-select-item) {
+    padding-right: 4px;
+  }
+}
+
+.family-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  .img-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    max-width: 190px;
+    > img {
+      max-height: 18px;
+      min-height: 16px;
+      object-fit: cover;
+      object-position: left;
+      overflow: visible;
+    }
+  }
+  > svg {
+    font-size: 24px;
+    min-width: 24px;
+  }
+}
+
+.panel {
+  :global(.ant-select) {
+    padding: 5px 0 1px 0;
+    :global(.ant-select-selector) {
+      border-width: 0 0 1px 0 !important;
+    }
+  }
+
+  .row {
+    display: flex;
+    align-items: flex-end;
+    margin-top: 4px;
+  }
+
+  .font-family {
+    width: 100%;
+    .family-option > svg {
+      display: none;
+    }
+  }
+
+  .font-size {
+    width: 68px;
+    margin-bottom: 1px;
+    margin-right: auto;
+
+    :global(.ui-control-unit-input-v2) {
+      margin: 0;
+
+      input {
+        width: 68px;
+      }
+    }
+  }
+
+  .font-style {
+    width: calc(100% - 80px);
+  }
+
+  .spacing {
+    @include mixins.icon-input();
+    margin-right: 8px;
+    margin-bottom: 0;
+
+    :global(.ui-control-unit-input-v2) {
+      margin: 4px 0;
+      input {
+        padding: 1px;
+      }
+    }
+  }
+
+  .vertical-text {
+    margin-left: auto;
+    margin-right: 4px;
+
+    &.active > span {
+      color: #1890ff;
+    }
+  }
+}

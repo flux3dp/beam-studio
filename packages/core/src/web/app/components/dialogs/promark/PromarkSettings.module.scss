@@ -1,0 +1,22 @@
+.container {
+  width: 560px;
+  margin: 28px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 40px;
+}
+
+.footer {
+  height: 32px;
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+
+    .icon {
+      margin-left: 8px;
+      font-size: 10px;
+    }
+  }
+}

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test BackButton should render correctly 1`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text enhancer button windows desktop"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <svgr-url />
+    </span>
+    <span>
+      Back
+    </span>
+  </button>
+</div>
+`;
+
+exports[`test BackButton should render correctly 2`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text enhancer button"
+    type="button"
+  >
+    <span
+      class="ant-btn-icon"
+    >
+      <svgr-url />
+    </span>
+    <span>
+      Back
+    </span>
+  </button>
+</div>
+`;

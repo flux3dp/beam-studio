@@ -1,0 +1,50 @@
+@use 'styles/mixins' as mixins;
+
+@mixin title-text {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.container {
+  width: 362px;
+  margin: 28px 0;
+}
+
+.footer {
+  @include mixins.footer;
+  width: 362px;
+  height: 32px;
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+
+    .icon {
+      margin-left: 8px;
+      font-size: 10px;
+    }
+  }
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+.mb-28 {
+  margin-bottom: 28px;
+}
+
+.lh-32 {
+  line-height: 32px;
+}
+
+.input {
+  width: 212px;
+}
+
+.mark-title {
+  @include title-text;
+  align-items: center;
+  margin-right: 4px;
+}

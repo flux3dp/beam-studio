@@ -1,0 +1,84 @@
+.controller {
+  flex: 1;
+  padding: 20px 20px 0;
+  overflow-y: scroll;
+  @media screen and (max-width: 600px) {
+    padding: 12px 12px 0;
+  }
+
+  .workarea {
+    color: #7c7c7c;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    @media screen and (max-width: 600px) {
+      margin-left: 0;
+    }
+    .icon {
+      font-size: 16px;
+    }
+  }
+
+  .form {
+    width: 400px;
+    @media screen and (max-width: 600px) {
+      width: 100%;
+      :global(.ant-form-item) {
+        margin-bottom: 16px;
+        :global(.ant-form-item-label) {
+          flex: none;
+          padding: 0;
+          width: 120px;
+          text-align: end;
+          ::after {
+            visibility: visible;
+          }
+        }
+        :global(.ant-form-item-control) {
+          flex: 1;
+        }
+      }
+    }
+
+    .number-input {
+      width: 100%;
+    }
+
+    .teeth-length {
+      :global(.ant-form-item-control-input-content) {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        @media screen and (max-width: 600px) {
+          flex-direction: column;
+        }
+        > div {
+          width: 100%;
+        }
+      }
+    }
+
+    :global(.ant-form-item) {
+      &.small-margin {
+        margin-bottom: 8px;
+      }
+      &.no-margin {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// sheet thickness custom dropdown
+.divider {
+  margin: 8px 0;
+}
+.thickness-editor {
+  padding: 0 8px 4px;
+  > div:first-child {
+    max-width: 140px;
+  }
+}

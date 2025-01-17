@@ -1,0 +1,561 @@
+html, body, div{
+	/* -webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-o-user-select: text;
+	user-select: text; */
+	/* this will work for QtWebKit in future */
+	/* -webkit-user-drag: text; */
+}
+
+#browser-not-supported {
+	font-size: 0.8em;
+	/* font-family: Verdana, Helvetica, Arial; */
+	color: #000000;
+}
+
+#svg_editor * {
+	transform-origin: 0 0;
+	-moz-transform-origin: 0 0;
+	-o-transform-origin: 0 0;
+	-webkit-transform-origin: 0 0;
+}
+
+#svg_editor g {
+	cursor: move;
+}
+
+#svg_editor g.lock{
+	cursor: default;
+}
+
+#svg_editor {
+	font-size: 10pt;
+	color: #000000;
+	position: absolute;
+	left: 54px;
+	top: 0px;
+	width: calc(100vw - 60px - 188px);
+	height: 100%;
+}
+
+a {
+	color: #19c;
+}
+
+hr {
+	border: none;
+	border-bottom: 1px solid #808080;
+}
+
+select {
+	margin-top: 4px;
+}
+
+#svgroot {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#svgcanvas {
+	line-height: normal;
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+	position: relative;
+}
+
+
+#linkLabel > svg {
+	height: 20px;
+	padding-top: 4px;
+}
+
+#workarea {
+	display: inline-table-cell;
+	position:absolute;
+	top: 40px;
+	left: 40px;
+	bottom: 40px;
+	right: 14px;
+	background-color: #A0A0A0;
+	border: 1px solid #808080;
+	overflow: auto;
+	text-align: center;
+}
+
+#sidepanel_handle {
+	display: inline-block;
+	position: absolute;
+	background-color: #D0D0D0;
+	font-weight: bold;
+	left: 0;
+	top: 40%;
+	width: 1em;
+	padding: 5px 1px 5px 5px;
+	margin-left: 3px;
+	cursor: pointer;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+#sidepanel_handle:hover {
+	font-weight: bold;
+}
+
+#sidepanel_handle * {
+	cursor: pointer;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+#layerlist_container::-webkit-scrollbar {
+	display: unset;
+	-webkit-appearance: none;
+	background-color: #EEE;
+	width: 7px;
+	padding: 2px;
+}
+#layerlist_container::-webkit-scrollbar-thumb {
+	transition: all 0.5s;
+	border-radius: 4px;
+	background-color: rgba(0,0,0,.2);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+#layerlist_container::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(0,0,0,.5);
+}
+
+/*—————————————————————————————*/
+
+.tool_button:hover,
+.push_button:hover,
+.buttonup:hover,
+.buttondown,
+.tool_button_current,
+.push_button_pressed
+{
+	background-color: #ffc !important;
+}
+
+.tool_button_current,
+.push_button_pressed,
+.buttondown {
+	background-color: #f4e284 !important;
+	-webkit-box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px  0 white  !important;
+	-moz-box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px  0 white  !important;
+	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4), 1px 1px  0 white  !important;
+}
+
+#workarea.wireframe #canvasBackground > rect {
+	fill: #FFF !important;
+}
+
+#editor_panel, #history_panel {
+	height: 34px;
+	float: left;
+}
+
+#multiselected_panel .selected_tool {
+	vertical-align: 12px;
+}
+
+/*TODO: Adjust position of rulers are not visible*/
+#cur_context_panel {
+	position: absolute;
+	top: 57px;
+	left: 56px;
+	line-height: 22px;
+	overflow: auto;
+	padding-left: 5px;
+	font-size: 12px;
+	background: rgba(0, 0, 0, 0.8);
+	color: #ccc;
+	padding: 0 10px;
+	border-radius: 0 0 3px 0;
+}
+
+#cur_context_panel a {
+	float: none;
+	text-decoration: none;
+}
+
+#cur_context_panel a:hover {
+	text-decoration: underline;
+}
+
+div.toolset,
+div.toolset > * {
+	float: left;
+}
+
+div.toolset {
+	height: 34px;
+}
+
+div.toolset label span {
+/*	outline: 1px solid red;*/
+	padding-top: 3px;
+	display: inline-block;
+}
+
+.flyout_arrow_horiz {
+	position: absolute;
+	bottom: -1px;
+	right: 0;
+	z-index: 10;
+}
+
+
+span.zoom_tool {
+	line-height: 26px;
+	padding: 3px;
+}
+
+#zoom_panel {
+	margin-top: 5px;
+}
+
+.dropdown {
+	position: relative;
+}
+
+.dropdown button {
+	width: 15px;
+	height: 21px;
+	margin: 6px 0 0 1px;
+	padding: 0;
+	border-left: 1px solid #FFFFFF;
+	border-top: 1px solid #FFFFFF;
+	border-right: 1px solid #808080;
+	border-bottom: 1px solid #808080;
+	background-color: #E8E8E8;
+}
+
+.dropdown button.down {
+	border-left: 1px solid #808080;
+	border-top: 1px solid #808080;
+	border-right: 1px solid #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	background-color: #B0B0B0;
+}
+
+.dropdown ul {
+	list-style: none;
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	left: -85px;
+	top: 26px;
+	z-index: 4;
+	display: none;
+}
+
+.dropup ul {
+	top: auto;
+	bottom: 24px;
+}
+
+.dropdown li {
+	display: block;
+	width: 120px;
+	padding: 4px;
+	background: #E8E8E8;
+	border: 1px solid #B0B0B0;
+	margin: 0 0 -1px 0;
+	line-height: 16px;
+}
+
+.dropdown li:hover {
+	background-color: #FFC;
+}
+
+.dropdown li.special {
+	padding: 10px 4px;
+}
+
+.dropdown li.special:hover {
+	background: #FFC;
+}
+
+.tool_button,
+.push_button,
+.tool_button_current,
+.push_button_pressed
+{
+	height: 24px;
+	width: 24px;
+	margin: 2px 2px 4px 2px;
+	padding: 3px;
+	-webkit-box-shadow: inset 1px 1px 2px white, 1px 1px 1px rgba(0,0,0,0.3);
+	moz-box-shadow: inset 1px 1px 2px white, 1px 1px 1px rgba(0,0,0,0.3);
+	box-shadow: inset 1px 1px 2px white, 1px 1px 1px rgba(0,0,0,0.3);
+	background-color: #E8E8E8;
+	cursor: pointer;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+#tool_import input {
+	position: absolute;
+	opacity: 0;
+	font-size: 10em;
+	top: -5px;
+	right: -5px;
+  width: 5px;
+  height: 5px;
+	margin: 0;
+	cursor: pointer; /* Sadly doesn't appear to have an effect */
+}
+
+.disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.tool_sep {
+	width: 1px;
+	background: #888;
+	border-left: 1px outset #EEE;
+	margin: 2px 3px;
+	padding: 0;
+	height: 24px;
+}
+
+.icon_label {
+	float: left;
+	padding-top: 3px;
+	padding-right: 3px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 0;
+}
+
+.width_label {
+	padding-right: 5px;
+}
+
+#text {
+	position: absolute;
+	left: -9999px;
+}
+
+#url_notice {
+	padding-top: 4px;
+	display: none;
+}
+
+/* Color tools: fill, stroke, opacity
+–––––––––––––––––––––––––––––––––––––*/
+
+.dropdown li.tool_button {
+	width: 24px;
+}
+
+#stroke_expand {
+	width: 0;
+	overflow: hidden;
+}
+
+@media screen {
+	#cur_context_panel {
+		top: 87px;
+	}
+
+	#selected_panel {
+		clear: right;
+	}
+}
+
+/*–––––––––––––––––––––––––––––––––––––*/
+
+ul li.current {
+	background-color: #F4E284;
+}
+
+ #copyright {
+	text-align: right;
+	padding-right: .3em;
+}
+
+.overlay {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background-color: black;
+	opacity: 0.6;
+	z-index: 5;
+}
+
+#dialog_box {
+	display: none;
+}
+
+#dialog_content {
+	height: 95px;
+	margin: 10px 10px 5px 10px;
+	background: #DDD;
+	overflow: auto;
+	text-align: left;
+	border: 1px solid #B0B0B0;
+}
+
+#dialog_content.prompt {
+	height: 75px;
+}
+
+#dialog_content p {
+	margin: 10px;
+	line-height: 1.3em;
+}
+
+#dialog_container {
+	position: absolute;
+	/* font-family: Verdana; */
+	text-align: center;
+	left: 50%;
+	top: 50%;
+	width: 300px;
+	margin-left: -150px;
+	height: 150px;
+	margin-top: -80px;
+	position: fixed;
+	z-index: 1000;
+	background: #CCC;
+	border: 1px outset #777;
+	/* font-family:Verdana,Helvetica,sans-serif; */
+	font-size:0.8em;
+}
+
+#dialog_container, #dialog_content {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+#dialog_buttons input[type=text] {
+	width: 90%;
+	display: block;
+	margin: 0 0 5px 11px;
+}
+
+#dialog_buttons input[type=button] {
+	margin: 0 1em;
+}
+
+/* Slider
+----------------------------------*/
+.ui-slider { position: relative; text-align: left; }
+.ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; }
+
+.ui-slider-horizontal { height: .8em; }
+.ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
+.ui-slider-horizontal .ui-slider-range { top: 0; height: 100%; }
+.ui-slider-horizontal .ui-slider-range-min { left: 0; }
+.ui-slider-horizontal .ui-slider-range-max { right: 0; }
+
+.ui-slider-vertical { width: .8em; height: 100px; }
+.ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
+.ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
+.ui-slider-vertical .ui-slider-range-min { bottom: 0; }
+.ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+.ui-slider {
+	border: 1px solid #B0B0B0;
+}
+
+.ui-slider-handle {
+	background: #B0B0B0;
+	border: 1px solid #000;
+}
+
+/* Generic context menu styles */
+.contextMenu {
+	position: absolute;
+	z-index: 99999;
+	border: solid 1px rgba(0,0,0,.33);
+	background: rgba(255,255,255,.95);
+	padding: 5px 0;
+	margin: 0px;
+	display: none;
+	font: 12px/15px Lucida Sans, Helvetica, Verdana, sans-serif;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-moz-box-shadow: 2px 5px 10px rgba(0,0,0,.3);
+	-webkit-box-shadow: 2px 5px 10px rgba(0,0,0,.3);
+	box-shadow: 2px 5px 10px rgba(0,0,0,.3);
+}
+
+.contextMenu LI {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.contextMenu .shortcut {
+	width: 115px;
+	text-align:right;
+	float:right;
+}
+
+.contextMenu A {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	color: #222;
+	text-decoration: none;
+	display: block;
+	line-height: 20px;
+	height: 20px;
+	background-position: 6px center;
+	background-repeat: no-repeat;
+	outline: none;
+	padding: 0px 15px 1px 20px;
+}
+
+.contextMenu LI.hover A {
+	background-color: #2e5dea;
+	color: white;
+	cursor: default;
+}
+
+.contextMenu LI.disabled A {
+	color: #999;
+}
+
+.contextMenu LI.hover.disabled A {
+	background-color: transparent;
+}
+
+.contextMenu LI.separator {
+	border-top: solid 1px #E3E3E3;
+	padding-top: 5px;
+	margin-top: 5px;
+}
+
+/*
+	Adding Icons
+	You can add icons to the context menu by adding
+	classes to the respective LI element(s)
+*/
+/*
+
+.contextMenu LI.edit A { background-image: url(images/page_white_edit.png); }
+.contextMenu LI.cut A { background-image: url(images/cut.png); }
+.contextMenu LI.copy A { background-image: url(images/page_white_copy.png); }
+.contextMenu LI.paste A { background-image: url(images/page_white_paste.png); }
+.contextMenu LI.delete A { background-image: url(images/page_white_delete.png); }
+.contextMenu LI.quit A { background-image: url(images/door.png); }
+*/

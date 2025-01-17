@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Ruler Component renders the Ruler component 1`] = `
+<div>
+  <div
+    class="rulers"
+    id="rulers"
+  >
+    <div
+      class="corner"
+    />
+    <div
+      class="x"
+      id="ruler_x"
+    >
+      <div
+        class="container"
+      />
+    </div>
+    <div
+      class="y"
+      id="ruler_y"
+    >
+      <div
+        class="container"
+      />
+    </div>
+    <div
+      class="unit"
+    >
+      mm
+    </div>
+  </div>
+</div>
+`;

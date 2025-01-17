@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test LeftPanel in curve engraving mode 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    MockCurveEngravingTool
+  </div>
+</div>
+`;
+
+exports[`test LeftPanel in path previewing 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="container"
+      id="Exit-Preview"
+      title="End Preview"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test LeftPanel neither in previewing nor in path previewing 1`] = `
+<div>
+  <div>
+    This is dummy DrawingToolButtonGroup
+  </div>
+</div>
+`;
+
+exports[`test LeftPanel not in path previewing 1`] = `
+<div>
+  <div>
+    This is dummy PreviewToolButtonGroup
+  </div>
+</div>
+`;

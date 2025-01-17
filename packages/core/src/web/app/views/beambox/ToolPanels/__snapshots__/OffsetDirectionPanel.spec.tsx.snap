@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly 1`] = `
+<div>
+  <div
+    class="tool-panel"
+  >
+    <label
+      class="controls accordion"
+    >
+      <input
+        checked=""
+        class="accordion-switcher"
+        type="checkbox"
+      />
+      <p
+        class="caption"
+      >
+        Offset Direction
+        <span
+          class="value"
+        >
+          Outward
+        </span>
+      </p>
+      <div
+        class="tool-panel-body"
+      >
+        <div
+          class="control offset-dir"
+        >
+          <select
+            id="select-offset-dir"
+          >
+            <option
+              label="Outward"
+              value="1"
+            >
+              Outward
+            </option>
+            <option
+              label="Inward"
+              value="0"
+            >
+              Inward
+            </option>
+          </select>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`should render correctly 2`] = `
+<div>
+  <div
+    class="tool-panel"
+  >
+    <label
+      class="controls accordion"
+    >
+      <input
+        checked=""
+        class="accordion-switcher"
+        type="checkbox"
+      />
+      <p
+        class="caption"
+      >
+        Offset Direction
+        <span
+          class="value"
+        >
+          Outward
+        </span>
+      </p>
+      <div
+        class="tool-panel-body collapsed"
+      >
+        <div
+          class="control offset-dir"
+        >
+          <select
+            id="select-offset-dir"
+          >
+            <option
+              label="Outward"
+              value="1"
+            >
+              Outward
+            </option>
+            <option
+              label="Inward"
+              value="0"
+            >
+              Inward
+            </option>
+          </select>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
+`;
+
+exports[`should render correctly 3`] = `
+<div>
+  <div
+    class="tool-panel"
+  >
+    <label
+      class="controls accordion"
+    >
+      <input
+        checked=""
+        class="accordion-switcher"
+        type="checkbox"
+      />
+      <p
+        class="caption"
+      >
+        Offset Direction
+        <span
+          class="value"
+        >
+          Inward
+        </span>
+      </p>
+      <div
+        class="tool-panel-body collapsed"
+      >
+        <div
+          class="control offset-dir"
+        >
+          <select
+            id="select-offset-dir"
+          >
+            <option
+              label="Outward"
+              value="1"
+            >
+              Outward
+            </option>
+            <option
+              label="Inward"
+              value="0"
+            >
+              Inward
+            </option>
+          </select>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
+`;

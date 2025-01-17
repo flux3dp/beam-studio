@@ -1,0 +1,20 @@
+@use "./mixins" as mixins;
+
+.panel {
+  @include mixins.panel;
+  padding: 20px;
+  margin: 0;
+  border: 1px solid #e0e0e0;
+  border-width: 0 0 1px;
+
+  .title {
+    color: #aaaaaa;
+    font-size: 13px;
+    line-height: 13px;
+    margin-bottom: 20px;
+  }
+
+  .select {
+    width: 100%;
+  }
+}

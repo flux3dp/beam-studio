@@ -1,0 +1,13 @@
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  &.mobile {
+    padding: 0 12px 12px 12px
+  }
+
+  &:not(.mobile) {
+    padding: 12px 24px;
+    border-top: 1px solid #ddd;
+  }
+}

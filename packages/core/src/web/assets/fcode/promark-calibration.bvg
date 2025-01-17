@@ -1,0 +1,9 @@
+<svg id="svgcontent" width="%(width)d" height="%(width)d" viewBox="0 0 %(width)d %(width)d"
+  xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+  <g data-printingStrength="100" data-repeat="1" data-strength="%(power)d" data-speed="%(speed)d"
+    data-color="#333333" style="cursor: move;" class="layer">
+    <title>Layer 1</title>
+    <rect vector-effect="non-scaling-stroke" fill-opacity="0" fill="none" id="svg_2"
+      stroke="#333333" height="%(width)d" width="%(width)d" y="0" x="0" />
+  </g>
+</svg>

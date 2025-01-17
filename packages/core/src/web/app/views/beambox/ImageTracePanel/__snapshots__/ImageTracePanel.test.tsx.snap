@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ImageTracePanel should listen to beamboxstore events 1`] = `<div />`;
+
+exports[`test ImageTracePanel should listen to beamboxstore events 2`] = `
+<div>
+  <div>
+    Dummy StepCrop
+    <button
+      type="button"
+    >
+      finish
+    </button>
+    <button
+      type="button"
+    >
+      cancel
+    </button>
+  </div>
+</div>
+`;
+
+exports[`test ImageTracePanel state transfer should work 1`] = `
+<div>
+  <div>
+    Dummy StepTune
+    <p>
+      cropData: 
+      mock-crop-data
+    </p>
+    <p>
+      imageUrl: 
+      mock-url
+    </p>
+    <button
+      type="button"
+    >
+      back
+    </button>
+    <button
+      type="button"
+    >
+      close
+    </button>
+  </div>
+</div>
+`;
+
+exports[`test ImageTracePanel state transfer should work 2`] = `<div />`;

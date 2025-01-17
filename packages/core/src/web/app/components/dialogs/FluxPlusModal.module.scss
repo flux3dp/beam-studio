@@ -1,0 +1,88 @@
+$antd-modal-border-radius: 8px;
+
+.flux-plus {
+  :global(.ant-modal-content) {
+    padding: 0;
+  }
+
+  .body {
+    display: flex;
+    @media screen and (max-width: 600px) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  .banner {
+    background: #1e1e1e;
+    padding: 40px 30px 24px;
+    overflow: hidden;
+    border-radius: $antd-modal-border-radius 0 0 $antd-modal-border-radius;
+    min-width: min(280px, 100%);
+    line-height: 0;
+    @media screen and (max-width: 600px) {
+      padding: 12px 20px;
+      border-radius: 0 0 $antd-modal-border-radius $antd-modal-border-radius;
+    }
+
+    .icon {
+      height: 45px;
+      width: 170px;
+    }
+
+    .features {
+      margin-top: 16px;
+      color: #fff;
+      .feature {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        > svg {
+          font-size: 24px;
+        }
+      }
+    }
+
+    .img-container {
+      margin: 30px -15px 24px;
+      display: flex;
+      justify-content: center;
+      @media screen and (max-width: 600px) {
+        margin: 0 -20px 10px;
+      }
+      > img {
+        max-width: 300px;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+      }
+    }
+
+    .button:global(.ant-btn-default) {
+      color: #f8d464;
+      border-color: #f8d464;
+      &:hover {
+        color: #1e1e1e;
+        background: #f8d464;
+      }
+    }
+  }
+
+  .content {
+    padding: 20px 24px;
+    width: min(400px, 100%);
+
+    button:global(.ant-btn-primary) {
+      color: black;
+      background: #ffd24b;
+      &:hover {
+        background: #ffc109 !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .banner + .content {
+      padding: 20px 20px 8px;
+    }
+  }
+}

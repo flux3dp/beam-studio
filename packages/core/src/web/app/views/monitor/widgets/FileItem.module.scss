@@ -1,0 +1,35 @@
+@use "./item" as item;
+
+.container {
+  @include item.container;
+
+  position: relative;
+
+  .img-container {
+    > img {
+      border: 3px solid #fff;
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+      padding: 0px;
+    }
+
+    > i {
+      position: absolute;
+      color: #ccc;
+      top: 3px;
+      right: -7px;
+      visibility: hidden;
+      z-index: 99;
+      cursor: pointer;
+
+      &:hover {
+        color: #333;
+      }
+    }
+
+    &.selected {
+      > i {
+        visibility: visible;
+      }
+    }
+  }
+}

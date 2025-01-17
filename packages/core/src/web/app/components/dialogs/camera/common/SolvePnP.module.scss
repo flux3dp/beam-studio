@@ -1,0 +1,111 @@
+@use "styles/variables" as variables;
+
+.footer-button {
+  text-transform: capitalize;
+}
+
+.steps {
+  padding: 0 0 0 24px;
+}
+
+.container {
+  position: relative;
+  box-shadow: 0 0 0 1px #000000;
+  height: 50vh;
+
+  .img-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+
+    &:active {
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .spin {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+
+      .spinner {
+        font-size: 48px;
+      }
+    }
+
+    > img {
+      max-width: unset;
+      top: 0;
+      position: absolute;
+    }
+
+    > svg {
+      max-width: unset;
+      top: 0;
+      position: absolute;
+
+      circle {
+        fill: #ff4d4f;
+        stroke: #ff4d4f;
+        fill-opacity: 0;
+        cursor: move;
+
+        &:active {
+          cursor: none;
+        }
+
+        &.center {
+          fill-opacity: 1;
+          stroke: none;
+          pointer-events: none;
+        }
+      }
+
+      g.selected {
+        circle {
+          fill: variables.$primary-blue;
+          stroke: variables.$primary-blue;
+
+          &.center {
+            stroke: none;
+          }
+        }
+      }
+    }
+  }
+
+  .zoom-block {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 0 0 5px;
+
+    button {
+      margin-left: 5px;
+      background: none;
+      border: none;
+    }
+  }
+}
+
+.point-id {
+  color: #ff4d4f;
+}
+
+.value {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}

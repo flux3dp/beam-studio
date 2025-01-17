@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test SelectConnectionType should render correctly 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="top-bar"
+    />
+    <div
+      class="btns"
+    >
+      <div
+        class="btn primary"
+      >
+        back
+      </div>
+    </div>
+    <div
+      class="main"
+    >
+      <h1
+        class="title"
+      >
+        How do you wish to connect?
+      </h1>
+      <div
+        class="btns"
+      >
+        <div
+          class="btn-container"
+        >
+          <img
+            class="icon"
+            draggable="false"
+            src="img/init-panel/icon-wifi.svg"
+          />
+          <button
+            class="btn btn"
+            id="connect-wifi"
+            type="button"
+          >
+            Wi-Fi
+          </button>
+        </div>
+        <div
+          class="btn-container"
+        >
+          <img
+            class="icon"
+            draggable="false"
+            src="img/init-panel/icon-wired.svg"
+          />
+          <button
+            class="btn btn"
+            id="connect-wired"
+            type="button"
+          >
+            Wired Network
+          </button>
+        </div>
+        <div
+          class="btn-container"
+        >
+          <img
+            class="icon"
+            draggable="false"
+            src="img/init-panel/icon-ether2ether.svg"
+          />
+          <button
+            class="btn btn"
+            id="connect-ether2ether"
+            type="button"
+          >
+            Direct Connection
+          </button>
+        </div>
+        <div
+          class="btn-container"
+        >
+          <img
+            class="icon"
+            draggable="false"
+            src="img/init-panel/icon-usb.svg"
+          />
+          <button
+            class="btn btn"
+            id="connect-usb"
+            type="button"
+          >
+            USB Connection
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

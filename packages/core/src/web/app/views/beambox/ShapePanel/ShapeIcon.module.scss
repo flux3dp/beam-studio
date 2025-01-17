@@ -1,0 +1,16 @@
+@use 'styles/variables' as variables;
+
+.icon {
+  // total size = font-size + border-width * 2
+  background-color: variables.$backgroundColor;
+  font-size: 44px;
+  border-radius: 4px;
+  border: 2px solid variables.$backgroundColor;
+  &:hover {
+    border-color: #3f8ff7;
+  }
+  @media screen and (max-width: 600px) {
+    border-radius: 7px;
+    border: none;
+  }
+}

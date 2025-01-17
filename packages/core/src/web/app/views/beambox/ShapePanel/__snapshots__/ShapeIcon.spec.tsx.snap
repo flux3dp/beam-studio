@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test ShapeIcon should render correctly 1`] = `
+<div>
+  <span
+    class="anticon icon"
+    id="basic/mock-icon"
+    role="img"
+    tabindex="-1"
+  >
+    <svgr-url
+      aria-hidden="true"
+      classname=""
+      fill="currentColor"
+      focusable="false"
+      height="1em"
+      width="1em"
+    />
+  </span>
+</div>
+`;

@@ -1,0 +1,957 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`settings/Editor initially no warning 1`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Editor
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-units
+    label:
+    Default Units
+    url:
+    options:
+    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"value":"Arial","label":"Arial","selected":true},{"value":"Courier","label":"Courier","selected":false},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"value":"ArialMT","label":"Regular","selected":true},{"value":"Arial-BoldMT","label":"Bold","selected":false},{"value":"Arial-BoldItalicMT","label":"Bold Italic","selected":false},{"value":"Arial-ItalicMT","label":"Italic","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-model
+    label:
+    Default Document Setting
+    url:
+    options:
+    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-guide
+    label:
+    Guides
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Guides Origin
+      </label>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        X
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-x-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        400
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        Y
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-y-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        375
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+    </div>
+  </div>
+  <div>
+    mock-select-control id:
+    set-bitmap-quality
+    label:
+    Bitmap Preview Quality
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004494995
+    options:
+    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-anti-aliasing
+    label:
+    Anti-Aliasing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004408956
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-continuous-drawingg
+    label:
+    Continuous Drawing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004406496
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-simplify-clipper-path
+    label:
+    Optimize the Calculated Path
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004407276
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-low-speed
+    label:
+    Enable slow speed movement
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    auto-switch-tab
+    label:
+    Auto Switch Layer and Object Panel
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    options:
+    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-custom-backlash
+    label:
+    Enable Custom Backlash Compensation
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;
+
+exports[`settings/Editor initially no warning 2`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Editor
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-units
+    label:
+    Default Units
+    url:
+    options:
+    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":false},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"value":"LiSungLight","label":"Light","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-model
+    label:
+    Default Document Setting
+    url:
+    options:
+    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-guide
+    label:
+    Guides
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Guides Origin
+      </label>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        X
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-x-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        400
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        Y
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-y-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        375
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+    </div>
+  </div>
+  <div>
+    mock-select-control id:
+    set-bitmap-quality
+    label:
+    Bitmap Preview Quality
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004494995
+    options:
+    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-anti-aliasing
+    label:
+    Anti-Aliasing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004408956
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-continuous-drawingg
+    label:
+    Continuous Drawing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004406496
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-simplify-clipper-path
+    label:
+    Optimize the Calculated Path
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004407276
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-low-speed
+    label:
+    Enable slow speed movement
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    auto-switch-tab
+    label:
+    Auto Switch Layer and Object Panel
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    options:
+    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-custom-backlash
+    label:
+    Enable Custom Backlash Compensation
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;
+
+exports[`settings/Editor initially no warning 3`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Editor
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-units
+    label:
+    Default Units
+    url:
+    options:
+    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":true},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"value":"Regular","label":"Regular","selected":true},{"value":"Courier-Bold","label":"Bold","selected":false},{"value":"Courier-BoldOblique","label":"Bold Oblique","selected":false},{"value":"Courier-Oblique","label":"Oblique","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-model
+    label:
+    Default Document Setting
+    url:
+    options:
+    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-guide
+    label:
+    Guides
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Guides Origin
+      </label>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        X
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-x-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        400
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        Y
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-y-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        375
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+    </div>
+  </div>
+  <div>
+    mock-select-control id:
+    set-bitmap-quality
+    label:
+    Bitmap Preview Quality
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004494995
+    options:
+    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-anti-aliasing
+    label:
+    Anti-Aliasing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004408956
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-continuous-drawingg
+    label:
+    Continuous Drawing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004406496
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-simplify-clipper-path
+    label:
+    Optimize the Calculated Path
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004407276
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-low-speed
+    label:
+    Enable slow speed movement
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    auto-switch-tab
+    label:
+    Auto Switch Layer and Object Panel
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    options:
+    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-custom-backlash
+    label:
+    Enable Custom Backlash Compensation
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;
+
+exports[`settings/Editor initially no warning 4`] = `
+<div>
+  <div
+    class="subtitle"
+  >
+    Editor
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-units
+    label:
+    Default Units
+    url:
+    options:
+    [{"value":"mm","label":"mm","selected":true},{"value":"inches","label":"Inches","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"value":"Arial","label":"Arial","selected":false},{"value":"Courier","label":"Courier","selected":true},{"value":"Apple LiSung","label":"蘋果儷細宋","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"value":"Regular","label":"Regular","selected":false},{"value":"Courier-Bold","label":"Bold","selected":true},{"value":"Courier-BoldOblique","label":"Bold Oblique","selected":false},{"value":"Courier-Oblique","label":"Oblique","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-model
+    label:
+    Default Document Setting
+    url:
+    options:
+    [{"value":"fbm1","label":"beamo","selected":false},{"value":"fbb1b","label":"Beambox","selected":true},{"value":"fbb1p","label":"Beambox Pro","selected":false},{"value":"fhexa1","label":"HEXA","selected":false},{"value":"ado1","label":"Ador","selected":false},{"value":"fpm1","label":"Promark","selected":false},{"value":"flv1","label":"Lazervida","selected":false},{"value":"fbb2","label":"Beambox II","selected":false}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-guide
+    label:
+    Guides
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div
+    class="row-fluid control"
+    id=""
+  >
+    <div
+      class="no-left-margin span3 label"
+    >
+      <label
+        class="font2"
+      >
+        Guides Origin
+      </label>
+    </div>
+    <div
+      class="font3 span8"
+    >
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        X
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-x-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        400
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+      <span
+        class="font2"
+        style="margin-right: 10px; line-height: 32px;"
+      >
+        Y
+      </span>
+      <div>
+        mock-unit-input id:
+        guide-y-input
+        unit:
+        mm
+        min:
+        0
+        max:
+        375
+        defaultValue:
+        0
+        forceUsePropsUnit:
+        true
+        className:
+        {"half":true}
+        <input
+          class="unit-input"
+        />
+      </div>
+    </div>
+  </div>
+  <div>
+    mock-select-control id:
+    set-bitmap-quality
+    label:
+    Bitmap Preview Quality
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004494995
+    options:
+    [{"value":"TRUE","label":"Low","selected":false},{"value":"FALSE","label":"Normal","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-anti-aliasing
+    label:
+    Anti-Aliasing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004408956
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-continuous-drawingg
+    label:
+    Continuous Drawing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004406496
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-simplify-clipper-path
+    label:
+    Optimize the Calculated Path
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004407276
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-low-speed
+    label:
+    Enable slow speed movement
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    auto-switch-tab
+    label:
+    Auto Switch Layer and Object Panel
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    options:
+    [{"value":"swiftray","label":"On","selected":false},{"value":"fluxghost","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-enable-custom-backlash
+    label:
+    Enable Custom Backlash Compensation
+    url:
+    options:
+    [{"value":"TRUE","label":"On","selected":false},{"value":"FALSE","label":"Off","selected":true}]
+    <input
+      class="select-control"
+    />
+  </div>
+</div>
+`;

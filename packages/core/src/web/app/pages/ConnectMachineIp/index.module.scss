@@ -1,0 +1,140 @@
+@use '../connection_setting_page' as connectionSettingPage;
+
+@keyframes pulse {
+  0% {
+    transform: (scale(0.8));
+  }
+
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+.container {
+  @include connectionSettingPage.container;
+
+  .main {
+    .image {
+      img {
+        width: 200px;
+        box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+
+        &.is-usb {
+          width: 300px;
+          margin: -126px 0px 0 26px;
+          position: relative;
+          box-shadow: none;
+          border-radius: 0;
+        }
+      }
+
+      .hint {
+        position: absolute;
+        width: 160px;
+        height: 20px;
+        border-radius: 10px;
+        margin: 74px 0 0 0px;
+
+        &.wired {
+          margin: 122px 0 0 -10px;
+        }
+      }
+
+      .c1 {
+        margin: 32px 0 0 82px;
+      }
+      .c2 {
+        margin: -133px 0px 0px 177px;
+      }
+
+      @media screen and (max-width: 600px) {
+        width: 100%;
+        margin-top: 0;
+
+        .circle {
+          &.c1 {
+            margin: 10px 0 0 -42px;
+          }
+          &.c2 {
+            margin: 146px 0 0 42px;
+          }
+        }
+
+        img {
+          margin: 0;
+        }
+
+        .hint {
+          width: 80px;
+          height: 14px;
+          margin: 44px 0 0 -38px;
+
+          &.wired {
+            margin: 73px 0 0 -38px;
+          }
+        }
+      }
+
+      &.is-usb {
+        width: 300px;
+        margin-top: -60px;
+      }
+    }
+
+    .text {
+      .contents {
+        .subtitle {
+          font-size: 14px;
+          font-weight: 500;
+          color: #000000;
+        }
+      }
+    }
+
+    .input {
+      width: 100%;
+      background-color: unset;
+      color: #333333;
+      border-radius: 0px;
+      border-width: 0px;
+      border-bottom-width: 1px;
+      font-size: 30px;
+      padding: 10px 0;
+      height: 50px;
+      margin-bottom: 10px;
+
+      @media screen and (max-width: 600px) {
+        font-size: 22px;
+        height: 42px;
+      }
+
+      &.disabled {
+        pointer-events: none;
+      }
+      &:focus {
+        border-radius: 0px;
+        border-width: 0px;
+        border-bottom-width: 1px;
+        outline: none;
+      }
+    }
+
+    &.ador {
+      .image {
+        .hint {
+          @include connectionSettingPage.ador-ip-hint;
+        }
+      }
+    }
+
+    &.bb2 {
+      .image {
+        .hint {
+          @include connectionSettingPage.bb2-ip-hint;
+        }
+      }
+    }
+  }
+}

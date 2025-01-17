@@ -1,0 +1,46 @@
+.modal {
+  .close-icon {
+    font-size: 22px;
+  }
+  .title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 12px 0;
+  }
+  .preview-btn {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+  .preview {
+    display: flex;
+    justify-content: center;
+    max-height: 300px;
+    margin-bottom: 12px;
+    > img {
+      object-fit: contain;
+    }
+  }
+  .field {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 8px;
+    margin-bottom: 12px;
+    .label {
+      min-width: 60px;
+      font-weight: bold;
+    }
+    .slider {
+      width: 100%;
+    }
+    .input {
+      width: 80px;
+      input {
+        border-radius: 0;
+      }
+    }
+  }
+}

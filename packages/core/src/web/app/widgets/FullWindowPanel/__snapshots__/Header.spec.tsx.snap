@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Header should render correctly 1`] = `
+<div>
+  <div
+    class="header class"
+  >
+    Header
+  </div>
+</div>
+`;
+
+exports[`test Header should render correctly 2`] = `
+<div>
+  <div
+    class="header class class2"
+  >
+    Header
+  </div>
+</div>
+`;

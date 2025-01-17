@@ -1,0 +1,1850 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly in mobile no elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        id="delete"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+      <div
+        id="duplicate"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Duplicate
+        </button>
+      </div>
+      <div
+        id="parameter"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Parameters
+        </button>
+      </div>
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div
+      class="tools"
+    >
+      <div>
+        This is dummy ObjectPanelDivider
+      </div>
+      <div
+        id="group"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Group
+        </button>
+      </div>
+      <div
+        id="ungroup"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Ungroup
+        </button>
+      </div>
+      <div
+        id="align"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Top Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Middle Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Bottom Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Left Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Center Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Right Align
+          </button>
+        </div>
+      </div>
+      <div
+        id="distribute"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Horizontal Distribute
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Vertical Distribute
+          </button>
+        </div>
+      </div>
+      <div
+        id="boolean"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Union
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Subtract
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Intersect
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Difference
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly in mobile one element is g element 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        id="delete"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+      <div
+        id="duplicate"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Duplicate
+        </button>
+      </div>
+      <div
+        id="parameter"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Parameters
+        </button>
+      </div>
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div
+      class="tools"
+    >
+      <div>
+        This is dummy ObjectPanelDivider
+      </div>
+      <div
+        id="group"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Group
+        </button>
+      </div>
+      <div
+        id="ungroup"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Ungroup
+        </button>
+      </div>
+      <div
+        id="align"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Top Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Middle Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Bottom Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Left Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Center Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Right Align
+          </button>
+        </div>
+      </div>
+      <div
+        id="distribute"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Horizontal Distribute
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Vertical Distribute
+          </button>
+        </div>
+      </div>
+      <div
+        id="boolean"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Union
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Subtract
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Intersect
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Difference
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly in mobile one element not g element 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        id="delete"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+      <div
+        id="duplicate"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Duplicate
+        </button>
+      </div>
+      <div
+        id="parameter"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Parameters
+        </button>
+      </div>
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div
+      class="tools"
+    >
+      <div>
+        This is dummy ObjectPanelDivider
+      </div>
+      <div
+        id="group"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Group
+        </button>
+      </div>
+      <div
+        id="ungroup"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Ungroup
+        </button>
+      </div>
+      <div
+        id="align"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Top Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Middle Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Bottom Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Left Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Center Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Right Align
+          </button>
+        </div>
+      </div>
+      <div
+        id="distribute"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Horizontal Distribute
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Vertical Distribute
+          </button>
+        </div>
+      </div>
+      <div
+        id="boolean"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Union
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Subtract
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Intersect
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Difference
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly in mobile two elements contains other types of elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        id="delete"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+      <div
+        id="duplicate"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Duplicate
+        </button>
+      </div>
+      <div
+        id="parameter"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Parameters
+        </button>
+      </div>
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div
+      class="tools"
+    >
+      <div>
+        This is dummy ObjectPanelDivider
+      </div>
+      <div
+        id="group"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Group
+        </button>
+      </div>
+      <div
+        id="ungroup"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Ungroup
+        </button>
+      </div>
+      <div
+        id="align"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Top Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Middle Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Bottom Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Left Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Center Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Right Align
+          </button>
+        </div>
+      </div>
+      <div
+        id="distribute"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Horizontal Distribute
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Vertical Distribute
+          </button>
+        </div>
+      </div>
+      <div
+        id="boolean"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Union
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Subtract
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Intersect
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Difference
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly in mobile two elements contains rect, polygon or ellipse elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        id="delete"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Delete
+        </button>
+      </div>
+      <div
+        id="duplicate"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Duplicate
+        </button>
+      </div>
+      <div
+        id="parameter"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Parameters
+        </button>
+      </div>
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div
+      class="tools"
+    >
+      <div>
+        This is dummy ObjectPanelDivider
+      </div>
+      <div
+        id="group"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Group
+        </button>
+      </div>
+      <div
+        id="ungroup"
+      >
+        This is dummy ObjectPanelItem
+        <button
+          type="button"
+        >
+          Ungroup
+        </button>
+      </div>
+      <div
+        id="align"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Top Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Middle Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Bottom Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Left Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Center Align
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Right Align
+          </button>
+        </div>
+      </div>
+      <div
+        id="distribute"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Horizontal Distribute
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Vertical Distribute
+          </button>
+        </div>
+      </div>
+      <div
+        id="boolean"
+      >
+        This is dummy ObjectPanelActionList
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Union
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Subtract
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Intersect
+          </button>
+        </div>
+        <div>
+          <svgr-url />
+          <button
+            type="button"
+          >
+            Difference
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly no elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  />
+  ,
+</div>
+`;
+
+exports[`should render correctly one element is g element 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        class="row"
+      >
+        <div
+          class="half left sep"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="hdist"
+            title="Horizontal Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="top_align"
+            title="Top Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="middle_align"
+            title="Middle Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="bottom_align"
+            title="Bottom Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="vdist"
+            title="Vertical Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="left_align"
+            title="Left Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="center_align"
+            title="Center Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="right_align"
+            title="Right Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="half left"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="group"
+            title="Group"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="ungroup"
+            title="Ungroup"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="union"
+            title="Union"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="subtract"
+            title="Subtract"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="intersect"
+            title="Intersect"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="difference"
+            title="Difference"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly one element not g element 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        class="row"
+      >
+        <div
+          class="half left sep"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="hdist"
+            title="Horizontal Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="top_align"
+            title="Top Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="middle_align"
+            title="Middle Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="bottom_align"
+            title="Bottom Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="vdist"
+            title="Vertical Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="left_align"
+            title="Left Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="center_align"
+            title="Center Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="right_align"
+            title="Right Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="half left"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="group"
+            title="Group"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="ungroup"
+            title="Ungroup"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="union"
+            title="Union"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="subtract"
+            title="Subtract"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="intersect"
+            title="Intersect"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="difference"
+            title="Difference"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly two elements contains other types of elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        class="row"
+      >
+        <div
+          class="half left sep"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="hdist"
+            title="Horizontal Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="top_align"
+            title="Top Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="middle_align"
+            title="Middle Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="bottom_align"
+            title="Bottom Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="vdist"
+            title="Vertical Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="left_align"
+            title="Left Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="center_align"
+            title="Center Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="right_align"
+            title="Right Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="half left"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="group"
+            title="Group"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="ungroup"
+            title="Ungroup"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="union"
+            title="Union"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="subtract"
+            title="Subtract"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="intersect"
+            title="Intersect"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="difference"
+            title="Difference"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;
+
+exports[`should render correctly two elements contains rect, polygon or ellipse elements 1`] = `
+<div>
+  <div
+    class="container"
+    id="object-panel"
+  >
+    <div
+      class="tools"
+    >
+      <div
+        class="row"
+      >
+        <div
+          class="half left sep"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="hdist"
+            title="Horizontal Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="top_align"
+            title="Top Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="middle_align"
+            title="Middle Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="bottom_align"
+            title="Bottom Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="vdist"
+            title="Vertical Distribute"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="left_align"
+            title="Left Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="center_align"
+            title="Center Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="right_align"
+            title="Right Align"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="row"
+      >
+        <div
+          class="half left"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="group"
+            title="Group"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            disabled=""
+            id="ungroup"
+            title="Ungroup"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+        <div
+          class="half right"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="union"
+            title="Union"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="subtract"
+            title="Subtract"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="intersect"
+            title="Intersect"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+            id="difference"
+            title="Difference"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      This is dummy DimensionPanel
+    </div>
+    <div>
+      This is dummy OptionsPanel
+    </div>
+    <div>
+      This is dummy ActionsPanel
+    </div>
+  </div>
+</div>
+`;

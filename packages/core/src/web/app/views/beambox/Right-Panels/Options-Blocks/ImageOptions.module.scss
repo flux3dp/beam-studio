@@ -1,0 +1,34 @@
+@use '../_mixins.scss' as mixins;
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 8px;
+  .label {
+    min-width: 60px;
+    font-weight: bold;
+  }
+  .slider {
+    width: 100%;
+  }
+  .input {
+    width: 90px;
+    input {
+      border-radius: 0;
+    }
+  }
+}
+
+.options {
+  .option-block {
+    @include mixins.option-block();
+
+    .option-input {
+      > input {
+        padding: 1px
+      }
+    }
+  }
+}

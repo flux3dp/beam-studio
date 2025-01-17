@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .desc {
+    width: 100%;
+    text-align: start;
+  }
+
+  .imgContainer {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    min-height: 55vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-height: 55vh;
+    }
+
+    .indicator {
+      position: absolute;
+      width: 80%;
+      left: 10%;
+      height: 65%;
+      top: 30%;
+      border: 1px solid red;
+      border-style: dashed;
+    }
+
+    .spinner {
+      font-size: 48px;
+    }
+
+    margin: 12px 0;
+  }
+
+  .slider {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

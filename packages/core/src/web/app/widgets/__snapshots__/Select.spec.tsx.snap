@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Select should render correctly 1`] = `
+<div>
+  <select
+    class="test123"
+    id="123"
+    multiple=""
+    name="select-lang"
+  >
+    <option
+      label="en"
+      value="en"
+    >
+      en
+    </option>
+    <option
+      label="es"
+      value="es"
+    >
+      es
+    </option>
+    <option
+      label="jp"
+      value="jp"
+    >
+      jp
+    </option>
+  </select>
+</div>
+`;
+
+exports[`test Select should render correctly 2`] = `
+<div>
+  <select
+    class="test123"
+    id="123"
+    name="select-lang"
+  >
+    <option
+      label="en"
+      value="en"
+    >
+      en
+    </option>
+    <option
+      label="es"
+      value="es"
+    >
+      es
+    </option>
+    <option
+      label="jp"
+      value="jp"
+    >
+      jp
+    </option>
+  </select>
+</div>
+`;

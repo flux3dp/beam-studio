@@ -1,0 +1,20 @@
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 12px;
+  margin-top: 8px;
+  .label {
+    white-space: nowrap;
+    font-weight: bold;
+  }
+  .select {
+    width: 100%;
+    border-radius: 50px;
+  }
+}

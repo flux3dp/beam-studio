@@ -1,0 +1,49 @@
+.flux-plus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+
+  > img {
+    margin-top: 60px;
+    width: 150px;
+    @media screen and (max-width: 600px) {
+      margin-top: 0;
+      width: 100px;
+    }
+  }
+  .text {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 400;
+    margin: 40px 0 24px 0;
+    > svg {
+      width: 80px;
+      margin-right: 10px;
+    }
+    @media screen and (max-width: 600px) {
+      margin: 12px 0;
+      font-size: 14px;
+      > div {
+        display: inline;
+      }
+      > svg {
+        width: 50px;
+        margin: 0 6px;
+      }
+    }
+  }
+  .buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .note {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+}

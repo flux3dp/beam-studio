@@ -1,0 +1,14 @@
+.container {
+  height: 100%;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+
+  &.disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}

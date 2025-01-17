@@ -1,0 +1,17 @@
+.container {
+  padding: 10px 0 !important;
+
+  :global(.ant-collapse-header-text) {
+    font-weight: bold;
+    font-size: 10pt;
+  }
+
+  .panel {
+    padding: 0;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 10pt;
+  }
+}

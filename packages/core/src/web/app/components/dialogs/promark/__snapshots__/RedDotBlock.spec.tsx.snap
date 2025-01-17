@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test RedDotBlock should render correctly 1`] = `
+<div>
+  <div
+    class="block ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+    style="gap: 8px;"
+  >
+    <div
+      class="title"
+    >
+      Red Dot
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Offset X
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          addonAfter: 
+          mm
+        </p>
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="offset-x"
+          value="0"
+        />
+      </div>
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Offset Y
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          addonAfter: 
+          mm
+        </p>
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="offset-y"
+          value="0"
+        />
+      </div>
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Scale X
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="scale-x"
+          value="1"
+        />
+      </div>
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Scale Y
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="scale-y"
+          value="1"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

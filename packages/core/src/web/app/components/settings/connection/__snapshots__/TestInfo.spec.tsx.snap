@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test TestInfo should correctly when state is camera test failed 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... OK ✅
+    </div>
+    <div
+      class="info"
+      id="machine-test-info"
+    >
+      check_connection... OK ✅
+    </div>
+    <div
+      class="info"
+    >
+      check_firmware... 4.0.0
+    </div>
+    <div
+      class="info"
+    >
+      check_camera... Fail
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is camera testing 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... OK ✅
+    </div>
+    <div
+      class="info"
+      id="machine-test-info"
+    >
+      check_connection... OK ✅
+    </div>
+    <div
+      class="info"
+    >
+      check_firmware... 4.0.0
+    </div>
+    <div
+      class="info"
+    >
+      check_camera... 
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is connection testing 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... OK ✅
+    </div>
+    <div
+      class="info"
+      id="machine-test-info"
+    >
+      check_connection... 10s
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is ip format error 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... invalid_ipinvalid_format
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is ip testing 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... 
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is ip unreachable 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... unreachable
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is none 1`] = `
+<div>
+  <div
+    class="container"
+  />
+</div>
+`;
+
+exports[`test TestInfo should correctly when state is test completed 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="info"
+      id="ip-test-info"
+    >
+      check_ip... OK ✅
+    </div>
+    <div
+      class="info"
+      id="machine-test-info"
+    >
+      check_connection... OK ✅
+    </div>
+    <div
+      class="info"
+    >
+      check_firmware... 4.0.0
+    </div>
+    <div
+      class="info"
+    >
+      check_camera... OK ✅
+    </div>
+    <div
+      class="info"
+    >
+      succeeded_message
+    </div>
+  </div>
+</div>
+`;

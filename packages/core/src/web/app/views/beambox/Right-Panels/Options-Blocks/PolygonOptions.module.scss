@@ -1,0 +1,11 @@
+@use '../_mixins.scss' as mixins;
+
+div.polygon-sides {
+  @include mixins.icon-input();
+
+  :global(.ui-control-unit-input-v2) {
+    input {
+      padding: 1px;
+    }
+  }
+}

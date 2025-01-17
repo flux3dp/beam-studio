@@ -1,0 +1,42 @@
+@use 'styles/mixins' as mixins;
+
+.container {
+  margin: 0 -24px;
+  border: 1px solid #dddddd;
+  border-width: 1px 0;
+  display: flex;
+
+  .canvas {
+    flex: 1 1;
+    min-height: 400px;
+    background: #f0f0f0;
+    position: relative;
+
+    // dragging > move
+    &.move {
+      cursor: move;
+    }
+
+    &.dragging {
+      cursor: grab;
+    }
+
+    .konva-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .zoom {
+      position: absolute;
+      left: 10px;
+      bottom: 20px;
+    }
+  }
+}
+
+.footer {
+  @include mixins.footer;
+  display: flex;
+  justify-content: space-between;
+}

@@ -1,0 +1,20 @@
+@use './mixins' as mixins;
+
+.panel {
+  @include mixins.panel;
+
+  display: inline-flex;
+  align-items: center;
+
+  .setting {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    color: #ababab;
+  }
+}
+
+.icon {
+  font-size: 24px;
+}

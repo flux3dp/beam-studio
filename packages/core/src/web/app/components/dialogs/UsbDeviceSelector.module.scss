@@ -1,0 +1,83 @@
+.device-list {
+  cursor: pointer;
+  height: 160px;
+  list-style: none;
+  margin: 0;
+  margin-top: 12px;
+  text-align: left;
+
+  ul {
+    border: 1px solid #cecece;
+    border-radius: 4px;
+    color: #333333;
+    font-family: Helvetica Neue;
+    height: 100%;
+    margin: 0;
+    overflow-y: scroll;
+    padding: 4px;
+    width: 100%;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      margin: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: 36px;
+      .icon {
+        font-size: 40px;
+        color: #dddddd;
+      }
+    }
+
+    li {
+      display: flex;
+      width: 100%;
+      height: 30px;
+      padding: 0px 12px;
+      border-radius: 2px;
+      align-items: center;
+      justify-content: space-between;
+
+      .name {
+        cursor: pointer;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &:hover {
+        background-color: #e9f4fe;
+      }
+
+      &.selected {
+        background-color: #e9f4fe;
+        .name {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .device-list ul li {
+    padding-right: 0px;
+    gap: 0;
+    .name {
+      width: 120px;
+      margin-right: 8px;
+    }
+  }
+}

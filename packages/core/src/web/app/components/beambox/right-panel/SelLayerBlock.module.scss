@@ -1,0 +1,25 @@
+.container {
+  background: #f8f8f8;
+  padding: 15px;
+
+  .label {
+    white-space: nowrap;
+    margin: -15px -15px 15px -15px;
+    display: block;
+    padding: 10px 15px;
+    background: #f2f2f2;
+    border-bottom: 1px #e0e0e0 solid;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .select {
+    display: block;
+    background-color: #ffffff;
+    width: 100%;
+    height: 30px;
+    padding: 0 0 0 10px;
+    background-position: calc(100% - 4px);
+    cursor: pointer;
+  }
+}

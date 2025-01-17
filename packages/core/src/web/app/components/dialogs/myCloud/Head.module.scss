@@ -1,0 +1,21 @@
+@use 'styles/variables' as variables;
+
+.head {
+  display: flex;
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  .select {
+    :global(.ant-select-selection-item) {
+      color: variables.$primary-blue;
+    }
+  }
+}
+
+.select-dropdown :global(.ant-select-item-option-selected) > div {
+  color: variables.$primary-blue;
+}
+
+.tabs > div {
+  border-bottom: 0;
+}
