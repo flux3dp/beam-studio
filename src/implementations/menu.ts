@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Menu as ElectronMenu } from '@electron/remote';
 
 import AbstractMenu from 'helpers/menubar/AbstractMenu';
@@ -7,12 +6,19 @@ import BeamboxPreference from 'app/actions/beambox/beambox-preference';
 import communicator from 'implementations/communicator';
 import { TabEvents } from 'app/constants/tabConstants';
 
+import eventEmitterFactory from 'helpers/eventEmitterFactory';
 import ElectronUpdater from './electron-updater';
-import { updateCheckbox } from '../electron-menubar-helper';
+import {
+  changeVisibilityByIsBb2,
+  changeVisibilityByIsPromark,
+  changeMenuItemChecked,
+} from '../electron-menubar-helper';
 
 const updateWindowsMenu = () => {
   if (window.os === 'Windows') window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
 };
+
+const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -25,33 +31,45 @@ class Menu extends AbstractMenu {
     });
     communicator.on('NEW_APP_MENU', () => {
       updateWindowsMenu();
-      this.initCheckboxs();
+      this.initMenuItemStatus();
     });
     communicator.on(TabEvents.TabFocused, () => {
-      this.initCheckboxs();
+      this.initMenuItemStatus();
     });
   }
 
   init(): void {
     const isDev = localStorage.getItem('dev') === 'true';
     this.setDevMode(isDev);
-    this.initCheckboxs();
+    this.initMenuItemStatus();
     this.initMenuEvents();
   }
 
-  initCheckboxs = (): void => {
+  initMenuItemStatus = (): void => {
+    // checkboxes
     const shouldZoomWithWindow = BeamboxPreference.read('zoom_with_window');
-    updateCheckbox(['_view', 'ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
+    changeMenuItemChecked(['ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
     const shouldShowGrids = BeamboxPreference.read('show_grids');
-    updateCheckbox(['_view', 'SHOW_GRIDS'], shouldShowGrids);
+    changeMenuItemChecked(['SHOW_GRIDS'], shouldShowGrids);
     const shouldShowRulers = BeamboxPreference.read('show_rulers');
-    updateCheckbox(['_view', 'SHOW_RULERS'], shouldShowRulers);
+    changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
-    updateCheckbox(['_view', 'SHOW_LAYER_COLOR'], isUsingLayerColor);
+    changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
     const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
-    updateCheckbox(['_view', 'ANTI_ALIASING'], isUsingAntiAliasing);
+    changeMenuItemChecked(['ANTI_ALIASING'], isUsingAntiAliasing);
     const shouldShowAlignLines = BeamboxPreference.read('show_align_lines');
-    updateCheckbox(['_view', 'ALIGN_TO_EDGES'], shouldShowAlignLines);
+    changeMenuItemChecked(['ALIGN_TO_EDGES'], shouldShowAlignLines);
+
+    // visibility
+    canvasEvent.on('model-changed', (model) => {
+      const isBb2 = model === 'fbb2';
+      const isPromark = model === 'fpm1';
+
+      changeVisibilityByIsBb2(isBb2);
+      changeVisibilityByIsPromark(isPromark);
+      // force re-render menu
+      ElectronMenu.setApplicationMenu(ElectronMenu.getApplicationMenu());
+    });
   };
 
   attach(enabledItems: string[]) {
