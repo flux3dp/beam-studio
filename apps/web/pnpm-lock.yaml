@@ -171,6 +171,9 @@ importers:
       '@types/eventemitter3':
         specifier: ^2.0.2
         version: 2.0.2
+      '@types/file-saver':
+        specifier: ^2.0.7
+        version: 2.0.7
       '@types/fontkit':
         specifier: ^2.0.6
         version: 2.0.6
@@ -180,6 +183,9 @@ importers:
       '@types/jquery':
         specifier: ^3.5.5
         version: 3.5.5
+      '@types/js-cookie':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/react':
         specifier: ^17.0.5
         version: 17.0.11
@@ -1472,6 +1478,9 @@ packages:
   '@types/express@4.17.17':
     resolution: {integrity: sha512-Q4FmmuLGBG58btUnfS1c1r/NQdlp3DMfGDGig8WhfpA2YRUtEkxAjkZb0yvplJGYdF1fsQ81iMDcH24sSCNC/Q==}
 
+  '@types/file-saver@2.0.7':
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
+
   '@types/fontkit@2.0.6':
     resolution: {integrity: sha512-GxeaJay2RidoCWRDogp2CRttkv0weLwrB7hC+Qmh0mCdW1g0aEVwlLA6kLv5ZDJ6hGZSEiGZG7r57MgAD+fWOg==}
 
@@ -1507,6 +1516,9 @@ packages:
 
   '@types/js-cookie@2.2.7':
     resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
+
+  '@types/js-cookie@3.0.6':
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
 
   '@types/json-schema@7.0.12':
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
@@ -7590,6 +7602,8 @@ snapshots:
       '@types/qs': 6.9.7
       '@types/serve-static': 1.15.0
 
+  '@types/file-saver@2.0.7': {}
+
   '@types/fontkit@2.0.6':
     dependencies:
       '@types/node': 18.19.4
@@ -7631,6 +7645,8 @@ snapshots:
       '@types/sizzle': 2.3.3
 
   '@types/js-cookie@2.2.7': {}
+
+  '@types/js-cookie@3.0.6': {}
 
   '@types/json-schema@7.0.12': {}
 

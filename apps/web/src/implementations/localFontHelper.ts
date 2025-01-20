@@ -1,10 +1,10 @@
-import { LocalFontHelper } from 'core-interfaces/IFont';
+import type { LocalFontHelper } from '@core/interfaces/IFont';
 
 export default {
   findFont: () => null,
   findFonts: () => [],
   getAvailableFonts: () => [],
-  substituteFont: () => null,
   getFontName: () => '',
   getLocalFont: () => undefined,
+  substituteFont: () => null,
 } as LocalFontHelper;

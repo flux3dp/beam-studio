@@ -1,4 +1,4 @@
-import { IChangeLog } from 'core-interfaces/IChangeLog';
+import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
 const CHANGES_TW = {
   added: [
@@ -7,10 +7,8 @@ const CHANGES_TW = {
     '服務不受限於 Windows、MacOS、Linux 與 Chrome OS 等作業系統版本，只要能上網都可以使用。',
     '建議使用最新版 Chrome 或是 Safari 瀏覽器開啟 Beam Studio 以取得最佳的服務相容性與使用體驗。',
   ],
-  fixed: [
-  ],
-  changed: [
-  ],
+  changed: [],
+  fixed: [],
 };
 
 const CHANGES_EN = {
@@ -20,13 +18,11 @@ const CHANGES_EN = {
     'The service is not limited to operating system versions such as Windows, macOS, Linux, and Chrome OS, as long as your device can access the Internet.',
     'We recommend using the latest Chrome or Safari browser to open the Beam Studio to get compatibility and the optimized user experience.',
   ],
-  fixed: [
-  ],
-  changed: [
-  ],
+  changed: [],
+  fixed: [],
 };
 
 export default {
-  CHANGES_TW,
   CHANGES_EN,
+  CHANGES_TW,
 } as IChangeLog;

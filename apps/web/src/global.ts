@@ -1,11 +1,12 @@
+/* eslint-disable no-unused-vars */
 declare global {
   interface Window {
     FLUX: {
-      version: string;
       dev: boolean;
+      version: string;
     };
+    Jimp: any;
     svgedit: {
-      NS: { [key: string]: string };
       browser: {
         isChrome: () => boolean;
         isGecko: () => boolean;
@@ -27,17 +28,21 @@ declare global {
         supportsSelectors: () => () => boolean;
         supportsSvg: () => () => boolean;
         supportsXpath: () => () => boolean;
-      },
+      };
+      coords: {
+        init: any;
+        remapElement: any;
+      };
       draw: {
         Drawing: (svgElem: SVGSVGElement, opt_idPrefix: string) => any;
         Layer: (
           name: string,
-          group: SVGGElement | null,
+          group: null | SVGGElement,
           svgElem: SVGGElement,
           color: string,
         ) => any;
         randomizeIds: (enableRandomization: string, currentDrawing: any) => void;
-      },
+      };
       getReverseNS: () => { [key: string]: string };
       history: {
         BatchCommand: (text?: string) => any;
@@ -58,7 +63,7 @@ declare global {
           text?: string,
         ) => any;
         UndoManager: (historyEventHandler: any) => any;
-      },
+      };
       math: {
         getMatrix: (elem: Element) => SVGMatrix;
         hasMatrixTransform: (tlist: any) => boolean;
@@ -67,44 +72,58 @@ declare global {
         rectsIntersect: (r1: SVGRect, r2: SVGRect) => boolean;
         roundToDefault: (val: number) => number;
         roundToDigit: (val: number, digit?: number) => number;
-        snapToAngle: (x1: number, y1: number, x2: number, y2: number) => {
+        snapToAngle: (
+          x1: number,
+          y1: number,
+          x2: number,
+          y2: number,
+        ) => {
+          a: number;
           x: number;
           y: number;
-          a: number;
         };
-        transformBox: (l: number, t: number, w: number, h: number, m: SVGMatrix) => {
-          tl: {
+        transformBox: (
+          l: number,
+          t: number,
+          w: number,
+          h: number,
+          m: SVGMatrix,
+        ) => {
+          aabox: {
+            height: number;
+            width: number;
             x: number;
             y: number;
-          },
-          tr: {
-            x: number;
-            y: number;
-          },
+          };
           bl: {
             x: number;
             y: number;
-          },
+          };
           br: {
             x: number;
             y: number;
-          },
-          aabox: {
+          };
+          tl: {
             x: number;
             y: number;
-            width: number;
-            height: number;
-          },
+          };
+          tr: {
+            x: number;
+            y: number;
+          };
         };
         transformListToTransform: (tlist: any, min?: number, max?: number) => any;
-        transformPoint: (x: number, y: number, m: SVGMatrix) => {
+        transformPoint: (
           x: number,
           y: number,
+          m: SVGMatrix,
+        ) => {
+          x: number;
+          y: number;
         };
-      },
+      };
+      NS: { [key: string]: string };
       path: {
-        Path: (elem: Element) => any;
-        Segment: (index: number, item: any) => any;
         addDrawingCtrlGrip: (id: number) => HTMLElement;
         addDrawingPoint: (
           index: number,
@@ -116,76 +135,87 @@ declare global {
         clearData: () => void;
         getCtrlLine: (id: number) => HTMLElement;
         getGripContainer: () => HTMLElement;
-        getGripPosition: (x: number, y: number) => {
+        getGripPosition: (
           x: number,
           y: number,
+        ) => {
+          x: number;
+          y: number;
         };
-        getGripPt: (seg: any, alt_pt: any) => {
-          x: number,
-          y: number,
+        getGripPt: (
+          seg: any,
+          alt_pt: any,
+        ) => {
+          x: number;
+          y: number;
         };
         getPath_: (elem: Element) => any;
-        getPointFromGrip: (pt: any, path: any) => {
-          x: number,
-          y: number,
+        getPointFromGrip: (
+          pt: any,
+          path: any,
+        ) => {
+          x: number;
+          y: number;
         };
         getSegSelector: (seg: any, update: any) => HTMLElement;
         init: (editorContext: any) => void;
         insertItemBefore: (elem: any, newseg: any, index: number) => void;
+        Path: (elem: Element) => any;
         path: any;
         ptObjToArr: (type: string, seg_item: []) => [];
         recalcRotatedPath: () => void;
         removePath_: (id: number) => {
-          x: number,
-          y: number,
+          x: number;
+          y: number;
         };
         replacePathSeg: (type: string, index: number, pts: any, elem: any) => any;
+        Segment: (index: number, item: any) => any;
         setLinkControlPoints: (lcp: any) => void;
         smoothControlPoints: (
           ct1: {
-            x: number,
-            y: number,
+            x: number;
+            y: number;
           },
           ct2: {
-            x: number,
-            y: number,
+            x: number;
+            y: number;
           },
           pt: {
-            x: number,
-            y: number,
+            x: number;
+            y: number;
           },
-        ) => [{
-          x: number,
-          y: number,
-        }, {
-          x: number,
-          y: number,
-        }] | undefined;
+        ) =>
+          | [
+              {
+                x: number;
+                y: number;
+              },
+              {
+                x: number;
+                y: number;
+              },
+            ]
+          | undefined;
         updateControlLines: () => void;
         updateDrawingPoints: () => void;
+      };
+      recalculate: {
+        init: any;
+        recalculateDimensions: any;
+        updateClipPath: any;
       };
       sanitize: {
         sanitizeSvg: (node: HTMLElement) => void;
       };
       select: {
-        Selector: (id: number, elem: HTMLElement, bbox?: any) => any;
-        SelectorManager: () => any;
         getSelectorManager: () => any;
         init: (config: any, svgFactory: any) => void;
+        Selector: (id: number, elem: HTMLElement, bbox?: any) => any;
+        SelectorManager: () => any;
       };
-      coords: {
-        init: any;
-        remapElement: any;
-      },
-      recalculate: {
-        init: any;
-        recalculateDimensions: any;
-        updateClipPath: any;
-      },
       transformlist: any;
       units: any;
       utilities: any;
     };
-    Jimp: any;
   }
 }

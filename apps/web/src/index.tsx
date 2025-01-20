@@ -1,19 +1,18 @@
 /* eslint-disable import/order */
 import './assets/scss/main.scss';
 
-import 'helpers/global-helper';
+import '@core/helpers/global-helper';
 
 // need to import all required external modules before reading our own files
 // otherwise, the major global variables will not become accessible
 import './main';
 import './shortcuts';
 
-import storage from 'implementations/storage';
-import router from 'app/router';
+import storage from '@app/implementations/storage';
+import router from '@core/app/router';
 
 if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line no-console
-  console.log('Looks like we are in development mode!');
+  console.log('We are in development mode!');
   window.FLUX.dev = true;
 }
 
@@ -38,16 +37,19 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const onFinished = (data) => {
+const onFinished = (data: boolean) => {
   const { hash } = window.location;
   const isReady = data;
+
   if (isReady === true && (hash === '' || hash.startsWith('#initialize'))) {
     window.location.hash = '#studio/beambox';
   } else if (isReady === false && !hash.startsWith('#initialize')) {
     window.location.hash = '#';
   }
+
   checkScreenSize();
   window.addEventListener('hashchange', checkScreenSize);
-  router(document.getElementById('root'));
+  router(document.getElementById('root') as HTMLElement);
 };
+
 onFinished(storage.get('printer-is-ready'));

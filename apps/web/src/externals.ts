@@ -20,5 +20,5 @@ import 'coords';
 import 'recalculate';
 import 'draw';
 import 'layer';
-import 'path';
+import 'node:path';
 import 'jqueryUi';

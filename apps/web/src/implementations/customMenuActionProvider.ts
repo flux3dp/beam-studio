@@ -1,8 +1,7 @@
-import { ICustomMenuActionProvider } from 'core-interfaces/ICustomMenuActionProvider';
+import type { ICustomMenuActionProvider } from '@core/interfaces/ICustomMenuActionProvider';
 
 export default {
   getCustomMenuActions() {
-    return {
-    };
+    return {};
   },
 } as ICustomMenuActionProvider;

@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
-import AbstractMenu from 'helpers/menubar/AbstractMenu';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 class Menu extends AbstractMenu {
   private eventEmitter;

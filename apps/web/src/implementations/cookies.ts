@@ -1,9 +1,7 @@
-import { ICookies } from 'core-interfaces/ICookies';
 import Cookies from 'js-cookie';
 
+import type { ICookies } from '@core/interfaces/ICookies';
+
 export default {
-  getBrowserCookie: (name: string) => {
-    const value = Cookies.get(name);
-    return value;
-  },
+  getBrowserCookie: (name: string) => Cookies.get(name),
 } as ICookies;

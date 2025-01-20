@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 
-import { ICommunicator } from 'core-interfaces/ICommunicator';
+import type { ICommunicator } from '@core/interfaces/ICommunicator';
 
 export const listener = new EventEmitter();
 export const sender = new EventEmitter();
@@ -16,7 +16,9 @@ export default {
   },
   sendSync(channel: string, ...args: any[]) {
     const res = { returnValue: null };
+
     sender.emit(channel, res, ...args);
+
     return res.returnValue;
   },
 } as ICommunicator;
