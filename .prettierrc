@@ -3,6 +3,7 @@
   "tabWidth": 2,
   "semi": true,
   "printWidth": 100,
+  "trailingComma": "all",
   "overrides": [
     {
       "files": "packages/core/src/web/app/lang/*.ts",

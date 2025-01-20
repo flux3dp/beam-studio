@@ -1,44 +1,44 @@
 import React, { forwardRef } from 'react';
 
 interface Props {
-  id: string;
-  disabled?: boolean;
+  addonAfter?: string;
   className?: string;
-  value?: number;
+  'data-testid'?: string;
+  disabled?: boolean;
+  fireOnChange?: boolean;
+  id: string;
+  isInch?: boolean;
   max?: number;
   min?: number;
-  addonAfter?: string;
-  isInch?: boolean;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (value: number) => void;
   precision?: number;
   underline?: boolean;
   unit?: string;
-  fireOnChange?: boolean;
-  'data-testid'?: string;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-  onChange?: (value: number) => void;
+  value?: number;
 }
 
 const mockComponent = forwardRef<HTMLInputElement, Props>(
   (
     {
-      id,
-      disabled,
+      addonAfter,
       className,
-      value,
+      'data-testid': testId,
+      disabled,
+      fireOnChange,
+      id,
+      isInch,
       max,
       min,
-      addonAfter,
-      isInch,
+      onBlur,
+      onChange,
       precision,
       underline,
       unit,
-      fireOnChange,
-      onBlur,
-      onChange,
-      'data-testid': testId,
+      value,
     }: Props,
-    outerRef
-  ): JSX.Element => (
+    outerRef,
+  ): React.JSX.Element => (
     <div className={className}>
       UnitInput: {id}
       {addonAfter && <p>addonAfter: {addonAfter}</p>}
@@ -48,18 +48,18 @@ const mockComponent = forwardRef<HTMLInputElement, Props>(
       {unit && <p>unit: {unit}</p>}
       {fireOnChange && <p>fireOnChange</p>}
       <input
-        ref={outerRef}
-        id={id}
         data-testid={testId}
         disabled={disabled}
+        id={id}
         max={max}
         min={min}
-        value={value}
         onBlur={onBlur}
         onChange={(e) => onChange(Number(e.target.value))}
+        ref={outerRef}
+        value={value}
       />
     </div>
-  )
+  ),
 );
 
 export default mockComponent;
