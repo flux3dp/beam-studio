@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`test canvas/prespray-area generate prespray area 1`] = `"<g class="layer" data-module="5"></g><image id="presprayArea" x="4000" y="2400" width="300" height="300" href="url" style="cursor:move;"><title>Priming Area</title></image>"`;
