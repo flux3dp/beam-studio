@@ -1,4 +1,5 @@
 # Beam Studio
+
 ---
 
 ## Introduction
@@ -22,15 +23,14 @@ Beam Studio is the companion application for [FLUX Beam Series](http://flux3dp.c
 1. Build resource `$> webpack watch`
 
 ## Rebuild module for electron `$> node_modules/.bin/electron-rebuild`
+
 * Rebuild C++ module to make it compatible with the node inside of electron.
 * Though the module was build when running yarn install (or npm install, npm rebuild), it was build for node in your command line environment, not for electron
-
 
 ## Run electron
 
 * Run default: `npm start`
 * Support environment variables
-
 
 ## License
 

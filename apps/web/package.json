@@ -1,5 +1,5 @@
 {
-  "name": "beam-studio-web",
+  "name": "@beam-studio/web",
   "version": "1.0.0",
   "description": "Beam Studio Web",
   "main": "index.tsx",
@@ -53,7 +53,7 @@
     "rxjs": "^7.1.0",
     "sprintf-js": "^1.1.2",
     "three": "^0.159.0",
-    "typescript": "^4.2.4",
+    "typescript": "^5.6.3",
     "use-image": "^1.1.1"
   },
   "devDependencies": {
@@ -74,8 +74,6 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/sprintf-js": "^1.1.2",
     "@types/three": "^0.159.0",
-    "@typescript-eslint/eslint-plugin": "^4.23.0",
-    "@typescript-eslint/parser": "^4.23.0",
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.6",
@@ -83,13 +81,6 @@
     "cypress-file-upload": "^5.0.8",
     "cypress-real-events": "^1.11.0",
     "cypress-xpath": "^1.6.2",
-    "eslint": "^7.26.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-plugin-cypress": "^2.11.3",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.23.2",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "exports-loader": "^3.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.1",
@@ -111,5 +102,5 @@
     "workbox-webpack-plugin": "^7.0.0",
     "worker-loader": "^3.0.8"
   },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@10.0.0"
 }

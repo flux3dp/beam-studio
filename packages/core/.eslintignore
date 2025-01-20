@@ -1,6 +1,0 @@
-node_modules
-public/js/dist
-public/js/lib
-src/web/app/actions/beambox/svg-editor.ts
-src/web/helpers/potrace
-src/web/helpers/clipper/clipper_unminified.js

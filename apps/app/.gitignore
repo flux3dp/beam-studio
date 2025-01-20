@@ -1,9 +1,4 @@
 # Folder view configuration files
-Desktop.ini
-bower_components
-!/public/node_modules
-_tools/nwjs*
-_tools/build
 public/js/jsx
 public/js/dist
 public/js/node
@@ -19,67 +14,6 @@ utils
 dist
 tmp/*
 
-fluxhald.pid
-fluxrobot.pid
-fluxupnpd.pid
-fluxusbd.pid
-
-osx-cache
-win-x86-cache
-win-x64-cache
-latest-ghost-osx.zip
-latest-ghost-win-x86.rar
-pack-win.zip
-_tools/nwjs-shell-builder/resources/*
-message.log
-
 *.dmg
 
-public/merged.stl
-public/output.fcode
-public/output.gcode
-public/preprocess.svg
-public/preview.png
-public/stl.cache
-public/temp.transform
-
-# Thumbnail cache files
-._*
-Thumbs.db
-
-# temporary/log files
-output.fcode
-output.gcode
-output.stl
-preprocess.svg
-preview.png
-public/_preview.png
-public/npm-debug.log
-public/output.fc
-public/output.ini
-public/output.stl
-public/js/jsx
-
-# other
 _tools/environment
-
-_test/selenium-debug.log
-_test/tests_output/CHROME_57.0.2987.98_MAC_googleTest.xml
-_test/tests_output/CHROME_57.0.2987.98_MAC_dashboard.xml
-_test/nwjs
-_test/tests_output/*
-
-_test/tests_output/CHROME_57.0.2987.98_MAC_printing.xml
-stl.cache
-temp.transform
-_test/example_files/star.png
-_test/example_files/star.svg
-_test/tests_output/CHROME_57.0.2987.133_MAC_laser.xml
-_test/tests_output/CHROME_57.0.2987.133_MAC_printing.xml
-
-build/config.gypi
-.vscode/ipch/7a6dfb8b3e824ce9/mmap_address.bin
-build-script.sh
-curl.exe
-
-**/top-menu/black/**

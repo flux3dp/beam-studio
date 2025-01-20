@@ -1,7 +1,0 @@
-node_modules
-dist
-src/web
-src/vendor
-src/interfaces/core-interfaces
-cypress.config.ts
-cypress.config.*.ts
