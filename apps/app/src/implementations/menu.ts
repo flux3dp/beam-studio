@@ -1,21 +1,24 @@
 import { Menu as ElectronMenu } from '@electron/remote';
 
-import AbstractMenu from 'helpers/menubar/AbstractMenu';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { TabEvents } from '@core/app/constants/tabConstants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 
-import communicator from 'implementations/communicator';
-import { TabEvents } from 'app/constants/tabConstants';
+import communicator from '@app/implementations/communicator';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import ElectronUpdater from './electron-updater';
 import {
+  changeMenuItemChecked,
   changeVisibilityByIsBb2,
   changeVisibilityByIsPromark,
-  changeMenuItemChecked,
 } from '../electron-menubar-helper';
 
+import ElectronUpdater from './electron-updater';
+
 const updateWindowsMenu = () => {
-  if (window.os === 'Windows') window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
+  if (window.os === 'Windows') {
+    window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
+  }
 };
 
 const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
@@ -23,7 +26,7 @@ const canvasEvent = eventEmitterFactory.createEventEmitter('canvas');
 class Menu extends AbstractMenu {
   private communicator;
 
-  constructor(aCommunicator) {
+  constructor(aCommunicator: any) {
     super();
     this.communicator = aCommunicator;
     communicator.on('UPDATE_MENU', () => {
@@ -40,6 +43,7 @@ class Menu extends AbstractMenu {
 
   init(): void {
     const isDev = localStorage.getItem('dev') === 'true';
+
     this.setDevMode(isDev);
     this.initMenuItemStatus();
     this.initMenuEvents();
@@ -48,16 +52,27 @@ class Menu extends AbstractMenu {
   initMenuItemStatus = (): void => {
     // checkboxes
     const shouldZoomWithWindow = BeamboxPreference.read('zoom_with_window');
+
     changeMenuItemChecked(['ZOOM_WITH_WINDOW'], shouldZoomWithWindow);
+
     const shouldShowGrids = BeamboxPreference.read('show_grids');
+
     changeMenuItemChecked(['SHOW_GRIDS'], shouldShowGrids);
+
     const shouldShowRulers = BeamboxPreference.read('show_rulers');
+
     changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
+
     const isUsingLayerColor = BeamboxPreference.read('use_layer_color');
+
     changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
+
     const isUsingAntiAliasing = BeamboxPreference.read('anti-aliasing');
+
     changeMenuItemChecked(['ANTI_ALIASING'], isUsingAntiAliasing);
+
     const shouldShowAlignLines = BeamboxPreference.read('show_align_lines');
+
     changeMenuItemChecked(['ALIGN_TO_EDGES'], shouldShowAlignLines);
 
     // visibility

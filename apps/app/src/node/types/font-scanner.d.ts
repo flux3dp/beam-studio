@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 interface Font {
   family: string;
-  postscriptName: string;
   italic: boolean;
+  postscriptName: string;
   style: string;
   weight: number;
 }
@@ -12,8 +13,8 @@ declare module 'font-scanner' {
   export function substituteFontSync(postscriptName: string, text: string): Font;
 
   export default {
-    getAvailableFontsSync,
     findFontSync,
+    getAvailableFontsSync,
     substituteFontSync,
   };
 }

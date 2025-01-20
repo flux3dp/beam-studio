@@ -1,4 +1,4 @@
-import { IMenuEventListenerFactory } from 'interfaces/IMenuEventListenerFactory';
+import type { IMenuEventListenerFactory } from '@core/interfaces/IMenuEventListenerFactory';
 
 import communicator from './communicator';
 

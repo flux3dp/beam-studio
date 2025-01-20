@@ -1,18 +1,23 @@
-/* eslint-disable no-param-reassign */
 import { Menu } from '@electron/remote';
 
 export const getOneMenuItem = (id: string): Electron.MenuItem =>
-  Menu.getApplicationMenu().getMenuItemById(id);
+  Menu.getApplicationMenu()?.getMenuItemById(id) as Electron.MenuItem;
 
-export const getManyMenuItems = (ids: string[]): Array<Electron.MenuItem> => {
-  let currentItem: Electron.MenuItem;
+export const getManyMenuItems = (ids: string[]): Electron.MenuItem[] => {
+  let currentItem: Electron.MenuItem = getOneMenuItem('_file');
 
   for (let i = 0; i < ids.length - 1; i += 1) {
-    currentItem = getOneMenuItem(ids[i]);
+    const targetItem = getOneMenuItem(ids[i]);
+
+    if (!targetItem) {
+      return [];
+    }
+
+    currentItem = targetItem;
   }
 
   return ids[ids.length - 1] === '*'
-    ? currentItem.submenu.items
+    ? (currentItem.submenu?.items ?? [])
     : [getOneMenuItem(ids[ids.length - 1])];
 };
 

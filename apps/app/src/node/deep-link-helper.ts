@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { WebContentsView } from 'electron';
+import type { WebContentsView } from 'electron';
 
 export const getDeeplinkUrl = (argv: string[]): string | undefined =>
   argv.find((s) => s.startsWith('beam-studio://'));
@@ -7,7 +6,9 @@ export const getDeeplinkUrl = (argv: string[]): string | undefined =>
 export const handleDeepLinkUrl = (views: WebContentsView[], url: string): void => {
   if (url) {
     const urlObject = new URL(decodeURI(url));
+
     console.log(urlObject);
+
     if (urlObject.hostname === 'fb-auth') {
       views.forEach((view) => view.webContents.send('FB_AUTH_TOKEN', urlObject.hash.slice(1)));
     } else if (urlObject.hostname === 'google-auth') {

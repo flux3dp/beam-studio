@@ -1,7 +1,8 @@
-import childProcess from 'child_process';
-import os from 'os';
-import util from 'util';
-import { IOperatingSystem } from 'interfaces/IOperatingSystem';
+import childProcess from 'node:child_process';
+import os from 'node:os';
+import util from 'node:util';
+
+import type { IOperatingSystem } from '@core/interfaces/IOperatingSystem';
 
 // ref: https://en.wikipedia.org/wiki/Darwin_(operating_system)#Release_history
 // list to mac 11 because we support mac 11 and above
@@ -24,16 +25,18 @@ export const macKernelVersionMap = {
   '19.5.0': '10.15.5',
   '19.6.0': '10.15.6',
   '20.1.0': '11.0.0',
-};
+} as const;
+
+export type MacKernelVersionMap = keyof typeof macKernelVersionMap;
 
 export default {
-  type: os.type,
   arch: os.arch,
-  release: os.release,
   networkInterfaces: os.networkInterfaces,
   process: {
     exec: util.promisify(childProcess.exec),
     execFile: util.promisify(childProcess.execFile),
     execSync: childProcess.execSync,
   },
+  release: os.release,
+  type: os.type,
 } as IOperatingSystem;

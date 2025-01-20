@@ -1,11 +1,5 @@
-import svgEditor from 'app/actions/beambox/svg-editor';
-import EasyManipulator from 'helpers/api/beam-easy-api';
-import grayScale from 'helpers/grayscale';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
+import EasyManipulator from '@core/helpers/api/beam-easy-api';
+import grayScale from '@core/helpers/grayscale';
 
-console.log('TSLoader', {
-  svgEditor,
-  EasyManipulator,
-  grayScale,
-});
-
-export default true;
+console.log('TSLoader', { EasyManipulator, grayScale, svgEditor });

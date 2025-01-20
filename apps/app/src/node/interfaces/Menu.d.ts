@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { MenuItem } from 'electron';
+import type { MenuItem } from 'electron';
 
 export interface MenuData extends MenuItem {
   id: string;
-  uuid?: string;
-  serial?: string;
   machineName?: string;
+  serial?: string;
   source?: string;
+  uuid?: string;
 }

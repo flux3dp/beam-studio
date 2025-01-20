@@ -1,33 +1,30 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable import/first */
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/order
 import { app, BaseWindow, BrowserWindow, ipcMain, systemPreferences } from 'electron';
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
 // app.allowRendererProcessReuse = false;
 
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import url from 'url';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import url from 'node:url';
 
-import Sentry from '@sentry/electron';
 import * as electronRemote from '@electron/remote/main';
+import Sentry from '@sentry/electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
-
-import DeviceInfo from 'interfaces/DeviceInfo';
 
 import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
-import events from './ipc-events';
+import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import fontHelper from './font-helper';
+import { setTabManager } from './helpers/tabHelper';
+import type DeviceInfo from './interfaces/DeviceInfo';
+import events from './ipc-events';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
 import TabManager from './tabManager';
-import { getDeeplinkUrl, handleDeepLinkUrl } from './deep-link-helper';
-import { setTabManager } from './helpers/tabHelper';
 import { UpdateManager } from './updateManager';
 
 electronRemote.initialize();
@@ -43,13 +40,13 @@ setupTitlebar();
 
 let mainWindow: BaseWindow | null;
 let menuManager: MenuManager | null;
-let tabManager: TabManager | null;
+let tabManager: null | TabManager;
 
 const globalData: {
   backend: {
     alive: boolean;
-    port?: number;
     logfile?: string;
+    port?: number;
   };
   devices: { [key: string]: DeviceInfo };
 } = {
@@ -59,7 +56,9 @@ const globalData: {
   devices: {},
 };
 
+// eslint-disable-next-line no-unused-vars
 let logger: { write: (data: string) => void };
+
 function createLogFile() {
   const storageDir = app.getPath('userData');
 
@@ -67,18 +66,23 @@ function createLogFile() {
     if (fs.existsSync(target)) {
       return;
     }
+
     chkDir(path.dirname(target));
     fs.mkdirSync(target);
   }
   chkDir(storageDir);
 
   const filename = path.join(app.getPath('userData'), 'backend.log');
+
   globalData.backend.logfile = filename;
+
   // global.backend.logfile = filename;
   let writeStream = fs.createWriteStream(filename, { flags: 'w' });
+
   logger = writeStream;
   console.log = (...args) => writeStream.write(`${args.join(' ')}\n`);
   console.error = console.log;
+
   const setCloseEventHandler = () => {
     writeStream.on('close', () => {
       writeStream = fs.createWriteStream(filename, { flags: 'a' });
@@ -88,11 +92,14 @@ function createLogFile() {
       setCloseEventHandler();
     });
   };
+
   setCloseEventHandler();
+
   return writeStream;
 }
 
 let DEBUG = false;
+
 logger = process.stderr.isTTY ? process.stderr : createLogFile();
 
 if (process.argv.indexOf('--debug-mode') > 0) {
@@ -118,8 +125,9 @@ function onGhostDown() {
 }
 
 function onDeviceUpdated(deviceInfo: DeviceInfo) {
-  const { alive, source, uuid, serial } = deviceInfo;
+  const { alive, serial, source, uuid } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
+
   tabManager?.sendToFocusedView('device-status', deviceInfo);
 
   if (alive || source !== 'lan') {
@@ -127,35 +135,44 @@ function onDeviceUpdated(deviceInfo: DeviceInfo) {
       if (globalData.devices[deviceID] && globalData.devices[deviceID].serial !== serial) {
         menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       }
+
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
-      if (didUpdated) tabManager?.sendToAllViews('UPDATE_MENU');
+
+      if (didUpdated) {
+        tabManager?.sendToAllViews('UPDATE_MENU');
+      }
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
       tabManager?.sendToAllViews('UPDATE_MENU');
     }
+
     delete globalData.devices[deviceID];
   }
+
   globalData.devices[deviceID] = deviceInfo;
 }
 
 bootstrap();
 
 UpdateManager.init();
+
 const backendManager = new BackendManager({
+  debug: DEBUG,
   location: process.env.BACKEND,
-  trace_pid: process.pid,
-  server: process.argv.indexOf('--server') > 0,
   on_ready: onGhostUp,
   on_stderr: (data) => logger.write(`${data}`),
   on_stopped: onGhostDown,
-  debug: DEBUG,
+  server: process.argv.indexOf('--server') > 0,
+  trace_pid: process.pid,
 });
+
 backendManager.start();
 
 // Run monitorexe api
 let monitorManager: MonitorManager | null = null;
+
 if (process.argv.includes('--monitor')) {
   console.log('Starting Monitor');
   monitorManager = new MonitorManager({
@@ -174,7 +191,7 @@ const loadShadowWindow = () => {
     url.format({
       pathname: path.join(__dirname, '../../shadow-index.html'),
       protocol: 'file:',
-    })
+    }),
   );
 };
 
@@ -183,8 +200,8 @@ const createShadowWindow = () => {
     shadowWindow = new BrowserWindow({
       show: false,
       webPreferences: {
-        nodeIntegration: true,
         contextIsolation: false,
+        nodeIntegration: true,
       },
     });
     // shadowWindow.webContents.openDevTools();
@@ -204,14 +221,14 @@ function createWindow() {
   // Create the browser window.
   console.log('Creating main window');
   mainWindow = new BaseWindow({
-    width: 1300,
-    height: 650,
-    minWidth: 800,
-    minHeight: 400,
-    titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     frame: process.platform !== 'win32',
+    height: 650,
+    minHeight: 400,
+    minWidth: 800,
     title: `Beam Studio - ${app.getVersion()}`,
+    titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     trafficLightPosition: { x: 12, y: 14 },
+    width: 1300,
   });
   tabManager = new TabManager(mainWindow, { isDebug: DEBUG });
   tabManager.addNewTab();
@@ -232,12 +249,18 @@ function createWindow() {
 
   mainWindow.on('close', async (evt) => {
     console.log('Main window close event', isCloseConfirmed);
+
     if (!isCloseConfirmed) {
       evt.preventDefault();
+
       if (tabManager) {
         const res = await tabManager.closeAllTabs();
-        if (!res) return;
+
+        if (!res) {
+          return;
+        }
       }
+
       isCloseConfirmed = true;
       mainWindow?.close();
     } else {
@@ -248,8 +271,11 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
 
-    if (process.platform === 'darwin' && DEBUG) console.log('Main window closed.');
-    else app.quit();
+    if (process.platform === 'darwin' && DEBUG) {
+      console.log('Main window closed.');
+    } else {
+      app.quit();
+    }
   });
 
   menuManager?.on('DEBUG-RELOAD', () => {
@@ -258,7 +284,7 @@ function createWindow() {
         pathname: path.join(__dirname, '../../index.html'),
         protocol: 'file:',
         slashes: true,
-      })
+      }),
     );
   });
 
@@ -276,7 +302,7 @@ function createWindow() {
 
   if (process.platform === 'win32') {
     // original attachTitlebarToWindow for windows
-    // eslint-disable-next-line max-len
+
     // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
     mainWindow.on('enter-full-screen', () => {
       tabManager?.sendToAllViews('window-fullscreen', true);
@@ -309,29 +335,38 @@ app.on('open-file', (event, filePath) => {
 ipcMain.on('GET_OPEN_FILE', (evt) => {
   if (!didGetOpenFile) {
     didGetOpenFile = true;
+
     if (process.platform === 'win32' && process.argv.length > 1) {
       [, initOpenPath] = process.argv;
     }
+
     if (initOpenPath && fs.existsSync(initOpenPath)) {
       evt.returnValue = initOpenPath;
     }
   }
+
   evt.returnValue = null;
 });
 
 ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
   if (process.platform === 'darwin') {
     const res = await systemPreferences.askForMediaAccess(key);
+
     console.log('ask for permission', key, res);
     event.returnValue = res;
+
     return;
   }
+
   if (process.platform === 'win32') {
     const res = systemPreferences.getMediaAccessStatus(key);
+
     console.log('ask for permission', key, res);
     event.returnValue = res !== 'denied';
+
     return;
   }
+
   event.returnValue = true;
 });
 
@@ -352,39 +387,43 @@ ipcMain.on(events.CHECK_BACKEND_STATUS, (evt) => {
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL, (e, data) => {
   const {
-    svgUrl,
-    imgWidth: width,
-    imgHeight: height,
     bb,
-    imageRatio,
-    id,
-    strokeWidth,
     fullColor,
+    id,
+    imageRatio,
+    imgHeight: height,
+    imgWidth: width,
+    strokeWidth,
+    svgUrl,
   } = data;
+
   if (shadowWindow) {
     const senderId = e.sender.id;
+
     shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, {
+      bb,
+      fullColor,
+      height,
+      id,
+      imageRatio,
+      senderId,
+      strokeWidth,
       url: svgUrl,
       width,
-      height,
-      bb,
-      imageRatio,
-      id,
-      strokeWidth,
-      fullColor,
-      senderId,
     });
   }
 });
 
 ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (e, data) => {
-  const { imageUrl, id, senderId } = data;
+  const { id, imageUrl, senderId } = data;
+
   tabManager?.sendToView(senderId, `${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
 
 let editingStandardInput = false;
+
 ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (event, arg) => {
   editingStandardInput = arg;
   console.log('Set SET_EDITING_STANDARD_INPUT', arg);
@@ -395,6 +434,7 @@ console.log('Running Beam Studio on ', os.arch());
 app.setAsDefaultProtocolClient('beam-studio');
 
 const hasLock = app.requestSingleInstanceLock();
+
 console.log('hasLock', hasLock);
 
 if (process.platform === 'win32' && !hasLock && getDeeplinkUrl(process.argv)) {
@@ -406,14 +446,20 @@ if (process.platform === 'win32' && !hasLock && getDeeplinkUrl(process.argv)) {
 app.on('second-instance', (e, argv) => {
   e.preventDefault();
   console.log(argv);
+
   if (mainWindow) {
     if (mainWindow.isMinimized()) {
       mainWindow.restore();
     }
+
     mainWindow.focus();
   }
+
   const linkUrl = getDeeplinkUrl(argv);
-  if (linkUrl) handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
+
+  if (linkUrl) {
+    handleDeepLinkUrl(tabManager?.getAllViews() || [], linkUrl);
+  }
 });
 
 // macOS deep link handler
@@ -431,20 +477,22 @@ if (os.arch() === 'ia32' || os.arch() === 'x32') {
 
 const onMenuClick = (data: {
   id: string;
+  machineName?: string;
   serial?: string;
   uuid?: string;
-  machineName?: string;
 }) => {
   data = {
     id: data.id,
+    machineName: data.machineName,
     serial: data.serial,
     uuid: data.uuid,
-    machineName: data.machineName,
   };
+
   if (editingStandardInput) {
     if (data.id === 'REDO') {
       tabManager?.getFocusedView()?.webContents.redo();
     }
+
     if (data.id === 'UNDO') {
       tabManager?.getFocusedView()?.webContents.undo();
     }
@@ -475,12 +523,16 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
   });
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
 app.on('before-quit', () => {});

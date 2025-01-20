@@ -1,6 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { exec, execSync } from 'child_process';
+/* eslint-disable no-unused-vars */
+import { exec, execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import sudo from 'sudo-prompt';
 
@@ -63,8 +64,8 @@ class MonitorManager {
     let monitorCmd = null;
     let execFail = false;
     const sudoOption = {
-      name: 'Beam Studio',
       icns: 'public/icon.png',
+      name: 'Beam Studio',
     };
 
     if (process.platform === 'darwin') {
@@ -77,12 +78,15 @@ class MonitorManager {
           if (err) {
             console.log(err);
           }
+
           console.log(stdout);
         },
       );
+
       if (!fs.existsSync(path.join(this.backendLocation, 'tmp'))) {
         fs.mkdirSync(path.join(this.backendLocation, 'tmp'));
       }
+
       if (!fs.existsSync(path.join(this.backendLocation, 'var'))) {
         fs.mkdirSync(path.join(this.backendLocation, 'var'));
       }
@@ -99,11 +103,13 @@ class MonitorManager {
           console.log(data);
         }
       });
+
       if (execFail) {
         sudo.exec(monitorCmd, sudoOption, (err, stdout, stderr) => {
           if (err) {
             console.log('sudo monitorexe err:', err);
           }
+
           console.log('sudo monitor out:');
           console.log(stdout);
         });

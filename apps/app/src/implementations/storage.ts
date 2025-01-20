@@ -1,6 +1,6 @@
 import Store from 'electron-store';
 
-import { IStorage } from 'interfaces/IStorage';
+import type { IStorage } from '@core/interfaces/IStorage';
 
 class ElectronStorage implements IStorage {
   private store: Store;
@@ -16,15 +16,16 @@ class ElectronStorage implements IStorage {
     const store = useCache ? this.storeCache : this.store.store;
     let item: any = name ? store[name] : store;
 
-    item = (item === null ? '' : item);
+    item = item === null ? '' : item;
 
     try {
       const tempItem = JSON.parse(item);
+
       if (typeof tempItem === 'object') {
         item = tempItem;
       }
-    } catch (ex) {
-      // TODO: do something
+    } catch (error) {
+      console.error(error);
     }
 
     return item;
@@ -33,25 +34,30 @@ class ElectronStorage implements IStorage {
   set = (name: string, val: any): IStorage => {
     this.store.set(name || '', val);
     this.storeCache[name] = val;
+
     return this;
   };
 
   removeAt = (name: string): IStorage => {
     this.store.delete(name);
     delete this.storeCache[name];
+
     return this;
   };
 
   clearAll = (): IStorage => {
     this.store.clear();
     this.storeCache = {};
+
     return this;
   };
 
   clearAllExceptIP = (): IStorage => {
     const ip = this.get('poke-ip-addr');
+
     this.clearAll();
     this.set('poke-ip-addr', ip);
+
     return this;
   };
 

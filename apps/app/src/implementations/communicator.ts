@@ -1,17 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/no-extraneous-dependencies */
 import electron from 'electron';
-import { ICommunicator } from 'interfaces/ICommunicator';
+
+import type { ICommunicator } from '@core/interfaces/ICommunicator';
 
 export default {
+  off(channel: string, listener: any) {
+    return electron.ipcRenderer.off(channel, listener);
+  },
   on(channel: string, listener: any) {
     electron.ipcRenderer.on(channel, listener);
   },
   once(channel: string, listener: any) {
     electron.ipcRenderer.once(channel, listener);
-  },
-  off(channel: string, listener: any) {
-    return electron.ipcRenderer.off(channel, listener);
   },
   send(channel: string, ...args: any[]) {
     electron.ipcRenderer.send(channel, ...args);

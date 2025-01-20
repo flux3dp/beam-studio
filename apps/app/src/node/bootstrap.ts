@@ -1,8 +1,7 @@
-import os from 'os';
-import path from 'path';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { app } from 'electron';
 
 const resourcesRoot = process.defaultApp ? '.' : process.resourcesPath;
@@ -23,9 +22,9 @@ function bootstrapLinux() {
 function setupWindowsFirewall() {
   try {
     const cmd = path.join(resourcesRoot, 'backend', 'elevate.cmd');
+
     execSync(
-      // eslint-disable-next-line max-len
-      `${cmd} netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901`
+      `${cmd} netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901`,
     );
   } catch (err) {
     console.log('setup windows firewall error: %s', err);
@@ -41,7 +40,7 @@ function bootstrapWindows() {
 
   try {
     execSync('netsh advfirewall firewall show rule name="FLUX Discover Port 1901"');
-  } catch (err) {
+  } catch {
     setupWindowsFirewall();
   }
 }
@@ -61,7 +60,7 @@ const bootstrap = (): void => {
       bootstrapWindows();
       break;
     default:
-      throw Error(`System ${os.platform()} not support`);
+      throw new Error(`System ${os.platform()} not support`);
   }
 };
 

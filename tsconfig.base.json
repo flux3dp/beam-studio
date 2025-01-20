@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "module": "esnext",
+    "module": "nodenext",
     "moduleResolution": "nodenext",
     "paths": {
       "@core/*": ["packages/core/src/web/*"],

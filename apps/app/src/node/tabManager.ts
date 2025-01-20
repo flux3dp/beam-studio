@@ -1,17 +1,17 @@
-import path from 'path';
-import url from 'url';
+import path from 'node:path';
+import url from 'node:url';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { BaseWindow, IpcMainEvent, ipcMain, WebContentsView } from 'electron';
 import { enable as enableRemote } from '@electron/remote/main';
+import type { BaseWindow, IpcMainEvent } from 'electron';
+import { ipcMain, WebContentsView } from 'electron';
 
-import CanvasMode from 'app/constants/canvasMode';
-import i18n from 'helpers/i18n';
-import tabConstants, { TabEvents } from 'app/constants/tabConstants';
-import { Tab as FrontendTab } from 'interfaces/Tab';
+import type CanvasMode from '@core/app/constants/canvasMode';
+import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
+import i18n from '@core/helpers/i18n';
+import type { Tab as FrontendTab } from '@core/interfaces/Tab';
 
-import events from './ipc-events';
 import initStore from './helpers/initStore';
+import events from './ipc-events';
 
 interface Tab extends Omit<FrontendTab, 'id'> {
   view: WebContentsView;
@@ -21,7 +21,7 @@ class TabManager {
   private mainWindow: BaseWindow;
   private tabsMap: Record<number, Tab> = {};
   private tabsList: number[] = [];
-  private preloadedTab: Tab | null = null;
+  private preloadedTab: null | Tab = null;
   private focusOnReadyId = -1;
   private focusedId = -1;
   private isDebug = false;
@@ -70,25 +70,34 @@ class TabManager {
 
     ipcMain.on(events.FRONTEND_READY, (e) => {
       const { id } = e.sender;
-      let tab: Tab | null = null;
+      let tab: null | Tab = null;
+
       if (this.tabsMap[id]) {
         tab = this.tabsMap[id];
       }
+
       if (tab) {
         tab.isLoading = false;
         this.updateTabBounds([tab]);
+
         if (id === this.focusOnReadyId) {
           this.focusTab(id);
         }
-        if (id === this.focusedId) this.sendToView(id, TabEvents.TabFocused);
+
+        if (id === this.focusedId) {
+          this.sendToView(id, TabEvents.TabFocused);
+        }
+
         this.notifyTabUpdated();
       }
     });
 
     const handleWindowSizeChanged = () => {
       const tabs = Object.values(this.tabsMap);
+
       this.updateTabBounds(tabs);
     };
+
     this.mainWindow.on('resized', handleWindowSizeChanged);
     this.mainWindow.on('enter-full-screen', handleWindowSizeChanged);
     this.mainWindow.on('leave-full-screen', handleWindowSizeChanged);
@@ -104,17 +113,20 @@ class TabManager {
 
   private updateTabBounds = (tabs: Tab[]): void => {
     const bound = this.mainWindow?.getContentBounds();
+
     if (bound) {
-      const { width, height } = bound;
+      const { height, width } = bound;
       const topBarHeight = process.platform === 'win32' ? 70 : 40;
       const isAnyTabReady = this.tabsList.some((id) => !this.tabsMap[id].isLoading);
-      tabs.forEach(({ view, isLoading }) => {
+
+      tabs.forEach(({ isLoading, view }) => {
         const shouldSetY = isLoading && isAnyTabReady;
+
         view.setBounds({
-          x: 0,
-          width,
-          y: shouldSetY ? topBarHeight : 0,
           height,
+          width,
+          x: 0,
+          y: shouldSetY ? topBarHeight : 0,
         });
       });
     }
@@ -128,10 +140,11 @@ class TabManager {
     }
   };
 
-  private serializeTabs = (): Array<FrontendTab> =>
+  private serializeTabs = (): FrontendTab[] =>
     this.tabsList.map((id: number) => {
-      const { title, isCloud, isLoading, mode } = this.tabsMap[id];
-      return { id, title, isCloud, isFocused: id === this.focusedId, isLoading, mode };
+      const { isCloud, isLoading, mode, title } = this.tabsMap[id];
+
+      return { id, isCloud, isFocused: id === this.focusedId, isLoading, mode, title };
     });
 
   private notifyTabUpdated = (): void => {
@@ -141,17 +154,23 @@ class TabManager {
   private createTab = (): Tab => {
     const tabView = new WebContentsView({
       webPreferences: {
-        preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
-        nodeIntegration: true,
         contextIsolation: false,
+        nodeIntegration: true,
+        preload: path.join(__dirname, '../../../src/node', 'main-window-entry.js'),
       },
     });
+
     this.mainWindow.contentView.addChildView(tabView);
+
     const { webContents } = tabView;
+
     enableRemote(webContents);
     webContents.setWindowOpenHandler(({ url: openUrl }) => {
       // Prevent the new window from early input files
-      if (openUrl.startsWith('file://')) return { action: 'deny' };
+      if (openUrl.startsWith('file://')) {
+        return { action: 'deny' };
+      }
+
       return { action: 'allow' };
     });
     initStore(webContents);
@@ -160,22 +179,27 @@ class TabManager {
         pathname: path.join(__dirname, '../../index.html'),
         protocol: 'file:',
         slashes: true,
-      })
+      }),
     );
-    if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug))
+
+    if (!process.argv.includes('--test') && (process.defaultApp || this.isDebug)) {
       webContents.openDevTools();
+    }
+
     const title = i18n.lang.topbar.untitled;
     const tab: Tab = {
-      view: tabView,
-      title,
       isCloud: false,
       isLoading: true,
+      title,
+      view: tabView,
     };
+
     webContents.on('devtools-closed', () => {
       this.updateTabBounds([tab]);
     });
     this.updateTabBounds([tab]);
     this.tabsMap[tabView.webContents.id] = tab;
+
     return tab;
   };
 
@@ -191,79 +215,111 @@ class TabManager {
 
   addNewTab = (): void => {
     const newTab = this.preloadedTab ?? this.createTab();
+
     this.preloadedTab = null;
+
     const { id } = newTab.view.webContents;
+
     this.tabsList.push(id);
     this.preloadTab();
+
     if (!newTab.isLoading || this.focusedId < 0) {
       this.focusTab(id);
     } else {
       this.focusTab(this.focusedId);
       this.focusOnReadyId = id;
     }
+
     this.notifyTabUpdated();
   };
 
   focusTab = (id: number): void => {
     if (this.tabsMap[id]) {
       const oldId = this.focusedId;
+
       this.focusedId = id;
+
       const { view } = this.tabsMap[id];
+
       this.mainWindow.contentView.addChildView(view);
       view.webContents.focus();
-      if (oldId !== id) this.sendToView(oldId, TabEvents.TabBlurred);
+
+      if (oldId !== id) {
+        this.sendToView(oldId, TabEvents.TabBlurred);
+      }
+
       view.webContents.send(TabEvents.TabFocused);
       this.focusOnReadyId = -1;
     }
   };
 
-  getFocusedView = (): WebContentsView | null => {
+  getFocusedView = (): null | WebContentsView => {
     const { focusedId, tabsMap } = this;
-    if (tabsMap[focusedId]) return tabsMap[focusedId].view;
+
+    if (tabsMap[focusedId]) {
+      return tabsMap[focusedId].view;
+    }
+
     return null;
   };
 
   getAllViews = (): WebContentsView[] => {
     const res = Object.values(this.tabsMap).map(({ view }) => view);
+
     return res;
   };
 
   private closeWebContentsView = (view: WebContentsView, force = false) => {
     const { id } = view.webContents;
+
     return new Promise<boolean>((resolve) => {
       const closeHandler = () => {
         this.mainWindow?.contentView.removeChildView(view);
         view.webContents.close();
         resolve(true);
       };
+
       if (force) {
         closeHandler();
+
         return;
       }
+
       let eventReceivced = false;
       const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
         if (evt.sender === view.webContents) {
           eventReceivced = true;
           ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
-          if (this.focusedId !== id) this.focusTab(id);
+
+          if (this.focusedId !== id) {
+            this.focusTab(id);
+          }
         }
       };
       const closeReplyHander = (event: IpcMainEvent, reply: boolean) => {
         if (event.sender === view.webContents) {
           eventReceivced = true;
-          if (reply) closeHandler();
-          else resolve(false);
+
+          if (reply) {
+            closeHandler();
+          } else {
+            resolve(false);
+          }
+
           ipcMain.removeListener('CLOSE_REPLY', closeReplyHander);
           ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
         }
       };
+
       ipcMain.on('CLOSE_REPLY', closeReplyHander);
       ipcMain.on('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
       view.webContents.send('WINDOW_CLOSE');
       // if no event received in 10 seconds
       // something may goes wrong in frontend, close the view
       setTimeout(() => {
-        if (!eventReceivced) closeHandler();
+        if (!eventReceivced) {
+          closeHandler();
+        }
       }, 10000);
     });
   };
@@ -283,18 +339,23 @@ class TabManager {
     }: {
       allowEmpty?: boolean;
       shouldCloseWindow?: boolean;
-    } = {}
+    } = {},
   ): Promise<boolean> => {
-    const { tabsMap, focusedId } = this;
+    const { focusedId, tabsMap } = this;
+
     if (tabsMap[id] && (allowEmpty || this.tabsList.length > 1)) {
       const res = await this.closeWebContentsView(
         tabsMap[id].view,
-        tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab
+        tabsMap[id].isLoading || tabsMap[id] === this.preloadedTab,
       );
+
       if (res) {
         delete this.tabsMap[id];
+
         const origIdx = this.tabsList.indexOf(id);
+
         this.tabsList = this.tabsList.filter((tabId) => tabId !== id);
+
         if (focusedId === id) {
           if (this.tabsList.length) {
             this.focusTab(this.tabsList[origIdx] || this.tabsList[origIdx - 1]);
@@ -303,14 +364,17 @@ class TabManager {
           this.focusTab(focusedId);
         }
       }
+
       if (this.tabsList.length > 0) {
         this.notifyTabUpdated();
         this.preloadTab();
       } else if (shouldCloseWindow) {
         this.mainWindow.close();
       }
+
       return res;
     }
+
     return false;
   };
 
@@ -318,7 +382,7 @@ class TabManager {
     opts: {
       allowEmpty?: boolean;
       shouldCloseWindow?: boolean;
-    } = {}
+    } = {},
   ): Promise<boolean> => this.closeTab(this.focusedId, opts);
 
   /**
@@ -331,36 +395,49 @@ class TabManager {
     shouldCloseWindow?: boolean;
   } = {}): Promise<boolean> => {
     const ids = Object.keys(this.tabsMap);
+
     for (let i = 0; i < ids.length; i += 1) {
-      const id = parseInt(ids[i], 10);
-      // eslint-disable-next-line no-await-in-loop
+      const id = Number.parseInt(ids[i], 10);
+
       const res = await this.closeTab(id, { allowEmpty: true, shouldCloseWindow });
-      if (!res) return false;
+
+      if (!res) {
+        return false;
+      }
     }
+
     return true;
   };
 
   moveTab = (srcIdx: number, dstIdx: number): void => {
     const { tabsList } = this;
+
     if (srcIdx !== dstIdx) {
       const [tabId] = tabsList.splice(srcIdx, 1);
+
       tabsList.splice(dstIdx, 0, tabId);
       this.notifyTabUpdated();
     }
   };
 
   sendToView = (id: number, event: string, data?: unknown): void => {
-    if (this.tabsMap[id]) this.tabsMap[id].view.webContents.send(event, data);
+    if (this.tabsMap[id]) {
+      this.tabsMap[id].view.webContents.send(event, data);
+    }
   };
 
   sendToAllViews = (event: string, data?: unknown): void => {
     const views = this.getAllViews();
+
     views.forEach((view) => view.webContents.send(event, data));
   };
 
   sendToFocusedView = (event: string, data?: unknown): void => {
     const { focusedId, tabsMap } = this;
-    if (tabsMap[focusedId]) tabsMap[focusedId].view.webContents.send(event, data);
+
+    if (tabsMap[focusedId]) {
+      tabsMap[focusedId].view.webContents.send(event, data);
+    }
   };
 }
 

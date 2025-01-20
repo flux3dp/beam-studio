@@ -1,18 +1,20 @@
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamFileHelper from 'helpers/beam-file-helper';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import FileExportHelper from 'helpers/file-export-helper';
-import i18n from 'helpers/i18n';
-import importBvg from 'app/svgedit/operations/import/importBvg';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IRecentMenuUpdater } from 'interfaces/IRecentMenuUpdater';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import importBvg from '@core/app/svgedit/operations/import/importBvg';
+import BeamFileHelper from '@core/helpers/beam-file-helper';
+import FileExportHelper from '@core/helpers/file-export-helper';
+import i18n from '@core/helpers/i18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IRecentMenuUpdater } from '@core/interfaces/IRecentMenuUpdater';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import communicator from './communicator';
 import fs from './fileSystem';
 import storage from './storage';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -21,8 +23,9 @@ const update = () => {
   communicator.send('UPDATE_RECENT_FILES_MENU');
 };
 
-communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
+communicator.on('OPEN_RECENT_FILES', async (evt: any, filePath: string) => {
   const res = await FileExportHelper.toggleUnsavedChangedDialog();
+
   if (res) {
     if (fs.exists(filePath)) {
       Alert.popUp({
@@ -33,16 +36,21 @@ communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
       svgCanvas.updateRecentFiles(filePath);
       try {
         svgCanvas.clearSelection();
+
         const fetchPath = filePath.replaceAll('#', '%23');
+
         if (filePath.endsWith('beam')) {
           const resp = await fetch(fetchPath);
           const blob = await resp.blob();
+
           await BeamFileHelper.readBeam(blob as File);
         } else if (filePath.endsWith('bvg')) {
           const resp = await fetch(fetchPath);
           const blob = await resp.blob();
+
           importBvg(blob);
         }
+
         currentFileManager.setHasUnsavedChanges(false);
       } finally {
         Alert.popById('load-recent');
@@ -50,12 +58,12 @@ communicator.on('OPEN_RECENT_FILES', async (evt, filePath: string) => {
     } else {
       Alert.popUp({
         id: 'load-recent',
-        type: AlertConstants.SHOW_POPUP_ERROR,
         message: i18n.lang.topmenu.file.path_not_exit,
+        type: AlertConstants.SHOW_POPUP_ERROR,
       });
       storage.set(
         'recent_files',
-        storage.get('recent_files', false).filter((path) => path !== filePath)
+        storage.get('recent_files', false).filter((path: string) => path !== filePath),
       );
       update();
     }

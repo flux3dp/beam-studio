@@ -1,61 +1,64 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { app, session } from '@electron/remote';
-import { TitlebarColor, Titlebar } from 'custom-electron-titlebar';
-
 // This module setup global window variable, Should be put at top
-import globalHelper from 'helpers/global-helper';
-import fileExportHelper from 'helpers/file-export-helper';
-import globalEvents from 'app/actions/global';
-import router from 'app/router';
+import { Titlebar, TitlebarColor } from 'custom-electron-titlebar';
 
-import communicator from 'implementations/communicator';
+import globalEvents from '@core/app/actions/global';
+import router from '@core/app/router';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import globalHelper from '@core/helpers/global-helper';
+
+import communicator from '@app/implementations/communicator';
+
 import initBackendEvents from './init-backend-events';
-import loaderResult from './loader';
+import './loader';
 
 globalHelper.setWindowMember();
-console.log('Loader success: ', loaderResult);
 
 // const allowTracking = false;
 declare global {
-  var requireNode: (name: string) => any;
+  var requireNode: (_name: string) => any;
   interface Window {
+    $: any;
     electron?: {
-      ipc: any,
-      events: { [key: string]: string; },
-      remote: any,
-    },
+      events: { [key: string]: string };
+      ipc: any;
+      remote: any;
+    };
     FLUX: {
-      allowTracking: boolean,
-      backendAlive: boolean,
-      debug: boolean,
-      dev: boolean,
-      ghostPort: number,
-      logfile?: any,
-      timestamp: number,
-      version: string,
-      websockets: any,
-    },
-    os: 'MacOS' | 'Windows' | 'Linux' | 'others',
-    requirejs: (deps: string[], callback: (...modules: any[]) => void) => void,
-    $: any,
-    jQuery: any,
-    svgedit: any,
-    svgCanvas: any,
-    svgEditor: any,
-    titlebar?: any,
+      allowTracking: boolean;
+      backendAlive: boolean;
+      debug: boolean;
+      dev: boolean;
+      ghostPort: number;
+      logfile?: any;
+      timestamp: number;
+      version: string;
+      websockets: any;
+    };
+    jQuery: any;
+    os: 'Linux' | 'MacOS' | 'others' | 'Windows';
+    requirejs: (_deps: string[], _callback: (..._modules: any[]) => void) => void;
+    svgCanvas: any;
+    svgedit: any;
+    svgEditor: any;
+    titlebar?: any;
   }
 }
 
 function menuBar() {
-  if (window.os !== 'Windows') return;
+  if (window.os !== 'Windows') {
+    return;
+  }
 
+  // @ts-expect-error - jQuery is a global variable
   $('.content').css({ height: 'calc(100% - 30px)' });
+
   const titlebar = new Titlebar({
     backgroundColor: TitlebarColor.fromHex('#333'),
-    shadow: false,
     icon: 'win-title-icon.png',
+    shadow: false,
   });
+
   titlebar.updateTitle(' ');
   window.titlebar = titlebar;
   communicator.on('UPDATE_CUSTOM_TITLEBAR', () => {
@@ -67,11 +70,13 @@ const setReferer = () => {
   const filter = {
     urls: ['https://id.flux3dp.com/*'],
   };
+
   session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
     const header = {
       ...details.requestHeaders,
       Referer: 'https://id.flux3dp.com',
     };
+
     callback({ requestHeaders: header });
   });
 };
@@ -84,10 +89,14 @@ export default function main(): void {
   menuBar();
   communicator.on('WINDOW_CLOSE', async () => {
     const res = await fileExportHelper.toggleUnsavedChangedDialog();
-    if (res) communicator.send('CLOSE_REPLY', true);
+
+    if (res) {
+      communicator.send('CLOSE_REPLY', true);
+    }
   });
 
   globalEvents(() => {
+    // @ts-expect-error - jQuery is a global variable
     router($('section.content')[0]);
   });
 }

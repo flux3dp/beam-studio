@@ -1,9 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { app, ipcMain, WebContents } from 'electron';
+import type { WebContents } from 'electron';
+import { app, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
-import events from './ipc-events';
 import { getFocusedView } from './helpers/tabHelper';
+import events from './ipc-events';
 
 export class UpdateManager {
   isDownloading: boolean;
@@ -24,13 +24,17 @@ export class UpdateManager {
     autoUpdater.on('checking-for-update', () => {});
     autoUpdater.on('update-available', (info) => {
       console.log('Update Available, Info:', info);
+
       const res = { info, isUpdateAvailable: true };
+
       this.send(events.UPDATE_AVAILABLE, res);
     });
     autoUpdater.on('update-not-available', (info) => {
       console.log('Update Not Available, Info:', info);
       this.isDownloading = false;
+
       const res = { info, isUpdateAvailable: false };
+
       this.send(events.UPDATE_AVAILABLE, res);
     });
     autoUpdater.on('update-downloaded', (info) => {
@@ -48,6 +52,7 @@ export class UpdateManager {
       } else {
         autoUpdater.channel = app.getVersion().split('-')[1] || 'latest';
       }
+
       this.checkForUpdates(event.sender);
     });
     ipcMain.on(events.DOWNLOAD_UPDATE, () => {
@@ -63,6 +68,7 @@ export class UpdateManager {
 
   checkForUpdates = async (webContents: WebContents): Promise<void> => {
     let res;
+
     try {
       res = await autoUpdater.checkForUpdates();
     } catch (error) {

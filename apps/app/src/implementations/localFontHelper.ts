@@ -1,16 +1,12 @@
-import { Font as FontkitFont, FontCollection, openSync } from 'fontkit';
+import type { FontCollection, Font as FontkitFont } from 'fontkit';
+import { openSync } from 'fontkit';
 
-import communicator from 'implementations/communicator';
-import { FontDescriptor, LocalFontHelper } from 'interfaces/IFont';
+import type { FontDescriptor, LocalFontHelper } from '@core/interfaces/IFont';
+
+import communicator from '@app/implementations/communicator';
 
 interface Font extends FontkitFont {
-  name?: {
-    records: {
-      fontFamily: {
-        [key: string]: string;
-      };
-    };
-  };
+  name?: { records: { fontFamily: Record<string, string> } };
 }
 
 export default {
@@ -23,50 +19,57 @@ export default {
   getAvailableFonts(): FontDescriptor[] {
     return communicator.sendSync('GET_AVAILABLE_FONTS');
   },
-  substituteFont(postscriptName: string, text: string): FontDescriptor[] {
-    return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
-  },
   getFontName(font: FontDescriptor): string {
     let fontName = font.family;
+
     try {
-      const res = openSync(font.path);
+      const res = openSync(font?.path || '');
       let fontkitFont: Font;
+
       if ('fonts' in res && res.fonts && res.fonts[0]) {
         // Font Collection
         fontkitFont =
           res.fonts.find((f) => {
-            if (f.familyName === font.family) return true;
-            if (f.getName('fontFamily', navigator.language) === font.family) return true;
+            if (f.familyName === font.family) {
+              return true;
+            }
+
+            if (f.getName('fontFamily', navigator.language) === font.family) {
+              return true;
+            }
+
             return false;
           }) || res.fonts[0];
       } else {
         fontkitFont = res as Font;
       }
+
       if (fontkitFont.name) {
         const firstNotEn = Object.keys(fontkitFont.name.records.fontFamily).find(
-          (key) => key !== 'en'
+          (key) => key !== 'en',
         );
+
         fontName =
           fontkitFont.name.records.fontFamily[navigator.language] ||
-          fontkitFont.name.records.fontFamily[firstNotEn] ||
+          fontkitFont.name.records.fontFamily[firstNotEn || ''] ||
           fontkitFont.getName('fontFamily', navigator.language) ||
           fontName;
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.warn(`Error when get font name of ${font.family}:`, err);
     }
-    return fontName;
+
+    return fontName || '';
   },
   getLocalFont: (font: FontDescriptor) => {
     try {
-      const getFontDirectly = openSync(font.path, font.postscriptName);
+      const getFontDirectly = openSync(font.path ?? '', font.postscriptName);
 
       if (getFontDirectly) {
         return getFontDirectly;
       }
 
-      const getFontFromPath = openSync(font.path);
+      const getFontFromPath = openSync(font.path ?? '');
 
       if (['TTF', 'WOFF', 'WOFF2'].includes(getFontFromPath.type)) {
         return getFontFromPath;
@@ -76,7 +79,10 @@ export default {
       return (getFontFromPath as FontCollection).fonts[0];
     } catch {
       // Single Font
-      return openSync(font.path);
+      return openSync(font.path ?? '');
     }
+  },
+  substituteFont(postscriptName: string, text: string): FontDescriptor[] {
+    return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
   },
 } as LocalFontHelper;

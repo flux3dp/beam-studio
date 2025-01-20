@@ -1,12 +1,15 @@
-import viewMenu from 'helpers/menubar/view';
-import windowLocationReload from 'app/actions/windowLocation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ICustomMenuActionProvider } from 'interfaces/ICustomMenuActionProvider';
+import windowLocationReload from '@core/app/actions/windowLocation';
+import viewMenu from '@core/helpers/menubar/view';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { ICustomMenuActionProvider } from '@core/interfaces/ICustomMenuActionProvider';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import ElectronUpdater from './electron-updater';
 import { changeMenuItemChecked } from '../electron-menubar-helper';
 
-let svgCanvas;
+import ElectronUpdater from './electron-updater';
+
+let svgCanvas: ISVGCanvas;
+
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
@@ -14,31 +17,38 @@ getSVGAsync((globalSVG) => {
 export default {
   getCustomMenuActions() {
     return {
-      RELOAD_APP: () => windowLocationReload(),
-      SWITCH_VERSION: () => ElectronUpdater.switchVersion(),
-      UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ALIGN_TO_EDGES: () => {
+        // @ts-expect-error not set this type yet
         const isBezierPathAlignToEdge = svgCanvas.toggleBezierPathAlignToEdge();
+
         changeMenuItemChecked(['ALIGN_TO_EDGES'], isBezierPathAlignToEdge);
       },
       ANTI_ALIASING: () => {
         const newValue = viewMenu.toggleAntiAliasing();
+
         changeMenuItemChecked(['ANTI_ALIASING'], newValue);
       },
+      RELOAD_APP: () => windowLocationReload(),
       SHOW_GRIDS: () => {
         const showGrid = viewMenu.toggleGrid();
+
         changeMenuItemChecked(['SHOW_GRIDS'], showGrid);
       },
       SHOW_LAYER_COLOR: () => {
         const isUsingLayerColor = viewMenu.toggleLayerColor();
+
         changeMenuItemChecked(['SHOW_LAYER_COLOR'], isUsingLayerColor);
       },
       SHOW_RULERS: () => {
         const shouldShowRulers = viewMenu.toggleRulers();
+
         changeMenuItemChecked(['SHOW_RULERS'], shouldShowRulers);
       },
+      SWITCH_VERSION: () => ElectronUpdater.switchVersion(),
+      UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ZOOM_WITH_WINDOW: () => {
         const zoomWithWindow = viewMenu.toggleZoomWithWindow();
+
         changeMenuItemChecked(['ZOOM_WITH_WINDOW'], zoomWithWindow);
       },
     };

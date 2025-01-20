@@ -5,6 +5,6 @@ const initSentry = (): void => {
 };
 
 export default {
-  Sentry,
   initSentry,
+  Sentry,
 };

@@ -1,39 +1,37 @@
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable import/no-extraneous-dependencies */
-import EventEmitter from 'events';
+/* eslint-disable no-unused-vars */
+import EventEmitter from 'node:events';
 
+import type { MenuItemConstructorOptions } from 'electron';
+import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import Store from 'electron-store';
-import { app, Menu, MenuItemConstructorOptions, MenuItem, shell, ipcMain } from 'electron';
 
-import DeviceInfo from 'interfaces/DeviceInfo';
-import i18n from 'helpers/i18n';
-import { adorModels, promarkModels } from 'app/actions/beambox/constant';
-import { MenuData } from 'interfaces/Menu';
+import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
+import i18n from '@core/helpers/i18n';
 
+import { getFocusedView } from './helpers/tabHelper';
+import type DeviceInfo from './interfaces/DeviceInfo';
+import type { MenuData } from './interfaces/Menu';
 import events from './ipc-events';
 import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
-import { getFocusedView } from './helpers/tabHelper';
 
 const store = new Store();
 let r = i18n.lang.topbar.menu;
-let accountInfo: { email: string } | null = null;
+let accountInfo: null | { email: string } = null;
 
 function buildOSXAppMenu(callback: (data: MenuData) => void) {
   const currentChannel = app.getVersion().split('-')[1] || 'latest';
   const switchChannelLabel = currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
+
   return {
     label: 'Beam Studio',
     submenu: [
-      { id: 'ABOUT_BEAM_STUDIO', label: r.about, click: callback },
-      { id: 'SWITCH_VERSION', label: switchChannelLabel, click: callback },
+      { click: callback, id: 'ABOUT_BEAM_STUDIO', label: r.about },
+      { click: callback, id: 'SWITCH_VERSION', label: switchChannelLabel },
       {
-        id: 'PREFERENCE',
-        label: r.preferences,
         accelerator: 'Cmd+,',
         click: callback,
+        id: 'PREFERENCE',
+        label: r.preferences,
       },
       { type: 'separator' },
       { label: r.service, role: 'services', submenu: [] },
@@ -42,10 +40,10 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
       { label: r.hideothers, role: 'hideothers' },
       { type: 'separator' },
       {
-        id: 'RELOAD_APP',
-        label: r.reload_app,
         accelerator: 'Cmd+R',
         click: () => getFocusedView()?.webContents.reload(),
+        id: 'RELOAD_APP',
+        label: r.reload_app,
       },
       { label: r.quit, role: 'quit' },
     ],
@@ -54,34 +52,35 @@ function buildOSXAppMenu(callback: (data: MenuData) => void) {
 
 function buildAccountMenuItems(
   callback: (data: MenuData) => void,
-  accInfo: { email: string } | null
+  accInfo: null | { email: string },
 ) {
   const signoutLabel = accInfo ? `${r.sign_out} (${accInfo.email})` : r.sign_out;
+
   return [
     {
+      click: callback,
       id: 'SIGN_IN',
       label: r.sign_in,
-      click: callback,
       visible: !accInfo,
     },
     {
+      click: callback,
       id: 'SIGN_OUT',
       label: signoutLabel,
-      click: callback,
       visible: !!accInfo,
     },
     {
-      id: 'MANAGE_ACCOUNT',
-      label: r.manage_account,
       click: callback,
       enabled: !!accInfo,
+      id: 'MANAGE_ACCOUNT',
+      label: r.manage_account,
     },
     {
-      id: 'DESIGN_MARKET',
-      label: r.design_market,
       click() {
         shell.openExternal(r.link.design_market);
       },
+      id: 'DESIGN_MARKET',
+      label: r.design_market,
     },
   ];
 }
@@ -94,71 +93,71 @@ function buildDeviceMenu(
   callback: (data: MenuData) => void,
   uuid: string,
   data: DeviceInfo,
-  isDevMode = false
+  isDevMode = false,
 ) {
-  const { serial, source, name, model } = data;
+  const { model, name, serial, source } = data;
   const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
   const isAdor = adorModels.has(model);
   const isPromark = promarkModels.has(model);
   const isBeamo = model === 'fbm1';
   const isBb2 = model === 'fbb2';
-  const handleClick = (item: MenuItem) => callback({ ...item, uuid, serial, machineName, source });
+  const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [
-    { id: 'DASHBOARD', label: r.dashboard, click: handleClick },
-    { id: 'MACHINE_INFO', label: r.machine_info, click: handleClick },
+    { click: handleClick, id: 'DASHBOARD', label: r.dashboard },
+    { click: handleClick, id: 'MACHINE_INFO', label: r.machine_info },
     isPromark && {
+      click: handleClick,
       id: 'PROMARK_SETTINGS',
       label: i18n.lang.promark_settings?.title,
-      click: handleClick,
     },
     isPromark && {
+      click: handleClick,
       id: 'Z_AXIS_ADJUSTMENT',
       label: i18n.lang.promark_settings?.z_axis_adjustment.title,
-      click: handleClick,
     },
     { type: 'separator' },
     {
       id: 'CALIBRATION',
       label: r.calibration,
       submenu: [
-        { id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera, click: handleClick },
+        { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
         isBb2 && {
+          click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
-          click: handleClick,
         },
         isBeamo && {
+          click: handleClick,
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
           label: r.calibrate_beambox_camera_borderless,
-          click: handleClick,
         },
         isBeamo && {
+          click: handleClick,
           id: 'CALIBRATE_DIODE_MODULE',
           label: r.calibrate_diode_module,
-          click: handleClick,
         },
         isAdor &&
           isDevMode && {
+            click: handleClick,
             id: 'CALIBRATE_CAMERA_V2_FACTORY',
             label: `${r.calibrate_beambox_camera} (Factory)`,
-            click: handleClick,
           },
         isAdor && {
+          click: handleClick,
           id: 'CALIBRATE_PRINTER_MODULE',
           label: r.calibrate_printer_module,
-          click: handleClick,
         },
         isAdor && {
+          click: handleClick,
           id: 'CALIBRATE_IR_MODULE',
           label: r.calibrate_ir_module,
-          click: handleClick,
         },
         isAdor &&
           isDevMode && {
+            click: handleClick,
             id: 'CATRIDGE_CHIP_SETTING',
             label: 'Catridge Chip Setting',
-            click: handleClick,
           },
       ].filter(Boolean),
     },
@@ -168,75 +167,75 @@ function buildDeviceMenu(
       label: r.camera_calibration_data,
       submenu: [
         {
+          click: handleClick,
           id: 'UPLOAD_CALIBRATION_DATA',
           label: r.upload_data,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'DOWNLOAD_CALIBRATION_DATA',
           label: r.download_data,
-          click: handleClick,
         },
       ],
     },
     {
+      click: handleClick,
       id: 'UPDATE_FIRMWARE',
       label: r.update_firmware,
-      click: handleClick,
     },
     {
       id: 'DOWNLOAD_LOG',
       label: r.download_log,
       submenu: [
         {
+          click: handleClick,
           id: 'LOG_NETWORK',
           label: r.log.network,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_HARDWARE',
           label: r.log.hardware,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_DISCOVER',
           label: r.log.discover,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_USB',
           label: r.log.usb,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_USBLIST',
           label: r.log.usblist,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_CAMERA',
           label: r.log.camera,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_PLAYER',
           label: r.log.player,
-          click: handleClick,
         },
         {
+          click: handleClick,
           id: 'LOG_ROBOT',
           label: r.log.robot,
-          click: handleClick,
         },
       ],
     },
   ].filter(Boolean) as MenuItemConstructorOptions[];
 
   return new MenuItem({
-    label: menuLabel,
     id: getDeviceMenuId(uuid, data),
-    visible: true,
+    label: menuLabel,
     submenu,
+    visible: true,
   });
 }
 
@@ -254,6 +253,7 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
       const language = (store.get('active-lang') as string) || 'en';
+
       i18n.setActiveLang(language);
       r = i18n.lang.topbar.menu;
       this.constructMenu();
@@ -269,7 +269,9 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
       const hasChanged = this.isDevMode !== isDevMode;
+
       this.isDevMode = isDevMode;
+
       if (hasChanged && this.deviceMenu?.submenu) {
         this.constructMenu();
       }
@@ -277,26 +279,28 @@ class MenuManager extends EventEmitter {
 
     ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
       accountInfo = info;
+
       const item = Menu.getApplicationMenu()?.items.find((i) => i.id === '_account');
       const accountSubmenu = item?.submenu;
+
       if (accountSubmenu) {
         const newMenu = Menu.buildFromTemplate([]);
         const signoutLabel = info ? `${r.sign_out} (${info.email})` : r.sign_out;
+
         accountSubmenu.items.forEach((menuitem) => {
           if (menuitem.id === 'SIGN_IN') {
-            // eslint-disable-next-line no-param-reassign
             menuitem.visible = !info;
             newMenu.append(menuitem);
           } else if (menuitem.id === 'SIGN_OUT') {
             const newSignOut = new MenuItem({
-              id: 'SIGN_OUT',
-              visible: !!info,
               click: menuitem.click as () => void,
+              id: 'SIGN_OUT',
               label: signoutLabel,
+              visible: !!info,
             });
+
             newMenu.append(newSignOut);
           } else if (menuitem.id === 'MANAGE_ACCOUNT') {
-            // eslint-disable-next-line no-param-reassign
             menuitem.enabled = !!info;
             newMenu.append(menuitem);
           } else {
@@ -306,6 +310,7 @@ class MenuManager extends EventEmitter {
         delete item.submenu;
         item.submenu = newMenu;
       }
+
       Menu.setApplicationMenu(Menu.getApplicationMenu());
     });
   }
@@ -321,6 +326,7 @@ class MenuManager extends EventEmitter {
     for (const devMenuId in this.deviceList) {
       const data = this.deviceList[devMenuId];
       const instance = buildDeviceMenu(this.onMenuClick, data.uuid, data, this.isDevMode);
+
       this.deviceMenu?.submenu?.append(instance);
     }
     Menu.setApplicationMenu(this.appmenu);
@@ -330,13 +336,24 @@ class MenuManager extends EventEmitter {
 
   toggleMenu(ids: string | string[], enabled: boolean): void {
     const idList = Array.isArray(ids) ? ids : [ids];
-    if (!this.appmenu) return;
+
+    if (!this.appmenu) {
+      return;
+    }
+
     const iterStack = [...this.appmenu.items];
+
     while (iterStack.length > 0) {
       const item = iterStack.pop();
+
       if (item) {
-        if (item.submenu) iterStack.push(...item.submenu.items);
-        if (idList.indexOf(item.id) >= 0) item.enabled = enabled;
+        if (item.submenu) {
+          iterStack.push(...item.submenu.items);
+        }
+
+        if (idList.includes(item.id)) {
+          item.enabled = enabled;
+        }
       }
     }
     Menu.setApplicationMenu(this.appmenu);
@@ -345,15 +362,19 @@ class MenuManager extends EventEmitter {
   onMenuClick = (data: MenuData): void => {
     if (data.id) {
       const eventData: MenuData = { ...data };
+
       if (data.uuid && data.source) {
         const menuId = getDeviceMenuId(data.uuid, { source: data.source });
+
         if (this.deviceList[menuId]) {
           eventData.serial = this.deviceList[menuId].serial;
           eventData.machineName = this.deviceList[menuId].name;
         }
       }
+
       this.emit(events.MENU_CLICK, eventData, this.appmenu);
     }
+
     if (process.platform === 'win32') {
       this.reset_custom_electron_titlebar();
     }
@@ -361,12 +382,17 @@ class MenuManager extends EventEmitter {
 
   reset_custom_electron_titlebar(): void {
     const view = getFocusedView();
-    if (view) view.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
+
+    if (view) {
+      view.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
+    }
   }
 
   appendDevice(uuid: string, data: DeviceInfo): void {
     const menuId = getDeviceMenuId(uuid, data);
+
     this.deviceList[menuId] = data;
+
     if (this.deviceMenu) {
       const instance = buildDeviceMenu(this.onMenuClick, uuid, data, this.isDevMode);
 
@@ -375,12 +401,16 @@ class MenuManager extends EventEmitter {
       } else {
         this.deviceMenu.submenu?.append(instance);
       }
-      if (this.appmenu) Menu.setApplicationMenu(this.appmenu);
+
+      if (this.appmenu) {
+        Menu.setApplicationMenu(this.appmenu);
+      }
     }
   }
 
   updateDevice(uuid: string, data: DeviceInfo): boolean {
     const menuId = getDeviceMenuId(uuid, data);
+
     this.deviceList[menuId] = data;
 
     if (this.deviceMenu?.submenu) {
@@ -389,28 +419,40 @@ class MenuManager extends EventEmitter {
           if (menuitem.label !== data.name) {
             menuitem.label = data.name;
             Menu.setApplicationMenu(this.appmenu);
+
             return true;
           }
+
           return false;
         }
       }
     }
+
     this.appendDevice(uuid, data);
+
     return true;
   }
 
   removeDevice(uuid: string, data: DeviceInfo): void {
     const menuId = getDeviceMenuId(uuid, data);
+
     delete this.deviceList[menuId];
 
     if (this.deviceMenu?.submenu) {
       const newMenu = Menu.buildFromTemplate([]);
+
       this.deviceMenu.submenu.items.forEach((item) => {
-        if (item.id !== menuId) newMenu.append(item);
+        if (item.id !== menuId) {
+          newMenu.append(item);
+        }
       });
       delete this.deviceMenu.submenu;
       this.deviceMenu.submenu = newMenu;
-      if (this.appmenu) this.appmenu = Menu.buildFromTemplate(this.appmenu.items);
+
+      if (this.appmenu) {
+        this.appmenu = Menu.buildFromTemplate(this.appmenu.items);
+      }
+
       Menu.setApplicationMenu(this.appmenu);
     }
   }
@@ -430,93 +472,93 @@ class MenuManager extends EventEmitter {
       label: r.edit,
       submenu: [
         {
+          accelerator: `${fnKey}+Z`,
+          click: callback,
           id: 'UNDO',
           label: r.undo || 'Undo',
-          click: callback,
-          accelerator: `${fnKey}+Z`,
         },
         {
+          accelerator: `${fnKey}+Shift+Z`,
+          click: callback,
           id: 'REDO',
           label: r.redo || 'Redo',
-          click: callback,
-          accelerator: `${fnKey}+Shift+Z`,
         },
         { type: 'separator' },
         { id: 'CUT', label: r.cut, role: 'cut' },
         { id: 'COPY', label: r.copy, role: 'copy' },
         { id: 'PASTE', label: r.paste, role: 'paste' },
         {
+          accelerator: `${fnKey}+Shift+V`,
+          click: callback,
           id: 'PASTE_IN_PLACE',
           label: r.paste_in_place,
-          click: callback,
-          accelerator: `${fnKey}+Shift+V`,
         },
         {
+          accelerator: `${fnKey}+D`,
+          click: callback,
+          enabled: false,
           id: 'DUPLICATE',
           label: r.duplicate || 'Duplicate',
-          enabled: false,
-          click: callback,
-          accelerator: `${fnKey}+D`,
         },
         {
+          accelerator: deleteKey,
+          click: callback,
+          enabled: false,
           id: 'DELETE',
           label: r.delete || 'Delete',
-          enabled: false,
-          click: callback,
-          accelerator: deleteKey,
         },
         { type: 'separator' },
         {
+          accelerator: `${fnKey}+G`,
+          click: callback,
+          enabled: false,
           id: 'GROUP',
           label: r.group || 'Group',
-          enabled: false,
-          click: callback,
-          accelerator: `${fnKey}+G`,
         },
         {
+          accelerator: `${fnKey}+Shift+G`,
+          click: callback,
+          enabled: false,
           id: 'UNGROUP',
           label: r.ungroup || 'Ungroup',
-          enabled: false,
-          click: callback,
-          accelerator: `${fnKey}+Shift+G`,
         },
         { type: 'separator' },
         {
+          enabled: false,
           id: 'PATH',
           label: r.path,
-          enabled: false,
           submenu: [
-            { id: 'OFFSET', label: r.offset || 'Offset', click: callback },
+            { click: callback, id: 'OFFSET', label: r.offset || 'Offset' },
             {
+              click: callback,
+              enabled: false,
               id: 'DECOMPOSE_PATH',
               label: r.decompose_path,
-              enabled: false,
-              click: callback,
             },
           ],
         },
         {
+          enabled: false,
           id: 'PHOTO_EDIT',
           label: r.photo_edit || 'Edit Photo',
-          enabled: false,
           submenu: [
-            { id: 'IMAGE_SHARPEN', label: r.image_sharpen, click: callback },
-            { id: 'IMAGE_CROP', label: r.image_crop, click: callback },
-            { id: 'IMAGE_INVERT', label: r.image_invert, click: callback },
-            { id: 'IMAGE_STAMP', label: r.image_stamp, click: callback },
-            { id: 'IMAGE_VECTORIZE', label: r.image_vectorize, click: callback },
-            { id: 'IMAGE_CURVE', label: r.image_curve, click: callback },
+            { click: callback, id: 'IMAGE_SHARPEN', label: r.image_sharpen },
+            { click: callback, id: 'IMAGE_CROP', label: r.image_crop },
+            { click: callback, id: 'IMAGE_INVERT', label: r.image_invert },
+            { click: callback, id: 'IMAGE_STAMP', label: r.image_stamp },
+            { click: callback, id: 'IMAGE_VECTORIZE', label: r.image_vectorize },
+            { click: callback, id: 'IMAGE_CURVE', label: r.image_curve },
           ],
         },
         {
+          enabled: false,
           id: 'SVG_EDIT',
           label: r.svg_edit || 'Edit Photo',
-          enabled: false,
           submenu: [
             {
+              click: callback,
               id: 'DISASSEMBLE_USE',
               label: r.disassemble_use || 'Disassemble SVG',
-              click: callback,
             },
           ],
         },
@@ -525,19 +567,19 @@ class MenuManager extends EventEmitter {
           label: r.layer_setting,
           submenu: [
             {
+              click: callback,
               id: 'LAYER_COLOR_CONFIG',
               label: r.layer_color_config || 'Color Configuration',
-              click: callback,
             },
           ],
         },
         { type: 'separator' },
         {
+          click: callback,
           id: 'DOCUMENT_SETTING',
           label: r.document_setting || 'Document Setting',
-          click: callback,
         },
-        { id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup', click: callback },
+        { click: callback, id: 'ROTARY_SETUP', label: r.rotary_setup || 'Rotary Setup' },
       ].filter((item) => !!item),
     });
 
@@ -546,55 +588,55 @@ class MenuManager extends EventEmitter {
       label: r.view,
       submenu: [
         {
+          accelerator: process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus',
+          click: callback,
           id: 'ZOOM_IN',
           label: r.zoom_in || 'Zoom In',
-          click: callback,
-          accelerator: process.platform === 'win32' ? 'CmdOrCtrl++' : 'CmdOrCtrl+Plus',
         },
         {
+          accelerator: `${fnKey}+-`,
+          click: callback,
           id: 'ZOOM_OUT',
           label: r.zoom_out || 'Zoom Out',
-          click: callback,
-          accelerator: `${fnKey}+-`,
         },
-        { id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window', click: callback },
+        { click: callback, id: 'FITS_TO_WINDOW', label: r.fit_to_window || 'Fit To Window' },
         {
+          click: callback,
           id: 'ZOOM_WITH_WINDOW',
           label: r.zoom_with_window || 'Zoom With Window',
-          click: callback,
           type: 'checkbox',
         },
         { type: 'separator' },
         {
+          checked: true,
+          click: callback,
           id: 'SHOW_GRIDS',
           label: r.show_grids || 'Show Grids',
-          click: callback,
           type: 'checkbox',
-          checked: true,
         },
         {
+          click: callback,
           id: 'SHOW_RULERS',
           label: r.show_rulers,
-          click: callback,
           type: 'checkbox',
         },
         {
+          click: callback,
           id: 'SHOW_LAYER_COLOR',
           label: r.show_layer_color || 'Show Layer Color',
-          click: callback,
           type: 'checkbox',
         },
         {
+          click: callback,
+          enabled: false,
           id: 'ALIGN_TO_EDGES',
           label: r.align_to_edges,
-          enabled: false,
-          click: callback,
           type: 'checkbox',
         },
         {
+          click: callback,
           id: 'ANTI_ALIASING',
           label: r.anti_aliasing,
-          click: callback,
           type: 'checkbox',
         },
       ],
@@ -605,12 +647,12 @@ class MenuManager extends EventEmitter {
       label: r.machines || 'Machines',
       submenu: [
         {
-          id: 'ADD_NEW_MACHINE',
-          label: r.add_new_machine || 'Add New Machine',
           accelerator: `${fnKey}+M`,
           click: callback,
+          id: 'ADD_NEW_MACHINE',
+          label: r.add_new_machine || 'Add New Machine',
         },
-        { id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network', click: callback },
+        { click: callback, id: 'NETWORK_TESTING', label: r.network_testing || 'Test Network' },
         { type: 'separator' },
       ],
     });
@@ -619,13 +661,14 @@ class MenuManager extends EventEmitter {
       id: '_tools',
       label: r.tools.title,
       submenu: [
-        { id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator, click: callback },
-        { id: 'CODE_GENERATOR', label: r.tools.code_generator, click: callback },
-        { id: 'BOX_GEN', label: r.tools.box_generator, click: callback },
+        { click: callback, id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator },
+        { click: callback, id: 'CODE_GENERATOR', label: r.tools.code_generator },
+        { click: callback, id: 'BOX_GEN', label: r.tools.box_generator },
       ],
     });
 
     const accountSubmenu = buildAccountMenuItems(callback, accountInfo);
+
     menuItems.push({
       id: '_account',
       label: r.account,
@@ -644,6 +687,7 @@ class MenuManager extends EventEmitter {
     }
 
     const helpSubmenu = this.buildHelpMenu(callback);
+
     menuItems.push({
       id: '_help',
       label: r.help || 'Help',
@@ -656,81 +700,90 @@ class MenuManager extends EventEmitter {
 
   private buildHelpMenu = (callback: (data: MenuData) => void) => {
     const helpSubmenu = [];
+
     if (process.platform !== 'darwin') {
-      helpSubmenu.push({ id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio, click: callback });
+      helpSubmenu.push({ click: callback, id: 'ABOUT_BEAM_STUDIO', label: r.about_beam_studio });
     }
+
     helpSubmenu.push(
       ...[
-        { id: 'START_TUTORIAL', label: r.show_start_tutorial, click: callback },
-        { id: 'START_UI_INTRO', label: r.show_ui_intro, click: callback },
-        { id: 'QUESTIONNAIRE', label: r.questionnaire, click: callback },
-        { id: 'CHANGE_LOGS', label: r.change_logs, click: callback },
+        { click: callback, id: 'START_TUTORIAL', label: r.show_start_tutorial },
+        { click: callback, id: 'START_UI_INTRO', label: r.show_ui_intro },
+        { click: callback, id: 'QUESTIONNAIRE', label: r.questionnaire },
+        { click: callback, id: 'CHANGE_LOGS', label: r.change_logs },
         {
-          id: 'HELP_CENTER',
-          label: r.help_center,
           click() {
             shell.openExternal(r.link.help_center);
           },
+          id: 'HELP_CENTER',
+          label: r.help_center,
         },
         {
-          id: 'KEYBOARD_SHORTCUTS',
-          label: r.keyboard_shortcuts,
           click() {
             shell.openExternal(r.link.shortcuts);
           },
+          id: 'KEYBOARD_SHORTCUTS',
+          label: r.keyboard_shortcuts,
         },
         {
-          id: 'CONTACT_US',
-          label: r.contact,
           click() {
             shell.openExternal(r.link.contact_us);
           },
+          id: 'CONTACT_US',
+          label: r.contact,
         },
         { type: 'separator' },
         {
-          id: 'FORUM',
-          label: r.forum,
           click() {
             shell.openExternal(r.link.forum);
           },
+          id: 'FORUM',
+          label: r.forum,
         },
         {
+          click: callback,
           id: 'FOLLOW_US',
           label: r.follow_us,
-          click: callback,
         },
         { type: 'separator' },
-      ]
+      ],
     );
-    helpSubmenu.push({ id: 'UPDATE_BS', label: r.update, click: callback });
+    helpSubmenu.push({ click: callback, id: 'UPDATE_BS', label: r.update });
+
     if (process.platform !== 'darwin') {
       const currentChannel = app.getVersion().split('-')[1] || 'latest';
       const switchChannelLabel =
         currentChannel === 'latest' ? r.switch_to_beta : r.switch_to_latest;
-      helpSubmenu.push({ id: 'SWITCH_VERSION', label: switchChannelLabel, click: callback });
+
+      helpSubmenu.push({ click: callback, id: 'SWITCH_VERSION', label: switchChannelLabel });
     }
+
     helpSubmenu.push(
       ...[
         { type: 'separator' },
-        { id: 'BUG_REPORT', label: r.bug_report || 'Bug Report', click: callback },
+        { click: callback, id: 'BUG_REPORT', label: r.bug_report || 'Bug Report' },
         {
-          id: 'DEV_TOOL',
-          label: r.dev_tool || 'Debug Tool',
+          accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J',
           click: () => {
             const view = getFocusedView();
-            if (view) view.webContents.openDevTools();
+
+            if (view) {
+              view.webContents.openDevTools();
+            }
           },
-          accelerator: process.platform === 'darwin' ? 'Cmd+Option+J' : 'Ctrl+Shift+J',
+          id: 'DEV_TOOL',
+          label: r.dev_tool || 'Debug Tool',
         },
         {
-          id: 'BEAM_STUDIO_API',
-          label: r.using_beam_studio_api || 'Using Beam Studio API',
           click() {
             shell.openExternal(r.link.beam_studio_api);
           },
+          id: 'BEAM_STUDIO_API',
+          label: r.using_beam_studio_api || 'Using Beam Studio API',
         },
-      ]
+      ],
     );
+
     return helpSubmenu;
   };
 }

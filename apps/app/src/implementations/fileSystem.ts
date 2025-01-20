@@ -1,62 +1,59 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable @typescript-eslint/no-shadow */
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { app } from '@electron/remote';
 
-import { IFileSystem } from 'interfaces/IFileSystem';
+import type { IFileSystem } from '@core/interfaces/IFileSystem';
 
-export type Path = 'documents' | 'userData' | 'appData';
+export type Path = 'appData' | 'documents' | 'userData';
 export default {
-  exists(path: string): boolean {
-    return fs.existsSync(path);
-  },
   appendFile(filePath: string, data: Buffer | string): void {
     fs.appendFileSync(filePath, data);
   },
   copyFile(src: string, dest: string): void {
     fs.copyFileSync(src, dest);
   },
-  writeFile(filePath: string, data: Buffer | string): void {
-    fs.writeFileSync(filePath, data);
+  delete(path: Path): void {
+    fs.unlinkSync(path);
   },
-  readFile(filePath: string, encoding?: BufferEncoding): string {
-    return fs.readFileSync(filePath, {
-      encoding,
-    });
+  exists(path: string): boolean {
+    return fs.existsSync(path);
   },
-  isFile(input: string): boolean {
-    return fs.lstatSync(input).isFile();
+  getPath(path: Path): string {
+    return app.getPath(path);
   },
   isDirectory(input: string): boolean {
     return fs.lstatSync(input).isDirectory();
   },
+  isFile(input: string): boolean {
+    return fs.lstatSync(input).isFile();
+  },
+  join(...paths: string[]): string {
+    return path.join(...paths);
+  },
+  async mkdir(path: string, isRecursive: boolean): Promise<string | undefined> {
+    return fs.mkdirSync(path, { recursive: isRecursive });
+  },
+  readdirSync(path: Path): string[] {
+    return fs.readdirSync(path);
+  },
+  readFile(filePath: string, encoding?: BufferEncoding): Buffer | string {
+    return fs.readFileSync(filePath, { encoding });
+  },
   rename(oldPath: string, newPath: string): Promise<void> {
     const fsPromises = fs.promises;
+
     return fsPromises.rename(oldPath, newPath);
   },
-  async mkdir(path: string, isRecursive: boolean): Promise<string> {
-    return fs.mkdirSync(path, {
-      recursive: isRecursive,
-    });
+  writeFile(filePath: string, data: Buffer | string): void {
+    fs.writeFileSync(filePath, data);
   },
   writeStream(path: string, flags: string, data?: Buffer[]): void {
     const stream = fs.createWriteStream(path, {
       flags,
     });
+
     data?.forEach((datum) => stream.write(datum));
     stream.close();
-  },
-  join(...paths: string[]): string {
-    return path.join(...paths);
-  },
-  getPath(path: Path): string {
-    return app.getPath(path);
-  },
-  readdirSync(path: Path): string[] {
-    return fs.readdirSync(path);
-  },
-  delete(path: Path): void {
-    fs.unlinkSync(path);
   },
 } as IFileSystem;

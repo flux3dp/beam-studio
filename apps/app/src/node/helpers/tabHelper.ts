@@ -2,24 +2,24 @@
  * @file tabHelper.ts
  * @description Helper functions for tab management, extracted from tab-manager.ts to avoid circular dependency
  */
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { WebContentsView } from 'electron';
 
-import TabManager from 'node/tabManager';
+import type { WebContentsView } from 'electron';
 
-let currentTabManager: TabManager | null = null;
+import type TabManager from '../tabManager';
 
-export const getTabManager = (): TabManager | null => currentTabManager;
+let currentTabManager: null | TabManager = null;
+
+export const getTabManager = (): null | TabManager => currentTabManager;
 
 export const setTabManager = (tabManager: TabManager): void => {
   currentTabManager = tabManager;
 };
 
-export const getFocusedView = (): WebContentsView | null =>
+export const getFocusedView = (): null | WebContentsView =>
   currentTabManager?.getFocusedView() ?? null;
 
 export default {
-  setTabManager,
-  getTabManager,
   getFocusedView,
+  getTabManager,
+  setTabManager,
 };
