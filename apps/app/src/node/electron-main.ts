@@ -11,7 +11,7 @@ import path from 'path';
 import url from 'url';
 
 import * as electronRemote from '@electron/remote/main';
-import Sentry from '@sentry/electron';
+import { captureMessage, init as SentryInit } from '@sentry/electron';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
 
 import BackendManager from './backend-manager';
@@ -28,14 +28,16 @@ import TabManager from './tabManager';
 import { UpdateManager } from './updateManager';
 
 electronRemote.initialize();
-Sentry.init({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
-Sentry.captureMessage('User Census', {
+
+SentryInit({ dsn: 'https://bbd96134db9147658677dcf024ae5a83@o28957.ingest.sentry.io/5617300' });
+captureMessage('User Census', {
   level: 'info',
   tags: {
     census: 'v1',
     from: 'backend',
   },
 });
+
 setupTitlebar();
 
 let mainWindow: BaseWindow | null;

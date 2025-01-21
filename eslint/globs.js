@@ -32,8 +32,6 @@ const IGNORES = [
   '**/public/**/*',
   '**/svgedit',
   '**/svg-editor',
-  '**/webpack.*.js',
-  'eslint.config.js',
   // ignore for now, to prevent eslint overloading
   '**/lang/*.ts',
 ];

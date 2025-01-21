@@ -1,17 +1,18 @@
-const { merge } = require('webpack-merge');
-const defaultConfig = require('./webpack.config.js');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const { merge } = require('webpack-merge');
 
-const prodConfig = defaultConfig.map((config) => {
+const defaultConfig = require('./webpack.config.js');
+
+module.exports = defaultConfig.map((config) => {
   return merge(config, {
     mode: 'production',
     plugins:
       config.entry === './src/main.ts'
         ? [
             sentryWebpackPlugin({
+              authToken: process.env.SENTRY_AUTH_TOKEN,
               org: 'flux3dp',
               project: 'beam-studio',
-              authToken: process.env.SENTRY_AUTH_TOKEN,
               silent: true,
               telemetry: false,
             }),
@@ -19,5 +20,3 @@ const prodConfig = defaultConfig.map((config) => {
         : undefined,
   });
 });
-
-module.exports = prodConfig;

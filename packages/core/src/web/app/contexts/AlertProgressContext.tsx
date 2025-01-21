@@ -1,34 +1,36 @@
+/* eslint-disable no-unused-vars */
 import React, { createContext } from 'react';
-import { MessageInstance } from 'antd/es/message/interface';
 
+import type { MessageInstance } from 'antd/es/message/interface';
+
+import { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import ProgressConstants from '@core/app/constants/progress-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import ProgressConstants from '@core/app/constants/progress-constants';
-import { IAlert } from '@core/interfaces/IAlert';
-import { IProgressDialog } from '@core/interfaces/IProgress';
-import { IMessage } from '@core/interfaces/IMessage';
-import { MessageLevel } from '@core/app/actions/message-caller';
-import { IButton } from '@core/interfaces/IButton';
+import type { IAlert } from '@core/interfaces/IAlert';
+import type { IButton } from '@core/interfaces/IButton';
+import type { IMessage } from '@core/interfaces/IMessage';
+import type { IProgressDialog } from '@core/interfaces/IProgress';
 
 const LANG = i18n.lang.alert;
 
 interface IAlertProgressContext {
-  alertProgressStack: (IAlert | IProgressDialog)[];
-  popFromStack: () => void;
+  alertProgressStack: Array<IAlert | IProgressDialog>;
   popById: (id: string) => void;
+  popFromStack: () => void;
 }
 
 export const AlertProgressContext = createContext<IAlertProgressContext>({
   alertProgressStack: [],
-  popFromStack: () => {},
   popById: () => {},
+  popFromStack: () => {},
 });
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 
 interface State {
-  alertProgressStack: (IAlert | IProgressDialog)[];
+  alertProgressStack: Array<IAlert | IProgressDialog>;
 }
 
 interface Props {
@@ -66,7 +68,9 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     this.setState((cur) => {
       const { alertProgressStack } = cur;
       const newStack = [...alertProgressStack];
+
       newStack.pop();
+
       return { alertProgressStack: newStack };
     });
   };
@@ -74,6 +78,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
   popById = (id: string): void => {
     this.setState((cur) => {
       const newStack = [...cur.alertProgressStack.filter((item) => item.id !== id)];
+
       return { alertProgressStack: newStack };
     });
   };
@@ -87,8 +92,10 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     const { alertProgressStack } = this.state;
     const res = alertProgressStack.filter((item) => {
       const { id: itemId } = item;
+
       return itemId === id && !('isProgress' in item);
     });
+
     response.idExist = res.length > 0;
   };
 
@@ -101,16 +108,18 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     const { alertProgressStack } = this.state;
     const res = alertProgressStack.filter((item) => {
       const { id: itemId, isProgress } = item;
+
       return itemId === id && isProgress;
     });
+
     response.result = res.length > 0;
   };
 
   pushToStack = (item: IAlert | IProgressDialog, callback = () => {}): void => {
     if (item.id) {
-      // eslint-disable-next-line no-console
       console.log('alert/progress pushed', item.id);
     }
+
     this.setState(
       (cur) => ({
         ...cur,
@@ -121,16 +130,16 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
   };
 
   openProgress = (args: IProgressDialog, callback = () => {}): void => {
-    const { id, caption, message, type } = args;
+    const { caption, id, message, type } = args;
 
     this.pushToStack(
       {
         ...args,
-        id,
-        type,
         caption: caption || '',
-        message: message || '',
+        id,
         isProgress: true,
+        message: message || '',
+        type,
       },
       callback,
     );
@@ -138,6 +147,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
 
   closeMessage = (id: string): void => {
     const { messageApi } = this.props;
+
     messageApi.destroy(id);
   };
 
@@ -145,6 +155,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     const { level } = args;
 
     const { messageApi } = this.props;
+
     switch (level) {
       case MessageLevel.SUCCESS:
         messageApi.success(args);
@@ -170,15 +181,19 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     this.setState((cur) => {
       const { alertProgressStack } = cur;
       let i;
+
       for (i = alertProgressStack.length - 1; i >= 0; i -= 1) {
         if ('isProgress' in alertProgressStack[i]) {
           break;
         }
       }
+
       if (i >= 0) {
         alertProgressStack.splice(i, 1);
+
         return { alertProgressStack };
       }
+
       return cur;
     });
   };
@@ -187,16 +202,20 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     this.setState((cur) => {
       const { alertProgressStack } = cur;
       const newStack = [...alertProgressStack];
-      const targetObjects = newStack.filter(
-        ({ id: itemId, isProgress }) => isProgress && itemId === id,
-      );
-      if (targetObjects.length === 0) return cur;
+      const targetObjects = newStack.filter(({ id: itemId, isProgress }) => isProgress && itemId === id);
+
+      if (targetObjects.length === 0) {
+        return cur;
+      }
+
       const targetObject = targetObjects[targetObjects.length - 1];
+
       if (targetObject.type === ProgressConstants.NONSTOP && !args.caption && args.message) {
-        // eslint-disable-next-line no-param-reassign
         args.caption = args.message;
       }
+
       Object.assign(targetObject, args);
+
       return { alertProgressStack: newStack };
     });
   };
@@ -204,6 +223,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
   popUp = (args: IAlert, callback = () => {}): void => {
     const { message, type } = args;
     let { caption } = args;
+
     switch (type) {
       case AlertConstants.SHOW_POPUP_INFO:
         caption = caption || LANG.info;
@@ -220,14 +240,15 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
       default:
         break;
     }
+
     const buttons = this.buttonsGenerator(args);
 
     this.pushToStack(
       {
         ...args,
+        buttons,
         caption,
         message,
-        buttons,
       },
       callback,
     );
@@ -235,9 +256,14 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
 
   buttonsGenerator = (args: IAlert): IButton[] => {
     let { buttons } = args;
-    if (buttons) return buttons;
-    const { id, buttonType, onYes, onConfirm, onRetry } = args;
-    let { buttonLabels, callbacks, primaryButtonIndex, onNo, onCancel } = args;
+
+    if (buttons) {
+      return buttons;
+    }
+
+    const { buttonType, id, onConfirm, onRetry, onYes } = args;
+    let { buttonLabels, callbacks, onCancel, onNo, primaryButtonIndex } = args;
+
     switch (buttonType) {
       case AlertConstants.YES_NO:
         onNo = onNo || (() => {});
@@ -260,7 +286,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
       case AlertConstants.CUSTOM_CANCEL:
         onCancel = onCancel || (() => {});
         primaryButtonIndex = primaryButtonIndex || 0;
-        buttonLabels = [...buttonLabels, LANG.cancel];
+        buttonLabels = [...(buttonLabels ?? []), LANG.cancel];
         callbacks = [callbacks as () => void, onCancel];
         break;
       default:
@@ -268,41 +294,45 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
           buttonLabels = [LANG.ok];
           callbacks = callbacks || (() => {});
         }
+
         break;
     }
     buttons = buttonLabels.map((label, i) => {
       const b = {
-        label,
         className:
           buttonLabels.length === 1 || i === primaryButtonIndex || primaryButtonIndex === undefined
             ? 'btn-default primary'
             : 'btn-default',
+        label,
         onClick: () => {},
       };
+
       if (callbacks && typeof callbacks === 'function') {
         b.onClick = () => {
-          (callbacks as (id: string) => void)(id);
+          (callbacks as (id: string | undefined) => void)(id);
         };
       } else if (callbacks && callbacks.length > i) {
         b.onClick = () => {
           callbacks[i](id);
         };
       }
+
       return b;
     });
 
     return buttons;
   };
 
-  render(): JSX.Element {
+  render(): React.JSX.Element {
     const { children } = this.props;
     const { alertProgressStack } = this.state;
+
     return (
       <AlertProgressContext.Provider
         value={{
           alertProgressStack,
-          popFromStack: this.popFromStack,
           popById: this.popById,
+          popFromStack: this.popFromStack,
         }}
       >
         {children}

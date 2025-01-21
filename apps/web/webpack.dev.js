@@ -1,17 +1,17 @@
 const path = require('path');
+
 const { merge } = require('webpack-merge');
+
 const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
-  mode: 'development',
   devServer: {
-    static: '../../dist',
     compress: true,
+    static: path.resolve(__dirname, 'dist'),
   },
+  mode: 'development',
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name].bundle.js',
     clean: true,
-    hashFunction: 'xxhash64',
+    filename: '[name].bundle.js',
   },
 });

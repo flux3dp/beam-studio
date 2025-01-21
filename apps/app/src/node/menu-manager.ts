@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';

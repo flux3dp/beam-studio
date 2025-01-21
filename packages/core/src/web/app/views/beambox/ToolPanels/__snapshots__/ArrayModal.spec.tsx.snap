@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should render correctly default unit is inches 1`] = `
+exports[`ArrayModal default unit is inches 1`] = `
 <body>
   <div />
   <div>
@@ -336,7 +336,7 @@ exports[`should render correctly default unit is inches 1`] = `
 </body>
 `;
 
-exports[`should render correctly default unit is mm 1`] = `
+exports[`ArrayModal default unit is mm 1`] = `
 <body>
   <div />
   <div>

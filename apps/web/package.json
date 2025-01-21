@@ -7,7 +7,7 @@
     "build": "webpack --config webpack.prod.js",
     "cy:dev": "cypress open",
     "cy:run": "cypress run",
-    "start": "webpack serve --open --config webpack.dev.js"
+    "start": "webpack serve --config webpack.dev.js"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.3.2",

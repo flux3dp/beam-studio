@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import type { ChildProcess } from 'child_process';
 import { execSync, spawn } from 'child_process';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';

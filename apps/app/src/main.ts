@@ -10,12 +10,10 @@ import globalHelper from '@core/helpers/global-helper';
 import communicator from '@app/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
-import loaderLoaded from './loader';
+import './loader';
 
 globalHelper.setWindowMember();
-console.log('loader loaded', loaderLoaded);
 
-// const allowTracking = false;
 declare global {
   var requireNode: (_name: string) => any;
   interface Window {

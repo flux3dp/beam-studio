@@ -5,62 +5,40 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const nodeConfig = require('./webpack.node.js');
 
-const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
 const app = path.resolve(__dirname, 'src');
+const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
 
 module.exports = [
   ...nodeConfig,
   {
-    entry: './src/main.ts',
     devtool: 'source-map',
-    mode: 'development',
-    resolve: {
-      alias: {
-        '@core': coreWeb,
-        '@app': app,
-      },
-      extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
-    },
+    entry: './src/main.ts',
     externals: {
-      crypto: 'require("crypto")',
-      electron: 'require("electron")',
-      fs: 'require("fs")',
-      os: 'require("os")',
-      path: 'require("path")',
-      dns: 'require("dns")',
-      util: 'require("util")',
-      child_process: 'require("child_process")',
-      'net-ping': 'require("net-ping")',
-      fontkit: 'require("fontkit")',
-      'font-scanner': 'require("font-scanner")',
       '@sentry/electron': 'require("@sentry/electron")',
+      'font-scanner': 'require("font-scanner")',
     },
-    node: {
-      __dirname: false,
-    },
+    mode: 'development',
     module: {
       rules: [
         {
-          test: /\.worker\.ts$/,
           loader: 'worker-loader',
-          options: {
-            filename: '[name].worker.js',
-          },
+          options: { filename: '[name].worker.js' },
+          test: /\.worker\.ts$/,
         },
         {
-          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
+          test: /\.(js|jsx)$/,
           use: ['babel-loader'],
         },
         {
-          test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
+          test: /\.(ts|tsx)$/,
           use: [
             {
               loader: 'ts-loader',
               options: {
-                transpileOnly: true,
                 configFile: 'tsconfig.app.json',
+                transpileOnly: true,
               },
             },
           ],
@@ -70,31 +48,26 @@ module.exports = [
           use: ['style-loader', 'css-loader'],
         },
         {
-          test: /\.module\.s[ac]ss$/,
           exclude: /node_modules/,
+          test: /\.module\.s[ac]ss$/,
           use: [
             'style-loader',
             {
               loader: 'css-loader',
-              options: {
-                modules: {
-                  localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                },
-              },
+              options: { modules: { localIdentName: '[path][name]__[local]--[hash:base64:5]' } },
             },
-            {
-              loader: 'sass-loader',
-            },
+            { loader: 'sass-loader' },
           ],
         },
         {
+          resourceQuery: /url/, // *.svg?url
           test: /\.svg$/i,
           type: 'asset',
-          resourceQuery: /url/, // *.svg?url
         },
         {
+          // exclude react component if *.svg?url
+          resourceQuery: { not: [/url/] },
           test: /\.svg$/,
-          resourceQuery: { not: [/url/] }, // exclude react component if *.svg?url
           use: [
             {
               loader: '@svgr/webpack',
@@ -105,8 +78,8 @@ module.exports = [
                       name: 'preset-default',
                       params: {
                         overrides: {
-                          removeViewBox: false,
                           convertPathData: false,
+                          removeViewBox: false,
                         },
                       },
                     },
@@ -118,85 +91,81 @@ module.exports = [
         },
       ],
     },
+    node: {
+      __dirname: false,
+    },
     output: {
-      path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'bundle.js',
+      path: path.resolve(__dirname, 'public', 'js', 'dist'),
+      uniqueName: 'app-renderer',
     },
     plugins: [
       new CopyPlugin({
         patterns: [
-          {
-            from: path.resolve(coreWeb, 'assets/video'),
-            to: path.resolve(__dirname, 'public/video'),
-          },
-          {
-            from: path.resolve(coreWeb, 'assets/img'),
-            to: path.resolve(__dirname, 'public/core-img'),
-          },
-          {
-            from: path.resolve(coreWeb, 'assets/fcode'),
-            to: path.resolve(__dirname, 'public/fcode'),
-          },
-          {
-            from: path.resolve(coreWeb, 'assets/assets'),
-            to: path.resolve(__dirname, 'public/assets'),
-          },
+          { from: path.resolve(coreWeb, 'assets/video'), to: path.resolve(__dirname, 'public/video') },
+          { from: path.resolve(coreWeb, 'assets/img'), to: path.resolve(__dirname, 'public/core-img') },
+          { from: path.resolve(coreWeb, 'assets/fcode'), to: path.resolve(__dirname, 'public/fcode') },
+          { from: path.resolve(coreWeb, 'assets/assets'), to: path.resolve(__dirname, 'public/assets') },
         ],
       }),
     ],
-  },
-  {
-    entry: './src/shadow-window.ts',
-    devtool: 'source-map',
-    mode: 'development',
-    stats: 'errors-only',
     resolve: {
       alias: {
-        '@core': coreWeb,
         '@app': app,
+        '@core': coreWeb,
       },
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
     },
-    externals: {
-      electron: 'require("electron")',
-      '@sentry/electron': 'require("@sentry/electron")',
-    },
-    node: {
-      __dirname: false,
-    },
+    // stats: 'errors-only',
+    target: 'electron30-renderer',
+  },
+  {
+    devtool: 'source-map',
+    entry: './src/shadow-window.ts',
+    externals: { '@sentry/electron': 'require("@sentry/electron")' },
+    mode: 'development',
     module: {
       rules: [
         {
-          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
+          test: /\.(js|jsx)$/,
           use: ['babel-loader'],
         },
         {
-          test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
+          test: /\.(ts|tsx)$/,
           use: [
             {
               loader: 'ts-loader',
               options: {
-                transpileOnly: true,
                 configFile: 'tsconfig.app.json',
+                transpileOnly: true,
               },
             },
           ],
         },
       ],
     },
+    node: { __dirname: false },
     output: {
-      path: path.resolve(__dirname, 'public', 'js', 'dist'),
       filename: 'shadow-window.js',
+      path: path.resolve(__dirname, 'public', 'js', 'dist'),
+      uniqueName: 'app-shadow-renderer',
     },
+    resolve: {
+      alias: {
+        '@app': app,
+        '@core': coreWeb,
+      },
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
+    },
+    // stats: 'errors-only',
+    target: 'electron30-renderer',
   },
   {
+    // stats: 'errors-only',
+    entry: { main: './public/sass/main.scss' },
     mode: 'development',
-    stats: 'errors-only',
-    entry: {
-      main: './public/sass/main.scss',
-    },
     module: {
       rules: [
         {
@@ -209,9 +178,10 @@ module.exports = [
         },
       ],
     },
-    plugins: [new MiniCssExtractPlugin()],
     output: {
       path: path.resolve(__dirname, 'public', 'css', 'dist'),
+      uniqueName: 'app-style',
     },
+    plugins: [new MiniCssExtractPlugin()],
   },
 ];

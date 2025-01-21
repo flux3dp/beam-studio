@@ -1,27 +1,23 @@
 'use strict';
-const globals = require('globals');
-const pluginNx = require('@nx/eslint-plugin');
 const js = require('@eslint/js');
+const pluginNx = require('@nx/eslint-plugin');
+const style = require('@stylistic/eslint-plugin-js'); // stylistic
 const ts = require('@typescript-eslint/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
+const format = require('eslint-plugin-format'); // format
+const pluginImport = require('eslint-plugin-import-x'); // import
 const n = require('eslint-plugin-n');
-// import
-const pluginImport = require('eslint-plugin-import-x');
-const unusedImport = require('eslint-plugin-unused-imports');
-// react
+const perfectionist = require('eslint-plugin-perfectionist'); // strict order elements
 const react = require('eslint-plugin-react');
 const hooks = require('eslint-plugin-react-hooks');
 const reactRefresh = require('eslint-plugin-react-refresh');
-// strict style
-const style = require('@stylistic/eslint-plugin-js');
-const perfectionist = require('eslint-plugin-perfectionist');
-const unicorn = require('eslint-plugin-unicorn');
-// format
-const format = require('eslint-plugin-format');
+const unicorn = require('eslint-plugin-unicorn'); // strict style
+const unusedImport = require('eslint-plugin-unused-imports');
+const globals = require('globals');
 
 const { RULES: perfectionistRules } = require('./eslint/config/perfectionist');
 const { RULES: unicornRules } = require('./eslint/config/unicorn');
-const { addPrefix, IGNORES, GLOB_TS, GLOB_TSX, GLOB_STYLE, GLOB_TESTS } = require('./eslint/globs');
+const { addPrefix, GLOB_STYLE, GLOB_TESTS, GLOB_TS, GLOB_TSX, IGNORES } = require('./eslint/globs');
 
 const SRC_GLOB_TS = addPrefix('**/src', GLOB_TS);
 const SRC_GLOB_TSX = addPrefix('**/src', GLOB_TSX);
@@ -35,17 +31,17 @@ module.exports = [
   {
     plugins: {
       '@nx': pluginNx,
-      ts,
-      n,
-      import: pluginImport,
-      unusedImport,
-      react,
+      format,
       hooks,
+      import: pluginImport,
+      n,
+      perfectionist,
+      react,
       reactRefresh,
       style,
+      ts,
       unicorn,
-      perfectionist,
-      format,
+      unusedImport,
     },
   },
   {
@@ -54,10 +50,10 @@ module.exports = [
         ...globals.browser,
         ...globals.node,
         ...globals.worker,
-        NodeJS: true,
-        BufferEncoding: true,
         $: true,
+        BufferEncoding: true,
         Electron: true,
+        NodeJS: true,
       },
       parser: tsParser,
     },
@@ -67,34 +63,47 @@ module.exports = [
     rules: {
       // js
       ...js.configs.recommended.rules,
-      'no-unused-vars': [
+      curly: ['error', 'all'],
+      'format/prettier': [
         'error',
         {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
+          overrides: [
+            {
+              files: '**/lang/*.ts',
+              options: {
+                printWidth: 100000,
+              },
+            },
+          ],
+          parser: 'typescript',
+          printWidth: 120,
+          semi: true,
+          singleQuote: true,
+          tabWidth: 2,
         },
       ],
-      // ts
-      'ts/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
-      'ts/consistent-type-imports': 'error',
+      'hooks/exhaustive-deps': ['warn', { additionalHooks: '(useDrag|useDrop)' }],
+      'hooks/rules-of-hooks': 'error',
       // import
       'import/order': [
         'error',
         {
-          alphabetize: { order: 'asc', caseInsensitive: true },
+          alphabetize: { caseInsensitive: true, order: 'asc' },
           groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'unknown'],
+          'newlines-between': 'always',
           pathGroups: [
             // place react and react-native imports at the top
-            { pattern: 'react+(|-native)', group: 'external', position: 'before' },
-            { pattern: '@core/**', group: 'internal', position: 'before' },
-            { pattern: '@app/**', group: 'internal', position: 'before' },
+            {
+              group: 'external',
+              pattern: 'react+(|-native)',
+              position: 'before',
+            },
+            { group: 'internal', pattern: '@core/**', position: 'before' },
+            { group: 'internal', pattern: '@app/**', position: 'before' },
           ],
           pathGroupsExcludedImportTypes: ['react'],
-          'newlines-between': 'always',
         },
       ],
-      'unusedImport/no-unused-imports': 'error',
       // node
       'n/handle-callback-err': ['error', '^(err|error)$'],
       'n/no-deprecated-api': 'error',
@@ -102,68 +111,90 @@ module.exports = [
       'n/no-new-require': 'error',
       'n/no-path-concat': 'error',
       'n/process-exit-as-throw': 'error',
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       // nx
       // enable following rule if our implementations are ready
       // '@nx/enforce-module-boundaries': [
       //   'error',
       //   { allow: [], depConstraints: [{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }] },
       // ],
-      // react
       'react/react-in-jsx-scope': 'off',
-      'hooks/rules-of-hooks': 'error',
-      'hooks/exhaustive-deps': ['warn', { additionalHooks: '(useDrag|useDrop)' }],
       'reactRefresh/only-export-components': ['warn', { allowConstantExport: true }],
-      // style
-      curly: ['error', 'all'],
       'style/brace-style': ['error', '1tbs'],
       'style/no-extra-semi': 'error',
       'style/padding-line-between-statements': [
         'error',
-        { blankLine: 'always', prev: '*', next: 'return' },
-        { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
-        { blankLine: 'always', prev: '*', next: ['const', 'let', 'var'] },
-        { blankLine: 'any', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
-        { blankLine: 'always', prev: 'if', next: '*' },
-        { blankLine: 'always', prev: '*', next: 'if' },
+        { blankLine: 'always', next: 'return', prev: '*' },
+        { blankLine: 'always', next: '*', prev: ['const', 'let', 'var'] },
+        { blankLine: 'always', next: ['const', 'let', 'var'], prev: '*' },
+        {
+          blankLine: 'any',
+          next: ['const', 'let', 'var'],
+          prev: ['const', 'let', 'var'],
+        },
+        { blankLine: 'always', next: '*', prev: 'if' },
+        { blankLine: 'always', next: 'if', prev: '*' },
       ],
       'style/quotes': ['error', 'single'],
-      'format/prettier': [
-        'error',
-        {
-          parser: 'typescript',
-          singleQuote: true,
-          tabWidth: 2,
-          semi: true,
-          printWidth: 100,
-          overrides: [
-            {
-              files: '**/lang/*.ts',
-              options: {
-                printWidth: 10000,
-              },
-            },
-          ],
-        },
-      ],
+      // ts
+      'ts/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
+      'ts/consistent-type-imports': 'error',
+      'unusedImport/no-unused-imports': 'error',
       ...perfectionistRules,
       ...unicornRules,
     },
   },
   {
     files: [SRC_GLOB_STYLE],
-    languageOptions: {
-      parser: format.parserPlain,
-    },
-    rules: {
-      'format/prettier': ['error', { parser: 'scss', tabWidth: 2 }],
-    },
+    languageOptions: { parser: format.parserPlain },
+    rules: { 'format/prettier': ['error', { parser: 'scss', tabWidth: 2 }] },
   },
   {
     files: SRC_GLOB_TESTS,
-    languageOptions: {
-      globals: {
-        ...globals.jest,
-      },
+    languageOptions: { globals: { ...globals.jest } },
+  },
+  {
+    files: ['**/webpack.*.js', 'eslint.config.js', './eslint/**/*.js'],
+    rules: {
+      'format/prettier': [
+        'error',
+        {
+          parser: 'babel-flow',
+          printWidth: 120,
+          semi: true,
+          singleQuote: true,
+          tabWidth: 2,
+        },
+      ],
+      'import/order': [
+        'error',
+        {
+          alphabetize: { caseInsensitive: true, order: 'asc' },
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'unknown'],
+          'newlines-between': 'always',
+          pathGroups: [
+            // place react and react-native imports at the top
+            {
+              group: 'external',
+              pattern: 'react+(|-native)',
+              position: 'before',
+            },
+            { group: 'internal', pattern: '@core/**', position: 'before' },
+            { group: 'internal', pattern: '@app/**', position: 'before' },
+          ],
+          pathGroupsExcludedImportTypes: ['react'],
+        },
+      ],
+      'unusedImport/no-unused-imports': 'error',
+      ...perfectionistRules,
+      ...unicornRules,
     },
   },
 ];

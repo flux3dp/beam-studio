@@ -2,13 +2,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "target": "es2022",
-    "lib": ["es2022", "dom", "dom.iterable"],
+    "lib": ["esnext", "dom", "dom.iterable"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "@core/*": ["packages/core/src/web/*"],
       "@app/*": ["apps/app/src/*"]

@@ -34,13 +34,13 @@ exports[`should render correctly 6`] = `
 <div>
   {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
   {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","caption":"INFO","buttons":[{"label":"Yes","className":"btn-default primary"},{"label":"No","className":"btn-default"}]}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"caption":"WARNING","buttons":[{"label":"OK","className":"btn-default primary"}]}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","caption":"UH-OH","buttons":[{"label":"Retry","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"label":"Confirm","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"label":"UPDATE","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
+  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
+  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
   {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
-  {"id":"machine-info","type":"SHOW_POPUP_INFO","caption":"abcde","message":"abcde: 111.222.333.444","buttonLabels":["Test Network","OK"],"callbacks":[null,null],"primaryButtonIndex":1,"buttons":[{"label":"Test Network","className":"btn-default"},{"label":"OK","className":"btn-default primary"}]}
+  {"id":"machine-info","type":"SHOW_POPUP_INFO","caption":"abcde","message":"abcde: 111.222.333.444","buttonLabels":["Test Network","OK"],"callbacks":[null,null],"primaryButtonIndex":1,"buttons":[{"className":"btn-default","label":"Test Network"},{"className":"btn-default primary","label":"OK"}]}
 </div>
 `;
 
@@ -48,11 +48,11 @@ exports[`should render correctly 7`] = `
 <div>
   {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
   {"id":"get_log","type":"STEPPING","message":"downloading","isProgress":true,"percentage":100,"caption":""}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","caption":"INFO","buttons":[{"label":"Yes","className":"btn-default primary"},{"label":"No","className":"btn-default"}]}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"caption":"WARNING","buttons":[{"label":"OK","className":"btn-default primary"}]}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","caption":"UH-OH","buttons":[{"label":"Retry","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"label":"Confirm","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"label":"UPDATE","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
+  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
+  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
   {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
 </div>
 `;
@@ -60,11 +60,11 @@ exports[`should render correctly 7`] = `
 exports[`should render correctly 8`] = `
 <div>
   {"id":"check-status","type":"NONSTOP","caption":"prepared","isProgress":true,"message":"prepared"}
-  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","caption":"INFO","buttons":[{"label":"Yes","className":"btn-default primary"},{"label":"No","className":"btn-default"}]}
-  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"caption":"WARNING","buttons":[{"label":"OK","className":"btn-default primary"}]}
-  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","caption":"UH-OH","buttons":[{"label":"Retry","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"label":"Confirm","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
-  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"label":"UPDATE","className":"btn-default primary"},{"label":"Cancel","className":"btn-default"}]}
+  {"type":"SHOW_POPUP_INFO","message":"File already exists, do you want to replace it?","buttonType":"YES_NO","buttons":[{"className":"btn-default primary","label":"Yes"},{"className":"btn-default","label":"No"}],"caption":"INFO"}
+  {"type":"SHOW_POPUP_WARNING","message":"Some texts were changed to other Fonts when parsing texts to paths and some character may not converted normally.","checkbox":{"text":"Don't Show this next time."},"buttons":[{"className":"btn-default primary","label":"OK"}],"caption":"WARNING"}
+  {"id":"monitor-reconnect","type":"SHOW_POPUP_ERROR","buttonType":"RETRY_CANCEL","message":"The connection with the machine has broken. Do you want to reconnect?","buttons":[{"className":"btn-default primary","label":"Retry"},{"className":"btn-default","label":"Cancel"}],"caption":"UH-OH"}
+  {"buttonType":"CONFIRM_CANCEL","message":"This will load arrangement of presets and replacing customized parameters set in the file, are you sure to proceed?","buttons":[{"className":"btn-default primary","label":"Confirm"},{"className":"btn-default","label":"Cancel"}]}
+  {"id":"latest-firmware","message":"You have the latest Machine firmware","caption":"Machine firmware Update","buttonType":"CUSTOM_CANCEL","buttonLabels":["UPDATE"],"buttons":[{"className":"btn-default primary","label":"UPDATE"},{"className":"btn-default","label":"Cancel"}]}
   {"message":"Unable to find machine ","buttons":[{"label":"Set Connection","className":"btn-default primary"},{"label":"Retry","className":"btn-default primary"}]}
 </div>
 `;
