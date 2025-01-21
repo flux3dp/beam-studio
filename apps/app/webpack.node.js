@@ -7,15 +7,13 @@ module.exports = [
     entry: './src/node/electron-main.ts',
     devtool: 'source-map',
     mode: 'development',
+    stats: 'errors-only',
     resolve: {
       alias: {
-        node: '/src/node',
-        app: '/src/web/app',
-        helpers: '/src/web/helpers',
-        implementations: '/src/implementations',
+        '@core': path.resolve(__dirname, '../../packages/core/src/web'),
+        '@app': path.resolve(__dirname, 'src'),
       },
       extensions: ['.ts', '.js'],
-      symlinks: false,
     },
     externals: [nodeExternals()],
     module: {
@@ -23,7 +21,15 @@ module.exports = [
         {
           test: /\.ts?$/,
           exclude: /node_modules/,
-          use: 'ts-loader',
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+                configFile: 'tsconfig.app.json',
+              },
+            },
+          ],
         },
       ],
     },

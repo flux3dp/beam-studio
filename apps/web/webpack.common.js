@@ -1,7 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
+const app = path.resolve(__dirname, '../app/src');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src/index.tsx'),
@@ -14,25 +17,17 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   resolve: {
-    modules: [
-      path.join(__dirname, 'public/js/lib'),
-      'node_modules',
-    ],
+    modules: [path.join(__dirname, 'public/js/lib'), 'node_modules'],
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
       react: path.resolve(__dirname, 'node_modules/react'),
-      app: path.resolve(__dirname, 'src/web/app/'),
-      helpers: path.resolve(__dirname, 'src/web/helpers/'),
-      "core-interfaces": path.resolve(__dirname, 'src/web/interfaces/'),
-      styles: path.resolve(__dirname, 'src/web/styles/'),
-      implementations: path.resolve(__dirname, 'src/implementations/'),
+      '@core': coreWeb,
+      '@app': path.resolve(__dirname, 'src'),
       /* from beam-studio */
       jquery: path.join(__dirname, 'public/js/lib/svgeditor/jquery'),
       underscore: path.join(__dirname, 'public/js/lib/underscore'),
       svgeditor: path.join(__dirname, 'public/js/lib/svgeditor'),
       imagetracer: path.join(__dirname, 'public/js/lib/svgeditor/imagetracer'),
-      // cssHome: '../css/3rd-party-plugins',
-      // freetrans: 'plugins/freetrans/jquery.freetrans',
       jqueryGrowl: path.join(__dirname, 'public/js/lib/jquery.growl'),
       dxf2svg: path.join(__dirname, 'public/js/lib/dxf2svg'),
       // SVG Editor Libraries Begin
@@ -44,7 +39,10 @@ module.exports = {
       touch: path.join(__dirname, 'public/js/lib/svgeditor/touch'),
       svgedit: path.join(__dirname, 'public/js/lib/svgeditor/svgedit'),
       jquerySvg: path.join(__dirname, 'public/js/lib/svgeditor/jquery-svg'),
-      jqueryContextMenu: path.join(__dirname, 'public/js/lib/svgeditor/contextmenu/jquery.contextMenu'),
+      jqueryContextMenu: path.join(
+        __dirname,
+        'public/js/lib/svgeditor/contextmenu/jquery.contextMenu',
+      ),
       pathseg: path.join(__dirname, 'public/js/lib/svgeditor/pathseg'),
       browser: path.join(__dirname, 'public/js/lib/svgeditor/browser'),
       svgtransformlist: path.join(__dirname, 'public/js/lib/svgeditor/svgtransformlist'),
@@ -57,8 +55,10 @@ module.exports = {
       draw: path.join(__dirname, 'public/js/lib/svgeditor/draw'),
       layer: path.join(__dirname, 'public/js/lib/svgeditor/layer'),
       path: path.join(__dirname, 'public/js/lib/svgeditor/path'),
-      // svgcanvas: 'public/js/lib/svgeditor/svgcanvas',
-      jqueryUi: path.join(__dirname, 'public/js/lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min'),
+      jqueryUi: path.join(
+        __dirname,
+        'public/js/lib/svgeditor/jquery-ui/jquery-ui-1.8.17.custom.min',
+      ),
       jpicker: path.join(__dirname, 'public/js/lib/svgeditor/jgraduate/jpicker'),
       canvg: path.join(__dirname, 'public/js/lib/svgeditor/canvg/canvg'),
       rgbcolor: path.join(__dirname, 'public/js/lib/svgeditor/canvg/rgbcolor'),
@@ -70,7 +70,6 @@ module.exports = {
       buffer: false,
       events: false,
     },
-    symlinks: false,
   },
   module: {
     rules: [
@@ -78,7 +77,7 @@ module.exports = {
         test: /\.worker\.ts$/,
         loader: 'worker-loader',
         options: {
-          filename: "[name].[contenthash].worker.js",
+          filename: '[name].[contenthash].worker.js',
         },
       },
       {
@@ -107,14 +106,14 @@ module.exports = {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                localIdentName: '[path][name]__[local]--[hash:base64:5]',
               },
-            }
+            },
           },
           {
             loader: 'sass-loader',
-          }
-        ]
+          },
+        ],
       },
       {
         test: /\.scss$/i,
@@ -168,17 +167,41 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/assets/images'), to: path.resolve(__dirname, 'dist/img') },
-        { from: path.resolve(__dirname, 'src/web/assets/img'), to: path.resolve(__dirname, 'dist/core-img') },
-        { from: path.resolve(__dirname, 'src/web/assets/fcode'), to: path.resolve(__dirname, 'dist/fcode') },
-        { from: path.resolve(__dirname, 'src/assets/styles'), to: path.resolve(__dirname, 'dist/styles') },
-        { from: path.resolve(__dirname, 'src/web/assets/video'), to: path.resolve(__dirname, 'dist/video') },
-        { from: path.resolve(__dirname, 'src/web/assets/assets'), to: path.resolve(__dirname, 'dist/assets') },
-        { from: path.resolve(__dirname, 'public/js/lib/svgeditor/extensions'), to: path.resolve(__dirname, 'dist/js/lib/svgeditor/extensions') },
-        { from: path.resolve(__dirname, 'public/js/lib/svgeditor/images'), to: path.resolve(__dirname, 'dist/js/lib/svgeditor/images') },
-        { from: path.resolve(__dirname, 'public/js/lib/svg-nest'), to: path.resolve(__dirname, 'dist/js/lib/svg-nest') },
-        { from: path.resolve(__dirname, 'public/js/lib/dxf2svg.js'), to: path.resolve(__dirname, 'dist') },
-        { from: path.resolve(__dirname, 'public/js/lib/svgeditor/imagetracer.js'), to: path.resolve(__dirname, 'dist') },
+        {
+          from: path.resolve(__dirname, 'src/assets/images'),
+          to: path.resolve(__dirname, 'dist/img'),
+        },
+        { from: path.resolve(coreWeb, 'assets/img'), to: path.resolve(__dirname, 'dist/core-img') },
+        { from: path.resolve(coreWeb, 'assets/fcode'), to: path.resolve(__dirname, 'dist/fcode') },
+        {
+          from: path.resolve(__dirname, 'src/assets/styles'),
+          to: path.resolve(__dirname, 'dist/styles'),
+        },
+        { from: path.resolve(coreWeb, 'assets/video'), to: path.resolve(__dirname, 'dist/video') },
+        {
+          from: path.resolve(coreWeb, 'assets/assets'),
+          to: path.resolve(__dirname, 'dist/assets'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/lib/svgeditor/extensions'),
+          to: path.resolve(__dirname, 'dist/js/lib/svgeditor/extensions'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/lib/svgeditor/images'),
+          to: path.resolve(__dirname, 'dist/js/lib/svgeditor/images'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/lib/svg-nest'),
+          to: path.resolve(__dirname, 'dist/js/lib/svg-nest'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/lib/dxf2svg.js'),
+          to: path.resolve(__dirname, 'dist'),
+        },
+        {
+          from: path.resolve(__dirname, 'public/js/lib/svgeditor/imagetracer.js'),
+          to: path.resolve(__dirname, 'dist'),
+        },
         { from: path.resolve(__dirname, 'src/vendor'), to: path.resolve(__dirname, 'dist/vendor') },
         { from: path.resolve(__dirname, 'src/manifest.json'), to: path.resolve(__dirname, 'dist') },
       ],

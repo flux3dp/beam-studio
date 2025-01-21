@@ -5,23 +5,21 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const nodeConfig = require('./webpack.node.js');
 
+const coreWeb = path.resolve(__dirname, '../../packages/core/src/web');
+const app = path.resolve(__dirname, 'src');
+
 module.exports = [
   ...nodeConfig,
   {
     entry: './src/main.ts',
     devtool: 'source-map',
     mode: 'development',
-    target: 'electron30-renderer',
     resolve: {
       alias: {
-        app: '/src/web/app',
-        helpers: '/src/web/helpers',
-        loader: '/src/web/loader',
-        implementations: '/src/implementations',
-        styles: '/src/web/styles',
+        '@core': coreWeb,
+        '@app': app,
       },
-      extensions: ['.tsx', '.ts', '.jsx', '.js', 'sass'],
-      symlinks: false,
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
     },
     externals: {
       crypto: 'require("crypto")',
@@ -30,13 +28,15 @@ module.exports = [
       os: 'require("os")',
       path: 'require("path")',
       dns: 'require("dns")',
-      child_process: 'require("child_process")',
       util: 'require("util")',
+      child_process: 'require("child_process")',
+      'net-ping': 'require("net-ping")',
+      fontkit: 'require("fontkit")',
       'font-scanner': 'require("font-scanner")',
       '@sentry/electron': 'require("@sentry/electron")',
     },
     node: {
-      __dirname: false
+      __dirname: false,
     },
     module: {
       rules: [
@@ -44,7 +44,7 @@ module.exports = [
           test: /\.worker\.ts$/,
           loader: 'worker-loader',
           options: {
-            filename: "[name].worker.js",
+            filename: '[name].worker.js',
           },
         },
         {
@@ -60,6 +60,7 @@ module.exports = [
               loader: 'ts-loader',
               options: {
                 transpileOnly: true,
+                configFile: 'tsconfig.app.json',
               },
             },
           ],
@@ -67,11 +68,6 @@ module.exports = [
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
-          include: [
-            path.join(__dirname, 'node_modules/react-resizable'),
-            path.join(__dirname, 'node_modules/antd'),
-            path.join(__dirname, 'node_modules/antd-mobile'),
-          ],
         },
         {
           test: /\.module\.s[ac]ss$/,
@@ -82,14 +78,14 @@ module.exports = [
               loader: 'css-loader',
               options: {
                 modules: {
-                  localIdentName: "[path][name]__[local]--[hash:base64:5]",
+                  localIdentName: '[path][name]__[local]--[hash:base64:5]',
                 },
-              }
+              },
             },
             {
               loader: 'sass-loader',
-            }
-          ]
+            },
+          ],
         },
         {
           test: /\.svg$/i,
@@ -129,10 +125,22 @@ module.exports = [
     plugins: [
       new CopyPlugin({
         patterns: [
-          { from: path.resolve(__dirname, 'src/web/assets/video'), to: path.resolve(__dirname, 'public/video') },
-          { from: path.resolve(__dirname, 'src/web/assets/img'), to: path.resolve(__dirname, 'public/core-img') },
-          { from: path.resolve(__dirname, 'src/web/assets/fcode'), to: path.resolve(__dirname, 'public/fcode') },
-          { from: path.resolve(__dirname, 'src/web/assets/assets'), to: path.resolve(__dirname, 'public/assets') },
+          {
+            from: path.resolve(coreWeb, 'assets/video'),
+            to: path.resolve(__dirname, 'public/video'),
+          },
+          {
+            from: path.resolve(coreWeb, 'assets/img'),
+            to: path.resolve(__dirname, 'public/core-img'),
+          },
+          {
+            from: path.resolve(coreWeb, 'assets/fcode'),
+            to: path.resolve(__dirname, 'public/fcode'),
+          },
+          {
+            from: path.resolve(coreWeb, 'assets/assets'),
+            to: path.resolve(__dirname, 'public/assets'),
+          },
         ],
       }),
     ],
@@ -141,16 +149,20 @@ module.exports = [
     entry: './src/shadow-window.ts',
     devtool: 'source-map',
     mode: 'development',
+    stats: 'errors-only',
     resolve: {
-      extensions: ['.tsx', '.ts', '.jsx', '.js'],
-      symlinks: false,
+      alias: {
+        '@core': coreWeb,
+        '@app': app,
+      },
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
     },
     externals: {
       electron: 'require("electron")',
       '@sentry/electron': 'require("@sentry/electron")',
     },
     node: {
-      __dirname: false
+      __dirname: false,
     },
     module: {
       rules: [
@@ -167,6 +179,7 @@ module.exports = [
               loader: 'ts-loader',
               options: {
                 transpileOnly: true,
+                configFile: 'tsconfig.app.json',
               },
             },
           ],
@@ -180,6 +193,7 @@ module.exports = [
   },
   {
     mode: 'development',
+    stats: 'errors-only',
     entry: {
       main: './public/sass/main.scss',
     },
@@ -187,21 +201,15 @@ module.exports = [
       rules: [
         {
           test: /\.s[ac]ss$/i,
-          use: [
-            MiniCssExtractPlugin.loader,
-            "css-loader",
-            "sass-loader",
-          ],
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         },
         {
           test: /\.(woff(2)?|ttf|eot|svg|png)$/,
           use: ['file-loader'],
-        }
+        },
       ],
     },
-    plugins: [
-      new MiniCssExtractPlugin(),
-    ],
+    plugins: [new MiniCssExtractPlugin()],
     output: {
       path: path.resolve(__dirname, 'public', 'css', 'dist'),
     },

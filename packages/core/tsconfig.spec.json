@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "es2022",
     "esModuleInterop": true,
-    "module": "ES2022",
+    "module": "nodenext",
     "moduleResolution": "nodenext",
     "sourceMap": true,
     "emitDecoratorMetadata": true,

@@ -1,8 +1,10 @@
 {
   "name": "@beam-studio/mono",
-  "version": "2.4.3-alpha",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "nx": "nx",
+    "run": "nx run",
     "test": "nx run-many --target=test --all",
     "lint": "nx run-many --target=lint --all"
   },
@@ -61,7 +63,7 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
-    "typescript": "~5.5.2",
+    "typescript": "^5.6.3",
     "typescript-eslint": "^8.0.0",
     "webpack-cli": "^5.1.4"
   },
