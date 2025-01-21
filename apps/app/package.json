@@ -1,6 +1,7 @@
 {
   "name": "@beam-studio/app",
   "version": "2.4.9-alpha",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/flux3dp/beam-studio",
   "author": {
     "name": "FLUX Inc.",

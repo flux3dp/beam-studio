@@ -2,7 +2,7 @@
   "name": "@beam-studio/core",
   "version": "1.0.0",
   "description": "Core of Beam Studio",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"

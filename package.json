@@ -2,7 +2,7 @@
   "name": "@beam-studio/mono",
   "version": "1.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "lint": "nx run-many --target=lint --all",
     "nx": "nx",

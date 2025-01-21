@@ -2,6 +2,7 @@
   "name": "@beam-studio/web",
   "version": "1.0.0",
   "description": "Beam Studio Web",
+  "license": "AGPL-3.0-only",
   "main": "index.tsx",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
