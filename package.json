@@ -215,7 +215,6 @@
       ]
     },
     "nsis": {
-      "include": "win-install.nsh",
       "artifactName": "Beam Studio Installer ${version}.${ext}",
       "oneClick": false,
       "perMachine": true,
