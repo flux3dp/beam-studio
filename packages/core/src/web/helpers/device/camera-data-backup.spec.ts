@@ -1,15 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const mockJSZip = jest.fn();
-jest.mock('jszip', () => ({
+
+jest.doMock('jszip', () => ({
   __esModule: true,
   default: mockJSZip,
 }));
 
-// eslint-disable-next-line import/first
-import { downloadCameraData, uploadCameraData, targetDirs } from './camera-data-backup';
+import { downloadCameraData, targetDirs, uploadCameraData } from './camera-data-backup';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args: any) => mockPopUp(...args),
   popUpError: (...args: any) => mockPopUpError(...args),
@@ -18,17 +18,19 @@ jest.mock('@core/app/actions/alert-caller', () => ({
 const mockLs = jest.fn();
 const mockDownloadFile = jest.fn();
 const mockUploadToDirectory = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  ls: (...args: any) => mockLs(...args),
   downloadFile: (...args: any) => mockDownloadFile(...args),
+  ls: (...args: any) => mockLs(...args),
   uploadToDirectory: (...args: any) => mockUploadToDirectory(...args),
 }));
 
 const mockWriteFileDialog = jest.fn();
 const mockGetFileFromDialog = jest.fn();
+
 jest.mock('@app/implementations/dialog', () => ({
-  writeFileDialog: (...args: any) => mockWriteFileDialog(...args),
   getFileFromDialog: (...args: any) => mockGetFileFromDialog(...args),
+  writeFileDialog: (...args: any) => mockWriteFileDialog(...args),
 }));
 
 jest.mock('@core/helpers/duration-formatter', () => (sec: number) => `${sec.toFixed(2)} seconds`);
@@ -37,15 +39,17 @@ const mockOpenNonstopProgress = jest.fn();
 const mockOpenSteppingProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
+
 jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args: any) => mockOpenNonstopProgress(...args),
   openSteppingProgress: (...args: any) => mockOpenSteppingProgress(...args),
-  update: (...args: any) => mockUpdate(...args),
   popById: (...args: any) => mockPopById(...args),
+  update: (...args: any) => mockUpdate(...args),
 }));
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
   get: (...args: any) => mockGet(...args),
   set: (...args: any) => mockSet(...args),
@@ -54,25 +58,25 @@ jest.mock('@app/implementations/storage', () => ({
 jest.mock('@core/helpers/i18n', () => ({
   lang: {
     camera_data_backup: {
-      no_picture_found: 'no_picture_found',
+      download_success: 'download_success',
       downloading_data: 'downloading_data',
       estimated_time_left: 'estimated_time_left',
       folder_not_exists: 'folder_not_exists',
       incorrect_folder: 'incorrect_folder',
-      uploading_data: 'uploading_data',
+      no_picture_found: 'no_picture_found',
       title: 'title',
-      download_success: 'download_success',
       upload_success: 'upload_success',
+      uploading_data: 'uploading_data',
     },
   },
 }));
 
 const mockDateNow = jest.fn();
 const mockJsZipInstance = {
-  folder: jest.fn(),
   file: jest.fn(),
-  generateAsync: jest.fn(),
   filter: jest.fn(),
+  folder: jest.fn(),
+  generateAsync: jest.fn(),
 };
 const mockLoadAsync = jest.fn();
 
@@ -82,9 +86,12 @@ describe('test camera-data-backup', () => {
     // @ts-expect-error mocking JSZip.loadAsync
     mockJSZip.loadAsync = mockLoadAsync;
     Date.now = mockDateNow;
+
     let t = 0;
+
     mockDateNow.mockImplementation(() => {
       t += 1000;
+
       return t;
     });
   });
@@ -120,18 +127,8 @@ describe('test camera-data-backup', () => {
         message: `downloading_data ${targetDirs[i]} 2/2<br/>estimated_time_left 0.67 seconds`,
         percentage: 75,
       });
-      expect(mockDownloadFile).toHaveBeenNthCalledWith(
-        i * 2 + 1,
-        targetDirs[i],
-        'file1',
-        expect.any(Function),
-      );
-      expect(mockDownloadFile).toHaveBeenNthCalledWith(
-        i * 2 + 2,
-        targetDirs[i],
-        'file2',
-        expect.any(Function),
-      );
+      expect(mockDownloadFile).toHaveBeenNthCalledWith(i * 2 + 1, targetDirs[i], 'file1', expect.any(Function));
+      expect(mockDownloadFile).toHaveBeenNthCalledWith(i * 2 + 2, targetDirs[i], 'file2', expect.any(Function));
       expect(mockJsZipInstance.folder).toHaveBeenNthCalledWith(i + 1, targetDirs[i]);
       expect(mockJsZipInstance.file).toHaveBeenNthCalledWith(
         i * 2 + 1,
@@ -152,7 +149,9 @@ describe('test camera-data-backup', () => {
     mockWriteFileDialog.mockResolvedValue('path');
     mockDownloadFile.mockImplementation(async (dirName: string, name: string, onProgress) => {
       onProgress({ left: 50, size: 100 });
+
       const mockBlob = `${dirName}/${name}`;
+
       return ['info', mockBlob];
     });
     await downloadCameraData('deviceName');
@@ -163,10 +162,12 @@ describe('test camera-data-backup', () => {
     mockJsZipInstance.generateAsync.mockResolvedValue('blob');
     expect(mockWriteFileDialog).toBeCalledTimes(1);
     expect(mockWriteFileDialog).toBeCalledWith(expect.any(Function), 'title', 'deviceName', [
-      { name: 'zip', extensions: ['zip'] },
+      { extensions: ['zip'], name: 'zip' },
     ]);
+
     const getContent = mockWriteFileDialog.mock.calls[0][0];
     const content = await getContent();
+
     expect(content).toBe('blob');
     expect(mockJsZipInstance.generateAsync).toBeCalledTimes(1);
     expect(mockJsZipInstance.generateAsync).toHaveBeenNthCalledWith(1, { type: 'blob' });
@@ -188,7 +189,9 @@ describe('test camera-data-backup', () => {
     mockWriteFileDialog.mockResolvedValue(null);
     mockDownloadFile.mockImplementation(async (dirName: string, name: string, onProgress) => {
       onProgress({ left: 50, size: 100 });
+
       const mockBlob = `${dirName}/${name}`;
+
       return ['info', mockBlob];
     });
     await downloadCameraData('deviceName');
@@ -204,12 +207,14 @@ describe('test camera-data-backup', () => {
     });
     mockLoadAsync.mockResolvedValue(mockJsZipInstance);
     mockJsZipInstance.filter.mockReturnValue([
-      { name: 'camera_calib/file1', length: 1 },
-      { name: 'camera_calib/file2', length: 2 },
-      { name: 'auto_leveling/file1', length: 3 },
-      { name: 'auto_leveling/file2', length: 0 },
+      { length: 1, name: 'camera_calib/file1' },
+      { length: 2, name: 'camera_calib/file2' },
+      { length: 3, name: 'auto_leveling/file1' },
+      { length: 0, name: 'auto_leveling/file2' },
     ]);
+
     const mockAsyncGetData = jest.fn();
+
     mockJsZipInstance.file.mockImplementation(() => ({
       async: mockAsyncGetData,
     }));
@@ -227,8 +232,8 @@ describe('test camera-data-backup', () => {
     expect(mockGetFileFromDialog).toBeCalledTimes(1);
     expect(mockGetFileFromDialog).toBeCalledWith({
       defaultPath: 'path',
+      filters: [{ extensions: ['zip'], name: 'zip' }],
       properties: ['openFile'],
-      filters: [{ name: 'zip', extensions: ['zip'] }],
     });
     expect(mockOpenSteppingProgress).toBeCalledTimes(1);
     expect(mockOpenSteppingProgress).toBeCalledWith({
@@ -239,7 +244,9 @@ describe('test camera-data-backup', () => {
     expect(mockLoadAsync).toBeCalledTimes(1);
     expect(mockLoadAsync).toBeCalledWith('arrayBuffer');
     expect(mockJsZipInstance.filter).toBeCalledTimes(1);
+
     const filterFunction = mockJsZipInstance.filter.mock.calls[0][0];
+
     expect(filterFunction('camera_calib/file1', { dir: false })).toBe(true);
     expect(filterFunction('camera_calib/file2', { dir: false })).toBe(true);
     expect(filterFunction('camera_calib/some-sub-folder/file', { dir: false })).toBe(false);

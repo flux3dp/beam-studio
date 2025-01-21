@@ -1,14 +1,14 @@
 {
   "name": "@beam-studio/mono",
   "version": "1.0.0",
+  "private": true,
   "license": "MIT",
   "scripts": {
+    "lint": "nx run-many --target=lint --all",
     "nx": "nx",
     "run": "nx run",
-    "test": "nx run-many --target=test --all",
-    "lint": "nx run-many --target=lint --all"
+    "test": "nx run-many --target=test --all"
   },
-  "private": true,
   "dependencies": {
     "react": "18.3.1",
     "react-dom": "18.3.1"
@@ -67,6 +67,7 @@
     "typescript-eslint": "^8.0.0",
     "webpack-cli": "^5.1.4"
   },
+  "packageManager": "pnpm@10.0.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
@@ -84,6 +85,5 @@
       "nx",
       "spectron"
     ]
-  },
-  "packageManager": "pnpm@10.0.0"
+  }
 }

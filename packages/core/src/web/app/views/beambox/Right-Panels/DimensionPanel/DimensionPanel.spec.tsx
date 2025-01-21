@@ -1,17 +1,17 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 const get = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
-  get,
+  get: () => get(),
 }));
 
 const mockReRenderImageSymbol = jest.fn();
-const reRenderImageSymbolArray = jest.fn();
+
 jest.mock('@core/helpers/symbol-maker', () => ({
-  reRenderImageSymbol: mockReRenderImageSymbol,
-  reRenderImageSymbolArray,
+  reRenderImageSymbol: (...args) => mockReRenderImageSymbol(...args),
 }));
 
 import DimensionPanel from './DimensionPanel';
@@ -25,21 +25,22 @@ const mockFinishUndoableChange = jest.fn();
 const setSvgElemSize = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const flipSelectedElements = jest.fn();
+
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
         changeSelectedAttribute: (...args) => mockChangeSelectedAttribute(...args),
-        setSvgElemPosition: (...args) => mockSetSvgElemPosition(...args),
+        changeSelectedAttributeNoUndo: (...args) => mockChangeSelectedAttributeNoUndo(...args),
+        flipSelectedElements: (...args) => flipSelectedElements(...args),
         setRotationAngle: (...args) => mockSetRotationAngle(...args),
+        setSvgElemPosition: (...args) => mockSetSvgElemPosition(...args),
+        setSvgElemSize: (...args) => setSvgElemSize(...args),
         undoMgr: {
+          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
           beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
           finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
         },
-        changeSelectedAttributeNoUndo: (...args) => mockChangeSelectedAttributeNoUndo(...args),
-        setSvgElemSize: (...args) => setSvgElemSize(...args),
-        flipSelectedElements: (...args) => flipSelectedElements(...args),
       },
     });
   },
@@ -47,35 +48,31 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 
 jest.mock('./FlipButtons', () => () => <div>Mock FlipButtons</div>);
 
-jest.mock('./PositionInput', () => ({ type, value, onChange }: any) => (
+jest.mock('./PositionInput', () => ({ onChange, type, value }: any) => (
   <div>
     <div>Mock PositionInput</div>
     <div>type: {type}</div>
     <p>value: {value}</p>
-    <button id={`position-${type}`} type="button" onClick={() => onChange(type, 100)}>
+    <button id={`position-${type}`} onClick={() => onChange(type, 100)} type="button">
       position-{type}
     </button>
   </div>
 ));
 
-jest.mock('./SizeInput', () => ({ type, value, onChange, onBlur }: any) => (
+jest.mock('./SizeInput', () => ({ onBlur, onChange, type, value }: any) => (
   <div>
     <div>Mock SizeInput</div>
     <div>type: {type}</div>
     <p>value: {value}</p>
-    <input
-      id={`size-${type}`}
-      onBlur={onBlur}
-      onChange={() => onChange(type === 'w' ? 'width' : 'height', 100)}
-    />
+    <input id={`size-${type}`} onBlur={onBlur} onChange={() => onChange(type === 'w' ? 'width' : 'height', 100)} />
   </div>
 ));
 
-jest.mock('./Rotation', () => ({ value, onChange }: any) => (
+jest.mock('./Rotation', () => ({ onChange, value }: any) => (
   <div>
     <div>Mock Rotation</div>
     <p>value: {value}</p>
-    <button type="button" onClick={() => onChange(1000)}>
+    <button onClick={() => onChange(1000)} type="button">
       rotation
     </button>
   </div>
@@ -85,7 +82,7 @@ jest.mock('./RatioLock', () => ({ isLocked, onClick }: any) => (
   <div>
     <div>Mock RatioLock</div>
     <p>isLocked: {isLocked ? 'true' : 'false'}</p>
-    <button type="button" onClick={onClick}>
+    <button onClick={onClick} type="button">
       lock
     </button>
   </div>
@@ -93,15 +90,18 @@ jest.mock('./RatioLock', () => ({ isLocked, onClick }: any) => (
 
 const isMobile = jest.fn();
 const mockUseIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
   useIsMobile: () => mockUseIsMobile(),
 }));
 
 const mockForceUpdate = jest.fn();
+
 jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 
 const mockCreateBatchCommand = jest.fn();
+
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
@@ -110,9 +110,9 @@ const mockGetDimensionValues = jest.fn();
 const mockUpdateDimensionValues = jest.fn();
 
 const mockImage = {
-  tagName: 'image',
-  setAttribute: jest.fn(),
   getAttribute: jest.fn(),
+  setAttribute: jest.fn(),
+  tagName: 'image',
 };
 
 describe('test DimensionPanel', () => {
@@ -128,11 +128,13 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   test('unsupported element', () => {
     document.body.innerHTML = '<unsupported id="svg_1" />';
+
     const { container } = render(
       <DimensionPanel
         elem={document.getElementById('svg_1')}
@@ -140,20 +142,22 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('shoud render correctly on desktop', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 4,
         isRatioFixed: true,
+        rotation: 0,
+        width: 3,
         x: 1,
         y: 2,
-        width: 3,
-        height: 4,
-        rotation: 0,
       };
     });
+
     const { container } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -161,20 +165,22 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   it('shoud render correctly on mobile', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 4,
         isRatioFixed: true,
+        rotation: 0,
+        width: 3,
         x: 1,
         y: 2,
-        width: 3,
-        height: 4,
-        rotation: 0,
       };
     });
+
     const { container } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -182,20 +188,22 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(container).toMatchSnapshot();
   });
 
   test('change position', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 1526,
         isRatioFixed: true,
+        rotation: 0,
+        width: 1080,
         x: 0,
         y: 0,
-        width: 1080,
-        height: 1526,
-        rotation: 0,
       };
     });
+
     const { getByText } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -203,6 +211,7 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(mockGetDimensionValues).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('position-x'));
@@ -231,14 +240,15 @@ describe('test DimensionPanel', () => {
   test('change rotation', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 300,
         isRatioFixed: true,
+        rotation: 0,
+        width: 200,
         x: 0,
         y: 0,
-        width: 200,
-        height: 300,
-        rotation: 0,
       };
     });
+
     const { getByText } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -246,6 +256,7 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
@@ -256,14 +267,15 @@ describe('test DimensionPanel', () => {
   test('change toggle ratio lock', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 300,
         isRatioFixed: true,
+        rotation: 0,
+        width: 200,
         x: 0,
         y: 0,
-        width: 200,
-        height: 300,
-        rotation: 0,
       };
     });
+
     const { getByText } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -271,15 +283,14 @@ describe('test DimensionPanel', () => {
         updateDimensionValues={mockUpdateDimensionValues}
       />,
     );
+
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
     mockImage.getAttribute.mockReturnValueOnce('true');
     fireEvent.click(getByText('lock'));
     expect(mockImage.getAttribute).toHaveBeenCalledTimes(1);
     expect(mockImage.getAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed');
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [
-      mockImage,
-    ]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockImage]);
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
       isRatioFixed: false,
@@ -289,14 +300,15 @@ describe('test DimensionPanel', () => {
   test('change size', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 300,
         isRatioFixed: true,
+        rotation: 0,
+        width: 200,
         x: 0,
         y: 0,
-        width: 200,
-        height: 300,
-        rotation: 0,
       };
     });
+
     const { container } = render(
       <DimensionPanel
         elem={mockImage as unknown as Element}
@@ -305,13 +317,18 @@ describe('test DimensionPanel', () => {
       />,
     );
     const inputW = container.querySelector('#size-w');
+
     expect(mockBeginUndoableChange).not.toBeCalled();
     expect(mockChangeSelectedAttributeNoUndo).not.toBeCalled();
     expect(mockFinishUndoableChange).not.toBeCalled();
+
     const mockCmd = { isEmpty: () => false };
+
     mockFinishUndoableChange.mockReturnValue(mockCmd);
+
     const addSubCommand = jest.fn();
     const isEmpty = jest.fn();
+
     mockCreateBatchCommand.mockReturnValue({
       addSubCommand,
       isEmpty,
@@ -321,18 +338,14 @@ describe('test DimensionPanel', () => {
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'width', [mockImage]);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'height', [mockImage]);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [
-      mockImage,
-    ]);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [
-      mockImage,
-    ]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockImage]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockImage]);
     expect(mockFinishUndoableChange).toBeCalledTimes(2);
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Object Panel Size Change');
     expect(addSubCommand).toHaveBeenCalledTimes(2);
     expect(mockUpdateDimensionValues).toBeCalledTimes(1);
-    expect(mockUpdateDimensionValues).toHaveBeenLastCalledWith({ width: 1000, height: 1500 });
+    expect(mockUpdateDimensionValues).toHaveBeenLastCalledWith({ height: 1500, width: 1000 });
     expect(mockAddCommandToHistory).toBeCalledTimes(1);
     expect(mockForceUpdate).toBeCalledTimes(1);
     expect(mockReRenderImageSymbol).not.toBeCalled();
@@ -341,18 +354,19 @@ describe('test DimensionPanel', () => {
   test('rerender image symbol', () => {
     mockGetDimensionValues.mockImplementation((response) => {
       response.dimensionValues = {
+        height: 300,
         isRatioFixed: true,
+        rotation: 0,
+        width: 200,
         x: 0,
         y: 0,
-        width: 200,
-        height: 300,
-        rotation: 0,
       };
     });
+
     const mockElem = {
-      tagName: 'use',
-      setAttribute: jest.fn(),
       getAttribute: jest.fn(),
+      setAttribute: jest.fn(),
+      tagName: 'use',
     };
     const { container } = render(
       <DimensionPanel
@@ -362,6 +376,7 @@ describe('test DimensionPanel', () => {
       />,
     );
     const inputW = container.querySelector('#size-w');
+
     fireEvent.blur(inputW);
     expect(mockReRenderImageSymbol).toBeCalledTimes(1);
     expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElem);

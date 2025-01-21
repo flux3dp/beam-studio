@@ -1,9 +1,9 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 
 import TimeEstimationButton from './TimeEstimationButton';
@@ -40,21 +40,25 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockPopUp = jest.fn();
+
 jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockCheckConnection = jest.fn();
+
 jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: (...args) => mockCheckConnection(...args),
 }));
 
 const mockEstimateTime = jest.fn();
+
 jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   estimateTime: (...args) => mockEstimateTime(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
+
 jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
@@ -68,11 +72,12 @@ describe('should render correctly', () => {
     Object.defineProperty(window, 'os', {
       value: 'MacOS',
     });
+
     const { container } = render(
       <TimeEstimationButtonContext.Provider
         value={{
-          setEstimatedTime: () => {},
           estimatedTime: 60,
+          setEstimatedTime: () => {},
         }}
       >
         <TimeEstimationButton />
@@ -94,14 +99,15 @@ describe('should render correctly', () => {
       >
         <TimeEstimationButtonContext.Provider
           value={{
-            setEstimatedTime: () => {},
             estimatedTime: 60,
+            setEstimatedTime: () => {},
           }}
         >
           <TimeEstimationButton />
         </TimeEstimationButtonContext.Provider>
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 
@@ -109,12 +115,13 @@ describe('should render correctly', () => {
     Object.defineProperty(window, 'os', {
       value: 'Windows',
     });
+
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
       <TimeEstimationButtonContext.Provider
         value={{
-          setEstimatedTime: mockSetEstimatedTime,
           estimatedTime: null,
+          setEstimatedTime: mockSetEstimatedTime,
         }}
       >
         <TimeEstimationButton />
@@ -140,12 +147,13 @@ describe('should render correctly', () => {
         version: 'web',
       },
     });
+
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
       <TimeEstimationButtonContext.Provider
         value={{
-          setEstimatedTime: mockSetEstimatedTime,
           estimatedTime: null,
+          setEstimatedTime: mockSetEstimatedTime,
         }}
       >
         <TimeEstimationButton />

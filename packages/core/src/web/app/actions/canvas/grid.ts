@@ -1,7 +1,7 @@
 import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import styles from './grid.module.scss';
 
@@ -15,22 +15,38 @@ let show = beamboxPreference.read('show_grids');
 let lastZoomRatio = 1;
 
 const getGridInterval = (zoomRatio: number): number => {
-  if (zoomRatio > 10) return gridIntervals[0];
-  if (zoomRatio > 1) return gridIntervals[1];
+  if (zoomRatio > 10) {
+    return gridIntervals[0];
+  }
+
+  if (zoomRatio > 1) {
+    return gridIntervals[1];
+  }
+
   return gridIntervals[2];
 };
 
 const updateGrids = (zoomRatio: number, force = false): void => {
   lastZoomRatio = zoomRatio;
-  if (!show) return;
+
+  if (!show) {
+    return;
+  }
+
   const gridLevel = getGridInterval(zoomRatio);
-  if (!force && gridLevel === currentGridInterval) return;
-  const { width, height } = workareaManager;
+
+  if (!force && gridLevel === currentGridInterval) {
+    return;
+  }
+
+  const { height, width } = workareaManager;
+
   xGridContainer.replaceChildren();
   yGridContainer.replaceChildren();
   for (let i = 0; i <= width / gridLevel; i += 1) {
     const x = i * gridLevel;
     const line = document.createElementNS(NS.SVG, 'line');
+
     line.setAttribute('x1', x.toString());
     line.setAttribute('y1', '0');
     line.setAttribute('x2', x.toString());
@@ -44,6 +60,7 @@ const updateGrids = (zoomRatio: number, force = false): void => {
   for (let i = 0; i <= height / gridLevel; i += 1) {
     const y = i * gridLevel;
     const line = document.createElementNS(NS.SVG, 'line');
+
     line.setAttribute('x1', '0');
     line.setAttribute('y1', y.toString());
     line.setAttribute('x2', width.toString());
@@ -56,14 +73,17 @@ const updateGrids = (zoomRatio: number, force = false): void => {
   }
   currentGridInterval = gridLevel;
 };
+
 canvasEventEmitter.on('zoom-changed', (zoomRatio: number) => {
   requestAnimationFrame(() => updateGrids(zoomRatio));
 });
 
 const updateCanvasSize = (): void => {
-  const { width, height } = workareaManager;
+  const { height, width } = workareaManager;
+
   gridContainer.setAttribute('viewBox', `0 0 ${width} ${height}`);
 };
+
 canvasEventEmitter.on('canvas-change', () => {
   requestAnimationFrame(() => {
     updateCanvasSize();
@@ -88,13 +108,14 @@ const init = (zoomRatio = 1): void => {
 
   const canvasBackground = document.getElementById('canvasBackground');
   const fixedSizeSvg = document.getElementById('fixedSizeSvg');
-  canvasBackground.insertBefore(gridContainer, fixedSizeSvg);
+
+  canvasBackground?.insertBefore(gridContainer, fixedSizeSvg);
   updateGrids(zoomRatio);
   updateCanvasSize();
 };
 
 export default {
   init,
-  updateGrids,
   toggleGrids,
+  updateGrids,
 };

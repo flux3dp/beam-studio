@@ -1,13 +1,13 @@
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-
 import CanvasMode from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const mockSend = jest.fn();
 const mockSendSync = jest.fn();
 const mockCommunicator = {};
+
 jest.mock('@app/implementations/communicator', () => ({
   on: (event, handler) => {
     mockCommunicator[event] = handler;
@@ -16,15 +16,15 @@ jest.mock('@app/implementations/communicator', () => ({
   sendSync: (...args) => mockSendSync(...args),
 }));
 
-// eslint-disable-next-line import/first
 import tabController from './tabController';
 
 const mockGetName = jest.fn();
 const mockGetHasUnsavedChanges = jest.fn();
 const mockIsCloudFile = jest.fn();
+
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  getName: (...args) => mockGetName(...args),
   getHasUnsavedChanges: (...args) => mockGetHasUnsavedChanges(...args),
+  getName: (...args) => mockGetName(...args),
   get isCloudFile() {
     return mockIsCloudFile();
   },
@@ -37,6 +37,7 @@ describe('test TabController', () => {
 
   test('register focus event', () => {
     const handler = jest.fn();
+
     tabController.onFocused(handler);
     mockCommunicator[TabEvents.TabFocused]();
     expect(handler).toBeCalledTimes(1);
@@ -47,6 +48,7 @@ describe('test TabController', () => {
 
   test('register blur event', () => {
     const handler = jest.fn();
+
     tabController.onBlurred(handler);
     mockCommunicator[TabEvents.TabBlurred]();
     expect(handler).toBeCalledTimes(1);
@@ -57,6 +59,7 @@ describe('test TabController', () => {
 
   test('register tabs updated event', () => {
     const handler = jest.fn();
+
     tabController.onTabsUpdated(handler);
     mockCommunicator[TabEvents.TabUpdated]();
     expect(handler).toBeCalledTimes(1);

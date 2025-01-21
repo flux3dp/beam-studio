@@ -1,4 +1,5 @@
-export const enum TabEvents {
+/* eslint-disable no-unused-vars */
+export enum TabEvents {
   AddNewTab = 'add-new-tab',
   CloseTab = 'close-tab',
   FocusTab = 'focus-tab',
@@ -7,8 +8,8 @@ export const enum TabEvents {
   MoveTab = 'move-tab',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
-  TabFocused = 'tab-focused',
   TabBlurred = 'tab-blurred',
+  TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',
 }
 

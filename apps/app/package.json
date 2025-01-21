@@ -1,6 +1,7 @@
 {
   "name": "@beam-studio/app",
   "version": "2.4.9-alpha",
+  "homepage": "https://github.com/flux3dp/beam-studio",
   "author": {
     "name": "FLUX Inc.",
     "email": "support@flux3dp.com"
@@ -129,6 +130,25 @@
     "webpack-node-externals": "^3.0.0",
     "worker-loader": "^3.0.8"
   },
+  "packageManager": "pnpm@10.0.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@sentry/cli",
+      "@swc/core",
+      "chromedriver",
+      "core-js",
+      "core-js-pure",
+      "cypress",
+      "edgedriver",
+      "electron",
+      "electron-chromedriver",
+      "font-scanner",
+      "geckodriver",
+      "nx",
+      "spectron"
+    ]
+  },
   "build": {
     "appId": "com.flux3dp.beam-studio-flux",
     "extraMetadata": {
@@ -237,7 +257,5 @@
       }
     ]
   },
-  "homepage": "https://github.com/flux3dp/beam-studio",
-  "productName": "Beam Studio",
-  "packageManager": "pnpm@10.0.0"
+  "productName": "Beam Studio"
 }

@@ -1,23 +1,25 @@
-/* eslint-disable import/first */
 const showRatingDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  showRatingDialog,
+  showRatingDialog: (...args) => showRatingDialog(...args),
 }));
 
 const get = jest.fn();
 const set = jest.fn();
 const isExisting = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
-  get,
-  set,
-  isExisting,
+  get: (...args) => get(...args),
+  isExisting: (...args) => isExisting(...args),
+  set: (...args) => set(...args),
 }));
 
 const getInfo = jest.fn();
 const submitRating = jest.fn();
+
 jest.mock('@core/helpers/api/flux-id', () => ({
-  getInfo,
-  submitRating,
+  getInfo: (...args) => getInfo(...args),
+  submitRating: (...args) => submitRating(...args),
 }));
 
 window['FLUX'].version = '1.0.0';
@@ -39,11 +41,11 @@ describe('test rating-helper', () => {
       RatingHelper.init();
       expect(set).toHaveBeenCalledTimes(1);
       expect(set).toHaveBeenNthCalledWith(1, 'rating-record', {
+        isIgnored: false,
+        isVoted: false,
+        score: 0,
         times: 1,
         version: '1.0.0',
-        score: 0,
-        isVoted: false,
-        isIgnored: false,
       });
     });
 
@@ -55,19 +57,19 @@ describe('test rating-helper', () => {
       RatingHelper.init();
       expect(set).toHaveBeenCalledTimes(1);
       expect(set).toHaveBeenNthCalledWith(1, 'rating-record', {
+        isIgnored: false,
+        isVoted: false,
+        score: 0,
         times: 1,
         version: '1.0.0',
-        score: 0,
-        isVoted: false,
-        isIgnored: false,
       });
     });
 
     test('record is ignored', () => {
       isExisting.mockReturnValue(true);
       get.mockReturnValue({
-        version: '1.0.0',
         isIgnored: true,
+        version: '1.0.0',
       });
       RatingHelper.init();
       expect(showRatingDialog).not.toHaveBeenCalled();
@@ -76,8 +78,8 @@ describe('test rating-helper', () => {
     test('record is voted', () => {
       isExisting.mockReturnValue(true);
       get.mockReturnValue({
-        version: '1.0.0',
         isVoted: true,
+        version: '1.0.0',
       });
       RatingHelper.init();
       expect(showRatingDialog).not.toHaveBeenCalled();
@@ -86,8 +88,8 @@ describe('test rating-helper', () => {
     test('show rating dialog', () => {
       isExisting.mockReturnValue(true);
       get.mockReturnValue({
-        version: '1.0.0',
         times: 5,
+        version: '1.0.0',
       });
       RatingHelper.init();
       expect(showRatingDialog).toHaveBeenCalledTimes(1);
@@ -101,8 +103,8 @@ describe('test rating-helper', () => {
     test('does not show rating dialog because rating times is not greater than four', () => {
       isExisting.mockReturnValue(true);
       get.mockReturnValue({
-        version: '1.0.0',
         times: 4,
+        version: '1.0.0',
       });
       RatingHelper.init();
       expect(showRatingDialog).not.toHaveBeenCalled();
@@ -116,8 +118,8 @@ describe('test rating-helper', () => {
     test('does not show rating dialog because rating times % 5 is not zero', () => {
       isExisting.mockReturnValue(true);
       get.mockReturnValue({
-        version: '1.0.0',
         times: 6,
+        version: '1.0.0',
       });
       RatingHelper.init();
       expect(showRatingDialog).not.toHaveBeenCalled();
@@ -136,8 +138,8 @@ describe('test rating-helper', () => {
     RatingHelper.setNotShowing();
     expect(set).toHaveBeenCalledTimes(1);
     expect(set).toHaveBeenNthCalledWith(1, 'rating-record', {
-      version: '1.0.0',
       isIgnored: true,
+      version: '1.0.0',
     });
   });
 });

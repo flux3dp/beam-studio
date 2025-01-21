@@ -1,23 +1,26 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 const mockClearAllDialogComponents = jest.fn();
 const mockShowLoginDialog = jest.fn();
+
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  clearAllDialogComponents: mockClearAllDialogComponents,
-  showLoginDialog: mockShowLoginDialog,
+  clearAllDialogComponents: (...args) => mockClearAllDialogComponents(...args),
+  showLoginDialog: (...args) => mockShowLoginDialog(...args),
 }));
 
 const mockGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
-  get: mockGet,
+  get: (...args) => mockGet(...args),
 }));
 
 import FluxIdLogin from './FluxIdLogin';
 
 test('should render correctly', () => {
   const { container } = render(<FluxIdLogin />);
+
   expect(container).toMatchSnapshot();
   expect(mockClearAllDialogComponents).toHaveBeenCalledTimes(1);
   expect(mockGet).toHaveBeenCalledTimes(1);

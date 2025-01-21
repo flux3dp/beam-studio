@@ -3,13 +3,9 @@ import { resolve } from 'path';
 export default {
   displayName: 'core',
   testEnvironment: 'jsdom',
-  preset: 'ts-jest',
   testMatch: ['**/?(*.)+(spec|test).(ts|tsx)'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'packages/core/tsconfig.spec.json' }],
-    // following transformation are much stricter than the above one.
-    // '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
-    // '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'packages/core/tsconfig.spec.json', isolatedModules: true }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   moduleNameMapper: {

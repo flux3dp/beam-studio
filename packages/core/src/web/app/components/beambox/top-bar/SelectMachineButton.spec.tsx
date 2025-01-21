@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import SelectMachineButton from './SelectMachineButton';
 
@@ -13,6 +14,7 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 }));
 
 const mockSetupPreviewMode = jest.fn();
+
 jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({
     mode: CanvasMode.Draw,
@@ -22,11 +24,13 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 const mockGetDevice = jest.fn();
+
 jest.mock(
   '@core/helpers/device/get-device',
   () =>
@@ -55,6 +59,7 @@ describe('test SelectMachineButton', () => {
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toBeCalledTimes(1);
@@ -63,6 +68,7 @@ describe('test SelectMachineButton', () => {
 
   test('mobile', () => {
     useIsMobile.mockReturnValue(true);
+
     const { container } = render(
       <CanvasContext.Provider
         value={
@@ -77,6 +83,7 @@ describe('test SelectMachineButton', () => {
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toBeCalledTimes(1);
@@ -98,6 +105,7 @@ describe('test SelectMachineButton', () => {
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toBeCalledTimes(1);
@@ -119,6 +127,7 @@ describe('test SelectMachineButton', () => {
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toBeCalledTimes(0);

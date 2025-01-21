@@ -1,18 +1,20 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 import langEn from '@core/app/lang/en';
 
 const mockGetLang = jest.fn();
+
 jest.mock('@core/helpers/i18n', () => ({
-  getActiveLang: mockGetLang,
+  getActiveLang: () => mockGetLang(),
   lang: langEn,
 }));
 
 const mockOpen = jest.fn();
+
 jest.mock('@app/implementations/browser', () => ({
-  open: mockOpen,
+  open: (...args) => mockOpen(...args),
 }));
 
 const mockOnClose = jest.fn();
@@ -26,14 +28,18 @@ describe('test SocialMediaModal', () => {
 
   it('should render correctly', () => {
     mockGetLang.mockReturnValue('en');
+
     const { baseElement } = render(<SocialMediaModal onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
 
     const img = baseElement.querySelector('img');
+
     expect(img).not.toBeNull();
     expect(img.getAttribute('src')).toBe('core-img/social-media/instagram-global.png');
 
     const link = baseElement.querySelector('.name');
+
     expect(link).not.toBeNull();
     fireEvent.click(link);
     expect(mockOpen).toBeCalledWith('https://www.instagram.com/flux_inc/');
@@ -41,14 +47,18 @@ describe('test SocialMediaModal', () => {
 
   it('should render correctly with zh-tw lang', () => {
     mockGetLang.mockReturnValue('zh-tw');
+
     const { baseElement } = render(<SocialMediaModal onClose={mockOnClose} />);
+
     expect(baseElement).toMatchSnapshot();
 
     const img = baseElement.querySelector('img');
+
     expect(img).not.toBeNull();
     expect(img.getAttribute('src')).toBe('core-img/social-media/instagram-taiwan.png');
 
     const link = baseElement.querySelector('.name');
+
     expect(link).not.toBeNull();
     fireEvent.click(link);
     expect(mockOpen).toBeCalledWith('https://www.instagram.com/fluxinctaiwan/');

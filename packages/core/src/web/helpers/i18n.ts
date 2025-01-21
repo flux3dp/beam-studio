@@ -21,33 +21,34 @@ import LangTh from '@core/app/lang/th';
 import LangVi from '@core/app/lang/vi';
 import LangZHCN from '@core/app/lang/zh-cn';
 import LangZHTW from '@core/app/lang/zh-tw';
+import type { ILang } from '@core/interfaces/ILang';
+
 import storage from '@app/implementations/storage';
-import { ILang } from '@core/interfaces/ILang';
 
 const ACTIVE_LANG = 'active-lang';
 const langCache: { [key: string]: ILang } = {
   cs: LangCs,
+  da: LangDa,
   de: LangDe,
+  el: LangEl,
   en: LangEn,
   es: LangEs,
-  pt: LangPt,
-  fr: LangFr,
-  nl: LangNl,
-  'zh-tw': LangZHTW,
-  ja: LangJa,
-  kr: LangKr,
-  'zh-cn': LangZHCN,
-  pl: LangPl,
-  da: LangDa,
-  el: LangEl,
   fi: LangFi,
+  fr: LangFr,
   id: LangId,
   it: LangIt,
+  ja: LangJa,
+  kr: LangKr,
   ms: LangMs,
+  nl: LangNl,
   no: LangNo,
+  pl: LangPl,
+  pt: LangPt,
   se: LangSe,
   th: LangTh,
   vi: LangVi,
+  'zh-cn': LangZHCN,
+  'zh-tw': LangZHTW,
 };
 
 let activeLang = (storage.get(ACTIVE_LANG) as string) || AppSettings.i18n.default_lang;
@@ -75,8 +76,8 @@ export function setActiveLang(lang: string): void {
 
 export default {
   getActiveLang,
-  setActiveLang,
   get lang(): ILang {
     return langCache[activeLang] || langCache[AppSettings.i18n.default_lang];
   },
+  setActiveLang,
 };

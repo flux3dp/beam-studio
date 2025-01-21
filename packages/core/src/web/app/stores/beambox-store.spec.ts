@@ -1,14 +1,14 @@
-/* eslint-disable import/first */
 const mockOn = jest.fn();
 const mockEmit = jest.fn();
 const mockRemoveListener = jest.fn();
 const mockRemoveAllListeners = jest.fn();
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
-    on: mockOn,
     emit: mockEmit,
-    removeListener: mockRemoveListener,
+    on: mockOn,
     removeAllListeners: mockRemoveAllListeners,
+    removeListener: mockRemoveListener,
   }),
 }));
 
@@ -21,6 +21,7 @@ describe('test beambox-store', () => {
 
   test('test onCropperShown', () => {
     const callback = jest.fn();
+
     beamboxStore.onCropperShown(callback);
     expect(mockOn).toHaveBeenCalledTimes(1);
     expect(mockOn).toHaveBeenNthCalledWith(1, 'SHOW_CROPPER', callback);
@@ -28,6 +29,7 @@ describe('test beambox-store', () => {
 
   test('test onDrawGuideLines', () => {
     const callback = jest.fn();
+
     beamboxStore.onDrawGuideLines(callback);
     expect(mockOn).toHaveBeenCalledTimes(1);
     expect(mockOn).toHaveBeenNthCalledWith(1, 'DRAW_GUIDE_LINES', callback);
@@ -35,6 +37,7 @@ describe('test beambox-store', () => {
 
   test('test removeCropperShownListener', () => {
     const callback = jest.fn();
+
     beamboxStore.removeCropperShownListener(callback);
     expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'SHOW_CROPPER', callback);

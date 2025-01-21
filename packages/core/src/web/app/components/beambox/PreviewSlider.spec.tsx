@@ -1,36 +1,38 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import PreviewSlider from './PreviewSlider';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   editor: {
-    opacity: 'Preview Opacity',
     exposure: 'Preview Exposure',
+    opacity: 'Preview Opacity',
   },
 }));
 
 const mockSetDeviceSetting = jest.fn();
 const mockGetDeviceSetting = jest.fn().mockResolvedValue({
-  key: 'camera_exposure_absolute',
-  value: '{"data_type": "int", "min": 50, "default": 166, "max": 10000, "value": 450, "step": 1}',
   cmd: 'config get camera_exposure_absolute',
+  key: 'camera_exposure_absolute',
   status: 'ok',
+  value: '{"data_type": "int", "min": 50, "default": 166, "max": 10000, "value": 450, "step": 1}',
 });
 const mockGetCurrentDevice = jest.fn();
+
 jest.mock('@core/helpers/device-master', () => ({
-  setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
-  getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
   get currentDevice() {
     return mockGetCurrentDevice();
   },
+  getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
+  setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
 }));
 
 const mockPreviewFullWorkarea = jest.fn();
+
 jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
   isPreviewModeOn: true,
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
@@ -41,32 +43,32 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 }));
 
 jest.mock('antd', () => ({
-  Tooltip: ({ title, children }: any) => (
-    <div>
-      Mock Antd Tooltip
-      <p>title: {title}</p>
-      {children}
-    </div>
-  ),
-  Slider: ({ className, min, max, step, value, onChange, onAfterChange }: any) => (
+  Slider: ({ className, max, min, onAfterChange, onChange, step, value }: any) => (
     <div className={className}>
       Mock Antd Slider
       <p>min: {min}</p>
       <p>max: {max}</p>
       <p>step: {step}</p>
       <p>value: {value}</p>
-      <button type="button" onClick={() => onChange(0.25)}>
+      <button onClick={() => onChange(0.25)} type="button">
         onChange
       </button>
-      <button type="button" onClick={() => onAfterChange(20)}>
+      <button onClick={() => onAfterChange(20)} type="button">
         onAfterChange
       </button>
     </div>
   ),
-  Space: ({ className, direction, children }: any) => (
+  Space: ({ children, className, direction }: any) => (
     <div className={className}>
       Mock Antd Space
       <p>direction: {direction}</p>
+      {children}
+    </div>
+  ),
+  Tooltip: ({ children, title }: any) => (
+    <div>
+      Mock Antd Tooltip
+      <p>title: {title}</p>
       {children}
     </div>
   ),
@@ -75,13 +77,13 @@ jest.mock('antd', () => ({
 describe('test PreviewSlider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    document.body.innerHTML =
-      '<image id="background_image" style="pointer-events:none; opacity: 1;"/>';
+    document.body.innerHTML = '<image id="background_image" style="pointer-events:none; opacity: 1;"/>';
   });
 
   it('should render correctly with preview image', async () => {
     const { container, getByText } = render(<PreviewSlider />);
     const bgImage = document.getElementById('background_image');
+
     expect(bgImage).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
 
@@ -92,19 +94,24 @@ describe('test PreviewSlider', () => {
 
   it('should render correctly without background image', () => {
     document.body.innerHTML = '';
+
     const { container } = render(<PreviewSlider />);
+
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when is previewing', () => {
     const bgImage: HTMLElement = document.getElementById('background_image');
+
     bgImage.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
+
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <PreviewSlider />
       </CanvasContext.Provider>,
     );
+
     expect(bgImage).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
     expect(mockGetDeviceSetting).not.toBeCalled();
@@ -112,13 +119,16 @@ describe('test PreviewSlider', () => {
 
   it('should render correctly when is previewing Ador', async () => {
     const bgImage: HTMLElement = document.getElementById('background_image');
+
     bgImage.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
+
     const { container, getByText } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <PreviewSlider />
       </CanvasContext.Provider>,
     );
+
     expect(bgImage).toHaveStyle({ opacity: 1 });
     await waitFor(() => expect(mockGetDeviceSetting).toBeCalledTimes(1));
     expect(mockGetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute');
@@ -143,6 +153,7 @@ describe('test PreviewSlider', () => {
         <PreviewSlider />
       </CanvasContext.Provider>,
     );
+
     expect(container).toBeEmptyDOMElement();
   });
 });

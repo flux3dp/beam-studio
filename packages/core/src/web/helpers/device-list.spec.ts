@@ -1,13 +1,14 @@
-/* eslint-disable import/first */
-const get = jest.fn();
+const mockGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
-  get,
+  get: (...args) => mockGet(...args),
 }));
 
 import DeviceList from './device-list';
 
 test('test device-list', () => {
-  get.mockReturnValueOnce('unwanted1,unwanted2');
+  mockGet.mockReturnValueOnce('unwanted1,unwanted2');
+
   expect(
     DeviceList({
       '1.1.1.1': { name: 'unwanted1' } as any,
@@ -15,10 +16,11 @@ test('test device-list', () => {
       '3.3.3.3': { name: 'wanted' } as any,
     }),
   ).toEqual([{ name: 'wanted' }]);
-  expect(get).toHaveBeenCalledTimes(1);
-  expect(get).toHaveBeenNthCalledWith(1, 'black-list');
 
-  get.mockReturnValueOnce(undefined);
+  expect(mockGet).toHaveBeenCalledTimes(1);
+  expect(mockGet).toHaveBeenNthCalledWith(1, 'black-list');
+
+  mockGet.mockReturnValueOnce(undefined);
   expect(
     DeviceList({
       '1.1.1.1': { name: 'wanted1' } as any,

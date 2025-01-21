@@ -1,8 +1,8 @@
-export const enum CanvasMode {
-  Draw = 1,
-  Preview = 2,
-  PathPreview = 3,
+export enum CanvasMode {
   CurveEngraving = 4,
+  Draw = 1,
+  PathPreview = 3,
+  Preview = 2,
 }
 
 export default CanvasMode;

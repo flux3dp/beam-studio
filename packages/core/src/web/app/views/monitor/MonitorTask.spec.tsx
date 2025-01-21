@@ -1,5 +1,5 @@
-/* eslint-disable max-len */
 import React from 'react';
+
 import { render } from '@testing-library/react';
 
 import { Mode } from '@core/app/constants/monitor-constants';
@@ -12,6 +12,7 @@ jest.mock('@core/app/contexts/MonitorContext', () => ({
 }));
 
 const formatDuration = jest.fn();
+
 jest.mock('@core/helpers/duration-formatter', () => (sec: number) => formatDuration(sec));
 
 jest.mock('./MonitorControl', () => () => <div>Dummy MonitorControl</div>);
@@ -30,20 +31,20 @@ jest.mock('@core/helpers/device/framing', () => ({
 
 // Mock MessageCaller
 jest.mock('@core/app/actions/message-caller', () => ({
-  openMessage: jest.fn(),
   closeMessage: jest.fn(),
+  openMessage: jest.fn(),
 }));
 
 // Mock useI18n
 jest.mock('@core/helpers/useI18n', () => () => ({
+  framing: {
+    framing: 'Framing',
+  },
   monitor: {
     left: 'left',
     task: {
       BEAMBOX: 'BEAMBOX',
     },
-  },
-  framing: {
-    framing: 'Framing',
   },
 }));
 
@@ -54,25 +55,27 @@ describe('should render correctly', () => {
 
   it('should render correctly', () => {
     formatDuration.mockReturnValue('1m 30s');
+
     const { container } = render(
       <MonitorContext.Provider
         value={
           {
-            taskTime: 90,
+            fileInfo: ['filename'],
             mode: Mode.PREVIEW,
             report: {
-              st_id: 1,
               prog: 123,
+              st_id: 1,
             },
-            uploadProgress: null,
             taskImageURL: 'img/flux.svg',
-            fileInfo: ['filename'],
+            taskTime: 90,
+            uploadProgress: null,
           } as any
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
       </MonitorContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
     expect(formatDuration).toHaveBeenCalledTimes(1);
     expect(formatDuration).toHaveBeenNthCalledWith(1, 90);
@@ -83,21 +86,22 @@ describe('should render correctly', () => {
       <MonitorContext.Provider
         value={
           {
-            taskTime: 0,
+            fileInfo: ['filename'],
             mode: Mode.WORKING,
             report: {
-              st_id: 64,
               prog: 0,
+              st_id: 64,
             },
-            uploadProgress: null,
             taskImageURL: 'img/flux.svg',
-            fileInfo: ['filename'],
+            taskTime: 0,
+            uploadProgress: null,
           } as any
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
       </MonitorContext.Provider>,
     );
+
     expect(container).toMatchSnapshot();
   });
 });

@@ -1,5 +1,6 @@
-/* eslint-disable import/first */
+/* eslint-disable no-unused-vars */
 import * as React from 'react';
+
 import { fireEvent, render } from '@testing-library/react';
 
 enum VerticalAlign {
@@ -8,11 +9,10 @@ enum VerticalAlign {
   TOP = 2,
 }
 
-jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
-  VerticalAlign,
-}));
+jest.mock('@core/app/actions/beambox/textPathEdit', () => ({ VerticalAlign: { BOTTOM: 0, MIDDLE: 1, TOP: 2 } }));
 
 const useIsMobile = jest.fn();
+
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
@@ -22,11 +22,11 @@ jest.mock('@core/helpers/i18n', () => ({
     beambox: {
       right_panel: {
         object_panel: {
+          bottom_align: 'Bottom Align',
+          middle_align: 'Middle Align',
           option_panel: {
             vertical_align: 'Vertical Align',
           },
-          bottom_align: 'Bottom Align',
-          middle_align: 'Middle Align',
           top_align: 'Top Align',
         },
       },
@@ -40,8 +40,9 @@ describe('test VerticalAlignBlock', () => {
   test('should render correctly', () => {
     const onValueChange = jest.fn();
     const { baseElement, getByRole, getByText } = render(
-      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />,
+      <VerticalAlignBlock onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />,
     );
+
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.mouseDown(getByRole('combobox'));
@@ -54,10 +55,10 @@ describe('test VerticalAlignBlock', () => {
 
   test('should render correctly in mobile', () => {
     useIsMobile.mockReturnValue(true);
+
     const onValueChange = jest.fn();
-    const { container } = render(
-      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />,
-    );
+    const { container } = render(<VerticalAlignBlock onValueChange={onValueChange} value={VerticalAlign.BOTTOM} />);
+
     expect(container).toMatchSnapshot();
   });
 });

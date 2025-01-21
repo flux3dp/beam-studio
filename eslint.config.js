@@ -142,7 +142,6 @@ module.exports = [
         { blankLine: 'always', next: '*', prev: 'if' },
         { blankLine: 'always', next: 'if', prev: '*' },
       ],
-      'style/quotes': ['error', 'single'],
       // ts
       'ts/array-type': ['error', { default: 'array-simple', readonly: 'generic' }],
       'ts/consistent-type-imports': 'error',

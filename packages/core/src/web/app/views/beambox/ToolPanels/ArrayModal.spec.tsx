@@ -59,7 +59,7 @@ describe('ArrayModal', () => {
     fireEvent.click(getByText('Confirm'));
     expect(onOk).toBeCalledTimes(1);
     expect(onOk).toBeCalledWith({ column: 10, dx: 20, dy: 60, row: 3 });
-  });
+  }, 10000);
 
   test('default unit is inches', async () => {
     jest.setTimeout(10000); // Increase timeout for this test
@@ -83,5 +83,5 @@ describe('ArrayModal', () => {
     fireEvent.click(getByText('Confirm'));
     expect(onOk).toBeCalledTimes(1);
     expect(onOk).toBeCalledWith({ column: 3, dx: 76.2, dy: 25.4, row: 3 });
-  });
+  }, 10000);
 });

@@ -1,11 +1,11 @@
-/* eslint-disable import/first */
+const mockGet = jest.fn();
 const mockIsExisting = jest.fn();
 const mockSet = jest.fn();
-const mockGet = jest.fn();
+
 jest.mock('@app/implementations/storage', () => ({
-  isExisting: mockIsExisting,
-  set: mockSet,
-  get: mockGet,
+  get: (...args) => mockGet(...args),
+  isExisting: (...args) => mockIsExisting(...args),
+  set: (...args) => mockSet(...args),
 }));
 
 import rsaKey from './rsa-key';
