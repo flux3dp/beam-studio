@@ -1,14 +1,17 @@
 /* eslint-disable import/prefer-default-export */
-import checkDeviceStatus from 'helpers/check-device-status';
-import Dialog from 'app/actions/dialog-caller';
-import getDevice from 'helpers/device/get-device';
-import isWeb from 'helpers/is-web';
-import progressCaller from 'app/actions/progress-caller';
-import promarkButtonHandler from 'helpers/device/promark/promark-button-handler';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import { getNextStepRequirement, handleNextStep } from 'app/views/tutorials/tutorialController';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import Dialog from '@core/app/actions/dialog-caller';
+import getDevice from '@core/helpers/device/get-device';
+import isWeb from '@core/helpers/is-web';
+import progressCaller from '@core/app/actions/progress-caller';
+import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import {
+  getNextStepRequirement,
+  handleNextStep,
+} from '@core/app/views/tutorials/tutorialController';
 
-import { ILang } from 'interfaces/ILang';
+import { ILang } from '@core/interfaces/ILang';
 
 import { exportTask } from './exportTask';
 import { checkModuleCalibration } from './checkModuleCalibration';

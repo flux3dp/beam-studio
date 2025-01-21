@@ -1,5 +1,5 @@
-import storage from 'implementations/storage';
-import { axiosFluxId, fluxIDEvents, getCurrentUser } from 'helpers/api/flux-id';
+import storage from '@app/implementations/storage';
+import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 
 const recordActivity = async (): Promise<void> => {
   const user = getCurrentUser();
@@ -9,7 +9,7 @@ const recordActivity = async (): Promise<void> => {
   const { data } = await axiosFluxId.post(
     '/user/activity/beam-studio',
     { version: window.FLUX.version },
-    { withCredentials: true }
+    { withCredentials: true },
   );
   if (data.status === 'ok') storage.set('last-record-activity', date);
 };

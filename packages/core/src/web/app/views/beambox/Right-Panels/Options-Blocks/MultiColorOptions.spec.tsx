@@ -1,16 +1,16 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import MultiColorOptions from './MultiColorOptions';
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ isColorPreviewing: false }),
 }));
 
 jest.mock(
-  'app/widgets/ColorPicker',
+  '@core/app/widgets/ColorPicker',
   () =>
     ({ allowClear, initColor, triggerType, onChange }: any) =>
       (
@@ -23,33 +23,38 @@ jest.mock(
             onChange
           </button>
         </div>
-      )
+      ),
 );
 
-jest.mock('app/widgets/ColorPickerMobile', () => ({ color, onChange, open, onClose }: any) => (
-  <div>
-    Mock ColorPicker Mobile
-    <p>color: {color}</p>
-    <p>open: {open ? 't' : 'f'}</p>
-    <button type="button" onClick={() => onChange('#FFFFFF', false)}>
-      onPreview
-    </button>
-    <button
-      type="button"
-      onClick={() => {
-        onChange('#AAAAFF');
-        onClose();
-      }}
-    >
-      onChange
-    </button>
-    <button type="button" onClick={onClose}>
-      onClose
-    </button>
-  </div>
-));
+jest.mock(
+  '@core/app/widgets/ColorPickerMobile',
+  () =>
+    ({ color, onChange, open, onClose }: any) =>
+      (
+        <div>
+          Mock ColorPicker Mobile
+          <p>color: {color}</p>
+          <p>open: {open ? 't' : 'f'}</p>
+          <button type="button" onClick={() => onChange('#FFFFFF', false)}>
+            onPreview
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onChange('#AAAAFF');
+              onClose();
+            }}
+          >
+            onChange
+          </button>
+          <button type="button" onClick={onClose}>
+            onClose
+          </button>
+        </div>
+      ),
+);
 
-jest.mock('app/widgets/FloatingPanel', () => ({ title, children, onClose }: any) => (
+jest.mock('@core/app/widgets/FloatingPanel', () => ({ title, children, onClose }: any) => (
   <div>
     Mock Floating Panel
     <p>title: {title}</p>
@@ -62,14 +67,14 @@ jest.mock('app/widgets/FloatingPanel', () => ({ title, children, onClose }: any)
 
 const mockColloectColors = jest.fn();
 jest.mock(
-  'helpers/color/collectColors',
+  '@core/helpers/color/collectColors',
   () =>
     (...args) =>
-      mockColloectColors(...args)
+      mockColloectColors(...args),
 );
 
 const mockCreateBatchCommand = jest.fn();
-jest.mock('app/svgedit/history/HistoryCommandFactory', () => ({
+jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 
@@ -80,7 +85,7 @@ const mockBatchCommand = {
 };
 
 const mockReRenderImageSymbolArray = jest.fn();
-jest.mock('helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-maker', () => ({
   reRenderImageSymbolArray: (...args) => mockReRenderImageSymbolArray(...args),
 }));
 
@@ -90,7 +95,7 @@ const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockSetCurrentMode = jest.fn();
 const mockResize = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -111,16 +116,16 @@ jest.mock('helpers/svg-editor-helper', () => ({
   },
 }));
 
-jest.mock('app/widgets/HorizontalScrollContainer', () => ({ className, children }: any) => (
+jest.mock('@core/app/widgets/HorizontalScrollContainer', () => ({ className, children }: any) => (
   <div className={className}>{children}</div>
 ));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -152,7 +157,7 @@ describe('test MultiColorOptions', () => {
     const { container } = render(
       <CanvasContext.Provider value={{ isColorPreviewing: false } as any}>
         <MultiColorOptions elem={document.createElement('rect')} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -161,7 +166,7 @@ describe('test MultiColorOptions', () => {
     const { getByText, getAllByText } = render(
       <CanvasContext.Provider value={{ isColorPreviewing: false } as any}>
         <MultiColorOptions elem={mockUseElem} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     const mockChangeCmd = { isEmpty: () => false };
     mockColloectColors.mockReturnValue({
@@ -219,7 +224,7 @@ describe('test MultiColorOptions mobile', () => {
         value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}
       >
         <MultiColorOptions elem={document.createElement('rect')} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     act(() => {
       fireEvent.click(getByText('Color'));
@@ -236,7 +241,7 @@ describe('test MultiColorOptions mobile', () => {
         value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}
       >
         <MultiColorOptions elem={mockUseElem} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     const mockChangeCmd = { isEmpty: () => false };
     mockFinishUndoableChange.mockReturnValue(mockChangeCmd);

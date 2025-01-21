@@ -4,8 +4,8 @@
  */
 import exifr from 'exifr';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import imageProcessor from 'implementations/imageProcessor';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import imageProcessor from '@app/implementations/imageProcessor';
 
 import getExifRotationFlag from './image/getExifRotationFlag';
 import grayScale from './grayscale';
@@ -92,7 +92,7 @@ export default async (source: string | Blob, opts) => {
       0,
       0,
       size.width,
-      size.height
+      size.height,
     );
     const resultImageData = resultCtx.getImageData(0, 0, size.width, size.height);
     if (typeof opts.grayscale !== 'undefined') {

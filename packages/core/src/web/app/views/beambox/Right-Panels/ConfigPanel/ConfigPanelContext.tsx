@@ -1,7 +1,7 @@
 import { createContext, Dispatch } from 'react';
 
-import { getDefaultConfig } from 'helpers/layer/layer-config-helper';
-import { ConfigKey, ILayerConfig } from 'interfaces/ILayerConfig';
+import { getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import { ConfigKey, ILayerConfig } from '@core/interfaces/ILayerConfig';
 
 interface State extends ILayerConfig {
   selectedLayer?: string;
@@ -17,24 +17,27 @@ export const getDefaultState = (): State => {
   return initState as State;
 };
 
-export type Action = {
-  type: 'update';
-  payload: {
-    selectedLayer?: string;
-  } & {
-    [key in ConfigKey]?: ILayerConfig[key];
-  };
-} | {
-  type: 'change';
-  payload: {
-    selectedLayer?: string;
-  } & {
-    [key in keyof ILayerConfig]?: ILayerConfig[key]['value'];
-  };
-} | {
-  type: 'rename';
-  payload: string;
-};
+export type Action =
+  | {
+      type: 'update';
+      payload: {
+        selectedLayer?: string;
+      } & {
+        [key in ConfigKey]?: ILayerConfig[key];
+      };
+    }
+  | {
+      type: 'change';
+      payload: {
+        selectedLayer?: string;
+      } & {
+        [key in keyof ILayerConfig]?: ILayerConfig[key]['value'];
+      };
+    }
+  | {
+      type: 'rename';
+      payload: string;
+    };
 
 export const reducer = (state: State, action: Action): State => {
   if (action.type === 'update') return { ...state, ...action.payload };

@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
     bottom_up: 'bottom_up',
     top_down: 'top_down',
@@ -16,10 +16,10 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/components/settings/Control', () => 'mock-control');
+jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
 jest.mock(
-  'app/components/settings/SelectControl',
+  '@core/app/components/settings/SelectControl',
   () =>
     ({ id, label, onChange, options, url }: any) =>
       (
@@ -30,11 +30,11 @@ jest.mock(
           options:{JSON.stringify(options)}
           <input className="select-control" onChange={onChange} />
         </div>
-      )
+      ),
 );
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, unit, min, max, defaultValue, getValue, forceUsePropsUnit, className }: any) =>
       (
@@ -48,7 +48,7 @@ jest.mock(
           className:{JSON.stringify(className)}
           <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
         </div>
-      )
+      ),
 );
 
 // eslint-disable-next-line import/first
@@ -65,7 +65,7 @@ test('should render correctly', () => {
     <Engraving
       getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
       updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
-    />
+    />,
   );
   expect(getBeamboxPreferenceEditingValue).toHaveBeenCalledTimes(2);
   expect(getBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'fast_gradient');

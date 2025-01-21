@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import menu from 'implementations/menu';
-import tabController from 'app/actions/tabController';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import menu from '@app/implementations/menu';
+import tabController from '@core/app/actions/tabController';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {

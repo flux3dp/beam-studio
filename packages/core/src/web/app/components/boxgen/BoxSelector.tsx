@@ -1,9 +1,9 @@
 import React from 'react';
 import { Menu } from 'antd';
 
-import Select from 'app/widgets/AntdSelect';
-import useI18n from 'helpers/useI18n';
-import { useIsMobile } from 'helpers/system-helper';
+import Select from '@core/app/widgets/AntdSelect';
+import useI18n from '@core/helpers/useI18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './BoxSelector.module.scss';
 

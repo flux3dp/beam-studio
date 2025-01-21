@@ -1,3 +1,3 @@
-import { IDialog } from 'interfaces/IDialog';
+import type { IDialog } from '@core/interfaces/IDialog';
 
 export default {} as IDialog;

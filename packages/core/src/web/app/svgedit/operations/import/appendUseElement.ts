@@ -1,15 +1,18 @@
-import history from 'app/svgedit/history/history';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import layerConfigHelper, { getData, writeDataLayer } from 'helpers/layer/layer-config-helper';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import NS from 'app/constants/namespaces';
-import rgbToHex from 'helpers/color/rgbToHex';
-import storage from 'implementations/storage';
-import { createLayer, getLayerByName } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ICommand } from 'interfaces/IHistory';
-import { ImportType } from 'interfaces/ImportSvg';
+import history from '@core/app/svgedit/history/history';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import layerConfigHelper, {
+  getData,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import NS from '@core/app/constants/namespaces';
+import rgbToHex from '@core/helpers/color/rgbToHex';
+import storage from '@app/implementations/storage';
+import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ICommand } from '@core/interfaces/IHistory';
+import { ImportType } from '@core/interfaces/ImportSvg';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -26,7 +29,7 @@ const checkLayerModule = (layer: Element, targetModule: LayerModule): boolean =>
 
 const appendUseElement = (
   symbol: SVGSymbolElement | null,
-  args: { type: ImportType; layerName?: string; targetModule?: LayerModule }
+  args: { type: ImportType; layerName?: string; targetModule?: LayerModule },
 ): {
   element: SVGUseElement;
   command: ICommand;
@@ -82,7 +85,7 @@ const appendUseElement = (
             parseSpeed = Math.round(parseSpeed * 10) / 10;
             parseSpeed = Math.max(
               Math.min(parseSpeed, laserConst.laser_speed.max),
-              laserConst.laser_speed.min
+              laserConst.laser_speed.min,
             );
             writeDataLayer(newLayer, 'speed', parseSpeed);
           }
@@ -97,16 +100,16 @@ const appendUseElement = (
             'power',
             Math.max(
               Math.min(layerColorConfig.array[index].power, laserConst.power.max),
-              laserConst.power.min
-            )
+              laserConst.power.min,
+            ),
           );
           writeDataLayer(
             newLayer,
             'speed',
             Math.max(
               Math.min(layerColorConfig.array[index].speed, laserConst.laser_speed.max),
-              laserConst.laser_speed.min
-            )
+              laserConst.laser_speed.min,
+            ),
           );
           writeDataLayer(newLayer, 'repeat', layerColorConfig.array[index].repeat);
         }
@@ -129,7 +132,7 @@ const appendUseElement = (
         targetModule === LayerModule.PRINTER
           ? i18n.lang.layer_module.printing
           : i18n.lang.layer_module.general_laser,
-        { isSubCmd: true }
+        { isSubCmd: true },
       );
       targetLayer = layer;
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);

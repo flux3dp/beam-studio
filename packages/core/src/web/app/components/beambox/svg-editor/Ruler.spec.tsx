@@ -6,18 +6,18 @@ import Ruler from './Ruler';
 
 // Mock necessary modules
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   canvasExpansion: 1,
   width: 800,
   height: 600,

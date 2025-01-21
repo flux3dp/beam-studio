@@ -1,4 +1,4 @@
-import ISVGLayer, { ISVGLayerConscrtuctor } from 'interfaces/ISVGLayer';
+import ISVGLayer, { ISVGLayerConscrtuctor } from '@core/interfaces/ISVGLayer';
 
 export default interface ISVGDrawing {
   all_layers: ISVGLayer[];

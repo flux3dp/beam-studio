@@ -3,11 +3,11 @@ import Icon from '@ant-design/icons';
 import React from 'react';
 import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 
-import ActionPanelIcons from 'app/icons/action-panel/ActionPanelIcons';
-import i18n from 'helpers/i18n';
-import Select from 'app/widgets/AntdSelect';
-import storage from 'implementations/storage';
-import units from 'helpers/units';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import i18n from '@core/helpers/i18n';
+import Select from '@core/app/widgets/AntdSelect';
+import storage from '@app/implementations/storage';
+import units from '@core/helpers/units';
 
 import styles from './OffsetModal.module.scss';
 

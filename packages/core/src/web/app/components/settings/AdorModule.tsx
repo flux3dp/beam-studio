@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 
-import Controls from 'app/components/settings/Control';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import moduleOffsets from 'app/constants/layer-module/module-offsets';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
+import Controls from '@core/app/components/settings/Control';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 interface Props {
   defaultUnit: string;
@@ -37,7 +37,7 @@ const AdorModule = ({
       const val = currentModuleOffsets[module] || moduleOffsets[module];
       return [val[0] - moduleOffsets[module][0], val[1] - moduleOffsets[module][1]];
     },
-    [currentModuleOffsets]
+    [currentModuleOffsets],
   );
 
   const editValue = useCallback(
@@ -52,7 +52,7 @@ const AdorModule = ({
         [module]: curVal,
       });
     },
-    [currentModuleOffsets, getModuleOffset, updateBeamboxPreferenceChange]
+    [currentModuleOffsets, getModuleOffset, updateBeamboxPreferenceChange],
   );
 
   const isPrintAdvancedModeEnabled =
@@ -67,7 +67,7 @@ const AdorModule = ({
     (module: LayerModule) => {
       updateBeamboxPreferenceChange('default-laser-module', module);
     },
-    [updateBeamboxPreferenceChange]
+    [updateBeamboxPreferenceChange],
   );
   const defaultLaserModuleOptions = useMemo(
     () => [
@@ -82,7 +82,7 @@ const AdorModule = ({
         selected: defaultLaserModule !== LayerModule.LASER_10W_DIODE,
       },
     ],
-    [defaultLaserModule, lang]
+    [defaultLaserModule, lang],
   );
   const currentLowPower = getBeamboxPreferenceEditingValue<number>('low_power');
 

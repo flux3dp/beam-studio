@@ -1,16 +1,16 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import FileItem from './FileItem';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
 const mockFileInfo = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   fileInfo: (...args) => mockFileInfo(...args),
 }));
 
@@ -33,15 +33,18 @@ describe('should render correctly', () => {
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url');
     const { container, rerender } = render(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFile: mockOnSelectFile,
-        onDeleteFile: mockOnDeleteFile,
-        highlightedItem: { name: 'file', type: 'FILE' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFile: mockOnSelectFile,
+            onDeleteFile: mockOnDeleteFile,
+            highlightedItem: { name: 'file', type: 'FILE' },
+          } as any
+        }
       >
         <FileItem path="path" fileName="file" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     await waitFor(() => {
       expect(mockFileInfo).toBeCalledTimes(1);
@@ -53,15 +56,18 @@ describe('should render correctly', () => {
     expect(container.querySelector('img').getAttribute('src')).toEqual('mock-url');
 
     rerender(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFile: mockOnSelectFile,
-        onDeleteFile: mockOnDeleteFile,
-        highlightedItem: { name: 'file2', type: 'FILE' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFile: mockOnSelectFile,
+            onDeleteFile: mockOnDeleteFile,
+            highlightedItem: { name: 'file2', type: 'FILE' },
+          } as any
+        }
       >
         <FileItem path="path2" fileName="file2" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
 
     const mockData2 = ['mock-file', { author: 'flux' }, new Blob(['456'])];
@@ -84,15 +90,18 @@ describe('should render correctly', () => {
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url');
     const { container } = render(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFile: mockOnSelectFile,
-        onDeleteFile: mockOnDeleteFile,
-        highlightedItem: { name: 'file', type: 'FILE' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFile: mockOnSelectFile,
+            onDeleteFile: mockOnDeleteFile,
+            highlightedItem: { name: 'file', type: 'FILE' },
+          } as any
+        }
       >
         <FileItem path="path" fileName="file" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     await waitFor(() => {
       expect(mockFileInfo).toBeCalledTimes(1);

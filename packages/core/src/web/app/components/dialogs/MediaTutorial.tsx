@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Modal } from 'antd';
 
-import i18n from 'helpers/i18n';
-import { IMediaTutorial } from 'interfaces/ITutorial';
+import i18n from '@core/helpers/i18n';
+import { IMediaTutorial } from '@core/interfaces/ITutorial';
 
 interface Props {
-  data: IMediaTutorial[],
-  onClose: () => void,
+  data: IMediaTutorial[];
+  onClose: () => void;
 }
 
 function MediaTutorial({ data, onClose }: Props): JSX.Element {
@@ -26,34 +26,41 @@ function MediaTutorial({ data, onClose }: Props): JSX.Element {
     if (isVideo) {
       return (
         <video autoPlay loop muted ref={videoRef} playsInline>
-          {mediaSources.map(({ src, type }) => <source key={src} src={src} type={type} />)}
+          {mediaSources.map(({ src, type }) => (
+            <source key={src} src={src} type={type} />
+          ))}
         </video>
       );
     }
-    return (<img src={mediaSources[0].src} />);
+    return <img src={mediaSources[0].src} />;
   };
 
   const footer = [];
   if (step !== 0) {
-    footer.push(<Button key="back" onClick={() => setStep(step - 1)}>{LANG.back}</Button>);
+    footer.push(
+      <Button key="back" onClick={() => setStep(step - 1)}>
+        {LANG.back}
+      </Button>,
+    );
   }
   if (step === data.length - 1) {
-    footer.push(<Button key="done" type="primary" onClick={onClose}>{LANG.done}</Button>);
+    footer.push(
+      <Button key="done" type="primary" onClick={onClose}>
+        {LANG.done}
+      </Button>,
+    );
   } else {
-    footer.push(<Button key="next" type="primary" onClick={() => setStep(step + 1)}>{LANG.next}</Button>);
+    footer.push(
+      <Button key="next" type="primary" onClick={() => setStep(step + 1)}>
+        {LANG.next}
+      </Button>,
+    );
   }
 
   return (
-    <Modal
-      open
-      centered
-      onCancel={onClose}
-      footer={footer}
-    >
+    <Modal open centered onCancel={onClose} footer={footer}>
       <div className="media-tutorial">
-        <div className="media-container">
-          {mediaContent()}
-        </div>
+        <div className="media-container">{mediaContent()}</div>
         <div className="description">{description}</div>
         <div className="step">{`${step + 1}/${data.length}`}</div>
       </div>

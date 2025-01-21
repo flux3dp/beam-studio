@@ -5,7 +5,7 @@ import { FullWindowPanelContext } from './FullWindowPanel';
 
 import Header from './Header';
 
-jest.mock('app/widgets/FullWindowPanel/FullWindowPanel', () => ({
+jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
     isDesktop: false,
     isMobile: false,
@@ -23,8 +23,8 @@ describe('test Header', () => {
           isWindows: false,
         }}
       >
-        <Header className='class'>Header</Header>
-      </FullWindowPanelContext.Provider>
+        <Header className="class">Header</Header>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     rerender(
@@ -35,8 +35,8 @@ describe('test Header', () => {
           isWindows: true,
         }}
       >
-        <Header className='class class2'>Header</Header>
-      </FullWindowPanelContext.Provider>
+        <Header className="class class2">Header</Header>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

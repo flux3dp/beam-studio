@@ -4,11 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import FluxPlusModal from './FluxPlusModal';
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     flux_plus: {
       learn_more: 'Learn More',
@@ -25,11 +25,11 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/is-flux-plus-active', () => true);
+jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 const onClose = jest.fn();
 
@@ -42,7 +42,7 @@ describe('test FluxPlusModal', () => {
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" onClose={onClose}>
         <div>mock-children</div>
-      </FluxPlusModal>
+      </FluxPlusModal>,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -59,7 +59,7 @@ describe('test FluxPlusModal', () => {
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" onClose={onClose}>
         <div>mock-children</div>
-      </FluxPlusModal>
+      </FluxPlusModal>,
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -69,7 +69,7 @@ describe('test FluxPlusModal', () => {
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" onClose={onClose} hideMobileBanner>
         <div>mock-children</div>
-      </FluxPlusModal>
+      </FluxPlusModal>,
     );
     expect(baseElement.querySelector('.banner')).not.toBeInTheDocument();
   });

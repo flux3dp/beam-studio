@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 
-import browser from 'implementations/browser';
-import useI18n from 'helpers/useI18n';
+import browser from '@app/implementations/browser';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ConnectEthernet.module.scss';
 

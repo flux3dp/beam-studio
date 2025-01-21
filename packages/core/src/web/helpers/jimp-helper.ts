@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
-import imageProcessor from 'implementations/imageProcessor';
+import imageProcessor from '@app/implementations/imageProcessor';
 
 const urlToImage = async (url: string) => {
   const resp = await fetch(url);
@@ -64,7 +64,11 @@ const sharpImage = async (imgBlobUrl: string, sharpness: number) => {
     const kEdge = -sharpness / 2;
     const kCorner = -sharpness / 4;
     const kMid = -4 * (kEdge + kCorner) + 1;
-    const kernel = [[kCorner, kEdge, kCorner], [kEdge, kMid, kEdge], [kCorner, kEdge, kCorner]];
+    const kernel = [
+      [kCorner, kEdge, kCorner],
+      [kEdge, kMid, kEdge],
+      [kCorner, kEdge, kCorner],
+    ];
     image.convolute(kernel);
     const newImgUrl = imageToUrl(image);
     return await Promise.resolve(newImgUrl);
@@ -191,13 +195,13 @@ const regulateBlurredImage = (image): void => {
     let v = image.bitmap.data[i];
     v = (v - min) / (max - min);
     if (v < 0.3) {
-      v = Math.round((v) ** 1.5 * (255 - BLACK_CAP)) + BLACK_CAP;
+      v = Math.round(v ** 1.5 * (255 - BLACK_CAP)) + BLACK_CAP;
     } else if (v < 0.7) {
       const power = 1.5 + 2.5 * (v - 0.3);
-      v = Math.round((v) ** power * (255 - BLACK_CAP)) + BLACK_CAP;
+      v = Math.round(v ** power * (255 - BLACK_CAP)) + BLACK_CAP;
     } else {
       const power = 2.5 + 5 * (v - 0.7);
-      v = Math.round((v) ** power * (255 - BLACK_CAP)) + BLACK_CAP;
+      v = Math.round(v ** power * (255 - BLACK_CAP)) + BLACK_CAP;
     }
 
     image.bitmap.data[i] = v;

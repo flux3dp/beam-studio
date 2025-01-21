@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import FirmwareUpdate from './FirmwareUpdate';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     update: {
       release_note: 'Release Note:',
@@ -22,7 +22,7 @@ jest.mock('helpers/i18n', () => ({
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
 }));
@@ -43,7 +43,7 @@ describe('test update dialog', () => {
         onDownload={mockOnDownload}
         onClose={mockOnClose}
         onInstall={mockOnInstall}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
 

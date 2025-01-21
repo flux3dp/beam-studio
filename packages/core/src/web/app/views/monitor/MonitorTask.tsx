@@ -3,17 +3,17 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Button, Col, Flex, Progress, Row, Spin } from 'antd';
 import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import DeviceConstants from 'app/constants/device-constants';
-import FormatDuration from 'helpers/duration-formatter';
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import DeviceConstants from '@core/app/constants/device-constants';
+import FormatDuration from '@core/helpers/duration-formatter';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
-import useI18n from 'helpers/useI18n';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { promarkModels } from 'app/actions/beambox/constant';
-import FramingTaskManager, { FramingType } from 'helpers/device/framing';
-import FramingIcons from 'app/icons/framing/FramingIcons';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
+import useI18n from '@core/helpers/useI18n';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorControl from './MonitorControl';
 import styles from './MonitorTask.module.scss';
 
@@ -59,7 +59,7 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
 
   const handleFramingStart = useCallback(
     (forceType?: FramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
-    [type]
+    [type],
   );
 
   const renderIcon = useCallback(
@@ -79,7 +79,7 @@ const MonitorTask = ({ device }: Props): JSX.Element => {
           return null;
       }
     },
-    [isFraming, type]
+    [isFraming, type],
   );
 
   const renderPromarkFramingButton = (): JSX.Element => {

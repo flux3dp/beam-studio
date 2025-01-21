@@ -1,21 +1,21 @@
 /* eslint-disable import/prefer-default-export */
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import Dialog from 'app/actions/dialog-caller';
-import SymbolMaker from 'helpers/symbol-maker';
-import storage from 'implementations/storage';
-import VersionChecker from 'helpers/version-checker';
-import { executeFirmwareUpdate } from 'app/actions/beambox/menuDeviceActions';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { ILang } from 'interfaces/ILang';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import Dialog from '@core/app/actions/dialog-caller';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import storage from '@app/implementations/storage';
+import VersionChecker from '@core/helpers/version-checker';
+import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { ILang } from '@core/interfaces/ILang';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 

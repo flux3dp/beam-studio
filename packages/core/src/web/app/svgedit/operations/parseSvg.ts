@@ -1,7 +1,7 @@
-import getMainColorOfElement from 'helpers/color/getMainColorOfElement';
-import SymbolMaker from 'helpers/symbol-maker';
-import units, { Units } from 'helpers/units';
-import { IBatchCommand } from 'interfaces/IHistory';
+import getMainColorOfElement from '@core/helpers/color/getMainColorOfElement';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import units, { Units } from '@core/helpers/units';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 const { NS } = svgedit;
@@ -9,7 +9,7 @@ const { NS } = svgedit;
 const parseSvg = (
   batchCmd: IBatchCommand,
   svgElement: Element,
-  type: string
+  type: string,
 ): {
   symbols: SVGSymbolElement[];
   confirmedType: string;
@@ -94,7 +94,7 @@ const parseSvg = (
   }
   function parseSvgByLayer() {
     const defNodes = Array.from(svgElement.childNodes).filter(
-      (node: Element) => node.tagName === 'defs'
+      (node: Element) => node.tagName === 'defs',
     );
     let defChildren = [];
     defNodes.forEach((def: Element) => {
@@ -102,7 +102,7 @@ const parseSvg = (
     });
     const layerNodes = Array.from(svgElement.childNodes).filter(
       (node: Element) =>
-        !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName)
+        !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName),
     );
     if (layerNodes.length === 0) return [];
     let elem = layerNodes[0];
@@ -112,15 +112,8 @@ const parseSvg = (
         g.appendChild(node);
       });
       elem = g;
-
     }
-    const symbol = SymbolMaker.makeSymbol(
-      symbolWrapper(elem),
-      [],
-      batchCmd,
-      defChildren,
-      'layer'
-    );
+    const symbol = SymbolMaker.makeSymbol(symbolWrapper(elem), [], batchCmd, defChildren, 'layer');
     return [symbol];
   }
   function parseSvgByColor(svg) {
@@ -209,7 +202,7 @@ const parseSvg = (
         [],
         batchCmd,
         defChildren,
-        'color'
+        'color',
       );
       return symbol;
     });
@@ -219,7 +212,7 @@ const parseSvg = (
     // this is same as parseByLayer .....
     const defNodes = Array.from(svg.childNodes).filter((node: Element) => node.tagName === 'defs');
     const styleNodes = Array.from(svg.childNodes).filter(
-      (node: Element) => node.tagName === 'style'
+      (node: Element) => node.tagName === 'style',
     );
     let defChildren = [];
     defNodes.forEach((def: Element) => {
@@ -229,18 +222,12 @@ const parseSvg = (
 
     const layerNodes = Array.from(svg.childNodes).filter(
       (node: Element) =>
-        !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName)
+        !['defs', 'title', 'style', 'metadata', 'sodipodi:namedview'].includes(node.tagName),
     );
     if (layerNodes.length === 0) return [];
     const wrappedSymbolContent = symbolWrapper(layerNodes);
     if (!wrappedSymbolContent) return [];
-    const symbol = SymbolMaker.makeSymbol(
-      wrappedSymbolContent,
-      [],
-      batchCmd,
-      defChildren,
-      type
-    );
+    const symbol = SymbolMaker.makeSymbol(wrappedSymbolContent, [], batchCmd, defChildren, type);
 
     return [symbol];
   }

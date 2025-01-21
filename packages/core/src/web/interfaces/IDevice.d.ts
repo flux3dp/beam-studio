@@ -1,4 +1,4 @@
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import Camera from '../helpers/api/camera';
 // eslint-disable-next-line import/no-cycle

@@ -3,15 +3,15 @@ import React, { SyntheticEvent, useCallback, useEffect, useMemo, useRef, useStat
 import { Button, Col, InputNumber, Modal, Row, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import alertCaller from 'app/actions/alert-caller';
-import ObjectPanelIcons from 'app/icons/object-panel/ObjectPanelIcons';
-import useI18n from 'helpers/useI18n';
-import { FisheyeCaliParameters } from 'interfaces/FisheyePreview';
+import alertCaller from '@core/app/actions/alert-caller';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useI18n from '@core/helpers/useI18n';
+import { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 import {
   solvePnPFindCorners,
   solvePnPCalculate,
   updateData,
-} from 'helpers/camera-calibration-helper';
+} from '@core/helpers/camera-calibration-helper';
 
 import ExposureSlider from './ExposureSlider';
 import styles from './SolvePnP.module.scss';
@@ -66,7 +66,7 @@ const SolvePnP = ({
     () => () => {
       URL.revokeObjectURL(img?.url);
     },
-    [img]
+    [img],
   );
 
   const scrollToZoomCenter = useCallback(() => {
@@ -106,7 +106,7 @@ const SolvePnP = ({
         if (scrollToCenter) scrollToZoomCenter();
       }
     },
-    [scrollToZoomCenter]
+    [scrollToZoomCenter],
   );
 
   const zoomToAllPoints = useCallback(
@@ -120,7 +120,7 @@ const SolvePnP = ({
           acc.minY = Math.min(acc.minY, p[1]);
           return acc;
         },
-        { maxX: 0, maxY: 0, minX: Infinity, minY: Infinity }
+        { maxX: 0, maxY: 0, minX: Infinity, minY: Infinity },
       );
       const width = coord.maxX - coord.minX;
       const height = coord.maxY - coord.minY;
@@ -134,7 +134,7 @@ const SolvePnP = ({
       imgContainerRef.current.scrollTop =
         center[1] * targetScale - imgContainerRef.current.clientHeight / 2;
     },
-    [updateScale]
+    [updateScale],
   );
 
   const handleImg = useCallback(
@@ -175,12 +175,12 @@ const SolvePnP = ({
       }
       return true;
     },
-    [dh, params, refPoints, zoomToAllPoints]
+    [dh, params, refPoints, zoomToAllPoints],
   );
 
   const { exposureSetting, setExposureSetting, handleTakePicture } = useCamera(
     handleImg,
-    imgSource
+    imgSource,
   );
 
   const handleContainerDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -204,7 +204,7 @@ const SolvePnP = ({
         pointIdx: idx,
       };
     },
-    [points]
+    [points],
   );
 
   const handleDragMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -249,7 +249,7 @@ const SolvePnP = ({
       if (newScale === cur) return;
       updateScale(newScale, true);
     },
-    [updateScale]
+    [updateScale],
   );
 
   const handleImgLoad = useCallback(
@@ -261,7 +261,7 @@ const SolvePnP = ({
       setImgLoaded(true);
       zoomToAllPoints(points);
     },
-    [zoomToAllPoints, points]
+    [zoomToAllPoints, points],
   );
 
   const handleWheel = useCallback(
@@ -283,7 +283,7 @@ const SolvePnP = ({
         }, 20);
       }
     },
-    [handleZoom]
+    [handleZoom],
   );
   useEffect(() => {
     const imgContainer = imgContainerRef.current;
@@ -315,7 +315,7 @@ const SolvePnP = ({
         lang.calibration.align_ilb,
         lang.calibration.align_irb,
       ][selectedPointIdx],
-    [lang, selectedPointIdx]
+    [lang, selectedPointIdx],
   );
 
   return (
@@ -429,7 +429,7 @@ const SolvePnP = ({
                   value={points[selectedPointIdx][0]}
                   onChange={(val) =>
                     setPoints((prev) =>
-                      prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p))
+                      prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)),
                     )
                   }
                   step={1}
@@ -445,7 +445,7 @@ const SolvePnP = ({
                   value={points[selectedPointIdx][1]}
                   onChange={(val) =>
                     setPoints((prev) =>
-                      prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p))
+                      prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)),
                     )
                   }
                   step={1}

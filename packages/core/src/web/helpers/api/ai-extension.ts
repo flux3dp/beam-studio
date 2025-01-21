@@ -2,9 +2,9 @@
  * API image tracer
  * Ref: none
  */
-import importSvg from 'app/svgedit/operations/import/importSvg';
-import Websocket from 'helpers/websocket';
-import { writeData } from 'helpers/layer/layer-config-helper';
+import importSvg from '@core/app/svgedit/operations/import/importSvg';
+import Websocket from '@core/helpers/websocket';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 const init = (): { connection: any } => {
   const events = {
@@ -50,7 +50,7 @@ const init = (): { connection: any } => {
   return {
     connection: ws,
   };
-}
+};
 
 export default {
   init,

@@ -1,20 +1,20 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import dialogCaller from 'app/actions/dialog-caller';
-import findDefs from 'app/svgedit/utils/findDef';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import layerConfigHelper from 'helpers/layer/layer-config-helper';
-import NS from 'app/constants/namespaces';
-import progressCaller from 'app/actions/progress-caller';
-import requirejsHelper from 'helpers/requirejs-helper';
-import SymbolMaker from 'helpers/symbol-maker';
-import workareaManager from 'app/svgedit/workarea';
-import { createLayer, removeDefaultLayerIfEmpty } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import layerConfigHelper from '@core/helpers/layer/layer-config-helper';
+import NS from '@core/app/constants/namespaces';
+import progressCaller from '@core/app/actions/progress-caller';
+import requirejsHelper from '@core/helpers/requirejs-helper';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import workareaManager from '@core/app/svgedit/workarea';
+import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;
@@ -82,7 +82,7 @@ const importDxf = async (file: Blob): Promise<void> => {
     caption: 'Loading image, please wait...',
   });
   const { outputLayers, bbox } = Dxf2Svg.toSVG(parsed, unitLength * 10);
-  const { width, height } = workareaManager
+  const { width, height } = workareaManager;
   if (
     !alertConfig.read('skip_dxf_oversize_warning') &&
     (bbox.width > width || bbox.height > height)
@@ -152,7 +152,7 @@ const importDxf = async (file: Blob): Promise<void> => {
         svgedit.utilities.setHref(useElem, `#${imageSymbol.id}`);
         svgCanvas.updateElementColor(useElem);
         resolve();
-      })
+      }),
     );
   }
   await Promise.all(promises);

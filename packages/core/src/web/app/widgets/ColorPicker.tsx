@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Color } from 'antd/es/color-picker';
 import { ColorPicker as AntdColorPicker, Button } from 'antd';
 
-import colorConstants, { objectsColorPresets } from 'app/constants/color-constants';
-import useI18n from 'helpers/useI18n';
+import colorConstants, { objectsColorPresets } from '@core/app/constants/color-constants';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ColorPicker.module.scss';
 

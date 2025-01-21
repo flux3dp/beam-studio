@@ -4,11 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import PrintingInputs from './PrintingInputs';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   baseConfig: {
     ink: 3,
     multipass: 3,
@@ -22,7 +22,7 @@ jest.mock('helpers/layer/layer-config-helper', () => ({
   },
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -70,7 +70,7 @@ describe('PrintingInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -82,19 +82,19 @@ describe('PrintingInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     const inkToggle = baseElement.querySelector('#inkSelect');
     fireEvent.mouseDown(inkToggle);
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0],
     );
     expect(handleChange).toBeCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith('ink', 1);
     const halftoneToggle = baseElement.querySelector('#halftoneSelect');
     fireEvent.mouseDown(halftoneToggle);
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1],
     );
     expect(handleChange).toBeCalledTimes(2);
     expect(handleChange).toHaveBeenLastCalledWith('halftone', 2);
@@ -108,7 +108,7 @@ describe('PrintingInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -121,7 +121,7 @@ describe('PrintingInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     const inkInput = getByTestId('ink');
     fireEvent.change(inkInput, { target: { value: 2 } });

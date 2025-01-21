@@ -1,12 +1,12 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import NS from 'app/constants/namespaces';
-import rotaryConstants from 'app/constants/rotary-constants';
-import undoManager from 'app/svgedit/history/undoManager';
-import workareaManager from 'app/svgedit/workarea';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import NS from '@core/app/constants/namespaces';
+import rotaryConstants from '@core/app/constants/rotary-constants';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import workareaManager from '@core/app/svgedit/workarea';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 let container: SVGSVGElement;
@@ -139,10 +139,10 @@ const mouseUp = (): void => {
   if (rotaryLine) {
     const batchCmd = new history.BatchCommand('Move Rotary Axis');
     batchCmd.addSubCommand(
-      new history.ChangeElementCommand(rotaryLine, { y1: startY, y2: startY })
+      new history.ChangeElementCommand(rotaryLine, { y1: startY, y2: startY }),
     );
     batchCmd.addSubCommand(
-      new history.ChangeElementCommand(transparentRotaryLine, { y1: startY, y2: startY })
+      new history.ChangeElementCommand(transparentRotaryLine, { y1: startY, y2: startY }),
     );
     batchCmd.onAfter = () => {
       const position = getPosition();

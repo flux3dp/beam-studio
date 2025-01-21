@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 
-import { FullWindowPanelContext } from 'app/widgets/FullWindowPanel/FullWindowPanel';
+import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
 import styles from './Header.module.scss';
 

@@ -1,9 +1,9 @@
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import grid from 'app/actions/canvas/grid';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import workareaManager from 'app/svgedit/workarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import grid from '@core/app/actions/canvas/grid';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {

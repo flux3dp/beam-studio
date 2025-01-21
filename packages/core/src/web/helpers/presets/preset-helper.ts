@@ -1,14 +1,14 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import defaultPresets from 'app/constants/presets';
-import dialog from 'implementations/dialog';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import storage from 'implementations/storage';
-import { getPromarkInfo } from 'helpers/device/promark/promark-info';
-import { Preset, PresetModel } from 'interfaces/ILayerConfig';
-import { promarkModels } from 'app/actions/beambox/constant';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import defaultPresets from '@core/app/constants/presets';
+import dialog from '@app/implementations/dialog';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import storage from '@app/implementations/storage';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const migrateStorage = () => {
   const defaultKeys = Object.keys(defaultPresets);
@@ -108,7 +108,7 @@ const getPresetModel = (model: PresetModel): PresetModel => {
 const getDefaultPreset = (
   key: string,
   model: PresetModel,
-  layerModule: LayerModule = LayerModule.LASER_UNIVERSAL
+  layerModule: LayerModule = LayerModule.LASER_UNIVERSAL,
 ): Preset | null => {
   const presetModel = getPresetModel(model);
   return (
@@ -123,7 +123,7 @@ const modelHasPreset = (model: WorkAreaModel, key: string): boolean =>
 
 const getPresetsList = (
   model: WorkAreaModel,
-  layerModule: LayerModule = LayerModule.LASER_UNIVERSAL
+  layerModule: LayerModule = LayerModule.LASER_UNIVERSAL,
 ): Preset[] => {
   const presetModel = getPresetModel(model);
   if (presetsCache[presetModel]?.[layerModule]) {
@@ -195,7 +195,7 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
               const configNames = new Set(
                 customizedLaserConfigs
                   .filter((config) => !config.isDefault)
-                  .map((config) => config.name)
+                  .map((config) => config.name),
               );
               let currentConfig = storage.get('customizedLaserConfigs') || [];
               if (typeof currentConfig === 'string') {
@@ -244,7 +244,7 @@ const exportPresets = async (presets?: Preset[]): Promise<void> => {
         name: i18n.lang.topmenu.file.all_files,
         extensions: ['*'],
       },
-    ]
+    ],
   );
 };
 

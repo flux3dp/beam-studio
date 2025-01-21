@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { FisheyeCameraParametersV2Cali } from 'interfaces/FisheyePreview';
-import { findCorners } from 'helpers/camera-calibration-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+import { findCorners } from '@core/helpers/camera-calibration-helper';
 
 import styles from './FindCorner.module.scss';
 

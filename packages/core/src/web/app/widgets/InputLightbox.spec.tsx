@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import Constants from 'app/constants/input-lightbox-constants';
+import Constants from '@core/app/constants/input-lightbox-constants';
 
 import InputLightbox from './InputLightbox';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
       cancel: 'Resolution',
@@ -15,11 +15,11 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 jest.mock(
-  'app/widgets/AlertDialog',
+  '@core/app/widgets/AlertDialog',
   () =>
     function DummyImageAlertDialog() {
       return <div>This is dummy AlertDialog</div>;
-    }
+    },
 );
 
 const mockOnSubmit = jest.fn();
@@ -41,7 +41,7 @@ describe('test InputLightbox', () => {
         confirmText="UPLOAD"
         onSubmit={mockOnSubmit}
         onClose={mockOnClose}
-      />
+      />,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -83,7 +83,7 @@ describe('test InputLightbox', () => {
         confirmText="CONNECT"
         onSubmit={mockOnSubmit}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
     fireEvent.change(baseElement.querySelector('input'), { target: { value: 'pAssw0rd' } });

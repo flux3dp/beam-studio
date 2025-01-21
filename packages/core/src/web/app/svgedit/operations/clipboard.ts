@@ -1,16 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-console */
-import findDefs from 'app/svgedit/utils/findDef';
-import history from 'app/svgedit/history/history';
-import selector from 'app/svgedit/selector';
-import symbolMaker from 'helpers/symbol-maker';
-import updateElementColor from 'helpers/color/updateElementColor';
-import workareaManager from 'app/svgedit/workarea';
-import { deleteElements } from 'app/svgedit/operations/delete';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { moveElements } from 'app/svgedit/operations/move';
-import { IBatchCommand } from 'interfaces/IHistory';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import history from '@core/app/svgedit/history/history';
+import selector from '@core/app/svgedit/selector';
+import symbolMaker from '@core/helpers/symbol-maker';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { moveElements } from '@core/app/svgedit/operations/move';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 import undoManager from '../history/undoManager';
 
 interface ClipboardElement {
@@ -104,7 +104,7 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
     if (elem.tagName === 'use') addRefToClipboard(elem as SVGUseElement);
     else
       Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) =>
-        addRefToClipboard(use)
+        addRefToClipboard(use),
       );
     if (!layerNames.has(layerName)) {
       layerNames.add(layerName);
@@ -128,8 +128,10 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
   // save original image data as base64
   const origImageUrls = Array.from(
     new Set(
-      elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))
-    )
+      elems
+        .filter((elem) => elem.tagName === 'image')
+        .map((elem) => elem.getAttribute('origImage')),
+    ),
   );
   const promises = [];
   for (let i = 0; i < origImageUrls.length; i += 1) {
@@ -149,7 +151,7 @@ const copyElements = async (elems: Array<Element>): Promise<void> => {
         } finally {
           resolve();
         }
-      })
+      }),
     );
   }
   await Promise.allSettled(promises);
@@ -229,7 +231,7 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
       } catch (error) {
         console.error('Failed to fetch image data', error);
       }
-    })
+    }),
   );
 
   const newElements = elements.map((element: Element) => drawing.copyElemData(element));
@@ -246,7 +248,7 @@ async function getElementsFromNativeClipboard(): Promise<Array<Element>> {
           }
         }
       }
-    })
+    }),
   );
   return newElements;
 }
@@ -256,7 +258,7 @@ const pasteRef = async (
   opts?: {
     parentCmd?: IBatchCommand;
     addToHistory?: boolean;
-  }
+  },
 ): Promise<void> => {
   const { parentCmd, addToHistory = true } = opts || {};
   const batchCmd = new history.BatchCommand('Paste Ref');
@@ -284,7 +286,7 @@ const pasteRef = async (
 
 export const handlePastedRef = async (
   copy: Element,
-  opts: { parentCmd?: IBatchCommand } = {}
+  opts: { parentCmd?: IBatchCommand } = {},
 ): Promise<void> => {
   const promises = Array.of<Promise<void>>();
   const uses = Array.from(copy.querySelectorAll('use'));
@@ -329,7 +331,7 @@ const pasteElements = (
     y?: number;
     isSubCmd: boolean;
     selectElement?: boolean;
-  }
+  },
 ): { cmd: IBatchCommand; elems: Array<Element> } | null => {
   const { type, x, y, isSubCmd = false, selectElement = true } = args || {};
 
@@ -439,7 +441,7 @@ const cloneElements = async (
     addToHistory: true,
     selectElement: true,
     callChangOnMove: true,
-  }
+  },
 ): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> => {
   const { parentCmd, addToHistory = true, selectElement = true, callChangOnMove = true } = opts;
   const batchCmd = new history.BatchCommand('Clone elements');
@@ -488,7 +490,7 @@ const cloneSelectedElements = async (
     addToHistory: true,
     selectElement: true,
     callChangOnMove: true,
-  }
+  },
 ): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> => {
   const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
   const res = await cloneElements(selectedElems, dx, dy, opts);
@@ -500,7 +502,7 @@ const pasteFromNativeClipboard = async (
   type: 'mouse' | 'in_place' | 'point',
   x?: number,
   y?: number,
-  isSubCmd = false
+  isSubCmd = false,
 ): Promise<{ cmd: IBatchCommand; elems: Array<Element> } | null> =>
   pasteElements(await getElementsFromNativeClipboard(), { type, x, y, isSubCmd });
 
@@ -514,7 +516,7 @@ const pasteInCenter = async (): Promise<{ cmd: IBatchCommand; elems: Array<Eleme
 
 const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
-  { row, column }: { row: number; column: number }
+  { row, column }: { row: number; column: number },
 ): Promise<IBatchCommand> => {
   const batchCmd = new history.BatchCommand('Grid elements');
   await copySelectedElements();

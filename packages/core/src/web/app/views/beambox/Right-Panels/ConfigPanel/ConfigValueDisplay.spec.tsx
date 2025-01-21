@@ -5,7 +5,7 @@ import { fireEvent, render } from '@testing-library/react';
 import ConfigValueDisplay from './ConfigValueDisplay';
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue, disabled }: any) =>
       (
@@ -23,7 +23,7 @@ jest.mock(
             change
           </button>
         </div>
-      )
+      ),
 );
 
 jest.mock('antd', () => ({
@@ -63,7 +63,7 @@ describe('test ConfigValueDisplay when type is not panel-item', () => {
         hasMultiValue={false}
         decimal={2}
         onChange={() => {}}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -81,7 +81,7 @@ describe('test ConfigValueDisplay when type is not panel-item', () => {
         hasMultiValue={false}
         decimal={2}
         onChange={mockOnChange}
-      />
+      />,
     );
     fireEvent.click(getByText('change'));
     expect(mockOnChange).toHaveBeenCalledTimes(1);
@@ -102,7 +102,7 @@ describe('test ConfigValueDisplay when type is panel-item', () => {
         hasMultiValue={false}
         decimal={2}
         onChange={() => {}}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -120,7 +120,7 @@ describe('test ConfigValueDisplay when type is panel-item', () => {
         hasMultiValue={false}
         decimal={2}
         onChange={mockOnChange}
-      />
+      />,
     );
     const input = container.querySelector('input');
     fireEvent.change(input, { target: { value: '7' } });

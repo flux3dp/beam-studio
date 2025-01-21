@@ -1,8 +1,8 @@
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const moveLaserHead = async (): Promise<boolean> => {
   let isLineCheckMode = false;

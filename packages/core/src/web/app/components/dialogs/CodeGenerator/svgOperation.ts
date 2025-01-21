@@ -1,12 +1,15 @@
 /* eslint-disable no-param-reassign */
-import fontFuncs, { convertTextToPathByFontkit, getFontObj } from 'app/actions/beambox/font-funcs';
-import NS from 'app/constants/namespaces';
-import history from 'app/svgedit/history/history';
-import undoManager from 'app/svgedit/history/undoManager';
-import importSvgString from 'app/svgedit/operations/import/importSvgString';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { FontDescriptor } from 'interfaces/IFont';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
+import fontFuncs, {
+  convertTextToPathByFontkit,
+  getFontObj,
+} from '@core/app/actions/beambox/font-funcs';
+import NS from '@core/app/constants/namespaces';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { FontDescriptor } from '@core/interfaces/IFont';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
 
@@ -42,12 +45,13 @@ function extractFontDetails(fontStyle: string): {
 function findMatchingFont(
   fontInfos: Array<FontDescriptor>,
   isBold: boolean,
-  isItalic: boolean
+  isItalic: boolean,
 ): FontDescriptor {
   return (
     fontInfos.find(
       ({ postscriptName }) =>
-        isBold === postscriptName.includes('Bold') && isItalic === postscriptName.includes('Italic')
+        isBold === postscriptName.includes('Bold') &&
+        isItalic === postscriptName.includes('Italic'),
     ) || fontInfos[0]
   );
 }
@@ -61,7 +65,7 @@ function preProcessTextTag(svgElement: SVGElement): SVGElement {
 
   texts.forEach((text) => {
     const { fontFamily, fontSize, isBold, isItalic } = extractFontDetails(
-      text.getAttribute('style')
+      text.getAttribute('style'),
     );
     const fonts: Array<FontDescriptor> = fontFuncs.requestFontsOfTheFontFamily(fontFamily);
     const font = findMatchingFont(fonts, isBold, isItalic);
@@ -99,8 +103,8 @@ async function getDFromBarcodeSvgElement(svgElement: SVGElement) {
 
   const fontObj = await getFontObj(
     fontFuncs.getFontOfPostscriptName(
-      svgElement.querySelector('text')?.getAttribute('font-postscript')
-    )
+      svgElement.querySelector('text')?.getAttribute('font-postscript'),
+    ),
   );
 
   svgElement.querySelectorAll('g').forEach((g) => {
@@ -158,7 +162,7 @@ async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
   const subtractedD = svgCanvas.pathActions.booleanOperation(
     new XMLSerializer().serializeToString(backgroundPath),
     new XMLSerializer().serializeToString(codePath),
-    2
+    2,
   );
 
   codePath.remove();
@@ -169,7 +173,7 @@ async function getSubtractedDFromBarcodeSvgElement(svgElement: SVGElement) {
 
 export async function importBarcodeSvgElement(
   svgElement: SVGElement,
-  isInvert = false
+  isInvert = false,
 ): Promise<void> {
   const batchCmd = new history.BatchCommand('Import Barcode');
   const d = isInvert
@@ -207,7 +211,7 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
 
   const [backgroundPath, codePath] = extractSvgTags(
     new XMLSerializer().serializeToString(svgElement),
-    'path'
+    'path',
   );
   const subtractedD = svgCanvas.pathActions.booleanOperation(backgroundPath, codePath, 2);
   const path = document.createElementNS(NS.SVG, 'path');
@@ -226,7 +230,7 @@ function handleQrCodeInvertColor(svgElement: SVGElement): string {
 
 export async function importQrCodeSvgElement(
   svgElement: SVGElement,
-  isInvert = false
+  isInvert = false,
 ): Promise<void> {
   const svgString = isInvert
     ? handleQrCodeInvertColor(svgElement)

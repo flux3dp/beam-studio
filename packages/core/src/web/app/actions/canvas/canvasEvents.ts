@@ -1,5 +1,5 @@
-import BeamboxGlobalInteraction from 'app/actions/beambox/beambox-global-interaction';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 

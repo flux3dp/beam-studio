@@ -2,11 +2,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -30,7 +30,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -41,17 +41,17 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const mockUseWorkarea = jest.fn();
-jest.mock('helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
+jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 const mockUpdate = jest.fn();
-jest.mock('app/actions/canvas/module-boundary-drawer', () => ({
+jest.mock('@core/app/actions/canvas/module-boundary-drawer', () => ({
   update: (...args: any) => mockUpdate(...args),
 }));
 
 const mockOn = jest.fn();
 const mockOff = jest.fn();
 const mockEmit = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     on: (...args) => mockOn(...args),
     off: (...args) => mockOff(...args),
@@ -60,19 +60,19 @@ jest.mock('helpers/eventEmitterFactory', () => ({
 }));
 
 const mockGetPresetsList = jest.fn();
-jest.mock('helpers/presets/preset-helper', () => ({
+jest.mock('@core/helpers/presets/preset-helper', () => ({
   getPresetsList: (...args) => mockGetPresetsList(...args),
 }));
 
 const mockTogglePresprayArea = jest.fn();
-jest.mock('app/actions/canvas/prespray-area', () => ({
+jest.mock('@core/app/actions/canvas/prespray-area', () => ({
   togglePresprayArea: (...args) => mockTogglePresprayArea(...args),
 }));
 
 const mockApplyPreset = jest.fn();
 const mockWriteDataLayer = jest.fn();
 const mockGetData = jest.fn().mockReturnValue('configName');
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   applyPreset: (...args) => mockApplyPreset(...args),
   baseConfig: {
     speed: 20,
@@ -86,25 +86,25 @@ jest.mock('helpers/layer/layer-config-helper', () => ({
 }));
 
 const mockGetLayerElementByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
 jest.mock(
-  'helpers/layer/full-color/toggleFullColorLayer',
+  '@core/helpers/layer/full-color/toggleFullColorLayer',
   () =>
     (...args) =>
-      mockToggleFullColorLayer(...args)
+      mockToggleFullColorLayer(...args),
 );
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockUpdateLayerPanel = jest.fn();
-jest.mock('app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
   updateLayerPanel: mockUpdateLayerPanel,
 }));
 
@@ -113,7 +113,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: null, addSubCommand: jest.fn() };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -124,7 +124,7 @@ const mockContextState = {
 
 const mockAlertConfigRead = jest.fn();
 const mockAlertConfigWrite = jest.fn();
-jest.mock('helpers/api/alert-config', () => ({
+jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => mockAlertConfigRead(...args),
   write: (...args) => mockAlertConfigWrite(...args),
 }));
@@ -153,7 +153,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toBeCalledTimes(1);
@@ -180,7 +180,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toBeEmptyDOMElement();
   });
@@ -196,7 +196,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockUpdate).toBeCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
@@ -224,14 +224,14 @@ describe('test ModuleBlock', () => {
       mockElem,
       'module',
       LayerModule.LASER_20W_DIODE,
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockApplyPreset).toBeCalledTimes(1);
     expect(mockApplyPreset).toHaveBeenNthCalledWith(
       1,
       mockElem,
       { name: 'config1', speed: 77, power: 78, repeat: 79 },
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockToggleFullColorLayer).toBeCalledTimes(1);
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockElem, { val: false });
@@ -262,7 +262,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockUpdate).toBeCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
@@ -289,7 +289,7 @@ describe('test ModuleBlock', () => {
       mockElem,
       'module',
       LayerModule.LASER_20W_DIODE,
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockApplyPreset).not.toBeCalled();
     expect(mockToggleFullColorLayer).toBeCalledTimes(1);
@@ -320,7 +320,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockUpdate).toBeCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
@@ -348,7 +348,7 @@ describe('test ModuleBlock', () => {
       mockElem,
       'module',
       LayerModule.LASER_20W_DIODE,
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, mockElem, 'configName', undefined, {
       batchCmd,
@@ -382,7 +382,7 @@ describe('test ModuleBlock', () => {
         }}
       >
         <ModuleBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockUpdate).toBeCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(LayerModule.LASER_10W_DIODE);
@@ -408,7 +408,7 @@ describe('test ModuleBlock', () => {
       mockElem1,
       'module',
       LayerModule.PRINTER,
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, mockElem1, 'configName', undefined, {
       batchCmd,
@@ -423,7 +423,7 @@ describe('test ModuleBlock', () => {
       mockElem2,
       'module',
       LayerModule.PRINTER,
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(7, mockElem2, 'configName', undefined, {
       batchCmd,

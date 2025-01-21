@@ -9,44 +9,44 @@ jest.mock(
   () =>
     function Cropper(...args) {
       return mockCropper(...args);
-    }
+    },
 );
 
 const mockCalculateBase64 = jest.fn();
 jest.mock(
-  'helpers/image-edit-panel/calculate-base64',
+  '@core/helpers/image-edit-panel/calculate-base64',
   () =>
     (...args) =>
-      mockCalculateBase64(...args)
+      mockCalculateBase64(...args),
 );
 
 const mockHandleFinish = jest.fn();
 jest.mock(
-  'helpers/image-edit-panel/handle-finish',
+  '@core/helpers/image-edit-panel/handle-finish',
   () =>
     (...args) =>
-      mockHandleFinish(...args)
+      mockHandleFinish(...args),
 );
 
 const mockCropImage = jest.fn();
-jest.mock('helpers/jimp-helper', () => ({
+jest.mock('@core/helpers/jimp-helper', () => ({
   cropImage: (...args) => mockCropImage(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
 const mockPreprocessByUrl = jest.fn();
-jest.mock('helpers/image-edit-panel/preprocess', () => ({
+jest.mock('@core/helpers/image-edit-panel/preprocess', () => ({
   preprocessByUrl: (...args) => mockPreprocessByUrl(...args),
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
@@ -86,7 +86,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
@@ -102,7 +102,7 @@ describe('test CropPanel', () => {
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear')
+      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -127,7 +127,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
@@ -143,7 +143,7 @@ describe('test CropPanel', () => {
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear')
+      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -162,7 +162,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockOpenNonstopProgress).toBeCalledTimes(1);
@@ -178,7 +178,7 @@ describe('test CropPanel', () => {
       expect(mockPopById).toHaveBeenLastCalledWith('photo-edit-processing');
     });
     await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear')
+      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -198,7 +198,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);
@@ -254,7 +254,7 @@ describe('test CropPanel', () => {
       minCropBoxHeight: 1,
     });
     await waitFor(() =>
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear')
+      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear'),
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -303,7 +303,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);
@@ -381,7 +381,7 @@ describe('test CropPanel', () => {
         src="mock-src"
         image={mockImage as unknown as SVGImageElement}
         onClose={mockOnClose}
-      />
+      />,
     );
     await waitFor(() => {
       expect(mockPopById).toBeCalledTimes(1);

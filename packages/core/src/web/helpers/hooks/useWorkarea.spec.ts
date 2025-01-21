@@ -2,7 +2,7 @@ import useWorkarea from './useWorkarea';
 
 const mockOn = jest.fn();
 const mockOff = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     on: (...args) => mockOn(...args),
     off: (...args) => mockOff(...args),
@@ -10,7 +10,7 @@ jest.mock('helpers/eventEmitterFactory', () => ({
 }));
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key: string) => mockRead(key),
 }));
 

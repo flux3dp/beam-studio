@@ -1,13 +1,13 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import LeftPanel from './LeftPanel';
 
 const on = jest.fn();
-jest.mock('helpers/shortcuts', () => ({
+jest.mock('@core/helpers/shortcuts', () => ({
   on: (...args) => on(...args),
 }));
 
@@ -20,7 +20,7 @@ const insertEllipse = jest.fn();
 const insertLine = jest.fn();
 const insertPath = jest.fn();
 const insertPolygon = jest.fn();
-jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   clearSelection: () => clearSelection(),
   useSelectTool: () => useSelectTool(),
   importImage: () => importImage(),
@@ -33,29 +33,29 @@ jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
 }));
 
 jest.mock(
-  'app/components/beambox/left-panel/DrawingToolButtonGroup',
+  '@core/app/components/beambox/left-panel/DrawingToolButtonGroup',
   () =>
     function DrawingToolButtonGroup() {
       return <div>This is dummy DrawingToolButtonGroup</div>;
-    }
+    },
 );
 
-jest.mock('app/components/beambox/left-panel/PreviewToolButtonGroup', () => () => (
+jest.mock('@core/app/components/beambox/left-panel/PreviewToolButtonGroup', () => () => (
   <div>This is dummy PreviewToolButtonGroup</div>
 ));
 
 jest.mock(
-  'app/components/beambox/left-panel/CurveEngravingTool',
+  '@core/app/components/beambox/left-panel/CurveEngravingTool',
   () =>
     ({ className }: { className: string }) =>
-      <div className={className}>MockCurveEngravingTool</div>
+      <div className={className}>MockCurveEngravingTool</div>,
 );
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext(null),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       left_panel: {
@@ -84,11 +84,11 @@ describe('test LeftPanel', () => {
         }
       >
         <LeftPanel />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(
-      document.getElementById('svg_editor').className.split(' ').indexOf('color') !== -1
+      document.getElementById('svg_editor').className.split(' ').indexOf('color') !== -1,
     ).toBeTruthy();
 
     unmount();
@@ -107,7 +107,7 @@ describe('test LeftPanel', () => {
         }
       >
         <LeftPanel />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -125,7 +125,7 @@ describe('test LeftPanel', () => {
         }
       >
         <LeftPanel />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 
@@ -146,7 +146,7 @@ describe('test LeftPanel', () => {
         }
       >
         <LeftPanel />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

@@ -2,23 +2,22 @@
 import React, { useContext } from 'react';
 import { Button, Modal } from 'antd';
 
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import Progress from 'app/actions/progress-caller';
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import DeviceErrorHandler from 'helpers/device-error-handler';
-import DeviceMaster from 'helpers/device-master';
-import Browser from 'implementations/browser';
-import CheckDeviceStatus from 'helpers/check-device-status';
-import useI18n from 'helpers/useI18n';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import Progress from '@core/app/actions/progress-caller';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import DeviceErrorHandler from '@core/helpers/device-error-handler';
+import DeviceMaster from '@core/helpers/device-master';
+import Browser from '@app/implementations/browser';
+import CheckDeviceStatus from '@core/helpers/check-device-status';
+import useI18n from '@core/helpers/useI18n';
 import {
   CALIBRATION_PARAMS,
   STEP_BEFORE_ANALYZE_PICTURE,
   STEP_PUT_PAPER,
-} from 'app/constants/camera-calibration-constants';
-import { doGetOffsetFromPicture } from 'helpers/camera-calibration-helper';
-import { CalibrationContext } from 'app/contexts/CalibrationContext';
-
+} from '@core/app/constants/camera-calibration-constants';
+import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 
 const StepAskReadjust = (): JSX.Element => {
   const lang = useI18n();
@@ -38,7 +37,7 @@ const StepAskReadjust = (): JSX.Element => {
   const onSkip = async () => {
     try {
       await PreviewModeController.start(device, () =>
-        console.log('camera fail. stop preview mode')
+        console.log('camera fail. stop preview mode'),
       );
       setLastConfig(PreviewModeController.getCameraOffsetStandard());
       Progress.openNonstopProgress({
@@ -71,7 +70,7 @@ const StepAskReadjust = (): JSX.Element => {
                 st_id: report.st_id,
               },
               false,
-              true
+              true,
             );
           },
           () => Browser.open(langCalibration.zendesk_link),

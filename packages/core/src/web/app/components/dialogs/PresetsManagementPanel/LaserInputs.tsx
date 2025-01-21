@@ -1,9 +1,9 @@
 import React from 'react';
 
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from 'interfaces/ILayerConfig';
-import { baseConfig } from 'helpers/layer/layer-config-helper';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
+import { baseConfig } from '@core/helpers/layer/layer-config-helper';
 
 import styles from './PresetsManagementPanel.module.scss';
 

@@ -2,19 +2,19 @@ import React, { forwardRef, MutableRefObject, useEffect, useRef, useState } from
 import Konva from 'konva';
 import useImage from 'use-image';
 import { Image, Transformer } from 'react-konva';
-import { setRotationAngle } from 'app/svgedit/transform/rotation';
+import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 
-import findDefs from 'app/svgedit/utils/findDef';
-import NS from 'app/constants/namespaces';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
-import symbolMaker from 'helpers/symbol-maker';
-import updateElementColor from 'helpers/color/updateElementColor';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import NS from '@core/app/constants/namespaces';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import symbolMaker from '@core/helpers/symbol-maker';
+import updateElementColor from '@core/helpers/color/updateElementColor';
 
 import { ImageDimension } from './dimension';
 
 const getImageUrl = async (
   element: SVGElement,
-  bbox: { x: number; y: number; width: number; height: number }
+  bbox: { x: number; y: number; width: number; height: number },
 ): Promise<string> => {
   const svgDefs = findDefs();
   const { x, y, width, height } = bbox;
@@ -28,7 +28,7 @@ const getImageUrl = async (
   setRotationAngle(clonedElement as SVGElement, 0);
   // keep title, filter and selected element, remove other elements
   const elementsToDelete = clonedSvgContent.querySelectorAll(
-    `g.layer > *:not(filter):not(title):not(#${elementId})`
+    `g.layer > *:not(filter):not(title):not(#${elementId})`,
   );
   elementsToDelete.forEach((e) => e.remove());
   const defs = document.createElementNS(NS.SVG, 'defs');
@@ -73,7 +73,7 @@ const KonvaImage = forwardRef<Konva.Image, Props>(
       onMouseEnter,
       onMouseLeave,
     }: Props,
-    imageRef: MutableRefObject<Konva.Image>
+    imageRef: MutableRefObject<Konva.Image>,
   ): JSX.Element => {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [image, status] = useImage(imageUrl);
@@ -167,7 +167,7 @@ const KonvaImage = forwardRef<Konva.Image, Props>(
         />
       </>
     );
-  }
+  },
 );
 
 export default KonvaImage;

@@ -1,22 +1,22 @@
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import checkSoftwareForAdor from 'helpers/check-software';
-import dialogCaller from 'app/actions/dialog-caller';
-import i18n from 'helpers/i18n';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import storage from 'implementations/storage';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { promarkModels } from 'app/actions/beambox/constant';
-import { SelectionResult } from 'app/constants/connection-constants';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import checkSoftwareForAdor from '@core/helpers/check-software';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import i18n from '@core/helpers/i18n';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import storage from '@app/implementations/storage';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { SelectionResult } from '@core/app/constants/connection-constants';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import DeviceMaster from '../device-master';
 import showResizeAlert from './fit-device-workarea-alert';
 
 const getDevice = async (
-  showModal = false
+  showModal = false,
 ): Promise<{ device: IDeviceInfo | null; isWorkareaMatched?: boolean }> => {
   const currentDevice = TopBarController.getSelectedDevice();
   let device = showModal ? null : currentDevice;

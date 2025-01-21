@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Col, Modal, Row } from 'antd';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import dialog from 'implementations/dialog';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { calibrateChessboard, startFisheyeCalibrate } from 'helpers/camera-calibration-helper';
-import { FisheyeCameraParametersV2Cali } from 'interfaces/FisheyePreview';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import dialog from '@app/implementations/dialog';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import {
+  calibrateChessboard,
+  startFisheyeCalibrate,
+} from '@core/helpers/camera-calibration-helper';
+import { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from './CalibrateChessBoard.module.scss';
 import { getMaterialHeight, prepareToTakePicture } from './utils';
@@ -139,7 +142,7 @@ const CalibrateChessBoard = ({ updateParam, onClose, onBack, onNext }: Props): J
     await deviceMaster.uploadToDirectory(
       res.origBlob,
       'camera_calib',
-      `pic_${objectHeight.current.toFixed(1)}_top_left.jpg`
+      `pic_${objectHeight.current.toFixed(1)}_top_left.jpg`,
     );
     onNext();
   }, [updateParam, onNext, res]);

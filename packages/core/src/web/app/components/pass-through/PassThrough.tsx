@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { Button } from 'antd';
 
-import BackButton from 'app/widgets/FullWindowPanel/BackButton';
-import Footer from 'app/widgets/FullWindowPanel/Footer';
-import FullWindowPanel from 'app/widgets/FullWindowPanel/FullWindowPanel';
-import Header from 'app/widgets/FullWindowPanel/Header';
-import LeftPanelIcons from 'app/icons/left-panel/LeftPanelIcons';
-import Sider from 'app/widgets/FullWindowPanel/Sider';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { useIsMobile } from 'helpers/system-helper';
+import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
+import Footer from '@core/app/widgets/FullWindowPanel/Footer';
+import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
+import Header from '@core/app/widgets/FullWindowPanel/Header';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import Sider from '@core/app/widgets/FullWindowPanel/Sider';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import Canvas from './Canvas';
 import Controls from './Controls';
@@ -75,7 +75,7 @@ export const showPassThrough = (onClose?: () => void): Promise<void> => {
             onClose?.();
           }}
         />
-      </PassThroughProvider>
+      </PassThroughProvider>,
     );
   });
 };

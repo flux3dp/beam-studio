@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { Collapse } from 'antd';
 
-import { adorModels, bb2Models } from 'app/actions/beambox/constant';
-import useI18n from 'helpers/useI18n';
+import { adorModels, bb2Models } from '@core/app/actions/beambox/constant';
+import useI18n from '@core/helpers/useI18n';
 
 import { useLocation } from 'react-router-dom';
 import styles from './ConnectWiFi.module.scss';

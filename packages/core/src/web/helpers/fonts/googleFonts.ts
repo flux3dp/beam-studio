@@ -1,4 +1,4 @@
-import { WebFont } from 'interfaces/IFont';
+import { WebFont } from '@core/interfaces/IFont';
 
 // Note:
 // TextOptions Fallback font family: Noto Sans

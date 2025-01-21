@@ -1,16 +1,13 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import imageData from 'helpers/image-data';
-import NS from 'app/constants/namespaces';
-import { IImageDataResult } from 'interfaces/IImage';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import imageData from '@core/helpers/image-data';
+import NS from '@core/app/constants/namespaces';
+import { IImageDataResult } from '@core/interfaces/IImage';
 
 /**
  * updateImagesResolution update all images resolution for exporting or light weight display
  * @param fullResolution target resolution: full resolution if true, otherwise low resolution
  */
-const updateImagesResolution = async (
-  fullResolution: boolean,
-  parent?: Element
-): Promise<void> => {
+const updateImagesResolution = async (fullResolution: boolean, parent?: Element): Promise<void> => {
   if (beamboxPreference.read('image_downsampling') === false) return;
   const svgcontent = document.getElementById('svgcontent');
   const images = parent ? parent.querySelectorAll('image') : svgcontent?.querySelectorAll('image');

@@ -4,27 +4,27 @@
 /* eslint-disable no-console */
 import { sprintf } from 'sprintf-js';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import checkSoftwareForAdor from 'helpers/check-software';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import DeviceConstants from 'app/constants/device-constants';
-import Dialog from 'app/actions/dialog-caller';
-import IControlSocket from 'interfaces/IControlSocket';
-import InputLightBoxConstants from 'app/constants/input-lightbox-constants';
-import Progress from 'app/actions/progress-caller';
-import storage from 'implementations/storage';
-import { ConnectionError, SelectionResult } from 'app/constants/connection-constants';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import checkSoftwareForAdor from '@core/helpers/check-software';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import DeviceConstants from '@core/app/constants/device-constants';
+import Dialog from '@core/app/actions/dialog-caller';
+import IControlSocket from '@core/interfaces/IControlSocket';
+import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
+import Progress from '@core/app/actions/progress-caller';
+import storage from '@app/implementations/storage';
+import { ConnectionError, SelectionResult } from '@core/app/constants/connection-constants';
 import {
   FisheyeCameraParameters,
   FisheyeMatrix,
   PerspectiveGrid,
   RotationParameters3D,
   RotationParameters3DGhostApi,
-} from 'interfaces/FisheyePreview';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo, IDeviceConnection, IDeviceDetailInfo } from 'interfaces/IDevice';
-import { Field, GalvoParameters } from 'interfaces/Promark';
+} from '@core/interfaces/FisheyePreview';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo, IDeviceConnection, IDeviceDetailInfo } from '@core/interfaces/IDevice';
+import { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
 import Control from './api/control';
@@ -220,7 +220,7 @@ class DeviceMaster {
             resolve({ success: false, data: 'cancel', password: '' });
           },
         });
-      }
+      },
     );
 
     if (authResult.success) {
@@ -335,7 +335,7 @@ class DeviceMaster {
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if (
         [ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(
-          errorCode as ConnectionError
+          errorCode as ConnectionError,
         )
       ) {
         return await this.runAuthProcess(uuid, device, deviceInfo);
@@ -428,7 +428,7 @@ class DeviceMaster {
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if (
         [ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(
-          errorCode as ConnectionError
+          errorCode as ConnectionError,
         )
       ) {
         return await this.runAuthProcess(uuid, device, deviceInfo);
@@ -448,7 +448,7 @@ class DeviceMaster {
   async runAuthProcess(
     uuid: string,
     device: IDeviceConnection,
-    deviceInfo: IDeviceInfo
+    deviceInfo: IDeviceInfo,
   ): Promise<SelectionResult> {
     if (device.info.password) {
       const authed = await this.showAuthDialog(uuid);
@@ -786,7 +786,7 @@ class DeviceMaster {
 
   async doAdorCalibrationV2(step = 1, withPitch = false) {
     await this.doCalibration(
-      `fcode/ador-camera-v2-${step}${withPitch && step === 1 ? '-p' : ''}.fc`
+      `fcode/ador-camera-v2-${step}${withPitch && step === 1 ? '-p' : ''}.fc`,
     );
   }
 
@@ -838,7 +838,7 @@ class DeviceMaster {
     data,
     path: string,
     fileName: string,
-    onProgress?: (...args: any[]) => void
+    onProgress?: (...args: any[]) => void,
   ) {
     const controlSocket = await this.getControl();
     if (onProgress) {
@@ -1249,7 +1249,7 @@ class DeviceMaster {
   checkCameraNeedFlip(cameraOffset: string) {
     const { currentDevice } = this;
     currentDevice.cameraNeedsFlip = !!Number(
-      (/F:\s?(-?\d+\.?\d+)/.exec(cameraOffset) || ['', ''])[1]
+      (/F:\s?(-?\d+\.?\d+)/.exec(cameraOffset) || ['', ''])[1],
     );
     return currentDevice.cameraNeedsFlip;
   }
@@ -1302,7 +1302,7 @@ class DeviceMaster {
   }
 
   async takeOnePicture(
-    opts: { timeout?: number } = {}
+    opts: { timeout?: number } = {},
   ): Promise<{ imgBlob?: Blob; needCameraCableAlert?: boolean }> {
     const { timeout = 30 } = opts;
     const startTime = Date.now();

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 
 import ConnectUsb from './ConnectUsb';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     connect_usb: {
       title: 'USB Connection',

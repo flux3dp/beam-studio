@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 
-import getDevice from 'helpers/device/get-device';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { useIsMobile } from 'helpers/system-helper';
+import getDevice from '@core/helpers/device/get-device';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './SelectMachineButton.module.scss';
 

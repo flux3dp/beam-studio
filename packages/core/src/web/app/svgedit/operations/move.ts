@@ -1,8 +1,8 @@
-import history from 'app/svgedit/history/history';
-import selector from 'app/svgedit/selector';
-import workareaManager from 'app/svgedit/workarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import history from '@core/app/svgedit/history/history';
+import selector from '@core/app/svgedit/selector';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 // TODO: decouple with svgcanvas
 
@@ -18,7 +18,7 @@ export function moveElements(
   dy: number | number[],
   elems: Element[],
   undoable = true,
-  noCall = false
+  noCall = false,
 ): IBatchCommand {
   // if single values, scale them to the zoom
   let zoomedX: number;
@@ -72,7 +72,7 @@ export function moveElements(
 export function moveSelectedElements(
   dx: number | number[],
   dy: number | number[],
-  undoable = true
+  undoable = true,
 ): IBatchCommand {
   // if single values, scale them to the zoom
   const selectedElements = svgCanvas.getSelectedElems();

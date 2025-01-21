@@ -2,8 +2,8 @@ import Cropper from 'cropperjs';
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Spin } from 'antd';
 
-import i18n from 'helpers/i18n';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
+import i18n from '@core/helpers/i18n';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 
 const LANG = i18n.lang.beambox.image_trace_panel;
 
@@ -17,7 +17,10 @@ const MODAL_PADDING_Y = 170;
 
 const StepCrop = ({ onCancel, onCropFinish }: Props): JSX.Element => {
   const [croppedCameraCanvasBlobUrl, setCroppedCameraCanvasBlobUrl] = useState('');
-  useEffect(() => () => URL.revokeObjectURL(croppedCameraCanvasBlobUrl), [croppedCameraCanvasBlobUrl]);
+  useEffect(
+    () => () => URL.revokeObjectURL(croppedCameraCanvasBlobUrl),
+    [croppedCameraCanvasBlobUrl],
+  );
   const cropperRef = useRef<Cropper>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
 
@@ -42,7 +45,7 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): JSX.Element => {
     return () => {
       cropperRef.current?.destroy();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startCropper = () => {
@@ -67,7 +70,7 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): JSX.Element => {
 
   const maxWidth = window.innerWidth - MODAL_PADDING_X;
   const maxHieght = window.innerHeight - MODAL_PADDING_Y;
-  const isWideImage = (width / maxWidth > height / maxHieght);
+  const isWideImage = width / maxWidth > height / maxHieght;
   return (
     <Modal
       centered

@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 
-import useI18n from 'helpers/useI18n';
-import { supportUsbModels } from 'app/actions/beambox/constant';
+import useI18n from '@core/helpers/useI18n';
+import { supportUsbModels } from '@core/app/actions/beambox/constant';
 
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useLocation } from 'react-router-dom';
 import styles from './SelectConnectionType.module.scss';
 
@@ -33,7 +33,7 @@ const SelectConnectionType = (): JSX.Element => {
   };
 
   const renderConnectionTypeButton = (
-    type: 'wifi' | 'wired' | 'ether2ether' | 'usb'
+    type: 'wifi' | 'wired' | 'ether2ether' | 'usb',
   ): JSX.Element => (
     <button
       id={`connect-${type}`}
@@ -46,7 +46,7 @@ const SelectConnectionType = (): JSX.Element => {
   );
 
   const renderConnectionTypeContainer = (
-    type: 'wifi' | 'wired' | 'ether2ether' | 'usb'
+    type: 'wifi' | 'wired' | 'ether2ether' | 'usb',
   ): JSX.Element => (
     <div className={styles['btn-container']}>
       <img className={styles.icon} src={`img/init-panel/icon-${type}.svg`} draggable="false" />

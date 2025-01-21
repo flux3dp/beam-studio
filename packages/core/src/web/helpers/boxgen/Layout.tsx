@@ -1,12 +1,12 @@
 import React from 'react';
 import Shape from '@doodle3d/clipper-js';
-import { DEFAULT_LABEL_COLOR, DEFAULT_STROKE_COLOR } from 'app/constants/boxgen-constants';
+import { DEFAULT_LABEL_COLOR, DEFAULT_STROKE_COLOR } from '@core/app/constants/boxgen-constants';
 import {
   getTopBottomShape,
   getFrontBackShape,
   getLeftRightShape,
-} from 'app/components/boxgen/Shape';
-import { IController, IExportOptions } from 'interfaces/IBoxgen';
+} from '@core/app/components/boxgen/Shape';
+import { IController, IExportOptions } from '@core/interfaces/IBoxgen';
 
 interface ShapeDisplayObject {
   shape: THREE.Shape;
@@ -82,7 +82,7 @@ export const getLayouts = (
   canvasWidth: number,
   canvasHeight: number,
   data: IController,
-  options: IExportOptions
+  options: IExportOptions,
 ): { pages: { shape: JSX.Element[]; label: JSX.Element[] }[] } => {
   const color = DEFAULT_STROKE_COLOR;
   const textColor = DEFAULT_LABEL_COLOR;

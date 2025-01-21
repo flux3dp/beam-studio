@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     topbar: {
       menu: {
@@ -15,12 +15,12 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -35,7 +35,7 @@ getSVGAsync.mockImplementation((callback) => {
 
 const undo = jest.fn();
 const redo = jest.fn();
-jest.mock('app/svgedit/history/utils', () => ({
+jest.mock('@core/app/svgedit/history/utils', () => ({
   undo,
   redo,
 }));

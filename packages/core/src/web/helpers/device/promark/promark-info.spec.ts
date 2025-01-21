@@ -1,14 +1,14 @@
-import { LaserType } from 'app/constants/promark-constants';
+import { LaserType } from '@core/app/constants/promark-constants';
 
 import { getPromarkInfo, setPromarkInfo } from './promark-info';
 
 const mockStorageGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
 const mockGetSelectedDevice = jest.fn();
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 

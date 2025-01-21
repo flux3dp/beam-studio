@@ -3,26 +3,26 @@
 import * as fontkit from 'fontkit';
 import { sprintf } from 'sprintf-js';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConfig from 'helpers/api/alert-config';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import fileExportHelper from 'helpers/file-export-helper';
-import fontHelper from 'helpers/fonts/fontHelper';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import localFontHelper from 'implementations/localFontHelper';
-import Progress from 'app/actions/progress-caller';
-import SvgLaserParser from 'helpers/api/svg-laser-parser';
-import storage from 'implementations/storage';
-import textPathEdit from 'app/actions/beambox/textPathEdit';
-import weldPath from 'helpers/weldPath';
-import { checkConnection } from 'helpers/api/discover';
-import { FontDescriptor, IFont, IFontQuery, WebFont } from 'interfaces/IFont';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { moveElements } from 'app/svgedit/operations/move';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConfig from '@core/helpers/api/alert-config';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import localFontHelper from '@app/implementations/localFontHelper';
+import Progress from '@core/app/actions/progress-caller';
+import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
+import storage from '@app/implementations/storage';
+import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import weldPath from '@core/helpers/weldPath';
+import { checkConnection } from '@core/helpers/api/discover';
+import { FontDescriptor, IFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { moveElements } from '@core/app/svgedit/operations/move';
 
 let svgCanvas: ISVGCanvas;
 let svgedit;
@@ -159,7 +159,7 @@ const requestFontByFamilyAndStyle = (opts: IFontQuery): IFont => {
 };
 
 export const getFontObj = async (
-  font: WebFont | FontDescriptor
+  font: WebFont | FontDescriptor,
 ): Promise<fontkit.Font | undefined> => {
   try {
     const { postscriptName } = font;
@@ -206,7 +206,7 @@ export const getFontObj = async (
 
 export const convertTextToPathByFontkit = (
   textElem: Element,
-  fontObj: fontkit.Font
+  fontObj: fontkit.Font,
 ): IConvertInfo => {
   try {
     const maxChar = 0xffff;
@@ -295,7 +295,7 @@ export const convertTextToPathByFontkit = (
     return { d, transform: textElem.getAttribute('transform') };
   } catch (err) {
     console.log(
-      `Unable to handle font ${textElem.getAttribute('font-postscript')} by fontkit, ${err}`
+      `Unable to handle font ${textElem.getAttribute('font-postscript')} by fontkit, ${err}`,
     );
     return null;
   }
@@ -323,7 +323,7 @@ const getPathAndTransformFromSvg = async (data: any, isFilled: boolean) =>
 const convertTextToPathByGhost = async (
   textElem: Element,
   isFilled: boolean,
-  font: FontDescriptor
+  font: FontDescriptor,
 ): Promise<IConvertInfo> => {
   try {
     if ('hasLoaded' in font) {
@@ -351,7 +351,7 @@ const convertTextToPathByGhost = async (
     return { ...convertRes, moveElement: bbox };
   } catch (err) {
     console.log(
-      `Unable to handle font ${textElem.getAttribute('font-postscript')} by ghost, ${err}`
+      `Unable to handle font ${textElem.getAttribute('font-postscript')} by ghost, ${err}`,
     );
     return null;
   }
@@ -359,7 +359,7 @@ const convertTextToPathByGhost = async (
 
 const getUnsupportedChar = async (
   font: WebFont | FontDescriptor,
-  textContent: string[]
+  textContent: string[],
 ): Promise<string[] | null> => {
   const fontObj = await getFontObj(font);
   if (fontObj) {
@@ -389,7 +389,7 @@ const substitutedFont = async (font: WebFont | FontDescriptor, textElement: Elem
   // because my Mac cannot substituteFont properly handing font like 'Windings'
   // but we have to subsittue text if text contain both English and Chinese
   const textOnlyContainBasicLatin = Array.from(text).every(
-    (char: string) => char.charCodeAt(0) <= 0x007f
+    (char: string) => char.charCodeAt(0) <= 0x007f,
   );
   if (textOnlyContainBasicLatin) {
     return { font: originFont };
@@ -523,7 +523,7 @@ const setTextPostscriptnameIfNeeded = (textElement: Element) => {
 
 const convertTextToPath = async (
   textElement: Element,
-  opts?: { isTempConvert?: boolean; weldingTexts?: boolean }
+  opts?: { isTempConvert?: boolean; weldingTexts?: boolean },
 ): Promise<ConvertResult> => {
   if (!textElement.textContent) {
     return ConvertResult.CONTINUE;

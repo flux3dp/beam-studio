@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import appSettings from 'app/app-settings';
-import i18n from 'helpers/i18n';
-import menu from 'implementations/menu';
-import Modal from 'app/widgets/Modal';
-import SelectView from 'app/widgets/Select';
+import appSettings from '@core/app/app-settings';
+import i18n from '@core/helpers/i18n';
+import menu from '@app/implementations/menu';
+import Modal from '@core/app/widgets/Modal';
+import SelectView from '@core/app/widgets/Select';
 
 function Home(): JSX.Element {
   const [lang, changeLang] = React.useState(i18n.lang);
@@ -40,14 +40,14 @@ function Home(): JSX.Element {
           <SelectView id="select-lang" options={getLanguageOptions()} onChange={changeActiveLang} />
         </div>
         <div>
-          <a href="#initialize/connect/flux-id-login" className="btn btn-action btn-large">{lang.initialize.next}</a>
+          <a href="#initialize/connect/flux-id-login" className="btn btn-action btn-large">
+            {lang.initialize.next}
+          </a>
         </div>
       </div>
     </div>
   );
-  return (
-    <Modal className={wrapperClassName} content={content} />
-  );
+  return <Modal className={wrapperClassName} content={content} />;
 }
 
 export default Home;

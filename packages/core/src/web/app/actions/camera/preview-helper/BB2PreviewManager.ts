@@ -1,17 +1,17 @@
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant, { PreviewSpeedLevel } from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import MessageCaller from 'app/actions/message-caller';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from 'app/actions/progress-caller';
-import { FisheyeCameraParameters, PerspectiveGrid } from 'interfaces/FisheyePreview';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant, { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import MessageCaller from '@core/app/actions/message-caller';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import progressCaller from '@core/app/actions/progress-caller';
+import { FisheyeCameraParameters, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -59,7 +59,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       } catch (err) {
         console.log('Fail to fetchFisheyeParams', err?.message);
         throw new Error(
-          'Unable to get fisheye parameters, please make sure you have calibrated the camera'
+          'Unable to get fisheye parameters, please make sure you have calibrated the camera',
         );
       }
       progressCaller.update(this.progressId, { message: lang.message.gettingLaserSpeed });
@@ -154,7 +154,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
   preprocessImage = async (
     imgUrl: string,
-    opts: { overlapRatio?: number; overlapFlag?: number } = {}
+    opts: { overlapRatio?: number; overlapFlag?: number } = {},
   ): Promise<HTMLCanvasElement> => {
     const { overlapRatio = 0, overlapFlag = 0 } = opts;
     const img = new Image();
@@ -205,7 +205,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   preview = async (
     x: number,
     y: number,
-    opts: { overlapRatio?: number; overlapFlag?: number } = {}
+    opts: { overlapRatio?: number; overlapFlag?: number } = {},
   ): Promise<boolean> => {
     if (this.ended) return false;
     const { overlapRatio = 0, overlapFlag } = opts;
@@ -227,7 +227,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     y1: number,
     x2: number,
     y2: number,
-    { overlapRatio = 0.05 }: { overlapRatio?: number } = {}
+    { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
   ): Promise<boolean> => {
     const getPoints = () => {
       const imgW = (this.grid.x[1] - this.grid.x[0]) * constant.dpmm;

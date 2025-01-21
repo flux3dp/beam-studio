@@ -22,59 +22,59 @@
 TODOS
 1. JSDoc
 */
-import clipboard from 'app/svgedit/operations/clipboard';
-import history from 'app/svgedit/history/history';
-import historyUtils from 'app/svgedit/history/utils';
-import svgCanvasClass from 'app/svgedit/svgcanvas';
-import textActions from 'app/svgedit/text/textactions';
-import textEdit from 'app/svgedit/text/textedit';
-import textPathEdit from 'app/actions/beambox/textPathEdit';
-import workareaManager from 'app/svgedit/workarea';
-import { deleteSelectedElements } from 'app/svgedit/operations/delete';
-import { moveSelectedElements } from 'app/svgedit/operations/move';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import history from '@core/app/svgedit/history/history';
+import historyUtils from '@core/app/svgedit/history/utils';
+import svgCanvasClass from '@core/app/svgedit/svgcanvas';
+import textActions from '@core/app/svgedit/text/textactions';
+import textEdit from '@core/app/svgedit/text/textedit';
+import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import workareaManager from '@core/app/svgedit/workarea';
+import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
+import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 
-import canvasEvents from 'app/actions/canvas/canvasEvents';
-import currentFileManager from 'app/svgedit/currentFileManager';
+import canvasEvents from '@core/app/actions/canvas/canvasEvents';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import ToolPanelsController from './toolPanelsController';
-import RightPanelController from 'app/views/beambox/Right-Panels/contexts/RightPanelController';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import { getNextStepRequirement } from 'app/views/tutorials/tutorialController';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { NounProjectPanelController } from 'app/views/beambox/Noun-Project-Panel';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { NounProjectPanelController } from '@core/app/views/beambox/Noun-Project-Panel';
 import BeamboxPreference from './beambox-preference';
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import OpenBottomBoundaryDrawer from './open-bottom-boundary-drawer';
 import PreviewModeController from './preview-mode-controller';
 import Alert from '../alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import TutorialConstants from 'app/constants/tutorial-constants';
+import AlertConstants from '@core/app/constants/alert-constants';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
 import Progress from '../progress-caller';
-import BeamFileHelper from 'helpers/beam-file-helper';
-import fileExportHelper from 'helpers/file-export-helper';
-import ImageData from 'helpers/image-data';
-import storage from 'implementations/storage';
-import pdfHelper from 'implementations/pdfHelper';
-import Shortcuts from 'helpers/shortcuts';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { IFont } from 'interfaces/IFont';
-import { IIcon } from 'interfaces/INoun-Project';
-import { IStorage, StorageKey } from 'interfaces/IStorage';
-import ISVGConfig from 'interfaces/ISVGConfig';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import getExifRotationFlag from 'helpers/image/getExifRotationFlag';
-import importBitmap from 'app/svgedit/operations/import/importBitmap';
-import importBvg from 'app/svgedit/operations/import/importBvg';
-import importDxf from 'app/svgedit/operations/import/importDxf';
-import importSvg from 'app/svgedit/operations/import/importSvg';
-import readBitmapFile from 'app/svgedit/operations/import/readBitmapFile';
-import { isMobile } from 'helpers/system-helper';
-import { PanelType } from 'app/constants/right-panel-types';
-import { importPresets } from 'helpers/presets/preset-helper';
-import webNeedConnectionWrapper from 'helpers/web-need-connection-helper';
+import BeamFileHelper from '@core/helpers/beam-file-helper';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import ImageData from '@core/helpers/image-data';
+import storage from '@app/implementations/storage';
+import pdfHelper from '@app/implementations/pdfHelper';
+import Shortcuts from '@core/helpers/shortcuts';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { IFont } from '@core/interfaces/IFont';
+import { IIcon } from '@core/interfaces/INoun-Project';
+import { IStorage, StorageKey } from '@core/interfaces/IStorage';
+import ISVGConfig from '@core/interfaces/ISVGConfig';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
+import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
+import importBvg from '@core/app/svgedit/operations/import/importBvg';
+import importDxf from '@core/app/svgedit/operations/import/importDxf';
+import importSvg from '@core/app/svgedit/operations/import/importSvg';
+import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
+import { isMobile } from '@core/helpers/system-helper';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import { importPresets } from '@core/helpers/presets/preset-helper';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 
 if (svgCanvasClass) {
   console.log('svgCanvas loaded successfully');
@@ -859,7 +859,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if (
         [TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(
-          getNextStepRequirement()
+          getNextStepRequirement(),
         )
       ) {
         return;
@@ -1625,7 +1625,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                 .append(
                   $('<div>', {
                     class: 'flyout_arrow_horiz',
-                  })
+                  }),
                 );
 
               ref_btn.before(show_btn);
@@ -1961,7 +1961,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     const triggerGridTool = function () {
       if (selectedElement != null || multiselected) {
         ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible
+          ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible,
         );
         ToolPanelsController.setType('gridArray');
         ToolPanelsController.render();
@@ -1996,7 +1996,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
       if (selectedElement != null || multiselected) {
         ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible
+          ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible,
         );
         ToolPanelsController.setType('offset');
         ToolPanelsController.render();
@@ -2014,7 +2014,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     let triggerNestTool = function () {
       if (selectedElement != null || multiselected) {
         ToolPanelsController.setVisibility(
-          ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible
+          ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible,
         );
         ToolPanelsController.setType('nest');
         ToolPanelsController.render();
@@ -2056,7 +2056,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       () => {
         if (Shortcuts.isInBaseScope()) cutSelected();
       },
-      false
+      false,
     );
 
     var copySelected = function () {
@@ -2074,7 +2074,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       () => {
         if (Shortcuts.isInBaseScope()) copySelected();
       },
-      false
+      false,
     );
 
     // handle paste
@@ -2387,7 +2387,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               window['polygonAddSides']?.();
               ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
             },
-            { splitKey: '-' }
+            { splitKey: '-' },
           );
           Shortcuts.on(['-'], () => {
             window['polygonDecreaseSides']?.();
@@ -2437,7 +2437,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         e.returnValue = '';
         return '';
       },
-      false
+      false,
     );
 
     editor.openPrep = function (func) {
@@ -2541,7 +2541,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         $('#workarea').removeAttr('style');
         if (e.dataTransfer && e.dataTransfer.types.includes('text/noun-project-icon')) {
           const nounProjectIcon = JSON.parse(
-            e.dataTransfer.getData('text/noun-project-icon')
+            e.dataTransfer.getData('text/noun-project-icon'),
           ) as IIcon;
           NounProjectPanelController.emit('insertIcon', nounProjectIcon);
           return;
@@ -2705,7 +2705,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // Keep for e2e import image
       // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
       var imgImport = $(
-        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">'
+        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">',
       ).change(importImage);
       $('#tool_import').show().prepend(imgImport);
 

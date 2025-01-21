@@ -2,13 +2,13 @@
 import React, { memo } from 'react';
 
 import { Button, Flex, TabPaneProps, Tabs } from 'antd';
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
-import ImageEditPanelIcons from 'app/icons/image-edit-panel/ImageEditPanelIcons';
-import BackButton from 'app/widgets/FullWindowPanel/BackButton';
-import Footer from 'app/widgets/FullWindowPanel/Footer';
-import Header from 'app/widgets/FullWindowPanel/Header';
-import FullWindowPanelSider from 'app/widgets/FullWindowPanel/Sider';
+import ImageEditPanelIcons from '@core/app/icons/image-edit-panel/ImageEditPanelIcons';
+import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
+import Footer from '@core/app/widgets/FullWindowPanel/Footer';
+import Header from '@core/app/widgets/FullWindowPanel/Header';
+import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
 
 import Eraser from './Eraser';
 import MagicWand from './MagicWand';

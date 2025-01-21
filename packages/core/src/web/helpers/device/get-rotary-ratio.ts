@@ -1,5 +1,5 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import { CHUCK_ROTARY_DIAMETER, RotaryType, SupportInfo } from 'app/constants/add-on';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { CHUCK_ROTARY_DIAMETER, RotaryType, SupportInfo } from '@core/app/constants/add-on';
 
 const getRotaryRatio = (supportInfo: SupportInfo): number => {
   let ratio = 1;

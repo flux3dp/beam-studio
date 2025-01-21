@@ -2,7 +2,7 @@ import Draggable, { ControlPosition, DraggableData, DraggableEvent } from 'react
 import React, { useRef, useState } from 'react';
 import { Modal, ModalProps } from 'antd';
 
-import layoutConstants from 'app/constants/layout-constants';
+import layoutConstants from '@core/app/constants/layout-constants';
 
 interface Props extends ModalProps {
   defaultPosition?: ControlPosition;

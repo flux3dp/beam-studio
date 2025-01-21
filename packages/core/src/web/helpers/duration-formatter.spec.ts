@@ -1,6 +1,6 @@
 import FormatDuration from './duration-formatter';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     monitor: {
       hour: 'h',

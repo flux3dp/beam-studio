@@ -2,16 +2,16 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import langEn from 'app/lang/en';
+import langEn from '@core/app/lang/en';
 
 const mockGetLang = jest.fn();
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   getActiveLang: mockGetLang,
   lang: langEn,
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: mockOpen,
 }));
 

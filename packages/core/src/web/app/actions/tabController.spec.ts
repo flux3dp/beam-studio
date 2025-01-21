@@ -1,14 +1,14 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-import CanvasMode from 'app/constants/canvasMode';
-import { TabEvents } from 'app/constants/tabConstants';
+import CanvasMode from '@core/app/constants/canvasMode';
+import { TabEvents } from '@core/app/constants/tabConstants';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const mockSend = jest.fn();
 const mockSendSync = jest.fn();
 const mockCommunicator = {};
-jest.mock('implementations/communicator', () => ({
+jest.mock('@app/implementations/communicator', () => ({
   on: (event, handler) => {
     mockCommunicator[event] = handler;
   },
@@ -22,7 +22,7 @@ import tabController from './tabController';
 const mockGetName = jest.fn();
 const mockGetHasUnsavedChanges = jest.fn();
 const mockIsCloudFile = jest.fn();
-jest.mock('app/svgedit/currentFileManager', () => ({
+jest.mock('@core/app/svgedit/currentFileManager', () => ({
   getName: (...args) => mockGetName(...args),
   getHasUnsavedChanges: (...args) => mockGetHasUnsavedChanges(...args),
   get isCloudFile() {

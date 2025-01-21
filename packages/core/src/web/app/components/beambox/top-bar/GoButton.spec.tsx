@@ -1,74 +1,74 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
-import CanvasMode from 'app/constants/canvasMode';
+import CanvasMode from '@core/app/constants/canvasMode';
 import GoButton from './GoButton';
 
 const popUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => popUp(...args),
 }));
 
 const alertConfigRead = jest.fn();
 const write = jest.fn();
-jest.mock('helpers/api/alert-config', () => ({
+jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => alertConfigRead(...args),
   write: (...args) => write(...args),
 }));
 
 const beamboxPreferenceRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => beamboxPreferenceRead(...args),
 }));
 
 const showConfirmPromptDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showConfirmPromptDialog: (...args) => showConfirmPromptDialog(...args),
 }));
 
 const uploadFcode = jest.fn();
-jest.mock('app/actions/beambox/export-funcs', () => ({
+jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   uploadFcode: (...args) => uploadFcode(...args),
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => get(...args),
 }));
 
 const switchImageSymbolForAll = jest.fn();
-jest.mock('helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-maker', () => ({
   switchImageSymbolForAll: (...args) => switchImageSymbolForAll(...args),
 }));
 
-jest.mock('app/constants/tutorial-constants', () => ({
+jest.mock('@core/app/constants/tutorial-constants', () => ({
   SEND_FILE: 'SEND_FILE',
 }));
 
 const versionChecker = jest.fn();
 jest.mock(
-  'helpers/version-checker',
+  '@core/helpers/version-checker',
   () =>
     (...args) =>
-      versionChecker(...args)
+      versionChecker(...args),
 );
 
 const getNextStepRequirement = jest.fn();
 const handleNextStep = jest.fn();
-jest.mock('app/views/tutorials/tutorialController', () => ({
+jest.mock('@core/app/views/tutorials/tutorialController', () => ({
   getNextStepRequirement: (...args) => getNextStepRequirement(...args),
   handleNextStep: (...args) => handleNextStep(...args),
 }));
 
 const mockExecuteFirmwareUpdate = jest.fn();
-jest.mock('app/actions/beambox/menuDeviceActions', () => ({
+jest.mock('@core/app/actions/beambox/menuDeviceActions', () => ({
   executeFirmwareUpdate: (...args) => mockExecuteFirmwareUpdate(...args),
 }));
 
 const getCurrentDrawing = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -77,36 +77,36 @@ jest.mock('helpers/svg-editor-helper', () => ({
     }),
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext(null),
 }));
 
 const mockCheckOldFirmware = jest.fn();
 jest.mock(
-  'helpers/device/checkOldFirmware',
+  '@core/helpers/device/checkOldFirmware',
   () =>
     (...args) =>
-      mockCheckOldFirmware(...args)
+      mockCheckOldFirmware(...args),
 );
 
 const mockCheckDeviceStatus = jest.fn();
 jest.mock(
-  'helpers/check-device-status',
+  '@core/helpers/check-device-status',
   () =>
     (...args) =>
-      mockCheckDeviceStatus(...args)
+      mockCheckDeviceStatus(...args),
 );
 
 const mockGetDevice = jest.fn();
 jest.mock(
-  'helpers/device/get-device',
+  '@core/helpers/device/get-device',
   () =>
     (...args) =>
-      mockGetDevice(...args)
+      mockGetDevice(...args),
 );
 
 const mockShowAdorCalibration = jest.fn();
-jest.mock('app/components/dialogs/camera/AdorCalibration', () => ({
+jest.mock('@core/app/components/dialogs/camera/AdorCalibration', () => ({
   showAdorCalibration: (...args) => mockShowAdorCalibration(...args),
 }));
 
@@ -114,7 +114,7 @@ const mockSetStatus = jest.fn();
 const mockHandleFinish = jest.fn();
 const mockSetExportFn = jest.fn();
 const mockOnContextChanged = jest.fn();
-jest.mock('helpers/device/promark/promark-button-handler', () => ({
+jest.mock('@core/helpers/device/promark/promark-button-handler', () => ({
   setStatus: (...args) => mockSetStatus(...args),
   handleFinish: (...args) => mockHandleFinish(...args),
   setExportFn: (...args) => mockSetExportFn(...args),
@@ -131,7 +131,7 @@ describe('test GoButton', () => {
         value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}
       >
         <GoButton hasDiscoverdMachine={false} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

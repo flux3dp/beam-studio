@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Checkbox, Switch } from 'antd';
 
-import ConfigPanelIcons from 'app/icons/config-panel/ConfigPanelIcons';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { writeData } from 'helpers/layer/layer-config-helper';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './WhiteInkCheckbox.module.scss';
@@ -40,9 +40,7 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): JSX.Element => {
       payload: { wInk: newVal },
     });
     const batchCmd = new history.BatchCommand('Change white ink toggle');
-    selectedLayers.forEach((layerName) =>
-      writeData(layerName, 'wInk', newVal, { batchCmd })
-    );
+    selectedLayers.forEach((layerName) => writeData(layerName, 'wInk', newVal, { batchCmd }));
     batchCmd.onAfter = initState;
     svgCanvas.addCommandToHistory(batchCmd);
   };

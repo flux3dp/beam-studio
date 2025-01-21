@@ -5,7 +5,7 @@ import { fireEvent, render } from '@testing-library/react';
 import SidePanel from './SidePanel';
 
 const mockGetConvertEngine = jest.fn();
-jest.mock('app/actions/beambox/export-funcs', () => ({
+jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   getConvertEngine: () => mockGetConvertEngine(),
 }));
 
@@ -30,7 +30,7 @@ describe('side panel test', () => {
         handleStartHere={handleStartHere}
         isStartHereEnabled
         togglePathPreview={togglePathPreview}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -57,7 +57,7 @@ describe('side panel test', () => {
         handleStartHere={handleStartHere}
         isStartHereEnabled={false}
         togglePathPreview={togglePathPreview}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -85,7 +85,7 @@ describe('side panel test', () => {
         handleStartHere={handleStartHere}
         isStartHereEnabled
         togglePathPreview={togglePathPreview}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 

@@ -1,3 +1,3 @@
-import { IRecentMenuUpdater } from 'interfaces/IRecentMenuUpdater';
+import type { IRecentMenuUpdater } from '@core/interfaces/IRecentMenuUpdater';
 
 export default {} as IRecentMenuUpdater;

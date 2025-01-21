@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { Modal, Switch } from 'antd';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { ConfigKey, ConfigKeyTypeMap } from 'interfaces/ILayerConfig';
-import { getLayerByName } from 'helpers/layer/layer-helper';
-import { writeDataLayer } from 'helpers/layer/layer-config-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './FillSettingModal.module.scss';

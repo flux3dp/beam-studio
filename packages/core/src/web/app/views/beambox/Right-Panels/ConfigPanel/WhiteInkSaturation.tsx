@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
-import configOptions from 'app/constants/config-options';
-import useI18n from 'helpers/useI18n';
+import configOptions from '@core/app/constants/config-options';
+import useI18n from '@core/helpers/useI18n';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
@@ -11,7 +11,7 @@ import styles from './WhiteInkSettingsModal.module.scss';
 
 interface Props {
   value: number;
-  hasMultiValue?: boolean
+  hasMultiValue?: boolean;
   onChange: (val: number) => void;
 }
 
@@ -24,14 +24,14 @@ const WhiteInkSaturation = ({ value, hasMultiValue, onChange }: Props): JSX.Elem
   const { simpleMode = true } = useContext(ConfigPanelContext);
   const sliderOptions = useMemo(
     () => (simpleMode ? configOptions.getWhiteSaturationOptions(lang) : null),
-    [simpleMode, lang]
+    [simpleMode, lang],
   );
   return (
     <div className={styles.panel}>
       <span className={styles.title}>{t.ink_saturation}</span>
       <ConfigValueDisplay
-        inputId='white-ink-input'
-        type='modal'
+        inputId="white-ink-input"
+        type="modal"
         max={MAX_VALUE}
         min={MIN_VALUE}
         value={value}
@@ -40,7 +40,7 @@ const WhiteInkSaturation = ({ value, hasMultiValue, onChange }: Props): JSX.Elem
         options={sliderOptions}
       />
       <ConfigSlider
-        id='white-ink-slider'
+        id="white-ink-slider"
         max={MAX_VALUE}
         min={MIN_VALUE}
         value={value}

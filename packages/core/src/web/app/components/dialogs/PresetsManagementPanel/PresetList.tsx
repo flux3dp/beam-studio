@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import React, { forwardRef, MutableRefObject } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import useI18n from 'helpers/useI18n';
-import { Preset } from 'interfaces/ILayerConfig';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import useI18n from '@core/helpers/useI18n';
+import { Preset } from '@core/interfaces/ILayerConfig';
 
 import styles from './PresetsManagementPanel.module.scss';
 
@@ -30,7 +30,7 @@ const PresetList = forwardRef<HTMLDivElement, Props>(
       toggleHidePreset,
       onReorder,
     }: Props,
-    outerRef: MutableRefObject<HTMLDivElement>
+    outerRef: MutableRefObject<HTMLDivElement>,
   ): JSX.Element => {
     const t = useI18n().beambox.right_panel.laser_panel.preset_management;
     const handleBeforeDragStart = ({ source }) => {
@@ -107,7 +107,7 @@ const PresetList = forwardRef<HTMLDivElement, Props>(
         </Droppable>
       </DragDropContext>
     );
-  }
+  },
 );
 
 export default PresetList;

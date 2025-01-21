@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Col, Input, InputNumber, Modal, Radio, Row, Tabs } from 'antd';
 
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import Select from 'app/widgets/AntdSelect';
-import { ChipSettings, RawChipSettings } from 'interfaces/Cartridge';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import Select from '@core/app/widgets/AntdSelect';
+import { ChipSettings, RawChipSettings } from '@core/interfaces/Cartridge';
 
 interface Props {
   inkLevel: number;
@@ -104,7 +104,7 @@ const CartridgeSettingPanel = ({ inkLevel, initData, onClose }: Props): JSX.Elem
   const [privateKey, setPrivateKey] = useState(privateKeyCache);
   const [chipSettings, setChipSettings] = useState<ChipSettings>(initData);
   const [editingValues, setEditingValues] = useState<ChipSettings>(
-    editValueCache ?? { ...initData, plScale: initPlScale, totalCapacity: initCapacity }
+    editValueCache ?? { ...initData, plScale: initPlScale, totalCapacity: initCapacity },
   );
   const [tabKey, setTabKey] = useState<string>('info');
   const handleSave = async () => {
@@ -128,7 +128,7 @@ const CartridgeSettingPanel = ({ inkLevel, initData, onClose }: Props): JSX.Elem
         children: null,
       },
     ],
-    []
+    [],
   );
   const fetchChipSettings = useCallback(async () => {
     progressCaller.openNonstopProgress({
@@ -151,7 +151,7 @@ const CartridgeSettingPanel = ({ inkLevel, initData, onClose }: Props): JSX.Elem
       if (deviceMaster.currentDevice?.control?.getMode() === 'cartridge_io')
         deviceMaster.endCartridgeIOMode();
     },
-    []
+    [],
   );
 
   const colorSelectOptions = useMemo(
@@ -163,7 +163,7 @@ const CartridgeSettingPanel = ({ inkLevel, initData, onClose }: Props): JSX.Elem
       { label: 'Black', value: 4 },
       { label: 'White', value: 5 },
     ],
-    []
+    [],
   );
 
   const handleVerify = async () => {

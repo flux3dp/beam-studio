@@ -4,14 +4,19 @@ import { act, fireEvent, render } from '@testing-library/react';
 import StepTune from './StepTune';
 
 const mockImageData = jest.fn();
-jest.mock('helpers/image-data', () => (...args) => mockImageData(...args));
+jest.mock(
+  '@core/helpers/image-data',
+  () =>
+    (...args) =>
+      mockImageData(...args),
+);
 
 const mockInsertImage = jest.fn();
-jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   insertImage: (...args) => mockInsertImage(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       image_trace_panel: {
@@ -26,12 +31,17 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const mockGetCoordinates = jest.fn();
-jest.mock('app/actions/beambox/preview-mode-background-drawer', () => ({
+jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
   getCoordinates: () => mockGetCoordinates(),
 }));
 
 const mockTraceAndImportPath = jest.fn();
-jest.mock('helpers/image-trace-panel/trace-and-import-path', () => (...args) => mockTraceAndImportPath(...args));
+jest.mock(
+  '@core/helpers/image-trace-panel/trace-and-import-path',
+  () =>
+    (...args) =>
+      mockTraceAndImportPath(...args),
+);
 
 const mockOnGoBack = jest.fn();
 const mockOnClose = jest.fn();
@@ -58,7 +68,7 @@ describe('test StepTune', () => {
         cropData={mockCropData}
         onGoBack={mockOnGoBack}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -76,7 +86,7 @@ describe('test StepTune', () => {
         cropData={mockCropData}
         onGoBack={mockOnGoBack}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(mockOnGoBack).not.toBeCalled();
     fireEvent.click(getByText('back'));
@@ -90,7 +100,7 @@ describe('test StepTune', () => {
         cropData={mockCropData}
         onGoBack={mockOnGoBack}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(mockImageData).toBeCalledTimes(1);
     expect(mockImageData).toHaveBeenLastCalledWith('mock-url', expect.anything());
@@ -104,9 +114,18 @@ describe('test StepTune', () => {
       fireEvent.click(getByText('next'));
     });
     expect(mockTraceAndImportPath).toBeCalledTimes(1);
-    expect(mockTraceAndImportPath).toHaveBeenLastCalledWith('mock-base64', { x: 30, y: 40, width: 100, height: 100 });
+    expect(mockTraceAndImportPath).toHaveBeenLastCalledWith('mock-base64', {
+      x: 30,
+      y: 40,
+      width: 100,
+      height: 100,
+    });
     expect(mockInsertImage).toBeCalledTimes(1);
-    expect(mockInsertImage).toHaveBeenLastCalledWith('mock-url', { x: 30, y: 40, width: 100, height: 100 }, 128);
+    expect(mockInsertImage).toHaveBeenLastCalledWith(
+      'mock-url',
+      { x: 30, y: 40, width: 100, height: 100 },
+      128,
+    );
     expect(mockOnClose).toBeCalledTimes(1);
   });
 });

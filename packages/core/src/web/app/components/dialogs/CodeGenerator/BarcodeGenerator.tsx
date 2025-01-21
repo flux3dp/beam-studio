@@ -12,7 +12,7 @@ import {
   Space,
 } from 'antd';
 
-import fontFuncs from 'app/actions/beambox/font-funcs';
+import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import {
   AlignCenterOutlined,
   AlignLeftOutlined,
@@ -20,10 +20,10 @@ import {
   BoldOutlined,
   ItalicOutlined,
 } from '@ant-design/icons';
-import useI18n from 'helpers/useI18n';
-import Select from 'app/widgets/AntdSelect';
-import fontHelper from 'helpers/fonts/fontHelper';
-import FluxIcons from 'app/icons/flux/FluxIcons';
+import useI18n from '@core/helpers/useI18n';
+import Select from '@core/app/widgets/AntdSelect';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import classNames from 'classnames';
 import { Barcode, defaultOptions, formats } from './Barcode';
 import styles from './BarcodeGenerator.module.scss';
@@ -70,11 +70,11 @@ export default forwardRef<HTMLDivElement, Props>(
 
           return { value, label };
         }),
-      [fontFamilies]
+      [fontFamilies],
     );
     const [isBold, isItalic] = useMemo(
       () => [options.fontOptions.includes('bold'), options.fontOptions.includes('italic')],
-      [options.fontOptions]
+      [options.fontOptions],
     );
 
     useEffect(() => {
@@ -175,7 +175,7 @@ export default forwardRef<HTMLDivElement, Props>(
                     showSearch
                     filterOption={(
                       input: string,
-                      option?: { label: JSX.Element; value: string }
+                      option?: { label: JSX.Element; value: string },
                     ) => {
                       if (option?.value) {
                         const searchKey = input.toLowerCase();
@@ -276,5 +276,5 @@ export default forwardRef<HTMLDivElement, Props>(
         </ConfigProvider>
       </div>
     );
-  }
+  },
 );

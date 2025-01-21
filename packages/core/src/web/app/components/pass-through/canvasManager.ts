@@ -1,7 +1,7 @@
-import EmbeddedCanvasManager from 'app/widgets/FullWindowPanel/EmbeddedCanvasManager';
-import findDefs from 'app/svgedit/utils/findDef';
-import NS from 'app/constants/namespaces';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
+import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import NS from '@core/app/constants/namespaces';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 
 import styles from './PassThrough.module.scss';
 
@@ -89,11 +89,11 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
         const endBottom = (endMid + halfHeight).toFixed(2);
         this.passThroughGuideStart.setAttribute(
           'd',
-          `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`
+          `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`,
         );
         this.passThroughGuideEnd.setAttribute(
           'd',
-          `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`
+          `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`,
         );
       }
     }
@@ -126,7 +126,7 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
                   resolve();
                 };
                 reader.readAsDataURL(blob);
-              })
+              }),
             );
           }
         }
@@ -148,7 +148,7 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
     const canvas = await svgStringToCanvas(
       svgString,
       Math.round(this.width / downScale),
-      Math.round(this.height / downScale)
+      Math.round(this.height / downScale),
     );
     const refImages: (string | null)[] = [];
     for (let i = 0; i < Math.ceil(this.height / this.passThroughHeight); i += 1) {

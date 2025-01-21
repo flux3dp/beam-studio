@@ -1,7 +1,7 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import NS from 'app/constants/namespaces';
-import workareaManager from 'app/svgedit/workarea';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import NS from '@core/app/constants/namespaces';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import styles from './grid.module.scss';
 

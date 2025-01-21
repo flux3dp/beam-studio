@@ -1,12 +1,12 @@
-import imageData from 'helpers/image-data';
+import imageData from '@core/helpers/image-data';
 
-import { IImageDataResult } from 'interfaces/IImage';
+import { IImageDataResult } from '@core/interfaces/IImage';
 
 const calculateBase64 = (
   blobUrl: string,
   isShading: boolean,
   threshold: number,
-  isFullColor = false
+  isFullColor = false,
 ): Promise<string> =>
   new Promise<string>((resolve) => {
     imageData(blobUrl, {

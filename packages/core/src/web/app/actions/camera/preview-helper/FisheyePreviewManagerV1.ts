@@ -1,18 +1,18 @@
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import i18n from 'helpers/i18n';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import i18n from '@core/helpers/i18n';
 import {
   FisheyeCameraParametersV1,
   FisheyePreviewManager,
   RotationParameters3DCalibration,
-} from 'interfaces/FisheyePreview';
+} from '@core/interfaces/FisheyePreview';
 // TODO: move this 2 function to camera-preview-helpers
 import {
   getPerspectivePointsZ3Regression,
   interpolatePointsFromHeight,
-} from 'helpers/camera-calibration-helper';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+} from '@core/helpers/camera-calibration-helper';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import getAutoFocusPosition from './getAutoFocusPosition';

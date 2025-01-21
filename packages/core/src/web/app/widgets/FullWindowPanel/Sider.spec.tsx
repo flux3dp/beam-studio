@@ -5,7 +5,7 @@ import { FullWindowPanelContext } from './FullWindowPanel';
 
 import Sider from './Sider';
 
-jest.mock('app/widgets/FullWindowPanel/FullWindowPanel', () => ({
+jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
     isDesktop: false,
     isMobile: false,
@@ -23,8 +23,8 @@ describe('test Sider', () => {
           isWindows: false,
         }}
       >
-        <Sider className='class'>Sider</Sider>
-      </FullWindowPanelContext.Provider>
+        <Sider className="class">Sider</Sider>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     rerender(
@@ -35,8 +35,8 @@ describe('test Sider', () => {
           isWindows: true,
         }}
       >
-        <Sider className='class class2'>Sider</Sider>
-      </FullWindowPanelContext.Provider>
+        <Sider className="class class2">Sider</Sider>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

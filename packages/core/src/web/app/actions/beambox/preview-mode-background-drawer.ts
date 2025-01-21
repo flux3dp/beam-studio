@@ -1,16 +1,16 @@
 import { ObservableInput, Subject, from } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import beamboxStore from 'app/stores/beambox-store';
-import Constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import NS from 'app/constants/namespaces';
-import workareaManager from 'app/svgedit/workarea';
-import { CameraParameters } from 'interfaces/Camera';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import beamboxStore from '@core/app/stores/beambox-store';
+import Constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import NS from '@core/app/constants/namespaces';
+import workareaManager from '@core/app/svgedit/workarea';
+import { CameraParameters } from '@core/interfaces/Camera';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 let svgedit;
@@ -102,7 +102,7 @@ class PreviewModeBackgroundDrawer {
     sourceCanvas: HTMLCanvasElement,
     x: number,
     y: number,
-    { opacityMerge = false, callback }: { opacityMerge?: boolean; callback?: () => void } = {}
+    { opacityMerge = false, callback }: { opacityMerge?: boolean; callback?: () => void } = {},
   ): Promise<void> => {
     const promise = new Promise<Blob>((resolve) => {
       const { width, height } = sourceCanvas;
@@ -146,7 +146,7 @@ class PreviewModeBackgroundDrawer {
           minX,
           minY,
           width * canvasRatio,
-          height * canvasRatio
+          height * canvasRatio,
         );
         for (let i = 0; i < mainImageData.data.length; i += 4) {
           const imgA = sourceData.data[i + 3];

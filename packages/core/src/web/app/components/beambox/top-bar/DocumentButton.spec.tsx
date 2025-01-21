@@ -4,11 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import DocumentButton from './DocumentButton';
 
 const mockShowDocumentSettings = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showDocumentSettings: (...args) => mockShowDocumentSettings(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     menu: {
       document_setting: 'document_setting',

@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import AutoFitPanel from './AutoFitPanel';
 
 export const showAutoFitPanel = (
   element: SVGElement,
   imageUrl: string,
-  data: AutoFitContour[][]
+  data: AutoFitContour[][],
 ): void => {
   const dialogId = 'auto-fit-panel';
   if (!isIdExist(dialogId)) {
@@ -20,7 +20,7 @@ export const showAutoFitPanel = (
         element={element}
         imageUrl={imageUrl}
         data={data}
-      />
+      />,
     );
   }
 };

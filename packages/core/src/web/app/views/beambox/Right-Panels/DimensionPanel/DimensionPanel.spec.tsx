@@ -3,13 +3,13 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
 const mockReRenderImageSymbol = jest.fn();
 const reRenderImageSymbolArray = jest.fn();
-jest.mock('helpers/symbol-maker', () => ({
+jest.mock('@core/helpers/symbol-maker', () => ({
   reRenderImageSymbol: mockReRenderImageSymbol,
   reRenderImageSymbolArray,
 }));
@@ -25,7 +25,7 @@ const mockFinishUndoableChange = jest.fn();
 const setSvgElemSize = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const flipSelectedElements = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -93,16 +93,16 @@ jest.mock('./RatioLock', () => ({ isLocked, onClick }: any) => (
 
 const isMobile = jest.fn();
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
   useIsMobile: () => mockUseIsMobile(),
 }));
 
 const mockForceUpdate = jest.fn();
-jest.mock('helpers/use-force-update', () => () => mockForceUpdate);
+jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 
 const mockCreateBatchCommand = jest.fn();
-jest.mock('app/svgedit/history/HistoryCommandFactory', () => ({
+jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 
@@ -126,7 +126,7 @@ describe('test DimensionPanel', () => {
         elem={null}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -138,7 +138,7 @@ describe('test DimensionPanel', () => {
         elem={document.getElementById('svg_1')}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -159,7 +159,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -180,7 +180,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -201,7 +201,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(mockGetDimensionValues).toHaveBeenCalledTimes(1);
 
@@ -244,7 +244,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
@@ -269,7 +269,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
     mockImage.getAttribute.mockReturnValueOnce('true');
@@ -302,7 +302,7 @@ describe('test DimensionPanel', () => {
         elem={mockImage as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     const inputW = container.querySelector('#size-w');
     expect(mockBeginUndoableChange).not.toBeCalled();
@@ -359,7 +359,7 @@ describe('test DimensionPanel', () => {
         elem={mockElem as unknown as Element}
         getDimensionValues={mockGetDimensionValues}
         updateDimensionValues={mockUpdateDimensionValues}
-      />
+      />,
     );
     const inputW = container.querySelector('#size-w');
     fireEvent.blur(inputW);

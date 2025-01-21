@@ -3,32 +3,32 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import AdorModule from 'app/components/settings/AdorModule';
-import AutoSave from 'app/components/settings/AutoSave';
-import autoSaveHelper from 'helpers/auto-save-helper';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import Camera from 'app/components/settings/Camera';
-import Connection from 'app/components/settings/Connection';
-import Editor from 'app/components/settings/Editor';
-import Engraving from 'app/components/settings/Engraving';
-import Experimental from 'app/components/settings/Experimental';
-import General from 'app/components/settings/General';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import Mask from 'app/components/settings/Mask';
-import Module from 'app/components/settings/Module';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import Path from 'app/components/settings/Path';
-import Privacy from 'app/components/settings/Privacy';
-import settings from 'app/app-settings';
-import storage from 'implementations/storage';
-import TextToPath from 'app/components/settings/TextToPath';
-import Update from 'app/components/settings/Update';
-import { IConfig } from 'interfaces/IAutosave';
-import { ILang } from 'interfaces/ILang';
-import { OptionValues } from 'app/constants/enums';
-import { StorageKey } from 'interfaces/IStorage';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import AdorModule from '@core/app/components/settings/AdorModule';
+import AutoSave from '@core/app/components/settings/AutoSave';
+import autoSaveHelper from '@core/helpers/auto-save-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Camera from '@core/app/components/settings/Camera';
+import Connection from '@core/app/components/settings/Connection';
+import Editor from '@core/app/components/settings/Editor';
+import Engraving from '@core/app/components/settings/Engraving';
+import Experimental from '@core/app/components/settings/Experimental';
+import General from '@core/app/components/settings/General';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import Mask from '@core/app/components/settings/Mask';
+import Module from '@core/app/components/settings/Module';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import Path from '@core/app/components/settings/Path';
+import Privacy from '@core/app/components/settings/Privacy';
+import settings from '@core/app/app-settings';
+import storage from '@app/implementations/storage';
+import TextToPath from '@core/app/components/settings/TextToPath';
+import Update from '@core/app/components/settings/Update';
+import { IConfig } from '@core/interfaces/IAutosave';
+import { ILang } from '@core/interfaces/ILang';
+import { OptionValues } from '@core/app/constants/enums';
+import { StorageKey } from '@core/interfaces/IStorage';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 interface State {
   lang?: ILang;
@@ -134,7 +134,7 @@ class Settings extends React.PureComponent<null, State> {
     onValue?: T,
     offValue?: T,
     onLabel?: string,
-    offLabel?: string
+    offLabel?: string,
   ): Array<{ value: T; label: string; selected: boolean }> => {
     const { lang } = this.state;
 
@@ -152,7 +152,7 @@ class Settings extends React.PureComponent<null, State> {
       1,
       0,
       lang.settings.notification_on,
-      lang.settings.notification_off
+      lang.settings.notification_off,
     );
 
     const isAutoCheckUpdateOn = this.getConfigEditingValue('auto_check_update') !== 0;
@@ -161,7 +161,7 @@ class Settings extends React.PureComponent<null, State> {
       1,
       0,
       lang.settings.notification_on,
-      lang.settings.notification_off
+      lang.settings.notification_off,
     );
 
     const isGuessingPokeOn = this.getConfigEditingValue('guessing_poke') !== 0;
@@ -174,7 +174,7 @@ class Settings extends React.PureComponent<null, State> {
     const enableSentryOptions = this.onOffOptionFactory(isSentryEnabled, 1, 0);
 
     const isCustomPrevHeightEnabled = this.getBeamboxPreferenceEditingValue(
-      'enable-custom-preview-height'
+      'enable-custom-preview-height',
     );
     const enableCustomPreviewHeightOptions =
       this.onOffOptionFactory<OptionValues>(isCustomPrevHeightEnabled);
@@ -185,7 +185,7 @@ class Settings extends React.PureComponent<null, State> {
     const isMultipassCompensationEnabled =
       this.getBeamboxPreferenceEditingValue('multipass-compensation') !== false;
     const multipassCompensationOptions = this.onOffOptionFactory<OptionValues>(
-      isMultipassCompensationEnabled
+      isMultipassCompensationEnabled,
     );
 
     const oneWayPrintingEnabled =

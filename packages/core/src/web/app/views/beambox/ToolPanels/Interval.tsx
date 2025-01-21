@@ -1,24 +1,24 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import i18n from 'helpers/i18n';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { getWorkarea } from 'app/constants/workarea-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import i18n from '@core/helpers/i18n';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  dx?: number,
-  dy?: number,
-  onValueChange?: (rc: { dx: number, dy: number }) => void,
+  dx?: number;
+  dy?: number;
+  onValueChange?: (rc: { dx: number; dy: number }) => void;
 }
 
 interface State {
-  dx: number,
-  dy: number,
-  isCollapsed: boolean,
+  dx: number;
+  dy: number;
+  isCollapsed: boolean;
 }
 
 class Interval extends React.Component<Props, State> {

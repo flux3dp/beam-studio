@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import React, { memo, useCallback, useState } from 'react';
 import { SettingFilled, SettingOutlined } from '@ant-design/icons';
 
-import FillSettingModal from 'app/views/beambox/Right-Panels/ConfigPanel/FillSettingModal';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from 'helpers/useI18n';
+import FillSettingModal from '@core/app/views/beambox/Right-Panels/ConfigPanel/FillSettingModal';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './FillBlock.module.scss';
 

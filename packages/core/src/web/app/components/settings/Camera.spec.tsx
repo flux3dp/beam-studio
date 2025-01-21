@@ -1,11 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { OptionValues } from 'app/constants/enums';
+import { OptionValues } from '@core/app/constants/enums';
 
-jest.mock('app/components/settings/Control', () => 'mock-control');
+jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
-jest.mock('app/components/settings/SelectControl', () =>
+jest.mock('@core/app/components/settings/SelectControl', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, label, url, onChange, options }: any) => (
     <div>
@@ -15,7 +15,7 @@ jest.mock('app/components/settings/SelectControl', () =>
       options:{JSON.stringify(options)}
       <input className="select-control" onChange={onChange} />
     </div>
-  )
+  ),
 );
 
 // eslint-disable-next-line import/first
@@ -53,7 +53,7 @@ test('should render correctly', () => {
         },
       ]}
       updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-    />
+    />,
   );
   expect(container).toMatchSnapshot();
 });

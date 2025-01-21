@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       tool_panels: {
@@ -15,11 +15,11 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
-jest.mock('app/widgets/Unit-Input-v2', () =>
+jest.mock('@core/app/widgets/Unit-Input-v2', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ min, unit, defaultValue, getValue }: any) => (
     <div>
@@ -28,7 +28,7 @@ jest.mock('app/widgets/Unit-Input-v2', () =>
       defaultValue:{defaultValue}
       <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
     </div>
-  )
+  ),
 );
 
 import NestSpacingPanel from './NestSpacingPanel';

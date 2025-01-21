@@ -4,17 +4,17 @@
  * Make symbol elements for <use> element
  */
 
-import communicator from 'implementations/communicator';
-import findDefs from 'app/svgedit/utils/findDef';
-import history from 'app/svgedit/history/history';
-import ImageSymbolWorker from 'helpers/symbol-helper/image-symbol.worker';
-import isWeb from 'helpers/is-web';
-import NS from 'app/constants/namespaces';
-import Progress from 'app/actions/progress-caller';
-import updateElementColor from 'helpers/color/updateElementColor';
-import workareaManager from 'app/svgedit/workarea';
-import { getObjectLayer } from 'helpers/layer/layer-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import communicator from '@app/implementations/communicator';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import history from '@core/app/svgedit/history/history';
+import ImageSymbolWorker from '@core/helpers/symbol-helper/image-symbol.worker';
+import isWeb from '@core/helpers/is-web';
+import NS from '@core/app/constants/namespaces';
+import Progress from '@core/app/actions/progress-caller';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { getSVGAsync } from './svg-editor-helper';
 
@@ -32,7 +32,7 @@ const makeSymbol = (
   attrs: { nodeName: string; value: string }[],
   batchCmd: IBatchCommand,
   defs: Element[],
-  type: string
+  type: string,
 ): SVGSymbolElement => {
   if (!elem) {
     return null;
@@ -73,7 +73,7 @@ const makeSymbol = (
         if (oldLinkMap.get(oldId)) {
           node.setAttribute(
             attr.nodeName,
-            attr.value.replace(`#${oldId}`, `#${oldLinkMap.get(oldId)}`)
+            attr.value.replace(`#${oldId}`, `#${oldLinkMap.get(oldId)}`),
           );
         }
       }
@@ -180,7 +180,7 @@ const makeSymbol = (
       $(textElem).attr('y', 0);
     }
     const texts = Array.from(textElem.childNodes).filter(
-      (child: ChildNode) => child.nodeType === 3
+      (child: ChildNode) => child.nodeType === 3,
     );
     for (let j = texts.length - 1; j >= 0; j -= 1) {
       const t = texts[j] as SVGTextContentElement;
@@ -307,7 +307,7 @@ const svgToImgUrl = async (data) =>
           0,
           0,
           img.width,
-          img.height
+          img.height,
         );
         img.remove();
       } else {
@@ -384,7 +384,7 @@ const makeImageSymbol = async (
     imageSymbol?: SVGSymbolElement;
     fullColor?: boolean;
     force?: boolean;
-  } = {}
+  } = {},
 ): Promise<SVGSymbolElement> => {
   const { scale = 1, fullColor = false, force = false } = opts;
   let { imageSymbol } = opts;
@@ -456,13 +456,13 @@ const makeImageSymbol = async (
       let styleText = styleNode.textContent;
       styleText = styleText.replace(
         /stroke-width: 1px !important;/g,
-        fullColor ? '' : `stroke-width: ${strokeWidth}px !important;`
+        fullColor ? '' : `stroke-width: ${strokeWidth}px !important;`,
       );
       styleNode.textContent = styleText;
     });
     tempUse.setAttribute(
       'transform',
-      `translate(${0.5 * strokeWidth}, ${0.5 * strokeWidth}) scale(${imageRatio})`
+      `translate(${0.5 * strokeWidth}, ${0.5 * strokeWidth}) scale(${imageRatio})`,
     );
 
     const svgString = new XMLSerializer().serializeToString(tempSvg);
@@ -501,7 +501,7 @@ const makeImageSymbol = async (
 
 const reRenderImageSymbol = async (
   useElement: SVGUseElement,
-  opts: { force?: boolean } = {}
+  opts: { force?: boolean } = {},
 ): Promise<void> => {
   if (!useElement.parentNode) return;
   const { force = false } = opts;
@@ -535,7 +535,7 @@ const reRenderImageSymbol = async (
 
 const reRenderImageSymbolArray = async (
   useElements: SVGUseElement[],
-  opts: { force?: boolean } = {}
+  opts: { force?: boolean } = {},
 ): Promise<void> => {
   const convertAllUses = useElements.map((use) => reRenderImageSymbol(use, opts));
   await Promise.all(convertAllUses);

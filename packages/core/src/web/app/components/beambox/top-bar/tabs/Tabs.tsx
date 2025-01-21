@@ -4,17 +4,17 @@ import classNames from 'classnames';
 import { CloseOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
-import CanvasMode from 'app/constants/canvasMode';
-import cloudFile from 'helpers/api/cloudFile';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import dialogCaller from 'app/actions/dialog-caller';
-import Tab from 'interfaces/Tab';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import tabConstants from 'app/constants/tabConstants';
-import tabController from 'app/actions/tabController';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
+import CanvasMode from '@core/app/constants/canvasMode';
+import cloudFile from '@core/helpers/api/cloudFile';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import Tab from '@core/interfaces/Tab';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import tabConstants from '@core/app/constants/tabConstants';
+import tabController from '@core/app/actions/tabController';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import styles from './Tabs.module.scss';
 

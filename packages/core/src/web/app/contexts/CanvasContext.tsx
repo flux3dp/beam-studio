@@ -8,27 +8,27 @@ import React, {
   useState,
 } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import getDevice from 'helpers/device/get-device';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import showResizeAlert from 'helpers/device/fit-device-workarea-alert';
-import tabController from 'app/actions/tabController';
-import tutorialConstants from 'app/constants/tutorial-constants';
-import tutorialController from 'app/views/tutorials/tutorialController';
-import useForceUpdate from 'helpers/use-force-update';
-import useI18n from 'helpers/useI18n';
-import workareaManager from 'app/svgedit/workarea';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { getLatestDeviceInfo } from 'helpers/api/discover';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { IUser } from 'interfaces/IUser';
-import shortcuts from 'helpers/shortcuts';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import getDevice from '@core/helpers/device/get-device';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
+import tabController from '@core/app/actions/tabController';
+import tutorialConstants from '@core/app/constants/tutorial-constants';
+import tutorialController from '@core/app/views/tutorials/tutorialController';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+import workareaManager from '@core/app/svgedit/workarea';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { getLatestDeviceInfo } from '@core/helpers/api/discover';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { IUser } from '@core/interfaces/IUser';
+import shortcuts from '@core/helpers/shortcuts';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
@@ -176,7 +176,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     canvasEventEmitter.on('SET_MODE', setMode);
     const canvasChangeHandler = () =>
       setHasPassthroughExtension(
-        beamboxPreference.read('pass-through') && getSupportInfo(workareaManager.model).passThrough
+        beamboxPreference.read('pass-through') && getSupportInfo(workareaManager.model).passThrough,
       );
     canvasChangeHandler();
     canvasEventEmitter.on('canvas-change', canvasChangeHandler);
@@ -288,7 +288,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         settingUpPreview.current = false;
       }
     },
-    [lang, updateCanvasContext]
+    [lang, updateCanvasContext],
   );
   useEffect(() => {
     canvasEventEmitter.addListener('SETUP_PREVIEW_MODE', setupPreviewMode);

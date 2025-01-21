@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from 'antd';
 
-import browser from 'implementations/browser';
-import dialogCaller from 'app/actions/dialog-caller';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import useI18n from 'helpers/useI18n';
-import { getCurrentUser } from 'helpers/api/flux-id';
+import browser from '@app/implementations/browser';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import useI18n from '@core/helpers/useI18n';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
 
 import FluxPlusModal from './FluxPlusModal';
 import styles from './FluxPlusWarning.module.scss';

@@ -1,3 +1,3 @@
-import { PdfHelper } from 'interfaces/IPdfHelper';
+import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 
 export default {} as PdfHelper;

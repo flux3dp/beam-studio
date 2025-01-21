@@ -5,24 +5,24 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { sprintf } from 'sprintf-js';
 import { Tooltip } from 'antd';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import configOptions from 'app/constants/config-options';
-import doLayersContainsVector from 'helpers/layer/check-vector';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import objectPanelItemStyles from 'app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import storage from 'implementations/storage';
-import units from 'helpers/units';
-import useI18n from 'helpers/useI18n';
-import { CUSTOM_PRESET_CONSTANT, writeData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { promarkModels } from 'app/actions/beambox/constant';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import configOptions from '@core/app/constants/config-options';
+import doLayersContainsVector from '@core/helpers/layer/check-vector';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import storage from '@app/implementations/storage';
+import units from '@core/helpers/units';
+import useI18n from '@core/helpers/useI18n';
+import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
@@ -53,7 +53,7 @@ const SpeedBlock = ({
   const { hasVector } = useContext(LayerPanelContext);
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
-    []
+    [],
   );
 
   const { value, hasMultiValue } = state.speed;
@@ -98,7 +98,7 @@ const SpeedBlock = ({
             ? `${vectorSpeedLimit} mm/s`
             : `${(vectorSpeedLimit / 25.4).toFixed(2)} in/s`,
       }),
-    [fakeUnit, t.speed_contrain_warning, vectorSpeedLimit]
+    [fakeUnit, t.speed_contrain_warning, vectorSpeedLimit],
   );
 
   if (!isPromark) {
@@ -135,7 +135,7 @@ const SpeedBlock = ({
       simpleMode && module === LayerModule.PRINTER
         ? configOptions.getPrintingSpeedOptions(lang)
         : null,
-    [simpleMode, module, lang]
+    [simpleMode, module, lang],
   );
 
   const content = (

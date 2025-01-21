@@ -4,16 +4,16 @@ import { fireEvent, render } from '@testing-library/react';
 import FluxPlusWarning from './FluxPlusWarning';
 
 const showLoginDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showLoginDialog: () => showLoginDialog(),
 }));
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     login: 'Sign In',
     flux_plus: {
@@ -32,7 +32,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const getCurrentUser = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => getCurrentUser(),
 }));
 

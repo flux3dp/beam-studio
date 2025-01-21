@@ -3,12 +3,12 @@ import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react'
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 
-import history from 'app/svgedit/history/history';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import undoManager from 'app/svgedit/history/undoManager';
-import useI18n from 'helpers/useI18n';
-import { writeData } from 'helpers/layer/layer-config-helper';
+import history from '@core/app/svgedit/history/history';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import useI18n from '@core/helpers/useI18n';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
@@ -67,7 +67,7 @@ const FocusBlock = ({
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     },
-    [focusStepMax, dispatch, selectedLayers, initState]
+    [focusStepMax, dispatch, selectedLayers, initState],
   );
 
   useEffect(() => {

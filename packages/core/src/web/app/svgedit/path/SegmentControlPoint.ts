@@ -1,6 +1,6 @@
-import { LINKTYPE_SMOOTH, LINKTYPE_CORNER } from 'app/constants/link-type-constants';
+import { LINKTYPE_SMOOTH, LINKTYPE_CORNER } from '@core/app/constants/link-type-constants';
 
-import { IPathNodePoint, ISegment } from 'interfaces/ISVGPath';
+import { IPathNodePoint, ISegment } from '@core/interfaces/ISVGPath';
 
 const { svgedit } = window;
 const { NS } = svgedit;

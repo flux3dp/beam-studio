@@ -1,10 +1,10 @@
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import historyUtils from 'app/svgedit/history/utils';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import i18n from '@core/helpers/i18n';
+import historyUtils from '@core/app/svgedit/history/utils';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './CommonTools.module.scss';
 

@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './PolygonOptions.module.scss';
-
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {

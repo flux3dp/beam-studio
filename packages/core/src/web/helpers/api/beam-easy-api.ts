@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import ExportFuncs from 'app/actions/beambox/export-funcs';
-import DeviceMaster from 'helpers/device-master';
-import Discover from 'helpers/api/discover';
-import svgLaserParser from 'helpers/api/svg-laser-parser';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { importBvgString } from 'app/svgedit/operations/import/importBvg';
-
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import DeviceMaster from '@core/helpers/device-master';
+import Discover from '@core/helpers/api/discover';
+import svgLaserParser from '@core/helpers/api/svg-laser-parser';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 const MACHINE_STATUS = {
@@ -121,10 +120,11 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     await importBvgString(this.bvg);
     const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
     const r = await svgeditorParser.uploadToSvgeditorAPI([uploadFile], {
-      model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+      model: this.device
+        ? this.device.model
+        : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
       engraveDpi: BeamboxPreference.read('engrave_dpi'),
-      onProgressing: () => {
-      },
+      onProgressing: () => {},
       onFinished: () => {
         this.emit('LOAD');
       },
@@ -144,24 +144,23 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     }
 
     const { taskCodeBlob, fileTimeCost } = await new Promise<{
-      taskCodeBlob: Blob; fileTimeCost: number;
+      taskCodeBlob: Blob;
+      fileTimeCost: number;
     }>((resolve) => {
       const names = []; // don't know what this is for
       const codeType = 'fcode';
-      svgeditorParser.getTaskCode(
-        names,
-        {
-          onProgressing: () => {
-          },
-          onFinished: (codeBlob, timeCost) => {
-            resolve({ taskCodeBlob: codeBlob, fileTimeCost: timeCost });
-            this.emit('CALCULATED', { detail: { taskCodeBlob: codeBlob, fileTimeCost: timeCost } });
-          },
-          fileMode: '-f',
-          codeType,
-          model: this.device ? this.device.model : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+      svgeditorParser.getTaskCode(names, {
+        onProgressing: () => {},
+        onFinished: (codeBlob, timeCost) => {
+          resolve({ taskCodeBlob: codeBlob, fileTimeCost: timeCost });
+          this.emit('CALCULATED', { detail: { taskCodeBlob: codeBlob, fileTimeCost: timeCost } });
         },
-      );
+        fileMode: '-f',
+        codeType,
+        model: this.device
+          ? this.device.model
+          : BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
+      });
     });
     this.taskCodeBlob = taskCodeBlob;
     return { success: true, timeCost: fileTimeCost };

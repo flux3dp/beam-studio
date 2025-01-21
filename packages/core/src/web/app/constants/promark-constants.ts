@@ -1,4 +1,4 @@
-import { Field, GalvoParameters, RedDot } from 'interfaces/Promark';
+import { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
 
 export const workareaOptions = [110, 150, 220] as const;
 export const promarkWatts = [20, 30, 50] as const;

@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Flex } from 'antd';
 
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 

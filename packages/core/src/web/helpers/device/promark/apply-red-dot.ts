@@ -2,13 +2,13 @@ import {
   defaultField,
   defaultGalvoParameters,
   defaultRedLight,
-} from 'app/constants/promark-constants';
-import { RedDot, Field, GalvoParameters } from 'interfaces/Promark';
+} from '@core/app/constants/promark-constants';
+import { RedDot, Field, GalvoParameters } from '@core/interfaces/Promark';
 
 const applyRedDot = (
   redDot: RedDot,
   field: Field,
-  galvoParameters: GalvoParameters
+  galvoParameters: GalvoParameters,
 ): { field: Field; galvoParameters: GalvoParameters } => {
   const { offsetX, offsetY, scaleX, scaleY } = redDot ?? defaultRedLight;
   const newField = { ...(field ?? defaultField) };

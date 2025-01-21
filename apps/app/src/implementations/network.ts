@@ -1,4 +1,4 @@
-import dns from 'node:dns';
+import dns from 'dns';
 
 import type { INetwork } from '@core/interfaces/INetwork';
 

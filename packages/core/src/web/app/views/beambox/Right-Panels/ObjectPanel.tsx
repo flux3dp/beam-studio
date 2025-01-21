@@ -2,20 +2,20 @@ import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
 import { Button, ConfigProvider } from 'antd';
 
-import ActionsPanel from 'app/views/beambox/Right-Panels/ActionsPanel';
-import ConfigPanel from 'app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
-import dialogCaller from 'app/actions/dialog-caller';
-import DimensionPanel from 'app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel';
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import ObjectPanelIcons from 'app/icons/object-panel/ObjectPanelIcons';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionsPanel from 'app/views/beambox/Right-Panels/OptionsPanel';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { iconButtonTheme } from 'app/constants/antd-config';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
-import { useIsMobile } from 'helpers/system-helper';
+import ActionsPanel from '@core/app/views/beambox/Right-Panels/ActionsPanel';
+import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import DimensionPanel from '@core/app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionsPanel from '@core/app/views/beambox/Right-Panels/OptionsPanel';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { iconButtonTheme } from '@core/app/constants/antd-config';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './ObjectPanel.module.scss';
 
@@ -71,7 +71,7 @@ function ObjectPanel({ hide }: Props): JSX.Element {
     icon: JSX.Element,
     disabled: boolean,
     onClick: () => void,
-    id: string
+    id: string,
   ): JSX.Element => (
     <Button type="text" id={id} icon={icon} onClick={onClick} disabled={disabled} title={label} />
   );
@@ -219,28 +219,28 @@ function ObjectPanel({ hide }: Props): JSX.Element {
                 <ObjectPanelIcons.HDist />,
                 !buttonAvailability.dist,
                 () => svgCanvas.distHori(),
-                'hdist'
+                'hdist',
               )}
               {renderToolBtn(
                 tObjectpanel.top_align,
                 <ObjectPanelIcons.VAlignTop />,
                 false,
                 FnWrapper.alignTop,
-                'top_align'
+                'top_align',
               )}
               {renderToolBtn(
                 tObjectpanel.middle_align,
                 <ObjectPanelIcons.VAlignMid />,
                 false,
                 FnWrapper.alignMiddle,
-                'middle_align'
+                'middle_align',
               )}
               {renderToolBtn(
                 tObjectpanel.bottom_align,
                 <ObjectPanelIcons.VAlignBot />,
                 false,
                 FnWrapper.alignBottom,
-                'bottom_align'
+                'bottom_align',
               )}
             </div>
             <div className={classNames(styles.half, styles.right)}>
@@ -249,28 +249,28 @@ function ObjectPanel({ hide }: Props): JSX.Element {
                 <ObjectPanelIcons.VDist />,
                 !buttonAvailability.dist,
                 () => svgCanvas.distVert(),
-                'vdist'
+                'vdist',
               )}
               {renderToolBtn(
                 tObjectpanel.left_align,
                 <ObjectPanelIcons.HAlignLeft />,
                 false,
                 FnWrapper.alignLeft,
-                'left_align'
+                'left_align',
               )}
               {renderToolBtn(
                 tObjectpanel.center_align,
                 <ObjectPanelIcons.HAlignMid />,
                 false,
                 FnWrapper.alignCenter,
-                'center_align'
+                'center_align',
               )}
               {renderToolBtn(
                 tObjectpanel.right_align,
                 <ObjectPanelIcons.HAlignRight />,
                 false,
                 FnWrapper.alignRight,
-                'right_align'
+                'right_align',
               )}
             </div>
           </div>
@@ -281,14 +281,14 @@ function ObjectPanel({ hide }: Props): JSX.Element {
                 <ObjectPanelIcons.Group />,
                 !buttonAvailability.group,
                 () => svgCanvas.groupSelectedElements(),
-                'group'
+                'group',
               )}
               {renderToolBtn(
                 tObjectpanel.ungroup,
                 <ObjectPanelIcons.Ungroup />,
                 !buttonAvailability.ungroup,
                 () => svgCanvas.ungroupSelectedElement(),
-                'ungroup'
+                'ungroup',
               )}
             </div>
             <div className={classNames(styles.half, styles.right)}>
@@ -297,28 +297,28 @@ function ObjectPanel({ hide }: Props): JSX.Element {
                 <ObjectPanelIcons.Union />,
                 !buttonAvailability.union,
                 () => svgCanvas.booleanOperationSelectedElements('union'),
-                'union'
+                'union',
               )}
               {renderToolBtn(
                 tObjectpanel.subtract,
                 <ObjectPanelIcons.Subtract />,
                 !buttonAvailability.subtract,
                 () => svgCanvas.booleanOperationSelectedElements('diff'),
-                'subtract'
+                'subtract',
               )}
               {renderToolBtn(
                 tObjectpanel.intersect,
                 <ObjectPanelIcons.Intersect />,
                 !buttonAvailability.intersect,
                 () => svgCanvas.booleanOperationSelectedElements('intersect'),
-                'intersect'
+                'intersect',
               )}
               {renderToolBtn(
                 tObjectpanel.difference,
                 <ObjectPanelIcons.Diff />,
                 !buttonAvailability.difference,
                 () => svgCanvas.booleanOperationSelectedElements('xor'),
-                'difference'
+                'difference',
               )}
             </div>
           </div>

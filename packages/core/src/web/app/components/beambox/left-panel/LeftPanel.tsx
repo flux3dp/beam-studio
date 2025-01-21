@@ -1,15 +1,15 @@
 import React from 'react';
 
-import CurveEngravingTool from 'app/components/beambox/left-panel/CurveEngravingTool';
-import DrawingToolButtonGroup from 'app/components/beambox/left-panel/DrawingToolButtonGroup';
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import i18n from 'helpers/i18n';
-import LeftPanelButton from 'app/components/beambox/left-panel/LeftPanelButton';
-import LeftPanelIcons from 'app/icons/left-panel/LeftPanelIcons';
-import PreviewToolButtonGroup from 'app/components/beambox/left-panel/PreviewToolButtonGroup';
-import shortcuts from 'helpers/shortcuts';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import CurveEngravingTool from '@core/app/components/beambox/left-panel/CurveEngravingTool';
+import DrawingToolButtonGroup from '@core/app/components/beambox/left-panel/DrawingToolButtonGroup';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import i18n from '@core/helpers/i18n';
+import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import PreviewToolButtonGroup from '@core/app/components/beambox/left-panel/PreviewToolButtonGroup';
+import shortcuts from '@core/helpers/shortcuts';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import styles from './LeftPanel.module.scss';
 

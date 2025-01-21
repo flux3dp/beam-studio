@@ -1,9 +1,9 @@
-import DeviceConstants from 'app/constants/device-constants';
-import { IReport } from 'interfaces/IDevice';
+import DeviceConstants from '@core/app/constants/device-constants';
+import { IReport } from '@core/interfaces/IDevice';
 
 import MonitorStatus, { ButtonTypes } from './monitor-status';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     device: {
       ready: 'Ready',
@@ -22,28 +22,27 @@ describe('test monitor-status', () => {
     expect(
       MonitorStatus.isAbortedOrCompleted({
         st_id: DeviceConstants.status.ABORTED,
-      } as IReport)
+      } as IReport),
     ).toBeTruthy();
     expect(
       MonitorStatus.isAbortedOrCompleted({
         st_id: DeviceConstants.status.COMPLETED,
-      } as IReport)
+      } as IReport),
     ).toBeTruthy();
     expect(
       MonitorStatus.isAbortedOrCompleted({
         st_id: DeviceConstants.status.COMPLETING,
-      } as IReport)
+      } as IReport),
     ).toBeFalsy();
   });
 
   test('getControlButtonType', () => {
     expect(MonitorStatus.getControlButtonType(null)).toEqual([]);
-    expect(MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.INIT } as IReport)).toEqual([
-      ButtonTypes.DISABLED_PLAY,
-    ]);
-    expect(MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.RUNNING } as IReport)).toEqual([
-      ButtonTypes.STOP,
-      ButtonTypes.PAUSE,
-    ]);
+    expect(
+      MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.INIT } as IReport),
+    ).toEqual([ButtonTypes.DISABLED_PLAY]);
+    expect(
+      MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.RUNNING } as IReport),
+    ).toEqual([ButtonTypes.STOP, ButtonTypes.PAUSE]);
   });
 });

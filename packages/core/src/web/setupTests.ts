@@ -1,16 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import '@testing-library/jest-dom';
 
-import $ from 'jquery';
-import { enableFetchMocks } from 'jest-fetch-mock';
 import { TextEncoder } from 'util';
+
+import { enableFetchMocks } from 'jest-fetch-mock';
+import $ from 'jquery';
 
 declare global {
   interface Window {
+    $: any;
     electron?: {
-      ipc: any;
       events: { [key: string]: string };
+      ipc: any;
       remote: any;
     };
     FLUX: {
@@ -24,16 +26,15 @@ declare global {
       version: string;
       websockets: any;
     };
-    os: 'MacOS' | 'Windows' | 'Linux' | 'others';
-    requirejs: (deps: string[], callback: (...modules: any[]) => void) => void;
-    $: any;
     jQuery: any;
-    svgedit: any;
-    svgCanvas: any;
-    svgEditor: any;
-    titlebar?: any;
+    os: 'Linux' | 'MacOS' | 'others' | 'Windows';
     polygonAddSides: (val?: number) => void;
     polygonDecreaseSides: (val?: number) => void;
+    requirejs: (deps: string[], callback: (...modules: any[]) => void) => void;
+    svgCanvas: any;
+    svgedit: any;
+    svgEditor: any;
+    titlebar?: any;
     updatePolygonSides: (elem: Element, val: number) => void;
   }
 }
@@ -54,45 +55,48 @@ Object.defineProperty(window, 'electron', {
 });
 Object.defineProperty(window, 'svgedit', {
   value: {
+    browser: {
+      isTouch: () => false,
+    },
     NS: {
       HTML: 'http://www.w3.org/1999/xhtml',
+      INKSCAPE: 'http://www.inkscape.org/namespaces/inkscape',
       MATH: 'http://www.w3.org/1998/Math/MathML',
       SE: 'http://svg-edit.googlecode.com',
       SVG: 'http://www.w3.org/2000/svg',
       XLINK: 'http://www.w3.org/1999/xlink',
       XML: 'http://www.w3.org/XML/1998/namespace',
       XMLNS: 'http://www.w3.org/2000/xmlns/',
-      INKSCAPE: 'http://www.inkscape.org/namespaces/inkscape',
-    },
-    browser: {
-      isTouch: () => false,
     },
   },
   writable: true,
 });
+
 if (!window.matchMedia) {
   Object.defineProperty(global.window, 'matchMedia', {
-    writable: true,
     configurable: true,
-    value: (query) => ({
-      matches: query.includes('max-width'),
+    value: (query: string | string[]) => ({
       addListener: () => {},
+      matches: query.includes('max-width'),
       removeListener: () => {},
     }),
+    writable: true,
   });
 }
+
 if (typeof global.TextEncoder === 'undefined') {
   global.TextEncoder = TextEncoder;
 }
 
 const antdCssDevOnlyRegex = /css-dev-only-do-not-override-([A-Za-z0-9]*)/g;
+
 expect.addSnapshotSerializer({
+  print: (val) =>
+    `"${(val as string).replace(antdCssDevOnlyRegex, 'css-dev-only-do-not-override-hash')}"`,
   test: (val) => typeof val === 'string' && !!val.match(antdCssDevOnlyRegex),
-  print: (val: string) =>
-    `"${val.replace(antdCssDevOnlyRegex, 'css-dev-only-do-not-override-hash')}"`,
 });
 
 expect.addSnapshotSerializer({
+  print: (val) => `"${(val as string).replace(/ transform-origin: NaNpx NaNpx;/g, '')}"`,
   test: (val) => typeof val === 'string' && !!val.match(/ transform-origin: NaNpx NaNpx;/g),
-  print: (val: string) => `"${val.replace(/ transform-origin: NaNpx NaNpx;/g, '')}"`,
-})
+});

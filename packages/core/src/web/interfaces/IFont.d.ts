@@ -1,5 +1,5 @@
 import { Font } from 'fontkit';
-import { IUser } from 'interfaces/IUser';
+import { IUser } from '@core/interfaces/IUser';
 
 export interface IFont {
   family?: string;
@@ -27,7 +27,7 @@ export interface FontHelper {
   applyMonotypeStyle: (
     font: WebFont | IFont,
     user: IUser | null,
-    silent?: boolean
+    silent?: boolean,
   ) => Promise<{ success: boolean; fontLoadedPromise?: Promise<void> }>;
   getMonotypeUrl: (postscriptName: string) => Promise<string | null>;
   usePostscriptAsFamily: (font?: FontDescriptor | string) => boolean;

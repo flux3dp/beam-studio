@@ -3,22 +3,22 @@ import React, { useContext, useState } from 'react';
 import { Button, Switch } from 'antd';
 import { Popover } from 'antd-mobile';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import colorConstants, { PrintingColors } from 'app/constants/color-constants';
-import colorPickerStyles from 'app/widgets/ColorPicker.module.scss';
-import ISVGDrawing from 'interfaces/ISVGDrawing';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import ObjectPanelIcons from 'app/icons/object-panel/ObjectPanelIcons';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import splitFullColorLayer from 'helpers/layer/full-color/splitFullColorLayer';
-import toggleFullColorLayer from 'helpers/layer/full-color/toggleFullColorLayer';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { ContextMenu, MenuItem } from 'helpers/react-contextmenu';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
+import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
+import ISVGDrawing from '@core/interfaces/ISVGDrawing';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
+import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import {
   cloneLayers,
   deleteLayers,
@@ -27,12 +27,12 @@ import {
   getLayerPosition,
   mergeLayers,
   setLayersLock,
-} from 'helpers/layer/layer-helper';
-import { getData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { useIsMobile } from 'helpers/system-helper';
+} from '@core/helpers/layer/layer-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './LayerContextMenu.module.scss';
 
@@ -151,7 +151,7 @@ const LayerContextMenu = ({ drawing, selectOnlyLayer, renameLayer }: Props): JSX
       isFullColor &&
       (newColor ||
         !colorConstants.printingLayerColor.includes(
-          layerElem.getAttribute('data-color') as PrintingColors
+          layerElem.getAttribute('data-color') as PrintingColors,
         ))
     ) {
       layerElem.setAttribute('data-color', newColor || colorConstants.printingLayerColor[0]);
@@ -190,7 +190,7 @@ const LayerContextMenu = ({ drawing, selectOnlyLayer, renameLayer }: Props): JSX
                       colorPickerStyles['preset-block'],
                       colorPickerStyles.color,
                       colorPickerStyles.printing,
-                      { [colorPickerStyles.checked]: preset === color }
+                      { [colorPickerStyles.checked]: preset === color },
                     )}
                     onClick={() => setColor(preset)}
                   >

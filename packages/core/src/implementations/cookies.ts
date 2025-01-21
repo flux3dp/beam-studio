@@ -1,3 +1,3 @@
-import { ICookies } from 'interfaces/ICookies';
+import type { ICookies } from '@core/interfaces/ICookies';
 
 export default {} as ICookies;

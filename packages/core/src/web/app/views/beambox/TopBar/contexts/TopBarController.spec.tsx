@@ -3,7 +3,7 @@ import TopBarController from './TopBarController';
 const mockEmit = jest.fn();
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: (...args) => mockEmit(...args),
     on: (...args) => mockOn(...args),
@@ -13,7 +13,7 @@ jest.mock('helpers/eventEmitterFactory', () => ({
 
 const mockOnObjectBlur = jest.fn();
 const mockOnObjectFocus = jest.fn();
-jest.mock('app/actions/beambox/beambox-global-interaction', () => ({
+jest.mock('@core/app/actions/beambox/beambox-global-interaction', () => ({
   onObjectBlur: (...args) => mockOnObjectBlur(...args),
   onObjectFocus: (...args) => mockOnObjectFocus(...args),
 }));

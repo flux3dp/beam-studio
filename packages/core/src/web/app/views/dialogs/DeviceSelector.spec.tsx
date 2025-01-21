@@ -4,21 +4,21 @@ import { act, fireEvent, render } from '@testing-library/react';
 import DeviceSelector from './DeviceSelector';
 
 const mockGetSelectedDevice = jest.fn();
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
-jest.mock('helpers/file-export-helper', () => ({
+jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     machine_status: {
       '-17': 'Cartridge IO Mode',
@@ -50,14 +50,19 @@ jest.mock('helpers/i18n', () => ({
       cancel: 'Cancel',
     },
     topbar: {
-      select_machine: 'Select a machine'
-    }
+      select_machine: 'Select a machine',
+    },
   },
   getActiveLang: () => 'en',
 }));
 
 const mockDiscover = jest.fn();
-jest.mock('helpers/api/discover', () => (...args) => mockDiscover(...args));
+jest.mock(
+  '@core/helpers/api/discover',
+  () =>
+    (...args) =>
+      mockDiscover(...args),
+);
 
 describe('should render correctly', () => {
   afterEach(() => {
@@ -73,10 +78,7 @@ describe('should render correctly', () => {
     const mockOnSelect = jest.fn();
     const mockOnClose = jest.fn();
     const { baseElement, getByTestId, unmount } = render(
-      <DeviceSelector
-        onSelect={mockOnSelect}
-        onClose={mockOnClose}
-      />
+      <DeviceSelector onSelect={mockOnSelect} onClose={mockOnClose} />,
     );
     expect(baseElement).toMatchSnapshot();
     expect(mockDiscover).toHaveBeenCalledTimes(1);

@@ -1,7 +1,7 @@
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 import getHeight from './getHeight';
 
-jest.mock('app/constants/device-constants', () => ({
+jest.mock('@core/app/constants/device-constants', () => ({
   WORKAREA_DEEP: {
     ado1: 40.5,
     fbb1b: 100,
@@ -9,19 +9,19 @@ jest.mock('app/constants/device-constants', () => ({
 }));
 
 const mockRawGetProbePos = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   rawGetProbePos: () => mockRawGetProbePos(),
 }));
 
 const mockGetPreviewHeight = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   getPreviewHeight: (...args) => mockGetPreviewHeight(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
@@ -44,7 +44,9 @@ describe('test getHeight', () => {
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'get-height' });
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith('get-height', { message: 'Getting probe position' });
+    expect(mockUpdate).toHaveBeenLastCalledWith('get-height', {
+      message: 'Getting probe position',
+    });
     expect(mockPopById).toHaveBeenCalledTimes(0);
   });
 
@@ -59,7 +61,9 @@ describe('test getHeight', () => {
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'get-height' });
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith('get-height', { message: 'Getting probe position' });
+    expect(mockUpdate).toHaveBeenLastCalledWith('get-height', {
+      message: 'Getting probe position',
+    });
     expect(mockPopById).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenLastCalledWith('get-height');
   });
@@ -74,9 +78,10 @@ describe('test getHeight', () => {
     expect(mockGetPreviewHeight).toHaveBeenLastCalledWith({ initValue: undefined });
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(0);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith('progress-id', { message: 'Getting probe position' });
+    expect(mockUpdate).toHaveBeenLastCalledWith('progress-id', {
+      message: 'Getting probe position',
+    });
     expect(mockPopById).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenLastCalledWith('progress-id');
   });
 });
-

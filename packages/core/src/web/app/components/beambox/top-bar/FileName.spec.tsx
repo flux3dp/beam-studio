@@ -6,7 +6,7 @@ import FileName from './FileName';
 
 const mockGetName = jest.fn();
 const mockGetIsCloudFile = jest.fn();
-jest.mock('app/svgedit/currentFileManager', () => ({
+jest.mock('@core/app/svgedit/currentFileManager', () => ({
   __esModule: true,
   default: {
     get isCloudFile() {
@@ -18,7 +18,7 @@ jest.mock('app/svgedit/currentFileManager', () => ({
 
 const mockOnTitleChange = jest.fn();
 const mockOffTitleChange = jest.fn();
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   onTitleChange: (...args) => mockOnTitleChange(...args),
   offTitleChange: (...args) => mockOffTitleChange(...args),
 }));

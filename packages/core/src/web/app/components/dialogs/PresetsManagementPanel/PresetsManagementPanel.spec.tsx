@@ -2,27 +2,27 @@
 import React, { forwardRef } from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import presetHelper from 'helpers/presets/preset-helper';
-import { Preset } from 'interfaces/ILayerConfig';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import { Preset } from '@core/interfaces/ILayerConfig';
 
 import PresetsManagementPanel from './PresetsManagementPanel';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
 const mockShowRadioSelectDialog = jest.fn();
 const mockPromptDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showRadioSelectDialog: (...args) => mockShowRadioSelectDialog(...args),
   promptDialog: (...args) => mockPromptDialog(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -48,12 +48,12 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockUseWorkarea = jest.fn();
-jest.mock('helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
+jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 const mockAddDialogComponent = jest.fn();
 const mockIsIdExist = jest.fn();
 const mockPopDialogById = jest.fn();
-jest.mock('app/actions/dialog-controller', () => ({
+jest.mock('@core/app/actions/dialog-controller', () => ({
   addDialogComponent: (...args) => mockAddDialogComponent(...args),
   isIdExist: (...args) => mockIsIdExist(...args),
   popDialogById: (...args) => mockPopDialogById(...args),
@@ -61,7 +61,7 @@ jest.mock('app/actions/dialog-controller', () => ({
 
 const mockPostPresetChange = jest.fn();
 const mockGetDefaultConfig = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   postPresetChange: (...args) => mockPostPresetChange(...args),
   getDefaultConfig: () => mockGetDefaultConfig(),
 }));
@@ -104,7 +104,7 @@ jest.mock(
             value={preset.speed ?? 30}
           />
         </div>
-      )
+      ),
 );
 
 jest.mock(
@@ -130,7 +130,7 @@ jest.mock(
             value={preset.multipass ?? 3}
           />
         </div>
-      )
+      ),
 );
 
 jest.mock('./PresetList', () =>
@@ -159,8 +159,8 @@ jest.mock('./PresetList', () =>
           </div>
         ))}
       </div>
-    )
-  )
+    ),
+  ),
 );
 
 const mockOnClose = jest.fn();
@@ -173,7 +173,7 @@ describe('test PresetsManagementPanel', () => {
   it('should render correctly', () => {
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -185,7 +185,7 @@ describe('test PresetsManagementPanel', () => {
       { key: 'key2', name: 'name2', module: LayerModule.LASER_20W_DIODE, isDefault: true },
     ]);
     const { getByTestId } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
 
     const powerInput = getByTestId('power') as HTMLInputElement;
@@ -200,7 +200,7 @@ describe('test PresetsManagementPanel', () => {
   it('should render correctly with print module', () => {
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement } = render(
-      <PresetsManagementPanel currentModule={LayerModule.PRINTER} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.PRINTER} onClose={mockOnClose} />,
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -213,7 +213,7 @@ describe('test PresetsManagementPanel', () => {
     ]);
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     mockImportPresets.mockResolvedValue(true);
     mockGetAllPresets.mockReturnValue([
@@ -236,7 +236,7 @@ describe('test PresetsManagementPanel', () => {
     const mockExportPresets = jest.spyOn(presetHelper, 'exportPresets');
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement, getByTestId } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     mockExportPresets.mockReturnValue(null);
     const powerInput = getByTestId('power') as HTMLInputElement;
@@ -257,7 +257,7 @@ describe('test PresetsManagementPanel', () => {
     ]);
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement, getByText } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     fireEvent.click(getByText('delete'));
     expect(baseElement.querySelector('#key1')).toBeFalsy();
@@ -271,7 +271,7 @@ describe('test PresetsManagementPanel', () => {
     const mockSavePresetList = jest.spyOn(presetHelper, 'savePresetList');
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement, getByTestId } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     const powerInput = getByTestId('power') as HTMLInputElement;
     fireEvent.change(powerInput, { target: { value: '10' } });
@@ -295,7 +295,7 @@ describe('test PresetsManagementPanel', () => {
     mockUseWorkarea.mockReturnValue('ado1');
     mockPopUp.mockImplementation(({ onConfirm }) => onConfirm());
     const { baseElement } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     fireEvent.click(baseElement.querySelector('#footer-reset'));
     expect(mockPopUp).toBeCalledTimes(1);
@@ -313,7 +313,7 @@ describe('test PresetsManagementPanel', () => {
   test('close', () => {
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     fireEvent.click(baseElement.querySelector('#footer-close'));
     expect(mockPostPresetChange).not.toBeCalled();
@@ -327,7 +327,7 @@ describe('test PresetsManagementPanel', () => {
     ]);
     mockUseWorkarea.mockReturnValue('ado1');
     const { baseElement, getByText } = render(
-      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />
+      <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
     mockShowRadioSelectDialog.mockImplementation(({ options }) => options[0].value);
     mockPromptDialog.mockImplementation(({ onYes }) => onYes('new_preset_name'));

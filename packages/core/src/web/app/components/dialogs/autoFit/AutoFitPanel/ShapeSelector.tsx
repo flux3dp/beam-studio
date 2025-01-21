@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React, { Dispatch, memo, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Carousel, ConfigProvider } from 'antd';
 
-import useI18n from 'helpers/useI18n';
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import useI18n from '@core/helpers/useI18n';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import styles from './ShapeSelector.module.scss';
 
@@ -22,7 +22,7 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
   const [shapePerPage, setShapePerPage] = useState(1);
   const pageCount = useMemo(
     () => Math.ceil(contours.length / shapePerPage),
-    [contours.length, shapePerPage]
+    [contours.length, shapePerPage],
   );
   const contourComponents = useMemo(
     () =>
@@ -34,7 +34,7 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
           </svg>
         );
       }),
-    [contours]
+    [contours],
   );
 
   const carouselPages = useMemo(() => {
@@ -54,7 +54,7 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
             onClick={() => setFocusedIndex(index)}
           >
             {contourComponents[index]}
-          </button>
+          </button>,
         );
       }
       pages.push(
@@ -62,7 +62,7 @@ const ShapeSelector = ({ contours, focusedIndex, setFocusedIndex, onNext }: Prop
           <div className={styles.page} style={{ height: contentRef.current?.clientHeight }}>
             {shapes}
           </div>
-        </div>
+        </div>,
       );
     }
     return pages;

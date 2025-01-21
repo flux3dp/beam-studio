@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useLoader, useThree } from '@react-three/fiber';
 
-import { CurveEngraving as ICurveEngraving } from 'interfaces/ICurveEngraving';
+import { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
 
 interface PlaneProps {
   data: ICurveEngraving;
@@ -39,7 +39,7 @@ const Plane = ({
           0.5 * height - (p[1] - bboxY),
           p[2] ? -p[2] : p[2],
         ]),
-    [points, bboxX, bboxY, width, height]
+    [points, bboxX, bboxY, width, height],
   );
   const filteredPoints = useMemo(() => flattened.filter((p) => p[2] !== null), [flattened]);
 
@@ -51,7 +51,7 @@ const Plane = ({
     const delaunay = Delaunator.from(
       filteredPoints,
       (p) => p[0],
-      (p) => p[1]
+      (p) => p[1],
     );
 
     for (let i = 0; i < delaunay.triangles.length; i += 3) {
@@ -100,7 +100,7 @@ const Plane = ({
       red: new THREE.Color(0xfe4348),
       blue: new THREE.Color(0x1890ff),
     }),
-    []
+    [],
   );
   const spheres = useMemo(() => {
     const size = 0.1 * Math.min(gap[0], gap[1]);
@@ -138,7 +138,7 @@ const Plane = ({
         if (intersected.userData.isSphere) toggleSelectedIndex?.(intersected.userData.index);
       }
     },
-    [camera, scene, toggleSelectedIndex]
+    [camera, scene, toggleSelectedIndex],
   );
   useEffect(() => {
     gl.domElement.addEventListener('pointerdown', handlePointerDown);
@@ -169,9 +169,8 @@ const Plane = ({
       }
       canvas.style.cursor = 'grab';
     },
-    [camera, scene]
+    [camera, scene],
   );
-
 
   useEffect(() => {
     gl.domElement.addEventListener('pointermove', handlePointerMove);

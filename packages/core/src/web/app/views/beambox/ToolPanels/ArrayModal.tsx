@@ -1,57 +1,61 @@
-import classNames from 'classnames';
+/* eslint-disable no-unused-vars */
 import React from 'react';
+
 import Icon from '@ant-design/icons';
 import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
+import classNames from 'classnames';
 
-import ActionPanelIcons from 'app/icons/action-panel/ActionPanelIcons';
-import i18n from 'helpers/i18n';
-import storage from 'implementations/storage';
-import units from 'helpers/units';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import i18n from '@core/helpers/i18n';
+import units from '@core/helpers/units';
+
+import storage from '@app/implementations/storage';
 
 import styles from './ArrayModal.module.scss';
 
 const LANG = i18n.lang.beambox.tool_panels;
 const unitSettings: {
   [key: string]: {
+    distance: { default: number; max: number; min: number; step?: number };
     precision: number;
-    distance: { default: number; min: number; max: number; step?: number };
   };
 } = {
-  mm: {
-    precision: 2,
-    distance: { default: 20, min: 1, max: 50 },
-  },
   inch: {
+    distance: { default: 1, max: 2, min: 0, step: 0.1 },
     precision: 2,
-    distance: { default: 1, min: 0, max: 2, step: 0.1 },
+  },
+  mm: {
+    distance: { default: 20, max: 50, min: 1 },
+    precision: 2,
   },
 };
 
 interface Value {
-  row: number;
   column: number;
   dx: number;
   dy: number;
+  row: number;
 }
 interface Props {
   onCancel: () => void;
   onOk: (data: Value) => void;
 }
 
-const ArrayModal = ({ onCancel, onOk }: Props): JSX.Element => {
+const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
   const unit = React.useMemo(() => (storage.get('default-units') === 'inches' ? 'inch' : 'mm'), []);
   const setting = unitSettings[unit];
   const [data, setData] = React.useState<Value>({
-    row: 3,
     column: 3,
     dx: setting.distance.default,
     dy: setting.distance.default,
+    row: 3,
   });
-  const { row, column, dx, dy } = data;
-  const setRow = (val) => setData({ ...data, row: val });
-  const setColumn = (val) => setData({ ...data, column: val });
-  const setDx = (val) => setData({ ...data, dx: val });
-  const setDy = (val) => setData({ ...data, dy: val });
+  const { column, dx, dy, row } = data;
+  const setRow = (val: any) => setData({ ...data, row: val });
+  const setColumn = (val: any) => setData({ ...data, column: val });
+  const setDx = (val: any) => setData({ ...data, dx: val });
+  const setDy = (val: any) => setData({ ...data, dy: val });
+
   return (
     <ConfigProvider
       theme={{
@@ -62,17 +66,18 @@ const ArrayModal = ({ onCancel, onOk }: Props): JSX.Element => {
       }}
     >
       <Modal
+        cancelText={LANG.cancel}
+        centered
         className={styles.modal}
         closeIcon={<Icon className={styles['close-icon']} component={ActionPanelIcons.Delete} />}
         okText={LANG.confirm}
-        cancelText={LANG.cancel}
+        onCancel={onCancel}
         onOk={() => {
           const dxInMM = +units.convertUnit(data.dx, 'mm', unit).toFixed(2);
           const dyInMM = +units.convertUnit(data.dy, 'mm', unit).toFixed(2);
+
           onOk({ ...data, dx: dxInMM, dy: dyInMM });
         }}
-        onCancel={onCancel}
-        centered
         open
       >
         <div className={styles.title}>{LANG.grid_array}</div>
@@ -80,30 +85,30 @@ const ArrayModal = ({ onCancel, onOk }: Props): JSX.Element => {
         <div className={styles.subtitle}>{LANG.array_dimension}</div>
         <div className={styles.field}>
           <span className={styles.label}>{LANG.columns}</span>
-          <Slider className={styles.slider} min={1} max={10} value={column} onChange={setColumn} />
+          <Slider className={styles.slider} max={10} min={1} onChange={setColumn} value={column} />
           <InputNumber
             className={styles.input}
-            type="number"
-            size="small"
-            min={1}
-            precision={0}
-            value={column}
-            onChange={setColumn}
             controls={false}
+            min={1}
+            onChange={setColumn}
+            precision={0}
+            size="small"
+            type="number"
+            value={column}
           />
         </div>
         <div className={styles.field}>
           <span className={styles.label}>{LANG.rows}</span>
-          <Slider className={styles.slider} min={1} max={10} value={row} onChange={setRow} />
+          <Slider className={styles.slider} max={10} min={1} onChange={setRow} value={row} />
           <InputNumber
             className={styles.input}
-            type="number"
-            size="small"
-            min={1}
-            precision={0}
-            value={row}
-            onChange={setRow}
             controls={false}
+            min={1}
+            onChange={setRow}
+            precision={0}
+            size="small"
+            type="number"
+            value={row}
           />
         </div>
         <div className={styles.subtitle}>{LANG.array_interval}</div>
@@ -111,48 +116,49 @@ const ArrayModal = ({ onCancel, onOk }: Props): JSX.Element => {
           <span className={styles.label}>{LANG.dx}</span>
           <Slider
             className={styles.slider}
-            min={setting.distance.min}
             max={setting.distance.max}
+            min={setting.distance.min}
+            onChange={setDx}
             step={setting.distance.step}
             value={dx}
-            onChange={setDx}
           />
           <InputNumber
             className={classNames(styles.input, styles['with-unit'])}
-            type="number"
-            size="small"
-            min={0}
-            precision={setting.precision}
-            value={dx}
-            onChange={setDx}
-            prefix={<span className={styles.unit}>{unit}</span>}
             controls={false}
+            min={0}
+            onChange={setDx}
+            precision={setting.precision}
+            prefix={<span className={styles.unit}>{unit}</span>}
+            size="small"
+            type="number"
+            value={dx}
           />
         </div>
         <div className={styles.field}>
           <span className={styles.label}>{LANG.dy}</span>
           <Slider
             className={styles.slider}
-            min={setting.distance.min}
             max={setting.distance.max}
+            min={setting.distance.min}
+            onChange={setDy}
             step={setting.distance.step}
             value={dy}
-            onChange={setDy}
           />
           <InputNumber
             className={classNames(styles.input, styles['with-unit'])}
-            type="number"
-            size="small"
-            min={0}
-            precision={setting.precision}
-            value={dy}
-            onChange={setDy}
-            prefix={<span className={styles.unit}>{unit}</span>}
             controls={false}
+            min={0}
+            onChange={setDy}
+            precision={setting.precision}
+            prefix={<span className={styles.unit}>{unit}</span>}
+            size="small"
+            type="number"
+            value={dy}
           />
         </div>
       </Modal>
     </ConfigProvider>
   );
 };
+
 export default ArrayModal;

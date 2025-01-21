@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ChangeLog from './ChangeLog';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     change_logs: {
       change_log: 'Change Logs:',
@@ -18,11 +18,11 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
-jest.mock('implementations/changelog', () => ({
+jest.mock('@app/implementations/changelog', () => ({
   CHANGES_TW: {
     added: [
       '提升「銳化」功能，高品質照片雕刻，讓照片更細緻與立體感。',
@@ -61,7 +61,7 @@ describe('test ChangeLog', () => {
     fireEvent.click(getByText('See Older Versions'));
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenLastCalledWith(
-      'https://support.flux3dp.com/hc/en-us/sections/360000421876'
+      'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     );
   });
 });

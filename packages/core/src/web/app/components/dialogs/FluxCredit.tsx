@@ -2,12 +2,12 @@ import React from 'react';
 import { Button, Space, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import browser from 'implementations/browser';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import isFluxPlusActive from 'helpers/is-flux-plus-active';
-import useI18n from 'helpers/useI18n';
-import { getCurrentUser, signOut } from 'helpers/api/flux-id';
-import { useIsMobile } from 'helpers/system-helper';
+import browser from '@app/implementations/browser';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
+import useI18n from '@core/helpers/useI18n';
+import { getCurrentUser, signOut } from '@core/helpers/api/flux-id';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import FluxPlusModal from './FluxPlusModal';
 import styles from './FluxCredit.module.scss';

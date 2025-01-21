@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import BeamboxGlobalInteraction from 'app/actions/beambox/beambox-global-interaction';
-import ToolPanels from 'app/views/beambox/ToolPanels/ToolPanels';
+import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
+import ToolPanels from '@core/app/views/beambox/ToolPanels/ToolPanels';
 
 export type ToolPanelType = 'unknown' | 'gridArray' | 'offset' | 'nest';
 

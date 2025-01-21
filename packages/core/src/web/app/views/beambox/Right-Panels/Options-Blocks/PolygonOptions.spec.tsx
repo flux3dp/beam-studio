@@ -1,16 +1,16 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { ObjectPanelContextProvider } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import PolygonOptions from './PolygonOptions';
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -32,14 +32,14 @@ const mockBatchCmd = {
   addSubCommand: jest.fn(),
   isEmpty: jest.fn(),
 };
-jest.mock('app/svgedit/history/HistoryCommandFactory', () => ({
+jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) => {
     cb({
       Canvas: {
@@ -53,7 +53,6 @@ jest.mock('helpers/svg-editor-helper', () => ({
   },
 }));
 
-
 describe('test PolygonOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -64,7 +63,7 @@ describe('test PolygonOptions', () => {
 
   test('should render correctly', () => {
     const { container, rerender } = render(
-      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />
+      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -117,7 +116,7 @@ describe('test PolygonOptions', () => {
   test('should render correctly in mobile', async () => {
     useIsMobile.mockReturnValue(true);
     const { baseElement, container, getByText, rerender } = render(
-      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />
+      <PolygonOptions elem={document.getElementById('flux')} polygonSides={0} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -128,7 +127,7 @@ describe('test PolygonOptions', () => {
     rerender(
       <ObjectPanelContextProvider>
         <PolygonOptions elem={document.getElementById('flux')} polygonSides={5} />
-      </ObjectPanelContextProvider>
+      </ObjectPanelContextProvider>,
     );
     expect(container).toMatchSnapshot();
 

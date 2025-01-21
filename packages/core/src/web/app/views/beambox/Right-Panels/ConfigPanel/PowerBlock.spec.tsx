@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -68,18 +68,18 @@ jest.mock(
             MockConfigValueDisplayButton
           </button>
         </div>
-      )
+      ),
 );
 
 const mockGetLayerByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
 const mockGetData = jest.fn();
 const mockGetMultiSelectData = jest.fn();
 const mockWriteDataLayer = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   getData: (...args) => mockGetData(...args),
   getMultiSelectData: (...args) => mockGetMultiSelectData(...args),
@@ -87,7 +87,7 @@ jest.mock('helpers/layer/layer-config-helper', () => ({
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('app/svgedit/history/undoManager', () => ({
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
   addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
@@ -96,7 +96,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -110,15 +110,15 @@ const mockInitState = jest.fn();
 
 const mockCheckPwmImages = jest.fn();
 jest.mock(
-  'helpers/layer/check-pwm-images',
+  '@core/helpers/layer/check-pwm-images',
   () =>
     (...args) =>
-      mockCheckPwmImages(...args)
+      mockCheckPwmImages(...args),
 );
 
 const mockEventsOn = jest.fn();
 const mockEventsOff = jest.fn();
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
   events: {
     on: mockEventsOn,
     off: mockEventsOff,
@@ -134,7 +134,7 @@ describe('test PowerBlock', () => {
     mockCheckPwmImages.mockReturnValue(false);
     mockGetLayerByName.mockImplementation((name) => name);
     mockGetData.mockReturnValue(0);
-    batchCmd = { onAfter: undefined, count: 0 }
+    batchCmd = { onAfter: undefined, count: 0 };
   });
 
   it('should render correctly', () => {
@@ -148,7 +148,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(mockEventsOn).toBeCalledTimes(1);
@@ -169,7 +169,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock type="panel-item" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -189,7 +189,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -206,7 +206,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const icon = container.querySelector('.icon');
     expect(icon).not.toBeNull();
@@ -225,7 +225,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteDataLayer).not.toBeCalled();
@@ -251,7 +251,7 @@ describe('test PowerBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer2', 'power', 88, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(
@@ -259,7 +259,7 @@ describe('test PowerBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockGetData).toBeCalledTimes(2);
     expect(mockGetData).toHaveBeenNthCalledWith(1, 'layer1', 'minPower');
@@ -281,7 +281,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteDataLayer).not.toBeCalled();
@@ -303,7 +303,7 @@ describe('test PowerBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer1', 'minPower', 0, { batchCmd });
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(4, 'layer2', 'power', 86, { batchCmd });
@@ -312,7 +312,7 @@ describe('test PowerBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(6, 'layer2', 'minPower', 0, { batchCmd });
     expect(mockGetData).toBeCalledTimes(2);
@@ -342,7 +342,7 @@ describe('test PowerBlock', () => {
         }}
       >
         <PowerBlock type="modal" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(getByText('type: modal')).toBeInTheDocument();
     expect(mockDispatch).not.toBeCalled();

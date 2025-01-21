@@ -1,8 +1,8 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import NS from 'app/constants/namespaces';
-import touchEvents from 'app/svgedit/touchEvents';
-import wheelEventHandlerGenerator from 'app/svgedit/interaction/wheelEventHandler';
-import workareaManager from 'app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import NS from '@core/app/constants/namespaces';
+import touchEvents from '@core/app/svgedit/touchEvents';
+import wheelEventHandlerGenerator from '@core/app/svgedit/interaction/wheelEventHandler';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import styles from './EmbeddedCanvas.module.scss';
 
@@ -57,7 +57,7 @@ export class EmbeddedCanvasManager {
         () => {},
         () => {},
         () => {},
-        this.zoom
+        this.zoom,
       );
     }
   };

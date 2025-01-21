@@ -1,23 +1,23 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import awsHelper from 'helpers/aws-helper';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import dialogCaller from 'app/actions/dialog-caller';
-import history from 'app/svgedit/history/history';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import layerConfigHelper, { writeDataLayer } from 'helpers/layer/layer-config-helper';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import progressCaller from 'app/actions/progress-caller';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import readBitmapFile from 'app/svgedit/operations/import/readBitmapFile';
-import svgLaserParser from 'helpers/api/svg-laser-parser';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { ImportType } from 'interfaces/ImportSvg';
-import { createLayer, removeDefaultLayerIfEmpty } from 'helpers/layer/layer-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import awsHelper from '@core/helpers/aws-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import history from '@core/app/svgedit/history/history';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import layerConfigHelper, { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import progressCaller from '@core/app/actions/progress-caller';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
+import svgLaserParser from '@core/helpers/api/svg-laser-parser';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { ImportType } from '@core/interfaces/ImportSvg';
+import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
 
 import importSvgString from './importSvgString';
 
@@ -42,7 +42,7 @@ const readSVG = (
     targetModule?: LayerModule;
     layerName?: string;
     parentCmd?: IBatchCommand;
-  }
+  },
 ) =>
   new Promise<SVGUseElement>((resolve) => {
     const parsedLayerName = layerName === 'nolayer' ? undefined : layerName;
@@ -53,7 +53,7 @@ const readSVG = (
 
       if (!['color', 'layer'].includes(type)) {
         svgString = svgString.replace(/<svg[^>]*>/, (svgTagString) =>
-          svgTagString.replace(/"([^"]*)pt"/g, (_, valWithoutPt) => `"${valWithoutPt}"`)
+          svgTagString.replace(/"([^"]*)pt"/g, (_, valWithoutPt) => `"${valWithoutPt}"`),
         );
       }
 
@@ -62,7 +62,7 @@ const readSVG = (
         svgString = svgString.replace(
           'xlink:href="../',
           // @ts-expect-error do not know why, so I just keep it
-          `xlink:href="${getBasename(blob.path)}/../`
+          `xlink:href="${getBasename(blob.path)}/../`,
         );
         // @ts-expect-error do not know why, so I just keep it
         svgString = svgString.replace('xlink:href="./', `xlink:href="${getBasename(blob.path)}/`);
@@ -101,7 +101,7 @@ const importSvg = async (
     skipByLayer = false,
     isFromNounProject,
     isFromAI = false,
-  }: { skipByLayer?: boolean; isFromNounProject?: boolean; isFromAI?: boolean } = {}
+  }: { skipByLayer?: boolean; isFromNounProject?: boolean; isFromAI?: boolean } = {},
 ): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import SVG');
   const { lang } = i18n;
@@ -212,7 +212,7 @@ const importSvg = async (
     newElements.push(await readSVG(outputData.colors, elementOptions));
   } else if (importType === 'layer') {
     const keys = Object.keys(outputData).filter(
-      (key) => !['bitmap', 'bitmap_offset'].includes(key)
+      (key) => !['bitmap', 'bitmap_offset'].includes(key),
     );
 
     for (let i = 0; i < keys.length; i += 1) {
@@ -223,7 +223,7 @@ const importSvg = async (
         await readSVG(outputData[key], {
           ...elementOptions,
           layerName: key,
-        })
+        }),
       );
     }
   } else {

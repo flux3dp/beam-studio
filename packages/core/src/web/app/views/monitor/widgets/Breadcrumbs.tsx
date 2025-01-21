@@ -2,14 +2,14 @@ import React, { memo, ReactNode, useContext } from 'react';
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import styles from './Breadcrumbs.module.scss';
 
 const Breadcrumbs = (): JSX.Element => {
   const { currentPath, onSelectFolder } = useContext(MonitorContext);
-  const breadcrumbItems: { title: ReactNode; onClick: () => void; className: string; }[] = [
-    { title: <HomeOutlined />, onClick: () => onSelectFolder('', true), className: styles.item }
+  const breadcrumbItems: { title: ReactNode; onClick: () => void; className: string }[] = [
+    { title: <HomeOutlined />, onClick: () => onSelectFolder('', true), className: styles.item },
   ];
   currentPath.forEach((folder, i) => {
     const handleClick = () => onSelectFolder(currentPath.slice(0, i + 1).join('/'), true);

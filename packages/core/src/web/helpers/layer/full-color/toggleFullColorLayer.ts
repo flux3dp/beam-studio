@@ -1,14 +1,14 @@
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const toggleFullColorLayer = (layer: Element, opts: { val?: boolean; } = {}): IBatchCommand => {
+const toggleFullColorLayer = (layer: Element, opts: { val?: boolean } = {}): IBatchCommand => {
   const { val } = opts;
   const origVal = layer.getAttribute('data-fullcolor') === '1';
   const targetVal = val ?? !origVal;

@@ -2,17 +2,17 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-import browser from 'implementations/browser';
-import { useIsMobile } from 'helpers/system-helper';
+import browser from '@app/implementations/browser';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './Control.module.scss';
 
 interface Props {
-  id?: string,
-  label: string,
-  url?: string,
-  warningText?: string,
-  children: JSX.Element | JSX.Element[],
+  id?: string;
+  label: string;
+  url?: string;
+  warningText?: string;
+  children: JSX.Element | JSX.Element[];
 }
 
 const Controls = ({
@@ -27,7 +27,7 @@ const Controls = ({
 
   const warningIcon = () => {
     if (warningText) {
-      return (<img src="img/warning.svg" title={warningText} />);
+      return <img src="img/warning.svg" title={warningText} />;
     }
     return null;
   };
@@ -36,7 +36,12 @@ const Controls = ({
     if (url) {
       return (
         <span className="info-icon-small">
-          <img src="img/info.svg" onClick={() => { browser.open(url); }} />
+          <img
+            src="img/info.svg"
+            onClick={() => {
+              browser.open(url);
+            }}
+          />
         </span>
       );
     }

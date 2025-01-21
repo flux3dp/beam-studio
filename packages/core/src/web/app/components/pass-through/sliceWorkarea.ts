@@ -1,26 +1,26 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import clipboard from 'app/svgedit/operations/clipboard';
-import constant from 'app/actions/beambox/constant';
-import findDefs from 'app/svgedit/utils/findDef';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import constant from '@core/app/actions/beambox/constant';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import layerConfigHelper, {
   initLayerConfig,
   writeDataLayer,
-} from 'helpers/layer/layer-config-helper';
-import NS from 'app/constants/namespaces';
-import progressCaller from 'app/actions/progress-caller';
-import updateElementColor from 'helpers/color/updateElementColor';
-import workareaManager from 'app/svgedit/workarea';
-import { changeBeamboxPreferenceValue } from 'app/svgedit/history/beamboxPreferenceCommand';
-import { createLayer, getLayerName } from 'helpers/layer/layer-helper';
-import { deleteUseRef } from 'app/svgedit/operations/delete';
-import { GuideMark } from 'interfaces/IPassThrough';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IBatchCommand } from 'interfaces/IHistory';
+} from '@core/helpers/layer/layer-config-helper';
+import NS from '@core/app/constants/namespaces';
+import progressCaller from '@core/app/actions/progress-caller';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
+import { deleteUseRef } from '@core/app/svgedit/operations/delete';
+import { GuideMark } from '@core/interfaces/IPassThrough';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { PassThroughCanvasManager } from './canvasManager';
 
@@ -33,7 +33,7 @@ getSVGAsync((globalSVG) => {
 
 const sliceWorkarea = async (
   sliceHeight: number,
-  opt: { refLayers?: boolean; guideMark?: GuideMark; parentCmd?: IBatchCommand } = {}
+  opt: { refLayers?: boolean; guideMark?: GuideMark; parentCmd?: IBatchCommand } = {},
 ): Promise<void> => {
   const progressId = 'slice-workarea';
   const lang = i18n.lang.pass_through;
@@ -78,7 +78,7 @@ const sliceWorkarea = async (
       const endBottom = (endMid + halfHeight).toFixed(2);
       start.setAttribute(
         'd',
-        `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`
+        `M ${left} ${startMid} L ${right} ${startTop} L ${right} ${startBottom} L ${left} ${startMid} Z`,
       );
       start.setAttribute('stroke', '#9745ff');
       start.setAttribute('fill', 'none');
@@ -88,7 +88,7 @@ const sliceWorkarea = async (
       const end = start.cloneNode(true) as SVGPathElement;
       end.setAttribute(
         'd',
-        `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`
+        `M ${left} ${endMid} L ${right} ${endTop} L ${right} ${endBottom} L ${left} ${endMid} Z`,
       );
       end.id = svgCanvas.getNextId();
       newLayer.appendChild(end);
@@ -114,7 +114,7 @@ const sliceWorkarea = async (
       }
       clonedLayer.remove();
       return { name, bbox, element: clonedLayer, origLayer: layer, hasNewLayer: false };
-    }
+    },
   );
 
   const updateUseElementPromises = [];

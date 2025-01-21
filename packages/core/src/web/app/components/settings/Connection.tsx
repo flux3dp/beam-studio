@@ -1,18 +1,18 @@
 import * as React from 'react';
 
-import alert from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import browser from 'implementations/browser';
-import Controls from 'app/components/settings/Control';
-import i18n from 'helpers/i18n';
-import SelectControl from 'app/components/settings/SelectControl';
-import storage from 'implementations/storage';
-import { StorageKey } from 'interfaces/IStorage';
+import alert from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import browser from '@app/implementations/browser';
+import Controls from '@core/app/components/settings/Control';
+import i18n from '@core/helpers/i18n';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import storage from '@app/implementations/storage';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
   originalIP: string;
-  guessingPokeOptions: { value: any, label: string, selected: boolean, }[];
-  autoConnectOptions: { value: any, label: string, selected: boolean, }[];
+  guessingPokeOptions: { value: any; label: string; selected: boolean }[];
+  autoConnectOptions: { value: any; label: string; selected: boolean }[];
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
 

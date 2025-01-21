@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import SvgEditor from './SvgEditor';
 
@@ -11,28 +11,28 @@ jest.mock('implementations/storage', () => ({
 }));
 
 jest.mock(
-  'app/components/beambox/svg-editor/Workarea',
+  '@core/app/components/beambox/svg-editor/Workarea',
   () =>
     function DummyWorkarea() {
       return <div>This is dummy Workarea</div>;
-    }
+    },
 );
 jest.mock(
-  'app/components/beambox/svg-editor/Ruler',
+  '@core/app/components/beambox/svg-editor/Ruler',
   () =>
     function DummyRuler() {
       return <div>This is dummy Ruler</div>;
-    }
+    },
 );
 
-jest.mock('app/components/beambox/path-preview/PathPreview', () => () => (
+jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => (
   <div>MockPathPreview</div>
 ));
-jest.mock('app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
-jest.mock('app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
+jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
+jest.mock('@core/app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
 
 const mockInit = jest.fn();
-jest.mock('app/actions/beambox/svg-editor', () => ({
+jest.mock('@core/app/actions/beambox/svg-editor', () => ({
   init: () => mockInit(),
 }));
 
@@ -40,12 +40,12 @@ Object.defineProperty(window, '$', {
   value: jest.fn(),
 });
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
 }));
 
 const mockZoom = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   zoom: (...args) => mockZoom(...args),
 }));
 

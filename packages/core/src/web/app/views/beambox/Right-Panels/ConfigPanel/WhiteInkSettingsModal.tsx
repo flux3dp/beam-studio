@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { Modal } from 'antd';
 
-import useI18n from 'helpers/useI18n';
-import { getLayerByName } from 'helpers/layer/layer-helper';
-import { writeDataLayer } from 'helpers/layer/layer-config-helper';
+import useI18n from '@core/helpers/useI18n';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './WhiteInkSettingsModal.module.scss';

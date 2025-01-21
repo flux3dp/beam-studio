@@ -1,27 +1,27 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import CustomCommand from 'app/svgedit/history/CustomCommand';
-import cursorIconUrl from 'app/icons/left-panel/curve-select.svg?url';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import getDevice from 'helpers/device/get-device';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import NS from 'app/constants/namespaces';
-import progressCaller from 'app/actions/progress-caller';
-import RawModeCurveMeasurer from 'helpers/device/curve-measurer/raw';
-import RedLightCurveMeasurer from 'helpers/device/curve-measurer/red-light';
-import workareaManager from 'app/svgedit/workarea';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { CurveMeasurer } from 'interfaces/CurveMeasurer';
-import { CurveEngraving, MeasureData } from 'interfaces/ICurveEngraving';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IBatchCommand, ICommand } from 'interfaces/IHistory';
-import { showCurveEngraving } from 'app/components/dialogs/CurveEngraving/CurveEngraving';
-import { showMeasureArea } from 'app/components/dialogs/CurveEngraving/MeasureArea';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import CustomCommand from '@core/app/svgedit/history/CustomCommand';
+import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import getDevice from '@core/helpers/device/get-device';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import NS from '@core/app/constants/namespaces';
+import progressCaller from '@core/app/actions/progress-caller';
+import RawModeCurveMeasurer from '@core/helpers/device/curve-measurer/raw';
+import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light';
+import workareaManager from '@core/app/svgedit/workarea';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
+import { CurveEngraving, MeasureData } from '@core/interfaces/ICurveEngraving';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import { showCurveEngraving } from '@core/app/components/dialogs/CurveEngraving/CurveEngraving';
+import { showMeasureArea } from '@core/app/components/dialogs/CurveEngraving/MeasureArea';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
@@ -101,7 +101,7 @@ class CurveEngravingModeController {
     progressCaller.openNonstopProgress({ id: 'init-measurer' });
     try {
       const setupRes = await this.measurer.setup((text) =>
-        progressCaller.update('init-measurer', { message: text })
+        progressCaller.update('init-measurer', { message: text }),
       );
       if (!setupRes) return false;
       return true;
@@ -209,7 +209,7 @@ class CurveEngravingModeController {
           buttonType: alertConstants.CONFIRM_CANCEL,
           onConfirm: () => resolve(true),
           onCancel: () => resolve(false),
-        })
+        }),
       );
       if (!res) return;
     }
@@ -321,7 +321,7 @@ class CurveEngravingModeController {
       },
       () => {
         this.data = origData;
-      }
+      },
     );
     const postLoadData = () => {
       this.updateContainer();

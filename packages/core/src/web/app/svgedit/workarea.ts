@@ -1,11 +1,11 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import layoutConstants from 'app/constants/layout-constants';
-import rotaryConstants from 'app/constants/rotary-constants';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { getSupportInfo } from 'app/constants/add-on';
-import { isMobile } from 'helpers/system-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import layoutConstants from '@core/app/constants/layout-constants';
+import rotaryConstants from '@core/app/constants/rotary-constants';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { isMobile } from '@core/helpers/system-helper';
 
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
@@ -147,7 +147,7 @@ class WorkareaManager {
       layoutConstants.topBarHeight + (hasRulers ? layoutConstants.rulerWidth : 0);
     const workareaToDimensionRatio = Math.min(
       (window.innerWidth - sidePanelsWidth) / width,
-      (window.innerHeight - topBarHeight) / height
+      (window.innerHeight - topBarHeight) / height,
     );
     const zoomLevel = workareaToDimensionRatio * 0.95;
     const workAreaWidth = width * zoomLevel;

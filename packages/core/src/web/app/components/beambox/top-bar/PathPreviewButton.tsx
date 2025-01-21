@@ -1,17 +1,17 @@
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 
-import checkWebGL from 'helpers/check-webgl';
-import constant from 'app/actions/beambox/constant';
-import isDev from 'helpers/is-dev';
-import isWeb from 'helpers/is-web';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import checkWebGL from '@core/helpers/check-webgl';
+import constant from '@core/app/actions/beambox/constant';
+import isDev from '@core/helpers/is-dev';
+import isWeb from '@core/helpers/is-web';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './PathPreviewButton.module.scss';
 

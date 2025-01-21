@@ -4,8 +4,8 @@
 // ref: http://blog.ivank.net/interpolation-with-cubic-splines.html
 import React from 'react';
 
-import shortcuts from 'helpers/shortcuts';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import shortcuts from '@core/helpers/shortcuts';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgEditor;
 getSVGAsync((globalSVG) => {
@@ -272,7 +272,7 @@ export default class CurveControl extends React.PureComponent<Props, State> {
           y={255 - p.y - 3}
           width={6}
           height={6}
-        />
+        />,
       );
     });
     return items;

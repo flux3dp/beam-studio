@@ -1,11 +1,11 @@
-import getDpmm from 'helpers/image/getDpmm';
-import getExifRotationFlag from 'helpers/image/getExifRotationFlag';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import imageData from 'helpers/image-data';
-import updateElementColor from 'helpers/color/updateElementColor';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import getDpmm from '@core/helpers/image/getDpmm';
+import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import imageData from '@core/helpers/image-data';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
@@ -32,7 +32,7 @@ const readBitmapFile = async (
     offset?: number[];
     gray?: boolean;
     parentCmd?: IBatchCommand;
-  }
+  },
 ): Promise<SVGImageElement> => {
   const { parentCmd, offset = [0, 0], gray = true } = opts ?? {};
   const reader = new FileReader();

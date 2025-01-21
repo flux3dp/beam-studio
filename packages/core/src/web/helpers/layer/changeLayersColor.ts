@@ -1,11 +1,11 @@
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
-import history from 'app/svgedit/history/history';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import { PrintingColors } from 'app/constants/color-constants';
+import history from '@core/app/svgedit/history/history';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import { PrintingColors } from '@core/app/constants/color-constants';
 
 import { getData, writeDataLayer } from './layer-config-helper';
 import { getLayerByName } from './layer-helper';

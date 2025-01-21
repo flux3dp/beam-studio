@@ -19,7 +19,7 @@ const mockRawLooseMotor = jest.fn();
 const mockUploadToDirectory = jest.fn();
 const mockLs = jest.fn();
 const mockDownloadFile = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   enterRawMode: (...args) => mockEnterRawMode(...args),
   rawHome: (...args) => mockRawHome(...args),
   rawHomeZ: (...args) => mockRawHomeZ(...args),
@@ -39,14 +39,14 @@ jest.mock('helpers/device-master', () => ({
 }));
 
 const mockGetWorkarea = jest.fn();
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 
 const mockOpenSteppingProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openSteppingProgress: (...args) => mockOpenSteppingProgress(...args),
   update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
@@ -55,14 +55,14 @@ jest.mock('app/actions/progress-caller', () => ({
 const mockAddFisheyeCalibrateImg = jest.fn();
 const mockDoFishEyeCalibration = jest.fn();
 const mockStartFisheyeCalibrate = jest.fn();
-jest.mock('helpers/camera-calibration-helper', () => ({
+jest.mock('@core/helpers/camera-calibration-helper', () => ({
   addFisheyeCalibrateImg: (...args) => mockAddFisheyeCalibrateImg(...args),
   doFishEyeCalibration: (...args) => mockDoFishEyeCalibration(...args),
   startFisheyeCalibrate: (...args) => mockStartFisheyeCalibrate(...args),
 }));
 
-jest.mock('helpers/duration-formatter', () => (time: number) => `${time.toFixed(2)} s`);
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/duration-formatter', () => (time: number) => `${time.toFixed(2)} s`);
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     calibration: {
       downloading_pictures: 'downloading_pictures',
@@ -141,7 +141,7 @@ describe('test AdorCalibrationV2 utils', () => {
     expect(mockUploadToDirectory).toHaveBeenLastCalledWith(
       expect.any(Blob),
       'fisheye',
-      'checkpoint.json'
+      'checkpoint.json',
     );
   });
 
@@ -176,24 +176,24 @@ describe('test AdorCalibrationV2 utils', () => {
       1,
       'camera_calib',
       'pic_-10.0_top_left.jpg',
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockDownloadFile).toHaveBeenNthCalledWith(
       2,
       'camera_calib',
       'pic_20.0_top_left.jpg',
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockAddFisheyeCalibrateImg).toBeCalledTimes(2);
     expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(
       1,
       -10,
-      'camera_calib/pic_-10.0_top_left.jpg'
+      'camera_calib/pic_-10.0_top_left.jpg',
     );
     expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(
       2,
       20,
-      'camera_calib/pic_20.0_top_left.jpg'
+      'camera_calib/pic_20.0_top_left.jpg',
     );
     expect(mockDoFishEyeCalibration).toBeCalledTimes(1);
     expect(mockUpdate).toBeCalledTimes(5);

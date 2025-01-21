@@ -2,11 +2,11 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import Boxgen from './Boxgen';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   buttons: {
     back_to_beam_studio: 'Back to Beam Studio',
   },
@@ -15,7 +15,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/contexts/BoxgenContext', () => ({
+jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext({ onClose: () => {} }),
   BoxgenProvider: ({ onClose, children }: any) => (
     <BoxgenContext.Provider value={{ onClose } as any}>{children}</BoxgenContext.Provider>
@@ -23,7 +23,7 @@ jest.mock('app/contexts/BoxgenContext', () => ({
 }));
 
 jest.mock(
-  'app/widgets/FullWindowPanel/FullWindowPanel',
+  '@core/app/widgets/FullWindowPanel/FullWindowPanel',
   () =>
     ({
       mobileTitle,
@@ -42,25 +42,25 @@ jest.mock(
             back
           </button>
         </div>
-      )
+      ),
 );
 
 jest.mock(
-  'app/widgets/FullWindowPanel/BackButton',
+  '@core/app/widgets/FullWindowPanel/BackButton',
   () =>
     ({ children }: { children: React.ReactNode }) =>
-      <div className="back button">{children}</div>
+      <div className="back button">{children}</div>,
 );
 
 jest.mock(
-  'app/widgets/FullWindowPanel/Footer',
+  '@core/app/widgets/FullWindowPanel/Footer',
   () =>
     ({ children }: { children: React.ReactNode }) =>
-      <div className="footer">{children}</div>
+      <div className="footer">{children}</div>,
 );
 
 jest.mock(
-  'app/widgets/FullWindowPanel/Header',
+  '@core/app/widgets/FullWindowPanel/Header',
   () =>
     ({ title, children }: { title: string; children: React.ReactNode }) =>
       (
@@ -68,14 +68,14 @@ jest.mock(
           <div>title: {title}</div>
           {children}
         </div>
-      )
+      ),
 );
 
 jest.mock(
-  'app/widgets/FullWindowPanel/Sider',
+  '@core/app/widgets/FullWindowPanel/Sider',
   () =>
     ({ children }: { children: React.ReactNode }) =>
-      <div className="sider">{children}</div>
+      <div className="sider">{children}</div>,
 );
 
 jest.mock('./BoxCanvas', () => 'mock-canvas');

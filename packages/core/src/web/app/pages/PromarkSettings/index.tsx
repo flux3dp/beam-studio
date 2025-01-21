@@ -4,21 +4,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Flex } from 'antd';
 import classNames from 'classnames';
 
-import useI18n from 'helpers/useI18n';
-import deviceMaster from 'helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
+import deviceMaster from '@core/helpers/device-master';
 import {
   defaultField,
   defaultGalvoParameters,
   defaultRedLight,
-} from 'app/constants/promark-constants';
-import storage from 'implementations/storage';
-import FieldBlock from 'app/components/dialogs/promark/FieldBlock';
-import RedDotBlock from 'app/components/dialogs/promark/RedDotBlock';
-import LensBlock from 'app/components/dialogs/promark/LensBlock';
-import dialogCaller from 'app/actions/dialog-caller';
-import promarkDataStore from 'helpers/device/promark/promark-data-store';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { getSerial } from 'helpers/device/promark/promark-info';
+} from '@core/app/constants/promark-constants';
+import storage from '@app/implementations/storage';
+import FieldBlock from '@core/app/components/dialogs/promark/FieldBlock';
+import RedDotBlock from '@core/app/components/dialogs/promark/RedDotBlock';
+import LensBlock from '@core/app/components/dialogs/promark/LensBlock';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSerial } from '@core/helpers/device/promark/promark-info';
 
 import styles from './index.module.scss';
 

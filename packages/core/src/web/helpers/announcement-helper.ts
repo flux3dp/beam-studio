@@ -1,7 +1,7 @@
-import dialogCaller from 'app/actions/dialog-caller';
-import i18n from 'helpers/i18n';
-import storage from 'implementations/storage';
-import { axiosFluxId } from 'helpers/api/flux-id';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import i18n from '@core/helpers/i18n';
+import storage from '@app/implementations/storage';
+import { axiosFluxId } from '@core/helpers/api/flux-id';
 
 interface IRecord {
   times: number;

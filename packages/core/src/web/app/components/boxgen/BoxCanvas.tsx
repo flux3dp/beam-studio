@@ -3,13 +3,13 @@ import * as THREE from 'three';
 import { Stage, Edges } from '@react-three/drei';
 import { Vector3 } from 'three';
 
-import Canvas from 'app/widgets/three/Canvas';
+import Canvas from '@core/app/widgets/three/Canvas';
 import {
   getTopBottomShape,
   getFrontBackShape,
   getLeftRightShape,
-} from 'app/components/boxgen/Shape';
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
+} from '@core/app/components/boxgen/Shape';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 const BoxFace = ({
   position,

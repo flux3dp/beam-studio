@@ -5,8 +5,8 @@ import ShapePanel from './ShapePanel';
 
 window.innerHeight = 667;
 
-jest.mock('app/constants/shape-panel-constants', () => {
-  const originalModule = jest.requireActual('app/constants/shape-panel-constants');
+jest.mock('@core/app/constants/shape-panel-constants', () => {
+  const originalModule = jest.requireActual('@core/app/constants/shape-panel-constants');
   return {
     __esModule: true,
     ...originalModule,
@@ -24,7 +24,7 @@ jest.mock('app/constants/shape-panel-constants', () => {
   };
 });
 
-jest.mock('app/views/beambox/ShapePanel/ShapeIcon', () =>
+jest.mock('@core/app/views/beambox/ShapePanel/ShapeIcon', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ activeTab, fileName, onClose }: any) => (
     <div>
@@ -34,10 +34,10 @@ jest.mock('app/views/beambox/ShapePanel/ShapeIcon', () =>
         Import Icon
       </button>
     </div>
-  )
+  ),
 );
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     shapes_panel: {
       title: 'Elements',
@@ -52,7 +52,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 

@@ -1,3 +1,3 @@
-import { IMenuEventListenerFactory } from 'interfaces/IMenuEventListenerFactory';
+import type { IMenuEventListenerFactory } from '@core/interfaces/IMenuEventListenerFactory';
 
 export default {} as IMenuEventListenerFactory;

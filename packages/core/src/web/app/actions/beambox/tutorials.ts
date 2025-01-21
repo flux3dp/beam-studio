@@ -1,10 +1,10 @@
-import Alert from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import Dialog from 'app/actions/dialog-caller';
-import Discover from 'helpers/api/discover';
-import i18n from 'helpers/i18n';
-import Progress from 'app/actions/progress-caller';
-import TutorialConstants from 'app/constants/tutorial-constants';
+import Alert from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Dialog from '@core/app/actions/dialog-caller';
+import Discover from '@core/helpers/api/discover';
+import i18n from '@core/helpers/i18n';
+import Progress from '@core/app/actions/progress-caller';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
 
 const LANG = i18n.lang.tutorial;
 const getMachineForTutorial = async () =>
@@ -38,7 +38,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
       ...TutorialConstants.NEW_USER_TUTORIAL,
       dialogStylesAndContents: autoSwitch
         ? TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents.filter(
-            ({ id }) => id !== 'switch-tab'
+            ({ id }) => id !== 'switch-tab',
           )
         : TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents,
     };

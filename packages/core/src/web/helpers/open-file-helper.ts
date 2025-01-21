@@ -3,9 +3,9 @@
  * Sending event to main process to get the file path
  * and then open the file
  */
-import communicator from 'implementations/communicator';
+import communicator from '@app/implementations/communicator';
 
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgEditor;
 getSVGAsync((globalSVG) => {

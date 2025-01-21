@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import { Modal } from 'antd';
 import { SpinLoading } from 'antd-mobile';
 
-import useI18n from 'helpers/useI18n';
-import { AlertProgressContext } from 'app/contexts/AlertProgressContext';
-import { IProgressDialog } from 'interfaces/IProgress';
+import useI18n from '@core/helpers/useI18n';
+import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
+import { IProgressDialog } from '@core/interfaces/IProgress';
 
 import styles from './AlertAndProgress.module.scss';
 

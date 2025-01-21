@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import TestState from 'app/constants/connection-test';
-import useI18n from 'helpers/useI18n';
+import TestState from '@core/app/constants/connection-test';
+import useI18n from '@core/helpers/useI18n';
 
-import { promarkModels } from 'app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import styles from './TestInfo.module.scss';
 
 interface Props {
@@ -24,7 +24,7 @@ const TestInfo = ({ testState, connectionCountDown, firmwareVersion = '' }: Prop
 
   const renderBasicConnectionInfo = (
     reached: string = tConnect.check_ip,
-    unreachableError = tConnect.unreachable
+    unreachableError = tConnect.unreachable,
   ) => {
     if (testState === TestState.NONE) {
       return null;
@@ -79,7 +79,7 @@ const TestInfo = ({ testState, connectionCountDown, firmwareVersion = '' }: Prop
       {isPromark
         ? renderBasicConnectionInfo(
             tConnect.check_swiftray_connection,
-            tConnect.check_swiftray_connection_unreachable
+            tConnect.check_swiftray_connection_unreachable,
           )
         : renderBasicConnectionInfo()}
       {renderConnectionTestInfo()}

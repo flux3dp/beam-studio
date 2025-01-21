@@ -1,24 +1,24 @@
 import getJobOrigin, { getRefModule } from './job-origin';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockGetAllLayers = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayers: (...args) => mockGetAllLayers(...args),
 }));
 
 const mockGetData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
 
 const mockWorkareaWidth = jest.fn();
 const mockWorkareaHeight = jest.fn();
 const mockWorkareaExpansion = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   get width() {
     return mockWorkareaWidth();
   },

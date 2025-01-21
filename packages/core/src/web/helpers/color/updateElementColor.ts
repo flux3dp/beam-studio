@@ -1,7 +1,7 @@
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import setElementsColor from 'helpers/color/setElementsColor';
-import { getObjectLayer } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import setElementsColor from '@core/helpers/color/setElementsColor';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {

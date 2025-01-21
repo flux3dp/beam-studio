@@ -1,14 +1,14 @@
 /* eslint-disable import/first */
 const mockEmit = jest.fn();
 const mockListenerCount = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: mockEmit,
     listenerCount: mockListenerCount,
   }),
 }));
 
-import alertConstants from 'app/constants/alert-constants';
+import alertConstants from '@core/app/constants/alert-constants';
 import alertCaller from './alert-caller';
 
 describe('test alert-caller', () => {

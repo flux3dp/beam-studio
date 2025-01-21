@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ConfigProvider, Slider, TooltipProps } from 'antd';
 
-import ConfigOption from 'interfaces/ConfigOption';
-import units from 'helpers/units';
+import ConfigOption from '@core/interfaces/ConfigOption';
+import units from '@core/helpers/units';
 
 import styles from './ConfigSlider.module.scss';
 
@@ -50,7 +50,7 @@ const ConfigSlider = ({
   const optionValues = useMemo(() => sliderOptions?.map((option) => option.value), [sliderOptions]);
   const optionLabels = useMemo(
     () => sliderOptions?.map((option) => option.label ?? option.value),
-    [sliderOptions]
+    [sliderOptions],
   );
   const fakeUnit = useMemo(() => (unit?.includes('in') ? 'inch' : 'mm'), [unit]);
   const getDisplayValueFromValue = useCallback(
@@ -58,13 +58,13 @@ const ConfigSlider = ({
       if (optionValues) return optionValues.indexOf(val);
       return val;
     },
-    [optionValues]
+    [optionValues],
   );
 
   const [displayValue, setDisplayValue] = useState(getDisplayValueFromValue(value));
   useEffect(
     () => setDisplayValue(getDisplayValueFromValue(value)),
-    [value, getDisplayValueFromValue]
+    [value, getDisplayValueFromValue],
   );
 
   const handleAfterChange = (val: number) => {

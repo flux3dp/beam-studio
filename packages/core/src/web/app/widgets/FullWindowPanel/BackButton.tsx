@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { Button } from 'antd';
 
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import { FullWindowPanelContext } from 'app/widgets/FullWindowPanel/FullWindowPanel';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
 import styles from './BackButton.module.scss';
 
@@ -24,7 +24,7 @@ const BackButton = ({ className = '', children, onClose }: Props): JSX.Element =
           [styles.windows]: isWindows,
           [styles.desktop]: isDesktop,
         },
-        className
+        className,
       )}
       type="text"
       icon={<TopBarIcons.Undo />}

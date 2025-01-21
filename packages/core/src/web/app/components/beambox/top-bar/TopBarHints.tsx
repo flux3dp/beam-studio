@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
-import useI18n from 'helpers/useI18n';
-import { TopBarHintsContext } from 'app/contexts/TopBarHintsContext';
+import useI18n from '@core/helpers/useI18n';
+import { TopBarHintsContext } from '@core/app/contexts/TopBarHintsContext';
 
 import styles from './TopBarHints.module.scss';
 

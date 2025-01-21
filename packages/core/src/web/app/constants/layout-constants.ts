@@ -1,4 +1,4 @@
-import isWeb from 'helpers/is-web';
+import isWeb from '@core/helpers/is-web';
 
 export default {
   rightPanelWidth: window.os !== 'MacOS' ? 258 : 242, // px

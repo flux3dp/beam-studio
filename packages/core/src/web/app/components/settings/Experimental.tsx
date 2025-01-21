@@ -1,8 +1,8 @@
 import React from 'react';
 
-import isDev from 'helpers/is-dev';
-import SelectControl from 'app/components/settings/SelectControl';
-import { OptionValues } from 'app/constants/enums';
+import isDev from '@core/helpers/is-dev';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import { OptionValues } from '@core/app/constants/enums';
 
 interface Props {
   multipassCompensationOptions: { value: OptionValues; label: string; selected: boolean }[];

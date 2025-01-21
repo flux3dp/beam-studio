@@ -1,10 +1,9 @@
 import React, { useContext } from 'react';
 import { Modal } from 'antd';
 
-import useI18n from 'helpers/useI18n';
-import { CalibrationContext } from 'app/contexts/CalibrationContext';
-import { STEP_REFOCUS } from 'app/constants/camera-calibration-constants';
-
+import useI18n from '@core/helpers/useI18n';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import { STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
 
 const StepPutPaper = (): JSX.Element => {
   const lang = useI18n().calibration;

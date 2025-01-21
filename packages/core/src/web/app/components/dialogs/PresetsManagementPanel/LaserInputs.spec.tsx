@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import LaserInputs from './LaserInputs';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -20,7 +20,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   baseConfig: {
     power: 15,
     speed: 20,
@@ -51,7 +51,7 @@ describe('LaserInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -63,7 +63,7 @@ describe('LaserInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     const powerInput = getByTestId('power');
     fireEvent.change(powerInput, { target: { value: '50' } });

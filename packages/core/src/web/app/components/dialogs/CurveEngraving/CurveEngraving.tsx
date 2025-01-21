@@ -3,12 +3,12 @@ import * as THREE from 'three';
 import { Button, Modal } from 'antd';
 import { Stage } from '@react-three/drei';
 
-import Canvas from 'app/widgets/three/Canvas';
-import constant from 'app/actions/beambox/constant';
-import previewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { CurveEngraving as ICurveEngraving } from 'interfaces/ICurveEngraving';
+import Canvas from '@core/app/widgets/three/Canvas';
+import constant from '@core/app/actions/beambox/constant';
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
 
 import getCanvasImage from './getCanvasImage';
 import Plane from './Plane';
@@ -169,7 +169,7 @@ export default CurveEngraving;
 
 export const showCurveEngraving = async (
   data: ICurveEngraving,
-  onRemeasure: (indices: Array<number>) => Promise<ICurveEngraving>
+  onRemeasure: (indices: Array<number>) => Promise<ICurveEngraving>,
 ): Promise<void> => {
   if (!isIdExist('curve-engraving')) {
     return new Promise<void>((resolve) => {
@@ -182,7 +182,7 @@ export const showCurveEngraving = async (
             popDialogById('curve-engraving');
             resolve();
           }}
-        />
+        />,
       );
     });
   }

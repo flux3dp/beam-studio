@@ -2,24 +2,24 @@ import classNames from 'classnames';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Popover } from 'antd-mobile';
 
-import ConfigPanelIcons from 'app/icons/config-panel/ConfigPanelIcons';
-import checkPwmImages from 'helpers/layer/check-pwm-images';
-import history from 'app/svgedit/history/history';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import objectPanelItemStyles from 'app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import undoManager from 'app/svgedit/history/undoManager';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import checkPwmImages from '@core/helpers/layer/check-pwm-images';
+import history from '@core/app/svgedit/history/history';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import {
   CUSTOM_PRESET_CONSTANT,
   getData,
   getMultiSelectData,
   writeDataLayer,
-} from 'helpers/layer/layer-config-helper';
-import { getLayerByName } from 'helpers/layer/layer-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+} from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
 import ConfigPanelContext from './ConfigPanelContext';
@@ -115,7 +115,7 @@ function PowerBlock({
         max={MAX_VALUE}
         step={1}
       />
-      {power.value < workareaObj.minPower  && (
+      {power.value < workareaObj.minPower && (
         <div className={styles.warning}>
           <div className={styles['warning-icon']}>!</div>
           <div className={styles['warning-text']}>{t.low_power_warning}</div>

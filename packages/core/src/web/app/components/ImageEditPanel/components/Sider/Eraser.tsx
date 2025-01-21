@@ -3,7 +3,7 @@ import React from 'react';
 import { Col, Form, InputNumber, Row, Slider } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './PanelContent.module.scss';
 

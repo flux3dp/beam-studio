@@ -1,7 +1,6 @@
-import { ICommand } from 'interfaces/IHistory';
+import { ICommand } from '@core/interfaces/IHistory';
 
 import { BaseHistoryCommand } from './history';
-
 
 class CustomCommand extends BaseHistoryCommand implements ICommand {
   _doApply: () => void;

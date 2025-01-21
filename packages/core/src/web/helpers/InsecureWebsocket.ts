@@ -1,10 +1,10 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import browser from 'implementations/browser';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import switchProtocol from 'helpers/switch-protocol';
-import { getBrowser } from 'helpers/browser';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import browser from '@app/implementations/browser';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import switchProtocol from '@core/helpers/switch-protocol';
+import { getBrowser } from '@core/helpers/browser';
 
 const wrappedSockets = {};
 
@@ -49,7 +49,7 @@ export const checkFluxTunnel = (): boolean => {
         callbacks: [
           () => {
             browser.open(
-              'https://chromewebstore.google.com/detail/beam-studio-connect/kopngdknlbamdmehbclgbkcekligncla'
+              'https://chromewebstore.google.com/detail/beam-studio-connect/kopngdknlbamdmehbclgbkcekligncla',
             );
           },
         ],
@@ -148,6 +148,6 @@ window.addEventListener('beforeunload', () => {
   Object.keys(wrappedSockets).forEach((id) => {
     wrappedSockets[id]?.close();
   });
-})
+});
 
 export default InsecureWebsocket;

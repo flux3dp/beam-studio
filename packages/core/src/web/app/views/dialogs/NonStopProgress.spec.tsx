@@ -1,19 +1,18 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { IProgressDialog } from 'interfaces/IProgress';
+import { IProgressDialog } from '@core/interfaces/IProgress';
 
 import NonStopProgress from './NonStopProgress';
 
 const mockPopById = jest.fn();
-jest.mock('app/contexts/AlertProgressContext', () => ({
+jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({
     popById: (id: string) => mockPopById(id),
   }),
 }));
 
-
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     cancel: 'Cancel',
   },

@@ -1,7 +1,7 @@
-import getUtilWS from 'helpers/api/utils-ws';
+import getUtilWS from '@core/helpers/api/utils-ws';
 
 const handleRgb = async (
-  rgbBlob: Blob
+  rgbBlob: Blob,
 ): Promise<{ c: string; m: string; y: string; k: string }> => {
   const utilWS = getUtilWS();
   try {
@@ -40,9 +40,9 @@ const handleRgb = async (
     const b = data[i + 2];
     const a = data[i + 3];
     let kValue = 255 - Math.max(r, g, b);
-    const cValue = Math.round((255 - r - kValue));
-    const mValue = Math.round((255 - g - kValue));
-    const yValue = Math.round((255 - b - kValue));
+    const cValue = Math.round(255 - r - kValue);
+    const mValue = Math.round(255 - g - kValue);
+    const yValue = Math.round(255 - b - kValue);
     kValue = Math.round(kValue);
     const colors = [255 - kValue, 255 - cValue, 255 - mValue, 255 - yValue];
     for (let j = 0; j < colors.length; j += 1) {
@@ -77,7 +77,7 @@ const splitColor = async (
   cmykBlob: { c: Blob; m: Blob; y: Blob; k: Blob } | null,
   opts: {
     includeWhite?: boolean;
-  } = {}
+  } = {},
 ): Promise<(Blob | null)[]> => {
   const { includeWhite = false } = opts;
   const { c, m, y, k } = await handleRgb(rgbBlob);

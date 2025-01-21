@@ -24,8 +24,8 @@ class ElectronStorage implements IStorage {
       if (typeof tempItem === 'object') {
         item = tempItem;
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // console.error(error);
     }
 
     return item;

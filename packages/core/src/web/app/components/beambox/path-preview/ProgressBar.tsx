@@ -1,6 +1,6 @@
 import React from 'react';
 
-import units from 'helpers/units';
+import units from '@core/helpers/units';
 
 interface Props {
   simTime: number;
@@ -25,7 +25,9 @@ function ProgressBar({ simTime, simTimeMax, handleSimTimeChange }: Props): JSX.E
             // @ts-ignore Set variable for css to use
             '--percentage': percentage,
           }}
-          onChange={(e) => handleSimTimeChange(units.convertTimeUnit(Number(e.target.value), 'm', 'ms'))}
+          onChange={(e) =>
+            handleSimTimeChange(units.convertTimeUnit(Number(e.target.value), 'm', 'ms'))
+          }
         />
       </div>
     </div>

@@ -6,11 +6,11 @@ import Rotation from './Rotation';
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args: any) => mockCreateEventEmitter(...args),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Number: ({ id, value, updateValue, label }: any) => (
     <div id={id}>
       {label}
@@ -20,7 +20,7 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   ),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     menu: {
       rotate: 'rotate',
@@ -29,7 +29,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 

@@ -1,4 +1,4 @@
-import { isMac } from 'helpers/system-helper';
+import { isMac } from '@core/helpers/system-helper';
 
 export interface MenuItem {
   action: string;

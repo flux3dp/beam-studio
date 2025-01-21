@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 import FlipButtons from './FlipButtons';
 
 const mockFlipSelectedElements = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -15,11 +15,11 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -31,7 +31,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   ActionList: ({ id, actions, content, label }: any) => (
     <div id={id}>
       {actions.map(({ icon, label: actionLabel, onClick }) => (

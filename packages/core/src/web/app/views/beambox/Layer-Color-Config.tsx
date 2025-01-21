@@ -4,13 +4,13 @@ import { Button, Form, FormInstance, InputNumber, Modal, Space, Table } from 'an
 import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import Input from 'app/widgets/Input';
-import InputKeyWrapper from 'app/widgets/InputKeyWrapper';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import { ColorConfig, DefaultColorConfigs } from 'app/constants/color-constants';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import Input from '@core/app/widgets/Input';
+import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import { ColorConfig, DefaultColorConfigs } from '@core/app/constants/color-constants';
 
 import AddColorConfigModal from '../dialogs/AddColorConfigModal';
 
@@ -209,7 +209,7 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
     initConfigs.map((config) => ({
       key: config.color,
       ...config,
-    }))
+    })),
   );
 
   const handleDelete = (key: React.Key) => {
@@ -304,7 +304,7 @@ const LayerColorConfigPanel = (props: Props): JSX.Element => {
           DefaultColorConfigs.map((config) => ({
             key: config.color,
             ...config,
-          }))
+          })),
         );
       },
     });

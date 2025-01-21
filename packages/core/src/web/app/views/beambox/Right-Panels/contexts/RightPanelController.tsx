@@ -1,5 +1,5 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { PanelType } from 'app/constants/right-panel-types';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { PanelType } from '@core/app/constants/right-panel-types';
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
 

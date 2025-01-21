@@ -2,14 +2,14 @@ import cloud from './cloud';
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
 }));
 
 const mockPost = jest.fn();
 const mockGetCurrentUser = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   axiosFluxId: {
     post: (...args) => mockPost(...args),
   },
@@ -40,7 +40,7 @@ describe('test cloud api', () => {
       1,
       '/user/activity/beam-studio',
       { version: '1.0.0' },
-      { withCredentials: true }
+      { withCredentials: true },
     );
     expect(mockSet).toBeCalledTimes(1);
     expect(mockSet).toHaveBeenNthCalledWith(1, 'last-record-activity', '2023-05-15');

@@ -1,6 +1,6 @@
 import React, { createContext, memo, useCallback, useEffect, useState, useRef } from 'react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -20,18 +20,15 @@ export const SelectedElementContextProvider = memo(({ children }: Props): JSX.El
   const [selectedElement, setSelectedElement] = useState<Element | null>(null);
   const selectedElementRef = useRef<Element | null>(null);
 
-  const handleSetSelectedElem = useCallback(
-    (elem: Element): void => {
-      if (elem === selectedElementRef.current) return;
-      selectedElementRef.current = elem;
-      setSelectedElement((cur) => {
-        if (cur === elem) return cur;
-        (document.activeElement as HTMLInputElement).blur();
-        return elem;
-      });
-    },
-    []
-  );
+  const handleSetSelectedElem = useCallback((elem: Element): void => {
+    if (elem === selectedElementRef.current) return;
+    selectedElementRef.current = elem;
+    setSelectedElement((cur) => {
+      if (cur === elem) return cur;
+      (document.activeElement as HTMLInputElement).blur();
+      return elem;
+    });
+  }, []);
 
   useEffect(() => {
     canvasEventEmitter.on('SET_SELECTED_ELEMENT', handleSetSelectedElem);

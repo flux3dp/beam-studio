@@ -2,10 +2,10 @@ import classNames from 'classnames';
 import React, { Dispatch, SetStateAction, useCallback } from 'react';
 import { Button, Flex } from 'antd';
 
-import PromarkIcons from 'app/icons/promark/PromarkIcons';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { GalvoParameters, LensCorrection } from 'interfaces/Promark';
+import PromarkIcons from '@core/app/icons/promark/PromarkIcons';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { GalvoParameters, LensCorrection } from '@core/interfaces/Promark';
 
 import styles from './Block.module.scss';
 

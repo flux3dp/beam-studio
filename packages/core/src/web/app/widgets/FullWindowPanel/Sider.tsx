@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useContext } from 'react';
 
-import { FullWindowPanelContext } from 'app/widgets/FullWindowPanel/FullWindowPanel';
+import { FullWindowPanelContext } from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
 import styles from './Sider.module.scss';
 
@@ -21,7 +21,7 @@ const Sider = ({ className = '', children }: Props): JSX.Element => {
           [styles.windows]: isWindows,
           [styles.desktop]: isDesktop,
         },
-        className
+        className,
       )}
     >
       {children}

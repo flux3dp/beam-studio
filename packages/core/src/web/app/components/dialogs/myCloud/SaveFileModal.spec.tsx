@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import SaveFileModal from './SaveFileModal';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     untitled: 'Untitled',
     menu: {
@@ -22,7 +22,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockGetName = jest.fn();
-jest.mock('app/svgedit/currentFileManager', () => ({
+jest.mock('@core/app/svgedit/currentFileManager', () => ({
   __esModule: true,
   default: {
     getName: () => mockGetName(),
@@ -51,7 +51,7 @@ describe('test SaveFileModal', () => {
 
   test('should save to old file correctly with uuid', () => {
     const { baseElement, getByText } = render(
-      <SaveFileModal onClose={mockOnClose} uuid="mock-uuid" />
+      <SaveFileModal onClose={mockOnClose} uuid="mock-uuid" />,
     );
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
@@ -62,7 +62,7 @@ describe('test SaveFileModal', () => {
   test('should save to another file correctly with uuid', () => {
     mockGetName.mockReturnValueOnce('/path/old file name');
     const { baseElement, getByText } = render(
-      <SaveFileModal onClose={mockOnClose} uuid="mock-uuid" />
+      <SaveFileModal onClose={mockOnClose} uuid="mock-uuid" />,
     );
     fireEvent.click(getByText('Save as new file'));
     expect(baseElement).toMatchSnapshot();

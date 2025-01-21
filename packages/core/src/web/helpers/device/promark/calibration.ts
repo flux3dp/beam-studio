@@ -1,8 +1,8 @@
 import { sprintf } from 'sprintf-js';
 
-import constant from 'app/actions/beambox/constant';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import constant from '@core/app/actions/beambox/constant';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): Promise<void> => {
   const uploadRes = await swiftrayClient.loadSVG(
@@ -15,20 +15,20 @@ export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): P
     },
     { onProgressing: () => {}, onFinished: () => {}, onError: () => {} },
     // use mid dpi (254)
-    { engraveDpi: 254, model, rotaryMode: false }
+    { engraveDpi: 254, model, rotaryMode: false },
   );
   if (!uploadRes.success)
     throw new Error(
-      `Failed to load calibration task: ${uploadRes.error?.message ?? 'Unknown Error'}`
+      `Failed to load calibration task: ${uploadRes.error?.message ?? 'Unknown Error'}`,
     );
   const convertRes = await swiftrayClient.convert(
     'gcode',
     { onProgressing: () => {}, onFinished: () => {}, onError: () => {} },
-    { model, travelSpeed: 4000, isPromark: true }
+    { model, travelSpeed: 4000, isPromark: true },
   );
   if (!convertRes.success)
     throw new Error(
-      `Failed to convert calibration task: ${convertRes.error?.message ?? 'Unknown Error'}`
+      `Failed to convert calibration task: ${convertRes.error?.message ?? 'Unknown Error'}`,
     );
 };
 
@@ -50,7 +50,7 @@ export const generateCalibrationTaskString = async ({
 
 export const loadCameraCalibrationTask = async (
   model: WorkAreaModel,
-  width: number
+  width: number,
 ): Promise<void> => {
   const fileName = `fcode/promark-calibration-${width}.bvg`;
   const resp = await fetch(fileName);

@@ -1,7 +1,7 @@
-import { promarkModels } from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import webcamHelper from 'helpers/webcam-helper';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import webcamHelper from '@core/helpers/webcam-helper';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 // according video resolution, 2400 * 1600 from [webcamHelper](src/web/helpers/webcam-helper.ts)
 const PROMARK_GOOD_PICTURE_THRESHOLD = (2400 * 1600) / 4;

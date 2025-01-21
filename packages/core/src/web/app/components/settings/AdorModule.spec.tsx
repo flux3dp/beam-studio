@@ -1,13 +1,13 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import moduleOffsets from 'app/constants/layer-module/module-offsets';
-import { OptionValues } from 'app/constants/enums';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import { OptionValues } from '@core/app/constants/enums';
 
 import AdorModule from './AdorModule';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
     printer_advanced_mode: 'printer_advanced_mode',
     default_laser_module: 'default_laser_module',
@@ -39,7 +39,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 jest.mock(
-  'app/components/settings/Control',
+  '@core/app/components/settings/Control',
   () =>
     ({ label, children }: { label: string; children: React.ReactNode }) =>
       (
@@ -47,10 +47,10 @@ jest.mock(
           <div>Mock Control{label}</div>
           {children}
         </div>
-      )
+      ),
 );
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({
       id,
@@ -71,10 +71,10 @@ jest.mock(
             onChange={(e) => getValue(parseFloat(e.target.value))}
           />
         </div>
-      )
+      ),
 );
 jest.mock(
-  'app/components/settings/SelectControl',
+  '@core/app/components/settings/SelectControl',
   () =>
     ({ label, id, options, onChange }: any) =>
       (
@@ -94,7 +94,7 @@ jest.mock(
             ))}
           </div>
         </div>
-      )
+      ),
 );
 
 const mockOffsetInit: { [m: number]: [number, number] } = {
@@ -120,7 +120,7 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -132,7 +132,7 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     let input = getByTestId('10w-laser-y-offset') as HTMLInputElement;
     fireEvent.change(input, { target: { value: '20' } });
@@ -154,7 +154,7 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     input = getByTestId('printer-x-offset') as HTMLInputElement;
     fireEvent.change(input, { target: { value: '30' } });
@@ -172,14 +172,14 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     const button = getByText('On');
     fireEvent.click(button);
     expect(mockUpdateBeamboxPreferenceChange).toBeCalledTimes(1);
     expect(mockUpdateBeamboxPreferenceChange).toHaveBeenLastCalledWith(
       'print-advanced-mode',
-      OptionValues.TRUE
+      OptionValues.TRUE,
     );
   });
 
@@ -190,14 +190,14 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     const button = getByText('laser_20w_diode');
     fireEvent.click(button);
     expect(mockUpdateBeamboxPreferenceChange).toBeCalledTimes(1);
     expect(mockUpdateBeamboxPreferenceChange).toHaveBeenLastCalledWith(
       'default-laser-module',
-      LayerModule.LASER_20W_DIODE
+      LayerModule.LASER_20W_DIODE,
     );
   });
 
@@ -208,7 +208,7 @@ describe('test AdorModule', () => {
         selectedModel="ado1"
         getBeamboxPreferenceEditingValue={mockGetBeamboxPreferenceEditingValue}
         updateBeamboxPreferenceChange={mockUpdateBeamboxPreferenceChange}
-      />
+      />,
     );
     const input = getByTestId('low-power') as HTMLInputElement;
     fireEvent.change(input, { target: { value: '5' } });

@@ -2,9 +2,9 @@
  * Convert shape to bitmap for printing
  * using for single-color printing layer only
  */
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import NS from 'app/constants/namespaces';
-import updateImageDisplay from 'helpers/image/updateImageDisplay';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import NS from '@core/app/constants/namespaces';
+import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
 import layerToImage from './layerToImage';
 import { getAllLayerNames, getLayerElementByName } from './layer-helper';

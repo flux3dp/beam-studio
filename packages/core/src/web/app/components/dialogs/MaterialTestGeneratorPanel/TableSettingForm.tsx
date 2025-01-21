@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useMemo } from 'react';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
 import { Flex } from 'antd';
-import Select from 'app/widgets/AntdSelect';
-import { LaserType } from 'app/constants/promark-constants';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
-import { promarkModels } from 'app/actions/beambox/constant';
+import Select from '@core/app/widgets/AntdSelect';
+import { LaserType } from '@core/app/constants/promark-constants';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import { Detail, tableParams, TableSetting } from './TableSetting';
 import styles from './Form.module.scss';
 
@@ -49,13 +49,13 @@ export default function TableSettingForm({
         .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
         .map((value) => ({ value, label: tLaserPanel[camelToSnake(value)] })),
     }),
-    [blockOption, tLaserPanel, tableSetting]
+    [blockOption, tLaserPanel, tableSetting],
   );
 
   const handleOptionChange = () => {
     const availableOptions = new Set(options.map(({ value }) => value));
     const invalidEntries = settingEntries.filter(
-      ([key, { selected }]) => !availableOptions.has(key) && selected !== 2
+      ([key, { selected }]) => !availableOptions.has(key) && selected !== 2,
     );
 
     if (!invalidEntries.length) {
@@ -69,7 +69,7 @@ export default function TableSettingForm({
       modifiedTableSetting[key].selected = 2;
 
       const [replacedKey] = Object.entries(modifiedTableSetting).find(
-        ([, { selected }]) => selected === 2
+        ([, { selected }]) => selected === 2,
       ) as [TableParams, Detail];
 
       modifiedTableSetting[replacedKey].selected = selected;
@@ -109,7 +109,7 @@ export default function TableSettingForm({
     const limitValue = (v: number) => {
       const rangedValue = Math[prefix](
         v,
-        tableSetting[key][prefix === 'min' ? 'maxValue' : 'minValue']
+        tableSetting[key][prefix === 'min' ? 'maxValue' : 'minValue'],
       );
 
       return Math.min(max, Math.max(min, rangedValue));

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 
 import ConnectWifi from './ConnectWiFi';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     connect_wifi: {
       title: 'Connecting to Wi-Fi',

@@ -1,39 +1,39 @@
-import { IDialogBoxStyle } from 'interfaces/IDialog';
+import { IDialogBoxStyle } from '@core/interfaces/IDialog';
 
 export interface IHintCircle {
-  top?: number,
-  bottom?: number,
-  left?: number,
-  right?: number,
-  width: number,
-  height: number,
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+  width: number;
+  height: number;
 }
 
 export interface ITutorialDialog {
   id?: string;
-  dialogBoxStyles: IDialogBoxStyle,
+  dialogBoxStyles: IDialogBoxStyle;
   holePosition?: {
-    top?: number,
-    bottom?: number,
-    left?: number,
-    right?: number,
-  },
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
   holeSize?: {
-    width?: number,
-    height?: number,
-  },
-  hintCircle?: IHintCircle,
-  text: string,
-  subElement?: JSX.Element,
-  nextStepRequirement?: string,
-  callback?: string,
+    width?: number;
+    height?: number;
+  };
+  hintCircle?: IHintCircle;
+  text: string;
+  subElement?: JSX.Element;
+  nextStepRequirement?: string;
+  callback?: string;
 }
 
 export interface ITutorial {
-  id: string,
-  end_alert?: string,
-  hasNextButton?: boolean,
-  dialogStylesAndContents: ITutorialDialog[],
+  id: string;
+  end_alert?: string;
+  hasNextButton?: boolean;
+  dialogStylesAndContents: ITutorialDialog[];
 }
 
 export interface IMediaTutorial {
@@ -41,6 +41,6 @@ export interface IMediaTutorial {
     src: string;
     type: string;
   }[];
-  description: string,
-  isVideo?: boolean,
+  description: string;
+  isVideo?: boolean;
 }

@@ -5,32 +5,35 @@ import { fireEvent, render } from '@testing-library/react';
 import OptionsPanel from './OptionsPanel';
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 jest.mock(
-  'app/views/beambox/Right-Panels/Options-Blocks/ImageOptions',
+  '@core/app/views/beambox/Right-Panels/Options-Blocks/ImageOptions',
   () =>
     function ImageOptions({ updateObjectPanel }: any) {
-      return <div>This is dummy ImageOptions
-        <button type="button" onClick={() => updateObjectPanel()}>
-          updateObjectPanel
-        </button>
-      </div>;
-    }
+      return (
+        <div>
+          This is dummy ImageOptions
+          <button type="button" onClick={() => updateObjectPanel()}>
+            updateObjectPanel
+          </button>
+        </div>
+      );
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/Options-Blocks/InFillBlock',
+  '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock',
   () =>
     function DummyInFillBlock() {
       return <div>This is dummy InFillBlock</div>;
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/Options-Blocks/RectOptions',
+  '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions',
   () =>
     function RectOptions({ updateDimensionValues }: any) {
       return (
@@ -41,11 +44,11 @@ jest.mock(
           </button>
         </div>
       );
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/Options-Blocks/TextOptions',
+  '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions',
   () =>
     function TextOptions({ updateDimensionValues, updateObjectPanel }: any) {
       return (
@@ -59,31 +62,31 @@ jest.mock(
           </button>
         </div>
       );
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions',
+  '@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions',
   () =>
     function PolygonOptions() {
       return <div>This is dummy PolygonOptions</div>;
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/ColorPanel',
+  '@core/app/views/beambox/Right-Panels/ColorPanel',
   () =>
     function ColorPanel() {
       return <div>This is dummy ColorPanel</div>;
-    }
+    },
 );
 
-jest.mock('app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions', () => () => (
+jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions', () => () => (
   <div>This is dummy MultiColorOptions</div>
-))
+));
 
 const mockGetAttribute = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getObjectLayer: () => ({
     elem: {
       getAttribute: () => mockGetAttribute(),
@@ -105,7 +108,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={updateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -120,7 +123,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={updateObjectPanel}
         updateDimensionValues={updateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -134,7 +137,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={updateObjectPanel}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -149,7 +152,7 @@ describe('should render correctly', () => {
           polygonSides={8}
           updateObjectPanel={jest.fn()}
           updateDimensionValues={jest.fn()}
-        />
+        />,
       );
       expect(container).toMatchSnapshot();
     });
@@ -164,7 +167,7 @@ describe('should render correctly', () => {
           polygonSides={8}
           updateObjectPanel={jest.fn()}
           updateDimensionValues={jest.fn()}
-        />
+        />,
       );
       expect(container).toMatchSnapshot();
     });
@@ -178,7 +181,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -190,7 +193,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -204,7 +207,7 @@ describe('should render correctly', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -225,7 +228,7 @@ describe('should render correctly in mobile', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={updateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     fireEvent.click(getByText('updateDimensionValues'));
@@ -242,7 +245,7 @@ describe('should render correctly in mobile', () => {
         rx={null}
         updateObjectPanel={updateObjectPanel}
         updateDimensionValues={updateDimensionValues}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -261,7 +264,7 @@ describe('should render correctly in mobile', () => {
         rx={null}
         updateObjectPanel={updateObjectPanel}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -279,7 +282,7 @@ describe('should render correctly in mobile', () => {
           polygonSides={8}
           updateObjectPanel={jest.fn()}
           updateDimensionValues={jest.fn()}
-        />
+        />,
       );
       expect(container).toMatchSnapshot();
     });
@@ -294,7 +297,7 @@ describe('should render correctly in mobile', () => {
           polygonSides={8}
           updateObjectPanel={jest.fn()}
           updateDimensionValues={jest.fn()}
-        />
+        />,
       );
       expect(container).toMatchSnapshot();
     });
@@ -308,7 +311,7 @@ describe('should render correctly in mobile', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -320,7 +323,7 @@ describe('should render correctly in mobile', () => {
         rx={null}
         updateObjectPanel={jest.fn()}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });

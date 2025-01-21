@@ -1,21 +1,21 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import UnitInput from 'app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  row?: number,
-  column?: number,
-  onValueChange?: (rc: { row: number, column: number }) => void,
+  row?: number;
+  column?: number;
+  onValueChange?: (rc: { row: number; column: number }) => void;
 }
 
 interface State {
-  row: number,
-  column: number,
-  isCollapsed: boolean,
+  row: number;
+  column: number;
+  isCollapsed: boolean;
 }
 
 class RowColumn extends React.Component<Props, State> {

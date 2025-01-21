@@ -1,13 +1,13 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import history from 'app/svgedit/history/history';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import NS from 'app/constants/namespaces';
-import presprayIconUrl from 'app/icons/prespray.svg?url';
-import undoManager from 'app/svgedit/history/undoManager';
-import workareaManager from 'app/svgedit/workarea';
-import { getSupportInfo } from 'app/constants/add-on';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import history from '@core/app/svgedit/history/history';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import NS from '@core/app/constants/namespaces';
+import presprayIconUrl from '@core/app/icons/prespray.svg?url';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSupportInfo } from '@core/app/constants/add-on';
 
 let presprayAreaBlock: SVGImageElement;
 
@@ -98,7 +98,7 @@ const endDrag = (): void => {
     const cmd = new history.ChangeElementCommand(
       presprayAreaBlock,
       { x: startX, y: startY },
-      'Drag Prespray Area'
+      'Drag Prespray Area',
     );
     undoManager.addCommandToHistory(cmd);
   }

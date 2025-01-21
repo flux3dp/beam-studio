@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import i18n from 'helpers/i18n';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.update;
 interface Props {
@@ -42,8 +42,12 @@ const FirmwareUpdate = ({
       title={LANG.firmware.caption}
       onCancel={onClose}
       footer={[
-        <Button key="later" onClick={onClose}>{LANG.later}</Button>,
-        <Button key="upload" onClick={handleUpload}>{LANG.upload}</Button>,
+        <Button key="later" onClick={onClose}>
+          {LANG.later}
+        </Button>,
+        <Button key="upload" onClick={handleUpload}>
+          {LANG.upload}
+        </Button>,
         <Button key="download" type="primary" onClick={handleDownload}>
           {LANG.download}
         </Button>,

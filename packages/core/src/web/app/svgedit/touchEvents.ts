@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import workareaManager from 'app/svgedit/workarea';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import workareaManager from '@core/app/svgedit/workarea';
 
 const calculateTouchCenter = (touches: TouchList) => {
   const center = { x: 0, y: 0 };
@@ -26,7 +26,7 @@ const setupCanvasTouchEvents = (
   onMouseMove: (e: Event) => void,
   onMouseUp: (e: Event, blocked?: boolean) => void,
   onDoubleClick: (e: Event) => void,
-  setZoom: (zoom: number, staticPoint: { x: number, y: number }) => void,
+  setZoom: (zoom: number, staticPoint: { x: number; y: number }) => void,
 ): void => {
   let touchStartTimeout: NodeJS.Timeout;
   let touchStartTimestamp: number;
@@ -57,7 +57,7 @@ const setupCanvasTouchEvents = (
         startZoom = workareaManager.zoomRatio;
         startDist = Math.hypot(
           e.touches[0].screenX - e.touches[1].screenX,
-          e.touches[0].screenY - e.touches[1].screenY
+          e.touches[0].screenY - e.touches[1].screenY,
         );
         currentScale = 1;
         // @ts-expect-error scale is defined in chrome & safari
@@ -71,8 +71,10 @@ const setupCanvasTouchEvents = (
   container.addEventListener('touchmove', (e: TouchEvent) => {
     e.preventDefault();
     if (e.touches.length === 1) {
-      if (e.touches[0].identifier === firstTouchID
-        && Date.now() > touchStartTimestamp + TOUCH_START_DELAY) {
+      if (
+        e.touches[0].identifier === firstTouchID &&
+        Date.now() > touchStartTimestamp + TOUCH_START_DELAY
+      ) {
         onMouseMove(e);
       }
     } else if (e.touches.length >= 2) {
@@ -85,7 +87,7 @@ const setupCanvasTouchEvents = (
           e.scale ??
           Math.hypot(
             e.touches[0].screenX - e.touches[1].screenX,
-            e.touches[0].screenY - e.touches[1].screenY
+            e.touches[0].screenY - e.touches[1].screenY,
           ) / startDist;
         let newZoom = workareaManager.zoomRatio;
         if (startZoom && Math.abs(Math.log(currentScale / scale)) >= Math.log(1.05)) {
@@ -100,7 +102,10 @@ const setupCanvasTouchEvents = (
         }
         const wOrig = workarea.clientWidth;
         const hOrig = workarea.clientHeight;
-        if (wOrig >= workareaManager.width * newZoom * multi || hOrig >= workareaManager.height * newZoom * multi) {
+        if (
+          wOrig >= workareaManager.width * newZoom * multi ||
+          hOrig >= workareaManager.height * newZoom * multi
+        ) {
           lastMoveEventTimestamp = timeStamp;
           return;
         }

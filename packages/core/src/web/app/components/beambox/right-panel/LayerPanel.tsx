@@ -2,31 +2,35 @@ import classNames from 'classnames';
 import React from 'react';
 import { ResizableBox } from 'react-resizable';
 
-import AddLayerButton from 'app/components/beambox/right-panel/AddLayerButton';
-import Alert from 'app/actions/alert-caller';
-import ConfigPanel from 'app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
-import changeLayersColor from 'helpers/layer/changeLayersColor';
-import Dialog from 'app/actions/dialog-caller';
-import DragImage from 'app/components/beambox/right-panel/DragImage';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import LayerContextMenu from 'app/views/beambox/Right-Panels/LayerPanel/LayerContextMenu';
-import LayerList from 'app/views/beambox/Right-Panels/LayerPanel/LayerList';
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import layoutConstants from 'app/constants/layout-constants';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import RightPanelController from 'app/views/beambox/Right-Panels/contexts/RightPanelController';
-import SelLayerBlock from 'app/components/beambox/right-panel/SelLayerBlock';
-import storage from 'implementations/storage';
-import { ContextMenuTrigger } from 'helpers/react-contextmenu';
-import { cloneLayerConfig } from 'helpers/layer/layer-config-helper';
-import { highlightLayer, moveLayersToPosition, setLayersLock } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { isMobile } from 'helpers/system-helper';
+import AddLayerButton from '@core/app/components/beambox/right-panel/AddLayerButton';
+import Alert from '@core/app/actions/alert-caller';
+import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
+import changeLayersColor from '@core/helpers/layer/changeLayersColor';
+import Dialog from '@core/app/actions/dialog-caller';
+import DragImage from '@core/app/components/beambox/right-panel/DragImage';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import LayerContextMenu from '@core/app/views/beambox/Right-Panels/LayerPanel/LayerContextMenu';
+import LayerList from '@core/app/views/beambox/Right-Panels/LayerPanel/LayerList';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import layoutConstants from '@core/app/constants/layout-constants';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import SelLayerBlock from '@core/app/components/beambox/right-panel/SelLayerBlock';
+import storage from '@app/implementations/storage';
+import { ContextMenuTrigger } from '@core/helpers/react-contextmenu';
+import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
+import {
+  highlightLayer,
+  moveLayersToPosition,
+  setLayersLock,
+} from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { isMobile } from '@core/helpers/system-helper';
 
 import styles from './LayerPanel.module.scss';
 

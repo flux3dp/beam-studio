@@ -1,5 +1,5 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
 
 export type WorkAreaLabel =
   | 'beamo'
@@ -151,7 +151,7 @@ const workareaConstants: { [key in WorkAreaModel]: WorkArea } = {
 
 export const getWorkarea = (
   model: WorkAreaModel,
-  fallbackModel: WorkAreaModel = 'fbm1'
+  fallbackModel: WorkAreaModel = 'fbm1',
 ): WorkArea => {
   const res = workareaConstants[model] || workareaConstants[fallbackModel];
   if (res.dismensionCustomizable) {

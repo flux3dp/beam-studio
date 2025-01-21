@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 import LayerList from './LayerList';
 
@@ -13,7 +13,7 @@ const mockDrawing = {
   getLayerColor: jest.fn(),
 };
 
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
       Canvas: {
@@ -24,35 +24,35 @@ jest.mock('helpers/svg-editor-helper', () => ({
 
 const mockUseWorkarea = jest.fn();
 jest.mock(
-  'helpers/hooks/useWorkarea',
+  '@core/helpers/hooks/useWorkarea',
   () =>
     (...args) =>
-      mockUseWorkarea(...args)
+      mockUseWorkarea(...args),
 );
 
 const mockGetData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
 
 const mockGetAllLayerNames = jest.fn();
 const mockGetLayerElementByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
   LayerPanelContext: React.createContext(null),
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
 jest.mock(
-  'app/widgets/ColorPicker',
+  '@core/app/widgets/ColorPicker',
   () =>
     ({ disabled, initColor, triggerSize, printerColor, onChange }: any) =>
       (
@@ -66,7 +66,7 @@ jest.mock(
             changeColor
           </button>
         </div>
-      )
+      ),
 );
 
 const mockOnLayerClick = jest.fn();
@@ -128,7 +128,7 @@ describe('test LayerList', () => {
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toBeCalledTimes(1);
@@ -177,7 +177,7 @@ describe('test LayerList', () => {
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -210,7 +210,7 @@ describe('test LayerList', () => {
           setLayerVisibility={mockSetLayerVisibility}
           unLockLayers={mockUnLockLayers}
         />
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     const layer1Item = getByTestId('layer1');
     expect(mockOnLayerClick).not.toBeCalled();

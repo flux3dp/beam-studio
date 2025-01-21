@@ -9,20 +9,20 @@ import { Layer, Line, Stage } from 'react-konva';
 import Konva from 'konva';
 import { Filter } from 'konva/lib/Node';
 
-import { preprocessByUrl } from 'helpers/image-edit-panel/preprocess';
-import calculateBase64 from 'helpers/image-edit-panel/calculate-base64';
-import handleFinish from 'helpers/image-edit-panel/handle-finish';
-import useI18n from 'helpers/useI18n';
-import shortcuts from 'helpers/shortcuts';
+import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
+import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
+import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
+import useI18n from '@core/helpers/useI18n';
+import shortcuts from '@core/helpers/shortcuts';
 
-import progressCaller from 'app/actions/progress-caller';
-import FullWindowPanel from 'app/widgets/FullWindowPanel/FullWindowPanel';
+import progressCaller from '@core/app/actions/progress-caller';
+import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 
-import useNewShortcutsScope from 'helpers/hooks/useNewShortcutsScope';
-import useKonvaCanvas from 'helpers/hooks/konva/useKonvaCanvas';
-import useForceUpdate from 'helpers/use-force-update';
-import { useKeyDown } from 'helpers/hooks/useKeyDown';
-import { useMouseDown } from 'helpers/hooks/useMouseDown';
+import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
+import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
+import useForceUpdate from '@core/helpers/use-force-update';
+import { useKeyDown } from '@core/helpers/hooks/useKeyDown';
+import { useMouseDown } from '@core/helpers/hooks/useMouseDown';
 import KonvaImage, { KonvaImageRef } from './components/KonvaImage';
 import Sider from './components/Sider';
 import TopBar from './components/TopBar';
@@ -69,7 +69,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       threshold: Number.parseInt(image.getAttribute('data-threshold'), 10),
       isFullColor: image.getAttribute('data-fullcolor') === '1',
     }),
-    [image]
+    [image],
   );
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [mode, setMode] = useState<'eraser' | 'magicWand'>('eraser');
@@ -128,7 +128,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       setFilters(filters);
       requestAnimationFrame(() => stageRef.current.batchDraw());
     },
-    [undo, redo]
+    [undo, redo],
   );
 
   const getPointerPositionFromStage = useCallback((stage: Konva.Stage) => {
@@ -153,7 +153,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
         setOperation('eraser');
         setLines((prevLines) =>
           // add two sets of points to create a initial line
-          prevLines.concat([{ points: [x, y, x, y], strokeWidth: brushSize / scale }])
+          prevLines.concat([{ points: [x, y, x, y], strokeWidth: brushSize / scale }]),
         );
       } else if (mode === 'magicWand') {
         setOperation('magicWand');
@@ -163,7 +163,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
         setFilters((prevFilters) => prevFilters.concat(filter));
       }
     },
-    [isDragging, getPointerPositionFromStage, mode, brushSize, tolerance]
+    [isDragging, getPointerPositionFromStage, mode, brushSize, tolerance],
   );
 
   const handleMouseMove = useCallback(
@@ -191,7 +191,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
         return updatedLines;
       });
     },
-    [isDragging, getPointerPositionFromStage, operation]
+    [isDragging, getPointerPositionFromStage, operation],
   );
 
   const handleExitDrawing = useCallback(() => {
@@ -274,7 +274,7 @@ function ImageEditPanel({ src, image, onClose }: Props): JSX.Element {
       const initScale = Math.min(
         1,
         (clientWidth - IMAGE_PADDING * 2) / width,
-        (clientHeight - IMAGE_PADDING * 2) / height
+        (clientHeight - IMAGE_PADDING * 2) / height,
       );
 
       const imageX = Math.max(IMAGE_PADDING, (clientWidth - width * initScale) / 2);

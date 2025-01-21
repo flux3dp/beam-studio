@@ -1,5 +1,5 @@
-import { BBox } from 'interfaces/ICurveEngraving';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import { BBox } from '@core/interfaces/ICurveEngraving';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export interface IBaseConfig {
   model: WorkAreaModel;

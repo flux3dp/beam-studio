@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Button, Modal } from 'antd';
 
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import getLevelingData from 'app/actions/camera/preview-helper/getLevelingData';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { FisheyeCameraParametersV2Cali } from 'interfaces/FisheyePreview';
-import { updateData } from 'helpers/camera-calibration-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+import { updateData } from '@core/helpers/camera-calibration-helper';
 
 import { calibrateWithDevicePictures } from './utils';
 
@@ -56,7 +56,9 @@ const CheckPictures = ({ updateParam, onClose, onNext }: Props): JSX.Element => 
     try {
       const ls = await deviceMaster.ls('camera_calib');
       hasPictures = ls.files.length > 0;
-    } catch { /* do nothing */ }
+    } catch {
+      /* do nothing */
+    }
     progressCaller.popById(progressId);
     if (hasPictures) calibrateDevicePictures();
     else {

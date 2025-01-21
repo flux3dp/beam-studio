@@ -1,13 +1,13 @@
 import React from 'react';
 
-import BackButton from 'app/widgets/FullWindowPanel/BackButton';
-import Footer from 'app/widgets/FullWindowPanel/Footer';
-import FullWindowPanel from 'app/widgets/FullWindowPanel/FullWindowPanel';
-import Header from 'app/widgets/FullWindowPanel/Header';
-import Sider from 'app/widgets/FullWindowPanel/Sider';
-import useI18n from 'helpers/useI18n';
-import useNewShortcutsScope from 'helpers/hooks/useNewShortcutsScope';
-import { BoxgenProvider } from 'app/contexts/BoxgenContext';
+import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
+import Footer from '@core/app/widgets/FullWindowPanel/Footer';
+import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
+import Header from '@core/app/widgets/FullWindowPanel/Header';
+import Sider from '@core/app/widgets/FullWindowPanel/Sider';
+import useI18n from '@core/helpers/useI18n';
+import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
+import { BoxgenProvider } from '@core/app/contexts/BoxgenContext';
 
 import BoxCanvas from './BoxCanvas';
 import BoxSelector from './BoxSelector';

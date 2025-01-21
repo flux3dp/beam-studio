@@ -5,13 +5,13 @@ import { fireEvent, render } from '@testing-library/react';
 import ConfigPanelContext from './ConfigPanelContext';
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -25,7 +25,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -34,12 +34,12 @@ const mockContextState = { frequency: { value: 40, hasMultiValue: false } };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
       (
@@ -59,7 +59,7 @@ jest.mock(
             onChange={(e) => getValue(parseFloat(e.target.value))}
           />
         </div>
-      )
+      ),
 );
 
 // eslint-disable-next-line import/first
@@ -82,7 +82,7 @@ describe('test FrequencyBlock', () => {
         }}
       >
         <FrequencyBlock min={27} max={60} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -98,7 +98,7 @@ describe('test FrequencyBlock', () => {
         }}
       >
         <FrequencyBlock type="panel-item" min={27} max={60} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -114,7 +114,7 @@ describe('test FrequencyBlock', () => {
         }}
       >
         <FrequencyBlock min={27} max={60} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
@@ -137,7 +137,7 @@ describe('test FrequencyBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'frequency', 88, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(
@@ -145,7 +145,7 @@ describe('test FrequencyBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toBeCalledTimes(1);
@@ -163,7 +163,7 @@ describe('test FrequencyBlock', () => {
         }}
       >
         <FrequencyBlock type="modal" min={27} max={60} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
 
     expect(mockDispatch).not.toBeCalled();

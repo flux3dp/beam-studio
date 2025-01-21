@@ -79,19 +79,19 @@
 */
 import { Buffer } from 'buffer';
 
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import history from 'app/svgedit/history/history';
-import Progress from 'app/actions/progress-caller';
-import undoManager from 'app/svgedit/history/undoManager';
-import updateImagesResolution from 'helpers/image/updateImagesResolution';
-import updateImageDisplay from 'helpers/image/updateImageDisplay';
-import { CurveEngraving } from 'interfaces/ICurveEngraving';
-import { importBvgString } from 'app/svgedit/operations/import/importBvg';
-import { IBatchCommand } from 'interfaces/IHistory';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import history from '@core/app/svgedit/history/history';
+import Progress from '@core/app/actions/progress-caller';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
+import { CurveEngraving } from '@core/interfaces/ICurveEngraving';
+import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface MiscData {
   ce?: CurveEngraving;
-};
+}
 
 // Create VInt Buffer, first bit indicate continue or not, other 7 bits represent value
 const valueToVIntBuffer = (value) => {
@@ -123,7 +123,9 @@ const readVInt = (buffer, offset = 0) => {
   };
 };
 
-const localHeaderTypeBuffer = (type: 'svgContent' | 'imageSource' | 'thumbnail' | 'miscData'): Buffer => {
+const localHeaderTypeBuffer = (
+  type: 'svgContent' | 'imageSource' | 'thumbnail' | 'miscData',
+): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -181,7 +183,7 @@ const generateMiscDataBlockBuffer = (data: MiscData): Buffer => {
   const contentBuf = Buffer.from(JSON.stringify(data));
   const lengthVintBuf = valueToVIntBuffer(contentBuf.length);
   return Buffer.concat([headerBuf, lengthVintBuf, contentBuf]);
-}
+};
 
 const generateBeamBuffer = (
   svgString: string,
@@ -289,7 +291,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     // image source
     console.log('Image Source Block');
     const { offset: newOffset, value } = readVInt(buf, currentOffset);
-    currentOffset = newOffset
+    currentOffset = newOffset;
     console.log('Size', value);
     readImageSource(buf, currentOffset, currentOffset + value);
     updateImagesResolution(false);

@@ -12,11 +12,11 @@ const mockUser = {
 };
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     menu: {
       sign_out: 'Sign Out',
@@ -40,17 +40,17 @@ jest.mock('./FluxPlusModal', () => 'mock-FluxPlusModal');
 
 const getCurrentUser = jest.fn();
 const signOut = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => getCurrentUser(),
   signOut: (...args) => signOut(...args),
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/is-flux-plus-active', () => true);
+jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 const onClose = jest.fn();
 

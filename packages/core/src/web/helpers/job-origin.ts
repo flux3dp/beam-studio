@@ -1,9 +1,9 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import workareaManager from 'app/svgedit/workarea';
-import { getAllLayers } from 'helpers/layer/layer-helper';
-import { getData } from 'helpers/layer/layer-config-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getAllLayers } from '@core/helpers/layer/layer-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 
 export const getRefModule = (): LayerModule => {
   const firstLayer = getAllLayers()

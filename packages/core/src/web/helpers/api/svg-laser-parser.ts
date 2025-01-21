@@ -5,31 +5,31 @@
  * API svg laser parser
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
-import Alert from 'app/actions/alert-caller';
-import AlertConfig from 'helpers/api/alert-config';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import fs from 'implementations/fileSystem';
-import getRotaryRatio from 'helpers/device/get-rotary-ratio';
-import i18n from 'helpers/i18n';
-import isDev from 'helpers/is-dev';
-import getJobOrigin, { getRefModule } from 'helpers/job-origin';
-import moduleOffsets from 'app/constants/layer-module/module-offsets';
-import Progress from 'app/actions/progress-caller';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import storage from 'implementations/storage';
-import Websocket from 'helpers/websocket';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IBaseConfig, IFcodeConfig } from 'interfaces/ITaskConfig';
-import { modelsWithModules } from 'app/constants/layer-module/layer-modules';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConfig from '@core/helpers/api/alert-config';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import fs from '@app/implementations/fileSystem';
+import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
+import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
+import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
+import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import Progress from '@core/app/actions/progress-caller';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import storage from '@app/implementations/storage';
+import Websocket from '@core/helpers/websocket';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
+import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 
 export const getExportOpt = (
   opt: IBaseConfig,
-  args?: string[]
+  args?: string[],
 ): {
   // without args, return config
   config?: IFcodeConfig;
@@ -340,7 +340,7 @@ export default (parserOpts: { type?: string; onFatal?: (data) => void }) => {
     },
     gcodeToFcode(
       taskData: { arrayBuffer: ArrayBuffer; thumbnailSize: number; size: number },
-      opts
+      opts,
     ) {
       const $deferred = $.Deferred();
       const warningCollection = [];
@@ -554,7 +554,7 @@ export default (parserOpts: { type?: string; onFatal?: (data) => void }) => {
                   .replace(/</g, '&lt;');
                 svgString = svgString.replace(
                   `xlink:href="${hrefCleaned}"`,
-                  `xlink:href="${newPath}"`
+                  `xlink:href="${newPath}"`,
                 );
                 continue;
               }

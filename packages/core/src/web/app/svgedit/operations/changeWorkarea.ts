@@ -1,12 +1,15 @@
-import beamboxPreferences from 'app/actions/beambox/beambox-preference';
-import openBottomBoundaryDrawer from 'app/actions/beambox/open-bottom-boundary-drawer';
-import workareaManager from 'app/svgedit/workarea';
-import { changeBeamboxPreferenceValue } from 'app/svgedit/history/beamboxPreferenceCommand';
-import { ICommand } from 'interfaces/IHistory';
-import { toggleFullColorAfterWorkareaChange } from 'helpers/layer/layer-config-helper';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import beamboxPreferences from '@core/app/actions/beambox/beambox-preference';
+import openBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
+import workareaManager from '@core/app/svgedit/workarea';
+import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import { ICommand } from '@core/interfaces/IHistory';
+import { toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
-const changeWorkarea = (workarea: WorkAreaModel, opts: { toggleModule?: boolean } = {}): ICommand => {
+const changeWorkarea = (
+  workarea: WorkAreaModel,
+  opts: { toggleModule?: boolean } = {},
+): ICommand => {
   const { toggleModule = true } = opts;
   const cmd = changeBeamboxPreferenceValue('workarea', workarea);
   const postWorkareaChange = () => {

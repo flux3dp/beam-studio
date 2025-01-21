@@ -1,17 +1,19 @@
-/* eslint-disable import/first */
 import React from 'react';
+
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 const mockOnClick1 = jest.fn();
 const mockOnClick2 = jest.fn();
 const mockUpdateValue = jest.fn();
 const mockStorage = jest.fn();
-jest.mock('implementations/storage', () => ({
+
+jest.mock('@app/implementations/storage', () => ({
   get: (key) => mockStorage(key),
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -20,42 +22,45 @@ const distVert = jest.fn();
 const groupSelectedElements = jest.fn();
 const ungroupSelectedElement = jest.fn();
 const booleanOperationSelectedElements = jest.fn();
+
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Editor: {
+      booleanOperationSelectedElements,
       distHori,
       distVert,
       groupSelectedElements,
       ungroupSelectedElement,
-      booleanOperationSelectedElements,
     },
   });
 });
 
 const mockActions = [
   { icon: <span>mock icon 1</span>, label: 'mock action 1', onClick: mockOnClick1 },
-  { icon: <span>mock icon 2</span>, label: 'mock action 2', onClick: mockOnClick2, disabled: true },
+  { disabled: true, icon: <span>mock icon 2</span>, label: 'mock action 2', onClick: mockOnClick2 },
 ];
 
-import { ObjectPanelContextProvider } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+
 import ObjectPanelItem from './ObjectPanelItem';
 
-const MockNumberItem = ({ id, unit, decimal }: { id: string; unit?: string; decimal?: number }) => {
+const MockNumberItem = ({ decimal, id, unit }: { decimal?: number; id: string; unit?: string }) => {
   const [value, setValue] = React.useState(1);
+
   return (
     <ObjectPanelContextProvider>
       <ObjectPanelItem.Mask />
       <ObjectPanelItem.Number
+        decimal={decimal}
         id={id}
-        value={value}
+        label="mock-label"
         max={50}
+        unit={unit}
         updateValue={(val) => {
           mockUpdateValue(val);
           setValue(val);
         }}
-        label="mock-label"
-        unit={unit}
-        decimal={decimal}
+        value={value}
       />
     </ObjectPanelContextProvider>
   );
@@ -64,24 +69,25 @@ const MockNumberItem = ({ id, unit, decimal }: { id: string; unit?: string; deci
 const MockSelect = ({
   options,
 }: {
-  options: {
-    label: string | JSX.Element;
-    value: string | number;
-  }[];
+  options: Array<{
+    label: React.JSX.Element | string;
+    value: number | string;
+  }>;
 }) => {
-  const [value, setValue] = React.useState<string | number>(1);
+  const [value, setValue] = React.useState<number | string>(1);
+
   return (
     <ObjectPanelContextProvider>
       <ObjectPanelItem.Mask />
       <ObjectPanelItem.Select
         id="mock-select"
-        selected={{ value, label: `display label ${value}` }}
-        options={options}
+        label="mock-label"
         onChange={(val) => {
           mockUpdateValue(val);
           setValue(val);
         }}
-        label="mock-label"
+        options={options}
+        selected={{ label: `display label ${value}`, value }}
       />
     </ObjectPanelContextProvider>
   );
@@ -94,6 +100,7 @@ describe('should render correctly', () => {
 
   test('divider', () => {
     const { container } = render(<ObjectPanelItem.Divider />);
+
     expect(container).toMatchSnapshot();
   });
 
@@ -101,13 +108,14 @@ describe('should render correctly', () => {
     test('disabled', () => {
       const { container } = render(
         <ObjectPanelItem.Item
-          id="mock-item"
           content={<div>mock content</div>}
+          disabled
+          id="mock-item"
           label="mock-label"
           onClick={mockOnClick1}
-          disabled
-        />
+        />,
       );
+
       expect(container).toMatchSnapshot();
     });
 
@@ -115,13 +123,14 @@ describe('should render correctly', () => {
       const { container } = render(
         <ObjectPanelContextProvider>
           <ObjectPanelItem.Item
-            id="mock-item"
             content={<div>mock content</div>}
+            id="mock-item"
             label="mock-label"
             onClick={mockOnClick1}
           />
-        </ObjectPanelContextProvider>
+        </ObjectPanelContextProvider>,
       );
+
       expect(container).toMatchSnapshot();
       expect(mockOnClick1).toBeCalledTimes(0);
       fireEvent.click(container.querySelector('div.object-panel-item'));
@@ -134,13 +143,14 @@ describe('should render correctly', () => {
     test('disabled', () => {
       const { container } = render(
         <ObjectPanelItem.ActionList
-          id="mock-action-list"
           actions={mockActions}
           content={<div>mock content</div>}
-          label="mock-label"
           disabled
-        />
+          id="mock-action-list"
+          label="mock-label"
+        />,
       );
+
       expect(container).toMatchSnapshot();
     });
 
@@ -148,21 +158,23 @@ describe('should render correctly', () => {
       const { baseElement, container, getByText } = render(
         <ObjectPanelContextProvider>
           <ObjectPanelItem.ActionList
-            id="mock-action-list"
             actions={mockActions}
             content={<div>mock content</div>}
+            id="mock-action-list"
             label="mock-label"
           />
-        </ObjectPanelContextProvider>
+        </ObjectPanelContextProvider>,
       );
+
       fireEvent.click(container.querySelector('div.object-panel-item'));
       expect(baseElement).toMatchSnapshot();
       expect(mockOnClick1).toBeCalledTimes(0);
       fireEvent.click(getByText('mock action 1'));
       expect(mockOnClick1).toBeCalledTimes(1);
       expect(baseElement.querySelector('div.action')).toHaveClass('active');
-      await waitFor(() =>
-        expect(baseElement.querySelector('div.action')).not.toHaveClass('active')
+      await waitFor(
+        () => expect(baseElement.querySelector('div.action')).not.toHaveClass('active'),
+        { timeout: 2000 },
       );
       fireEvent.click(getByText('mock action 2'));
       expect(mockOnClick2).toBeCalledTimes(0);
@@ -173,13 +185,17 @@ describe('should render correctly', () => {
   describe('number item', () => {
     test('when unit is mm', async () => {
       mockStorage.mockReturnValue('mm');
+
       const { baseElement, container, getByText } = render(
-        <MockNumberItem id="mock-number-item-mm" />
+        <MockNumberItem id="mock-number-item-mm" />,
       );
+
       expect(container).toMatchSnapshot();
+
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('1');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -235,13 +251,17 @@ describe('should render correctly', () => {
 
     test('when unit is inch', async () => {
       mockStorage.mockReturnValue('inches');
+
       const { baseElement, container, getByText } = render(
-        <MockNumberItem id="mock-number-item-inch" />
+        <MockNumberItem id="mock-number-item-inch" />,
       );
+
       expect(container).toMatchSnapshot();
+
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('0.0394');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -279,13 +299,17 @@ describe('should render correctly', () => {
 
     test('when unit is degree', async () => {
       mockStorage.mockReturnValue('inches');
+
       const { baseElement, container } = render(
-        <MockNumberItem id="mock-number-item-angle" unit="degree" />
+        <MockNumberItem id="mock-number-item-angle" unit="degree" />,
       );
+
       expect(container).toMatchSnapshot();
+
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('1°');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -308,11 +332,12 @@ describe('should render correctly', () => {
 
     test('when decimal is given', async () => {
       const { baseElement, getByText } = render(
-        <MockNumberItem id="mock-number-item-integer" decimal={3} />
+        <MockNumberItem decimal={3} id="mock-number-item-integer" />,
       );
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('1');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -334,11 +359,12 @@ describe('should render correctly', () => {
 
     test('when decimal is 0', async () => {
       const { baseElement, getByText } = render(
-        <MockNumberItem id="mock-number-item-integer" decimal={0} />
+        <MockNumberItem decimal={0} id="mock-number-item-integer" />,
       );
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('1');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -353,6 +379,7 @@ describe('should render correctly', () => {
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayBtn = baseElement.querySelector('button.number-item');
+
       expect(mask).toHaveClass('hide');
       expect(displayBtn).toHaveTextContent('1');
       expect(objectPanelItem).not.toHaveClass('active');
@@ -374,24 +401,29 @@ describe('should render correctly', () => {
 
   describe('select', () => {
     test('with only one option', () => {
-      const { container } = render(<MockSelect options={[{ value: 1, label: 'option-1' }]} />);
+      const { container } = render(<MockSelect options={[{ label: 'option-1', value: 1 }]} />);
+
       expect(container).toMatchSnapshot();
     });
 
     test('with multiple options', async () => {
       mockStorage.mockReturnValue('inches');
+
       const { baseElement, container, getByText } = render(
         <MockSelect
           options={[
-            { value: 1, label: 'option-1' },
-            { value: 2, label: 'option-2' },
+            { label: 'option-1', value: 1 },
+            { label: 'option-2', value: 2 },
           ]}
-        />
+        />,
       );
+
       expect(container).toMatchSnapshot();
+
       const mask = baseElement.querySelector('div.mask');
       const objectPanelItem = baseElement.querySelector('div.object-panel-item');
       const displayContent = baseElement.querySelector('.selected-content');
+
       expect(mask).toHaveClass('hide');
       expect(displayContent).toHaveTextContent('display label 1');
       expect(objectPanelItem).not.toHaveClass('active');

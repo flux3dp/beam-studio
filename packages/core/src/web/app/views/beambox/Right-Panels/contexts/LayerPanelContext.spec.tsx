@@ -1,23 +1,23 @@
 import React, { useContext } from 'react';
 import { act, render } from '@testing-library/react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { LayerPanelContextProvider, LayerPanelContext } from './LayerPanelContext';
 
 const mockForceUpdate = jest.fn();
-jest.mock('helpers/use-force-update', () => () => mockForceUpdate);
+jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 
 const mockDoLayersContainsVector = jest.fn();
 jest.mock(
-  'helpers/layer/check-vector',
+  '@core/helpers/layer/check-vector',
   () =>
     (...args) =>
-      mockDoLayersContainsVector(...args)
+      mockDoLayersContainsVector(...args),
 );
 
 const mockGetLayerElementByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
@@ -32,7 +32,7 @@ describe('test LayerPanelContext', () => {
     const { container, unmount } = render(
       <LayerPanelContextProvider>
         <MockChild />
-      </LayerPanelContextProvider>
+      </LayerPanelContextProvider>,
     );
     expect(layerPanelEventEmitter.eventNames().length).toBe(5);
     expect(mockDoLayersContainsVector).toBeCalledTimes(2);

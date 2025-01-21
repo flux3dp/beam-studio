@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
 
-import * as TutorialController from 'app/views/tutorials/tutorialController';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { PanelType } from 'app/constants/right-panel-types';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
+import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 interface Props {
   panelType: PanelType;
@@ -72,13 +72,13 @@ function Tab({ panelType, switchPanel }: Props): JSX.Element {
           isObjectDisabled || panelType === PanelType.Object || panelType === PanelType.PathEdit
             ? null
             : () => {
-              switchPanel();
-              if (
-                TutorialController.getNextStepRequirement() === TutorialConstants.TO_OBJECT_PANEL
-              ) {
-                TutorialController.handleNextStep();
+                switchPanel();
+                if (
+                  TutorialController.getNextStepRequirement() === TutorialConstants.TO_OBJECT_PANEL
+                ) {
+                  TutorialController.handleNextStep();
+                }
               }
-            }
         }
         title={`${objectTitle} (O)`}
       >

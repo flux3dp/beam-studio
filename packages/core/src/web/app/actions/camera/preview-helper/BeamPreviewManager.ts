@@ -1,19 +1,19 @@
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import ErrorConstants from 'app/constants/error-constants';
-import i18n from 'helpers/i18n';
-import MessageCaller from 'app/actions/message-caller';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from 'app/actions/progress-caller';
-import versionChecker from 'helpers/version-checker';
-import { CameraConfig, CameraParameters } from 'interfaces/Camera';
-import { getSupportInfo } from 'app/constants/add-on';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import ErrorConstants from '@core/app/constants/error-constants';
+import i18n from '@core/helpers/i18n';
+import MessageCaller from '@core/app/actions/message-caller';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import progressCaller from '@core/app/actions/progress-caller';
+import versionChecker from '@core/helpers/version-checker';
+import { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -158,10 +158,10 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
       y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
       angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
       scaleRatioX: Number(
-        (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]
+        (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1],
       ),
       scaleRatioY: Number(
-        (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]
+        (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1],
       ),
     };
     if (this.cameraOffset.x === 0 && this.cameraOffset.y === 0) {
@@ -213,7 +213,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
 
   preprocessImage = async (
     imgUrl: string,
-    opts: { overlapRatio?: number; overlapFlag?: number } = {}
+    opts: { overlapRatio?: number; overlapFlag?: number } = {},
   ): Promise<HTMLCanvasElement> => {
     const img = new Image();
     await new Promise((resolve) => {
@@ -265,7 +265,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
   preview = async (
     x: number,
     y: number,
-    opts: { overlapRatio?: number; overlapFlag?: number } = {}
+    opts: { overlapRatio?: number; overlapFlag?: number } = {},
   ): Promise<boolean> => {
     if (this.ended) return false;
     const { overlapRatio = 0, overlapFlag } = opts;
@@ -285,7 +285,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     y1: number,
     x2: number,
     y2: number,
-    { overlapRatio = 0.05 }: { overlapRatio?: number } = {}
+    { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
   ): Promise<boolean> => {
     const getPoints = () => {
       const size = (() => {

@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getWorkarea, WorkArea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
-import { PreviewSpeedLevel } from 'app/actions/beambox/constant';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import shortcuts from 'helpers/shortcuts';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getWorkarea, WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
+import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import shortcuts from '@core/helpers/shortcuts';
 import { Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
@@ -54,7 +54,7 @@ class BasePreviewManager implements PreviewManager {
   public preview = async (
     x: number,
     y: number,
-    opts?: { overlapRatio?: number; overlapFlag?: number }
+    opts?: { overlapRatio?: number; overlapFlag?: number },
   ): Promise<boolean> => {
     throw new Error('Method not implemented.');
   };
@@ -63,7 +63,7 @@ class BasePreviewManager implements PreviewManager {
     x1: number,
     y1: number,
     x2: number,
-    y2: number
+    y2: number,
   ): Promise<boolean> => {
     throw new Error('Method not implemented.');
   };
@@ -80,7 +80,7 @@ class BasePreviewManager implements PreviewManager {
     }: {
       getPoints?: () => Array<{ point: [number, number]; overlapFlag: number }>;
       overlapRatio?: number;
-    } = {}
+    } = {},
   ): Promise<boolean> => {
     const points = getPoints();
 

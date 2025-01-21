@@ -1,11 +1,11 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import i18n from 'helpers/i18n';
-import { CurveMeasurer, InteractiveOptions } from 'interfaces/CurveMeasurer';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import i18n from '@core/helpers/i18n';
+import { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMeasurer';
 
-import { MeasureData } from 'interfaces/ICurveEngraving';
+import { MeasureData } from '@core/interfaces/ICurveEngraving';
 import BaseCurveMeasurer from './base';
 
 export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements CurveMeasurer {
@@ -70,7 +70,7 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
   async measurePoints(
     curData: MeasureData,
     targetIndices: Array<number>,
-    opts?: InteractiveOptions
+    opts?: InteractiveOptions,
   ): Promise<MeasureData> {
     if (!this.hasTakenReference) {
       const res = await this.showTakeReferenceDialog();

@@ -2,24 +2,24 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import i18n from 'helpers/i18n';
+import i18n from '@core/helpers/i18n';
 
 const mockShowCropPanel = jest.fn();
 const showPhotoEditPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showCropPanel: (...args) => mockShowCropPanel(...args),
   showPhotoEditPanel,
   showSvgNestButtons: (...args) => mockSvgNestButtons(...args),
 }));
 
 const getFileFromDialog = jest.fn();
-jest.mock('implementations/dialog', () => ({
+jest.mock('@app/implementations/dialog', () => ({
   getFileFromDialog,
 }));
 
 const convertTextToPath = jest.fn();
-jest.mock('app/actions/beambox/font-funcs', () => ({
+jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   convertTextToPath,
 }));
 
@@ -28,7 +28,7 @@ const generateStampBevel = jest.fn();
 const colorInvert = jest.fn();
 const mockRemoveBackground = jest.fn();
 const mockPotrace = jest.fn();
-jest.mock('helpers/image-edit', () => ({
+jest.mock('@core/helpers/image-edit', () => ({
   generateStampBevel,
   colorInvert,
   potrace: (...args) => mockPotrace(...args),
@@ -37,51 +37,51 @@ jest.mock('helpers/image-edit', () => ({
 }));
 
 const renderText = jest.fn();
-jest.mock('app/svgedit/text/textedit', () => ({
+jest.mock('@core/app/svgedit/text/textedit', () => ({
   renderText,
 }));
 
 const editTextPath = jest.fn();
 const detachText = jest.fn();
 const attachTextToPath = jest.fn();
-jest.mock('app/actions/beambox/textPathEdit', () => ({
+jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
   editPath: editTextPath,
   detachText,
   attachTextToPath,
 }));
 
 const mockShowRotaryWarped = jest.fn();
-jest.mock('app/views/dialogs/image-edit/RotaryWarped', () => ({
+jest.mock('@core/app/views/dialogs/image-edit/RotaryWarped', () => ({
   showRotaryWarped: (...args) => mockShowRotaryWarped(...args),
 }));
 
 const openNonstopProgress = jest.fn();
 const popById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress,
   popById,
 }));
 
 const toSelectMode = jest.fn();
-jest.mock('app/svgedit/text/textactions', () => ({
+jest.mock('@core/app/svgedit/text/textactions', () => ({
   isEditing: true,
   toSelectMode,
 }));
 
-jest.mock('helpers/web-need-connection-helper', () => (callback) => callback());
+jest.mock('@core/helpers/web-need-connection-helper', () => (callback) => callback());
 
 const mockCheckConnection = jest.fn();
-jest.mock('helpers/api/discover', () => ({
+jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: mockCheckConnection,
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
 const isMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
 }));
 
@@ -117,10 +117,10 @@ import ActionsPanel from './ActionsPanel';
 
 const mockUpdateElementColor = jest.fn();
 jest.mock(
-  'helpers/color/updateElementColor',
+  '@core/helpers/color/updateElementColor',
   () =>
     (...args) =>
-      mockUpdateElementColor(...args)
+      mockUpdateElementColor(...args),
 );
 
 function tick() {
@@ -133,10 +133,10 @@ const tActionPanel = i18n.lang.beambox.right_panel.object_panel.actions_panel;
 
 const mockAutoFit = jest.fn();
 jest.mock(
-  'app/svgedit/operations/autoFit',
+  '@core/app/svgedit/operations/autoFit',
   () =>
     (...args) =>
-      mockAutoFit(...args)
+      mockAutoFit(...args),
 );
 
 describe('should render correctly', () => {
@@ -152,7 +152,7 @@ describe('should render correctly', () => {
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -234,7 +234,7 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -264,7 +264,7 @@ describe('should render correctly', () => {
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -283,7 +283,7 @@ describe('should render correctly', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -300,7 +300,7 @@ describe('should render correctly', () => {
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -317,7 +317,7 @@ describe('should render correctly', () => {
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -334,7 +334,7 @@ describe('should render correctly', () => {
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -351,7 +351,7 @@ describe('should render correctly', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -372,7 +372,7 @@ describe('should render correctly', () => {
         </g>
       `;
       const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_3')} />
+        <ActionsPanel elem={document.getElementById('svg_3')} />,
       );
       expect(container).toMatchSnapshot();
 
@@ -387,7 +387,7 @@ describe('should render correctly', () => {
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
       const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_1')} />
+        <ActionsPanel elem={document.getElementById('svg_1')} />,
       );
       expect(container).toMatchSnapshot();
 
@@ -413,7 +413,7 @@ describe('should render correctly in mobile', () => {
   test('image', async () => {
     document.body.innerHTML = '<image id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -497,7 +497,7 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<text id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -527,7 +527,7 @@ describe('should render correctly in mobile', () => {
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -546,7 +546,7 @@ describe('should render correctly in mobile', () => {
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -563,7 +563,7 @@ describe('should render correctly in mobile', () => {
   test('ellipse', () => {
     document.body.innerHTML = '<ellipse id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -580,7 +580,7 @@ describe('should render correctly in mobile', () => {
   test('polygon', () => {
     document.body.innerHTML = '<polygon id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -597,7 +597,7 @@ describe('should render correctly in mobile', () => {
   test('line', () => {
     document.body.innerHTML = '<line id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -614,7 +614,7 @@ describe('should render correctly in mobile', () => {
   test('use', () => {
     document.body.innerHTML = '<use id="svg_1" />';
     const { container, getByText } = render(
-      <ActionsPanel elem={document.getElementById('svg_1')} />
+      <ActionsPanel elem={document.getElementById('svg_1')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -635,7 +635,7 @@ describe('should render correctly in mobile', () => {
         </g>
       `;
       const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_3')} />
+        <ActionsPanel elem={document.getElementById('svg_3')} />,
       );
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.offset));
@@ -649,7 +649,7 @@ describe('should render correctly in mobile', () => {
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
       const { container, getByText } = render(
-        <ActionsPanel elem={document.getElementById('svg_1')} />
+        <ActionsPanel elem={document.getElementById('svg_1')} />,
       );
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.array));

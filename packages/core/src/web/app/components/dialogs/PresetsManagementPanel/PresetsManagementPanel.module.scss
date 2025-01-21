@@ -1,5 +1,5 @@
-@use 'styles/variables' as variables;
-@use 'styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 div.modal-wrap {
   overflow: unset !important;

@@ -1,5 +1,5 @@
 import JSEncrypt from 'jsencrypt';
-import storage from 'implementations/storage';
+import storage from '@app/implementations/storage';
 
 const RSA_KEY_NAME = 'flux-rsa-key';
 

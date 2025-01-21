@@ -1,15 +1,15 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-underscore-dangle */
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
-import updateElementColor from 'helpers/color/updateElementColor';
-import { fitPath } from 'helpers/bezier-fit-curve';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { fitPath } from '@core/helpers/bezier-fit-curve';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import ClipperBase from './clipper';
 import getClipperLib from './getClipperLib';
@@ -32,7 +32,7 @@ const offsetElements = async (
   dir: number,
   dist: number,
   cornerType: 'round' | 'sharp',
-  elems?: SVGElement[]
+  elems?: SVGElement[],
 ): Promise<void> => {
   progressCaller.openNonstopProgress({
     id: 'offset-path',

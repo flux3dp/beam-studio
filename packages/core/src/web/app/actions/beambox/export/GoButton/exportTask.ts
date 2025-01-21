@@ -1,24 +1,24 @@
 /* eslint-disable import/prefer-default-export */
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import checkOldFirmware from 'helpers/device/checkOldFirmware';
-import ExportFuncs from 'app/actions/beambox/export-funcs';
-import isDev from 'helpers/is-dev';
-import promarkButtonHandler from 'helpers/device/promark/promark-button-handler';
-import VersionChecker from 'helpers/version-checker';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
+import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import isDev from '@core/helpers/is-dev';
+import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
+import VersionChecker from '@core/helpers/version-checker';
 
-import { executeFirmwareUpdate } from 'app/actions/beambox/menuDeviceActions';
-import { getSupportInfo } from 'app/constants/add-on';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { ILang } from 'interfaces/ILang';
+import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { ILang } from '@core/interfaces/ILang';
 
 export const exportTask = async (
   device: IDeviceInfo,
   byHandler: boolean,
-  lang: ILang
+  lang: ILang,
 ): Promise<void> => {
   const showForceUpdateAlert = (id: string) => {
     alertCaller.popUp({

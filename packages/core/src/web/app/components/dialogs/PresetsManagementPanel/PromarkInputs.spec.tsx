@@ -40,7 +40,7 @@ const switchTests = [
   { key: 'crossHatch', value: true },
 ];
 
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getPromarkLimit: () => ({
     pulseWidth: { min: 2, max: 350 },
     frequency: { min: 1, max: 4000 },
@@ -60,7 +60,7 @@ describe('PromarkInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -72,7 +72,7 @@ describe('PromarkInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     const input = getByTestId(key);
     fireEvent.change(input, { target: { value } });
@@ -87,7 +87,7 @@ describe('PromarkInputs', () => {
         maxSpeed={maxSpeed}
         minSpeed={minSpeed}
         handleChange={handleChange}
-      />
+      />,
     );
     const input = getByTestId(key);
     fireEvent.click(input);

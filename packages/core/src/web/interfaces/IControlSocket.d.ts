@@ -1,6 +1,6 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import { SwiftrayClient } from 'helpers/api/swiftray-client';
+import { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import { ButtonState, Field, LensCorrection } from './Promark';
 // eslint-disable-next-line import/no-cycle
@@ -92,7 +92,7 @@ interface IControlSocket extends EventEmitter {
   getCartridgeChipData?: () => Promise<{ status: string; data: { result: RawChipSettings } }>;
   cartridgeIOJsonRpcReq?: (
     method: string,
-    params: unknown
+    params: unknown,
   ) => Promise<{ status: string; data: { result: { hash: string; sign: string } } }>;
   enterRedLaserMeasureMode?: () => Promise<void>;
   endRedLaserMeasureMode?: () => Promise<void>;

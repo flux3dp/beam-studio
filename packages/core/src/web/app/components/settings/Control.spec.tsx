@@ -2,12 +2,12 @@ import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open,
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
@@ -19,14 +19,14 @@ describe('test Control', () => {
     const { container, rerender } = render(
       <Control label="Flux">
         <div>Hello World</div>
-      </Control>
+      </Control>,
     );
     expect(container).toMatchSnapshot();
 
     rerender(
       <Control label="Flux" url="https://www.flux3dp.com" warningText="Warning!!">
         <div>Hello World</div>
-      </Control>
+      </Control>,
     );
     expect(container).toMatchSnapshot();
 
@@ -40,7 +40,7 @@ describe('test Control', () => {
     const { container } = render(
       <Control label="Flux">
         <div>Hello World</div>
-      </Control>
+      </Control>,
     );
     expect(container).toMatchSnapshot();
   });

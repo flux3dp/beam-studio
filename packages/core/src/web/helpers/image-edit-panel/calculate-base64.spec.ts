@@ -1,7 +1,12 @@
 import calculateBase64 from './calculate-base64';
 
 const mockImageData = jest.fn();
-jest.mock('helpers/image-data', () => (...args) => mockImageData(...args));
+jest.mock(
+  '@core/helpers/image-data',
+  () =>
+    (...args) =>
+      mockImageData(...args),
+);
 
 describe('test calculateBase64', () => {
   beforeEach(() => {

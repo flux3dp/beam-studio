@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { Button } from 'antd';
 
-import DimensionPanelIcons from 'app/icons/dimension-panel/DimensionPanelIcons';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from 'helpers/useI18n';
-import { useIsMobile } from 'helpers/system-helper';
+import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import useI18n from '@core/helpers/useI18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 interface Props {
   isLocked: boolean;
@@ -18,9 +18,7 @@ const RatioLock = ({ isLocked, onClick }: Props): JSX.Element => {
     return (
       <ObjectPanelItem.Item
         id="lock"
-        content={
-          isLocked ? <DimensionPanelIcons.Locked /> : <DimensionPanelIcons.Unlocked />
-        }
+        content={isLocked ? <DimensionPanelIcons.Locked /> : <DimensionPanelIcons.Unlocked />}
         onClick={onClick}
       />
     );

@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import CanvasController from './CanvasController';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
     reset: 'Reset',
     zoom: 'Zoom',
@@ -21,13 +21,15 @@ const mockSetResetKey = jest.fn().mockImplementation((fn) => {
   mockResetKey = fn(mockResetKey);
 });
 
-jest.mock('app/contexts/BoxgenContext', () => ({
+jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext(null),
 }));
 
 describe('test CanvasController', () => {
   test('should behave correctly', () => {
-    const { container } = render(<CanvasController setResetKey={mockSetResetKey} setZoomKey={mockSetZoomKey} />);
+    const { container } = render(
+      <CanvasController setResetKey={mockSetResetKey} setZoomKey={mockSetZoomKey} />,
+    );
     expect(container).toMatchSnapshot();
     const buttons = container.querySelectorAll('.button');
     fireEvent.click(buttons[0]);

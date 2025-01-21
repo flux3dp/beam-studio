@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import { objectPanelInputTheme } from 'app/constants/antd-config';
-import { useIsMobile } from 'helpers/system-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';
@@ -26,7 +26,10 @@ const typeKeyMap = {
 
 const SizeInput = ({ type, value, onChange, onBlur }: Props): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
+  const objectPanelEventEmitter = useMemo(
+    () => eventEmitterFactory.createEventEmitter('object-panel'),
+    [],
+  );
   const isMobile = useIsMobile();
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const unit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
@@ -39,11 +42,11 @@ const SizeInput = ({ type, value, onChange, onBlur }: Props): JSX.Element => {
         if (newVal === undefined) return;
         inputRef.current.value = newVal.toFixed(precision);
       }
-    }
+    };
     objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', handler);
     return () => {
       objectPanelEventEmitter.removeListener('UPDATE_DIMENSION_VALUES', handler);
-    }
+    };
   }, [type, unit, precision, objectPanelEventEmitter]);
 
   const label = useMemo<string | JSX.Element>(() => {
@@ -59,7 +62,7 @@ const SizeInput = ({ type, value, onChange, onBlur }: Props): JSX.Element => {
       const newVal = type === 'rx' || type === 'ry' ? val / 2 : val;
       onChange(changeKey, newVal);
     },
-    [onChange, type]
+    [onChange, type],
   );
 
   if (isMobile) {
@@ -76,22 +79,22 @@ const SizeInput = ({ type, value, onChange, onBlur }: Props): JSX.Element => {
   return (
     <div className={styles.dimension}>
       <div className={styles.label}>{label}</div>
-        <UnitInput
-          ref={inputRef}
-          id={`${type}_size`}
-          className={styles.input}
-          theme={objectPanelInputTheme}
-          underline
-          unit={unit}
-          isInch={isInch}
-          precision={precision}
-          step={isInch ? 2.54 : 1}
-          value={value}
-          onBlur={onBlur}
-          controls={false}
-          onChange={handleChange}
-          min={0}
-        />
+      <UnitInput
+        ref={inputRef}
+        id={`${type}_size`}
+        className={styles.input}
+        theme={objectPanelInputTheme}
+        underline
+        unit={unit}
+        isInch={isInch}
+        precision={precision}
+        step={isInch ? 2.54 : 1}
+        value={value}
+        onBlur={onBlur}
+        controls={false}
+        onChange={handleChange}
+        min={0}
+      />
     </div>
   );
 };

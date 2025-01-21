@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import configOptions from 'app/constants/config-options';
-import Select from 'app/widgets/AntdSelect';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from 'interfaces/ILayerConfig';
-import { baseConfig } from 'helpers/layer/layer-config-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import configOptions from '@core/app/constants/config-options';
+import Select from '@core/app/widgets/AntdSelect';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
+import { baseConfig } from '@core/helpers/layer/layer-config-helper';
 
 import styles from './PresetsManagementPanel.module.scss';
 
@@ -36,7 +36,7 @@ const PrintingInputs = ({
       printingSpeedOptions: configOptions.getPrintingSpeedOptions(lang),
       multipassOptions: configOptions.multipassOptions,
     }),
-    [lang]
+    [lang],
   );
   const tLaserPanel = lang.beambox.right_panel.laser_panel;
 

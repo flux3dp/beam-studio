@@ -8,33 +8,33 @@ import classNames from 'classnames';
 import React from 'react';
 import { mat4, vec3 } from 'gl-matrix';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import checkDeviceStatus from 'helpers/check-device-status';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import dialogCaller from 'app/actions/dialog-caller';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import exportFuncs from 'app/actions/beambox/export-funcs';
-import getDevice from 'helpers/device/get-device';
-import getJobOrigin from 'helpers/job-origin';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import layoutConstants from 'app/constants/layout-constants';
-import Pointable from 'app/components/beambox/path-preview/Pointable';
-import progressCaller from 'app/actions/progress-caller';
-import SidePanel from 'app/components/beambox/path-preview/SidePanel';
-import units from 'helpers/units';
-import VersionChecker from 'helpers/version-checker';
-import workareaManager from 'app/svgedit/workarea';
-import ZoomBlock from 'app/components/beambox/ZoomBlock';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { dpiTextMap } from 'app/actions/beambox/export-funcs-swiftray';
-import { DrawCommands } from 'helpers/path-preview/draw-commands';
-import { GcodePreview } from 'helpers/path-preview/draw-commands/GcodePreview';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { getSupportInfo } from 'app/constants/add-on';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import getDevice from '@core/helpers/device/get-device';
+import getJobOrigin from '@core/helpers/job-origin';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import layoutConstants from '@core/app/constants/layout-constants';
+import Pointable from '@core/app/components/beambox/path-preview/Pointable';
+import progressCaller from '@core/app/actions/progress-caller';
+import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
+import units from '@core/helpers/units';
+import VersionChecker from '@core/helpers/version-checker';
+import workareaManager from '@core/app/svgedit/workarea';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
+import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
+import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getSupportInfo } from '@core/app/constants/add-on';
 
 import ProgressBar from './ProgressBar';
 import { parseGcode } from '../../../views/beambox/tmpParseGcode';
@@ -94,7 +94,7 @@ function initShaderProgram(gl, vsSource, fsSource) {
   // 錯誤處理
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     console.error(
-      `Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`
+      `Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`,
     );
     return null;
   }
@@ -193,7 +193,7 @@ function drawScene(gl, programInfo, buffers, camera, isInverting, showTraversal,
       type,
       normalize,
       stride,
-      offset
+      offset,
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
   }
@@ -277,7 +277,7 @@ function calcCamera({
       fovy,
       viewportWidth / viewportHeight,
       near,
-      far
+      far,
     );
   } else {
     // @ts-ignore
@@ -295,9 +295,9 @@ function calcCamera({
         -yBound,
         yBound,
         near,
-        far
+        far,
       ),
-      view
+      view,
     );
     fovy = 0;
   }
@@ -350,7 +350,7 @@ const drawTaskPreview = (
   drawCommands,
   workspace,
   camera,
-  drawingArgs: { isInverting?: boolean; showTraversal?: boolean; showRemaining?: boolean }
+  drawingArgs: { isInverting?: boolean; showTraversal?: boolean; showRemaining?: boolean },
 ) => {
   const { isInverting = false, showTraversal = false, showRemaining = false } = drawingArgs;
   const draw = () => {
@@ -363,7 +363,7 @@ const drawTaskPreview = (
       workspace.rotaryDiameter,
       isInverting,
       showTraversal,
-      showRemaining
+      showRemaining,
     );
   };
   cacheDrawing(draw, cachedDrawState, {
@@ -403,7 +403,7 @@ class Grid {
       offset = { x: 0, y: 0 },
       major = MAJOR_GRID_SPACING,
       minor = MINOR_GRID_SPACING,
-    }
+    },
   ) {
     if (!this.maingrid || !this.origin || this.width !== width || this.height !== height) {
       this.width = width;
@@ -532,7 +532,7 @@ class PathPreview extends React.Component<Props, State> {
       width: window.innerWidth - layoutConstants.sidePanelsWidth,
       height: Math.max(
         dimensions.height,
-        window.innerHeight - layoutConstants.topBarHeight - TOOLS_PANEL_HEIGHT
+        window.innerHeight - layoutConstants.topBarHeight - TOOLS_PANEL_HEIGHT,
       ),
       camera: defaultCamera,
       workspace: defaultWorkspace,
@@ -585,7 +585,7 @@ class PathPreview extends React.Component<Props, State> {
           ...attrs,
         },
       },
-      this.setCamera
+      this.setCamera,
     );
   };
 
@@ -651,7 +651,7 @@ class PathPreview extends React.Component<Props, State> {
         this.gcodePreview.setParsedGcode(
           parsedGcode,
           isPromark,
-          (dpiTextMap[BeamboxPreference.read('engrave_dpi')] || 254) / 25.4
+          (dpiTextMap[BeamboxPreference.read('engrave_dpi')] || 254) / 25.4,
         );
         this.simTimeMax =
           Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) *
@@ -685,7 +685,7 @@ class PathPreview extends React.Component<Props, State> {
       this.camera,
       isInverting,
       workspace.showTraversal,
-      showRemaining
+      showRemaining,
     );
 
     this.grid.draw(this.drawCommands, {
@@ -704,7 +704,7 @@ class PathPreview extends React.Component<Props, State> {
       this.drawCommands,
       workspace,
       this.camera,
-      { isInverting, showTraversal: workspace.showTraversal }
+      { isInverting, showTraversal: workspace.showTraversal },
     );
 
     if (this.position[0] !== 0 && this.position[1] !== 0) {
@@ -717,7 +717,7 @@ class PathPreview extends React.Component<Props, State> {
         0,
         this.position[0] + crossValue,
         -this.position[1],
-        0
+        0,
       );
       crossPoints.push(
         this.position[0],
@@ -725,7 +725,7 @@ class PathPreview extends React.Component<Props, State> {
         0,
         this.position[0],
         -this.position[1] + crossValue,
-        0
+        0,
       );
 
       const crossPosition = new Float32Array(crossPoints);
@@ -750,7 +750,7 @@ class PathPreview extends React.Component<Props, State> {
       height !==
         Math.max(
           dimensions.height,
-          document.getElementById('path-preview-panel').offsetHeight - 200
+          document.getElementById('path-preview-panel').offsetHeight - 200,
         )
     ) {
       this.setState(
@@ -758,10 +758,10 @@ class PathPreview extends React.Component<Props, State> {
           width: window.document.getElementById('path-preview-panel').offsetWidth,
           height: Math.max(
             dimensions.height,
-            window.document.getElementById('path-preview-panel').offsetHeight - TOOLS_PANEL_HEIGHT
+            window.document.getElementById('path-preview-panel').offsetHeight - TOOLS_PANEL_HEIGHT,
           ),
         },
-        this.setCamera
+        this.setCamera,
       );
     }
   };
@@ -928,7 +928,7 @@ class PathPreview extends React.Component<Props, State> {
             this.pointers[0].pageX,
             this.pointers[0].pageY,
             this.pointers[1].pageX,
-            this.pointers[1].pageY
+            this.pointers[1].pageY,
           );
           if (this.fingers && this.fingers.num === this.pointers.length) {
             if (this.pointers.length >= 2) {
@@ -1064,24 +1064,24 @@ class PathPreview extends React.Component<Props, State> {
     const controlButtons = [];
     if (playState === PlayState.STOP) {
       controlButtons.push(
-        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />
+        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />,
       );
       controlButtons.push(
-        <img key="stop" className="disabled" src="img/Stop.svg" title={LANG.stop} />
+        <img key="stop" className="disabled" src="img/Stop.svg" title={LANG.stop} />,
       );
     } else if (playState === PlayState.PLAY) {
       controlButtons.push(
-        <img key="pause" src="img/Pause.svg" title={LANG.pause} onClick={this.handlePause} />
+        <img key="pause" src="img/Pause.svg" title={LANG.pause} onClick={this.handlePause} />,
       );
       controlButtons.push(
-        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />
+        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />,
       );
     } else if (playState === PlayState.PAUSE) {
       controlButtons.push(
-        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />
+        <img key="play" src="img/Play.svg" title={LANG.play} onClick={this.handlePlay} />,
       );
       controlButtons.push(
-        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />
+        <img key="stop" src="img/Stop.svg" title={LANG.stop} onClick={this.handleStop} />,
       );
     }
     return <div className="play-control">{controlButtons}</div>;
@@ -1104,7 +1104,7 @@ class PathPreview extends React.Component<Props, State> {
     }
 
     return `${Math.ceil(this.gcodePreview.maxX - this.gcodePreview.minX)} x ${Math.ceil(
-      this.gcodePreview.maxY - this.gcodePreview.minY
+      this.gcodePreview.maxY - this.gcodePreview.minY,
     )} mm`;
   };
 
@@ -1378,7 +1378,7 @@ class PathPreview extends React.Component<Props, State> {
 
                 if (fastGradientGcodeList[i].indexOf('F16 4') > -1) {
                   const distBytesCalculation = Math.abs(
-                    (simTimeInfo.position[0] - startX) / (32 * resolution)
+                    (simTimeInfo.position[0] - startX) / (32 * resolution),
                   );
                   const paddingEmptyBytes = Math.floor(distBytesCalculation);
                   if (engravingLineCount > distBytesCalculation) {
@@ -1411,7 +1411,7 @@ class PathPreview extends React.Component<Props, State> {
                       fastGradientGcodeList[fixedIndex].match(/F16 3 ([-0-9]*)/);
                     const bytesInfo = parseInt(matchByteInfo[1], 10);
                     const smallDist = Math.floor(
-                      (distBytesCalculation - Math.floor(distBytesCalculation)) * 32
+                      (distBytesCalculation - Math.floor(distBytesCalculation)) * 32,
                     );
                     let bitwiseOperand = '';
 
@@ -1425,12 +1425,12 @@ class PathPreview extends React.Component<Props, State> {
                     // eslint-disable-next-line no-bitwise
                     modifiedGcodeList.push(`F16 3 ${bytesInfo & (bitwiseOperand as any)}`);
                     modifiedGcodeList = modifiedGcodeList.concat(
-                      fastGradientGcodeList.slice(fixedIndex + 1)
+                      fastGradientGcodeList.slice(fixedIndex + 1),
                     );
 
                     const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
                       modifiedGcodeList.join('\n'),
-                      thumbnail
+                      thumbnail,
                     );
                     let res = await deviceMaster.getReport();
                     if (res) {
@@ -1440,7 +1440,7 @@ class PathPreview extends React.Component<Props, State> {
                           device,
                           fcodeBlob,
                           thumbnailUrl,
-                          fileTimeCost
+                          fileTimeCost,
                         );
                       }
                     }
@@ -1488,7 +1488,7 @@ class PathPreview extends React.Component<Props, State> {
 
             preparation.push(`G1 U${U}`);
             preparation.push(
-              `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`
+              `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`,
             );
             preparation.push(`G1 F${F}`);
             preparation.push(`G1${isEngraving ? 'V' : 'S'}0`);
@@ -1496,7 +1496,7 @@ class PathPreview extends React.Component<Props, State> {
             modifiedGcodeList = preparation.concat(fastGradientGcodeList.slice(target));
             const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
               modifiedGcodeList.join('\n'),
-              thumbnail
+              thumbnail,
             );
             let res = await deviceMaster.getReport();
             if (res) {
@@ -1515,7 +1515,7 @@ class PathPreview extends React.Component<Props, State> {
           }
           preparation.push(`G1 U${U}`);
           preparation.push(
-            `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`
+            `G1 X${simTimeInfo.position[0].toFixed(4)} Y${simTimeInfo.position[1].toFixed(4)}`,
           );
           preparation.push(`G1 F${F}`);
           preparation.push(`G1${isEngraving ? 'V' : 'S'}0`);
@@ -1524,7 +1524,7 @@ class PathPreview extends React.Component<Props, State> {
 
           const { fcodeBlob, fileTimeCost } = await exportFuncs.gcodeToFcode(
             modifiedGcodeList.join('\n'),
-            thumbnail
+            thumbnail,
           );
           let res = await deviceMaster.getReport();
           if (res) {
@@ -1574,7 +1574,7 @@ class PathPreview extends React.Component<Props, State> {
     const adjX = vec3.scale(
       [],
       vec3.cross([], vec3.normalize([], vec3.sub([], camera.center, camera.eye)), camera.up),
-      -dx - scaledPanX
+      -dx - scaledPanX,
     );
     // @ts-ignore
     const adjY = vec3.scale([], camera.up, -dy - scaledPanY);
@@ -1613,7 +1613,7 @@ class PathPreview extends React.Component<Props, State> {
     // @ts-ignore
     const n = vec3.normalize(
       [],
-      vec3.cross([], camera.up, vec3.sub([], camera.eye, camera.center))
+      vec3.cross([], camera.up, vec3.sub([], camera.eye, camera.center)),
     );
     // console.log(camera);
     this.setCameraAttrs({
@@ -1622,14 +1622,14 @@ class PathPreview extends React.Component<Props, State> {
         [],
         camera.eye,
         // @ts-ignore
-        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy))
+        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy)),
       ),
       // @ts-ignore
       center: vec3.add(
         [],
         camera.center,
         // @ts-ignore
-        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy))
+        vec3.add([], vec3.scale([], n, -scaledDx), vec3.scale([], camera.up, -scaledDy)),
       ),
     });
   }

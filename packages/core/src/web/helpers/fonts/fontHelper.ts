@@ -1,11 +1,11 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import getUtilWS from 'helpers/api/utils-ws';
-import i18n from 'helpers/i18n';
-import isFluxPlusActive from 'helpers/is-flux-plus-active';
-import isWeb from 'helpers/is-web';
-import localFontHelper from 'implementations/localFontHelper';
-import progressCaller from 'app/actions/progress-caller';
-import { FontDescriptor, FontDescriptorKeys, FontHelper, WebFont } from 'interfaces/IFont';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import getUtilWS from '@core/helpers/api/utils-ws';
+import i18n from '@core/helpers/i18n';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
+import isWeb from '@core/helpers/is-web';
+import localFontHelper from '@app/implementations/localFontHelper';
+import progressCaller from '@core/app/actions/progress-caller';
+import { FontDescriptor, FontDescriptorKeys, FontHelper, WebFont } from '@core/interfaces/IFont';
 
 import fontNameMap from './fontNameMap';
 import googleFonts from './googleFonts';
@@ -183,7 +183,7 @@ export default {
             }
             controller.close();
           },
-        })
+        }),
       );
       if (resp.status !== 200) {
         progressCaller.popById('fetch-web-font');

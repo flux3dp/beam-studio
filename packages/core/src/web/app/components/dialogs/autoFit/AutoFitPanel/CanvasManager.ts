@@ -1,6 +1,6 @@
-import EmbeddedCanvasManager from 'app/widgets/FullWindowPanel/EmbeddedCanvasManager';
-import NS from 'app/constants/namespaces';
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
+import NS from '@core/app/constants/namespaces';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 export class AutoFitCanvasManager extends EmbeddedCanvasManager {
   private backgroundImage: SVGImageElement;
@@ -56,7 +56,7 @@ export class AutoFitCanvasManager extends EmbeddedCanvasManager {
         const path = document.createElementNS(NS.SVG, 'path');
         path.setAttribute(
           'd',
-          contour.map(([x, y], idx) => `${idx === 0 ? 'M' : 'L'}${x},${y}`).join(' ')
+          contour.map(([x, y], idx) => `${idx === 0 ? 'M' : 'L'}${x},${y}`).join(' '),
         );
         path.setAttribute('opacity', '0.8');
         path.setAttribute('fill', '#1890ff');

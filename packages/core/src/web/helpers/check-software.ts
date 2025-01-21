@@ -1,9 +1,9 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { modelsWithModules } from 'app/constants/layer-module/layer-modules';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 import { sprintf } from 'sprintf-js';
 
 import versionCompare from './version-compare';

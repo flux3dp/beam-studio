@@ -1,5 +1,5 @@
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export interface ICustomMenuActionProvider {
-  getCustomMenuActions: () => { [key: string]: ((deivce?: IDeviceInfo) => void) }
+  getCustomMenuActions: () => { [key: string]: (deivce?: IDeviceInfo) => void };
 }

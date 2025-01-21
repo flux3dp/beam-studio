@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import Websocket from 'helpers/websocket';
+import Websocket from '@core/helpers/websocket';
 
 class OpenCVWebSocket extends EventEmitter {
   private ws: any;

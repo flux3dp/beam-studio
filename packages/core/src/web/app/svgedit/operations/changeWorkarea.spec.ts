@@ -1,29 +1,29 @@
 import changeWorkarea from './changeWorkarea';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockUpdate = jest.fn();
-jest.mock('app/actions/beambox/open-bottom-boundary-drawer', () => ({
+jest.mock('@core/app/actions/beambox/open-bottom-boundary-drawer', () => ({
   update: () => mockUpdate(),
 }));
 
 const mockSetWorkarea = jest.fn();
 const mockResetView = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   setWorkarea: (...args) => mockSetWorkarea(...args),
   resetView: (...args) => mockResetView(...args),
 }));
 
 const mockToggleFullColorAfterWorkareaChange = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   toggleFullColorAfterWorkareaChange: (...args) => mockToggleFullColorAfterWorkareaChange(...args),
 }));
 
 const mockChangeBeamboxPreferenceValue = jest.fn();
-jest.mock('app/svgedit/history/beamboxPreferenceCommand', () => ({
+jest.mock('@core/app/svgedit/history/beamboxPreferenceCommand', () => ({
   changeBeamboxPreferenceValue: (...args) => mockChangeBeamboxPreferenceValue(...args),
 }));
 
@@ -34,7 +34,7 @@ describe('test changeWorkarea', () => {
 
   it('should work correctly', () => {
     mockRead.mockReturnValue('fbm1');
-    const mockCmd = { onAfter: () => { } };
+    const mockCmd = { onAfter: () => {} };
     mockChangeBeamboxPreferenceValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1');
     expect(mockRead).toBeCalledTimes(1);
@@ -62,7 +62,7 @@ describe('test changeWorkarea', () => {
 
   it('should work correctly with toggleModule = false', () => {
     mockRead.mockReturnValue('fbm1');
-    const mockCmd = { onAfter: () => { } };
+    const mockCmd = { onAfter: () => {} };
     mockChangeBeamboxPreferenceValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1', { toggleModule: false });
     expect(mockRead).toBeCalledTimes(1);

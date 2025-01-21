@@ -1,31 +1,31 @@
 import { Buffer } from 'buffer';
 
-import Alert from 'app/actions/alert-caller';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import browser from 'implementations/browser';
-import checkQuestionnaire from 'helpers/check-questionnaire';
-import constant from 'app/actions/beambox/constant';
-import clipboard from 'app/svgedit/operations/clipboard';
-import Dialog from 'app/actions/dialog-caller';
-import ExportFuncs from 'app/actions/beambox/export-funcs';
-import FileExportHelper from 'helpers/file-export-helper';
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import historyUtils from 'app/svgedit/history/utils';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import imageEdit from 'helpers/image-edit';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import OutputError from 'helpers/output-error';
-import shortcuts from 'helpers/shortcuts';
-import Tutorials from 'app/actions/beambox/tutorials';
-import viewMenu from 'helpers/menubar/view';
-import workareaManager from 'app/svgedit/workarea';
-import { externalLinkMemberDashboard, signOut } from 'helpers/api/flux-id';
-import { gestureIntroduction } from 'app/constants/media-tutorials';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { importBvgString } from 'app/svgedit/operations/import/importBvg';
-import { showRotarySettings } from 'app/components/dialogs/RotarySettings';
-import { IBatchCommand } from 'interfaces/IHistory';
+import Alert from '@core/app/actions/alert-caller';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import browser from '@app/implementations/browser';
+import checkQuestionnaire from '@core/helpers/check-questionnaire';
+import constant from '@core/app/actions/beambox/constant';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import Dialog from '@core/app/actions/dialog-caller';
+import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import FileExportHelper from '@core/helpers/file-export-helper';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import historyUtils from '@core/app/svgedit/history/utils';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import imageEdit from '@core/helpers/image-edit';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import OutputError from '@core/helpers/output-error';
+import shortcuts from '@core/helpers/shortcuts';
+import Tutorials from '@core/app/actions/beambox/tutorials';
+import viewMenu from '@core/helpers/menubar/view';
+import workareaManager from '@core/app/svgedit/workarea';
+import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
+import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 let svgCanvas;
 let svgEditor;
@@ -121,7 +121,7 @@ const loadExampleFile = async (path: string) => {
   oReq.open(
     'GET',
     isWeb() ? `https://beam-studio-web.s3.ap-northeast-1.amazonaws.com/${path}` : path,
-    true
+    true,
   );
   oReq.responseType = 'blob';
 

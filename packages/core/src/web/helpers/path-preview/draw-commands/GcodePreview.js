@@ -16,7 +16,7 @@
 // Modified by Dean Sung and Kai Tseng, 2021
 //
 
-import { controlConfig } from 'app/constants/promark-constants';
+import { controlConfig } from '@core/app/constants/promark-constants';
 
 const parsedStride = 9;
 const drawStride = 8;
@@ -140,8 +140,9 @@ export class GcodePreview {
       this.g1Dist = 0;
       this.g1Time = 0;
     } else {
-      const array = new Float32Array(((parsed.length - parsedStride) / parsedStride)
-                                      * drawStride * 2);
+      const array = new Float32Array(
+        ((parsed.length - parsedStride) / parsedStride) * drawStride * 2,
+      );
       this.minX = Number.MAX_VALUE;
       this.maxX = -Number.MAX_VALUE;
       this.minY = Number.MAX_VALUE;
@@ -290,8 +291,9 @@ export class GcodePreview {
 
       if (this.timeInterval[guess] < simTime && this.timeInterval[guess + 1] > simTime) {
         index = guess + 1;
-        const ratio = (simTime - this.timeInterval[guess])
-                      / (this.timeInterval[index] - this.timeInterval[guess]);
+        const ratio =
+          (simTime - this.timeInterval[guess]) /
+          (this.timeInterval[index] - this.timeInterval[guess]);
         const ref = index * drawStride * 2;
         const x = this.array[ref + 1] + (this.array[ref + 9] - this.array[ref + 1]) * ratio;
         const y = this.array[ref + 2] + (this.array[ref + 10] - this.array[ref + 2]) * ratio;

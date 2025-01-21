@@ -1,7 +1,7 @@
 import moveLaserHead from './moveLaserHead';
 
 const mockPopUpError = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
@@ -13,7 +13,7 @@ const mockRawMove = jest.fn();
 const mockRawEndLineCheckMode = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockEndRawMode = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   currentDevice: {
     info: {
       model: 'fbb2',
@@ -31,7 +31,7 @@ jest.mock('helpers/device-master', () => ({
   endRawMode: (...args) => mockEndRawMode(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     calibration: {
       moving_laser_head: 'moving_laser_head',
@@ -42,13 +42,13 @@ jest.mock('helpers/i18n', () => ({
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 

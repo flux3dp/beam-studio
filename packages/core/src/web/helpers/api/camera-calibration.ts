@@ -2,7 +2,10 @@
  * API camera calibration
  * Ref: none
  */
-import { FisheyeCaliParameters, FisheyeCameraParametersV2Cali } from 'interfaces/FisheyePreview';
+import {
+  FisheyeCaliParameters,
+  FisheyeCameraParametersV2Cali,
+} from '@core/interfaces/FisheyePreview';
 
 import Websocket from '../websocket';
 
@@ -159,7 +162,7 @@ class CameraCalibrationApi {
   calibrateChessboard(
     img: Blob | ArrayBuffer,
     height: number,
-    chessboard = [48, 36]
+    chessboard = [48, 36],
   ): Promise<
     | {
         success: true;
@@ -208,7 +211,7 @@ class CameraCalibrationApi {
 
   findCorners(
     img: Blob | ArrayBuffer,
-    withPitch = false
+    withPitch = false,
   ): Promise<{
     success: boolean;
     blob: Blob;
@@ -261,7 +264,7 @@ class CameraCalibrationApi {
     img: Blob | ArrayBuffer,
     dh: number,
     refPoints: [number, number][],
-    interestArea?: { x: number; y: number; width: number; height: number }
+    interestArea?: { x: number; y: number; width: number; height: number },
   ): Promise<
     | {
         success: true;
@@ -309,7 +312,7 @@ class CameraCalibrationApi {
   solvePnPCalculate = (
     dh: number,
     points: [number, number][],
-    refPoints: [number, number][]
+    refPoints: [number, number][],
   ): Promise<{
     success: boolean;
     data?: { rvec: number[]; tvec: number[] };
@@ -339,8 +342,8 @@ class CameraCalibrationApi {
       // solve_pnp_calculate [ref_points] [elevated_dh] [points]
       this.ws.send(
         `solve_pnp_calculate ${JSON.stringify(refPoints)} ${dh.toFixed(3)} ${JSON.stringify(
-          points
-        )}`
+          points,
+        )}`,
       );
     });
 
@@ -369,7 +372,7 @@ class CameraCalibrationApi {
   extrinsicRegression = (
     rvecs: number[][],
     tvecs: number[][],
-    heights: number[]
+    heights: number[],
   ): Promise<{
     success: boolean;
     data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };

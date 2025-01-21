@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Swiftray Client Typescript API Client
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import communicator from 'implementations/communicator';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import { booleanConfig, getDefaultConfig } from 'helpers/layer/layer-config-helper';
-import { ButtonState } from 'interfaces/Promark';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceDetailInfo, IDeviceInfo, IReport } from 'interfaces/IDevice';
-import { IWrappedSwiftrayTaskFile } from 'interfaces/IWrappedFile';
-import { promarkModels } from 'app/actions/beambox/constant';
+import communicator from '@app/implementations/communicator';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import { ButtonState } from '@core/interfaces/Promark';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
+import { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 interface ErrorObject {
   code: number;
@@ -202,7 +202,7 @@ class SwiftrayClient extends EventEmitter {
       model: string;
       rotaryMode: boolean;
       engraveDpi: number;
-    }
+    },
   ): Promise<{ success: boolean; error?: ErrorObject }> {
     const defaultConfig: any = getDefaultConfig();
     booleanConfig.forEach((key) => {
@@ -217,7 +217,7 @@ class SwiftrayClient extends EventEmitter {
         rotaryMode: loadOptions.rotaryMode,
         engraveDpi: loadOptions.engraveDpi,
         defaultConfig,
-      }
+      },
     );
     return uploadRes;
   }
@@ -230,7 +230,7 @@ class SwiftrayClient extends EventEmitter {
         taskBlob: Blob,
         fileName: string,
         timeCost: number,
-        metadata: Record<string, string>
+        metadata: Record<string, string>,
       ) => void;
       onError: (message: string) => void;
     },
@@ -244,7 +244,7 @@ class SwiftrayClient extends EventEmitter {
       vectorSpeedConstraint?: boolean;
       paddingAccel?: number;
       travelSpeed?: number;
-    }
+    },
   ): Promise<{
     success: boolean;
     estimatedTime?: number;
@@ -270,13 +270,13 @@ class SwiftrayClient extends EventEmitter {
     });
     const taskBlob = new Blob(
       [type === 'fcode' ? Buffer.from(convertResult.fcode, 'base64') : convertResult.gcode],
-      { type: 'text/plain' }
+      { type: 'text/plain' },
     );
     eventListeners.onFinished(
       taskBlob,
       convertResult.fileName,
       convertResult.timeCost,
-      convertResult.metadata
+      convertResult.metadata,
     );
     return {
       success: convertResult.success,
@@ -289,7 +289,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async loadSettings(
-    data: PreferenceSettingsObject
+    data: PreferenceSettingsObject,
   ): Promise<{ success: boolean; error?: ErrorObject }> {
     return this.action('/parser', 'loadSettings', data);
   }
@@ -365,7 +365,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async deleteDeviceSettings(
-    name: string
+    name: string,
   ): Promise<{ success: boolean; error?: ErrorObject }> {
     return this.action(`/devices/${this.port}`, 'deleteSettings', { name });
   }

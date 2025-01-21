@@ -1,6 +1,6 @@
 import { Action, getDefaultState, reducer } from './ConfigPanelContext';
 
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getDefaultConfig: () => ({
     speed: 20,
     power: 15,

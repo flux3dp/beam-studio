@@ -1,14 +1,14 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import deviceMaster from 'helpers/device-master';
-import dialogCaller from 'app/actions/dialog-caller';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FullWindowPanelStyles from 'app/widgets/FullWindowPanel/FullWindowPanel.module.scss';
-import isWeb from 'helpers/is-web';
-import tabController from 'app/actions/tabController';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { promarkModels } from 'app/actions/beambox/constant';
-import { showFramingModal } from 'app/components/dialogs/FramingModal';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import deviceMaster from '@core/helpers/device-master';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FullWindowPanelStyles from '@core/app/widgets/FullWindowPanel/FullWindowPanel.module.scss';
+import isWeb from '@core/helpers/is-web';
+import tabController from '@core/app/actions/tabController';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 
 type TStatus =
   | 'idle'
@@ -67,7 +67,7 @@ class PromarkButtonHandler {
     this.updateRequirement(
       'context',
       (mode === CanvasMode.Draw || mode === CanvasMode.PathPreview) &&
-        promarkModels.has(this.device?.model)
+        promarkModels.has(this.device?.model),
     );
   };
 

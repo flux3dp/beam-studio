@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
 
 const LANG = i18n.lang.beambox.tool_panels;
 

@@ -11,11 +11,11 @@ const mockState = {
 };
 
 const mockShowPresetsManagementPanel = jest.fn();
-jest.mock('app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel', () => ({
+jest.mock('@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel', () => ({
   showPresetsManagementPanel: (...args) => mockShowPresetsManagementPanel(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -37,7 +37,7 @@ describe('test ParameterTitle', () => {
     const { container } = render(
       <ConfigPanelContext.Provider value={{ initState: mockInitState, state: mockState } as any}>
         <ParameterTitle />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -46,7 +46,7 @@ describe('test ParameterTitle', () => {
     const { getByTitle } = render(
       <ConfigPanelContext.Provider value={{ initState: mockInitState, state: mockState } as any}>
         <ParameterTitle />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     fireEvent.click(getByTitle('preset_management_title'));
     expect(mockShowPresetsManagementPanel).toHaveBeenCalledTimes(1);

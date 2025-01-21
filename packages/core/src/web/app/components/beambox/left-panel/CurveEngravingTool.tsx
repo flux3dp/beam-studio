@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import LeftPanelButton from 'app/components/beambox/left-panel/LeftPanelButton';
-import LeftPanelIcons from 'app/icons/left-panel/LeftPanelIcons';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import useForceUpdate from 'helpers/use-force-update';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {

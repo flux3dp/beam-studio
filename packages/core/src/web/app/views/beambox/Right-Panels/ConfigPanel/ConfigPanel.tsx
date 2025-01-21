@@ -11,29 +11,29 @@ import React, {
 import { ConfigProvider, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import ColorBlock from 'app/components/beambox/right-panel/ColorBlock';
-import dialogCaller from 'app/actions/dialog-caller';
-import diodeBoundaryDrawer from 'app/actions/canvas/diode-boundary-drawer';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import isDev from 'helpers/is-dev';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import presetHelper from 'helpers/presets/preset-helper';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import Select from 'app/widgets/AntdSelect';
-import tutorialConstants from 'app/constants/tutorial-constants';
-import tutorialController from 'app/views/tutorials/tutorialController';
-import useForceUpdate from 'helpers/use-force-update';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import Select from '@core/app/widgets/AntdSelect';
+import tutorialConstants from '@core/app/constants/tutorial-constants';
+import tutorialController from '@core/app/views/tutorials/tutorialController';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -45,13 +45,13 @@ import {
   getLayersConfig,
   postPresetChange,
   writeData,
-} from 'helpers/layer/layer-config-helper';
-import { getLayerElementByName, moveToOtherLayer } from 'helpers/layer/layer-helper';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { promarkModels } from 'app/actions/beambox/constant';
+} from '@core/helpers/layer/layer-config-helper';
+import { getLayerElementByName, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import AdvancedBlock from './AdvancedBlock';
 import Backlash from './Backlash';
@@ -107,7 +107,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): JSX.Element => {
       { value: lang.custom_preset, key: lang.custom_preset, label: lang.custom_preset },
       { value: lang.various_preset, key: lang.various_preset, label: lang.various_preset },
     ],
-    [lang.dropdown.parameters, lang.custom_preset, lang.various_preset]
+    [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
 
   const workarea = useWorkarea();
@@ -381,7 +381,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): JSX.Element => {
             )}
             <span>{layerName}</span>
           </div>
-        </Select.Option>
+        </Select.Option>,
       );
     }
     return (

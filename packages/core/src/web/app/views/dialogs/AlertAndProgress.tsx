@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useRef } from 'react';
 
-import Alert from 'app/views/dialogs/Alert';
-import browser from 'implementations/browser';
-import NonStopProgress from 'app/views/dialogs/NonStopProgress';
-import Progress from 'app/views/dialogs/Progress';
-import ProgressConstants from 'app/constants/progress-constants';
-import { AlertProgressContext } from 'app/contexts/AlertProgressContext';
-import { IAlert } from 'interfaces/IAlert';
-import { IProgressDialog } from 'interfaces/IProgress';
+import Alert from '@core/app/views/dialogs/Alert';
+import browser from '@app/implementations/browser';
+import NonStopProgress from '@core/app/views/dialogs/NonStopProgress';
+import Progress from '@core/app/views/dialogs/Progress';
+import ProgressConstants from '@core/app/constants/progress-constants';
+import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
+import { IAlert } from '@core/interfaces/IAlert';
+import { IProgressDialog } from '@core/interfaces/IProgress';
 
 const isProgress = (d: IAlert | IProgressDialog): d is IProgressDialog => d.isProgress;
 
@@ -34,7 +34,7 @@ const AlertsAndProgress = (): JSX.Element => {
   const alertModals = alertProgressStack.map((data) => {
     if (isProgress(data)) {
       if (data.type === ProgressConstants.NONSTOP) {
-        return <NonStopProgress key={`${data.key}-${data.id}`} data={data} />
+        return <NonStopProgress key={`${data.key}-${data.id}`} data={data} />;
       }
       return <Progress key={`${data.key}-${data.id}`} data={data} />;
     }

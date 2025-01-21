@@ -1,10 +1,10 @@
 import React, { useContext, useMemo } from 'react';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import configOptions from 'app/constants/config-options';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import configOptions from '@core/app/constants/config-options';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
@@ -26,7 +26,7 @@ const WhiteInkSpeed = ({ value, hasMultiValue, onChange }: Props): JSX.Element =
 
   const sliderOptions = useMemo(
     () => (simpleMode ? configOptions.getPrintingSpeedOptions(lang) : null),
-    [simpleMode, lang]
+    [simpleMode, lang],
   );
 
   const { display: displayUnit, decimal } = useMemo(() => {

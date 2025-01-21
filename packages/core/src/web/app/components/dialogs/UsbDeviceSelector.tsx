@@ -3,8 +3,8 @@ import { filter, interval, map, mergeMap, Subscription, scan } from 'rxjs';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
 
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 
 import styles from './UsbDeviceSelector.module.scss';
 
@@ -28,7 +28,7 @@ const UsbDeviceSelector = ({ initList, updateList, onSelect, onClose }: Props): 
           mergeMap(async (p, index) => {
             const devices = await p;
             return { index, devices };
-          })
+          }),
         )
         .pipe(
           scan<
@@ -39,8 +39,8 @@ const UsbDeviceSelector = ({ initList, updateList, onSelect, onClose }: Props): 
               if (index <= acc.index) return { index: acc.index };
               return { index, devices };
             },
-            { index: -1 }
-          )
+            { index: -1 },
+          ),
         )
         .pipe(filter(({ devices }) => devices !== undefined))
         .subscribe(({ devices }) => setList(devices));
@@ -95,7 +95,7 @@ export default UsbDeviceSelector;
 
 export const selectUsbDevice = async (
   initList: MediaDeviceInfo[] = [],
-  updateList?: () => Promise<MediaDeviceInfo[]>
+  updateList?: () => Promise<MediaDeviceInfo[]>,
 ): Promise<MediaDeviceInfo> => {
   if (isIdExist('USB_DEVICE_SELECTOR')) return null;
   return new Promise<MediaDeviceInfo>((resolve) => {
@@ -106,7 +106,7 @@ export const selectUsbDevice = async (
         updateList={updateList}
         onSelect={(device) => resolve(device)}
         onClose={() => popDialogById('USB_DEVICE_SELECTOR')}
-      />
+      />,
     );
   });
 };

@@ -1,7 +1,7 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
 
 const PROGRESS_ID = 'raw-and-home';
 

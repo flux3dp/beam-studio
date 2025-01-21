@@ -1,4 +1,4 @@
-import CanvasMode from 'app/constants/canvasMode';
+import CanvasMode from '@core/app/constants/canvasMode';
 
 export interface Tab {
   id: number;

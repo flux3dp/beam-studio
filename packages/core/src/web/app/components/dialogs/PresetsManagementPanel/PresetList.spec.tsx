@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import PresetList from './PresetList';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -21,25 +21,25 @@ describe('test PresetList', () => {
       {
         name: 'preset1',
         isDefault: false,
-        hide: false
+        hide: false,
       },
       {
         name: 'preset2',
         isDefault: true,
         hide: false,
-        key: 'pre2'
+        key: 'pre2',
       },
       {
         name: 'preset3',
         isDefault: false,
-        hide: true
+        hide: true,
       },
       {
         name: 'preset4',
         isDefault: true,
         hide: true,
-        key: 'pre4'
-      }
+        key: 'pre4',
+      },
     ];
     const displayList = presets;
     const editingValues = {};
@@ -59,7 +59,7 @@ describe('test PresetList', () => {
         onReorder={onReorder}
         ref={outerRef}
       />,
-      { container: document.body.appendChild(document.createElement('div')) }
+      { container: document.body.appendChild(document.createElement('div')) },
     );
     expect(container).toMatchSnapshot();
     const preset1 = getByText('preset1');

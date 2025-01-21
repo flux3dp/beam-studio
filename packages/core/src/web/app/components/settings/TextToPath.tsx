@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
 
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import useI18n from 'helpers/useI18n';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   getBeamboxPreferenceEditingValue: (key: string) => any;
@@ -24,7 +24,7 @@ function TextToPath({
       { value: '1.0', label: '1.0', selected: defaultFontConvert === '1.0' },
       { value: '2.0', label: '2.0', selected: defaultFontConvert === '2.0' },
     ],
-    [defaultFontConvert]
+    [defaultFontConvert],
   );
   return (
     <>

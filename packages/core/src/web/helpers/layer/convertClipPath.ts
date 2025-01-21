@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import * as paper from 'paper';
 
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -32,7 +32,7 @@ const checkParent = (elem: Element): { shouldSkip: boolean; parent?: Element } =
 const updateMatrix = (
   elem: Element,
   matrix: SVGMatrix | undefined | null,
-  inverse = false
+  inverse = false,
 ): SVGMatrix | null => {
   // Skip transform of top level elem
   if (matrix === undefined) return null;
@@ -64,7 +64,7 @@ const getBBoxByAttr = (elem: Element) => {
 const convertClipPath = async (): Promise<() => void> => {
   let revert = () => {};
   const clippedElems = Array.from(
-    document.querySelectorAll('#svgcontent *[clip-path*="url"], #svg_defs *[clip-path*="url"]')
+    document.querySelectorAll('#svgcontent *[clip-path*="url"], #svg_defs *[clip-path*="url"]'),
   );
   if (clippedElems.length === 0) return revert;
 

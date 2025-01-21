@@ -2,12 +2,12 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import ColorPanel from './ColorPanel';
 
 const mockSetIsColorPreviewing = jest.fn();
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({
     isColorPreviewing: false,
     setIsColorPreviewing: (val) => mockSetIsColorPreviewing(val),
@@ -15,7 +15,7 @@ jest.mock('app/contexts/CanvasContext', () => ({
 }));
 
 jest.mock(
-  'app/widgets/ColorPicker',
+  '@core/app/widgets/ColorPicker',
   () =>
     ({ allowClear, initColor, triggerType, onChange }: any) =>
       (
@@ -28,33 +28,38 @@ jest.mock(
             onChange
           </button>
         </div>
-      )
+      ),
 );
 
-jest.mock('app/widgets/ColorPickerMobile', () => ({ color, onChange, open, onClose }: any) => (
-  <div>
-    Mock ColorPicker Mobile
-    <p>color: {color}</p>
-    <p>open: {open ? 't' : 'f'}</p>
-    <button type="button" onClick={() => onChange('#aaffff', false)}>
-      onPreview
-    </button>
-    <button
-      type="button"
-      onClick={() => {
-        onChange('#aaaaff');
-        onClose();
-      }}
-    >
-      onChange
-    </button>
-    <button type="button" onClick={onClose}>
-      onClose
-    </button>
-  </div>
-));
+jest.mock(
+  '@core/app/widgets/ColorPickerMobile',
+  () =>
+    ({ color, onChange, open, onClose }: any) =>
+      (
+        <div>
+          Mock ColorPicker Mobile
+          <p>color: {color}</p>
+          <p>open: {open ? 't' : 'f'}</p>
+          <button type="button" onClick={() => onChange('#aaffff', false)}>
+            onPreview
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onChange('#aaaaff');
+              onClose();
+            }}
+          >
+            onChange
+          </button>
+          <button type="button" onClick={onClose}>
+            onClose
+          </button>
+        </div>
+      ),
+);
 
-jest.mock('app/widgets/FloatingPanel', () => ({ title, children, onClose }: any) => (
+jest.mock('@core/app/widgets/FloatingPanel', () => ({ title, children, onClose }: any) => (
   <div>
     Mock Floating Panel
     <p>title: {title}</p>
@@ -65,12 +70,12 @@ jest.mock('app/widgets/FloatingPanel', () => ({ title, children, onClose }: any)
   </div>
 ));
 
-jest.mock('app/actions/beambox/constant', () => ({
+jest.mock('@core/app/actions/beambox/constant', () => ({
   dpmm: 10,
 }));
 
 const mockCreateBatchCommand = jest.fn();
-jest.mock('app/svgedit/history/HistoryCommandFactory', () => ({
+jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 const mockAddSubCommand = jest.fn();
@@ -79,12 +84,12 @@ const mockBatchCommand = {
 };
 
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 
 const mockDeleteElements = jest.fn();
-jest.mock('app/svgedit/operations/delete', () => ({
+jest.mock('@core/app/svgedit/operations/delete', () => ({
   deleteElements: (...args) => mockDeleteElements(...args),
 }));
 
@@ -95,7 +100,7 @@ const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockSetCurrentMode = jest.fn();
 const mockRequestSelector = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -118,11 +123,11 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {

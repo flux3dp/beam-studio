@@ -4,24 +4,24 @@ const mockEventEmitter = {
   on: jest.fn(),
 };
 const mockCreateEventEmitter = jest.fn(() => mockEventEmitter);
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => mockCreateEventEmitter(),
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
 const mockConfigRead = jest.fn();
 const mockConfigWrite = jest.fn();
-jest.mock('helpers/api/alert-config', () => ({
+jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => mockConfigRead(...args),
   write: (...args) => mockConfigWrite(...args),
 }));
 
 const mockPopUp = jest.fn();
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       popup: {
@@ -72,19 +72,11 @@ describe('test alert helper', () => {
       message: 'message',
       buttonLabels: ['join_now', 'later', 'already_joined'],
       primaryButtonIndex: 0,
-      callbacks: [
-        expect.any(Function),
-        expect.any(Function),
-        expect.any(Function),
-      ],
+      callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
       checkbox: {
         text: 'dont_show_again',
-        callbacks: [
-          expect.any(Function),
-          expect.any(Function),
-          expect.any(Function),
-        ],
-      }
+        callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
+      },
     });
 
     expect(mockConfigWrite).not.toBeCalled();

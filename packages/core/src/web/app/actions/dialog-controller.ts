@@ -1,4 +1,4 @@
-import { eventEmitter } from 'app/contexts/DialogContext';
+import { eventEmitter } from '@core/app/contexts/DialogContext';
 // Trigger some dialog here to avoid dialog caller circular import
 
 export const addDialogComponent = (id: string, component: JSX.Element): void => {

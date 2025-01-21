@@ -1,19 +1,19 @@
-import Constant from 'app/actions/beambox/constant';
-import CameraCalibrationApi from 'helpers/api/camera-calibration';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import VersionChecker from 'helpers/version-checker';
-import { CameraConfig } from 'interfaces/Camera';
+import Constant from '@core/app/actions/beambox/constant';
+import CameraCalibrationApi from '@core/helpers/api/camera-calibration';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import VersionChecker from '@core/helpers/version-checker';
+import { CameraConfig } from '@core/interfaces/Camera';
 import {
   CALIBRATION_PARAMS,
   DEFAULT_CAMERA_OFFSET,
-} from 'app/constants/camera-calibration-constants';
+} from '@core/app/constants/camera-calibration-constants';
 import {
   FisheyeCaliParameters,
   FisheyeCameraParameters,
   FisheyeCameraParametersV2Cali,
-} from 'interfaces/FisheyePreview';
-import { IDeviceInfo } from 'interfaces/IDevice';
+} from '@core/interfaces/FisheyePreview';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const api = new CameraCalibrationApi();
 
@@ -23,7 +23,7 @@ const doAnalyzeResult = async (
   y: number,
   angle: number,
   squareWidth: number,
-  squareHeight: number
+  squareHeight: number,
 ): Promise<CameraConfig | null> => {
   const blobImgSize = await new Promise<{ width: number; height: number }>((resolve) => {
     const img = new Image();
@@ -106,7 +106,7 @@ export const doSendPictureTask = async (imgBlobUrl: string): Promise<CameraConfi
 
 export const doGetOffsetFromPicture = async (
   imgBlobUrl: string,
-  setCurrentOffset: (offset: CameraConfig) => void
+  setCurrentOffset: (offset: CameraConfig) => void,
 ): Promise<boolean> => {
   const offset = await doSendPictureTask(imgBlobUrl);
   if (!offset) {
@@ -124,7 +124,7 @@ const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
   if (vc.meetRequirement('BEAMBOX_CAMERA_CALIBRATION_XY_RATIO')) {
     await deviceMaster.setDeviceSetting(
       parameterName,
-      `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2} SX:${SX} SY:${SY}`
+      `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2} SX:${SX} SY:${SY}`,
     );
   } else {
     await deviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2}`);
@@ -134,7 +134,7 @@ const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
 export const sendPictureThenSetConfig = async (
   result: CameraConfig,
   device: IDeviceInfo,
-  borderless: boolean
+  borderless: boolean,
 ): Promise<void> => {
   console.log('Setting camera_offset', borderless ? 'borderless' : '', result);
   if (result) {
@@ -145,7 +145,7 @@ export const sendPictureThenSetConfig = async (
         X: Math.round(result.X * 10) / 10,
         Y: Math.round(result.Y * 10) / 10,
       },
-      borderless
+      borderless,
     );
   } else {
     throw new Error(i18n.lang.calibration.analyze_result_fail);
@@ -156,11 +156,11 @@ export const startFisheyeCalibrate = (): Promise<boolean> => api.startFisheyeCal
 export const addFisheyeCalibrateImg = (height: number, imgBlob: Blob): Promise<boolean> =>
   api.addFisheyeCalibrateImg(height, imgBlob);
 export const doFishEyeCalibration = (
-  onProgress?: (val: number) => void
+  onProgress?: (val: number) => void,
 ): Promise<FisheyeCameraParametersV2Cali> => api.doFisheyeCalibration(onProgress);
 
 export const setFisheyeConfig = async (
-  data: FisheyeCameraParameters
+  data: FisheyeCameraParameters,
 ): Promise<{ status: string }> => {
   const strData = JSON.stringify(data, (key, val) => {
     if (typeof val === 'number') {
@@ -234,7 +234,7 @@ const getRealPositionOfSplitIndices = (
   split: number[],
   chessboard: number[],
   workarea: number[],
-  center: number[]
+  center: number[],
 ): number[][][] => {
   const dpmm = 5;
   const padding = 100;
@@ -269,7 +269,7 @@ const getHeightOffsetFromLevelingRegion = (
   x: number,
   y: number,
   workarea: number[],
-  levelingOffsets: { [key: string]: number }
+  levelingOffsets: { [key: string]: number },
 ) => {
   let xIndex = 0;
   if (x > workarea[0] * (2 / 3)) xIndex = 2;
@@ -290,7 +290,7 @@ export const interpolatePointsFromHeight = (
     workarea: number[];
     levelingOffsets: { [key: string]: number };
     center: number[]; // center in pixel
-  }
+  },
 ): [number, number][][] => {
   if (points.length === 0) return [];
   if (points.length === 1) return points[0];
@@ -304,7 +304,7 @@ export const interpolatePointsFromHeight = (
       [points[0].length - 1, points[0][0].length - 1],
       chessboard,
       workarea,
-      center
+      center,
     );
   }
 
@@ -317,7 +317,7 @@ export const interpolatePointsFromHeight = (
           pointPositions[i][j][0],
           pointPositions[i][j][1],
           workarea,
-          levelingOffsets
+          levelingOffsets,
         );
       }
       const floorH = Math.floor(h);
@@ -329,7 +329,7 @@ export const interpolatePointsFromHeight = (
         points[index][i][j] as number[],
         heights[index + 1],
         points[index + 1][i][j] as number[],
-        h
+        h,
       ) as [number, number];
     }
   }
@@ -344,7 +344,7 @@ export const getPerspectivePointsZ3Regression = (
     workarea: number[];
     levelingOffsets: { [key: string]: number };
     center: number[]; // center in pixel
-  }
+  },
 ): [number, number][][] => {
   let pointPositions: number[][][];
   if (heightCompenstationDetail) {
@@ -353,7 +353,7 @@ export const getPerspectivePointsZ3Regression = (
       [regParam.length - 1, regParam[0].length - 1],
       chessboard,
       workarea,
-      center
+      center,
     );
   }
   const result: [number, number][][] = [];
@@ -367,7 +367,7 @@ export const getPerspectivePointsZ3Regression = (
           pointPositions[i][j][0],
           pointPositions[i][j][1],
           workarea,
-          levelingOffsets
+          levelingOffsets,
         );
       }
       const x =
@@ -389,7 +389,7 @@ export const getPerspectivePointsZ3Regression = (
 export const calibrateChessboard = async (
   img: Blob | ArrayBuffer,
   height: number,
-  chessboard = [48, 36]
+  chessboard = [48, 36],
 ): Promise<
   | {
       success: true;
@@ -410,7 +410,7 @@ export const calibrateChessboard = async (
 
 export const findCorners = async (
   imgBlob: Blob,
-  withPitch = false
+  withPitch = false,
 ): Promise<{
   success: boolean;
   blob: Blob;
@@ -430,7 +430,7 @@ export const solvePnPFindCorners = async (
   img: Blob | ArrayBuffer,
   dh: number,
   refPoints: [number, number][],
-  interestArea?: { x: number; y: number; width: number; height: number }
+  interestArea?: { x: number; y: number; width: number; height: number },
 ): Promise<
   | {
       success: true;
@@ -450,7 +450,7 @@ export const solvePnPFindCorners = async (
 export const solvePnPCalculate = async (
   dh: number,
   points: [number, number][],
-  refPoints: [number, number][]
+  refPoints: [number, number][],
 ): Promise<{
   success: boolean;
   data?: { rvec: number[]; tvec: number[] };
@@ -467,7 +467,7 @@ export const updateData = async (data: FisheyeCaliParameters): Promise<boolean> 
 export const extrinsicRegression = async (
   rvecs: number[][],
   tvecs: number[][],
-  heights: number[]
+  heights: number[],
 ): Promise<{
   success: boolean;
   data?: { rvec_polyfit: number[][]; tvec_polyfit: number[][] };

@@ -1,13 +1,13 @@
 import React from 'react';
 
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
 import { Flex } from 'antd';
-import Select from 'app/widgets/AntdSelect';
-import presetHelper from 'helpers/presets/preset-helper';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
+import Select from '@core/app/widgets/AntdSelect';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { textParams, TextSetting } from './TextSetting';
 import styles from './Form.module.scss';
 

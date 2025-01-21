@@ -3,14 +3,18 @@ import React, { useContext } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 
-import colorConstants, { PrintingColors } from 'app/constants/color-constants';
-import history from 'app/svgedit/history/history';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import toggleFullColorLayer from 'helpers/layer/full-color/toggleFullColorLayer';
-import undoManager from 'app/svgedit/history/undoManager';
-import useI18n from 'helpers/useI18n';
-import { getData, getMultiSelectData, writeDataLayer } from 'helpers/layer/layer-config-helper';
-import { getLayerByName } from 'helpers/layer/layer-helper';
+import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
+import history from '@core/app/svgedit/history/history';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import useI18n from '@core/helpers/useI18n';
+import {
+  getData,
+  getMultiSelectData,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';

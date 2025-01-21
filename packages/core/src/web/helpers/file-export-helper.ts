@@ -1,27 +1,27 @@
 /* eslint-disable no-console */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import beamFileHelper from 'helpers/beam-file-helper';
-import communicator from 'implementations/communicator';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import dialog from 'implementations/dialog';
-import dialogCaller from 'app/actions/dialog-caller';
-import findDefs from 'app/svgedit/utils/findDef';
-import fs from 'implementations/fileSystem';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import Progress from 'app/actions/progress-caller';
-import SymbolMaker from 'helpers/symbol-maker';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
-import workareaManager from 'app/svgedit/workarea';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import beamFileHelper from '@core/helpers/beam-file-helper';
+import communicator from '@app/implementations/communicator';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import dialog from '@app/implementations/dialog';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import fs from '@app/implementations/fileSystem';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import Progress from '@core/app/actions/progress-caller';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import workareaManager from '@core/app/svgedit/workarea';
 import {
   axiosFluxId,
   getCurrentUser,
   getDefaultHeader,
   ResponseWithError,
-} from 'helpers/api/flux-id';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+} from '@core/helpers/api/flux-id';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -49,7 +49,7 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
     bbox.height += bbox.y;
     bbox.y = 0;
   }
-  if (bbox.width <= 0 || bbox.height <= 0) return null
+  if (bbox.width <= 0 || bbox.height <= 0) return null;
   bbox.width = Math.min(bbox.width, width);
   bbox.height = Math.min(bbox.height, height);
   const downRatio = 300 / Math.max(bbox.width, bbox.height);
@@ -168,7 +168,7 @@ const saveAsFile = async (): Promise<boolean> => {
   svgCanvas.removeUnusedDefs();
   const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
   const langFile = LANG.topmenu.file;
-  const getContent =  async () => {
+  const getContent = async () => {
     const buffer = await generateBeamBuffer();
     const arrayBuffer = Uint8Array.from(buffer).buffer;
     const blob = new Blob([arrayBuffer]);
@@ -250,7 +250,7 @@ const checkNounProjectElements = () => {
 const removeNPElementsWrapper = <T = string>(fn: () => T) => {
   const svgContent = document.getElementById('svgcontent');
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
-  const removedElements = [] as { elem: Element, parentNode: Element, nextSibling: Element }[];
+  const removedElements = [] as { elem: Element; parentNode: Element; nextSibling: Element }[];
   for (let i = 0; i < npElements.length; i += 1) {
     const elem = npElements[i];
     const parentNode = elem.parentNode as Element;
@@ -273,24 +273,24 @@ const removeNPElementsWrapper = <T = string>(fn: () => T) => {
 };
 
 const exportAsBVG = async (): Promise<boolean> => {
-  if (!await checkNounProjectElements()) {
+  if (!(await checkNounProjectElements())) {
     return false;
   }
   svgCanvas.clearSelection();
   const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
   const langFile = LANG.topmenu.file;
   svgCanvas.removeUnusedDefs();
-  const getContent = () => removeNPElementsWrapper(
-    () => switchSymbolWrapper<string>(
-      () => svgCanvas.getSvgString(),
-    ),
-  );
+  const getContent = () =>
+    removeNPElementsWrapper(() => switchSymbolWrapper<string>(() => svgCanvas.getSvgString()));
   const newFilePath = await dialog.writeFileDialog(
     getContent,
     langFile.save_scene,
     defaultFileName,
     [
-      { name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files, extensions: ['bvg'] },
+      {
+        name: window.os === 'MacOS' ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files,
+        extensions: ['bvg'],
+      },
       { name: langFile.all_files, extensions: ['*'] },
     ],
   );
@@ -304,26 +304,29 @@ const exportAsBVG = async (): Promise<boolean> => {
 };
 
 const exportAsSVG = async (): Promise<void> => {
-  if (!await checkNounProjectElements()) {
+  if (!(await checkNounProjectElements())) {
     return;
   }
   svgCanvas.clearSelection();
   const getContent = () => {
     document.querySelectorAll('g.layer').forEach((layer) => layer.removeAttribute('clip-path'));
     svgCanvas.removeUnusedDefs();
-    const res = removeNPElementsWrapper(
-      () => switchSymbolWrapper<string>(
-        () => svgCanvas.getSvgString({ unit: 'mm' }),
-      ),
+    const res = removeNPElementsWrapper(() =>
+      switchSymbolWrapper<string>(() => svgCanvas.getSvgString({ unit: 'mm' })),
     );
-    document.querySelectorAll('g.layer').forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
+    document
+      .querySelectorAll('g.layer')
+      .forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
     return res;
   };
   const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
   const langFile = LANG.topmenu.file;
 
   await dialog.writeFileDialog(getContent, langFile.save_svg, defaultFileName, [
-    { name: window.os === 'MacOS' ? `${langFile.svg_files} (*.svg)` : langFile.svg_files, extensions: ['svg'] },
+    {
+      name: window.os === 'MacOS' ? `${langFile.svg_files} (*.svg)` : langFile.svg_files,
+      extensions: ['svg'],
+    },
     { name: langFile.all_files, extensions: ['*'] },
   ]);
 };
@@ -335,7 +338,7 @@ const exportAsImage = async (type: 'png' | 'jpg'): Promise<void> => {
   const langFile = LANG.topmenu.file;
   Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
   const defaultFileName = (currentFileManager.getName() || 'untitled').replace('/', ':');
-  const { width, height } = workareaManager
+  const { width, height } = workareaManager;
   const canvas = await svgStringToCanvas(output, width, height);
   let base64 = '';
   if (type === 'png') {
@@ -356,44 +359,51 @@ const exportAsImage = async (type: 'png' | 'jpg'): Promise<void> => {
   Progress.popById('export_image');
   if (type === 'png') {
     dialog.writeFileDialog(getContent, langFile.save_png, defaultFileName, [
-      { name: window.os === 'MacOS' ? `${langFile.png_files} (*.png)` : langFile.png_files, extensions: ['png'] },
+      {
+        name: window.os === 'MacOS' ? `${langFile.png_files} (*.png)` : langFile.png_files,
+        extensions: ['png'],
+      },
       { name: langFile.all_files, extensions: ['*'] },
     ]);
   } else if (type === 'jpg') {
     dialog.writeFileDialog(getContent, langFile.save_jpg, defaultFileName, [
-      { name: window.os === 'MacOS' ? `${langFile.jpg_files} (*.jpg)` : langFile.jpg_files, extensions: ['jpg'] },
+      {
+        name: window.os === 'MacOS' ? `${langFile.jpg_files} (*.jpg)` : langFile.jpg_files,
+        extensions: ['jpg'],
+      },
       { name: langFile.all_files, extensions: ['*'] },
     ]);
   }
 };
 
-const toggleUnsavedChangedDialog = async (): Promise<boolean> => new Promise((resolve) => {
-  communicator.send('SAVE_DIALOG_POPPED');
-  if (!currentFileManager.getHasUnsavedChanges() || window.location.hash !== '#/studio/beambox') {
-    resolve(true);
-  } else {
-    Alert.popById('unsaved_change_dialog');
-    Alert.popUp({
-      id: 'unsaved_change_dialog',
-      message: LANG.beambox.popup.save_unsave_changed,
-      buttonLabels: [LANG.alert.save, LANG.alert.dont_save, LANG.alert.cancel],
-      callbacks: [
-        async () => {
-          if (await saveFile()) {
+const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
+  new Promise((resolve) => {
+    communicator.send('SAVE_DIALOG_POPPED');
+    if (!currentFileManager.getHasUnsavedChanges() || window.location.hash !== '#/studio/beambox') {
+      resolve(true);
+    } else {
+      Alert.popById('unsaved_change_dialog');
+      Alert.popUp({
+        id: 'unsaved_change_dialog',
+        message: LANG.beambox.popup.save_unsave_changed,
+        buttonLabels: [LANG.alert.save, LANG.alert.dont_save, LANG.alert.cancel],
+        callbacks: [
+          async () => {
+            if (await saveFile()) {
+              resolve(true);
+            }
+          },
+          () => {
             resolve(true);
-          }
-        },
-        () => {
-          resolve(true);
-        },
-        () => {
-          resolve(false);
-        },
-      ],
-      primaryButtonIndex: 0,
-    });
-  }
-});
+          },
+          () => {
+            resolve(false);
+          },
+        ],
+        primaryButtonIndex: 0,
+      });
+    }
+  });
 
 export default {
   saveAsFile,

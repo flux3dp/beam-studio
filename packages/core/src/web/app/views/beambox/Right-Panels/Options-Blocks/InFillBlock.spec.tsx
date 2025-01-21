@@ -4,11 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import InFillBlock from './InFillBlock';
 
 const mockIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => () => mockIsMobile(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -24,7 +24,7 @@ const isElemFillable = jest.fn();
 const calcElemFilledInfo = jest.fn();
 const setElemsUnfill = jest.fn();
 const setElemsFill = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -90,7 +90,7 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
     const { container } = render(
-      <InFillBlock label="Infill" elem={document.getElementById('flux')} />
+      <InFillBlock label="Infill" elem={document.getElementById('flux')} />,
     );
     expect(container).toMatchSnapshot();
 
@@ -123,7 +123,7 @@ describe('should render correctly in mobile', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
     const { container } = render(
-      <InFillBlock elem={document.getElementById('flux')} id="mock-infill-id" />
+      <InFillBlock elem={document.getElementById('flux')} id="mock-infill-id" />,
     );
     expect(container).toMatchSnapshot();
   });

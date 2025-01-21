@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { ArrowDirection } from 'interfaces/IDialog';
+import { ArrowDirection } from '@core/interfaces/IDialog';
 
 interface Position {
   top?: number;

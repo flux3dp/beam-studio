@@ -1,19 +1,19 @@
 /* eslint-disable no-param-reassign */
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import findDefs from 'app/svgedit/utils/findDef';
-import fontHelper from 'helpers/fonts/fontHelper';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import NS from 'app/constants/namespaces';
-import sanitizeXmlString from 'helpers/sanitize-xml-string';
-import selector from 'app/svgedit/selector';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import workareaManager from 'app/svgedit/workarea';
-import { getCurrentUser } from 'helpers/api/flux-id';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { WebFont } from 'interfaces/IFont';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import NS from '@core/app/constants/namespaces';
+import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
+import selector from '@core/app/svgedit/selector';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { WebFont } from '@core/interfaces/IFont';
 
 let svgedit;
 let svgCanvas: ISVGCanvas;

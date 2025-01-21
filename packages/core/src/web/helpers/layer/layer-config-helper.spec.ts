@@ -1,19 +1,19 @@
 /* eslint-disable import/first */
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import { LaserType } from 'app/constants/promark-constants';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LaserType } from '@core/app/constants/promark-constants';
 
 const mockGetDefaultLaserModule = jest.fn();
-jest.mock('helpers/layer-module/layer-module-helper', () => ({
+jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
   getDefaultLaserModule: () => mockGetDefaultLaserModule(),
 }));
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key: string) => mockRead(key),
 }));
 
 const mockGetPromarkInfo = jest.fn();
-jest.mock('helpers/device/promark/promark-info', () => ({
+jest.mock('@core/helpers/device/promark/promark-info', () => ({
   getPromarkInfo: (...args) => mockGetPromarkInfo(...args),
 }));
 
@@ -30,24 +30,24 @@ import {
 
 const mockGetAllPresets = jest.fn();
 const mockGetDefaultPreset = jest.fn();
-jest.mock('helpers/presets/preset-helper', () => ({
+jest.mock('@core/helpers/presets/preset-helper', () => ({
   getAllPresets: () => mockGetAllPresets(),
   getDefaultPreset: (name) => mockGetDefaultPreset(name),
 }));
 
 const mockGetAllLayerNames = jest.fn();
 const mockGetLayerByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
   getLayerByName: (name) => mockGetLayerByName(name),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
 jest.mock(
-  'helpers/layer/full-color/toggleFullColorLayer',
+  '@core/helpers/layer/full-color/toggleFullColorLayer',
   () =>
     (...args) =>
-      mockToggleFullColorLayer(...args)
+      mockToggleFullColorLayer(...args),
 );
 
 const defaultLaserConfigs = {
@@ -190,7 +190,7 @@ describe('test layer-config-helper', () => {
 
   test('getLayersConfig', () => {
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual(
-      defaultMultiValueLaserConfigs
+      defaultMultiValueLaserConfigs,
     );
     writeData('layer 1', 'speed', 30);
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual({

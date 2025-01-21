@@ -2,19 +2,19 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { PanelType } from 'app/constants/right-panel-types';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 import Tab from './Tab';
 
 const getNextStepRequirement = jest.fn();
 const handleNextStep = jest.fn();
-jest.mock('app/views/tutorials/tutorialController', () => ({
+jest.mock('@core/app/views/tutorials/tutorialController', () => ({
   getNextStepRequirement: (...args) => getNextStepRequirement(...args),
   handleNextStep: (...args) => handleNextStep(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       tabs: {
@@ -45,11 +45,11 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/constants/tutorial-constants', () => ({
+jest.mock('@core/app/constants/tutorial-constants', () => ({
   TO_LAYER_PANEL: 'TO_LAYER_PANEL',
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ isPathEditing: false }),
 }));
 
@@ -58,7 +58,7 @@ describe('should render correctly', () => {
     const { container } = render(
       <SelectedElementContext.Provider value={{ selectedElement: null }}>
         <Tab panelType={PanelType.Layer} switchPanel={jest.fn()} />
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -71,7 +71,7 @@ describe('should render correctly', () => {
         value={{ selectedElement: document.getElementById('svg_1') }}
       >
         <Tab panelType={PanelType.PathEdit} switchPanel={jest.fn()} />
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -87,7 +87,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
         fireEvent.click(container.querySelector('div.layers'));
@@ -101,7 +101,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_3') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
         expect(getByText('Multiple Objects')).toBeInTheDocument();
@@ -114,7 +114,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
         expect(getByText('DXF Object')).toBeInTheDocument();
@@ -127,7 +127,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
         expect(getByText('SVG Object')).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
         expect(getByText('Text on Path')).toBeInTheDocument();
@@ -153,7 +153,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
       });
@@ -173,7 +173,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
         expect(container).toMatchSnapshot();
 
@@ -192,7 +192,7 @@ describe('should render correctly', () => {
             value={{ selectedElement: document.getElementById('svg_1') }}
           >
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>
+          </SelectedElementContext.Provider>,
         );
 
         getNextStepRequirement.mockReturnValue('');

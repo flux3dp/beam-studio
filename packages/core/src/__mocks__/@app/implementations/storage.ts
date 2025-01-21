@@ -1,4 +1,4 @@
-import type { IStorage, StorageKey } from 'interfaces/IStorage';
+import type { IStorage, StorageKey } from '@core/interfaces/IStorage';
 
 let storage: any = {};
 

@@ -2,14 +2,14 @@ import classNames from 'classnames';
 import React, { memo, useContext, useMemo } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import browser from 'implementations/browser';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import Select from 'app/widgets/AntdSelect';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { writeData } from 'helpers/layer/layer-config-helper';
+import browser from '@app/implementations/browser';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import Select from '@core/app/widgets/AntdSelect';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './HalftoneBlock.module.scss';
@@ -33,9 +33,7 @@ const HalftoneBlock = ({
     dispatch({ type: 'change', payload: { halftone: value } });
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Halftone');
-      selectedLayers.forEach((layerName) =>
-        writeData(layerName, 'halftone', value, { batchCmd })
-      );
+      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', value, { batchCmd }));
       batchCmd.onAfter = initState;
       svgCanvas.addCommandToHistory(batchCmd);
     }
@@ -50,7 +48,7 @@ const HalftoneBlock = ({
         { value: 1, label: 'FM' },
         { value: 2, label: 'AM' },
       ].filter((option) => option),
-    [hasMultiValue]
+    [hasMultiValue],
   );
   return type === 'panel-item' ? (
     <ObjectPanelItem.Select

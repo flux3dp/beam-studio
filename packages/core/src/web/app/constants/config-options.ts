@@ -1,12 +1,7 @@
-import ConfigOption from 'interfaces/ConfigOption';
-import { ILang } from 'interfaces/ILang';
+import ConfigOption from '@core/interfaces/ConfigOption';
+import { ILang } from '@core/interfaces/ILang';
 
-const multipassOptions: ConfigOption[] = [
-  { value: 2 },
-  { value: 3 },
-  { value: 4 },
-  { value: 5 },
-];
+const multipassOptions: ConfigOption[] = [{ value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }];
 
 const whiteMultipassOptions: ConfigOption[] = [
   { value: 3 },

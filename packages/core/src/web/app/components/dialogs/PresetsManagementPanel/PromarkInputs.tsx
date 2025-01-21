@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import { Switch } from 'antd';
 
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from 'interfaces/ILayerConfig';
-import { getDefaultConfig, getPromarkLimit } from 'helpers/layer/layer-config-helper';
-import { getSupportInfo } from 'app/constants/add-on';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
+import { getDefaultConfig, getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
+import { getSupportInfo } from '@core/app/constants/add-on';
 
 import styles from './PresetsManagementPanel.module.scss';
 

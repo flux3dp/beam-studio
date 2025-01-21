@@ -1,25 +1,32 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-const eventEmitters = {
+const eventEmitters: Record<string, any> = {
+  'alert-progress': null,
+  'beambox-preference': null,
+  canvas: null,
   'flux-id': null,
+  'layer-panel': null,
+  monitor: null,
+  'object-panel': null,
+  'right-panel': null,
+  'time-estimation-button': null,
   'top-bar': null,
   'top-bar-hints': null,
-  'time-estimation-button': null,
   'top-bar-menu': null,
-  'layer-panel': null,
-  'right-panel': null,
-  'object-panel': null,
-  'alert-progress': null,
-  'zoom-block': null,
-  'beambox-preference': null,
   workarea: null,
-  monitor: null,
-  canvas: null,
+  'zoom-block': null,
 };
+
 export default {
   createEventEmitter: (type?: string): EventEmitter => {
-    if (!type) return new EventEmitter();
-    if (!eventEmitters[type]) eventEmitters[type] = new EventEmitter();
-    return eventEmitters[type];
+    if (!type) {
+      return new EventEmitter();
+    }
+
+    if (!eventEmitters[type as keyof typeof eventEmitters]) {
+      eventEmitters[type as keyof typeof eventEmitters] = new EventEmitter();
+    }
+
+    return eventEmitters[type as keyof typeof eventEmitters] as unknown as EventEmitter;
   },
 };

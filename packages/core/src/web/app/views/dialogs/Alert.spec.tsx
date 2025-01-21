@@ -1,30 +1,30 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { IAlert } from 'interfaces/IAlert';
+import { IAlert } from '@core/interfaces/IAlert';
 
 import Alert from './Alert';
 
 const mockGetActiveLang = jest.fn();
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   getActiveLang: () => mockGetActiveLang(),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     learn_more: 'Learn more',
   },
 }));
 
 const mockPopFromStack = jest.fn();
-jest.mock('app/contexts/AlertProgressContext', () => ({
+jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({
     popFromStack: () => mockPopFromStack,
   }),
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   open: (...args: any) => mockOpen(...args),
 }));
@@ -73,14 +73,14 @@ describe('test Alert', () => {
 
   it('should render correctly with help center link', () => {
     const { baseElement, getByText, rerender } = render(
-      <Alert data={{ ...mockData, message: '#801 error', links: null }} />
+      <Alert data={{ ...mockData, message: '#801 error', links: null }} />,
     );
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Learn more'));
     expect(mockOpen).toBeCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(
       1,
-      'https://support.flux3dp.com/hc/en-us/articles/360001809676'
+      'https://support.flux3dp.com/hc/en-us/articles/360001809676',
     );
 
     mockGetActiveLang.mockReturnValue('zh-tw');
@@ -89,7 +89,7 @@ describe('test Alert', () => {
     expect(mockOpen).toBeCalledTimes(2);
     expect(mockOpen).toHaveBeenNthCalledWith(
       2,
-      'https://support.flux3dp.com/hc/zh-tw/articles/360001809676'
+      'https://support.flux3dp.com/hc/zh-tw/articles/360001809676',
     );
   });
 

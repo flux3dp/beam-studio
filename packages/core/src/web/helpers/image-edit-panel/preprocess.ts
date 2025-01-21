@@ -1,5 +1,5 @@
-import imageProcessor from 'implementations/imageProcessor';
-import jimpHelper from 'helpers/jimp-helper';
+import imageProcessor from '@app/implementations/imageProcessor';
+import jimpHelper from '@core/helpers/jimp-helper';
 import Jimp from 'jimp';
 
 export interface CropperDimension {
@@ -12,7 +12,7 @@ export interface CropperDimension {
 export const preprocessByJimpImage = async (
   image: Jimp,
   blobUrl: string,
-  { isFullResolution = false } = {}
+  { isFullResolution = false } = {},
 ): Promise<{
   blobUrl: string;
   dimension: CropperDimension;
@@ -39,7 +39,7 @@ export const preprocessByJimpImage = async (
 
 export const preprocessByUrl = async (
   blobUrl: string,
-  { isFullResolution = false } = {}
+  { isFullResolution = false } = {},
 ): Promise<{
   blobUrl: string;
   dimension: CropperDimension;

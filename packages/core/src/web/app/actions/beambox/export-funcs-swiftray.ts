@@ -1,27 +1,27 @@
 /* eslint-disable no-console */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import AwsHelper from 'helpers/aws-helper';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import convertClipPath from 'helpers/layer/convertClipPath';
-import convertShapeToBitmap from 'helpers/layer/convertShapeToBitmap';
-import FontFuncs from 'app/actions/beambox/font-funcs';
-import i18n from 'helpers/i18n';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import Progress from 'app/actions/progress-caller';
-import SymbolMaker from 'helpers/symbol-maker';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import updateImagesResolution from 'helpers/image/updateImagesResolution';
-import VersionChecker from 'helpers/version-checker';
-import { controlConfig } from 'app/constants/promark-constants';
-import { getExportOpt } from 'helpers/api/svg-laser-parser';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBaseConfig, IFcodeConfig } from 'interfaces/ITaskConfig';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { IWrappedSwiftrayTaskFile } from 'interfaces/IWrappedFile';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
-import { tempSplitFullColorLayers } from 'helpers/layer/full-color/splitFullColorLayer';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import AwsHelper from '@core/helpers/aws-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import convertClipPath from '@core/helpers/layer/convertClipPath';
+import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import i18n from '@core/helpers/i18n';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import Progress from '@core/app/actions/progress-caller';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import VersionChecker from '@core/helpers/version-checker';
+import { controlConfig } from '@core/app/constants/promark-constants';
+import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBaseConfig, IFcodeConfig } from '@core/interfaces/ITaskConfig';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 
 import generateThumbnail from './export/generate-thumbnail';
 import { getAdorPaddingAccel } from './export/ador-utils';
@@ -43,7 +43,7 @@ export const dpiTextMap = {
 
 const generateUploadFile = async (
   thumbnail: string,
-  thumbnailUrl: string
+  thumbnailUrl: string,
 ): Promise<IWrappedSwiftrayTaskFile> => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
@@ -108,7 +108,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
         errorMessage = message;
       },
     },
-    uploadConfig
+    uploadConfig,
   );
 
   if (errorMessage && !isCanceled) {
@@ -166,14 +166,14 @@ const getTaskCode = (codeType: 'gcode' | 'fcode', taskOptions) =>
           });
         },
       },
-      taskOptions
+      taskOptions,
     );
   });
 
 // Send svg string calculate taskcode, output Fcode in default
 const fetchTaskCodeSwiftray = async (
   device: IDeviceInfo = null,
-  opts: { output?: 'fcode' | 'gcode'; fgGcode?: boolean } = {}
+  opts: { output?: 'fcode' | 'gcode'; fgGcode?: boolean } = {},
 ): Promise<
   | {
       taskCodeBlob: Blob;
@@ -355,7 +355,7 @@ const fetchFraming = async (): Promise<boolean> => {
         });
       },
     },
-    uploadConfig
+    uploadConfig,
   );
   Progress.popById('upload-scene');
   return loadResult.success;

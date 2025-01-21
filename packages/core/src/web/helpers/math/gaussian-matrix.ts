@@ -1,4 +1,4 @@
-import binomialCoefficient from 'helpers/math/binomial-coefficient';
+import binomialCoefficient from '@core/helpers/math/binomial-coefficient';
 
 const fromBinomialCoef = (n: number, multiplier: number): number[][] => {
   const binomailCoef = binomialCoefficient(n);

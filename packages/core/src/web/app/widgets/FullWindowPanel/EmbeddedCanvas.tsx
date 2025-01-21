@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React, { memo, useEffect, useRef } from 'react';
 
-import ZoomBlock from 'app/components/beambox/ZoomBlock';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 
-import constant from 'app/actions/beambox/constant';
+import constant from '@core/app/actions/beambox/constant';
 import styles from './EmbeddedCanvas.module.scss';
 import { EmbeddedCanvasManager } from './EmbeddedCanvasManager';
 

@@ -1,8 +1,8 @@
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import requirejsHelper from 'helpers/requirejs-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { moveElements } from 'app/svgedit/operations/move';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import requirejsHelper from '@core/helpers/requirejs-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { moveElements } from '@core/app/svgedit/operations/move';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
@@ -11,7 +11,7 @@ getSVGAsync((globalSVG) => {
 
 const traceAndImportPath = async (
   imgBase64: string,
-  dimension: { x: number; y: number; width: number; height: number }
+  dimension: { x: number; y: number; width: number; height: number },
 ): Promise<boolean> => {
   const ImageTracer = await requirejsHelper('imagetracer');
   const { x, y, width, height } = dimension;

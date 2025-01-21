@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import arrayBuffer from 'helpers/arrayBuffer';
-import Websocket from 'helpers/websocket';
-import { AutoFit, AutoFitContour } from 'interfaces/IAutoFit';
-import { WrappedWebSocket } from 'interfaces/WebSocket';
+import arrayBuffer from '@core/helpers/arrayBuffer';
+import Websocket from '@core/helpers/websocket';
+import { AutoFit, AutoFitContour } from '@core/interfaces/IAutoFit';
+import { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 class UtilsWebSocket extends EventEmitter {
   private ws: WrappedWebSocket;
@@ -168,7 +168,7 @@ class UtilsWebSocket extends EventEmitter {
 
   transformRgbImageToCmyk = async (
     blob: Blob,
-    opts: { onProgress?: (progress: number) => void; resultType?: 'binary' | 'base64' } = {}
+    opts: { onProgress?: (progress: number) => void; resultType?: 'binary' | 'base64' } = {},
   ) => {
     const data = await arrayBuffer(blob);
     const { onProgress, resultType = 'binary' } = opts;
@@ -213,7 +213,7 @@ class UtilsWebSocket extends EventEmitter {
               reject(Error('strange message from /ws/utils'));
             }
           }
-        }
+        },
       );
       const args = ['rgb_to_cmyk', data.byteLength, resultType === 'binary' ? 'binary' : 'base64'];
       this.ws.send(args.join(' '));
@@ -224,7 +224,7 @@ class UtilsWebSocket extends EventEmitter {
     blob: Blob,
     opts: { onProgress?: (progress: number) => void; colorType: 'rgb' | 'cmyk' } = {
       colorType: 'rgb',
-    }
+    },
   ) => {
     const data = await arrayBuffer(blob);
     const { colorType = 'rgb' } = opts;
@@ -267,7 +267,7 @@ class UtilsWebSocket extends EventEmitter {
               reject(Error('strange message from /ws/utils'));
             }
           }
-        }
+        },
       );
       const args = ['split_color', data.byteLength, colorType];
       this.ws.send(args.join(' '));
@@ -279,7 +279,7 @@ class UtilsWebSocket extends EventEmitter {
     opts?: {
       isSplcingImg?: boolean;
       onProgress?: (progress: number) => void;
-    }
+    },
   ) => {
     const data = await arrayBuffer(imgBlob);
     return new Promise<AutoFit[]>((resolve, reject) => {
@@ -327,7 +327,7 @@ class UtilsWebSocket extends EventEmitter {
     opts?: {
       isSplcingImg?: boolean;
       onProgress?: (progress: number) => void;
-    }
+    },
   ) => {
     const data = await arrayBuffer(imgBlob);
     return new Promise<AutoFitContour[][]>((resolve, reject) => {
@@ -366,7 +366,7 @@ class UtilsWebSocket extends EventEmitter {
               reject(Error('strange message from /ws/utils'));
             }
           }
-        }
+        },
       );
       const args = ['get_all_similar_contours', data.byteLength, isSplcingImg ? 1 : 0];
       this.ws.send(args.join(' '));
@@ -407,7 +407,7 @@ class UtilsWebSocket extends EventEmitter {
               reject(Error('strange message from /ws/utils'));
             }
           }
-        }
+        },
       );
       const args = ['get_convex_hull', data.byteLength];
       this.ws.send(args.join(' '));

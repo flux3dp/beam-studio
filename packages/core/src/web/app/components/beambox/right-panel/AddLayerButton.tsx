@@ -1,13 +1,13 @@
 import Icon from '@ant-design/icons';
 import React from 'react';
 
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import TutorialController from 'app/views/tutorials/tutorialController';
-import useI18n from 'helpers/useI18n';
-import { createLayer } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { initLayerConfig } from 'helpers/layer/layer-config-helper';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import TutorialController from '@core/app/views/tutorials/tutorialController';
+import useI18n from '@core/helpers/useI18n';
+import { createLayer } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 
 import styles from './AddLayerButton.module.scss';
 

@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Modal, Segmented } from 'antd';
 
-import AlertIcons from 'app/icons/alerts/AlertIcons';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import browser from 'implementations/browser';
-import progressCaller from 'app/actions/progress-caller';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import imageEdit from 'helpers/image-edit';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { CHUCK_ROTARY_DIAMETER } from 'app/constants/add-on';
-import { getRotationAngle } from 'app/svgedit/transform/rotation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import AlertIcons from '@core/app/icons/alerts/AlertIcons';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import browser from '@app/implementations/browser';
+import progressCaller from '@core/app/actions/progress-caller';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import imageEdit from '@core/helpers/image-edit';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { CHUCK_ROTARY_DIAMETER } from '@core/app/constants/add-on';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './RotaryWarped.module.scss';
 
@@ -33,7 +33,7 @@ const rotateImage = (
   w: number,
   h: number,
   rotation: number,
-  source: CanvasImageSource
+  source: CanvasImageSource,
 ): HTMLCanvasElement => {
   const canvas = document.createElement('canvas');
   const c = Math.abs(Math.cos(rotation));
@@ -88,10 +88,10 @@ const RotaryWarped = ({ elem, onClose }: Props): JSX.Element => {
     return { ...imageInfo, rotation: r, initA: null, initB: null };
   }, [elem]);
   const [diameterA, setDiaMeterA] = useState<number>(
-    initA ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER
+    initA ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
   );
   const [diameterB, setDiaMeterB] = useState<number>(
-    initB ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER
+    initB ?? beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
   );
   const img = useRef<HTMLImageElement>(new Image());
   const previewCanvas = useRef<HTMLCanvasElement>(null);
@@ -101,7 +101,7 @@ const RotaryWarped = ({ elem, onClose }: Props): JSX.Element => {
       { label: t.diameter, value: 0 },
       { label: t.circumference, value: 1 },
     ],
-    [t]
+    [t],
   );
 
   useEffect(() => {
@@ -158,7 +158,7 @@ const RotaryWarped = ({ elem, onClose }: Props): JSX.Element => {
           imgUrl,
           shading,
           threshold,
-          isFullColor
+          isFullColor,
         );
         imageEdit.addBatchCommand('Image Edit: invert', elem, {
           origImage: imgUrl,
@@ -207,7 +207,7 @@ const RotaryWarped = ({ elem, onClose }: Props): JSX.Element => {
           acc[3] = Math.min(acc[3], y);
           return acc;
         },
-        [0, 0, Infinity, Infinity]
+        [0, 0, Infinity, Infinity],
       );
       const dw = Math.floor(Math.min(minX, result.width - maxX));
       const dh = Math.floor(Math.min(minY, result.height - maxY));
@@ -409,6 +409,6 @@ export const showRotaryWarped = (elem?: SVGImageElement): void => {
   if (!targetElem) return;
   addDialogComponent(
     'rotary-warped',
-    <RotaryWarped elem={targetElem} onClose={() => popDialogById('rotary-warped')} />
+    <RotaryWarped elem={targetElem} onClose={() => popDialogById('rotary-warped')} />,
   );
 };

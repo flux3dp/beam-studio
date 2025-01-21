@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 const mockGet = jest.fn();
 const mockSet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
 }));
@@ -12,7 +12,7 @@ mockGet.mockReturnValueOnce({
 
 import beamboxPreference from './beambox-preference';
 
-jest.mock('app/actions/beambox/constant', () => ({
+jest.mock('@core/app/actions/beambox/constant', () => ({
   diode: {
     defaultOffsetX: 10, // mm
     defaultOffsetY: 10, // mm
@@ -20,7 +20,7 @@ jest.mock('app/actions/beambox/constant', () => ({
 }));
 
 const mockEmit = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: (...args) => mockEmit(...args),
   }),

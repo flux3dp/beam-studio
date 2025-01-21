@@ -1,5 +1,5 @@
-import deviceMaster from 'helpers/device-master';
-import { RotationParameters3D } from 'interfaces/FisheyePreview';
+import deviceMaster from '@core/helpers/device-master';
+import { RotationParameters3D } from '@core/interfaces/FisheyePreview';
 
 const loadCamera3dRotation = async (): Promise<RotationParameters3D | null> => {
   try {

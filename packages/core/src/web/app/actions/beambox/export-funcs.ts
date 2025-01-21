@@ -1,31 +1,31 @@
 /* eslint-disable no-console */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import AwsHelper from 'helpers/aws-helper';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import convertShapeToBitmap from 'helpers/layer/convertShapeToBitmap';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import deviceMaster from 'helpers/device-master';
-import dialog from 'implementations/dialog';
-import FontFuncs from 'app/actions/beambox/font-funcs';
-import generateThumbnail from 'app/actions/beambox/export/generate-thumbnail';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import MonitorController from 'app/actions/monitor-controller';
-import Progress from 'app/actions/progress-caller';
-import SymbolMaker from 'helpers/symbol-maker';
-import svgLaserParser from 'helpers/api/svg-laser-parser';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import updateImagesResolution from 'helpers/image/updateImagesResolution';
-import VersionChecker from 'helpers/version-checker';
-import { fetchTaskCodeSwiftray } from 'app/actions/beambox/export-funcs-swiftray';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { hasSwiftray } from 'helpers/api/swiftray-client';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { Mode } from 'app/constants/monitor-constants';
-import { tempSplitFullColorLayers } from 'helpers/layer/full-color/splitFullColorLayer';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import AwsHelper from '@core/helpers/aws-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import deviceMaster from '@core/helpers/device-master';
+import dialog from '@app/implementations/dialog';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import MonitorController from '@core/app/actions/monitor-controller';
+import Progress from '@core/app/actions/progress-caller';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import svgLaserParser from '@core/helpers/api/svg-laser-parser';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
+import VersionChecker from '@core/helpers/version-checker';
+import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { hasSwiftray } from '@core/helpers/api/swiftray-client';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 
 let svgCanvas: ISVGCanvas;
 
@@ -97,7 +97,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
 // Send svg string calculate taskcode, output Fcode in default
 const fetchTaskCode = async (
   device: IDeviceInfo = null,
-  opts: { output?: 'fcode' | 'gcode'; fgGcode?: boolean } = {}
+  opts: { output?: 'fcode' | 'gcode'; fgGcode?: boolean } = {},
 ) => {
   svgCanvas.removeUnusedDefs();
   let didErrorOccur = false;
@@ -280,7 +280,7 @@ const fetchTaskCode = async (
           shouldUseFastGradient: false,
           shouldMockFastGradient: true,
         }
-      : undefined
+      : undefined,
   );
   const { taskCodeBlob, metadata } = taskCodeRes;
   let { fileTimeCost } = taskCodeRes;
@@ -359,7 +359,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
         codeType,
         model: BeamboxPreference.read('workarea') || BeamboxPreference.read('model'),
         vectorSpeedConstraint: BeamboxPreference.read('vector_speed_contraint') !== false,
-      }
+      },
     );
   });
   Progress.popById('fetch-task');
@@ -378,7 +378,7 @@ const openTaskInDeviceMonitor = (
   fcodeBlob: Blob,
   taskImageURL: string,
   taskTime: number,
-  autoStart?: boolean
+  autoStart?: boolean,
 ): void => {
   const fileName = currentFileManager.getName() || i18n.lang.topbar.untitled;
   MonitorController.showMonitor(
@@ -390,7 +390,7 @@ const openTaskInDeviceMonitor = (
       taskTime,
       fileName,
     },
-    autoStart
+    autoStart,
   );
 };
 
@@ -492,7 +492,7 @@ export default {
   },
   gcodeToFcode: async (
     gcodeString: string,
-    thumbnail: string
+    thumbnail: string,
   ): Promise<{
     fcodeBlob: Blob;
     fileTimeCost: number;

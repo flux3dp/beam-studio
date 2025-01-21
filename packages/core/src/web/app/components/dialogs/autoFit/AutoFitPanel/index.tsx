@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import ActionPanelIcons from 'app/icons/action-panel/ActionPanelIcons';
-import BackButton from 'app/widgets/FullWindowPanel/BackButton';
-import FullWindowPanel from 'app/widgets/FullWindowPanel/FullWindowPanel';
-import Header from 'app/widgets/FullWindowPanel/Header';
-import Sider from 'app/widgets/FullWindowPanel/Sider';
-import useI18n from 'helpers/useI18n';
-import useNewShortcutsScope from 'helpers/hooks/useNewShortcutsScope';
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
+import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
+import Header from '@core/app/widgets/FullWindowPanel/Header';
+import Sider from '@core/app/widgets/FullWindowPanel/Sider';
+import useI18n from '@core/helpers/useI18n';
+import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import apply from '../apply';
 import Canvas from './Canvas';

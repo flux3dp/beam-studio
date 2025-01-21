@@ -3,14 +3,14 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { render } from '@testing-library/react';
 
-import AlertConstants from 'app/constants/alert-constants';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import ProgressConstants from 'app/constants/progress-constants';
-import { MessageLevel } from 'app/actions/message-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import ProgressConstants from '@core/app/constants/progress-constants';
+import { MessageLevel } from '@core/app/actions/message-caller';
 
 import { AlertProgressContextProvider, AlertProgressContext } from './AlertProgressContext';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
       info: 'INFO',
@@ -53,7 +53,7 @@ test('should render correctly', async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     <AlertProgressContextProvider messageApi={mockMessageApi as any}>
       <Children />
-    </AlertProgressContextProvider>
+    </AlertProgressContextProvider>,
   );
   expect(container).toMatchSnapshot();
   expect(eventEmitter.eventNames().length).toBe(9);

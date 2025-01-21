@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     settings: {
       ip: 'Machine IP Address',
@@ -19,23 +19,23 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const popUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp,
 }));
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open,
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
-jest.mock('app/components/settings/Control', () => 'mock-control');
+jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
-jest.mock('app/components/settings/SelectControl', () =>
+jest.mock('@core/app/components/settings/SelectControl', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, label, onChange, options }: any) => (
     <div>
@@ -44,7 +44,7 @@ jest.mock('app/components/settings/SelectControl', () =>
       options:{JSON.stringify(options)}
       <input className="select-control" onChange={onChange} />
     </div>
-  )
+  ),
 );
 
 // eslint-disable-next-line import/first
@@ -86,7 +86,7 @@ describe('should render correctly', () => {
           },
         ]}
         updateConfigChange={updateConfigChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     expect(get).toHaveBeenCalledTimes(1);
@@ -111,7 +111,7 @@ describe('should render correctly', () => {
     expect(open).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenNthCalledWith(
       1,
-      'https://support.flux3dp.com/hc/en-us/sections/360000302135'
+      'https://support.flux3dp.com/hc/en-us/sections/360000302135',
     );
 
     const controls = container.querySelectorAll('.select-control');
@@ -159,7 +159,7 @@ describe('should render correctly', () => {
           },
         ]}
         updateConfigChange={updateConfigChange}
-      />
+      />,
     );
 
     const input = container.querySelector('input');
@@ -174,7 +174,7 @@ describe('should render correctly', () => {
     expect(updateConfigChange).toHaveBeenNthCalledWith(
       1,
       'poke-ip-addr',
-      '192.168.3.3;192.168.4.4'
+      '192.168.3.3;192.168.4.4',
     );
   });
 });

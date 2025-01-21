@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './PresetsManagementPanel.module.scss';
 

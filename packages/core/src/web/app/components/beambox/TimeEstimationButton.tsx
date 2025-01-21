@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { Tooltip } from 'antd';
 
-import ExportFuncs from 'app/actions/beambox/export-funcs';
-import FormatDuration from 'helpers/duration-formatter';
-import useI18n from 'helpers/useI18n';
-import webNeedConnectionWrapper from 'helpers/web-need-connection-helper';
-import WorkareaIcons from 'app/icons/workarea/WorkareaIcons';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { TimeEstimationButtonContext } from 'app/contexts/TimeEstimationButtonContext';
+import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import FormatDuration from '@core/helpers/duration-formatter';
+import useI18n from '@core/helpers/useI18n';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 
 import styles from './TimeEstimationButton.module.scss';
 

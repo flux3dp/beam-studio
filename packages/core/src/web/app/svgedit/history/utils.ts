@@ -1,5 +1,5 @@
-import currentFileManager from 'app/svgedit/currentFileManager';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 
 import undoManager from './undoManager';
 

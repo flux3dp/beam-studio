@@ -1,5 +1,5 @@
 import React from 'react';
-import browser from 'implementations/browser';
+import browser from '@app/implementations/browser';
 
 import classNames from 'classnames';
 import styles from './Hint.module.scss';
@@ -24,7 +24,7 @@ export default ({ message }: { message: string }): JSX.Element => {
       parts.push(
         <span className={styles.link} key={url} onClick={() => browser.open(url)}>
           {linkText}
-        </span>
+        </span>,
       );
 
       lastIndex = index + fullMatch.length;

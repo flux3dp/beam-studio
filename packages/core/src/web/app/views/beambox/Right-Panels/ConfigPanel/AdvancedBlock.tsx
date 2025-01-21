@@ -1,17 +1,17 @@
 import React, { memo, useContext, useEffect, useMemo } from 'react';
 import { Collapse, ConfigProvider } from 'antd';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import useForceUpdate from 'helpers/use-force-update';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { getPromarkInfo } from 'helpers/device/promark/promark-info';
-import { getPromarkLimit } from 'helpers/layer/layer-config-helper';
-import { getSupportInfo } from 'app/constants/add-on';
-import { LaserType } from 'app/constants/promark-constants';
-import { promarkModels } from 'app/actions/beambox/constant';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { LaserType } from '@core/app/constants/promark-constants';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import AutoFocus from './AutoFocus';
 import ConfigPanelContext from './ConfigPanelContext';
@@ -38,7 +38,7 @@ const AdvancedBlock = ({
   const promarkLimit = useMemo(
     () => (promarkInfo ? getPromarkLimit() : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [promarkInfo?.laserType, promarkInfo?.watt]
+    [promarkInfo?.laserType, promarkInfo?.watt],
   );
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const AdvancedBlock = ({
             type={type}
             min={promarkLimit.pulseWidth.min}
             max={promarkLimit.pulseWidth.max}
-          />
+          />,
         );
       contents.push(
         <FrequencyBlock
@@ -68,7 +68,7 @@ const AdvancedBlock = ({
           type={type}
           min={promarkLimit.frequency.min}
           max={promarkLimit.frequency.max}
-        />
+        />,
       );
     }
     if (supportInfo.lowerFocus) {

@@ -5,7 +5,7 @@ import { FullWindowPanelContext } from './FullWindowPanel';
 
 import Footer from './Footer';
 
-jest.mock('app/widgets/FullWindowPanel/FullWindowPanel', () => ({
+jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
     isDesktop: false,
     isMobile: false,
@@ -23,8 +23,8 @@ describe('test Footer', () => {
           isWindows: false,
         }}
       >
-        <Footer className='class'>Footer</Footer>
-      </FullWindowPanelContext.Provider>
+        <Footer className="class">Footer</Footer>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     rerender(
@@ -35,8 +35,8 @@ describe('test Footer', () => {
           isWindows: true,
         }}
       >
-        <Footer className='class class2'>Footer</Footer>
-      </FullWindowPanelContext.Provider>
+        <Footer className="class class2">Footer</Footer>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import React, { useContext, useEffect } from 'react';
 
-import shortcuts from 'helpers/shortcuts';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { showFramingModal } from 'app/components/dialogs/FramingModal';
+import shortcuts from '@core/helpers/shortcuts';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 
 import styles from './FrameButton.module.scss';
 

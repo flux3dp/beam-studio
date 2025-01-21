@@ -4,29 +4,29 @@ import classNames from 'classnames';
 import React, { KeyboardEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import checkCamera from 'helpers/device/check-camera';
-import checkIPFormat from 'helpers/check-ip-format';
-import checkRpiIp from 'helpers/check-rpi-ip';
-import checkSoftwareForAdor from 'helpers/check-software';
-import Discover from 'helpers/api/discover';
-import dialogCaller from 'app/actions/dialog-caller';
-import isWeb from 'helpers/is-web';
-import menuDeviceActions from 'app/actions/beambox/menuDeviceActions';
-import network from 'implementations/network';
-import storage from 'implementations/storage';
-import TestInfo from 'app/components/settings/connection/TestInfo';
-import TestState, { isTesting } from 'app/constants/connection-test';
-import useI18n from 'helpers/useI18n';
-import versionChecker from 'helpers/version-checker';
-import { adorModels, bb2Models, promarkModels } from 'app/actions/beambox/constant';
-import { allWorkareas } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import checkCamera from '@core/helpers/device/check-camera';
+import checkIPFormat from '@core/helpers/check-ip-format';
+import checkRpiIp from '@core/helpers/check-rpi-ip';
+import checkSoftwareForAdor from '@core/helpers/check-software';
+import Discover from '@core/helpers/api/discover';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import isWeb from '@core/helpers/is-web';
+import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
+import network from '@app/implementations/network';
+import storage from '@app/implementations/storage';
+import TestInfo from '@core/app/components/settings/connection/TestInfo';
+import TestState, { isTesting } from '@core/app/constants/connection-test';
+import useI18n from '@core/helpers/useI18n';
+import versionChecker from '@core/helpers/version-checker';
+import { adorModels, bb2Models, promarkModels } from '@core/app/actions/beambox/constant';
+import { allWorkareas } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import { swiftrayClient } from 'helpers/api/swiftray-client';
-import deviceMaster from 'helpers/device-master';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import deviceMaster from '@core/helpers/device-master';
 import styles from './index.module.scss';
 import { initialState, State } from './state';
 import Hint from './Hint';
@@ -58,14 +58,14 @@ const ConnectMachineIp = (): JSX.Element => {
       Discover('connect-machine-ip', (devices) => {
         discoveredDevicesRef.current = devices;
       }),
-    []
+    [],
   );
 
   useEffect(() => () => discoverer.removeListener('connect-machine-ip'), [discoverer]);
 
   const [isAdor, isBb2, isPromark] = useMemo(
     () => [adorModels.has(model), bb2Models.has(model), promarkModels.has(model)],
-    [model]
+    [model],
   );
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
   const updateTestState = (newState: Partial<State>) =>
@@ -101,7 +101,7 @@ const ConnectMachineIp = (): JSX.Element => {
 
   const testConnection = async (
     predicate: (value: IDeviceInfo, index: number, obj: IDeviceInfo[]) => unknown = ({ ipaddr }) =>
-      testingIps.includes(ipaddr)
+      testingIps.includes(ipaddr),
   ) => {
     countDown.current = MACHINE_CONNECTION_TIMEOUT;
 

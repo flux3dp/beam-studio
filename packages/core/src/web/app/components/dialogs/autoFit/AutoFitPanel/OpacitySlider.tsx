@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Slider, Tooltip } from 'antd';
 
-import WorkareaIcons from 'app/icons/workarea/WorkareaIcons';
-import useI18n from 'helpers/useI18n';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './OpacitySlider.module.scss';
 import { AutoFitCanvasManager } from './CanvasManager';

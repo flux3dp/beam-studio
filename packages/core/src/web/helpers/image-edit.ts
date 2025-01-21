@@ -1,30 +1,30 @@
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import browser from 'implementations/browser';
-import dialogCaller from 'app/actions/dialog-caller';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import imageData from 'helpers/image-data';
-import jimpHelper from 'helpers/jimp-helper';
-import progress from 'app/actions/progress-caller';
-import requirejsHelper from 'helpers/requirejs-helper';
-import undoManager from 'app/svgedit/history/undoManager';
-import updateElementColor from 'helpers/color/updateElementColor';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import browser from '@app/implementations/browser';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import imageData from '@core/helpers/image-data';
+import jimpHelper from '@core/helpers/jimp-helper';
+import progress from '@core/app/actions/progress-caller';
+import requirejsHelper from '@core/helpers/requirejs-helper';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import updateElementColor from '@core/helpers/color/updateElementColor';
 import {
   axiosFluxId,
   getCurrentUser,
   getDefaultHeader,
   ResponseWithError,
-} from 'helpers/api/flux-id';
-import { deleteElements } from 'app/svgedit/operations/delete';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { moveElements } from 'app/svgedit/operations/move';
-import { simplifyPath } from 'app/svgedit/operations/pathActions';
+} from '@core/helpers/api/flux-id';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { moveElements } from '@core/app/svgedit/operations/move';
+import { simplifyPath } from '@core/app/svgedit/operations/pathActions';
 
 import PotraceWorker from './potrace/potrace.worker';
 
@@ -49,7 +49,7 @@ const getSelectedElem = (): SVGImageElement => {
 };
 
 const getImageAttributes = (
-  elem: Element
+  elem: Element,
 ): {
   isFullColor: boolean;
   imgUrl: string;
@@ -75,7 +75,7 @@ const generateBase64Image = (
   imgSrc: string,
   shading: boolean,
   threshold: number,
-  isFullColor = false
+  isFullColor = false,
 ): Promise<string> =>
   new Promise<string>((resolve) => {
     imageData(imgSrc, {
@@ -97,7 +97,7 @@ const generateBase64Image = (
 const addBatchCommand = (
   commandName: string,
   elem: Element,
-  changes: { [key: string]: string | number | boolean | undefined }
+  changes: { [key: string]: string | number | boolean | undefined },
 ): IBatchCommand => {
   const batchCommand: IBatchCommand = new history.BatchCommand(commandName);
   const setAttribute = (key: string, value) => {
@@ -195,11 +195,11 @@ const traceImage = async (img?: SVGImageElement): Promise<void> => {
         is_svg: false,
       },
       onComplete: (result) => resolve(result.pngBase64),
-    })
+    }),
   );
   const svgStr = (
     await new Promise<string>((resolve) =>
-      ImageTracer.imageToSVG(grayScaleUrl, (str) => resolve(str), 'detailed')
+      ImageTracer.imageToSVG(grayScaleUrl, (str) => resolve(str), 'detailed'),
     )
   ).replace(/<\/?svg[^>]*>/g, '');
   const gId = svgCanvas.getNextId();
@@ -260,7 +260,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
       caption: i18n.lang.beambox.popup.ai_credit.insufficient_credit,
       message: sprintf(
         i18n.lang.beambox.popup.ai_credit.insufficient_credit_msg,
-        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal
+        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal,
       ),
       buttonType: alertConstants.CUSTOM_CANCEL,
       buttonLabels: [i18n.lang.beambox.popup.ai_credit.go],
@@ -517,7 +517,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
  */
 const trapezoid = (
   img: HTMLImageElement | HTMLCanvasElement,
-  opts: { factor?: number; dir?: number; fixSize?: boolean; returnType?: 'base64' | 'canvas' } = {}
+  opts: { factor?: number; dir?: number; fixSize?: boolean; returnType?: 'base64' | 'canvas' } = {},
 ): HTMLCanvasElement | string => {
   const { factor = 0.6, dir = 0, fixSize, returnType = 'base64' } = opts;
   const alongX = dir % 2 === 1;
@@ -547,7 +547,7 @@ const calculateTrapezoidPoints = (
   points: number[][],
   width: number,
   height: number,
-  opts: { factor?: number; dir?: number; fixSize?: boolean } = {}
+  opts: { factor?: number; dir?: number; fixSize?: boolean } = {},
 ): number[][] => {
   const { factor = 0.6, dir = 0, fixSize } = opts;
   const alongX = dir % 2 === 1;

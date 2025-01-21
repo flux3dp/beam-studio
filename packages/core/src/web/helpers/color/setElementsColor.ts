@@ -1,5 +1,5 @@
-import symbolMaker from 'helpers/symbol-maker';
-import updateImageDisplay from 'helpers/image/updateImageDisplay';
+import symbolMaker from '@core/helpers/symbol-maker';
+import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
 const endByLayerSymbol = Symbol('end by_layer');
 const endByColorSymbol = Symbol('end by_color');
@@ -8,7 +8,7 @@ const endByColorSymbol = Symbol('end by_color');
 const setElementsColor = (
   elements: Element[],
   color: string,
-  isFullColor = false
+  isFullColor = false,
 ): Promise<void> => {
   const descendants: (Element | typeof endByLayerSymbol | typeof endByColorSymbol)[] = [
     ...elements,

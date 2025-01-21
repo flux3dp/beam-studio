@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
-import configOptions from 'app/constants/config-options';
-import useI18n from 'helpers/useI18n';
+import configOptions from '@core/app/constants/config-options';
+import useI18n from '@core/helpers/useI18n';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
@@ -11,7 +11,7 @@ import styles from './WhiteInkSettingsModal.module.scss';
 
 interface Props {
   value: number;
-  hasMultiValue?: boolean
+  hasMultiValue?: boolean;
   onChange: (val: number) => void;
 }
 
@@ -25,14 +25,14 @@ const WhiteInkMultipass = ({ value, hasMultiValue, onChange }: Props): JSX.Eleme
 
   const sliderOptions = useMemo(
     () => (simpleMode ? configOptions.whiteMultipassOptions : null),
-    [simpleMode]
+    [simpleMode],
   );
   return (
     <div className={styles.panel}>
       <span className={styles.title}>{t.print_multipass}</span>
       <ConfigValueDisplay
-        inputId='white-multipass-input'
-        type='modal'
+        inputId="white-multipass-input"
+        type="modal"
         max={MAX_VALUE}
         min={MIN_VALUE}
         value={value}
@@ -41,7 +41,7 @@ const WhiteInkMultipass = ({ value, hasMultiValue, onChange }: Props): JSX.Eleme
         options={sliderOptions}
       />
       <ConfigSlider
-        id='white-multipass-slider'
+        id="white-multipass-slider"
         max={MAX_VALUE}
         min={MIN_VALUE}
         value={value}

@@ -2,12 +2,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -69,10 +69,10 @@ jest.mock(
             MockConfigValueDisplayButton
           </button>
         </div>
-      )
+      ),
 );
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Item: ({ id, content, label, onClick }: any) => (
     <div onClick={onClick}>
       MockObjectPanelItem
@@ -84,23 +84,23 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockStorageGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
 const mockPrefRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockPrefRead(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -114,7 +114,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -127,20 +127,20 @@ const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEmit = jest.fn();
 
-jest.mock('app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
   LayerPanelContext: React.createContext({ hasVector: false }),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
-jest.mock('helpers/layer/check-vector', () => jest.fn());
+jest.mock('@core/helpers/layer/check-vector', () => jest.fn());
 
 // eslint-disable-next-line import/first
 import SpeedBlock from './SpeedBlock';
@@ -166,7 +166,7 @@ describe('test SpeedBlock', () => {
         }}
       >
         <SpeedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockStorageGet).toBeCalledTimes(1);
     expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
@@ -189,7 +189,7 @@ describe('test SpeedBlock', () => {
         }}
       >
         <SpeedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -207,7 +207,7 @@ describe('test SpeedBlock', () => {
         }}
       >
         <SpeedBlock type="panel-item" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockStorageGet).toBeCalledTimes(1);
     expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
@@ -232,7 +232,7 @@ describe('test SpeedBlock', () => {
         >
           <SpeedBlock />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(mockPrefRead).toBeCalledTimes(3);
@@ -257,7 +257,7 @@ describe('test SpeedBlock', () => {
         >
           <SpeedBlock />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(mockPrefRead).toBeCalledTimes(2);
@@ -278,7 +278,7 @@ describe('test SpeedBlock', () => {
         }}
       >
         <SpeedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
@@ -308,7 +308,7 @@ describe('test SpeedBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'speed', 88, {
       applyPrinting: true,
@@ -319,7 +319,7 @@ describe('test SpeedBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockEmit).toBeCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
@@ -341,7 +341,7 @@ describe('test SpeedBlock', () => {
         }}
       >
         <SpeedBlock type="modal" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');

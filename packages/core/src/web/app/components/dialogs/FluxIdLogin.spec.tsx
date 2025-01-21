@@ -5,22 +5,22 @@ import FluxIdLogin from './FluxIdLogin';
 
 const popUpError = jest.fn();
 const popUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => popUpError(...args),
   popUp: (...args) => popUp(...args),
 }));
 
 const showFluxCreditDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showFluxCreditDialog: () => showFluxCreditDialog(),
 }));
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     connection_fail: '#847 Failed to connect to FLUX member service.',
     login_success: 'Successfully logged in.',
@@ -46,7 +46,7 @@ jest.mock('helpers/useI18n', () => () => ({
 
 const get = jest.fn();
 const set = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => get(...args),
   set: (...args) => set(...args),
 }));
@@ -57,7 +57,7 @@ const mockFluxIdEventsOn = jest.fn();
 const mockRemoveListener = jest.fn();
 const signIn = jest.fn();
 const signOut = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   externalLinkFBSignIn: (...args) => externalLinkFBSignIn(...args),
   externalLinkGoogleSignIn: (...args) => externalLinkGoogleSignIn(...args),
   fluxIDEvents: {
@@ -69,13 +69,13 @@ jest.mock('helpers/api/flux-id', () => ({
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 jest.mock('./FluxPlusModal', () => 'mock-FluxPlusModal');
 
-jest.mock('helpers/is-flux-plus-active', () => true);
+jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 describe('should render correctly', () => {
   beforeEach(() => {

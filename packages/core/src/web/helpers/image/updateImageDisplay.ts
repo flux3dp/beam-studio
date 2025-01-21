@@ -1,7 +1,7 @@
-import imageData from 'helpers/image-data';
-import NS from 'app/constants/namespaces';
-import { getObjectLayer } from 'helpers/layer/layer-helper';
-import { IImageDataResult } from 'interfaces/IImage';
+import imageData from '@core/helpers/image-data';
+import NS from '@core/app/constants/namespaces';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
+import { IImageDataResult } from '@core/interfaces/IImage';
 
 // TODO: add test
 const updateImageDisplay = (elem: SVGImageElement): Promise<void> => {

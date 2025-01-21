@@ -1,17 +1,17 @@
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import history from 'app/svgedit/history/history';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import presetHelper from 'helpers/presets/preset-helper';
-import toggleFullColorLayer from 'helpers/layer/full-color/toggleFullColorLayer';
-import updateLayerColorFilter from 'helpers/color/updateLayerColorFilter';
-import { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from 'interfaces/ILayerConfig';
-import { getAllLayerNames, getLayerByName } from 'helpers/layer/layer-helper';
-import { getPromarkInfo } from 'helpers/device/promark/promark-info';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { LaserType } from 'app/constants/promark-constants';
-import { promarkModels } from 'app/actions/beambox/constant';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import history from '@core/app/svgedit/history/history';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
+import { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
+import { getAllLayerNames, getLayerByName } from '@core/helpers/layer/layer-helper';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { LaserType } from '@core/app/constants/promark-constants';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 const getLayerElementByName = (layerName: string) => {
   const allLayers = Array.from(document.querySelectorAll('g.layer'));
@@ -149,7 +149,7 @@ export const booleanConfig: ConfigKey[] = [
 export const getData = <T extends ConfigKey>(
   layer: Element,
   key: T,
-  applyPrinting = false
+  applyPrinting = false,
 ): ConfigKeyTypeMap[T] => {
   let attr = attributeMap[key];
   if (!attr || !layer) return undefined;
@@ -176,7 +176,7 @@ export const writeDataLayer = <T extends ConfigKey>(
   layer: Element,
   key: T,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand }
+  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
 ): void => {
   if (!layer) return;
   let attr = attributeMap[key];
@@ -203,7 +203,7 @@ export const writeData = <T extends ConfigKey>(
   layerName: string,
   key: ConfigKey,
   value: ConfigKeyTypeMap[T] | undefined,
-  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand }
+  opts?: { applyPrinting?: boolean; batchCmd?: IBatchCommand },
 ): void => {
   const layer = getLayerElementByName(layerName);
   if (!layer) return;
@@ -213,7 +213,7 @@ export const writeData = <T extends ConfigKey>(
 export const getMultiSelectData = <T extends ConfigKey>(
   layers: Element[],
   currentLayerIdx: number,
-  key: T
+  key: T,
 ): { value: ConfigKeyTypeMap[T]; hasMultiValue: boolean } => {
   const mainIndex = currentLayerIdx > -1 ? currentLayerIdx : 0;
   const mainLayer = layers[mainIndex] || layers.find((l) => !!l);
@@ -422,7 +422,7 @@ export const getPromarkLimit = (): {
 export const applyPreset = (
   layer: Element,
   preset: Preset,
-  opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {}
+  opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {},
 ): void => {
   const workarea: WorkAreaModel = BeamboxPreference.read('workarea');
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
@@ -449,7 +449,7 @@ export const applyPreset = (
     writeDataLayer(
       layer,
       'configName',
-      (preset.isDefault ? preset.key : preset.name) || CUSTOM_PRESET_CONSTANT
+      (preset.isDefault ? preset.key : preset.name) || CUSTOM_PRESET_CONSTANT,
     );
 };
 
@@ -473,7 +473,7 @@ export const postPresetChange = (): void => {
 
     const configName = getData(layer, 'configName');
     const preset = allPresets.find(
-      (c) => !c.hide && (configName === c.key || configName === c.name)
+      (c) => !c.hide && (configName === c.key || configName === c.name),
     );
     if (preset?.isDefault) {
       const layerModule = getData(layer, 'module') as LayerModule;

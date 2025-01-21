@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import alertCaller from 'app/actions/alert-caller';
-import checkDeviceStatus from 'helpers/check-device-status';
-import durationFormatter from 'helpers/duration-formatter';
-import i18n from 'helpers/i18n';
-import { CurveMeasurer, InteractiveOptions } from 'interfaces/CurveMeasurer';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { MeasureData, Points } from 'interfaces/ICurveEngraving';
-import deviceMaster from 'helpers/device-master';
+import alertCaller from '@core/app/actions/alert-caller';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import durationFormatter from '@core/helpers/duration-formatter';
+import i18n from '@core/helpers/i18n';
+import { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMeasurer';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { MeasureData, Points } from '@core/interfaces/ICurveEngraving';
+import deviceMaster from '@core/helpers/device-master';
 
 export default class BaseCurveMeasurer implements CurveMeasurer {
   protected device: IDeviceInfo;
@@ -38,7 +38,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     feedrate: number,
     offset?: [number, number, number],
     objectHeight?: number,
-    lowest?: number
+    lowest?: number,
   ): Promise<number | null> => {
     throw new Error('Not implemented');
   };
@@ -46,7 +46,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
   async measurePoints(
     curData: MeasureData,
     targetIndices: Array<number>,
-    opts: InteractiveOptions = {}
+    opts: InteractiveOptions = {},
   ): Promise<MeasureData> {
     const { lang } = i18n;
     const { checkCancel, onProgressText, onPointFinished } = opts;
@@ -76,7 +76,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
           feedrate,
           [offsetX, offsetY, offsetZ],
           objectHeight,
-          lowest
+          lowest,
         );
         const pointZ = typeof z === 'number' ? Math.max(0, z - offsetZ) : null;
         if (lowest === null || z > lowest) lowest = z; // actually the max measured value
@@ -105,7 +105,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     xRange: Array<number>,
     yRange: Array<number>,
     objectHeight: number,
-    opts: InteractiveOptions = {}
+    opts: InteractiveOptions = {},
   ): Promise<MeasureData | null> => {
     try {
       const points: Points = yRange.map((y) => xRange.map((x) => [x, y, null]));
@@ -120,7 +120,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
           gap: [xRange[1] - xRange[0], yRange[1] - yRange[0]],
         },
         targetIndices,
-        opts
+        opts,
       );
       return data;
     } catch (error) {

@@ -12,7 +12,7 @@
 // 1) jQuery
 // 2) svgtransformlist.js
 // 3) svgutils.js
-import { IBatchCommand, ICommand, IHistoryHandler } from 'interfaces/IHistory';
+import { IBatchCommand, ICommand, IHistoryHandler } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
@@ -152,7 +152,7 @@ class RemoveElementCommand extends BaseHistoryCommand implements ICommand {
     elem: Element | SVGGraphicsElement,
     oldNextSibling: Node | Element,
     oldParent: Node | Element,
-    text?: string
+    text?: string,
   ) {
     super();
     this.elem = elem as SVGGraphicsElement;

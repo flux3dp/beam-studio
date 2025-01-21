@@ -1,14 +1,14 @@
-import workareaManager from 'app/svgedit/workarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ISVGPath, IPathNodePoint, ISegmentControlPoint } from '@core/interfaces/ISVGPath';
+
 import {
-  ISVGPath,
-  IPathNodePoint,
-  ISegmentControlPoint,
-} from 'interfaces/ISVGPath';
+  LINKTYPE_SMOOTH,
+  LINKTYPE_CORNER,
+  NodeLinkType,
+} from '@core/app/constants/link-type-constants';
 
-import { LINKTYPE_SMOOTH, LINKTYPE_CORNER, NodeLinkType } from 'app/constants/link-type-constants';
-
-import ISVGCanvas from 'interfaces/ISVGCanvas';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import SegmentControlPoint from './SegmentControlPoint';
 import Segment from './Segment';
 
@@ -80,7 +80,7 @@ export default class PathNodePoint implements IPathNodePoint {
     this.controlPoints.push(cp);
   }
 
-  getDisplayPosition(x = this.x, y = this.y): { x: number, y: number } {
+  getDisplayPosition(x = this.x, y = this.y): { x: number; y: number } {
     let out = { x, y };
     if (this.path.matrix) {
       out = svgedit.math.transformPoint(this.x, this.y, this.path.matrix);
@@ -167,7 +167,7 @@ export default class PathNodePoint implements IPathNodePoint {
     }
   }
 
-  setSelected(isSelected: boolean) : void {
+  setSelected(isSelected: boolean): void {
     this.isSelected = isSelected;
     this.setHighlight(isSelected);
     this.controlPoints.forEach((cp) => {
@@ -212,12 +212,14 @@ export default class PathNodePoint implements IPathNodePoint {
       const segItem = seg.item;
       const x = this.x + (seg.startPoint.x - this.x) / 3;
       const y = this.y + (seg.startPoint.y - this.y) / 3;
-      if (segItem.pathSegType === 4) { // L
+      if (segItem.pathSegType === 4) {
+        // L
         segChanges[seg.index] = { pathSegType: 8, x1: x, y1: y };
         const newControlPoint = new svgedit.path.SegmentControlPoint(x, y, seg, 1);
         newControlPoints.push(newControlPoint);
         seg.controlPoints.push(newControlPoint);
-      } else if (segItem.pathSegType === 8 && seg.controlPoints[0].nodePoint !== this) { // Q
+      } else if (segItem.pathSegType === 8 && seg.controlPoints[0].nodePoint !== this) {
+        // Q
         segChanges[seg.index] = { pathSegType: 6, x2: x, y2: y };
         const newControlPoint = new svgedit.path.SegmentControlPoint(x, y, seg, 2);
         newControlPoints.push(newControlPoint);
@@ -261,8 +263,10 @@ export default class PathNodePoint implements IPathNodePoint {
     const segChanges = {};
     this.linkType = newType;
     if (this.controlPoints.length === 2 && newType !== LINKTYPE_CORNER) {
-      const distancePoint = newType === LINKTYPE_SMOOTH ? this.controlPoints[1] : this.controlPoints[0];
-      const th = Math.atan2(this.controlPoints[0].y - this.y, this.controlPoints[0].x - this.x) - Math.PI;
+      const distancePoint =
+        newType === LINKTYPE_SMOOTH ? this.controlPoints[1] : this.controlPoints[0];
+      const th =
+        Math.atan2(this.controlPoints[0].y - this.y, this.controlPoints[0].x - this.x) - Math.PI;
       const l = Math.hypot(distancePoint.x - this.x, distancePoint.y - this.y);
       const newPos = { x: l * Math.cos(th) + this.x, y: l * Math.sin(th) + this.y };
       const changes = this.controlPoints[1].moveAbs(newPos.x, newPos.y);
@@ -312,10 +316,12 @@ export default class PathNodePoint implements IPathNodePoint {
         this.next.prev = this.prev;
       }
       segIndexToRemove = this.nextSeg.index;
-    } else if (this.prevSeg) { // has prevSeg, no nextSeg: last point
+    } else if (this.prevSeg) {
+      // has prevSeg, no nextSeg: last point
       this.prev.next = null;
       segIndexToRemove = this.prevSeg.index;
-    } else if (this.nextSeg) { // First point
+    } else if (this.nextSeg) {
+      // First point
       this.next.prev = null;
       segIndexToRemove = this.nextSeg.index;
     } else {

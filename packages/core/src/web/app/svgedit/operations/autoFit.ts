@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-loop-func */
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import getUtilWS from 'helpers/api/utils-ws';
-import i18n from 'helpers/i18n';
-import previewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from 'app/actions/progress-caller';
-import { AutoFitContour } from 'interfaces/IAutoFit';
-import { showAutoFitPanel } from 'app/components/dialogs/autoFit';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import getUtilWS from '@core/helpers/api/utils-ws';
+import i18n from '@core/helpers/i18n';
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import progressCaller from '@core/app/actions/progress-caller';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
 
 const dataCache: { url: string; data?: AutoFitContour[][] } = { url: '' };
 

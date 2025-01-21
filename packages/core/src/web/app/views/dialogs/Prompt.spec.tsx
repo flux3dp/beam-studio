@@ -5,24 +5,24 @@ import Prompt from './Prompt';
 
 const mockWrite = jest.fn();
 const mockRead = jest.fn();
-jest.mock('helpers/api/alert-config', () => ({
+jest.mock('@core/helpers/api/alert-config', () => ({
   write: (...args: any[]) => mockWrite(...args),
   read: (...args: any[]) => mockRead(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     ok2: 'OK',
     cancel: 'Cancel',
   },
   beambox: {
     popup: {
-      dont_show_again: 'dont_show_again'
+      dont_show_again: 'dont_show_again',
     },
   },
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
       ok2: 'OK',
@@ -48,7 +48,7 @@ describe('test Prompt', () => {
         onYes={onYes}
         onCancel={onCancel}
         onClose={onClose}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -75,7 +75,7 @@ describe('test Prompt', () => {
         onYes={onYes}
         onCancel={onCancel}
         onClose={onClose}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -108,7 +108,7 @@ describe('test Prompt', () => {
         onYes={onYes}
         onCancel={onCancel}
         onClose={onClose}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
 

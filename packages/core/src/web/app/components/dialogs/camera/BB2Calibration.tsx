@@ -1,17 +1,17 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import checkDeviceStatus from 'helpers/check-device-status';
-import deviceMaster from 'helpers/device-master';
-import dialog from 'implementations/dialog';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
+import alertCaller from '@core/app/actions/alert-caller';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
+import dialog from '@app/implementations/dialog';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import {
   FisheyeCameraParametersV3,
   FisheyeCameraParametersV3Cali,
-} from 'interfaces/FisheyePreview';
-import { setFisheyeConfig } from 'helpers/camera-calibration-helper';
+} from '@core/interfaces/FisheyePreview';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 
 import CheckpointData from './common/CheckpointData';
 import Chessboard from './BB2Calibration/Chessboard';
@@ -42,7 +42,7 @@ const BB2Calibration = ({ isAdvanced, onClose }: Props): JSX.Element => {
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
   const [step, setStep] = useState<Steps>(
-    isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECKPOINT_DATA
+    isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECKPOINT_DATA,
   );
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
@@ -83,7 +83,7 @@ const BB2Calibration = ({ isAdvanced, onClose }: Props): JSX.Element => {
             name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
             extensions: ['pdf'],
           },
-        ]
+        ],
       );
     };
     return (
@@ -242,7 +242,7 @@ export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
           onClose();
           resolve(completed);
         }}
-      />
+      />,
     );
   });
 };

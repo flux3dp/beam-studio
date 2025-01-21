@@ -1,7 +1,7 @@
 import React from 'react';
-import UnitInput from 'app/widgets/UnitInput';
+import UnitInput from '@core/app/widgets/UnitInput';
 import { Flex } from 'antd';
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 import { BlockSetting, blockSettingParams, blockSettingScopes } from './BlockSetting';
 import styles from './Form.module.scss';
 

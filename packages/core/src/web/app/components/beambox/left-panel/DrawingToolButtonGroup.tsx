@@ -1,17 +1,17 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 
-import browser from 'implementations/browser';
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import dialogCaller from 'app/actions/dialog-caller';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import isDev from 'helpers/is-dev';
-import LeftPanelIcons from 'app/icons/left-panel/LeftPanelIcons';
-import LeftPanelButton from 'app/components/beambox/left-panel/LeftPanelButton';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { getCurrentUser } from 'helpers/api/flux-id';
-import { showPassThrough } from 'app/components/pass-through/PassThrough';
+import browser from '@app/implementations/browser';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import isDev from '@core/helpers/is-dev';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import { showPassThrough } from '@core/app/components/pass-through/PassThrough';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
@@ -27,7 +27,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): JSX.Eleme
     icon: JSX.Element,
     label: string,
     onClick: () => void,
-    showBadge?: boolean
+    showBadge?: boolean,
   ) => (
     <LeftPanelButton
       id={`left-${id}`}
@@ -60,79 +60,79 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): JSX.Eleme
         'Cursor',
         <LeftPanelIcons.Cursor />,
         `${tLeftPanel.label.cursor} (V)`,
-        FnWrapper.useSelectTool
+        FnWrapper.useSelectTool,
       )}
       {renderToolButton(
         'Photo',
         <LeftPanelIcons.Photo />,
         `${tLeftPanel.label.photo} (I)`,
-        FnWrapper.importImage
+        FnWrapper.importImage,
       )}
       {renderToolButton(
         'MyCloud',
         <LeftPanelIcons.Cloud />,
         tLeftPanel.label.my_cloud,
         () => dialogCaller.showMyCloud(FnWrapper.useSelectTool),
-        isSubscribed
+        isSubscribed,
       )}
       {renderToolButton(
         'Text',
         <LeftPanelIcons.Text />,
         `${tLeftPanel.label.text} (T)`,
-        FnWrapper.insertText
+        FnWrapper.insertText,
       )}
       {renderToolButton(
         'Element',
         <LeftPanelIcons.Element />,
         `${tLeftPanel.label.shapes} (E)`,
-        () => dialogCaller.showShapePanel(FnWrapper.useSelectTool)
+        () => dialogCaller.showShapePanel(FnWrapper.useSelectTool),
       )}
       {renderToolButton(
         'Rectangle',
         <LeftPanelIcons.Rect />,
         `${tLeftPanel.label.rect} (M)`,
-        FnWrapper.insertRectangle
+        FnWrapper.insertRectangle,
       )}
       {renderToolButton(
         'Ellipse',
         <LeftPanelIcons.Oval />,
         `${tLeftPanel.label.oval} (C)`,
-        FnWrapper.insertEllipse
+        FnWrapper.insertEllipse,
       )}
       {renderToolButton(
         'Polygon',
         <LeftPanelIcons.Polygon />,
         tLeftPanel.label.polygon,
-        FnWrapper.insertPolygon
+        FnWrapper.insertPolygon,
       )}
       {renderToolButton(
         'Line',
         <LeftPanelIcons.Line />,
         `${tLeftPanel.label.line} (\\)`,
-        FnWrapper.insertLine
+        FnWrapper.insertLine,
       )}
       {renderToolButton(
         'Pen',
         <LeftPanelIcons.Draw />,
         `${tLeftPanel.label.pen} (P)`,
-        FnWrapper.insertPath
+        FnWrapper.insertPath,
       )}
       {(selectedDevice?.model === 'fbb2' || isDev()) &&
         renderToolButton(
           'curve-engrave',
           <LeftPanelIcons.CurveEngrave />,
           tLeftPanel.label.curve_engraving.title,
-          () => curveEngravingModeController.start()
+          () => curveEngravingModeController.start(),
         )}
       {hasPassthroughExtension &&
         renderToolButton(
           'PassThrough',
           <LeftPanelIcons.PassThrough />,
           tLeftPanel.label.pass_through,
-          () => showPassThrough(FnWrapper.useSelectTool)
+          () => showPassThrough(FnWrapper.useSelectTool),
         )}
       {renderToolButton('DM', <LeftPanelIcons.DM />, 'Design Market', () =>
-        browser.open(lang.topbar.menu.link.design_market)
+        browser.open(lang.topbar.menu.link.design_market),
       )}
     </div>
   );

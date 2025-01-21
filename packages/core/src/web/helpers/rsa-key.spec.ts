@@ -2,7 +2,7 @@
 const mockIsExisting = jest.fn();
 const mockSet = jest.fn();
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   isExisting: mockIsExisting,
   set: mockSet,
   get: mockGet,
@@ -23,7 +23,7 @@ describe('test rsa-key', () => {
     expect(mockSet.mock.calls[0][0]).toBe('flux-rsa-key');
   });
 
-  test('don\'t create new key but storage has the existing key', () => {
+  test("don't create new key but storage has the existing key", () => {
     mockIsExisting.mockReturnValue(true);
     mockGet.mockReturnValue('12345');
     expect(rsaKey(false)).toBe('12345');
@@ -34,7 +34,7 @@ describe('test rsa-key', () => {
     expect(mockGet).toHaveBeenNthCalledWith(1, 'flux-rsa-key');
   });
 
-  test('don\'t create new key and storage has no key either', () => {
+  test("don't create new key and storage has no key either", () => {
     mockIsExisting.mockReturnValue(false);
     rsaKey(false);
     expect(mockGet).not.toHaveBeenCalled();

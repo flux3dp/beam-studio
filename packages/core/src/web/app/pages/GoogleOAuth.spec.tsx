@@ -3,10 +3,10 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 
 const socialAuth = jest.fn();
-jest.mock('helpers/social-auth', () => socialAuth);
+jest.mock('@core/helpers/social-auth', () => socialAuth);
 
 const signInWithGoogleCode = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   signInWithGoogleCode,
   G_REDIRECT_URI: 'https://store.flux3dp.com/beam-studio-oauth?isWeb=true',
 }));

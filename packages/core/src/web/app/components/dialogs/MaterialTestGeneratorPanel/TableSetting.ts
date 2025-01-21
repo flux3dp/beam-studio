@@ -1,7 +1,7 @@
-import { promarkModels } from 'app/actions/beambox/constant';
-import { LaserType } from 'app/constants/promark-constants';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { getPromarkLimit } from 'helpers/layer/layer-config-helper';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { LaserType } from '@core/app/constants/promark-constants';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 
 export interface Detail {
   minValue: number;
@@ -21,7 +21,7 @@ interface SettingInfos {
 
 type TableSettingConstruct<
   T extends ReadonlyArray<string>,
-  IsRequired = true
+  IsRequired = true,
 > = IsRequired extends true ? { [K in T[number]]: Detail } : { [K in T[number]]?: Detail };
 
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
@@ -70,7 +70,7 @@ const getCommonTableSetting = (workarea: WorkAreaModel): TableSetting => {
 
 const getPromarkTableSetting = (
   workarea: WorkAreaModel,
-  { laserType }: SettingInfos
+  { laserType }: SettingInfos,
 ): TableSetting => {
   const { minSpeed, maxSpeed } = getWorkarea(workarea);
   const limit = getPromarkLimit();
@@ -131,7 +131,7 @@ const getPromarkTableSetting = (
 
 export const getTableSetting = (
   workarea: WorkAreaModel,
-  { laserType }: SettingInfos = { laserType: LaserType.Desktop }
+  { laserType }: SettingInfos = { laserType: LaserType.Desktop },
 ): TableSetting => {
   if (promarkModels.has(workarea)) {
     return getPromarkTableSetting(workarea, { laserType });

@@ -5,10 +5,10 @@ app.commandLine.appendSwitch('ignore-gpu-blacklist');
 app.commandLine.appendSwitch('--no-sandbox');
 // app.allowRendererProcessReuse = false;
 
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import url from 'node:url';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import url from 'url';
 
 import * as electronRemote from '@electron/remote/main';
 import Sentry from '@sentry/electron';

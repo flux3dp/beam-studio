@@ -1,45 +1,45 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { RotaryType } from 'app/constants/add-on';
+import { RotaryType } from '@core/app/constants/add-on';
 
 import RotarySettings from './RotarySettings';
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
 
 const mockChangeWorkarea = jest.fn();
 jest.mock(
-  'app/svgedit/operations/changeWorkarea',
+  '@core/app/svgedit/operations/changeWorkarea',
   () =>
     (...args) =>
-      mockChangeWorkarea(...args)
+      mockChangeWorkarea(...args),
 );
 
 const mockToggleDisplay = jest.fn();
-jest.mock('app/actions/canvas/rotary-axis', () => ({
+jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
   toggleDisplay: (...args) => mockToggleDisplay(...args),
 }));
 
 const mockStorageGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockStorageGet(...args),
 }));
 
 const mockAddDialogComponent = jest.fn();
 const mockIsIdExist = jest.fn();
 const mockPopDialogById = jest.fn();
-jest.mock('app/actions/dialog-controller', () => ({
+jest.mock('@core/app/actions/dialog-controller', () => ({
   addDialogComponent: (...args) => mockAddDialogComponent(...args),
   isIdExist: (...args) => mockIsIdExist(...args),
   popDialogById: (...args) => mockPopDialogById(...args),
 }));
 
-jest.mock('helpers/locale-helper', () => ({
+jest.mock('@core/helpers/locale-helper', () => ({
   isTwOrHk: true,
 }));
 

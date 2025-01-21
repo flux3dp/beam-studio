@@ -15,7 +15,7 @@ const mockDisassembleUse2Group = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockGetCurrentLayerName = jest.fn();
 const mockGetSelectedElems = jest.fn().mockReturnValue(['mock-path-elem']);
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -36,31 +36,31 @@ jest.mock('helpers/svg-editor-helper', () => ({
 
 const mockUpdateElementColor = jest.fn();
 jest.mock(
-  'helpers/color/updateElementColor',
+  '@core/helpers/color/updateElementColor',
   () =>
     (...args: any) =>
-      mockUpdateElementColor(...args)
+      mockUpdateElementColor(...args),
 );
 
 const mockImportSvgString = jest.fn().mockResolvedValue(mockElement);
 jest.mock(
-  'app/svgedit/operations/import/importSvgString',
+  '@core/app/svgedit/operations/import/importSvgString',
   () =>
     (...args: any) =>
-      mockImportSvgString(...args)
+      mockImportSvgString(...args),
 );
 
 const mockGetData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args: any) => mockGetData(...args),
 }));
 
 const mockGetLayerByName = jest.fn().mockReturnValue('mock-layer-elem');
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args: any) => mockGetLayerByName(...args),
 }));
 
-jest.mock('app/constants/shape-panel-constants', () => ({
+jest.mock('@core/app/constants/shape-panel-constants', () => ({
   __esModule: true,
   builtInElements: {
     'mock-circle': {
@@ -78,7 +78,7 @@ jest.mock('app/constants/shape-panel-constants', () => ({
   },
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       shapes_panel: {
@@ -91,12 +91,12 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
 const mockForceUpdate = jest.fn();
-jest.mock('helpers/use-force-update', () => (): (() => void) => {
+jest.mock('@core/helpers/use-force-update', () => (): (() => void) => {
   const [, setVal] = useState(0);
   const forceUpdate = useCallback(() => {
     setVal((v) => v + 1);
@@ -114,7 +114,7 @@ describe('test ShapeIcon', () => {
 
   it('should render correctly', async () => {
     const { container } = render(
-      <ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />
+      <ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />,
     );
     expect(container).toBeEmptyDOMElement();
     await waitFor(() => expect(mockForceUpdate).toBeCalled());
@@ -124,28 +124,28 @@ describe('test ShapeIcon', () => {
   });
 
   it('should render null when icon not found', async () => {
-    jest.doMock('app/icons/shape/basic/mock-null.svg', () => {
+    jest.doMock('@core/app/icons/shape/basic/mock-null.svg', () => {
       throw new Error("Cannot find module './basic/mock-null.svg'");
     });
     const errorLog = jest.spyOn(console, 'error');
     const { container } = render(
-      <ShapeIcon activeTab="basic" fileName="mock-null" onClose={mockOnClose} />
+      <ShapeIcon activeTab="basic" fileName="mock-null" onClose={mockOnClose} />,
     );
     await waitFor(() => {
       expect(errorLog).toBeCalledTimes(1);
       expect(errorLog).toBeCalledWith(
         // eslint-disable-next-line max-len
-        "Fail to load icon from 'app/icons/shape/basic/mock-null.svg': Error: Cannot find module './basic/mock-null.svg'"
+        "Fail to load icon from '@core/app/icons/shape/basic/mock-null.svg': Error: Cannot find module './basic/mock-null.svg'",
       );
     });
     expect(container).toBeEmptyDOMElement();
     expect(mockOnClose).not.toBeCalled();
-    jest.dontMock('app/icons/shape/basic/mock-null.svg');
+    jest.dontMock('@core/app/icons/shape/basic/mock-null.svg');
   });
 
   it('should import predefined object', async () => {
     const { container } = render(
-      <ShapeIcon activeTab="basic" fileName="mock-circle" onClose={mockOnClose} />
+      <ShapeIcon activeTab="basic" fileName="mock-circle" onClose={mockOnClose} />,
     );
     await waitFor(() => expect(mockForceUpdate).toBeCalled());
     fireEvent.click(container.querySelector('.icon'));
@@ -168,7 +168,7 @@ describe('test ShapeIcon', () => {
 
   it('should import svg object, update location and disassemble', async () => {
     const { container } = render(
-      <ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />
+      <ShapeIcon activeTab="basic" fileName="mock-icon" onClose={mockOnClose} />,
     );
     fireEvent.click(container.querySelector('.icon'));
     await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));

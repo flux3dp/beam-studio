@@ -1,30 +1,30 @@
 import classNames from 'classnames';
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import checkSoftwareForAdor from 'helpers/check-software';
-import CommonTools from 'app/components/beambox/top-bar/CommonTools';
-import Discover from 'helpers/api/discover';
-import DocumentButton from 'app/components/beambox/top-bar/DocumentButton';
-import ElementTitle from 'app/components/beambox/top-bar/ElementTitle';
+import checkSoftwareForAdor from '@core/helpers/check-software';
+import CommonTools from '@core/app/components/beambox/top-bar/CommonTools';
+import Discover from '@core/helpers/api/discover';
+import DocumentButton from '@core/app/components/beambox/top-bar/DocumentButton';
+import ElementTitle from '@core/app/components/beambox/top-bar/ElementTitle';
 import FileName, {
   registerWindowUpdateTitle,
   unregisterWindowUpdateTitle,
-} from 'app/components/beambox/top-bar/FileName';
-import FrameButton from 'app/components/beambox/top-bar/FrameButton';
-import GoButton from 'app/components/beambox/top-bar/GoButton';
-import isWeb from 'helpers/is-web';
-import Menu from 'app/components/beambox/top-bar/Menu';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import PathPreviewButton from 'app/components/beambox/top-bar/PathPreviewButton';
-import SelectMachineButton from 'app/components/beambox/top-bar/SelectMachineButton';
-import storage from 'implementations/storage';
-import TopBarHints from 'app/components/beambox/top-bar/TopBarHints';
-import tabController from 'app/actions/tabController';
-import UserAvatar from 'app/components/beambox/top-bar/UserAvatar';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
-import { TopBarHintsContextProvider } from 'app/contexts/TopBarHintsContext';
+} from '@core/app/components/beambox/top-bar/FileName';
+import FrameButton from '@core/app/components/beambox/top-bar/FrameButton';
+import GoButton from '@core/app/components/beambox/top-bar/GoButton';
+import isWeb from '@core/helpers/is-web';
+import Menu from '@core/app/components/beambox/top-bar/Menu';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import PathPreviewButton from '@core/app/components/beambox/top-bar/PathPreviewButton';
+import SelectMachineButton from '@core/app/components/beambox/top-bar/SelectMachineButton';
+import storage from '@app/implementations/storage';
+import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
+import tabController from '@core/app/actions/tabController';
+import UserAvatar from '@core/app/components/beambox/top-bar/UserAvatar';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 
 import styles from './TopBar.module.scss';
 import Tabs from './tabs/Tabs';
@@ -66,7 +66,7 @@ const Topbar = (): JSX.Element => {
       setSelectedDevice((cur) => {
         if (!cur && defaultDeviceUUID.current) {
           const defauldDevice = deviceList.find(
-            (device) => device.uuid === defaultDeviceUUID.current
+            (device) => device.uuid === defaultDeviceUUID.current,
           );
           if (defauldDevice && !checkSoftwareForAdor(defauldDevice, false)) {
             defaultDeviceUUID.current = null;

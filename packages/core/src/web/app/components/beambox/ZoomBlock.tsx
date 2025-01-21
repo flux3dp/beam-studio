@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import macOSWindowSize from 'app/constants/macOS-Window-Size';
-import os from 'implementations/os';
-import useI18n from 'helpers/useI18n';
-import workareaManager from 'app/svgedit/workarea';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from 'helpers/react-contextmenu';
-import { useIsMobile } from 'helpers/system-helper';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import macOSWindowSize from '@core/app/constants/macOS-Window-Size';
+import os from '@app/implementations/os';
+import useI18n from '@core/helpers/useI18n';
+import workareaManager from '@core/app/svgedit/workarea';
+import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './ZoomBlock.module.scss';
 
@@ -20,7 +20,7 @@ const calculateDpmm = async (): Promise<number> => {
   try {
     if (window.os === 'MacOS') {
       const res = await os.process.exec(
-        '/usr/sbin/system_profiler SPHardwareDataType | grep Identifier'
+        '/usr/sbin/system_profiler SPHardwareDataType | grep Identifier',
       );
       if (!res.stderr) {
         const match = res.stdout.match(/Model Identifier: (.+\b)/);
@@ -36,7 +36,7 @@ const calculateDpmm = async (): Promise<number> => {
       }
     } else if (window.os === 'Windows') {
       const res = await os.process.exec(
-        'powershell "Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBasicDisplayParams"'
+        'powershell "Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBasicDisplayParams"',
       );
       if (!res.stderr) {
         const matchWidth = res.stdout.match(/MaxHorizontalImageSize[ ]*: (\d+)\b/);
@@ -157,7 +157,7 @@ const ZoomBlock = ({
       const targetZoom = newRatio * dpmm;
       setZoom(targetZoom);
     },
-    [dpmm, setZoom]
+    [dpmm, setZoom],
   );
 
   const zoomIn = useCallback(
@@ -171,7 +171,7 @@ const ZoomBlock = ({
       }
       setRatio(targetRatio);
     },
-    [setRatio]
+    [setRatio],
   );
 
   const zoomOut = useCallback(
@@ -185,7 +185,7 @@ const ZoomBlock = ({
       }
       setRatio(targetRatio);
     },
-    [setRatio]
+    [setRatio],
   );
 
   return (
@@ -196,7 +196,7 @@ const ZoomBlock = ({
           [styles['path-preview']]: isPathPreviewing,
           [styles.mobile]: isMobile,
         },
-        className
+        className,
       )}
     >
       <ContextMenuTrigger id={contextMenuId} holdToDisplay={-1} holdToDisplayMouse={-1}>

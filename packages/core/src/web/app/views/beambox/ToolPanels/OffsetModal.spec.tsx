@@ -6,7 +6,7 @@ const onCancel = jest.fn();
 const onOk = jest.fn();
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
@@ -26,7 +26,7 @@ describe('should render correctly', () => {
   test('default unit is mm', async () => {
     get.mockReturnValue(undefined);
     const { baseElement, getByRole, getByText } = render(
-      <OffsetModal onCancel={onCancel} onOk={onOk} />
+      <OffsetModal onCancel={onCancel} onOk={onOk} />,
     );
     expect(get).toBeCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
@@ -58,7 +58,7 @@ describe('should render correctly', () => {
   test('default unit is inches', async () => {
     get.mockReturnValue('inches');
     const { baseElement, getByRole, getByText } = render(
-      <OffsetModal onCancel={onCancel} onOk={onOk} />
+      <OffsetModal onCancel={onCancel} onOk={onOk} />,
     );
     expect(get).toBeCalledTimes(1);
     expect(baseElement).toMatchSnapshot();

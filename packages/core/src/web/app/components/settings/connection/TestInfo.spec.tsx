@@ -1,11 +1,11 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import TestState from 'app/constants/connection-test';
+import TestState from '@core/app/constants/connection-test';
 
 import TestInfo from './TestInfo';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     connect_machine_ip: {
       invalid_ip: 'invalid_ip',
@@ -33,7 +33,9 @@ const STATES_TO_TEST = [
 
 describe('test TestInfo', () => {
   it.each(STATES_TO_TEST)('should correctly when state is $text', ({ state }) => {
-    const { container } = render(<TestInfo testState={state} firmwareVersion="4.0.0" connectionCountDown={10} />);
+    const { container } = render(
+      <TestInfo testState={state} firmwareVersion="4.0.0" connectionCountDown={10} />,
+    );
     expect(container).toMatchSnapshot();
   });
 });

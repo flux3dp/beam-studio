@@ -1,8 +1,8 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import { getData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import readBitmapFile from './readBitmapFile';
 

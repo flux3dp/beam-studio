@@ -1,27 +1,27 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import changeWorkarea from 'app/svgedit/operations/changeWorkarea';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import findDefs from 'app/svgedit/utils/findDef';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import symbolMaker from 'helpers/symbol-maker';
-import workareaManager from 'app/svgedit/workarea';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import symbolMaker from '@core/helpers/symbol-maker';
+import workareaManager from '@core/app/svgedit/workarea';
 import {
   applyDefaultLaserModule,
   toggleFullColorAfterWorkareaChange,
-} from 'helpers/layer/layer-config-helper';
-import { changeBeamboxPreferenceValue } from 'app/svgedit/history/beamboxPreferenceCommand';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand, ICommand } from 'interfaces/IHistory';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+} from '@core/helpers/layer/layer-config-helper';
+import { changeBeamboxPreferenceValue } from '@core/app/svgedit/history/beamboxPreferenceCommand';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import setSvgContent from './setSvgContent';
 
@@ -34,12 +34,12 @@ getSVGAsync((globalSVG) => {
 
 export const importBvgString = async (
   str: string,
-  opts: { parentCmd?: IBatchCommand; addToHistory?: boolean } = {}
+  opts: { parentCmd?: IBatchCommand; addToHistory?: boolean } = {},
 ): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import Bvg');
   svgCanvas.clearSelection();
   const setContentCmd = setSvgContent(
-    str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style')
+    str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'),
   );
   if (!setContentCmd) {
     alertCaller.popUp({

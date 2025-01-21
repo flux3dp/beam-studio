@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       tool_panels: {
@@ -14,7 +14,7 @@ jest.mock('helpers/i18n', () => ({
   },
 }));
 
-jest.mock('app/widgets/Unit-Input-v2', () =>
+jest.mock('@core/app/widgets/Unit-Input-v2', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, min, defaultValue, getValue }: any) => (
     <div>
@@ -23,7 +23,7 @@ jest.mock('app/widgets/Unit-Input-v2', () =>
       defaultValue:{defaultValue}
       <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
     </div>
-  )
+  ),
 );
 
 import RowColumn from './RowColumn';
@@ -36,7 +36,7 @@ describe('should render correctly', () => {
   test('valid input', () => {
     const onValueChange = jest.fn();
     const { container, rerender } = render(
-      <RowColumn row={2} column={3} onValueChange={onValueChange} />
+      <RowColumn row={2} column={3} onValueChange={onValueChange} />,
     );
     expect(container).toMatchSnapshot();
 

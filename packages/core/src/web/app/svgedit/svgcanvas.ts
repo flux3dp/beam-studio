@@ -45,41 +45,41 @@
 // 14) recalculate.js
 // svgedit libs
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import beamboxStore from 'app/stores/beambox-store';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import i18n from 'helpers/i18n';
-import ISVGConfig from 'interfaces/ISVGConfig';
-import ToolPanelsController from 'app/actions/beambox/toolPanelsController';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import * as TutorialController from 'app/views/tutorials/tutorialController';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import OpenBottomBoundaryDrawer from 'app/actions/beambox/open-bottom-boundary-drawer';
-import Progress from 'app/actions/progress-caller';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import viewMenu from 'helpers/menubar/view';
-import laserConfigHelper from 'helpers/layer/layer-config-helper';
-import * as LayerHelper from 'helpers/layer/layer-helper';
-import randomColor from 'helpers/randomColor';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import sanitizeXmlString from 'helpers/sanitize-xml-string';
-import storage from 'implementations/storage';
-import SymbolMaker from 'helpers/symbol-maker';
-import updateElementColor from 'helpers/color/updateElementColor';
-import { getSupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import units, { Units } from 'helpers/units';
-import jimpHelper from 'helpers/jimp-helper';
-import imageProcessor from 'implementations/imageProcessor';
-import recentMenuUpdater from 'implementations/recentMenuUpdater';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import grid from 'app/actions/canvas/grid';
-import updateLayerColorFilter from 'helpers/color/updateLayerColorFilter';
-import { IBatchCommand } from 'interfaces/IHistory';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import beamboxStore from '@core/app/stores/beambox-store';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import i18n from '@core/helpers/i18n';
+import ISVGConfig from '@core/interfaces/ISVGConfig';
+import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
+import Progress from '@core/app/actions/progress-caller';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import viewMenu from '@core/helpers/menubar/view';
+import laserConfigHelper from '@core/helpers/layer/layer-config-helper';
+import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import randomColor from '@core/helpers/randomColor';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
+import storage from '@app/implementations/storage';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import units, { Units } from '@core/helpers/units';
+import jimpHelper from '@core/helpers/jimp-helper';
+import imageProcessor from '@app/implementations/imageProcessor';
+import recentMenuUpdater from '@app/implementations/recentMenuUpdater';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import grid from '@core/app/actions/canvas/grid';
+import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import canvasBackground from './canvasBackground';
 import clipboard from './operations/clipboard';
@@ -162,9 +162,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         '</feMerge>' +
         '</filter>' +
         '</defs>' +
-        '</svg>'
+        '</svg>',
     ).documentElement,
-    true
+    true,
   );
   container.appendChild(svgroot);
 
@@ -306,7 +306,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           opacity: cur_shape.opacity / 2,
           style: 'pointer-events:inherit',
         },
-        100
+        100,
       );
     }
     svgedit.utilities.assignAttributes(shape, data.attr, 100);
@@ -315,7 +315,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       {
         'vector-effect': 'non-scaling-stroke',
       },
-      100
+      100,
     );
     svgedit.utilities.cleanupElement(shape);
 
@@ -572,7 +572,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   canvasBackground.setupBackground(
     curConfig.dimensions,
     () => svgroot,
-    () => svgcontent
+    () => svgcontent,
   );
   const model = BeamboxPreference.read('workarea');
   workareaManager.init(model);
@@ -631,7 +631,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Animation element to change the opacity of any newly created element
   this.opacityAnimation = document.createElementNS(
     NS.SVG,
-    'animate'
+    'animate',
   ) as unknown as SVGAnimateElement;
   $(this.opacityAnimation)
     .attr({
@@ -1112,7 +1112,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Runs recalculateDimensions on the selected elements,
   // adding the changes to a single batch command
   var recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function (
-    isSubCommand = false
+    isSubCommand = false,
   ) {
     var text = current_resize_mode === 'none' ? 'position' : 'size';
     var batchCmd = new history.BatchCommand(text);
@@ -1304,7 +1304,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       current_mode = 'select';
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
       const elemsToAdd = Array.from($(current_group || current_layer).children()).filter(
-        (c: Element) => !['title', 'filter'].includes(c.tagName)
+        (c: Element) => !['title', 'filter'].includes(c.tagName),
       );
       if (elemsToAdd.length < 1) {
         console.warn('Selecting empty layer in "selectAllInCurrentLayer"');
@@ -1337,7 +1337,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         layerElement.getAttribute('display') !== 'none'
       ) {
         const elemsToAdd = Array.from(layerElement.childNodes).filter(
-          (node: Element) => !['title', 'filter'].includes(node.tagName)
+          (node: Element) => !['title', 'filter'].includes(node.tagName),
         );
         elemsToSelect.push(...elemsToAdd);
       }
@@ -1441,7 +1441,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         if (document.body.contains(canvas.sensorAreaInfo.elem)) {
           const dist = Math.hypot(
             canvas.sensorAreaInfo.x - mouseX,
-            canvas.sensorAreaInfo.y - mouseY
+            canvas.sensorAreaInfo.y - mouseY,
           );
           if (dist < SENSOR_AREA_RADIUS) {
             mouseTarget = canvas.sensorAreaInfo.elem;
@@ -2197,7 +2197,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       if ($(grad).attr('gradientUnits') === 'userSpaceOnUse') {
         // TODO: Support more than one element with this ref by duplicating parent grad
         var elems = $(svgcontent).find(
-          '[fill="url(#' + grad.id + ')"],[stroke="url(#' + grad.id + ')"]'
+          '[fill="url(#' + grad.id + ')"],[stroke="url(#' + grad.id + ')"]',
         );
         if (!elems.length) {
           return;
@@ -2415,7 +2415,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.setLayerVisibility = function (
     layername: string,
     value: boolean,
-    opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean }
+    opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean },
   ) {
     const drawing = getCurrentDrawing();
     const prevVisibility = drawing.getLayerVisibility(layername);
@@ -2426,7 +2426,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const cmd = new history.ChangeElementCommand(
       layer,
       { display: oldDisplay },
-      'Layer Visibility'
+      'Layer Visibility',
     );
     cmd.onAfter = presprayArea.togglePresprayArea;
     const { parentCmd, addToHistory = true } = opts || {};
@@ -2641,7 +2641,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       batchCmd.addSubCommand(
         new history.ChangeElementCommand(title, {
           '#text': title.textContent,
-        })
+        }),
       );
       title.textContent = val;
     } else {
@@ -2696,7 +2696,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     batchCmd.addSubCommand(
       new history.ChangeElementCommand(doc_title, {
         '#text': old_title,
-      })
+      }),
     );
     addCommandToHistory(batchCmd);
   };
@@ -3175,7 +3175,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             width: '200%',
             height: '200%',
           },
-          100
+          100,
         );
       } else {
         // Removing these attributes hides text in Chrome (see Issue 579)
@@ -3307,7 +3307,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     batchCmd.addSubCommand(
       new history.ChangeElementCommand(elem, {
         '#href': cur_href,
-      })
+      }),
     );
 
     if (setsize) {
@@ -3364,7 +3364,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     batchCmd.addSubCommand(
       new history.ChangeElementCommand(elem, {
         '#href': cur_href,
-      })
+      }),
     );
 
     addCommandToHistory(batchCmd);
@@ -3389,8 +3389,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               rx: r,
               ry: r,
             },
-            'Radius'
-          )
+            'Radius',
+          ),
         );
         call('changed', [selected]);
       }
@@ -3602,7 +3602,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       attrs,
       addSvgElementFromJson,
       pathActions,
-      svgedit.history
+      svgedit.history,
     );
 
     if (path) {
@@ -3640,7 +3640,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   var changeSelectedAttributeNoUndo = (this.changeSelectedAttributeNoUndo = function (
     attr,
     newValue,
-    elems?
+    elems?,
   ) {
     if (current_mode === 'pathedit') {
       // Editing node
@@ -3765,7 +3765,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               var center = svgedit.math.transformPoint(
                 box.x + box.width / 2,
                 box.y + box.height / 2,
-                svgedit.math.transformListToTransform(tlist).matrix
+                svgedit.math.transformListToTransform(tlist).matrix,
               );
               var cx = center.x;
               var cy = center.y;
@@ -4011,7 +4011,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     elems = null,
     skipConfirm = false,
     addToHistory = true,
-    showProgress = true
+    showProgress = true,
   ) {
     if (!elems) {
       elems = selectedElements;
@@ -4127,7 +4127,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
       batchCmd.addSubCommand(new history.InsertElementCommand(g));
       batchCmd.addSubCommand(
-        new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode)
+        new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode),
       );
       elem.parentNode.removeChild(elem);
       const angle = svgedit.utilities.getRotationAngle(g);
@@ -4202,7 +4202,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         'd',
         `M ${xMatchPoint.x} ${xMatchPoint.y} L ${xMatchPoint.x} ${
           yMatchPoint ? yMatchPoint.y : y / zoom
-        }`
+        }`,
       );
       xAlignLine.setAttribute('display', 'inline');
     } else if (xAlignLine) {
@@ -4225,7 +4225,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         'd',
         `M ${yMatchPoint.x} ${yMatchPoint.y} L ${xMatchPoint ? xMatchPoint.x : x / zoom} ${
           yMatchPoint.y
-        }`
+        }`,
       );
       yAlignLine.setAttribute('display', 'inline');
     } else if (yAlignLine) {
@@ -4265,13 +4265,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const zoom = workareaManager.zoomRatio;
     let nearestX = bsFindNearest(
       this.pathAlignPointsSortByX.map((p) => p.x),
-      x / zoom
+      x / zoom,
     );
     nearestX = this.pathAlignPointsSortByX[nearestX];
     const xMatchPoint = nearestX && Math.abs(nearestX.x * zoom - x) < FUZZY_RANGE ? nearestX : null;
     let nearestY = bsFindNearest(
       this.pathAlignPointsSortByY.map((p) => p.y),
-      y / zoom
+      y / zoom,
     );
     nearestY = this.pathAlignPointsSortByY[nearestY];
     const yMatchPoint = nearestY && Math.abs(nearestY.y * zoom - y) < FUZZY_RANGE ? nearestY : null;
@@ -4577,7 +4577,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           var coldc = svgedit.math.transformPoint(
             cbox.x + cbox.width / 2,
             cbox.y + cbox.height / 2,
-            ceqm
+            ceqm,
           );
 
           // sum group and child's angles
@@ -4807,7 +4807,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const layers = selectedElements.flatMap((elem) =>
       elem.getAttribute('data-tempgroup') === 'true'
         ? selectedLayers
-        : LayerHelper.getObjectLayer(elem)?.title
+        : LayerHelper.getObjectLayer(elem)?.title,
     );
 
     // set the newst added layer as currentLayer
@@ -4836,7 +4836,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     const originalLayer = getCurrentDrawing().getLayerByName(
-      elem.getAttribute('data-original-layer')
+      elem.getAttribute('data-original-layer'),
     );
     const currentLayer = getCurrentDrawing().getCurrentLayer();
     const targetLayer = originalLayer || currentLayer;
@@ -4890,7 +4890,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       this.selectOnly([lastElem], true);
     } else {
       console.warn(
-        'Removing last child from temp group. This should not happen, should find out why'
+        'Removing last child from temp group. This should not happen, should find out why',
       );
       this.ungroupTempGroup();
     }
@@ -4939,7 +4939,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           continue;
         }
         const originalLayer = getCurrentDrawing().getLayerByName(
-          elem.getAttribute('data-original-layer')
+          elem.getAttribute('data-original-layer'),
         );
         const currentLayer = getCurrentDrawing().getCurrentLayer();
         const targetLayer = originalLayer || currentLayer;
@@ -5059,7 +5059,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (oldNextSibling !== t.nextSibling) {
       addCommandToHistory(
-        new history.MoveElementCommand(t, oldNextSibling, oldParent, 'Move ' + dir)
+        new history.MoveElementCommand(t, oldNextSibling, oldParent, 'Move ' + dir),
       );
       call('changed', [t]);
     }
@@ -5278,13 +5278,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         this.moveElemPosition(
           startX + dx * j - centerXs[i],
           startY + dy * j - centerYs[i],
-          realSelectedElements[i]
+          realSelectedElements[i],
         );
       } else {
         this.moveElemPosition(
           startX + dx * j - centerXs[i - len],
           startY + dy * j - centerYs[i - len],
-          realSelectedElements[i - len]
+          realSelectedElements[i - len],
         );
       }
       j += 1;
@@ -5324,7 +5324,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           cmd = await this.flipElementWithRespectToCenter(
             topElem,
             centers[centers.length - 1],
-            flipPara
+            flipPara,
           );
           if (cmd && !cmd.isEmpty()) {
             batchCmd.addSubCommand(cmd);

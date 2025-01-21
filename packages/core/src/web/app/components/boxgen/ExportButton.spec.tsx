@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import ExportButton from './ExportButton';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
     continue_import: 'Continue to Import',
     import: 'Import',
@@ -19,33 +19,35 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/contexts/BoxgenContext', () => ({
+jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext(null),
 }));
 
 const mockGetLayouts = jest.fn();
-jest.mock('helpers/boxgen/Layout', () => ({ getLayouts: (...args) => mockGetLayouts(...args) }));
+jest.mock('@core/helpers/boxgen/Layout', () => ({
+  getLayouts: (...args) => mockGetLayouts(...args),
+}));
 
 const mockWrapSVG = jest.fn().mockReturnValue('mock-svg');
 jest.mock(
-  'helpers/boxgen/wrapSVG',
+  '@core/helpers/boxgen/wrapSVG',
   () =>
     (...args) =>
-      mockWrapSVG(...args)
+      mockWrapSVG(...args),
 );
 
 const mockImportSvgString = jest.fn().mockResolvedValue('mock-svg-object');
 jest.mock(
-  'app/svgedit/operations/import/importSvgString',
+  '@core/app/svgedit/operations/import/importSvgString',
   () =>
     (...args) =>
-      mockImportSvgString(...args)
+      mockImportSvgString(...args),
 );
 
 const mockAddCommandToHistory = jest.fn();
 const mockDisassembleUse2Group = jest.fn();
 const mockSetLayerVisibility = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -61,7 +63,7 @@ jest.mock('helpers/svg-editor-helper', () => ({
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
 const mockCreateBatchCommand = jest.fn().mockImplementation(() => mockBatchCommand);
-jest.mock('app/svgedit/history/HistoryCommandFactory', () => ({
+jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 
@@ -83,7 +85,7 @@ describe('test ExportButton', () => {
         }
       >
         <ExportButton />
-      </BoxgenContext.Provider>
+      </BoxgenContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 
@@ -175,7 +177,7 @@ describe('test ExportButton', () => {
       ['mock-svg-object', 'mock-svg-object', 'mock-svg-object', 'mock-svg-object'],
       true,
       false,
-      false
+      false,
     );
     expect(mockSetLayerVisibility).toBeCalledTimes(2);
     expect(mockSetLayerVisibility).toHaveBeenNthCalledWith(1, 'Box 3-2', false);

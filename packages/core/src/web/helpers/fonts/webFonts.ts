@@ -1,5 +1,5 @@
-import isWeb from 'helpers/is-web';
-import { WebFont } from 'interfaces/IFont';
+import isWeb from '@core/helpers/is-web';
+import { WebFont } from '@core/interfaces/IFont';
 
 const fonts: WebFont[] = [
   // Passengers Script

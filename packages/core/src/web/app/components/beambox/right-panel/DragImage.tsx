@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import ColorPicker from 'app/widgets/ColorPicker';
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import ColorPicker from '@core/app/widgets/ColorPicker';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './DragImage.module.scss';
 

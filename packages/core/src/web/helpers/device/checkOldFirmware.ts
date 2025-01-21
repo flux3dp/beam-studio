@@ -1,8 +1,8 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import i18n from 'helpers/i18n';
-import versionChecker from 'helpers/version-checker';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
 
 // TODO: add unit test
 const checkOldFirmware = async (version: string): Promise<boolean> => {

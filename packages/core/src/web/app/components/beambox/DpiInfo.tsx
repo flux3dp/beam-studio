@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import useI18n from 'helpers/useI18n';
-import { useIsMobile } from 'helpers/system-helper';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useI18n from '@core/helpers/useI18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './DpiInfo.module.scss';
 

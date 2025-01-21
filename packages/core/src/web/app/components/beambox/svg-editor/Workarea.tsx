@@ -1,13 +1,18 @@
 import React from 'react';
 
-import clipboard from 'app/svgedit/operations/clipboard';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import svgEditor from 'app/actions/beambox/svg-editor';
-import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from 'helpers/react-contextmenu';
-import { getObjectLayer, moveToOtherLayer } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  MenuItem,
+  SubMenu,
+} from '@core/helpers/react-contextmenu';
+import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -22,7 +27,7 @@ const getCurrentLayer = (selectedElement?: Element): string | null => {
     const originalLayers = new Set(
       ([...selectedElement.childNodes] as SVGElement[])
         .filter((elem) => elem?.getAttribute('data-imageborder') !== 'true')
-        .map((elem) => elem.getAttribute('data-original-layer'))
+        .map((elem) => elem.getAttribute('data-original-layer')),
     );
     if (originalLayers.size === 1) {
       const [firstValue] = originalLayers;
@@ -76,7 +81,7 @@ export default class Workarea extends React.PureComponent<{ className: string },
     const layerNames: string[] =
       drawing?.all_layers.map(
         // eslint-disable-next-line no-underscore-dangle
-        (layer: { name_: string }) => layer.name_
+        (layer: { name_: string }) => layer.name_,
       ) || [];
     const selectedElems = svgCanvas?.getSelectedElems();
     const currentLayer = getCurrentLayer(selectedElems?.[0]);

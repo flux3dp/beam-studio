@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'fs';
 
 import { dialog } from '@electron/remote';
 
@@ -8,7 +8,7 @@ const showSaveDialog = async (
   title?: string,
   defaultPath?: string,
   filters?: DialogFilter[],
-): Promise<null | string> => {
+): Promise<null | string | undefined> => {
   const { canceled, filePath } = await dialog.showSaveDialog({
     defaultPath,
     filters,

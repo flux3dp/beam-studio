@@ -1,26 +1,26 @@
 import webNeedConnectionWrapper from './web-need-connection-helper';
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
-jest.mock('helpers/file-export-helper', () => ({
+jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
 const mockUpdateActiveKey = jest.fn();
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
   updateActiveKey: (...args) => mockUpdateActiveKey(...args),
 }));
 
 const mockCheckConnection = jest.fn();
-jest.mock('helpers/api/discover', () => ({
+jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: (...args) => mockCheckConnection(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
       oops: 'oops',

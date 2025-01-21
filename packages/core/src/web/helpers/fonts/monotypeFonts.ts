@@ -1,8 +1,8 @@
-import alertCaller from 'app/actions/alert-caller';
-import { axiosFluxId, FLUXID_HOST } from 'helpers/api/flux-id';
-import { IFont, WebFont } from 'interfaces/IFont';
-import { IUser } from 'interfaces/IUser';
-import { showFluxPlusWarning } from 'app/actions/dialog-controller';
+import alertCaller from '@core/app/actions/alert-caller';
+import { axiosFluxId, FLUXID_HOST } from '@core/helpers/api/flux-id';
+import { IFont, WebFont } from '@core/interfaces/IFont';
+import { IUser } from '@core/interfaces/IUser';
+import { showFluxPlusWarning } from '@core/app/actions/dialog-controller';
 
 const getUrlWithToken = async (postscriptName: string): Promise<string | null> => {
   const { data } = await axiosFluxId.get('oauth/?response_type=token&scope=4', {
@@ -16,7 +16,7 @@ const getUrlWithToken = async (postscriptName: string): Promise<string | null> =
 const applyStyle = async (
   font: WebFont | IFont,
   user: IUser | null,
-  silent?: boolean
+  silent?: boolean,
 ): Promise<{
   success: boolean;
   fontLoadedPromise?: Promise<void>;
@@ -58,14 +58,14 @@ const applyStyle = async (
 };
 
 const getAvailableFonts = async (
-  lang?: string
+  lang?: string,
 ): Promise<{
   monotypeLangFonts: WebFont[];
   monotypePreviewSrcMap: { [family: string]: string };
 } | null> => {
   try {
     const { data } = await axiosFluxId.get(
-      `api/beam-studio/monotype/fonts${lang ? `?lang=${lang}` : ''}`
+      `api/beam-studio/monotype/fonts${lang ? `?lang=${lang}` : ''}`,
     );
     const { fonts = [] } = data;
     const monotypePreviewSrcMap: { [family: string]: string } = {};

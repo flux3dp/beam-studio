@@ -1,6 +1,6 @@
 import React from 'react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 export const TopBarHintsContext = React.createContext<{
   hintType: string;
@@ -41,13 +41,12 @@ export class TopBarHintsContextProvider extends React.Component<any, State> {
 
   render() {
     const { children } = this.props;
-    const {
-      hintType,
-    } = this.state;
+    const { hintType } = this.state;
     return (
-      <TopBarHintsContext.Provider value={{
-        hintType,
-      }}
+      <TopBarHintsContext.Provider
+        value={{
+          hintType,
+        }}
       >
         {children}
       </TopBarHintsContext.Provider>

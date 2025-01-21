@@ -1,7 +1,8 @@
-import { IIcon } from 'interfaces/INoun-Project';
+import { IIcon } from '@core/interfaces/INoun-Project';
 
 const defaultIcons: IIcon[] = [
-  { // 1
+  {
+    // 1
     id: '18944',
     term: 'Star',
     preview_url: 'https://static.thenounproject.com/png/18944-200.png',
@@ -141,7 +142,8 @@ const defaultIcons: IIcon[] = [
     uploader_id: '15311',
     isDefault: true,
   },
-  { // 11
+  {
+    // 11
     id: '40559',
     term: 'Bell',
     preview_url: 'https://static.thenounproject.com/png/40559-200.png',
@@ -246,7 +248,7 @@ const defaultIcons: IIcon[] = [
     preview_url_42: 'https://static.thenounproject.com/png/42970-42.png',
     preview_url_84: 'https://static.thenounproject.com/png/42970-84.png',
     uploader: {
-      location: '\'s-Hertogenbosch, Noord-Brabant, NL',
+      location: "'s-Hertogenbosch, Noord-Brabant, NL",
       name: 'Joris Hoogendoorn',
       username: 'jorishoogendoorn',
     },
@@ -281,7 +283,8 @@ const defaultIcons: IIcon[] = [
     uploader_id: '4445850',
     isDefault: true,
   },
-  { // 21
+  {
+    // 21
     id: '476',
     term: 'Camera',
     preview_url: 'https://static.thenounproject.com/png/476-200.png',
@@ -421,7 +424,8 @@ const defaultIcons: IIcon[] = [
     uploader_id: '5375',
     isDefault: true,
   },
-  { // 31
+  {
+    // 31
     id: '920262',
     term: 'emoji',
     preview_url: 'https://static.thenounproject.com/png/920262-200.png',
@@ -561,7 +565,8 @@ const defaultIcons: IIcon[] = [
     uploader_id: '3810397',
     isDefault: true,
   },
-  { // 41
+  {
+    // 41
     id: '26219',
     term: 'building',
     preview_url: 'https://static.thenounproject.com/png/26219-200.png',

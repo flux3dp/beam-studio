@@ -1,21 +1,21 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { OptionValues } from 'app/constants/enums';
+import { OptionValues } from '@core/app/constants/enums';
 
 import Editor from './Editor';
 
-jest.mock('helpers/is-dev', () => () => true);
+jest.mock('@core/helpers/is-dev', () => () => true);
 
 const getFontOfPostscriptName = jest.fn();
-jest.mock('app/actions/beambox/font-funcs', () => ({
+jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   requestAvailableFontFamilies: () => ['Arial', 'Courier', 'Apple LiSung'],
   fontNameMap: new Map(
     Object.entries({
       Arial: 'Arial',
       Courier: 'Courier',
       'Apple LiSung': '蘋果儷細宋',
-    })
+    }),
   ),
   requestFontsOfTheFontFamily: (family) => {
     const fonts = {
@@ -81,12 +81,12 @@ map.set('default-font', {
   family: 'Arial',
   style: 'Regular',
 });
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (key) => map.get(key),
   set: (key, value) => map.set(key, value),
 }));
 
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: () => ({
     label: 'Beambox',
     width: 400,
@@ -101,7 +101,7 @@ jest.mock('app/constants/workarea-constants', () => ({
 }));
 
 jest.mock(
-  'app/components/settings/SelectControl',
+  '@core/app/components/settings/SelectControl',
   () =>
     ({ id, label, url, onChange, options }: any) =>
       (
@@ -112,11 +112,11 @@ jest.mock(
           options:{JSON.stringify(options)}
           <input className="select-control" onChange={onChange} />
         </div>
-      )
+      ),
 );
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, unit, min, max, defaultValue, getValue, forceUsePropsUnit, className }: any) =>
       (
@@ -130,14 +130,14 @@ jest.mock(
           className:{JSON.stringify(className)}
           <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
         </div>
-      )
+      ),
 );
 
-jest.mock('helpers/api/swiftray-client', () => ({
+jest.mock('@core/helpers/api/swiftray-client', () => ({
   hasSwiftray: true,
 }));
 
-jest.mock('helpers/locale-helper', () => ({
+jest.mock('@core/helpers/locale-helper', () => ({
   isTwOrHk: true,
 }));
 
@@ -165,7 +165,7 @@ describe('settings/Editor', () => {
         updateConfigChange={updateConfigChange}
         updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
         updateModel={updateModel}
-      />
+      />,
     );
     expect(mockGetBeamboxPreferenceEditingValue).toBeCalledTimes(11);
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(1, 'guide_x0');
@@ -176,13 +176,13 @@ describe('settings/Editor', () => {
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(6, 'continuous_drawing');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(
       7,
-      'simplify_clipper_path'
+      'simplify_clipper_path',
     );
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(8, 'enable-low-speed');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(9, 'auto-switch-tab');
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(
       10,
-      'enable-custom-backlash'
+      'enable-custom-backlash',
     );
     expect(mockGetBeamboxPreferenceEditingValue).toHaveBeenNthCalledWith(11, 'path-engine');
     expect(container).toMatchSnapshot();
@@ -235,7 +235,7 @@ describe('settings/Editor', () => {
     expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(
       6,
       'simplify_clipper_path',
-      'TRUE'
+      'TRUE',
     );
 
     fireEvent.change(SelectControls[9], { target: { value: OptionValues.TRUE } });
@@ -263,7 +263,7 @@ describe('settings/Editor', () => {
     expect(updateBeamboxPreferenceChange).toHaveBeenNthCalledWith(
       12,
       'enable-custom-backlash',
-      'TRUE'
+      'TRUE',
     );
   });
 });

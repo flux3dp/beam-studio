@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import keyCodeConstants from 'app/constants/keycode-constants';
+import keyCodeConstants from '@core/app/constants/keycode-constants';
 
 interface Props {
   defaultValue: any;
@@ -61,10 +61,13 @@ class ValidationTextInput extends React.Component<Props, State> {
     const { validation = (s) => s, getValue = () => {} } = this.props;
     const res = validation(val);
     if (res || res === '') {
-      this.setState({
-        displayValue: res,
-        value: res,
-      }, () => getValue(res));
+      this.setState(
+        {
+          displayValue: res,
+          value: res,
+        },
+        () => getValue(res),
+      );
     } else {
       this.setState((prevState) => ({ displayValue: prevState.value }));
     }

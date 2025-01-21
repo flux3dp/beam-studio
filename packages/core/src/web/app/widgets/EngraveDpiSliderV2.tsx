@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Col, Form, Row, Slider } from 'antd';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './EngraveDpiSliderV2.module.scss';
 

@@ -1,23 +1,23 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import FrameButton from './FrameButton';
 
 const mockShowFramingModal = jest.fn();
-jest.mock('app/components/dialogs/FramingModal', () => ({
+jest.mock('@core/app/components/dialogs/FramingModal', () => ({
   showFramingModal: (...args) => mockShowFramingModal(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     frame_task: 'frame_task',
   },
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: 1 }),
   CanvasMode: {
     Draw: 1,
@@ -27,12 +27,12 @@ jest.mock('app/contexts/CanvasContext', () => ({
 }));
 
 const mockGetSelectedDevice = jest.fn();
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 
 const mockOn = jest.fn();
-jest.mock('helpers/shortcuts', () => ({
+jest.mock('@core/helpers/shortcuts', () => ({
   on: (...args) => mockOn(...args),
 }));
 
@@ -53,7 +53,7 @@ describe('test FrameButton', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <FrameButton />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

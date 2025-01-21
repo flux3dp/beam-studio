@@ -1,6 +1,6 @@
-import constant from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import constant from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<number | null> => {
   if (!constant.adorModels.includes(device?.model)) return null;

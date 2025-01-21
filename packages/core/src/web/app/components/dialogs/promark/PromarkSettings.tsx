@@ -2,27 +2,27 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Flex, Modal, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import applyRedDot from 'helpers/device/promark/apply-red-dot';
-import checkDeviceStatus from 'helpers/check-device-status';
-import deviceMaster from 'helpers/device-master';
-import icons from 'app/icons/icons';
-import promarkDataStore from 'helpers/device/promark/promark-data-store';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
+import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
+import icons from '@core/app/icons/icons';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import {
   defaultField,
   defaultGalvoParameters,
   defaultRedLight,
-} from 'app/constants/promark-constants';
-import { Field, GalvoParameters, PromarkStore, RedDot } from 'interfaces/Promark';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+} from '@core/app/constants/promark-constants';
+import { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 import {
   generateCalibrationTaskString,
   loadTaskToSwiftray,
-} from 'helpers/device/promark/calibration';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
+} from '@core/helpers/device/promark/calibration';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import FieldBlock from './FieldBlock';
 import LensBlock from './LensBlock';
@@ -44,7 +44,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
   const [field, setField] = useState<Field>(initData.field || defaultField);
   const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
   const [galvoParameters, setGalvoCorrection] = useState<GalvoParameters>(
-    initData.galvoParameters || defaultGalvoParameters
+    initData.galvoParameters || defaultGalvoParameters,
   );
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
   const { power, speed } = parameters;
@@ -77,7 +77,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
       const { field: newField, galvoParameters: newGalvo } = applyRedDot(
         redDot,
         field,
-        galvoParameters
+        galvoParameters,
       );
       await deviceMaster.setField(width, newField);
       await deviceMaster.setGalvoParameters(newGalvo);
@@ -139,7 +139,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): JSX.Element => {
           initData.galvoParameters || {
             x: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
             y: { scale: 100, bulge: 1, skew: 1, trapezoid: 1 },
-          }
+          },
         );
       } catch (err) {
         console.error('Failed to restore from promark settings state', err);
@@ -209,7 +209,7 @@ export const showPromarkSettings = async (device: IDeviceInfo): Promise<void> =>
   if (!isIdExist(id)) {
     addDialogComponent(
       id,
-      <PromarkSettings device={device} initData={data} onClose={() => popDialogById(id)} />
+      <PromarkSettings device={device} initData={data} onClose={() => popDialogById(id)} />,
     );
   }
 };

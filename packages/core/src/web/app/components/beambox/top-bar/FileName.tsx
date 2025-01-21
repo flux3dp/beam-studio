@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import ReactDomServer from 'react-dom/server';
 
-import currentFileManager from 'app/svgedit/currentFileManager';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import useForceUpdate from 'helpers/use-force-update';
-import useI18n from 'helpers/useI18n';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './FileName.module.scss';
 
@@ -36,7 +36,7 @@ function FileName({ hasUnsavedChange, isTitle = false }: Props): JSX.Element {
 const updateTitle = () => {
   if (window.os === 'Windows' && window.titlebar) {
     const title = ReactDomServer.renderToStaticMarkup(
-      <FileName hasUnsavedChange={false} isTitle />
+      <FileName hasUnsavedChange={false} isTitle />,
     );
     // eslint-disable-next-line no-underscore-dangle
     if (window.titlebar?.title) window.titlebar.title.innerHTML = title;

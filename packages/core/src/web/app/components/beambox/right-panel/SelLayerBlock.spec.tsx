@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 import SelLayerBlock from './SelLayerBlock';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       layer_panel: {
@@ -17,7 +17,7 @@ jest.mock('helpers/useI18n', () => () => ({
 
 const mockgetObjectLayer = jest.fn();
 const mockMoveToOtherLayer = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
   getObjectLayer: (...args: any[]) => mockgetObjectLayer(...args),
 }));
@@ -39,7 +39,7 @@ describe('SelLayerBlock', () => {
     const { container } = render(
       <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
         <SelLayerBlock layerNames={['layer1', 'layer2']} />
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     expect(mockgetObjectLayer).toBeCalledTimes(1);
     expect(mockgetObjectLayer).toHaveBeenLastCalledWith(mockElem);
@@ -54,15 +54,11 @@ describe('SelLayerBlock', () => {
     const { container } = render(
       <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
         <SelLayerBlock layerNames={['layer1', 'layer2']} />
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     const select = container.querySelector('select') as HTMLSelectElement;
     fireEvent.change(select, { target: { value: 'layer2' } });
     expect(mockMoveToOtherLayer).toBeCalledTimes(1);
-    expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith(
-      'layer2',
-      expect.any(Function),
-      true
-    );
+    expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith('layer2', expect.any(Function), true);
   });
 });

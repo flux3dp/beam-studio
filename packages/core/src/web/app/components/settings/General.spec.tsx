@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     settings: {
       language: 'Language',
@@ -14,7 +14,7 @@ jest.mock('helpers/i18n', () => ({
   getActiveLang: () => 'en',
 }));
 
-jest.mock('app/components/settings/SelectControl', () =>
+jest.mock('@core/app/components/settings/SelectControl', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, label, onChange, options }: any) => (
     <div>
@@ -23,7 +23,7 @@ jest.mock('app/components/settings/SelectControl', () =>
       options:{JSON.stringify(options)}
       <input className="select-control" onChange={onChange} />
     </div>
-  )
+  ),
 );
 
 // eslint-disable-next-line import/first
@@ -58,7 +58,7 @@ describe('should render correctly', () => {
         ]}
         changeActiveLang={changeActiveLang}
         updateConfigChange={updateConfigChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -103,7 +103,7 @@ describe('should render correctly', () => {
         ]}
         changeActiveLang={changeActiveLang}
         updateConfigChange={updateConfigChange}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });

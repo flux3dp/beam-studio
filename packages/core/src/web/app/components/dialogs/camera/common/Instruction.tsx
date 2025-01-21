@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Button, Modal } from 'antd';
 
-import useDidUpdateEffect from 'helpers/hooks/useDidUpdateEffect';
+import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 
 import styles from './Instruction.module.scss';
 

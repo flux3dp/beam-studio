@@ -1,4 +1,4 @@
-import { IController } from 'interfaces/IBoxgen';
+import { IController } from '@core/interfaces/IBoxgen';
 
 export const SHEET_THICKNESS_MM = [
   { label: '3 mm', value: 3 },

@@ -1,43 +1,43 @@
 import ClassNames from 'classnames';
 import React from 'react';
 
-import keyCodeConstants from 'app/constants/keycode-constants';
-import storage from 'implementations/storage';
+import keyCodeConstants from '@core/app/constants/keycode-constants';
+import storage from '@app/implementations/storage';
 
 interface Props {
-  id?:string,
-  min?: number,
-  max?: number,
-  step?: number,
-  decimal?: number,
-  defaultValue: number,
-  unit?: string,
-  className?: string | { [key: string]: boolean },
-  type?: string,
-  disabled?: boolean,
-  abbr?: boolean,
-  isDoOnInput?: boolean,
-  displayMultiValue?: boolean,
-  forceUsePropsUnit?: boolean,
-  getValue: (value: number) => void,
-  onKeyUp?: (e?: any) => void,
-  onBlur?: () => void,
-  onFocus?: () => void,
+  id?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  decimal?: number;
+  defaultValue: number;
+  unit?: string;
+  className?: string | { [key: string]: boolean };
+  type?: string;
+  disabled?: boolean;
+  abbr?: boolean;
+  isDoOnInput?: boolean;
+  displayMultiValue?: boolean;
+  forceUsePropsUnit?: boolean;
+  getValue: (value: number) => void;
+  onKeyUp?: (e?: any) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
 }
 
 interface States {
-  id?:string,
-  isEditing: boolean,
-  displayValue: string | number,
-  savedValue: string,
+  id?: string;
+  isEditing: boolean;
+  displayValue: string | number;
+  savedValue: string;
 }
 
 /**
- * @deprecated use UnitInput from 'app/widgets/UnitInput'
+ * @deprecated use UnitInput from '@core/app/widgets/UnitInput'
  */
 class UnitInput extends React.Component<Props, States> {
   static defaultProps = {
-    getValue: function (value) { },
+    getValue: function (value) {},
     defaultValue: 0,
     className: {},
     type: 'text',
@@ -50,9 +50,9 @@ class UnitInput extends React.Component<Props, States> {
     isDoOnInput: false,
     displayMultiValue: false,
     forceUsePropsUnit: false,
-    onKeyUp: () => { },
-    onBlur: () => { },
-    onFocus: () => { },
+    onKeyUp: () => {},
+    onBlur: () => {},
+    onFocus: () => {},
   };
 
   private decimal: number = 0;
@@ -64,7 +64,7 @@ class UnitInput extends React.Component<Props, States> {
     this.state = {
       isEditing: false,
       displayValue: this.getTransformedValue(this._validateValue(defaultValue)),
-      savedValue: Number(defaultValue).toFixed(this.decimal)
+      savedValue: Number(defaultValue).toFixed(this.decimal),
     };
     this._handleBlur = this._handleBlur.bind(this);
     this._handleKeyUp = this._handleKeyUp.bind(this);
@@ -80,7 +80,7 @@ class UnitInput extends React.Component<Props, States> {
       const val = this._validateValue(defaultValue);
       this.setState({
         displayValue: this.getTransformedValue(Number(val)),
-        savedValue: val
+        savedValue: val,
       });
     }
 
@@ -95,7 +95,7 @@ class UnitInput extends React.Component<Props, States> {
     const val = this._validateValue(nextProps.defaultValue);
     this.setState({
       displayValue: this.getTransformedValue(Number(val)),
-      savedValue: val
+      savedValue: val,
     });
   }
 
@@ -162,7 +162,7 @@ class UnitInput extends React.Component<Props, States> {
   _handleChange(e) {
     this.setState({
       displayValue: e.target.value,
-      isEditing: true
+      isEditing: true,
     });
   }
 
@@ -195,10 +195,18 @@ class UnitInput extends React.Component<Props, States> {
         this.setState({ displayValue: this.getTransformedValue(this.state.savedValue) });
         return;
       case keyCodeConstants.KEY_UP:
-        if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step + step);
+        if (!this.props.isDoOnInput)
+          this._updateValue(
+            Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step +
+              step,
+          );
         return;
       case keyCodeConstants.KEY_DOWN:
-        if (!this.props.isDoOnInput) this._updateValue(Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step - step);
+        if (!this.props.isDoOnInput)
+          this._updateValue(
+            Math.round(this.getTransformedValue(parseFloat(this.state.savedValue)) / step) * step -
+              step,
+          );
         return;
       default:
         return;
@@ -214,7 +222,7 @@ class UnitInput extends React.Component<Props, States> {
       if (unit === 'mm') {
         return this.props.abbr ? '' : 'mm';
       } else {
-        return this.props.abbr ? '\"' : 'in';
+        return this.props.abbr ? '"' : 'in';
       }
     } else {
       return this.props.abbr ? '' : this.props.unit;
@@ -230,15 +238,7 @@ class UnitInput extends React.Component<Props, States> {
   }
 
   render() {
-    const {
-      id,
-      type,
-      step,
-      unit,
-      disabled,
-      className,
-      displayMultiValue,
-    } = this.props;
+    const { id, type, step, unit, disabled, className, displayMultiValue } = this.props;
     let renderUnit: string | JSX.Element = '';
     const { isEditing, displayValue } = this.state;
     if (unit !== '') {
@@ -247,7 +247,7 @@ class UnitInput extends React.Component<Props, States> {
 
     className['ui ui-control-unit-input-v2'] = true;
 
-    const shouldHideValue = (displayMultiValue && !isEditing);
+    const shouldHideValue = displayMultiValue && !isEditing;
     return (
       <div className={ClassNames(className)}>
         <input
@@ -255,7 +255,9 @@ class UnitInput extends React.Component<Props, States> {
           type={type}
           step={step}
           value={shouldHideValue ? '-' : displayValue}
-          onFocus={(e) => { this._handleFocus(e) }}
+          onFocus={(e) => {
+            this._handleFocus(e);
+          }}
           onBlur={this._handleBlur}
           onKeyUp={this._handleKeyUp}
           onKeyDown={this._handleKeyDown}
@@ -267,6 +269,6 @@ class UnitInput extends React.Component<Props, States> {
       </div>
     );
   }
-};
+}
 
 export default UnitInput;

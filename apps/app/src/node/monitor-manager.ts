@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { exec, execSync } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
+import { exec, execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
 import sudo from 'sudo-prompt';
 

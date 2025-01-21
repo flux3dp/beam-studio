@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Flex, Radio } from 'antd';
-import useI18n from 'helpers/useI18n';
-import DraggableModal from 'app/widgets/DraggableModal';
+import useI18n from '@core/helpers/useI18n';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import styles from './index.module.scss';
 
 import QRCodeGenerator from './QRCodeGenerator';
@@ -48,7 +48,7 @@ export default function CodeGenerator({ onClose }: Props): JSX.Element {
       { label: tCodeGenerator.qr_code, value: 'qrcode' },
       { label: tCodeGenerator.barcode, value: 'barcode' },
     ],
-    [tCodeGenerator]
+    [tCodeGenerator],
   );
 
   const renderContent = () =>

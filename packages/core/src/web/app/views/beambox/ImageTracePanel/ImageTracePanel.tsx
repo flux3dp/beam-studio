@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Cropper from 'cropperjs';
 
-import BeamboxStore from 'app/stores/beambox-store';
-import StepCrop from 'app/views/beambox/ImageTracePanel/StepCrop';
-import StepTune from 'app/views/beambox/ImageTracePanel/StepTune';
+import BeamboxStore from '@core/app/stores/beambox-store';
+import StepCrop from '@core/app/views/beambox/ImageTracePanel/StepCrop';
+import StepTune from '@core/app/views/beambox/ImageTracePanel/StepTune';
 
 enum Step {
   NONE = 0,
@@ -35,7 +35,14 @@ const ImageTracePanel = (): JSX.Element => {
       URL.revokeObjectURL(url);
       setStep(Step.CROP);
     };
-    return <StepTune cropData={data} imageUrl={url} onGoBack={handleGoBack} onClose={() => setStep(Step.NONE)} />;
+    return (
+      <StepTune
+        cropData={data}
+        imageUrl={url}
+        onGoBack={handleGoBack}
+        onClose={() => setStep(Step.NONE)}
+      />
+    );
   }
 
   return null;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     general: {
       choose_folder: 'Choose Folder',
@@ -26,9 +26,9 @@ jest.mock('helpers/i18n', () => ({
   },
 }));
 
-jest.mock('app/components/settings/Control', () => 'mock-control');
+jest.mock('@core/app/components/settings/Control', () => 'mock-control');
 
-jest.mock('app/widgets/PathInput', () => ({
+jest.mock('@core/app/widgets/PathInput', () => ({
   __esModule: true,
   InputType: {
     FILE: 0,
@@ -63,7 +63,7 @@ jest.mock('app/widgets/PathInput', () => ({
 }));
 
 jest.mock(
-  'app/components/settings/SelectControl',
+  '@core/app/components/settings/SelectControl',
   () =>
     ({ id, label, onChange, options }: any) =>
       (
@@ -73,11 +73,11 @@ jest.mock(
           options:{JSON.stringify(options)}
           <input className="select-control" onChange={onChange} />
         </div>
-      )
+      ),
 );
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, unit, min, max, defaultValue, getValue, forceUsePropsUnit, className }: any) =>
       (
@@ -91,7 +91,7 @@ jest.mock(
           className:{JSON.stringify(className)}
           <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
         </div>
-      )
+      ),
 );
 
 // eslint-disable-next-line import/first
@@ -127,7 +127,7 @@ describe('should render correctly', () => {
         }}
         warnings={{}}
         updateState={updateState}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -212,7 +212,7 @@ describe('should render correctly', () => {
           autosave_directory: 'Specified path not found.',
         }}
         updateState={updateState}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
 
@@ -256,7 +256,7 @@ describe('should render correctly', () => {
         }}
         warnings={{}}
         updateState={updateState}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });

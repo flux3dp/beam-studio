@@ -2,20 +2,20 @@
 import React, { createContext } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import { LaserType } from 'app/constants/promark-constants';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { LaserType } from '@core/app/constants/promark-constants';
 
 import AdvancedBlock from './AdvancedBlock';
 import ConfigPanelContext from './ConfigPanelContext';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key: string) => mockRead(key),
 }));
 
 const mockOn = jest.fn();
 const mockOff = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     on: (...args) => mockOn(...args),
     off: (...args) => mockOff(...args),
@@ -23,12 +23,12 @@ jest.mock('helpers/eventEmitterFactory', () => ({
 }));
 
 const mockForceUpdate = jest.fn();
-jest.mock('helpers/use-force-update', () => () => mockForceUpdate);
+jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
 
 const mockUseWorkarea = jest.fn();
-jest.mock('helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
+jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -39,16 +39,16 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockGetSupportInfo = jest.fn();
-jest.mock('app/constants/add-on', () => ({
+jest.mock('@core/app/constants/add-on', () => ({
   getSupportInfo: (...args) => mockGetSupportInfo(...args),
 }));
 
 const mockGetPromarkInfo = jest.fn();
-jest.mock('helpers/device/promark/promark-info', () => ({
+jest.mock('@core/helpers/device/promark/promark-info', () => ({
   getPromarkInfo: (...args) => mockGetPromarkInfo(...args),
 }));
 
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getPromarkLimit: () => ({
     pulseWidth: { min: 2, max: 350 },
     frequency: { min: 1, max: 4000 },
@@ -74,7 +74,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -88,7 +88,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const collapseHeader = container.querySelector('.ant-collapse-header');
     fireEvent.click(collapseHeader);
@@ -104,7 +104,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const collapseHeader = container.querySelector('.ant-collapse-header');
     fireEvent.click(collapseHeader);
@@ -120,7 +120,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.PRINTER } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const collapseHeader = container.querySelector('.ant-collapse-header');
     fireEvent.click(collapseHeader);
@@ -138,7 +138,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const collapseHeader = container.querySelector('.ant-collapse-header');
     fireEvent.click(collapseHeader);
@@ -156,7 +156,7 @@ describe('test AdvancedBlock', () => {
         value={{ state: { module: { value: LayerModule.LASER_UNIVERSAL } } } as any}
       >
         <AdvancedBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const collapseHeader = container.querySelector('.ant-collapse-header');
     fireEvent.click(collapseHeader);

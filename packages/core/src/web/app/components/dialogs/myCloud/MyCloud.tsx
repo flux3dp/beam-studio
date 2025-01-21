@@ -1,15 +1,15 @@
 import React, { useContext, useMemo } from 'react';
 import { Button, Modal, Space } from 'antd';
 
-import browser from 'implementations/browser';
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import isFluxPlusActive from 'helpers/is-flux-plus-active';
-import layoutConstants from 'app/constants/layout-constants';
-import useI18n from 'helpers/useI18n';
-import { getCurrentUser } from 'helpers/api/flux-id';
-import { MyCloudContext, MyCloudProvider } from 'app/contexts/MyCloudContext';
-import { useIsMobile } from 'helpers/system-helper';
+import browser from '@app/implementations/browser';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
+import layoutConstants from '@core/app/constants/layout-constants';
+import useI18n from '@core/helpers/useI18n';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import { MyCloudContext, MyCloudProvider } from '@core/app/contexts/MyCloudContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import GridFile from './GridFile';
 import Head from './Head';

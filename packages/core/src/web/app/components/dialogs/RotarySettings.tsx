@@ -1,16 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { Checkbox, Modal, Segmented, Switch } from 'antd';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import changeWorkarea from 'app/svgedit/operations/changeWorkarea';
-import localeHelper from 'helpers/locale-helper';
-import RotaryIcons from 'app/icons/rotary/RotaryIcons';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { CHUCK_ROTARY_DIAMETER, getSupportInfo, RotaryType } from 'app/constants/add-on';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import localeHelper from '@core/helpers/locale-helper';
+import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { CHUCK_ROTARY_DIAMETER, getSupportInfo, RotaryType } from '@core/app/constants/add-on';
 
 import styles from './RotarySettings.module.scss';
 
@@ -30,13 +30,13 @@ const RotarySettings = ({ onClose }: Props): JSX.Element => {
   const supportInfo = useMemo(() => getSupportInfo(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<number>(beamboxPreference.read('rotary_mode') ?? 0);
   const [rotaryType, setRotaryType] = useState<number>(
-    beamboxPreference.read('rotary-type') || RotaryType.Roller
+    beamboxPreference.read('rotary-type') || RotaryType.Roller,
   );
   const [diameter, setDiaMeter] = useState<number>(
-    beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER
+    beamboxPreference.read('rotary-chuck-obj-d') ?? CHUCK_ROTARY_DIAMETER,
   );
   const [extend, setExtend] = useState<boolean>(
-    Boolean(beamboxPreference.read('extend-rotary-workarea'))
+    Boolean(beamboxPreference.read('extend-rotary-workarea')),
   );
   const [mirror, setMirror] = useState<boolean>(Boolean(beamboxPreference.read('rotary-mirror')));
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
@@ -183,7 +183,7 @@ export const showRotarySettings = (): void => {
   if (!isIdExist('rotary-settings')) {
     addDialogComponent(
       'rotary-settings',
-      <RotarySettings onClose={() => popDialogById('rotary-settings')} />
+      <RotarySettings onClose={() => popDialogById('rotary-settings')} />,
     );
   }
 };

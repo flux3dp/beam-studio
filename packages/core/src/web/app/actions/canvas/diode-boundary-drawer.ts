@@ -1,8 +1,8 @@
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import Constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import NS from 'app/constants/namespaces';
-import workareaManager from 'app/svgedit/workarea';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import NS from '@core/app/constants/namespaces';
+import workareaManager from '@core/app/svgedit/workarea';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 

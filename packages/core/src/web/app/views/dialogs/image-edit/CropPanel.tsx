@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Cropper from 'cropperjs';
 import { Button, ConfigProvider, Modal } from 'antd';
 
-import calculateBase64 from 'helpers/image-edit-panel/calculate-base64';
-import handleFinish from 'helpers/image-edit-panel/handle-finish';
-import jimpHelper from 'helpers/jimp-helper';
-import progressCaller from 'app/actions/progress-caller';
-import Select from 'app/widgets/AntdSelect';
-import useI18n from 'helpers/useI18n';
-import { CropperDimension, preprocessByUrl } from 'helpers/image-edit-panel/preprocess';
-import { useIsMobile } from 'helpers/system-helper';
+import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
+import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
+import jimpHelper from '@core/helpers/jimp-helper';
+import progressCaller from '@core/app/actions/progress-caller';
+import Select from '@core/app/widgets/AntdSelect';
+import useI18n from '@core/helpers/useI18n';
+import { CropperDimension, preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './CropPanel.module.scss';
 
@@ -42,7 +42,7 @@ const CropPanel = ({ src, image, onClose }: Props): JSX.Element => {
       threshold: parseInt(image.getAttribute('data-threshold'), 10),
       isFullColor: image.getAttribute('data-fullcolor') === '1',
     }),
-    [image]
+    [image],
   );
   const [state, setState] = useState({
     blobUrl: src,

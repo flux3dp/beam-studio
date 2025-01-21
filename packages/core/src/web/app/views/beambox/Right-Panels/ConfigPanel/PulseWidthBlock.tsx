@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
 
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { CUSTOM_PRESET_CONSTANT, writeData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';

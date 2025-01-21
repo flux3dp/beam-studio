@@ -1,10 +1,7 @@
-/* eslint-disable no-console */
-/* eslint-disable import/no-extraneous-dependencies */
-import { Severity } from '@sentry/types';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import sentry from 'implementations/sentry';
-import storage from 'implementations/storage';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import sentry from '@app/implementations/sentry';
+import storage from '@app/implementations/storage';
 
 let isSentryInited = false;
 const sendDevices: { [uuid: string]: string } = storage.get('sentry-send-devices') || {};
@@ -16,7 +13,7 @@ const initSentry = (): void => {
     sentry.initSentry();
     isSentryInited = true;
     Sentry.captureMessage('User Census', {
-      level: 'info' as Severity,
+      level: 'info',
       tags: {
         census: 'v1',
         from: 'renderer',
@@ -26,15 +23,18 @@ const initSentry = (): void => {
 };
 
 const captureMessage = (
-  lastVersion: string, uuid: string, version: string, model: string,
+  lastVersion: string,
+  uuid: string,
+  version: string,
+  model: string,
 ): void => {
   Sentry.captureMessage('Device Info', {
-    level: 'info' as Severity,
+    level: 'info',
     tags: {
       'device-lastversion': lastVersion,
+      'device-model': model,
       'device-uuid': uuid,
       'device-version': version,
-      'device-model': model,
     },
   });
   sendDevices[uuid] = version;

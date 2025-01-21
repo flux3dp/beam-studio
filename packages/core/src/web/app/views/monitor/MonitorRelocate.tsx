@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
-import RawMovePanel from 'app/widgets/Raw-Move-Panel';
-import DeviceMaster from 'helpers/device-master';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import RawMovePanel from '@core/app/widgets/Raw-Move-Panel';
+import DeviceMaster from '@core/helpers/device-master';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const hdChecked = {};
 

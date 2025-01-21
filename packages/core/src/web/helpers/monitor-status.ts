@@ -1,6 +1,6 @@
-import DeviceConstants from 'app/constants/device-constants';
-import i18n from 'helpers/i18n';
-import { IReport } from 'interfaces/IDevice';
+import DeviceConstants from '@core/app/constants/device-constants';
+import i18n from '@core/helpers/i18n';
+import { IReport } from '@core/interfaces/IDevice';
 
 export enum ButtonTypes {
   NONE = 0,

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { ILang } from 'interfaces/ILang';
+import { ILang } from '@core/interfaces/ILang';
 
 const lang: ILang = {
   global: {

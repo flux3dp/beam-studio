@@ -2,12 +2,12 @@
 import React, { act } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import Tabs from './Tabs';
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({}),
 }));
 
@@ -21,7 +21,7 @@ const mockOnTabsUpdated = jest.fn();
 const mockOffFocused = jest.fn();
 const mockOffTabsUpdated = jest.fn();
 
-jest.mock('app/actions/tabController', () => ({
+jest.mock('@core/app/actions/tabController', () => ({
   closeTab: (...args) => mockCloseTab(...args),
   focusTab: (...args) => mockFocusTab(...args),
   getAllTabs: (...args) => mockGetAllTabs(...args),
@@ -35,13 +35,13 @@ jest.mock('app/actions/tabController', () => ({
 
 const mockOnTitleChange = jest.fn();
 const mockOffTitleChange = jest.fn();
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   onTitleChange: (...args) => mockOnTitleChange(...args),
   offTitleChange: (...args) => mockOffTitleChange(...args),
 }));
 
 const mockRenameFile = jest.fn();
-jest.mock('helpers/api/cloudFile', () => ({
+jest.mock('@core/helpers/api/cloudFile', () => ({
   renameFile: (...args) => mockRenameFile(...args),
 }));
 
@@ -49,7 +49,7 @@ const mockGetName = jest.fn();
 const mockGetPath = jest.fn();
 const mockSetCloudUUID = jest.fn();
 const mockSetFileName = jest.fn();
-jest.mock('app/svgedit/currentFileManager', () => ({
+jest.mock('@core/app/svgedit/currentFileManager', () => ({
   getName: (...args) => mockGetName(...args),
   getPath: (...args) => mockGetPath(...args),
   setCloudUUID: (...args) => mockSetCloudUUID(...args),
@@ -57,7 +57,7 @@ jest.mock('app/svgedit/currentFileManager', () => ({
 }));
 
 const mockGetPromptValue = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   getPromptValue: (...args) => mockGetPromptValue(...args),
 }));
 
@@ -150,7 +150,7 @@ describe('test Tabs', () => {
     const { container, rerender } = render(
       <CanvasContext.Provider value={{ hasUnsavedChange: false } as any}>
         <Tabs />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(mockOnTitleChange).toBeCalledTimes(1);
     act(() => mockOnTitleChange.mock.calls[0][0]('new title', false));
@@ -158,7 +158,7 @@ describe('test Tabs', () => {
     rerender(
       <CanvasContext.Provider value={{ hasUnsavedChange: true } as any}>
         <Tabs />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container.querySelector('.name').textContent).toBe('new title*');
   });

@@ -3,22 +3,22 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import { SwipeAction } from 'antd-mobile';
 
-import ColorPicker from 'app/widgets/ColorPicker';
-import constant from 'app/actions/beambox/constant';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import LayerPanelIcons from 'app/icons/layer-panel/LayerPanelIcons';
-import ObjectPanelIcons from 'app/icons/object-panel/ObjectPanelIcons';
-import useWorkarea from 'helpers/hooks/useWorkarea';
+import ColorPicker from '@core/app/widgets/ColorPicker';
+import constant from '@core/app/actions/beambox/constant';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import {
   deleteLayerByName,
   getAllLayerNames,
   getLayerElementByName,
   setLayerLock,
-} from 'helpers/layer/layer-helper';
-import { getData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { useIsMobile } from 'helpers/system-helper';
+} from '@core/helpers/layer/layer-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './LayerList.module.scss';
 
@@ -147,11 +147,7 @@ const LayerList = ({
                 />
               )}
             </div>
-            {moduleIcon && (
-              <div className={styles.module}>
-                {moduleIcon}
-              </div>
-            )}
+            {moduleIcon && <div className={styles.module}>{moduleIcon}</div>}
             <div
               id={`layerdoubleclick-${i}`}
               className={classNames(styles.name, {
@@ -253,7 +249,7 @@ const LayerList = ({
             onActionsReveal={() => setSelectedLayers([layerName])}
           >
             {layerItem}
-          </SwipeAction>
+          </SwipeAction>,
         );
       }
       if (draggingDestIndex === i) {

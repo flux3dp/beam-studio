@@ -2,9 +2,9 @@ import React, { Fragment, useMemo } from 'react';
 import { Divider, Modal } from 'antd';
 import { ExportOutlined } from '@ant-design/icons';
 
-import browser from 'implementations/browser';
-import i18n from 'helpers/i18n';
-import useI18n from 'helpers/useI18n';
+import browser from '@app/implementations/browser';
+import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './SocialMediaModal.module.scss';
 

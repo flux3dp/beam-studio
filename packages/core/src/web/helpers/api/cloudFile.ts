@@ -1,13 +1,13 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import beamFileHelper from 'helpers/beam-file-helper';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import dialog from 'implementations/dialog';
-import dialogCaller from 'app/actions/dialog-caller';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
-import { IFile } from 'interfaces/IMyCloud';
-import { showFluxPlusWarning } from 'app/actions/dialog-controller';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import beamFileHelper from '@core/helpers/beam-file-helper';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import dialog from '@app/implementations/dialog';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
+import { IFile } from '@core/interfaces/IMyCloud';
+import { showFluxPlusWarning } from '@core/app/actions/dialog-controller';
 
 import { axiosFluxId, getDefaultHeader, ResponseWithError } from './flux-id';
 
@@ -99,7 +99,7 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
 };
 
 export const duplicateFile = async (
-  uuid: string
+  uuid: string,
 ): Promise<OperationResult<{ new_file: string }>> => {
   const id = 'duplicate-cloud-file';
   await progressCaller.openNonstopProgress({ id });
@@ -107,7 +107,7 @@ export const duplicateFile = async (
     const resp = await axiosFluxId.put(
       `/api/beam-studio/cloud/file/operation/${uuid}`,
       { method: 'duplicate' },
-      { withCredentials: true, headers: getDefaultHeader() }
+      { withCredentials: true, headers: getDefaultHeader() },
     );
     const checkRespResult = await checkResp(resp);
     return { ...checkRespResult, data: resp.data };
@@ -145,7 +145,7 @@ export const downloadFile = async (file: IFile): Promise<void> => {
           name: langFile.all_files,
           extensions: ['*'],
         },
-      ]
+      ],
     );
   } catch (e) {
     console.error(e);
@@ -163,7 +163,7 @@ export const renameFile = async (uuid: string, newName: string): Promise<Operati
       const resp = await axiosFluxId.put(
         `/api/beam-studio/cloud/file/operation/${uuid}`,
         { method: 'rename', data: newName },
-        { withCredentials: true, headers: getDefaultHeader() }
+        { withCredentials: true, headers: getDefaultHeader() },
       );
       const checkRespResult = await checkResp(resp);
       if (checkRespResult.res) {

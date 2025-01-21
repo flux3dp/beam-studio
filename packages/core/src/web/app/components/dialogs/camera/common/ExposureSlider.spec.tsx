@@ -21,18 +21,18 @@ jest.mock('antd', () => ({
 }));
 
 const mockSetDeviceSetting = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   setDeviceSetting: (...args) => mockSetDeviceSetting(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   editor: {
     exposure: 'exposure',
   },
@@ -60,7 +60,7 @@ describe('test ExposureSlider', () => {
         exposureSetting={mockExposureSetting}
         setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -72,7 +72,7 @@ describe('test ExposureSlider', () => {
         exposureSetting={mockExposureSetting}
         setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
-      />
+      />,
     );
     expect(mockOpenNonstopProgress).not.toBeCalled();
     expect(mockSetDeviceSetting).not.toBeCalled();
@@ -92,7 +92,7 @@ describe('test ExposureSlider', () => {
         exposureSetting={mockExposureSetting}
         setExposureSetting={mockSetExposureSetting}
         onChanged={mockOnChanged}
-      />
+      />,
     );
     const input = container.querySelector('input');
     expect(input).not.toBeNull();

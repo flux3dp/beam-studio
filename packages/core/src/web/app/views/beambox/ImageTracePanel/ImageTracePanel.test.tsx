@@ -5,28 +5,46 @@ import ImageTracePanel from './ImageTracePanel';
 
 const mockOnCropperShown = jest.fn();
 const mockRemoveCropperShownListener = jest.fn();
-jest.mock('app/stores/beambox-store', () => ({
+jest.mock('@core/app/stores/beambox-store', () => ({
   onCropperShown: (...args) => mockOnCropperShown(...args),
   removeCropperShownListener: (...args) => mockRemoveCropperShownListener(...args),
 }));
 
-jest.mock('app/views/beambox/ImageTracePanel/StepCrop', () => ({ onCropFinish, onCancel }: any) => (
-  <div>
-    Dummy StepCrop
-    <button type="button" onClick={() => onCropFinish('mock-crop-data', 'mock-url')}>finish</button>
-    <button type="button" onClick={onCancel}>cancel</button>
-  </div>
-));
+jest.mock(
+  '@core/app/views/beambox/ImageTracePanel/StepCrop',
+  () =>
+    ({ onCropFinish, onCancel }: any) =>
+      (
+        <div>
+          Dummy StepCrop
+          <button type="button" onClick={() => onCropFinish('mock-crop-data', 'mock-url')}>
+            finish
+          </button>
+          <button type="button" onClick={onCancel}>
+            cancel
+          </button>
+        </div>
+      ),
+);
 
-jest.mock('app/views/beambox/ImageTracePanel/StepTune', () => ({ cropData, imageUrl, onGoBack, onClose }: any) => (
-  <div>
-    Dummy StepTune
-    <p>cropData: {cropData}</p>
-    <p>imageUrl: {imageUrl}</p>
-    <button type="button" onClick={onGoBack}>back</button>
-    <button type="button" onClick={onClose}>close</button>
-  </div>
-));
+jest.mock(
+  '@core/app/views/beambox/ImageTracePanel/StepTune',
+  () =>
+    ({ cropData, imageUrl, onGoBack, onClose }: any) =>
+      (
+        <div>
+          Dummy StepTune
+          <p>cropData: {cropData}</p>
+          <p>imageUrl: {imageUrl}</p>
+          <button type="button" onClick={onGoBack}>
+            back
+          </button>
+          <button type="button" onClick={onClose}>
+            close
+          </button>
+        </div>
+      ),
+);
 
 describe('test ImageTracePanel', () => {
   beforeEach(() => {

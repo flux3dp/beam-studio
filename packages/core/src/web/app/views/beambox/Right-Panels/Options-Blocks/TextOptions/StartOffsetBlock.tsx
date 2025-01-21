@@ -1,10 +1,10 @@
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import styles from 'app/views/beambox/Right-Panels/OptionsPanel.module.scss';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { useIsMobile } from 'helpers/system-helper';
+import i18n from '@core/helpers/i18n';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import styles from '@core/app/views/beambox/Right-Panels/OptionsPanel.module.scss';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 interface Props {
   value: number;

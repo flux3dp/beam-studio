@@ -1,7 +1,7 @@
 import React, { act } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { LaserType } from 'app/constants/promark-constants';
+import { LaserType } from '@core/app/constants/promark-constants';
 
 import DocumentSettings from './DocumentSettings';
 
@@ -9,18 +9,18 @@ const mockEventEmitter = {
   emit: jest.fn(),
 };
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => {
     mockCreateEventEmitter(...args);
     return mockEventEmitter;
   },
 }));
 
-jest.mock('helpers/locale-helper', () => ({
+jest.mock('@core/helpers/locale-helper', () => ({
   isTwOrHk: true,
 }));
 
-jest.mock('helpers/is-dev', () => () => true);
+jest.mock('@core/helpers/is-dev', () => () => true);
 
 jest.mock('antd', () => ({
   ...jest.requireActual('antd'),
@@ -28,11 +28,11 @@ jest.mock('antd', () => ({
 }));
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
-jest.mock('app/constants/alert-constants', () => ({
+jest.mock('@core/app/constants/alert-constants', () => ({
   CONFIRM_CANCEL: 'CONFIRM_CANCEL',
 }));
 
@@ -46,7 +46,7 @@ const beamboxPreferences = {
   'extend-rotary-workarea': undefined,
 };
 const mockBeamboxPreferenceWrite = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key) => beamboxPreferences[key],
   write: (key, value) => {
     beamboxPreferences[key] = value;
@@ -55,44 +55,44 @@ jest.mock('app/actions/beambox/beambox-preference', () => ({
 }));
 
 const update = jest.fn();
-jest.mock('app/actions/beambox/open-bottom-boundary-drawer', () => ({
+jest.mock('@core/app/actions/beambox/open-bottom-boundary-drawer', () => ({
   update: () => update(),
 }));
 
 const mockToggleDisplay = jest.fn();
-jest.mock('app/actions/canvas/rotary-axis', () => ({
+jest.mock('@core/app/actions/canvas/rotary-axis', () => ({
   toggleDisplay: () => mockToggleDisplay(),
 }));
 
 const mockTogglePresprayArea = jest.fn();
-jest.mock('app/actions/canvas/prespray-area', () => ({
+jest.mock('@core/app/actions/canvas/prespray-area', () => ({
   togglePresprayArea: () => mockTogglePresprayArea(),
 }));
 
 const mockChangeWorkarea = jest.fn();
 jest.mock(
-  'app/svgedit/operations/changeWorkarea',
+  '@core/app/svgedit/operations/changeWorkarea',
   () =>
     (...args) =>
-      mockChangeWorkarea(...args)
+      mockChangeWorkarea(...args),
 );
 
 const mockDiodeBoundaryDrawerShow = jest.fn();
 const mockDiodeBoundaryDrawerHide = jest.fn();
-jest.mock('app/actions/canvas/diode-boundary-drawer', () => ({
+jest.mock('@core/app/actions/canvas/diode-boundary-drawer', () => ({
   show: () => mockDiodeBoundaryDrawerShow(),
   hide: () => mockDiodeBoundaryDrawerHide(),
 }));
 
 const mockGetPromarkInfo = jest.fn();
 const mockSetPromarkInfo = jest.fn();
-jest.mock('helpers/device/promark/promark-info', () => ({
+jest.mock('@core/helpers/device/promark/promark-info', () => ({
   getPromarkInfo: (...args) => mockGetPromarkInfo(...args),
   setPromarkInfo: (...args) => mockSetPromarkInfo(...args),
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
@@ -111,7 +111,7 @@ describe('test DocumentSettings', () => {
     const workareaToggle = baseElement.querySelector('input#workareaSelect');
     fireEvent.mouseDown(workareaToggle);
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4],
     );
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(baseElement.querySelector('button#rotary_mode'));
@@ -126,13 +126,13 @@ describe('test DocumentSettings', () => {
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#dpi')));
     act(() => {
       fireEvent.click(
-        baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[2]
+        baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[2],
       );
     });
     expect(baseElement).toMatchSnapshot();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0],
     );
     fireEvent.click(baseElement.querySelector('button#rotary_mode'));
     fireEvent.click(baseElement.querySelector('button#borderless_mode'));
@@ -146,7 +146,7 @@ describe('test DocumentSettings', () => {
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#startFrom')));
     act(() => {
       fireEvent.click(
-        baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]
+        baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1],
       );
     });
     expect(baseElement).toMatchSnapshot();
@@ -200,17 +200,17 @@ describe('test DocumentSettings', () => {
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[5]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[5],
     );
     expect(baseElement.querySelector('input#customDimension')).toBeInTheDocument();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#customDimension')));
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0],
     );
     expect(baseElement.querySelector('input#pm-laser-source')).toBeInTheDocument();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#pm-laser-source')));
     fireEvent.click(
-      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4]
+      baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[4],
     );
     expect(baseElement.querySelector('input#frame_before_start')).not.toBeInTheDocument();
     expect(baseElement.querySelector('button#start_button')).toBeInTheDocument();

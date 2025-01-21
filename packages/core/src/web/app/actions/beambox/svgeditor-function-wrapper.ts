@@ -1,12 +1,12 @@
-import * as TutorialController from 'app/views/tutorials/tutorialController';
-import clipboard from 'app/svgedit/operations/clipboard';
-import dialog from 'implementations/dialog';
-import i18n from 'helpers/i18n';
-import ImageData from 'helpers/image-data';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import { createLayer } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import dialog from '@app/implementations/dialog';
+import i18n from '@core/helpers/i18n';
+import ImageData from '@core/helpers/image-data';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { createLayer } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 let svgEditor;
@@ -75,7 +75,7 @@ const funcs = {
     insertedImageSrc: string,
     dimension: { x: number; y: number; width: number; height: number },
     threshold = 255,
-    options: { useCurrentLayer?: boolean; ratioFixed?: boolean } = {}
+    options: { useCurrentLayer?: boolean; ratioFixed?: boolean } = {},
   ): void {
     const img = new Image();
     const layerName = LANG.right_panel.layer_panel.layer_bitmap;

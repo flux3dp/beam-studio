@@ -53,7 +53,7 @@ jest.mock('antd', () => ({
   ),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       rating_panel: {
@@ -68,7 +68,7 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const mockSetNotShowing = jest.fn();
-jest.mock('helpers/rating-helper', () => ({
+jest.mock('@core/helpers/rating-helper', () => ({
   setNotShowing: () => mockSetNotShowing(),
 }));
 

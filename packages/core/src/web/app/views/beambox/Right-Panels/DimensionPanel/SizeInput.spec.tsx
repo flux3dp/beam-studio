@@ -6,21 +6,21 @@ import SizeInput from './SizeInput';
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args: any) => mockCreateEventEmitter(...args),
 }));
 
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Number: ({ id, value, updateValue, label }: any) => (
     <div id={id}>
       {label}
@@ -80,7 +80,10 @@ describe('test SizeInput', () => {
     handler({ width: 10 });
     expect(container.querySelector('input').value).toBe('1.00');
     expect(mockGetValue).toBeCalledTimes(1);
-    expect(mockGetValue).toHaveBeenNthCalledWith(1, { width: 10 }, 'w', { unit: 'mm', allowUndefined: true });
+    expect(mockGetValue).toHaveBeenNthCalledWith(1, { width: 10 }, 'w', {
+      unit: 'mm',
+      allowUndefined: true,
+    });
     unmount();
     expect(mockRemoveListener).toBeCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', handler);
@@ -98,7 +101,7 @@ describe('test SizeInput', () => {
   test('onBlur', () => {
     mockUseIsMobile.mockReturnValue(false);
     const { container } = render(
-      <SizeInput type="w" value={0} onChange={mockOnChange} onBlur={mockOnBlur} />
+      <SizeInput type="w" value={0} onChange={mockOnChange} onBlur={mockOnBlur} />,
     );
     const input = container.querySelector('input');
     fireEvent.blur(input);

@@ -4,10 +4,10 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 
 const socialAuth = jest.fn();
-jest.mock('helpers/social-auth', () => socialAuth);
+jest.mock('@core/helpers/social-auth', () => socialAuth);
 
 const signInWithFBToken = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   signInWithFBToken,
 }));
 
@@ -22,7 +22,7 @@ test('should render correctly', async () => {
   expect(signInWithFBToken).toHaveBeenCalledTimes(1);
   expect(signInWithFBToken).toHaveBeenNthCalledWith(
     1,
-    'EAAPOjTRHtNEBANu7wd4I0TcHKDAX3C5QzFnfssNZBqTXEbn2Qnp6BBQMSIBXZB5lkhdC4ZAijms9tHGqiT9ZC8DmdabWCxGTF6eUmzy6io1soXkI2monscrdJ68W9av6YEwAadLF1QqxfDPiBJnVXAlwz3oZAet1j51LZBzEm1dZBCWbZCXASCdrsr4wq28jpyUMG4LEy9T0GqZAGCp4DZAYWLz4roZA8ZCdY3MZD'
+    'EAAPOjTRHtNEBANu7wd4I0TcHKDAX3C5QzFnfssNZBqTXEbn2Qnp6BBQMSIBXZB5lkhdC4ZAijms9tHGqiT9ZC8DmdabWCxGTF6eUmzy6io1soXkI2monscrdJ68W9av6YEwAadLF1QqxfDPiBJnVXAlwz3oZAet1j51LZBzEm1dZBCWbZCXASCdrsr4wq28jpyUMG4LEy9T0GqZAGCp4DZAYWLz4roZA8ZCdY3MZD',
   );
   waitFor(() => {
     expect(socialAuth).toHaveBeenCalledTimes(1);

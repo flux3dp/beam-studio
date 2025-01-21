@@ -2,20 +2,20 @@ import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Divider, Form, Input, InputRef, Space } from 'antd';
 
-import alert from 'app/actions/alert-caller';
-import browser from 'implementations/browser';
-import dialogCaller from 'app/actions/dialog-caller';
-import isFluxPlusActive from 'helpers/is-flux-plus-active';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
+import alert from '@core/app/actions/alert-caller';
+import browser from '@app/implementations/browser';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
 import {
   externalLinkFBSignIn,
   externalLinkGoogleSignIn,
   fluxIDEvents,
   signIn,
   signOut,
-} from 'helpers/api/flux-id';
-import { useIsMobile } from 'helpers/system-helper';
+} from '@core/helpers/api/flux-id';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import FluxPlusModal from './FluxPlusModal';
 import styles from './FluxIdLogin.module.scss';
@@ -31,7 +31,7 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
   const emailInput = useRef<InputRef>(null);
   const passwordInput = useRef<InputRef>(null);
   const [isRememberMeChecked, setIsRememberMeChecked] = useState(
-    !!storage.get('keep-flux-id-login')
+    !!storage.get('keep-flux-id-login'),
   );
   const isMobile = useIsMobile();
 
@@ -112,11 +112,7 @@ const FluxIdLogin = ({ silent, onClose }: Props): JSX.Element => {
               className={styles['remember-me']}
               onClick={() => setIsRememberMeChecked(!isRememberMeChecked)}
             >
-              <input
-                type="checkbox"
-                checked={isRememberMeChecked}
-                onChange={() => {}}
-              />
+              <input type="checkbox" checked={isRememberMeChecked} onChange={() => {}} />
               <div>{lang.remember_me}</div>
             </div>
             <div

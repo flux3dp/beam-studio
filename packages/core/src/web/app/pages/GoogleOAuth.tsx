@@ -1,5 +1,5 @@
-import socialAuth from 'helpers/social-auth';
-import { G_REDIRECT_URI, signInWithGoogleCode } from 'helpers/api/flux-id';
+import socialAuth from '@core/helpers/social-auth';
+import { G_REDIRECT_URI, signInWithGoogleCode } from '@core/helpers/api/flux-id';
 
 function GoogleOAuth(): JSX.Element {
   const [, ...params] = window.location.hash.split('?');

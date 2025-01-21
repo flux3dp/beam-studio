@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import React, { Dispatch } from 'react';
 import { Slider, Tooltip } from 'antd';
 
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import WorkareaIcons from 'app/icons/workarea/WorkareaIcons';
-import { IConfigSetting } from 'interfaces/IDevice';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './ExposureSlider.module.scss';
 

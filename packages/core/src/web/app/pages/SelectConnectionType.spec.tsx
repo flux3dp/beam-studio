@@ -12,11 +12,11 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const mockShowLoadingWindow = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showLoadingWindow: (...args) => mockShowLoadingWindow(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     select_connection_type: 'How do you wish to connect?',
     connection_types: {
@@ -33,7 +33,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockWindowLocationReload = jest.fn();
-jest.mock('app/actions/windowLocation', () => () => mockWindowLocationReload());
+jest.mock('@core/app/actions/windowLocation', () => () => mockWindowLocationReload());
 
 describe('test SelectConnectionType', () => {
   beforeEach(() => {

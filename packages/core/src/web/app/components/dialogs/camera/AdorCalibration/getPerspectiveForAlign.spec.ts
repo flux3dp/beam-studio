@@ -4,7 +4,7 @@ const mockFetchAutoLevelingData = jest.fn();
 const mockEnterRawMode = jest.fn();
 const mockRawGetProbePos = jest.fn();
 const mockEndRawMode = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   fetchAutoLevelingData: (...args) => mockFetchAutoLevelingData(...args),
   enterRawMode: (...args) => mockEnterRawMode(...args),
   rawGetProbePos: (...args) => mockRawGetProbePos(...args),
@@ -13,13 +13,13 @@ jest.mock('helpers/device-master', () => ({
 
 const mockGetPerspectivePointsZ3Regression = jest.fn();
 const mockInterpolatePointsFromHeight = jest.fn();
-jest.mock('helpers/camera-calibration-helper', () => ({
+jest.mock('@core/helpers/camera-calibration-helper', () => ({
   getPerspectivePointsZ3Regression: (...args) => mockGetPerspectivePointsZ3Regression(...args),
   interpolatePointsFromHeight: (...args) => mockInterpolatePointsFromHeight(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 
@@ -70,7 +70,7 @@ describe('test getPerspectiveForAlign', () => {
     const res = await getPerspectiveForAlign(
       { model: 'ado1' } as any,
       { heights: 'mock-heights', z3regParam: 'mock-z3-reg-param' } as any,
-      'mock-center' as any
+      'mock-center' as any,
     );
     expect(mockGetWorkarea).toBeCalledTimes(2);
     expect(mockGetWorkarea).toHaveBeenNthCalledWith(1, 'ado1', 'ado1');

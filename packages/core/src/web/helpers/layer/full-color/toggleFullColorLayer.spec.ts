@@ -2,7 +2,7 @@ import toggleFullColorLayer from './toggleFullColorLayer';
 
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) => {
     cb({
       Canvas: {
@@ -16,7 +16,12 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const mockUpdateLayerColor = jest.fn();
-jest.mock('helpers/color/updateLayerColor', () => (...args) => mockUpdateLayerColor(...args));
+jest.mock(
+  '@core/helpers/color/updateLayerColor',
+  () =>
+    (...args) =>
+      mockUpdateLayerColor(...args),
+);
 
 describe('test toggleFullColorLayer', () => {
   beforeEach(() => {

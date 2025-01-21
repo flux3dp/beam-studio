@@ -5,7 +5,7 @@ import { FullWindowPanelContext } from './FullWindowPanel';
 
 import BackButton from './BackButton';
 
-jest.mock('app/widgets/FullWindowPanel/FullWindowPanel', () => ({
+jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
   FullWindowPanelContext: React.createContext({
     isDesktop: true,
     isMobile: false,
@@ -30,7 +30,7 @@ describe('test BackButton', () => {
         }}
       >
         <BackButton>Back</BackButton>
-      </FullWindowPanelContext.Provider>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     rerender(
@@ -42,7 +42,7 @@ describe('test BackButton', () => {
         }}
       >
         <BackButton>Back</BackButton>
-      </FullWindowPanelContext.Provider>
+      </FullWindowPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

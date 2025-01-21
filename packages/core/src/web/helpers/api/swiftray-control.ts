@@ -2,12 +2,12 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import ErrorConstants from 'app/constants/error-constants';
-import IControlSocket, { Mode } from 'interfaces/IControlSocket';
-import { Field, LensCorrection } from 'interfaces/Promark';
-import { IDeviceDetailInfo } from 'interfaces/IDevice';
+import ErrorConstants from '@core/app/constants/error-constants';
+import IControlSocket, { Mode } from '@core/interfaces/IControlSocket';
+import { Field, LensCorrection } from '@core/interfaces/Promark';
+import { IDeviceDetailInfo } from '@core/interfaces/IDevice';
 
 import { getDeviceClient, SwiftrayClient } from './swiftray-client';
 
@@ -82,7 +82,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
   addTask<T>(taskFunction: (...args) => T, ...args: any[]) {
     if (this.taskQueue.length > MAX_TASK_QUEUE) {
       console.error(
-        `SwiftrayControl ${this.port} task queue exceeds max queue length. Clear queue and then sendGCode task`
+        `SwiftrayControl ${this.port} task queue exceeds max queue length. Clear queue and then sendGCode task`,
       );
       this.taskQueue = [];
       this.currentTask = null;
@@ -124,7 +124,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
 
   killSelf = async () => {
     console.warn(
-      'SwiftrayControl.killSelf is not implemented in swiftray, or should not be implemented'
+      'SwiftrayControl.killSelf is not implemented in swiftray, or should not be implemented',
     );
     // this.sc.close();
     await new Promise((r) => setTimeout(r, 500));
@@ -217,10 +217,11 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           responseString += response.text;
           let responseStrings = responseString.split(/\r?\n/);
           responseStrings = responseStrings.filter(
-            (s, i) => !s.startsWith('DEBUG:') || i === responseStrings.length - 1
+            (s, i) => !s.startsWith('DEBUG:') || i === responseStrings.length - 1,
           );
           const isCommandCompleted = responseStrings.some(
-            (s) => s.startsWith(`LN${this._lineNumber} 0`) || s.startsWith(`L${this._lineNumber} 0`)
+            (s) =>
+              s.startsWith(`LN${this._lineNumber} 0`) || s.startsWith(`L${this._lineNumber} 0`),
           );
           const hasERL = responseStrings.some((s) => {
             if (s.startsWith('ERL')) {
@@ -857,7 +858,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         const i = responses.findIndex((r) => r === 'ok');
         if (i >= 0) {
           const resIdx = responses.findIndex((r) =>
-            r.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/)
+            r.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/),
           );
           if (resIdx >= 0) {
             const resStr = responses[resIdx];
@@ -929,7 +930,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         if (i < 0) responseString = responses[responses.length - 1] || '';
         if (i >= 0) {
           const resIdx = responses.findIndex((r) =>
-            r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/)
+            r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/),
           );
           if (resIdx >= 0) {
             const resStr = responses[resIdx];

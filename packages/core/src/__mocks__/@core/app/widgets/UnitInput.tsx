@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { forwardRef } from 'react';
 
 interface Props {
@@ -54,7 +55,7 @@ const mockComponent = forwardRef<HTMLInputElement, Props>(
         max={max}
         min={min}
         onBlur={onBlur}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => onChange?.(Number(e.target.value))}
         ref={outerRef}
         value={value}
       />

@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
 
-import ColorPanel from 'app/views/beambox/Right-Panels/ColorPanel';
-import ImageOptions from 'app/views/beambox/Right-Panels/Options-Blocks/ImageOptions';
-import InFillBlock from 'app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
-import MultiColorOptions from 'app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import PolygonOptions from 'app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions';
-import RectOptions from 'app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
-import TextOptions from 'app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
-import { getObjectLayer } from 'helpers/layer/layer-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import ColorPanel from '@core/app/views/beambox/Right-Panels/ColorPanel';
+import ImageOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/ImageOptions';
+import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
+import MultiColorOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/MultiColorOptions';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import PolygonOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/PolygonOptions';
+import RectOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/RectOptions';
+import TextOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './OptionsPanel.module.scss';
 
@@ -32,7 +32,12 @@ function OptionsPanel({
   let contents: JSX.Element[];
   const showColorPanel = useMemo(() => {
     if (!elem) return false;
-    if (!['rect', 'ellipse', 'path', 'text', 'polygon', 'g', 'use'].includes(elem?.tagName.toLowerCase())) return false;
+    if (
+      !['rect', 'ellipse', 'path', 'text', 'polygon', 'g', 'use'].includes(
+        elem?.tagName.toLowerCase(),
+      )
+    )
+      return false;
     return getObjectLayer(elem as SVGElement)?.elem?.getAttribute('data-fullcolor') === '1';
   }, [elem]);
   if (elem) {
@@ -121,11 +126,11 @@ function OptionsPanel({
     </div>
   ) : (
     <>
-      {(contents) && (
+      {contents && (
         <div className={styles.panel}>
           <div className={styles.title}>OPTIONS</div>
           {contents}
-      </div>
+        </div>
       )}
     </>
   );

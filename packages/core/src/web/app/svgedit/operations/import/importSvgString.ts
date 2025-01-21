@@ -1,15 +1,15 @@
-import appendUseElement from 'app/svgedit/operations/import/appendUseElement';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import parseSvg from 'app/svgedit/operations/parseSvg';
-import symbolMaker from 'helpers/symbol-maker';
-import updateElementColor from 'helpers/color/updateElementColor';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { ImportType } from 'interfaces/ImportSvg';
-import { getObjectLayer, removeDefaultLayerIfEmpty } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import appendUseElement from '@core/app/svgedit/operations/import/appendUseElement';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import parseSvg from '@core/app/svgedit/operations/parseSvg';
+import symbolMaker from '@core/helpers/symbol-maker';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { ImportType } from '@core/interfaces/ImportSvg';
+import { getObjectLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgedit;
 let svgCanvas: ISVGCanvas;
@@ -31,7 +31,7 @@ const importSvgString = async (
     layerName?: string;
     parentCmd?: IBatchCommand;
     targetModule?: LayerModule;
-  }
+  },
 ): Promise<SVGUseElement> => {
   const batchCmd = new history.BatchCommand('Import Image');
 
@@ -60,7 +60,7 @@ const importSvgString = async (
 
   const results = (
     await Promise.all(
-      symbols.map(async (symbol) => appendUseElement(symbol, { type, layerName, targetModule }))
+      symbols.map(async (symbol) => appendUseElement(symbol, { type, layerName, targetModule })),
     )
   ).filter((res) => res?.element);
 
@@ -95,7 +95,7 @@ const importSvgString = async (
       if (svgCanvas.isUsingLayerColor) {
         updateElementColor(element);
       }
-    })
+    }),
   );
 
   if (useElements.length > 0) {

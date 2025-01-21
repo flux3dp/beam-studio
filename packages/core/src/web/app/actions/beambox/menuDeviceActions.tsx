@@ -1,41 +1,41 @@
 import React from 'react';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import CalibrationType from 'app/components/dialogs/camera/AdorCalibration/calibrationTypes';
-import checkDeviceStatus from 'helpers/check-device-status';
-import checkFirmware from 'helpers/check-firmware';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import DeviceMaster from 'helpers/device-master';
-import Dialog from 'app/actions/dialog-caller';
-import dialog from 'implementations/dialog';
-import firmwareUpdater from 'helpers/firmware-updater';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import MonitorController from 'app/actions/monitor-controller';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import ProgressCaller from 'app/actions/progress-caller';
-import VersionChecker from 'helpers/version-checker';
-import { downloadCameraData, uploadCameraData } from 'helpers/device/camera-data-backup';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { InkDetectionStatus } from 'app/constants/layer-module/ink-cartridge';
-import { Mode } from 'app/constants/monitor-constants';
-import { parsingChipData } from 'app/components/dialogs/CartridgeSettingPanel';
-import { showAdorCalibration } from 'app/components/dialogs/camera/AdorCalibration';
-import { showAdorCalibrationV2 } from 'app/components/dialogs/camera/AdorCalibrationV2';
-import { showBB2Calibration } from 'app/components/dialogs/camera/BB2Calibration';
-import { showCameraCalibration } from 'app/views/beambox/Camera-Calibration';
-import { showDiodeCalibration } from 'app/views/beambox/Diode-Calibration';
-import { showPromarkCalibration } from 'app/components/dialogs/camera/PromarkCalibration';
-import { showPromarkSettings } from 'app/components/dialogs/promark/PromarkSettings';
-import { showZAxisAdjustment } from 'app/components/dialogs/promark/ZAxisAdjustment';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import CalibrationType from '@core/app/components/dialogs/camera/AdorCalibration/calibrationTypes';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import checkFirmware from '@core/helpers/check-firmware';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import DeviceMaster from '@core/helpers/device-master';
+import Dialog from '@core/app/actions/dialog-caller';
+import dialog from '@app/implementations/dialog';
+import firmwareUpdater from '@core/helpers/firmware-updater';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import MonitorController from '@core/app/actions/monitor-controller';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import ProgressCaller from '@core/app/actions/progress-caller';
+import VersionChecker from '@core/helpers/version-checker';
+import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camera-data-backup';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
+import { showAdorCalibration } from '@core/app/components/dialogs/camera/AdorCalibration';
+import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
+import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
+import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
+import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
+import { showPromarkCalibration } from '@core/app/components/dialogs/camera/PromarkCalibration';
+import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
+import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 
 const { lang } = i18n;
 
 const calibrateCamera = async (
   device: IDeviceInfo,
-  args: { isBorderless?: boolean; factoryMode?: boolean; isAdvanced?: boolean } = {}
+  args: { isBorderless?: boolean; factoryMode?: boolean; isAdvanced?: boolean } = {},
 ) => {
   const { isBorderless = false, factoryMode = false, isAdvanced = false } = args;
   try {
@@ -158,7 +158,7 @@ const getLog = async (device: IDeviceInfo, log: string) => {
               message: 'downloading',
               percentage: (progress.completed / progress.size) * 100,
             });
-          }
+          },
         );
         ProgressCaller.popById('get_log');
         const getContent = async () => file[1] as Blob;

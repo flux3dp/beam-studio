@@ -3,7 +3,7 @@ import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 const mockGetCurrentControlMode = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockEndRawMode = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   get currentControlMode() {
     return mockGetCurrentControlMode();
   },
@@ -12,21 +12,26 @@ jest.mock('helpers/device-master', () => ({
 }));
 
 const mockGetLevelingData = jest.fn();
-jest.mock('./getLevelingData', () => (...args) => mockGetLevelingData(...args));
+jest.mock(
+  './getLevelingData',
+  () =>
+    (...args) =>
+      mockGetLevelingData(...args),
+);
 
 const mockGetPreviewHeight = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   getPreviewHeight: (...args) => mockGetPreviewHeight(...args),
 }));
 
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     message: {
       endingRawMode: 'endingRawMode',
@@ -67,6 +72,8 @@ describe('test FisheyePreviewManagerBase', () => {
     expect(mockEndRawMode).toHaveBeenCalledTimes(1);
     expect(manager.objectHeight).toBe(10);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith('fisheye-preview-manager', { message: 'endingRawMode' });
+    expect(mockUpdate).toHaveBeenLastCalledWith('fisheye-preview-manager', {
+      message: 'endingRawMode',
+    });
   });
 });

@@ -3,16 +3,16 @@
 import React from 'react';
 import { Button, Form, Input, InputRef, Modal } from 'antd';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import browser from 'implementations/browser';
-import Discover from 'helpers/api/discover';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import network from 'implementations/network';
-import os from 'implementations/os';
-import Progress from 'app/actions/progress-caller';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import browser from '@app/implementations/browser';
+import Discover from '@core/helpers/api/discover';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import network from '@app/implementations/network';
+import os from '@app/implementations/os';
+import Progress from '@core/app/actions/progress-caller';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const LANG = i18n.lang.beambox.network_testing_panel;
 const TEST_TIME = 30000;
@@ -95,7 +95,7 @@ class NetworkTestingPanel extends React.Component<Props> {
         Progress.update('network-testing', {
           percentage,
         });
-      }
+      },
     );
     Progress.popById('network-testing');
     if (err === 'CREATE_SESSION_FAILED') {

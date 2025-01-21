@@ -1,12 +1,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { IFile } from 'interfaces/IMyCloud';
-import { MyCloudContext } from 'app/contexts/MyCloudContext';
+import { IFile } from '@core/interfaces/IMyCloud';
+import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 
 import GridFile from './GridFile';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   my_cloud: {
     action: {
       open: 'Open',
@@ -51,12 +51,12 @@ const mockContext: any = {
   setSelectedId: mockSetSelectedId,
 };
 
-jest.mock('app/contexts/MyCloudContext', () => ({
+jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext(null),
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
@@ -69,7 +69,7 @@ describe('test GridFile', () => {
     const { container, getByText, rerender } = render(
       <MyCloudContext.Provider value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 
@@ -104,7 +104,7 @@ describe('test GridFile', () => {
     rerender(
       <MyCloudContext.Provider value={{ ...mockContext, editingId: 'mock-uuid' }}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
     const input = container.querySelector('.edit');
     expect(input).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('test GridFile', () => {
     rerender(
       <MyCloudContext.Provider value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
 
     fireEvent.click(getByText('Duplicate'));
@@ -142,7 +142,7 @@ describe('test GridFile', () => {
     const { container } = render(
       <MyCloudContext.Provider value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 

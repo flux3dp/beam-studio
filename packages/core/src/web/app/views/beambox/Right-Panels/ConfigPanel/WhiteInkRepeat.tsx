@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import ConfigValueDisplay from './ConfigValueDisplay';
 
@@ -8,7 +8,7 @@ import styles from './WhiteInkSettingsModal.module.scss';
 
 interface Props {
   value: number;
-  hasMultiValue?: boolean
+  hasMultiValue?: boolean;
   onChange: (val: number) => void;
 }
 
@@ -23,8 +23,8 @@ const WhiteInkRepeat = ({ value, hasMultiValue, onChange }: Props): JSX.Element 
     <div className={styles.panel}>
       <span className={styles.title}>{t.repeat}</span>
       <ConfigValueDisplay
-        inputId='white-repeat-input'
-        type='modal'
+        inputId="white-repeat-input"
+        type="modal"
         max={MAX_VALUE}
         min={MIN_VALUE}
         value={value}

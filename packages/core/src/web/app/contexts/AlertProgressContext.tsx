@@ -1,15 +1,15 @@
 import React, { createContext } from 'react';
 import { MessageInstance } from 'antd/es/message/interface';
 
-import AlertConstants from 'app/constants/alert-constants';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import ProgressConstants from 'app/constants/progress-constants';
-import { IAlert } from 'interfaces/IAlert';
-import { IProgressDialog } from 'interfaces/IProgress';
-import { IMessage } from 'interfaces/IMessage';
-import { MessageLevel } from 'app/actions/message-caller';
-import { IButton } from 'interfaces/IButton';
+import AlertConstants from '@core/app/constants/alert-constants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import ProgressConstants from '@core/app/constants/progress-constants';
+import { IAlert } from '@core/interfaces/IAlert';
+import { IProgressDialog } from '@core/interfaces/IProgress';
+import { IMessage } from '@core/interfaces/IMessage';
+import { MessageLevel } from '@core/app/actions/message-caller';
+import { IButton } from '@core/interfaces/IButton';
 
 const LANG = i18n.lang.alert;
 
@@ -82,7 +82,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     id: string,
     response: {
       idExist: boolean;
-    }
+    },
   ): void => {
     const { alertProgressStack } = this.state;
     const res = alertProgressStack.filter((item) => {
@@ -96,7 +96,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
     id: string,
     response: {
       result: boolean;
-    }
+    },
   ): void => {
     const { alertProgressStack } = this.state;
     const res = alertProgressStack.filter((item) => {
@@ -116,7 +116,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
         ...cur,
         alertProgressStack: [...cur.alertProgressStack, { ...item, key: generateRandomKey() }],
       }),
-      callback
+      callback,
     );
   };
 
@@ -132,7 +132,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
         message: message || '',
         isProgress: true,
       },
-      callback
+      callback,
     );
   };
 
@@ -188,7 +188,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
       const { alertProgressStack } = cur;
       const newStack = [...alertProgressStack];
       const targetObjects = newStack.filter(
-        ({ id: itemId, isProgress }) => isProgress && itemId === id
+        ({ id: itemId, isProgress }) => isProgress && itemId === id,
       );
       if (targetObjects.length === 0) return cur;
       const targetObject = targetObjects[targetObjects.length - 1];
@@ -229,7 +229,7 @@ export class AlertProgressContextProvider extends React.Component<Props, State> 
         message,
         buttons,
       },
-      callback
+      callback,
     );
   };
 

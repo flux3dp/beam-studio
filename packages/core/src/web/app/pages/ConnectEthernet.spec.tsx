@@ -4,11 +4,11 @@ import { fireEvent, render } from '@testing-library/react';
 import ConnectEthernet from './ConnectEthernet';
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (url) => mockOpen(url),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     connect_ethernet: {
       title: 'Direct Connection',
@@ -42,7 +42,7 @@ describe('test ConnectEthernet', () => {
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(
       1,
-      'https://support.flux3dp.com/hc/en-us/articles/360001517076'
+      'https://support.flux3dp.com/hc/en-us/articles/360001517076',
     );
   });
 
@@ -58,7 +58,7 @@ describe('test ConnectEthernet', () => {
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(
       1,
-      'https://support.flux3dp.com/hc/en-us/articles/360001507715'
+      'https://support.flux3dp.com/hc/en-us/articles/360001507715',
     );
   });
 });

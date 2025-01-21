@@ -1,8 +1,8 @@
-import findDefs from 'app/svgedit/utils/findDef';
-import history from 'app/svgedit/history/history';
-import selector from 'app/svgedit/selector';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import history from '@core/app/svgedit/history/history';
+import selector from '@core/app/svgedit/selector';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 
@@ -19,7 +19,7 @@ getSVGAsync((globalSVG) => {
  */
 export const deleteUseRef = (
   use: SVGUseElement,
-  opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean }
+  opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean },
 ): { cmd: IBatchCommand } => {
   const refId = svgCanvas.getHref(use);
   const svgcontent = document.getElementById('svgcontent');
@@ -44,7 +44,7 @@ export const deleteUseRef = (
           ({ parentNode, nextSibling } = element);
           parentNode.removeChild(element);
           batchCmd.addSubCommand(
-            new history.RemoveElementCommand(element, nextSibling, parentNode)
+            new history.RemoveElementCommand(element, nextSibling, parentNode),
           );
         }
       });

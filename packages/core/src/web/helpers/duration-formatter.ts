@@ -1,4 +1,4 @@
-import i18n from 'helpers/i18n';
+import i18n from '@core/helpers/i18n';
 
 const { lang } = i18n;
 const minute = 60;

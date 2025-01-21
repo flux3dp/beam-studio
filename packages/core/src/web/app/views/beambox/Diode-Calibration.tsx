@@ -1,23 +1,23 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import AlertDialog from 'app/widgets/AlertDialog';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import browser from 'implementations/browser';
-import CheckDeviceStatus from 'helpers/check-device-status';
-import Constant from 'app/actions/beambox/constant';
-import DeviceErrorHandler from 'helpers/device-error-handler';
-import DeviceMaster from 'helpers/device-master';
-import Dialog from 'app/actions/dialog-caller';
-import i18n from 'helpers/i18n';
-import Modal from 'app/widgets/Modal';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import Progress from 'app/actions/progress-caller';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import VersionChecker from 'helpers/version-checker';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import AlertDialog from '@core/app/widgets/AlertDialog';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import browser from '@app/implementations/browser';
+import CheckDeviceStatus from '@core/helpers/check-device-status';
+import Constant from '@core/app/actions/beambox/constant';
+import DeviceErrorHandler from '@core/helpers/device-error-handler';
+import DeviceMaster from '@core/helpers/device-master';
+import Dialog from '@core/app/actions/dialog-caller';
+import i18n from '@core/helpers/i18n';
+import Modal from '@core/app/widgets/Modal';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import Progress from '@core/app/actions/progress-caller';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import VersionChecker from '@core/helpers/version-checker';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const LANG = i18n.lang.calibration;
 const LANG_ALERT = i18n.lang.alert;
@@ -135,7 +135,7 @@ class DiodeCalibration extends React.Component<Props, State> {
     let blobUrl;
     try {
       await PreviewModeController.start(device, () =>
-        console.log('camera fail. stop preview mode')
+        console.log('camera fail. stop preview mode'),
       );
       Progress.openNonstopProgress({
         id: 'taking-picture',
@@ -538,6 +538,6 @@ export const showDiodeCalibration = (device: IDeviceInfo): void => {
     'diode-cali',
     <Modal>
       <DiodeCalibration device={device} onClose={() => Dialog.popDialogById('diode-cali')} />
-    </Modal>
+    </Modal>,
   );
 };

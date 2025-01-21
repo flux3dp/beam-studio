@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   getActiveLang: () => 'en',
   setActiveLang: jest.fn(),
   lang: {
@@ -13,11 +13,11 @@ jest.mock('helpers/i18n', () => ({
   },
 }));
 
-jest.mock('implementations/menu', () => ({
+jest.mock('@app/implementations/menu', () => ({
   updateLanguage: jest.fn(),
 }));
 
-jest.mock('app/widgets/Modal', () => ({ className, content }: any) => (
+jest.mock('@core/app/widgets/Modal', () => ({ className, content }: any) => (
   <div className={classNames(className)}>{content}</div>
 ));
 

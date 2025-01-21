@@ -1,11 +1,11 @@
-import deviceMaster from 'helpers/device-master';
-import { FisheyeCameraParametersV1, RotationParameters3D } from 'interfaces/FisheyePreview';
+import deviceMaster from '@core/helpers/device-master';
+import { FisheyeCameraParametersV1, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import {
   getPerspectivePointsZ3Regression,
   interpolatePointsFromHeight,
-} from 'helpers/camera-calibration-helper';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+} from '@core/helpers/camera-calibration-helper';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const getHeightOffsets = async () => {
   let autoLevelingData: { [key: string]: number } = {
@@ -79,7 +79,7 @@ const getHeight = async (device: IDeviceInfo) => {
 const getPerspectiveForAlign = async (
   device: IDeviceInfo,
   param: FisheyeCameraParametersV1,
-  center: number[]
+  center: number[],
 ): Promise<[number, number][][]> => {
   const { autoLevelingData, heightOffset } = await getHeightOffsets();
   const rotationParam = await loadCamera3dRotation();

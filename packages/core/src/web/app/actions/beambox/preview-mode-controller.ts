@@ -1,20 +1,20 @@
 /* eslint-disable no-console */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import checkDeviceStatus from 'helpers/check-device-status';
-import checkOldFirmware from 'helpers/device/checkOldFirmware';
-import Constant, { promarkModels } from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import Progress from 'app/actions/progress-caller';
-import VersionChecker from 'helpers/version-checker';
-import { CameraConfig, CameraParameters } from 'interfaces/Camera';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
-import { RotationParameters3DCalibration } from 'interfaces/FisheyePreview';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
+import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import Progress from '@core/app/actions/progress-caller';
+import VersionChecker from '@core/helpers/version-checker';
+import { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
+import { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
@@ -236,7 +236,7 @@ class PreviewModeController {
       last?: boolean;
       callback?: () => void;
       overlapRatio?: number;
-    } = {}
+    } = {},
   ): Promise<boolean> {
     const res = this.prePreview();
     if (!res) return false;

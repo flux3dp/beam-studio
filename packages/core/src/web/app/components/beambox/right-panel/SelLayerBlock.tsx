@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React, { memo, useContext, useEffect, useState } from 'react';
 
-import useI18n from 'helpers/useI18n';
-import { getObjectLayer, moveToOtherLayer } from 'helpers/layer/layer-helper';
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
+import useI18n from '@core/helpers/useI18n';
+import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 import styles from './SelLayerBlock.module.scss';
 
@@ -26,7 +26,7 @@ function SelLayerBlock({ layerNames }: Props): JSX.Element {
       const originalLayers = new Set(
         ([...selectedElement.childNodes] as SVGElement[])
           .filter((elem) => elem?.getAttribute('data-imageborder') !== 'true')
-          .map((elem) => elem.getAttribute('data-original-layer'))
+          .map((elem) => elem.getAttribute('data-original-layer')),
       );
       if (originalLayers.size === 1) {
         const [firstValue] = originalLayers;
@@ -50,7 +50,7 @@ function SelLayerBlock({ layerNames }: Props): JSX.Element {
         setDisplayValue(destLayer);
         setPromptMoveLayerOnce(true);
       },
-      !promptMoveLayerOnce
+      !promptMoveLayerOnce,
     );
   };
 
@@ -59,7 +59,7 @@ function SelLayerBlock({ layerNames }: Props): JSX.Element {
     options.push(
       <option value={defaultOption} key={-1}>
         {lang.move_elems_to}
-      </option>
+      </option>,
     );
   }
   for (let i = layerNames.length - 1; i >= 0; i -= 1) {
@@ -67,7 +67,7 @@ function SelLayerBlock({ layerNames }: Props): JSX.Element {
     options.push(
       <option value={layerName} key={i}>
         {layerName}
-      </option>
+      </option>,
     );
   }
   return (

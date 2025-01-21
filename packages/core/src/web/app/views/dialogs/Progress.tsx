@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { Modal, Progress as AntdProgress } from 'antd';
 
-import useI18n from 'helpers/useI18n';
-import { AlertProgressContext } from 'app/contexts/AlertProgressContext';
-import { IProgressDialog } from 'interfaces/IProgress';
-import { useIsMobile } from 'helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
+import { IProgressDialog } from '@core/interfaces/IProgress';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 const Progress = ({ data }: { data: IProgressDialog }): JSX.Element => {
   const lang = useI18n();

@@ -2,7 +2,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       tool_panels: {
@@ -16,12 +16,12 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -39,42 +39,51 @@ getSVGAsync.mockImplementation((callback) => {
 });
 
 const mockSetHasUnsavedChanges = jest.fn();
-jest.mock('app/svgedit/currentFileManager', () => ({
+jest.mock('@core/app/svgedit/currentFileManager', () => ({
   setHasUnsavedChanges: (...args) => mockSetHasUnsavedChanges(...args),
 }));
 
 const offsetElements = jest.fn();
 jest.mock(
-  'helpers/clipper/offset',
+  '@core/helpers/clipper/offset',
   () =>
     (...args) =>
-      offsetElements(...args)
+      offsetElements(...args),
 );
 
-jest.mock('app/views/beambox/ToolPanels/Interval', () => 'dummy-interval');
-jest.mock('app/views/beambox/ToolPanels/NestGAPanel', () => ({ nestOptions }: any) => (
+jest.mock('@core/app/views/beambox/ToolPanels/Interval', () => 'dummy-interval');
+jest.mock('@core/app/views/beambox/ToolPanels/NestGAPanel', () => ({ nestOptions }: any) => (
   <div>dummy-nest-ga-panel nestOptions: {JSON.stringify(nestOptions)}</div>
 ));
-jest.mock('app/views/beambox/ToolPanels/NestRotationPanel', () => 'dummy-nest-rotation-panel');
-jest.mock('app/views/beambox/ToolPanels/NestSpacingPanel', () => 'dummy-nest-spacing-panel');
-jest.mock('app/views/beambox/ToolPanels/OffsetCornerPanel', () => 'dummy-offset-corner-panel');
 jest.mock(
-  'app/views/beambox/ToolPanels/OffsetDirectionPanel',
-  () => 'dummy-offset-direction-panel'
+  '@core/app/views/beambox/ToolPanels/NestRotationPanel',
+  () => 'dummy-nest-rotation-panel',
 );
-jest.mock('app/views/beambox/ToolPanels/OffsetDistancePanel', () => 'dummy-offset-distance-panel');
-jest.mock('app/views/beambox/ToolPanels/RowColumn', () => 'dummy-row-column');
-jest.mock('app/actions/beambox/toolPanelsController', () => ({}));
+jest.mock('@core/app/views/beambox/ToolPanels/NestSpacingPanel', () => 'dummy-nest-spacing-panel');
+jest.mock(
+  '@core/app/views/beambox/ToolPanels/OffsetCornerPanel',
+  () => 'dummy-offset-corner-panel',
+);
+jest.mock(
+  '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel',
+  () => 'dummy-offset-direction-panel',
+);
+jest.mock(
+  '@core/app/views/beambox/ToolPanels/OffsetDistancePanel',
+  () => 'dummy-offset-distance-panel',
+);
+jest.mock('@core/app/views/beambox/ToolPanels/RowColumn', () => 'dummy-row-column');
+jest.mock('@core/app/actions/beambox/toolPanelsController', () => ({}));
 
 const isMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   isMobile: () => isMobile(),
 }));
 
 const isIdExist = jest.fn();
 const popDialogById = jest.fn();
 const addDialogComponent = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   isIdExist,
   popDialogById,
   addDialogComponent,
@@ -103,7 +112,7 @@ describe('should render correctly', () => {
           },
         }}
         unmount={unmount}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -124,7 +133,7 @@ describe('should render correctly', () => {
           },
         }}
         unmount={unmount}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -145,7 +154,7 @@ describe('should render correctly', () => {
           },
         }}
         unmount={unmount}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -173,7 +182,7 @@ describe('should render correctly in mobile', () => {
           },
         }}
         unmount={unmount}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     expect(isIdExist).toBeCalledTimes(1);
@@ -199,7 +208,7 @@ describe('should render correctly in mobile', () => {
           },
         }}
         unmount={unmount}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     expect(isIdExist).toBeCalledWith('offset');

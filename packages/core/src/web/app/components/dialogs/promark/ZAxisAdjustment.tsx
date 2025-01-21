@@ -2,27 +2,27 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Flex, Modal, Spin, Tooltip } from 'antd';
 
-import checkDeviceStatus from 'helpers/check-device-status';
-import deviceMaster from 'helpers/device-master';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import UnitInput from 'app/widgets/UnitInput';
+import UnitInput from '@core/app/widgets/UnitInput';
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   LoadingOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import {
   generateCalibrationTaskString,
   loadTaskToSwiftray,
-} from 'helpers/device/promark/calibration';
-import Icons from 'app/icons/icons';
-import deviceConstants from 'app/constants/device-constants';
+} from '@core/helpers/device/promark/calibration';
+import Icons from '@core/app/icons/icons';
+import deviceConstants from '@core/app/constants/device-constants';
 import styles from './ZAxisAdjustment.module.scss';
 import ParametersBlock, { MarkParameters } from './ParametersBlock';
 

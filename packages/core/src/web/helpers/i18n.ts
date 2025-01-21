@@ -1,28 +1,28 @@
-import AppSettings from 'app/app-settings';
-import LangCs from 'app/lang/cs';
-import LangDa from 'app/lang/da';
-import LangDe from 'app/lang/de';
-import LangEl from 'app/lang/el';
-import LangEn from 'app/lang/en';
-import LangEs from 'app/lang/es';
-import LangFi from 'app/lang/fi';
-import LangFr from 'app/lang/fr';
-import LangId from 'app/lang/id';
-import LangIt from 'app/lang/it';
-import LangJa from 'app/lang/ja';
-import LangKr from 'app/lang/kr';
-import LangMs from 'app/lang/ms';
-import LangNl from 'app/lang/nl';
-import LangNo from 'app/lang/no';
-import LangPl from 'app/lang/pl';
-import LangPt from 'app/lang/pt';
-import LangSe from 'app/lang/se';
-import LangTh from 'app/lang/th';
-import LangVi from 'app/lang/vi';
-import LangZHCN from 'app/lang/zh-cn';
-import LangZHTW from 'app/lang/zh-tw';
-import storage from 'implementations/storage';
-import { ILang } from 'interfaces/ILang';
+import AppSettings from '@core/app/app-settings';
+import LangCs from '@core/app/lang/cs';
+import LangDa from '@core/app/lang/da';
+import LangDe from '@core/app/lang/de';
+import LangEl from '@core/app/lang/el';
+import LangEn from '@core/app/lang/en';
+import LangEs from '@core/app/lang/es';
+import LangFi from '@core/app/lang/fi';
+import LangFr from '@core/app/lang/fr';
+import LangId from '@core/app/lang/id';
+import LangIt from '@core/app/lang/it';
+import LangJa from '@core/app/lang/ja';
+import LangKr from '@core/app/lang/kr';
+import LangMs from '@core/app/lang/ms';
+import LangNl from '@core/app/lang/nl';
+import LangNo from '@core/app/lang/no';
+import LangPl from '@core/app/lang/pl';
+import LangPt from '@core/app/lang/pt';
+import LangSe from '@core/app/lang/se';
+import LangTh from '@core/app/lang/th';
+import LangVi from '@core/app/lang/vi';
+import LangZHCN from '@core/app/lang/zh-cn';
+import LangZHTW from '@core/app/lang/zh-tw';
+import storage from '@app/implementations/storage';
+import { ILang } from '@core/interfaces/ILang';
 
 const ACTIVE_LANG = 'active-lang';
 const langCache: { [key: string]: ILang } = {
@@ -50,7 +50,7 @@ const langCache: { [key: string]: ILang } = {
   vi: LangVi,
 };
 
-let activeLang = storage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+let activeLang = (storage.get(ACTIVE_LANG) as string) || AppSettings.i18n.default_lang;
 
 /**
  * set active language
@@ -60,7 +60,7 @@ let activeLang = storage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_
  * @return string
  */
 export function getActiveLang(): string {
-  return storage.get(ACTIVE_LANG) as string || AppSettings.i18n.default_lang;
+  return (storage.get(ACTIVE_LANG) as string) || AppSettings.i18n.default_lang;
 }
 
 /**

@@ -3,10 +3,10 @@ import Icon, { DownOutlined } from '@ant-design/icons';
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { Button, Divider, Popover } from 'antd-mobile';
 
-import ObjectPanelIcons from 'app/icons/object-panel/ObjectPanelIcons';
-import storage from 'implementations/storage';
-import units from 'helpers/units';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import storage from '@app/implementations/storage';
+import units from '@core/helpers/units';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import styles from './ObjectPanelItem.module.scss';
 
@@ -74,7 +74,7 @@ const ObjectPanelNumber = ({
   const isActive = activeKey === id;
   const shouldConvert2Inch = useMemo(
     () => unit === 'mm' && storage.get('default-units') === 'inches',
-    [unit]
+    [unit],
   );
   // for unit conversion
   const fakeUnit = shouldConvert2Inch ? 'inch' : 'mm';
@@ -201,7 +201,7 @@ const ObjectPanelActionList = ({
                     }
                     return [...value];
                   }),
-                1000
+                1000,
               );
               action.onClick();
             }

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from 'react';
 
-import Controls from 'app/components/settings/Control';
-import FontFuncs from 'app/actions/beambox/font-funcs';
-import isDev from 'helpers/is-dev';
-import localeHelper from 'helpers/locale-helper';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { FontDescriptor } from 'interfaces/IFont';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { hasSwiftray } from 'helpers/api/swiftray-client';
-import { StorageKey } from 'interfaces/IStorage';
+import Controls from '@core/app/components/settings/Control';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import isDev from '@core/helpers/is-dev';
+import localeHelper from '@core/helpers/locale-helper';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { FontDescriptor } from '@core/interfaces/IFont';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { hasSwiftray } from '@core/helpers/api/swiftray-client';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
@@ -41,7 +41,7 @@ function Editor({
     storage.get('default-font') || {
       family: 'Arial',
       style: 'Regular',
-    }
+    },
   );
 
   const fontOptions: SelectOption[] = fontFamilies.map((family: string) => {
@@ -54,7 +54,7 @@ function Editor({
     };
   });
   const fontStyleOptions: SelectOption[] = FontFuncs.requestFontsOfTheFontFamily(
-    defaultFont.family
+    defaultFont.family,
   ).map((font: FontDescriptor) => ({
     value: font.postscriptName,
     label: font.style,
@@ -140,34 +140,34 @@ function Editor({
 
   const guideSelectionOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('show_guides') !== false,
-    { lang }
+    { lang },
   );
   const imageDownsamplingOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('image_downsampling') !== false,
-    { onLabel: lang.settings.low, offLabel: lang.settings.normal }
+    { onLabel: lang.settings.low, offLabel: lang.settings.normal },
   );
   const antiAliasingOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('anti-aliasing'),
-    { lang }
+    { lang },
   );
   const continuousDrawingOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('continuous_drawing'),
-    { lang }
+    { lang },
   );
   const simplifyClipperPath = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('simplify_clipper_path'),
-    { lang }
+    { lang },
   );
   const enableLowSpeedOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('enable-low-speed'),
-    { lang }
+    { lang },
   );
   const autoSwitchTab = onOffOptionFactory(getBeamboxPreferenceEditingValue('auto-switch-tab'), {
     lang,
   });
   const enableCustomBacklashOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('enable-custom-backlash'),
-    { lang }
+    { lang },
   );
 
   const pathEngine = getBeamboxPreferenceEditingValue('path-engine') || 'fluxghost';

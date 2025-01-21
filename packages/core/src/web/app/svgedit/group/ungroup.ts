@@ -1,7 +1,6 @@
-
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import history from '../history/history';
 
@@ -11,10 +10,9 @@ getSVGAsync((globalSVG) => {
 });
 
 // TODO add unit tests
-export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand, children: Element[] } => {
+export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; children: Element[] } => {
   if (elem?.getAttribute('data-pass-through') || elem?.getAttribute('data-textpath-g')) return null;
   if (elem.tagName === 'g' || elem.tagName === 'a') {
-
     const batchCmd = new history.BatchCommand('Ungroup Elements');
     const cmd = svgCanvas.pushGroupProperties(elem as SVGGElement, true);
     if (cmd && !cmd.isEmpty()) {
@@ -45,7 +43,9 @@ export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand, childr
         continue;
       }
 
-      const originalLayer = svgCanvas.getCurrentDrawing().getLayerByName(child.getAttribute('data-original-layer'));
+      const originalLayer = svgCanvas
+        .getCurrentDrawing()
+        .getLayerByName(child.getAttribute('data-original-layer'));
       if (originalLayer) {
         originalLayer.appendChild(child);
         if (svgCanvas.isUsingLayerColor) svgCanvas.updateElementColor(child);

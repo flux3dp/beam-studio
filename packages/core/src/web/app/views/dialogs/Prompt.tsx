@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { Checkbox, InputRef, Modal } from 'antd';
 
-import alertConfig, { AlertConfigKey } from 'helpers/api/alert-config';
-import Input from 'app/widgets/Input';
-import InputKeyWrapper from 'app/widgets/InputKeyWrapper';
-import useI18n from 'helpers/useI18n';
+import alertConfig, { AlertConfigKey } from '@core/helpers/api/alert-config';
+import Input from '@core/app/widgets/Input';
+import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './Prompt.module.scss';
 

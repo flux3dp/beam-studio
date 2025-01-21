@@ -2,16 +2,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 
-import dialog from 'app/actions/dialog-caller';
-import InitializeIcons from 'app/icons/initialize/InitializeIcons';
-import isDev from 'helpers/is-dev';
-import localeHelper from 'helpers/locale-helper';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import windowLocationReload from 'app/actions/windowLocation';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import dialog from '@core/app/actions/dialog-caller';
+import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
+import isDev from '@core/helpers/is-dev';
+import localeHelper from '@core/helpers/locale-helper';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import windowLocationReload from '@core/app/actions/windowLocation';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
-import { isMobile } from 'helpers/system-helper';
+import { isMobile } from '@core/helpers/system-helper';
 import { useLocation } from 'react-router-dom';
 import styles from './SelectMachineModel.module.scss';
 
@@ -112,18 +112,18 @@ const SelectMachineModel = (): JSX.Element => {
             btnClass: styles['btn-real'],
           } as const),
       ].filter(Boolean),
-    []
+    [],
   );
 
   const selectTitle = useMemo(
     () => (isSelectBeambox ? t.select_beambox : t.select_machine_type),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSelectBeambox]
+    [isSelectBeambox],
   );
   const currentList = useMemo(
     () => (isSelectBeambox ? beamboxModelList : modelList),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSelectBeambox]
+    [isSelectBeambox],
   );
 
   return (

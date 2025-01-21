@@ -1,5 +1,5 @@
-import { modifierKeys } from 'app/constants/modifierKeys';
-import { isMac, isMobile } from 'helpers/system-helper';
+import { modifierKeys } from '@core/app/constants/modifierKeys';
+import { isMac, isMobile } from '@core/helpers/system-helper';
 /**
  * setting up shortcut
  */
@@ -45,7 +45,7 @@ const matchedEventsByKeySet = (keySet: string) =>
 
       return acc;
     },
-    { matches: Array.of<ShortcutEvent>(), maxPriority: 0 }
+    { matches: Array.of<ShortcutEvent>(), maxPriority: 0 },
   );
 
 let layoutMap: Map<string, string> | null = null;
@@ -156,7 +156,7 @@ export default {
   on(
     keys: Array<string>,
     callback: (event: KeyboardEvent) => void,
-    { isBlocking = false, isPreventDefault = true, splitKey = '+' }: RegisterOptions = {}
+    { isBlocking = false, isPreventDefault = true, splitKey = '+' }: RegisterOptions = {},
   ): (() => void) | null {
     if (isMobile()) {
       return null;

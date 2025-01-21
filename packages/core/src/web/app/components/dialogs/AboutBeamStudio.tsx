@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Col, Modal, Row } from 'antd';
 
-import i18n from 'helpers/i18n';
+import i18n from '@core/helpers/i18n';
 
 const LANG = i18n.lang.topmenu;
 const { FLUX } = window;

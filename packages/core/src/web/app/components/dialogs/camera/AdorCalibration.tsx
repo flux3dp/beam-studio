@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import dialogCaller from 'app/actions/dialog-caller';
-import deviceMaster from 'helpers/device-master';
-import isDev from 'helpers/is-dev';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import deviceMaster from '@core/helpers/device-master';
+import isDev from '@core/helpers/is-dev';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
 import {
   FisheyeCameraParameters,
   FisheyeCameraParametersV1,
   FisheyeCameraParametersV2,
-} from 'interfaces/FisheyePreview';
+} from '@core/interfaces/FisheyePreview';
 
 import Align from './AdorCalibration/Align';
 import CalibrationType from './AdorCalibration/calibrationTypes';
@@ -183,7 +183,7 @@ const AdorCalibration = ({ type = CalibrationType.CAMERA, onClose }: Props): JSX
 };
 
 export const showAdorCalibration = async (
-  type: CalibrationType = CalibrationType.CAMERA
+  type: CalibrationType = CalibrationType.CAMERA,
 ): Promise<boolean> => {
   if (dialogCaller.isIdExist(DIALOG_ID)) return false;
   return new Promise((resolve) => {
@@ -195,7 +195,7 @@ export const showAdorCalibration = async (
           dialogCaller.popDialogById(DIALOG_ID);
           resolve(completed);
         }}
-      />
+      />,
     );
   });
 };

@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 
-import isWeb from 'helpers/is-web';
-import useI18n from 'helpers/useI18n';
-import { getConvertEngine } from 'app/actions/beambox/export-funcs';
+import isWeb from '@core/helpers/is-web';
+import useI18n from '@core/helpers/useI18n';
+import { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 
 interface Props {
   size: string;
@@ -44,7 +44,7 @@ function SidePanel({
         short: window.os === 'Windows' && !isWeb(),
         wide: window.os !== 'MacOS',
       }),
-    []
+    [],
   );
 
   const isStartHereHidden = useMemo(() => {

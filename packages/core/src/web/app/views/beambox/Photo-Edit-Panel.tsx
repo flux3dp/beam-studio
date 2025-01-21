@@ -2,20 +2,20 @@ import * as React from 'react';
 import Icon from '@ant-design/icons';
 import { Button, Col, ConfigProvider, InputNumber, Modal, Row, Slider } from 'antd';
 
-import ActionPanelIcons from 'app/icons/action-panel/ActionPanelIcons';
-import calculateBase64 from 'helpers/image-edit-panel/calculate-base64';
-import CurveControl from 'app/widgets/Curve-Control';
-import i18n from 'helpers/i18n';
-import imageEdit from 'helpers/image-edit';
-import imageProcessor from 'implementations/imageProcessor';
-import jimpHelper from 'helpers/jimp-helper';
-import layoutConstants from 'app/constants/layout-constants';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import OpenCVWebSocket from 'helpers/api/open-cv';
-import Progress from 'app/actions/progress-caller';
-import SliderControl from 'app/widgets/Slider-Control';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { isMobile } from 'helpers/system-helper';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
+import CurveControl from '@core/app/widgets/Curve-Control';
+import i18n from '@core/helpers/i18n';
+import imageEdit from '@core/helpers/image-edit';
+import imageProcessor from '@app/implementations/imageProcessor';
+import jimpHelper from '@core/helpers/jimp-helper';
+import layoutConstants from '@core/app/constants/layout-constants';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import OpenCVWebSocket from '@core/helpers/api/open-cv';
+import Progress from '@core/app/actions/progress-caller';
+import SliderControl from '@core/app/widgets/Slider-Control';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { isMobile } from '@core/helpers/system-helper';
 
 import styles from './Photo-Edit-Panel.module.scss';
 
@@ -453,7 +453,7 @@ class PhotoEditPanel extends React.Component<Props, State> {
       const currentContrast = type === 'contrast' ? val : contrast;
       const a = currentContrast < 0 ? currentContrast / 200 + 1 : currentContrast / 50 + 1;
       updateCurveFunction((n) =>
-        Math.max(Math.min(a * (n - 127.5) + currentBrightness + 127.5, 255), 0)
+        Math.max(Math.min(a * (n - 127.5) + currentBrightness + 127.5, 255), 0),
       );
     };
     return isMobile() ? (

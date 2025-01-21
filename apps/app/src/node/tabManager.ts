@@ -1,5 +1,5 @@
-import path from 'node:path';
-import url from 'node:url';
+import path from 'path';
+import url from 'url';
 
 import { enable as enableRemote } from '@electron/remote/main';
 import type { BaseWindow, IpcMainEvent } from 'electron';

@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ConfigProvider, InputNumber, Slider, TooltipProps } from 'antd';
 
-import ColorBlock from 'app/components/beambox/right-panel/ColorBlock';
-import ColorPicker from 'app/widgets/ColorPicker';
-import ColorPickerMobile from 'app/widgets/ColorPickerMobile';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import storage from 'implementations/storage';
-import useDidUpdateEffect from 'helpers/hooks/useDidUpdateEffect';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import ColorPicker from '@core/app/widgets/ColorPicker';
+import ColorPickerMobile from '@core/app/widgets/ColorPickerMobile';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import storage from '@app/implementations/storage';
+import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './ColorPanel.module.scss';
 
@@ -126,7 +126,7 @@ const ColorPanel = ({ elem }: Props): JSX.Element => {
             unit: 'inch',
           }
         : { ratio: constant.dpmm, decimal: 1, step: constant.dpmm * 0.1, max: 100, unit: 'mm' },
-    []
+    [],
   );
 
   const startPreviewMode = (type: number, color: string) => {

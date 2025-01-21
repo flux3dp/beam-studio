@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { FloatingPanel as AntdFloatingPanel } from 'antd-mobile';
 
-import ActionIcon from 'app/icons/action-panel/ActionPanelIcons';
+import ActionIcon from '@core/app/icons/action-panel/ActionPanelIcons';
 import Icon from '@ant-design/icons';
 
 import styles from './FloatingPanel.module.scss';

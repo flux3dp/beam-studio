@@ -5,13 +5,13 @@ import classNames from 'classnames';
 import React, { useContext, useState } from 'react';
 import { Button, Checkbox, Modal } from 'antd';
 
-import AlertIcons from 'app/icons/alerts/AlertIcons';
-import browser from 'implementations/browser';
-import i18n from 'helpers/i18n';
-import useI18n from 'helpers/useI18n';
-import { AlertProgressContext } from 'app/contexts/AlertProgressContext';
-import { HELP_CENTER_URLS } from 'app/constants/alert-constants';
-import { IAlert, MessageIcon } from 'interfaces/IAlert';
+import AlertIcons from '@core/app/icons/alerts/AlertIcons';
+import browser from '@app/implementations/browser';
+import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
+import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
+import { HELP_CENTER_URLS } from '@core/app/constants/alert-constants';
+import { IAlert, MessageIcon } from '@core/interfaces/IAlert';
 
 import {
   CheckCircleFilled,

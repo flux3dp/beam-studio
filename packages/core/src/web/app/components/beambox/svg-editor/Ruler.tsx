@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import storage from 'implementations/storage';
-import workareaManager from 'app/svgedit/workarea';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import storage from '@app/implementations/storage';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import styles from './Ruler.module.scss';
 
@@ -147,7 +147,12 @@ const Ruler = (): JSX.Element => {
   }, [canvasEventEmitter, updateRulers]);
 
   return (
-    <div ref={rulersRef} id="rulers" className={styles.rulers} style={{ display: showShowRulers ? '' : 'none' }}>
+    <div
+      ref={rulersRef}
+      id="rulers"
+      className={styles.rulers}
+      style={{ display: showShowRulers ? '' : 'none' }}
+    >
       <div className={styles.corner} />
       <div id="ruler_x" className={styles.x}>
         <div ref={xContainerRef} className={styles.container} />

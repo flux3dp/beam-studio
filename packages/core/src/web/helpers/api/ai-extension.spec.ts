@@ -1,11 +1,11 @@
 const mockImportSvg = jest.fn();
-jest.mock('app/svgedit/operations/import/importSvg', () => mockImportSvg);
+jest.mock('@core/app/svgedit/operations/import/importSvg', () => mockImportSvg);
 
 const mockWebsocket = jest.fn();
-jest.mock('helpers/websocket', () => mockWebsocket);
+jest.mock('@core/helpers/websocket', () => mockWebsocket);
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeData: mockWriteData,
 }));
 

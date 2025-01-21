@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ColorPickerMobile from './ColorPickerMobile';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     cancel: 'Cancel',
     ok: 'OK',
@@ -41,7 +41,7 @@ describe('test ColorPickerMobile', () => {
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <ColorPickerMobile color="#333333" onChange={mockOnChange} onClose={mockOnClose} open />
+      <ColorPickerMobile color="#333333" onChange={mockOnChange} onClose={mockOnClose} open />,
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -53,7 +53,7 @@ describe('test ColorPickerMobile', () => {
         onChange={mockOnChange}
         onClose={mockOnClose}
         open={false}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
   });

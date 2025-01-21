@@ -2,17 +2,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Col, Form, InputNumber, Modal, Row, Space } from 'antd';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import Constant from 'app/actions/beambox/constant';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import Progress from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { CalibrationContext } from 'app/contexts/CalibrationContext';
-import { CameraConfig } from 'interfaces/Camera';
-import { STEP_FINISH, STEP_REFOCUS } from 'app/constants/camera-calibration-constants';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import Constant from '@core/app/actions/beambox/constant';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import Progress from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import { CameraConfig } from '@core/interfaces/Camera';
+import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/camera-calibration-constants';
 import { QuestionOutlined } from '@ant-design/icons';
-import { sendPictureThenSetConfig } from 'helpers/camera-calibration-helper';
+import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helper';
 
 const StepBeforeAnalyzePicture = (): JSX.Element => {
   const lang = useI18n().calibration;

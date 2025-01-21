@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import blobSegments from 'helpers/blob-segments';
-import InsecureWebsocket, { checkFluxTunnel } from 'helpers/InsecureWebsocket';
-import i18n from 'helpers/i18n';
-import isJson from 'helpers/is-json';
-import isWeb from 'helpers/is-web';
-import Logger from 'helpers/logger';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import outputError from 'helpers/output-error';
-import { Option, WrappedWebSocket } from 'interfaces/WebSocket';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import blobSegments from '@core/helpers/blob-segments';
+import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
+import i18n from '@core/helpers/i18n';
+import isJson from '@core/helpers/is-json';
+import isWeb from '@core/helpers/is-web';
+import Logger from '@core/helpers/logger';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import outputError from '@core/helpers/output-error';
+import { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 window.FLUX.websockets = [];
 window.FLUX.websockets.list = () => {
@@ -335,4 +335,4 @@ export default (options: Option): WrappedWebSocket => {
   WsLogger.append(wsLog);
 
   return wsobj;
-}
+};

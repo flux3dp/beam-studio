@@ -1,13 +1,13 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { ConfigProvider, Modal, InputNumber, Slider } from 'antd';
 
-import history from 'app/svgedit/history/history';
-import undoManager from 'app/svgedit/history/undoManager';
-import useI18n from 'helpers/useI18n';
-import { ConfigModalBlock } from 'app/constants/antd-config';
-import { ConfigItem } from 'interfaces/ILayerConfig';
-import { getLayerByName } from 'helpers/layer/layer-helper';
-import { writeDataLayer } from 'helpers/layer/layer-config-helper';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigModalBlock } from '@core/app/constants/antd-config';
+import { ConfigItem } from '@core/interfaces/ILayerConfig';
+import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './AdvancedPowerPanel.module.scss';

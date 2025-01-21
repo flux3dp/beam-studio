@@ -2,14 +2,14 @@
 import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { TimeEstimationButtonContext } from 'app/contexts/TimeEstimationButtonContext';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 
 import TimeEstimationButton from './TimeEstimationButton';
 
 // for duration-formatter and connection helper
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     alert: {
       oops: 'Oops...',
@@ -30,7 +30,7 @@ jest.mock('helpers/i18n', () => ({
   },
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     time_est_button: {
       calculate: 'Estimate time',
@@ -40,26 +40,26 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockCheckConnection = jest.fn();
-jest.mock('helpers/api/discover', () => ({
+jest.mock('@core/helpers/api/discover', () => ({
   checkConnection: (...args) => mockCheckConnection(...args),
 }));
 
 const mockEstimateTime = jest.fn();
-jest.mock('app/actions/beambox/export-funcs', () => ({
+jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   estimateTime: (...args) => mockEstimateTime(...args),
 }));
 
 const mockToggleUnsavedChangedDialog = jest.fn();
-jest.mock('helpers/file-export-helper', () => ({
+jest.mock('@core/helpers/file-export-helper', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
 }));
 
@@ -76,7 +76,7 @@ describe('should render correctly', () => {
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>
+      </TimeEstimationButtonContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -100,7 +100,7 @@ describe('should render correctly', () => {
         >
           <TimeEstimationButton />
         </TimeEstimationButtonContext.Provider>
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -118,7 +118,7 @@ describe('should render correctly', () => {
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>
+      </TimeEstimationButtonContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -149,7 +149,7 @@ describe('should render correctly', () => {
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>
+      </TimeEstimationButtonContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

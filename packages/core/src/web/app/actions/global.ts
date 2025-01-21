@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import Logger from 'helpers/logger';
-import shortcuts from 'helpers/shortcuts';
-import storage from 'implementations/storage';
-import workareaManager from 'app/svgedit/workarea';
+import Logger from '@core/helpers/logger';
+import shortcuts from '@core/helpers/shortcuts';
+import storage from '@app/implementations/storage';
+import workareaManager from '@core/app/svgedit/workarea';
 
 const genericLogger = Logger('generic');
 const defaultKeyBehavior = () => {
@@ -17,7 +17,7 @@ const defaultKeyBehavior = () => {
       console.log('Zoom In');
       workareaManager.zoomIn();
     },
-    { splitKey: '-' }
+    { splitKey: '-' },
   );
   shortcuts.on(['Fnkey+-'], () => {
     console.log('Zoom Out');

@@ -2,8 +2,8 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { IFile } from 'interfaces/IMyCloud';
-import { MyCloudContext } from 'app/contexts/MyCloudContext';
+import { IFile } from '@core/interfaces/IMyCloud';
+import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 
 import MyCloud from './MyCloud';
 
@@ -28,7 +28,7 @@ const mockFiles: IFile[] = [
   },
 ];
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   flux_id_login: {
     flux_plus: {
       website_url: 'https://website_url',
@@ -54,16 +54,16 @@ const mockUser = {
 };
 
 const getCurrentUser = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => getCurrentUser(),
 }));
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => open(...args),
 }));
 
-jest.mock('app/contexts/MyCloudContext', () => ({
+jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext({}),
   MyCloudProvider: ({ onClose, children }: any) => (
     <MyCloudContext.Provider value={{ onClose, files: mockFiles } as any}>
@@ -73,11 +73,11 @@ jest.mock('app/contexts/MyCloudContext', () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-jest.mock('helpers/is-flux-plus-active', () => true);
+jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 jest.mock('./GridFile', () => ({ file }: any) => <div>Mock Grid File: {JSON.stringify(file)}</div>);
 jest.mock('./Head', () => 'mock-head');

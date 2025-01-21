@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -15,23 +15,28 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/widgets/Unit-Input-v2', () => (
-  { id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any
-) => (
-  <div>
-    MockUnitInput
-    <p>id: {id}</p>
-    <p>min: {min}</p>
-    <p>max: {max}</p>
-    <p>unit: {unit}</p>
-    <p>defaultValue: {defaultValue}</p>
-    <p>decimal: {decimal}</p>
-    <p>displayMultiValue: {displayMultiValue}</p>
-    <button type="button" onClick={() => getValue(7)}>change</button>
-  </div>
-));
+jest.mock(
+  '@core/app/widgets/Unit-Input-v2',
+  () =>
+    ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
+      (
+        <div>
+          MockUnitInput
+          <p>id: {id}</p>
+          <p>min: {min}</p>
+          <p>max: {max}</p>
+          <p>unit: {unit}</p>
+          <p>defaultValue: {defaultValue}</p>
+          <p>decimal: {decimal}</p>
+          <p>displayMultiValue: {displayMultiValue}</p>
+          <button type="button" onClick={() => getValue(7)}>
+            change
+          </button>
+        </div>
+      ),
+);
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Number: ({ id, label, value, unit, decimal }: any) => (
     <div>
       MockObjectPanelNumber
@@ -45,13 +50,13 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -65,7 +70,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -77,7 +82,7 @@ const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEmit = jest.fn();
@@ -104,7 +109,7 @@ describe('test RepeatBlock', () => {
         }}
       >
         <RepeatBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -120,7 +125,7 @@ describe('test RepeatBlock', () => {
         }}
       >
         <RepeatBlock type="panel-item" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -138,7 +143,7 @@ describe('test RepeatBlock', () => {
         }}
       >
         <RepeatBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
@@ -164,7 +169,7 @@ describe('test RepeatBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'repeat', 7, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(
@@ -172,7 +177,7 @@ describe('test RepeatBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockEmit).toBeCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
@@ -194,7 +199,7 @@ describe('test RepeatBlock', () => {
         }}
       >
         <RepeatBlock type="modal" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');

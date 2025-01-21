@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { Button } from 'antd';
 
-import DimensionPanelIcons from 'app/icons/dimension-panel/DimensionPanelIcons';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './FlipButtons.module.scss';
 

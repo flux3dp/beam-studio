@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import i18n from 'helpers/i18n';
-import SelectControl from 'app/components/settings/SelectControl';
-import { StorageKey } from 'interfaces/IStorage';
+import i18n from '@core/helpers/i18n';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
   isWeb: boolean;
-  updateNotificationOptions: { value: any, label: string, selected: boolean, }[];
+  updateNotificationOptions: { value: any; label: string; selected: boolean }[];
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
 

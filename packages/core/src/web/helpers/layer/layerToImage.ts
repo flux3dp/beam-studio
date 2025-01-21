@@ -1,14 +1,14 @@
-import constant from 'app/actions/beambox/constant';
-import findDefs from 'app/svgedit/utils/findDef';
-import getUtilWS from 'helpers/api/utils-ws';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
-import workareaManager from 'app/svgedit/workarea';
+import constant from '@core/app/actions/beambox/constant';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import getUtilWS from '@core/helpers/api/utils-ws';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import updateImageForSpliting from './full-color/updateImageForSpliting';
 
 const layerToImage = async (
   layer: SVGGElement,
-  opt?: { dpi?: number; shapesOnly?: boolean; isFullColor?: boolean }
+  opt?: { dpi?: number; shapesOnly?: boolean; isFullColor?: boolean },
 ): Promise<{
   rgbBlob: Blob;
   cmykBlob?: { c: Blob; m: Blob; y: Blob; k: Blob };
@@ -59,15 +59,24 @@ const layerToImage = async (
     const kLayer = cmykLayer.cloneNode(true) as SVGGElement;
     const cmykImages = cmykLayer.querySelectorAll('image[cmyk="1"]');
     for (let i = 0; i < cmykImages.length; i += 1) {
-      const base64 = cmykImages[i].getAttribute('origImage') || cmykImages[i].getAttribute('xlink:href');
+      const base64 =
+        cmykImages[i].getAttribute('origImage') || cmykImages[i].getAttribute('xlink:href');
       // eslint-disable-next-line no-await-in-loop
       const blob = await (await fetch(base64)).blob();
       // eslint-disable-next-line no-await-in-loop
       const { c, m, y, k } = await utilWS.splitColor(blob, { colorType: 'cmyk' });
-      cLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${c}`);
-      mLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${m}`);
-      yLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${y}`);
-      kLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${k}`);
+      cLayer
+        .querySelectorAll('image[cmyk="1"]')
+        [i].setAttribute('xlink:href', `data:image/jpeg;base64,${c}`);
+      mLayer
+        .querySelectorAll('image[cmyk="1"]')
+        [i].setAttribute('xlink:href', `data:image/jpeg;base64,${m}`);
+      yLayer
+        .querySelectorAll('image[cmyk="1"]')
+        [i].setAttribute('xlink:href', `data:image/jpeg;base64,${y}`);
+      kLayer
+        .querySelectorAll('image[cmyk="1"]')
+        [i].setAttribute('xlink:href', `data:image/jpeg;base64,${k}`);
     }
     const cCanvas = await getCanvas(cLayer);
     const mCanvas = await getCanvas(mLayer);
@@ -134,7 +143,7 @@ const layerToImage = async (
       0,
       0,
       outCanvas.width,
-      outCanvas.height
+      outCanvas.height,
     );
     return new Promise<Blob>((resolve) => {
       outCanvas.toBlob((b) => resolve(b));
@@ -142,12 +151,14 @@ const layerToImage = async (
   };
   const rgbBlob = await generateBlob(rgbCanvas);
   if (!isFullColor) return { rgbBlob, bbox: outputBbox };
-  const cmykBlob = cmykCanvas ? {
-    c: await generateBlob(cmykCanvas.c),
-    m: await generateBlob(cmykCanvas.m),
-    y: await generateBlob(cmykCanvas.y),
-    k: await generateBlob(cmykCanvas.k),
-  } : null;
+  const cmykBlob = cmykCanvas
+    ? {
+        c: await generateBlob(cmykCanvas.c),
+        m: await generateBlob(cmykCanvas.m),
+        y: await generateBlob(cmykCanvas.y),
+        k: await generateBlob(cmykCanvas.k),
+      }
+    : null;
   return { rgbBlob, cmykBlob, bbox: outputBbox };
 };
 

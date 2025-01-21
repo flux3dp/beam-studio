@@ -1,18 +1,18 @@
 import React, { useContext, useMemo } from 'react';
 
-import beamboxStore from 'app/stores/beambox-store';
-import constant from 'app/actions/beambox/constant';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import LeftPanelButton from 'app/components/beambox/left-panel/LeftPanelButton';
-import LeftPanelIcons from 'app/icons/left-panel/LeftPanelIcons';
-import localeHelper from 'helpers/locale-helper';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import useI18n from 'helpers/useI18n';
-import useForceUpdate from 'helpers/use-force-update';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import beamboxStore from '@core/app/stores/beambox-store';
+import constant from '@core/app/actions/beambox/constant';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import localeHelper from '@core/helpers/locale-helper';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import useI18n from '@core/helpers/useI18n';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {

@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { MyCloudContext } from 'app/contexts/MyCloudContext';
+import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 
 import Head from './Head';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   my_cloud: {
     sort: {
       most_recent: 'Most Recent',
@@ -23,12 +23,12 @@ const mockContext: any = {
   setSortBy: mockSetSortby,
 };
 
-jest.mock('app/contexts/MyCloudContext', () => ({
+jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext(null),
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
@@ -41,7 +41,7 @@ describe('test Head', () => {
     const { baseElement, container, getByText } = render(
       <MyCloudContext.Provider value={mockContext}>
         <Head />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 
@@ -58,7 +58,7 @@ describe('test Head', () => {
     const { container, getByText } = render(
       <MyCloudContext.Provider value={mockContext}>
         <Head />
-      </MyCloudContext.Provider>
+      </MyCloudContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 

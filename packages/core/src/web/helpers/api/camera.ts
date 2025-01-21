@@ -6,20 +6,20 @@
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
 import { EmptyError, from, lastValueFrom, Observable, partition, Subject } from 'rxjs';
 
-import constant from 'app/actions/beambox/constant';
-import i18n from 'helpers/i18n';
-import Progress from 'app/actions/progress-caller';
-import rsaKey from 'helpers/rsa-key';
-import VersionChecker from 'helpers/version-checker';
-import Websocket from 'helpers/websocket';
+import constant from '@core/app/actions/beambox/constant';
+import i18n from '@core/helpers/i18n';
+import Progress from '@core/app/actions/progress-caller';
+import rsaKey from '@core/helpers/rsa-key';
+import VersionChecker from '@core/helpers/version-checker';
+import Websocket from '@core/helpers/websocket';
 import {
   FisheyeCameraParameters,
   FisheyeMatrix,
   PerspectiveGrid,
   RotationParameters3DGhostApi,
-} from 'interfaces/FisheyePreview';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+} from '@core/interfaces/FisheyePreview';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const TIMEOUT = 120000;
 const IMAGE_TRANSMISSION_FAIL_THRESHOLD = 20;
@@ -122,7 +122,7 @@ class Camera {
           this.requireFrameRetry = 0;
           const imgBlob = await this.preprocessImage(blob);
           return { imgBlob, needCameraCableAlert };
-        })
+        }),
       )
       .pipe(concatMap((p) => from(p)))
       .pipe(filter((res) => res !== null));
@@ -155,20 +155,20 @@ class Camera {
       this.wsSubject
         .pipe(filter((res) => !(res instanceof Blob) && res.status === 'connected'))
         .pipe(take(1))
-        .pipe(timeout(TIMEOUT))
+        .pipe(timeout(TIMEOUT)),
     );
 
     // check whether the camera need flip
     if (this.cameraNeedFlip === null && device && device.model.indexOf('delta-') < 0) {
       this.cameraNeedFlip = !!Number(
-        (/F:\s?(-?\d+\.?\d+)/.exec(await this.getCameraOffset()) || ['', ''])[1]
+        (/F:\s?(-?\d+\.?\d+)/.exec(await this.getCameraOffset()) || ['', ''])[1],
       );
     }
   }
 
   async getCameraOffset(): Promise<string> {
     console.warn(
-      'This is additional control socket created in camera.ts, this may take unnecessary time.'
+      'This is additional control socket created in camera.ts, this may take unnecessary time.',
     );
     const tempWsSubject = new Subject<{ error?: Error; status: string; value: string }>();
     const tempWs = Websocket({
@@ -187,7 +187,7 @@ class Camera {
       tempWsSubject
         .pipe(filter((res) => res.status === 'connected'))
         .pipe(take(1))
-        .pipe(timeout(TIMEOUT))
+        .pipe(timeout(TIMEOUT)),
     );
 
     tempWs.send('config get camera_offset');
@@ -253,7 +253,7 @@ class Camera {
     return res.status === 'ok';
   };
 
-  setFisheyeLevelingData = async(data: Record<string, number>): Promise<boolean> => {
+  setFisheyeLevelingData = async (data: Record<string, number>): Promise<boolean> => {
     this.fishEyeSetting = { ...this.fishEyeSetting, levelingData: data };
     const strData = JSON.stringify(data, (key, val) => {
       if (typeof val === 'number') {
@@ -342,7 +342,7 @@ class Camera {
         img.width === 1280 && img.height === 720,
         'image should be 1280x720',
         img.width,
-        img.height
+        img.height,
       );
 
       const canvas = document.createElement('canvas');
@@ -350,7 +350,7 @@ class Camera {
       canvas.height = 280;
       canvas.getContext('2d').drawImage(img, 0, -40, 640, 360); // resize
       const preprocessedBlob = await new Promise<Blob>((resolve) =>
-        canvas.toBlob((b) => resolve(b))
+        canvas.toBlob((b) => resolve(b)),
       );
       return preprocessedBlob;
     };
@@ -361,7 +361,7 @@ class Camera {
         img.width === 640 && img.height === 480,
         'image should be 640x480',
         img.width,
-        img.height
+        img.height,
       );
 
       const canvas = document.createElement('canvas');
@@ -369,7 +369,7 @@ class Camera {
       canvas.height = 280;
       canvas.getContext('2d').drawImage(img, 0, -100, 640, 480); // crop top and bottom
       const preprocessedBlob = await new Promise<Blob>((resolve) =>
-        canvas.toBlob((b) => resolve(b))
+        canvas.toBlob((b) => resolve(b)),
       );
       return preprocessedBlob;
     };
@@ -377,7 +377,7 @@ class Camera {
     const loadAndFlipImage = async () => {
       const canvas = await imageLoadBlob();
       const preprocessedBlob = await new Promise<Blob>((resolve) =>
-        canvas.toBlob((b) => resolve(b))
+        canvas.toBlob((b) => resolve(b)),
       );
       return preprocessedBlob;
     };
@@ -385,7 +385,7 @@ class Camera {
     if (constant.adorModels.includes(this.device.model)) return blob;
     if (
       !['mozu1', 'fbm1', 'fbb1b', 'fbb1p', 'fhexa1', 'laser-b1', 'laser-b2', 'darwin-dev'].includes(
-        this.device.model
+        this.device.model,
       )
     ) {
       return blob;

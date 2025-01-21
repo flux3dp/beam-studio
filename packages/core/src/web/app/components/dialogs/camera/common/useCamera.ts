@@ -1,15 +1,15 @@
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import i18n from 'helpers/i18n';
-import webcamHelper, { WebCamConnection } from 'helpers/webcam-helper';
-import { IConfigSetting } from 'interfaces/IDevice';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import i18n from '@core/helpers/i18n';
+import webcamHelper, { WebCamConnection } from '@core/helpers/webcam-helper';
+import { IConfigSetting } from '@core/interfaces/IDevice';
 
 const useCamera = (
   handleImg?: (blob: Blob) => Promise<boolean> | boolean,
-  source: 'wifi' | 'usb' = 'wifi'
+  source: 'wifi' | 'usb' = 'wifi',
 ): {
   exposureSetting: IConfigSetting | null;
   setExposureSetting: Dispatch<IConfigSetting | null>;
@@ -55,7 +55,7 @@ const useCamera = (
       if (!silent) progressCaller.popById('use-camera');
       return imgBlob;
     },
-    [connectWebCam, handleImg, source]
+    [connectWebCam, handleImg, source],
   );
 
   useEffect(() => {

@@ -3,9 +3,9 @@ import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
-import { SupportUsbModels } from 'app/actions/beambox/constant';
+import { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import styles from './ConnectUsb.module.scss';
 
 export default function ConnectUsb(): JSX.Element {
@@ -13,7 +13,7 @@ export default function ConnectUsb(): JSX.Element {
   const { search } = useLocation();
   const model = useMemo(
     () => new URLSearchParams(search).get('model'),
-    [search]
+    [search],
   ) as SupportUsbModels;
 
   const renderInformation: Record<SupportUsbModels, { title: string; steps: Array<string> }> = {

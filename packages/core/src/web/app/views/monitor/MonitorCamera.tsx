@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
-import DeviceMaster from 'helpers/device-master';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import DeviceMaster from '@core/helpers/device-master';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const hdChecked = {};
 
@@ -16,11 +16,11 @@ const getImageSize = (url: string, onSize: (size: number[]) => void) => {
 };
 
 interface Props {
-  device: IDeviceInfo,
+  device: IDeviceInfo;
 }
 
 interface State {
-  isHd: boolean,
+  isHd: boolean;
 }
 
 export default class MonitorCamera extends React.PureComponent<Props, State> {
@@ -88,7 +88,10 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
 
   render() {
     const { isHd } = this.state;
-    const className = classNames('camera-image', { 'beambox-camera': this.isBeamboxCamera, hd: isHd });
+    const className = classNames('camera-image', {
+      'beambox-camera': this.isBeamboxCamera,
+      hd: isHd,
+    });
     return (
       <div className="camera">
         <img id="camera-image" className={className} />

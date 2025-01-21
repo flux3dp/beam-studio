@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import SelectView from 'app/widgets/Select';
+import i18n from '@core/helpers/i18n';
+import SelectView from '@core/app/widgets/Select';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  dir: number,
-  onValueChange: (val: number) => void,
+  dir: number;
+  onValueChange: (val: number) => void;
 }
 
 function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Element {
@@ -20,10 +20,11 @@ function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Elem
     updateDir(val);
   };
 
-  const getOffsetDir = () => ({
-    0: LANG._offset.inward,
-    1: LANG._offset.outward,
-  }[dir]);
+  const getOffsetDir = () =>
+    ({
+      0: LANG._offset.inward,
+      1: LANG._offset.outward,
+    }[dir]);
 
   const options = [
     {
@@ -51,7 +52,9 @@ function OffsetDirectionPanel({ dir: dirProps, onValueChange }: Props): JSX.Elem
             <SelectView
               id="select-offset-dir"
               options={options}
-              onChange={(e) => { updateOffsetDir(parseInt(e.target.value, 10)); }}
+              onChange={(e) => {
+                updateOffsetDir(parseInt(e.target.value, 10));
+              }}
             />
           </div>
         </div>

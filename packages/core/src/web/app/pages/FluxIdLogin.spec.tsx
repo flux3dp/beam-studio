@@ -4,13 +4,13 @@ import { render } from '@testing-library/react';
 
 const mockClearAllDialogComponents = jest.fn();
 const mockShowLoginDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   clearAllDialogComponents: mockClearAllDialogComponents,
   showLoginDialog: mockShowLoginDialog,
 }));
 
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: mockGet,
 }));
 

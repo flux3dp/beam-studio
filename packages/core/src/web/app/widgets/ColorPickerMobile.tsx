@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Color } from 'antd/es/color-picker';
 import { ColorPicker, Button, Input, Popover } from 'antd';
 
-import ColorBlock from 'app/components/beambox/right-panel/ColorBlock';
-import isWeb from 'helpers/is-web';
-import useI18n from 'helpers/useI18n';
+import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import isWeb from '@core/helpers/is-web';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ColorPicker.module.scss';
 

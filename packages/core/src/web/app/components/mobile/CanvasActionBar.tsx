@@ -1,9 +1,9 @@
 import React from 'react';
 import { TabBar } from 'antd-mobile';
 
-import svgEditor from 'app/actions/beambox/svg-editor';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
-import { TrashIcon } from 'app/icons/icons';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { TrashIcon } from '@core/app/icons/icons';
 
 const CanvasActionBar = (): JSX.Element => {
   const { selectedElement } = React.useContext(SelectedElementContext);
@@ -14,7 +14,7 @@ const CanvasActionBar = (): JSX.Element => {
       key: 'trash',
       title: '刪除',
       icon: <TrashIcon />,
-      disabled: (!selectedElement)
+      disabled: !selectedElement,
     },
   ];
 
@@ -26,15 +26,16 @@ const CanvasActionBar = (): JSX.Element => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      width: '100%',
-      borderTop: 'solid 1px #CCC',
-      background: '#FFFFFF',
-      zIndex: 998,
-      overflowX: 'scroll',
-      bottom: 50,
-    }}
+    <div
+      style={{
+        position: 'fixed',
+        width: '100%',
+        borderTop: 'solid 1px #CCC',
+        background: '#FFFFFF',
+        zIndex: 998,
+        overflowX: 'scroll',
+        bottom: 50,
+      }}
     >
       <div style={{ width: '100%' }}>
         <TabBar
@@ -45,7 +46,12 @@ const CanvasActionBar = (): JSX.Element => {
           }}
         >
           {tabs.map((item) => (
-            <TabBar.Item key={item.key} icon={item.icon} title={item.title} aria-disabled={item.disabled} />
+            <TabBar.Item
+              key={item.key}
+              icon={item.icon}
+              title={item.title}
+              aria-disabled={item.disabled}
+            />
           ))}
         </TabBar>
       </div>

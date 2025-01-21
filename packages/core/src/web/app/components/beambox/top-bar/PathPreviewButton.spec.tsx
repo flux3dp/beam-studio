@@ -3,20 +3,20 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topbar: {
     task_preview: 'task_preview',
   },
 }));
 
 const checkWebGL = jest.fn();
-jest.mock('helpers/check-webgl', () => checkWebGL);
+jest.mock('@core/helpers/check-webgl', () => checkWebGL);
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -29,7 +29,7 @@ getSVGAsync.mockImplementation((callback) => {
   });
 });
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({
     mode: 1,
   }),
@@ -43,7 +43,7 @@ jest.mock('app/contexts/CanvasContext', () => ({
 import PathPreviewButton from './PathPreviewButton';
 
 const mockUseWorkarea = jest.fn();
-jest.mock('helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
+jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
 describe('test PathPreviewButton', () => {
   test('no WebGL', () => {
@@ -51,7 +51,7 @@ describe('test PathPreviewButton', () => {
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
         <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -62,7 +62,7 @@ describe('test PathPreviewButton', () => {
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
-        </CanvasContext.Provider>
+        </CanvasContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -80,7 +80,7 @@ describe('test PathPreviewButton', () => {
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
-        </CanvasContext.Provider>
+        </CanvasContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -90,7 +90,7 @@ describe('test PathPreviewButton', () => {
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
           <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
-        </CanvasContext.Provider>
+        </CanvasContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -106,7 +106,7 @@ describe('test PathPreviewButton', () => {
         const { container } = render(
           <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
             <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
-          </CanvasContext.Provider>
+          </CanvasContext.Provider>,
         );
 
         fireEvent.click(container.querySelector('div[class*="button"]'));
@@ -120,7 +120,7 @@ describe('test PathPreviewButton', () => {
         const { container } = render(
           <CanvasContext.Provider value={{ mode: CanvasMode.Draw } as any}>
             <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
-          </CanvasContext.Provider>
+          </CanvasContext.Provider>,
         );
         fireEvent.click(container.querySelector('div[class*="button"]'));
         expect(clearSelection).toHaveBeenCalledTimes(1);

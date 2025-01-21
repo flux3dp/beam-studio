@@ -2,15 +2,15 @@ import React, { useContext, useMemo, useState } from 'react';
 import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import importSvgString from 'app/svgedit/operations/import/importSvgString';
-import ISVGLayer from 'interfaces/ISVGLayer';
-import useI18n from 'helpers/useI18n';
-import wrapSVG from 'helpers/boxgen/wrapSVG';
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
-import { getLayouts } from 'helpers/boxgen/Layout';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IExportOptions } from 'interfaces/IBoxgen';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
+import ISVGLayer from '@core/interfaces/ISVGLayer';
+import useI18n from '@core/helpers/useI18n';
+import wrapSVG from '@core/helpers/boxgen/wrapSVG';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { getLayouts } from '@core/helpers/boxgen/Layout';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IExportOptions } from '@core/interfaces/IBoxgen';
 
 import styles from './ExportButton.module.scss';
 
@@ -66,7 +66,7 @@ const ExportDialog = ({
           type: 'layer',
           layerName: `${uniqBoxName}-${idx + 1}`,
           parentCmd: batchCmd,
-        })
+        }),
       );
       newLayers.push(`${uniqBoxName}-${idx + 1}`);
       if (options.textLabel) {
@@ -76,13 +76,13 @@ const ExportDialog = ({
             type: 'layer',
             layerName: `${uniqBoxName}-${idx + 1} Label`,
             parentCmd: batchCmd,
-          })
+          }),
         );
         newLayers.push(`${uniqBoxName}-${idx + 1} Label`);
       }
     });
     const elems = (await Promise.allSettled(promises)).map((p) =>
-      p.status === 'fulfilled' ? p.value : null
+      p.status === 'fulfilled' ? p.value : null,
     );
     batchCmd.addSubCommand(await svgCanvas.disassembleUse2Group(elems, true, false, false));
     newLayers

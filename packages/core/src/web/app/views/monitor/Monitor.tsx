@@ -2,15 +2,15 @@ import React, { useEffect, useMemo } from 'react';
 import { Modal, Tabs } from 'antd';
 import { CameraOutlined, FolderOutlined, PictureOutlined } from '@ant-design/icons';
 
-import deviceConstants from 'app/constants/device-constants';
-import localeHelper from 'helpers/locale-helper';
-import MonitorStatus from 'helpers/monitor-status';
-import useI18n from 'helpers/useI18n';
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { promarkModels } from 'app/actions/beambox/constant';
+import deviceConstants from '@core/app/constants/device-constants';
+import localeHelper from '@core/helpers/locale-helper';
+import MonitorStatus from '@core/helpers/monitor-status';
+import useI18n from '@core/helpers/useI18n';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import MonitorCamera from './MonitorCamera';
 import MonitorFilelist from './MonitorFilelist';

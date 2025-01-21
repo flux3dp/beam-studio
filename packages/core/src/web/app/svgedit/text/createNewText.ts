@@ -1,11 +1,11 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import fontHelper from 'helpers/fonts/fontHelper';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import textEdit from 'app/svgedit/text/textedit';
-import updateElementColor from 'helpers/color/updateElementColor';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import getDefaultFont from 'helpers/fonts/getDefaultFont';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import textEdit from '@core/app/svgedit/text/textedit';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
 let svgCanvas: ISVGCanvas;
 
@@ -34,7 +34,7 @@ const createNewText = (
     addToHistory = false,
     isToSelect = false,
     isDefaultFont = false,
-  }: Options = {}
+  }: Options = {},
 ): SVGElement => {
   const currentShape = svgCanvas.getCurrentShape();
   const modelText = isDefaultFont ? getDefaultFont() : textEdit.getCurText();

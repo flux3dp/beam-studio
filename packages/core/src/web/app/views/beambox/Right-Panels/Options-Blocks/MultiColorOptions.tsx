@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import ColorBlock from 'app/components/beambox/right-panel/ColorBlock';
-import ColorPicker from 'app/widgets/ColorPicker';
-import ColorPickerMobile from 'app/widgets/ColorPickerMobile';
-import colloectColors from 'helpers/color/collectColors';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import HorizontalScrollContainer from 'app/widgets/HorizontalScrollContainer';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import symbolMaker from 'helpers/symbol-maker';
-import useI18n from 'helpers/useI18n';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import ColorPicker from '@core/app/widgets/ColorPicker';
+import ColorPickerMobile from '@core/app/widgets/ColorPickerMobile';
+import colloectColors from '@core/helpers/color/collectColors';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import HorizontalScrollContainer from '@core/app/widgets/HorizontalScrollContainer';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import symbolMaker from '@core/helpers/symbol-maker';
+import useI18n from '@core/helpers/useI18n';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './MultiColorOptions.module.scss';
 
@@ -55,7 +55,7 @@ const MultiColorOptions = ({ elem }: Props): JSX.Element => {
     origColor: string,
     newColor: string,
     actual = true,
-    rerender = true
+    rerender = true,
   ) => {
     const fillElements = [];
     const strokeElements = [];

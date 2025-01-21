@@ -1,12 +1,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { Mode, ItemType } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { Mode, ItemType } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import MonitorTabExtraContent from './MonitorTabExtraContent';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
@@ -25,7 +25,7 @@ describe('test MonitorTabExtraContent', () => {
     const { container } = render(
       <MonitorContext.Provider value={mockContext as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     const uploadBtn = container.querySelectorAll('button')[0];
@@ -43,7 +43,7 @@ describe('test MonitorTabExtraContent', () => {
     const { container } = render(
       <MonitorContext.Provider value={{ ...mockContext, mode: Mode.CAMERA } as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -54,7 +54,7 @@ describe('test MonitorTabExtraContent', () => {
         value={{ ...mockContext, highlightedItem: { type: ItemType.FOLDER, name: 'test' } } as any}
       >
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -63,7 +63,7 @@ describe('test MonitorTabExtraContent', () => {
     const { container } = render(
       <MonitorContext.Provider value={{ ...mockContext, currentPath: [] } as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

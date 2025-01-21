@@ -1,4 +1,4 @@
-@use 'styles/variables' as v;
+@use '@core/styles/variables' as v;
 
 @mixin title-text {
   font-weight: bold;

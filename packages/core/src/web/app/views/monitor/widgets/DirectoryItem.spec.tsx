@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import DirectoryItem from './DirectoryItem';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
@@ -15,39 +15,48 @@ const mockOnSelectFolder = jest.fn();
 describe('test DirectoryItem', () => {
   it('should render correctly', () => {
     const { container, rerender } = render(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFolder: mockOnSelectFolder,
-        highlightedItem: { name: 'directory', type: 'FOLDER' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFolder: mockOnSelectFolder,
+            highlightedItem: { name: 'directory', type: 'FOLDER' },
+          } as any
+        }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     rerender(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFolder: mockOnSelectFolder,
-        highlightedItem: { name: 'directory2', type: 'FOLDER' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFolder: mockOnSelectFolder,
+            highlightedItem: { name: 'directory2', type: 'FOLDER' },
+          } as any
+        }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
 
   test('context events should work', () => {
     const { container } = render(
-      <MonitorContext.Provider value={{
-        onHighlightItem: mockOnHighlightItem,
-        onSelectFolder: mockOnSelectFolder,
-        highlightedItem: { name: 'directory', type: 'FOLDER' }
-      } as any}
+      <MonitorContext.Provider
+        value={
+          {
+            onHighlightItem: mockOnHighlightItem,
+            onSelectFolder: mockOnSelectFolder,
+            highlightedItem: { name: 'directory', type: 'FOLDER' },
+          } as any
+        }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     const divContainer = container.querySelector('.container');
     expect(mockOnHighlightItem).not.toBeCalled();

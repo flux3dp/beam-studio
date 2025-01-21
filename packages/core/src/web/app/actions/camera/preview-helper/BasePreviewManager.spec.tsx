@@ -1,17 +1,17 @@
-import alertConstants from 'app/constants/alert-constants';
-import lang from 'app/lang/en';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewSpeedLevel } from 'app/actions/beambox/constant';
+import alertConstants from '@core/app/constants/alert-constants';
+import lang from '@core/app/lang/en';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 
 import BasePreviewManager from './BasePreviewManager';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockAlertConfigRead = jest.fn();
-jest.mock('helpers/api/alert-config', () => ({
+jest.mock('@core/helpers/api/alert-config', () => ({
   read: (...args) => mockAlertConfigRead(...args),
 }));
 
@@ -22,7 +22,7 @@ const mockTakeOnePicture = jest.fn();
 const mockGetControl = jest.fn();
 const mockRawMove = jest.fn();
 const mockEnterRawMode = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   select: (...args) => mockSelect(...args),
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
   kick: (...args) => mockKick(...args),
@@ -33,17 +33,17 @@ jest.mock('helpers/device-master', () => ({
 }));
 
 const mockGetSupportInfo = jest.fn();
-jest.mock('app/constants/add-on', () => ({
+jest.mock('@core/app/constants/add-on', () => ({
   getSupportInfo: (...args) => mockGetSupportInfo(...args),
 }));
 
 const mockGetWorkarea = jest.fn();
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
@@ -61,7 +61,7 @@ describe('test BasePreviewManager', () => {
     expect(basePreviewManager.setup()).rejects.toThrow('Method not implemented.');
     expect(basePreviewManager.preview(0, 0)).rejects.toThrow('Method not implemented.');
     expect(basePreviewManager.previewRegion(0, 100, 0, 100)).rejects.toThrow(
-      'Method not implemented.'
+      'Method not implemented.',
     );
   });
 
@@ -99,7 +99,7 @@ describe('test BasePreviewManager', () => {
       const basePreviewManager = new BasePreviewManager(mockDeviceInfo);
       mockTakeOnePicture.mockResolvedValue(undefined);
       await expect(basePreviewManager.getPhotoFromMachine()).rejects.toThrow(
-        lang.message.camera.ws_closed_unexpectly
+        lang.message.camera.ws_closed_unexpectly,
       );
     });
 

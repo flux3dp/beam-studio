@@ -1,20 +1,20 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import checkDeviceStatus from 'helpers/check-device-status';
-import deviceMaster from 'helpers/device-master';
-import dialog from 'implementations/dialog';
-import progressCaller from 'app/actions/progress-caller';
-import promarkDataStore from 'helpers/device/promark/promark-data-store';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
+import alertCaller from '@core/app/actions/alert-caller';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
+import dialog from '@app/implementations/dialog';
+import progressCaller from '@core/app/actions/progress-caller';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import {
   FisheyeCameraParametersV3,
   FisheyeCameraParametersV3Cali,
-} from 'interfaces/FisheyePreview';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { loadCameraCalibrationTask } from 'helpers/device/promark/calibration';
+} from '@core/interfaces/FisheyePreview';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 
 import CheckpointData from './common/CheckpointData';
 import Chessboard from './Promark/Chessboard';
@@ -83,7 +83,7 @@ const PromarkCalibration = ({ device: { serial, model }, onClose }: Props): JSX.
             name: window.os === 'MacOS' ? 'PDF (*.pdf)' : 'PDF',
             extensions: ['pdf'],
           },
-        ]
+        ],
       );
     };
     return (
@@ -221,7 +221,7 @@ export const showPromarkCalibration = (device: IDeviceInfo): Promise<boolean> =>
           onClose();
           resolve(completed);
         }}
-      />
+      />,
     );
   });
 };

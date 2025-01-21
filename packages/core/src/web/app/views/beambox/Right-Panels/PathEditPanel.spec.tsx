@@ -5,11 +5,11 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import PathEditPanel from './PathEditPanel';
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       right_panel: {
@@ -37,54 +37,55 @@ const mockSetSharp = jest.fn();
 const mockSetRound = jest.fn();
 const mockDisconnectNode = jest.fn();
 const toSelectMode = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => callback({
-    Edit: {
-      path: {
+jest.mock('@core/helpers/svg-editor-helper', () => ({
+  getSVGAsync: (callback) =>
+    callback({
+      Edit: {
         path: {
-          setSelectedNodeType: (...args) => setSelectedNodeType(...args),
-          selected_pts: [2],
-          nodePoints: [
-            {
-              index: 0,
-              linkType: 0,
-              isSharp: () => true,
-              isRound: () => false,
-              prev: 'mock-p2',
-              next: 'mock-p1'
-            },
-            {
-              index: 1,
-              linkType: 0,
-              isSharp: () => true,
-              isRound: () => false,
-              prev: 'mock-p0',
-              next: 'mock-p2'
-            },
-            {
-              index: 2,
-              linkType: 0,
-              isSharp: () => true,
-              isRound: () => false,
-              prev: 'mock-p1',
-              next: 'mock-p0'
-            },
-          ],
+          path: {
+            setSelectedNodeType: (...args) => setSelectedNodeType(...args),
+            selected_pts: [2],
+            nodePoints: [
+              {
+                index: 0,
+                linkType: 0,
+                isSharp: () => true,
+                isRound: () => false,
+                prev: 'mock-p2',
+                next: 'mock-p1',
+              },
+              {
+                index: 1,
+                linkType: 0,
+                isSharp: () => true,
+                isRound: () => false,
+                prev: 'mock-p0',
+                next: 'mock-p2',
+              },
+              {
+                index: 2,
+                linkType: 0,
+                isSharp: () => true,
+                isRound: () => false,
+                prev: 'mock-p1',
+                next: 'mock-p0',
+              },
+            ],
+          },
         },
       },
-    },
-    Editor: {
-      deleteSelected: (...args) => deleteSelected(...args),
-    },
-    Canvas: {
-      pathActions: {
-        setSharp: (...args) => mockSetSharp(...args),
-        setRound: (...args) => mockSetRound(...args),
-        disconnectNode: (...args) => mockDisconnectNode(...args),
-        toSelectMode: (...args) => toSelectMode(...args),
-      }
-    }
-  }),
+      Editor: {
+        deleteSelected: (...args) => deleteSelected(...args),
+      },
+      Canvas: {
+        pathActions: {
+          setSharp: (...args) => mockSetSharp(...args),
+          setRound: (...args) => mockSetRound(...args),
+          disconnectNode: (...args) => mockDisconnectNode(...args),
+          toSelectMode: (...args) => toSelectMode(...args),
+        },
+      },
+    }),
 }));
 
 describe('test PathEditPanel', () => {

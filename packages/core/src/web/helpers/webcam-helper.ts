@@ -1,8 +1,8 @@
-import communicator from 'implementations/communicator';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
+import communicator from '@app/implementations/communicator';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 
-import { selectUsbDevice } from 'app/components/dialogs/UsbDeviceSelector';
+import { selectUsbDevice } from '@core/app/components/dialogs/UsbDeviceSelector';
 
 const askForPermission = async (): Promise<boolean> => {
   if (isWeb()) {
@@ -23,7 +23,7 @@ const askForPermission = async (): Promise<boolean> => {
 const listDevices = async (): Promise<MediaDeviceInfo[]> => {
   let devices = await navigator.mediaDevices.enumerateDevices();
   devices = devices.filter(
-    (device) => device.kind === 'videoinput' && device.label.startsWith('USB')
+    (device) => device.kind === 'videoinput' && device.label.startsWith('USB'),
   );
   return devices;
 };
@@ -145,7 +145,7 @@ const connectWebcam = async (
     width?: number;
     height?: number;
     timeout?: number;
-  } = {}
+  } = {},
 ): Promise<WebCamConnection> => {
   const { timeout = 5000 } = opts;
   const connection = new WebCamConnection(opts);

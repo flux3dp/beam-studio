@@ -3,12 +3,12 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import webcamHelper, { WebCamConnection } from 'helpers/webcam-helper';
-import { calibrateChessboard } from 'helpers/camera-calibration-helper';
-import { FisheyeCameraParametersV3Cali } from 'interfaces/FisheyePreview';
+import alertCaller from '@core/app/actions/alert-caller';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import webcamHelper, { WebCamConnection } from '@core/helpers/webcam-helper';
+import { calibrateChessboard } from '@core/helpers/camera-calibration-helper';
+import { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from './Chessboard.module.scss';
 import Title from '../common/Title';

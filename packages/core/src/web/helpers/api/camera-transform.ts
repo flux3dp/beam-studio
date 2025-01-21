@@ -1,9 +1,9 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import arrayBuffer from 'helpers/arrayBuffer';
-import Websocket from 'helpers/websocket';
-import { FisheyeCameraParameters, PerspectiveGrid } from 'interfaces/FisheyePreview';
-import { WrappedWebSocket } from 'interfaces/WebSocket';
+import arrayBuffer from '@core/helpers/arrayBuffer';
+import Websocket from '@core/helpers/websocket';
+import { FisheyeCameraParameters, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+import { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 class CameraTransformAPI extends EventEmitter {
   private ws: WrappedWebSocket;

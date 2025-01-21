@@ -1,6 +1,6 @@
-import imageEdit from 'helpers/image-edit';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import imageEdit from '@core/helpers/image-edit';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas: ISVGCanvas;
 
@@ -12,7 +12,7 @@ const handleFinish = (
   element: SVGImageElement,
   src: string,
   base64: string,
-  attrs: Record<string, string | number> = {}
+  attrs: Record<string, string | number> = {},
 ): void => {
   const changes: Record<string, string | number> = {
     origImage: src,

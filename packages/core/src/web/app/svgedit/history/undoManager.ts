@@ -1,4 +1,4 @@
-import currentFileManager from 'app/svgedit/currentFileManager';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import { IBatchCommand, IHistoryHandler, IUndoManager } from 'interfaces/IHistory';
 
 import history, { BaseHistoryCommand } from './history';

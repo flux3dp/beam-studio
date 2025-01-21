@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 import { Tooltip } from 'antd';
 import { sprintf } from 'sprintf-js';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import moduleBoundary from 'app/constants/layer-module/module-boundary';
-import LayerModule from 'app/constants/layer-module/layer-modules';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import useWorkarea from 'helpers/hooks/useWorkarea';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import styles from './WorkAreaInfo.module.scss';
 
 interface Props {
@@ -54,7 +54,7 @@ export default function WorkAreaInfo({ isInch }: Props): JSX.Element {
       <Tooltip
         title={sprintf(
           tBoxGen.max_dimension_tooltip,
-          `${(workareaLimit / unitRatio).toFixed(decimal)}${unit}`
+          `${(workareaLimit / unitRatio).toFixed(decimal)}${unit}`,
         )}
         placement="bottomLeft"
         arrow={{ pointAtCenter: true }}

@@ -9,27 +9,27 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import ArrayModal from 'app/views/beambox/ToolPanels/ArrayModal';
-import Constant from 'app/actions/beambox/constant';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import Dialog from 'app/actions/dialog-caller';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import IntervalPanel from 'app/views/beambox/ToolPanels/Interval';
-import NestGAPanel from 'app/views/beambox/ToolPanels/NestGAPanel';
-import NestRotationPanel from 'app/views/beambox/ToolPanels/NestRotationPanel';
-import NestSpacingPanel from 'app/views/beambox/ToolPanels/NestSpacingPanel';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import OffsetCornerPanel from 'app/views/beambox/ToolPanels/OffsetCornerPanel';
-import OffsetDirectionPanel from 'app/views/beambox/ToolPanels/OffsetDirectionPanel';
-import OffsetDistancePanel from 'app/views/beambox/ToolPanels/OffsetDistancePanel';
-import OffsetModal from 'app/views/beambox/ToolPanels/OffsetModal';
-import offsetElements from 'helpers/clipper/offset';
-import RowColumnPanel from 'app/views/beambox/ToolPanels/RowColumn';
-import storage from 'implementations/storage';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { isMobile } from 'helpers/system-helper';
-import { ToolPanelType } from 'app/actions/beambox/toolPanelsController';
+import ArrayModal from '@core/app/views/beambox/ToolPanels/ArrayModal';
+import Constant from '@core/app/actions/beambox/constant';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import Dialog from '@core/app/actions/dialog-caller';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import IntervalPanel from '@core/app/views/beambox/ToolPanels/Interval';
+import NestGAPanel from '@core/app/views/beambox/ToolPanels/NestGAPanel';
+import NestRotationPanel from '@core/app/views/beambox/ToolPanels/NestRotationPanel';
+import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPanel';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import OffsetCornerPanel from '@core/app/views/beambox/ToolPanels/OffsetCornerPanel';
+import OffsetDirectionPanel from '@core/app/views/beambox/ToolPanels/OffsetDirectionPanel';
+import OffsetDistancePanel from '@core/app/views/beambox/ToolPanels/OffsetDistancePanel';
+import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
+import offsetElements from '@core/helpers/clipper/offset';
+import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
+import storage from '@app/implementations/storage';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { isMobile } from '@core/helpers/system-helper';
+import { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
 
 let svgCanvas;
 
@@ -258,7 +258,7 @@ class ToolPanel extends React.Component<Props> {
           offsetElements(
             this.offset.dir,
             _mm2pixel(this.offset.distance),
-            this.offset.cornerType as 'sharp' | 'round'
+            this.offset.cornerType as 'sharp' | 'round',
           );
           unmount();
           svgCanvas.setMode('select');
@@ -319,7 +319,7 @@ class ToolPanel extends React.Component<Props> {
               await onOk();
               closeModal();
             }}
-          />
+          />,
         );
         break;
       case 'offset':
@@ -337,7 +337,7 @@ class ToolPanel extends React.Component<Props> {
               await onOk();
               closeModal();
             }}
-          />
+          />,
         );
         break;
       default:

@@ -1,12 +1,12 @@
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from 'app/actions/progress-caller';
-import { FisheyeCameraParameters, FisheyePreviewManager } from 'interfaces/FisheyePreview';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import progressCaller from '@core/app/actions/progress-caller';
+import { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
@@ -38,7 +38,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       } catch (err) {
         console.log('Fail to fetchFisheyeParams', err?.message);
         throw new Error(
-          'Unable to get fisheye parameters, please make sure you have calibrated the camera'
+          'Unable to get fisheye parameters, please make sure you have calibrated the camera',
         );
       }
       if (!('v' in params)) {
@@ -109,7 +109,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     return res;
   };
 
-  public previewFullWorkarea? =  async(): Promise<boolean> => {
+  public previewFullWorkarea? = async (): Promise<boolean> => {
     const res = await this.preview();
     return res;
   };

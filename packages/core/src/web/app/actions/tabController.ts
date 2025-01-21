@@ -1,12 +1,12 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import communicator from 'implementations/communicator';
-import currentFileManager from 'app/svgedit/currentFileManager';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { Tab } from 'interfaces/Tab';
-import { TabEvents } from 'app/constants/tabConstants';
+import communicator from '@app/implementations/communicator';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { Tab } from '@core/interfaces/Tab';
+import { TabEvents } from '@core/app/constants/tabConstants';
 
 class TabController extends EventEmitter {
   private currentInfo: { title: string; isCloud: boolean } = null;

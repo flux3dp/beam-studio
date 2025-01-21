@@ -1,12 +1,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import Monitor from './Monitor';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 jest.mock('./MonitorCamera', () => ({ device }: any) => (
@@ -16,7 +16,7 @@ jest.mock('./MonitorFilelist', () => ({ path }: any) => <div>Dummy MonitorFileli
 jest.mock('./MonitorTabExtraContent', () => () => <div>Dummy MonitorTabExtraContent</div>);
 jest.mock('./MonitorTask', () => () => <div>Dummy MonitorTask</div>);
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   topmenu: { file: { label: 'label' } },
   monitor: {
     camera: 'camera',
@@ -33,7 +33,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockGetDisplayStatus = jest.fn();
-jest.mock('helpers/monitor-status', () => ({
+jest.mock('@core/helpers/monitor-status', () => ({
   getDisplayStatus: (...args) => mockGetDisplayStatus(...args),
 }));
 
@@ -49,7 +49,7 @@ const mockContext = {
 };
 
 const mockIsNorthAmerica = jest.fn();
-jest.mock('helpers/locale-helper', () => ({
+jest.mock('@core/helpers/locale-helper', () => ({
   get isNorthAmerica() {
     return mockIsNorthAmerica();
   },
@@ -65,7 +65,7 @@ describe('test Monitor', () => {
     const { baseElement } = render(
       <MonitorContext.Provider value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(baseElement).toMatchSnapshot();
     expect(mockGetDisplayStatus).toBeCalledTimes(1);
@@ -77,7 +77,7 @@ describe('test Monitor', () => {
     const { baseElement } = render(
       <MonitorContext.Provider value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(baseElement).toMatchSnapshot();
     expect(mockGetDisplayStatus).toBeCalledTimes(1);
@@ -88,7 +88,7 @@ describe('test Monitor', () => {
     const { baseElement } = render(
       <MonitorContext.Provider value={{ ...mockContext, uploadProgress: 50 } as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(baseElement).toMatchSnapshot();
     expect(mockGetDisplayStatus).not.toBeCalled();
@@ -98,7 +98,7 @@ describe('test Monitor', () => {
     const { baseElement } = render(
       <MonitorContext.Provider value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
     expect(mockOnClose).toBeCalledTimes(1);
@@ -108,7 +108,7 @@ describe('test Monitor', () => {
     const { getByText, rerender } = render(
       <MonitorContext.Provider value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     fireEvent.click(getByText('camera'));
     expect(mockSetMonitorMode).toBeCalledTimes(1);
@@ -116,7 +116,7 @@ describe('test Monitor', () => {
     rerender(
       <MonitorContext.Provider value={{ ...mockContext, mode: Mode.CAMERA } as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     fireEvent.click(getByText('label'));
     expect(mockSetMonitorMode).toBeCalledTimes(2);

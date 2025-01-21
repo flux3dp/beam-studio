@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 
-import Controls from 'app/components/settings/Control';
-import isDev from 'helpers/is-dev';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
+import Controls from '@core/app/components/settings/Control';
+import isDev from '@core/helpers/is-dev';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   getBeamboxPreferenceEditingValue: (key: string) => any;
@@ -20,7 +20,7 @@ function Engraving({
   const lang = useI18n();
   const fastGradientOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('fast_gradient') !== false,
-    { lang }
+    { lang },
   );
 
   const reverseEngravingOptions = onOffOptionFactory(
@@ -29,7 +29,7 @@ function Engraving({
       onLabel: lang.settings.bottom_up,
       offLabel: lang.settings.top_down,
       lang,
-    }
+    },
   );
 
   return (

@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Constant from 'app/actions/beambox/constant';
-import i18n from 'helpers/i18n';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+import Constant from '@core/app/actions/beambox/constant';
+import i18n from '@core/helpers/i18n';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './RectOptions.module.scss';
 

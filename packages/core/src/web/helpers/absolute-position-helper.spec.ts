@@ -1,6 +1,6 @@
 import { calculateTop, TopRef, calculateRight, RightRef } from './absolute-position-helper';
 
-jest.mock('app/constants/layout-constants', () => ({
+jest.mock('@core/app/constants/layout-constants', () => ({
   topBarHeight: 10,
   layerListHeight: 20,
   titlebarHeight: 30,
@@ -9,12 +9,12 @@ jest.mock('app/constants/layout-constants', () => ({
 }));
 
 const mockBeamboxPreferenceRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockBeamboxPreferenceRead(...args),
 }));
 
 const mockIsDev = jest.fn();
-jest.mock('helpers/is-dev', () => () => mockIsDev());
+jest.mock('@core/helpers/is-dev', () => () => mockIsDev());
 
 describe('test calculateTop', () => {
   test('TopRef.WINDOW', () => {
@@ -35,7 +35,7 @@ describe('test calculateTop', () => {
   test('TopRef.LAYER_PARAMS', () => {
     jest.spyOn(document, 'querySelector').mockImplementation(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      () => ({ getBoundingClientRect: jest.fn().mockReturnValueOnce({ top: 300 }) } as any)
+      () => ({ getBoundingClientRect: jest.fn().mockReturnValueOnce({ top: 300 }) } as any),
     );
     const result = calculateTop(10, TopRef.LAYER_PARAMS);
     expect(result).toEqual(310);

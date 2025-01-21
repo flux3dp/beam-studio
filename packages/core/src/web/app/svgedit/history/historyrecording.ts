@@ -7,7 +7,7 @@
  * Copyright(c) 2016 Flint O'Brien
  */
 
-import history from 'app/svgedit/history/history';
+import history from '@core/app/svgedit/history/history';
 import { IBatchCommand, ICommand, IUndoManager } from 'interfaces/IHistory';
 
 const { svgedit } = window;
@@ -71,7 +71,9 @@ class HistoryRecordingService {
    * Private function to add a command to the history or current batch command.
    */
   private addCommand(cmd: ICommand) {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     if (this.currentBatchCommand) {
       this.currentBatchCommand.addSubCommand(cmd);
     } else {
@@ -85,7 +87,9 @@ class HistoryRecordingService {
    * Requires a corresponding call to endBatchCommand. Start and end commands can be nested.
    */
   startBatchCommand(text: string): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     this.currentBatchCommand = new history.BatchCommand(text);
     this.batchCommandStack.push(this.currentBatchCommand);
     return this;
@@ -95,7 +99,9 @@ class HistoryRecordingService {
    * End a batch command and add it to the history or a parent batch command.
    */
   endBatchCommand(): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     if (this.currentBatchCommand) {
       const batchCommand = this.currentBatchCommand;
       this.batchCommandStack.pop();
@@ -119,7 +125,9 @@ class HistoryRecordingService {
     oldParent: Node | Element,
     text?: string,
   ): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     this.addCommand(new history.MoveElementCommand(elem, oldNextSibling, oldParent, text));
     return this;
   }
@@ -130,7 +138,9 @@ class HistoryRecordingService {
    * @param text - An optional string visible to user related to this change
    */
   insertElement(elem: Element | SVGGraphicsElement, text?: string): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     this.addCommand(new history.InsertElementCommand(elem, text));
     return this;
   }
@@ -148,7 +158,9 @@ class HistoryRecordingService {
     oldParent: Node | Element,
     text?: string,
   ): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     this.addCommand(new history.RemoveElementCommand(elem, oldNextSibling, oldParent, text));
     return this;
   }
@@ -165,7 +177,9 @@ class HistoryRecordingService {
     attrs: { [key: string]: any },
     text?: string,
   ): HistoryRecordingService {
-    if (!this.undoManager) { return this; }
+    if (!this.undoManager) {
+      return this;
+    }
     this.addCommand(new history.ChangeElementCommand(elem, attrs, text));
     return this;
   }

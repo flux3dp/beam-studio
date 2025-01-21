@@ -1,23 +1,23 @@
 /* eslint-disable no-fallthrough */
 import * as paper from 'paper';
 
-import * as BezierFitCurve from 'helpers/bezier-fit-curve';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import getClipperLib from 'helpers/clipper/getClipperLib';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ISVGPathElement from 'interfaces/ISVGPathElement';
-import PathNodePoint from 'app/svgedit/path/PathNodePoint';
-import SegmentControlPoint from 'app/svgedit/path/SegmentControlPoint';
-import selector from 'app/svgedit/selector';
-import shortcuts from 'helpers/shortcuts';
-import updateElementColor from 'helpers/color/updateElementColor';
-import workareaManager from 'app/svgedit/workarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ICommand } from 'interfaces/IHistory';
-import { ISVGPath, ISVGPathSeg } from 'interfaces/ISVGPath';
-import { isMobile } from 'helpers/system-helper';
+import * as BezierFitCurve from '@core/helpers/bezier-fit-curve';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import getClipperLib from '@core/helpers/clipper/getClipperLib';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ISVGPathElement from '@core/interfaces/ISVGPathElement';
+import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
+import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
+import selector from '@core/app/svgedit/selector';
+import shortcuts from '@core/helpers/shortcuts';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ICommand } from '@core/interfaces/IHistory';
+import { ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';
+import { isMobile } from '@core/helpers/system-helper';
 
 import Path from '../path/Path';
 import Segment from '../path/Segment';
@@ -301,7 +301,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
       // set stretchy line to first point
       stretchy.setAttribute(
         'd',
-        ['M', ...wrapPrecision([mouseX, mouseY, mouseX, mouseY])].join(' ')
+        ['M', ...wrapPrecision([mouseX, mouseY, mouseX, mouseY])].join(' '),
       );
       index = subpath ? svgedit.path.path.segs.length : 0;
       svgedit.path.addDrawingPoint(index, mouseX, mouseY, x, y);
@@ -357,7 +357,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
               sSegment.x1 / currentZoom,
               sSegment.y1 / currentZoom,
               absX,
-              absY
+              absY,
             );
           }
 
@@ -418,7 +418,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
             sSegment.x1 / currentZoom,
             sSegment.y1 / currentZoom,
             sSegment.x2 / currentZoom,
-            sSegment.y2 / currentZoom
+            sSegment.y2 / currentZoom,
           );
         }
 
@@ -518,7 +518,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
           height: 0,
           display: 'inline',
         },
-        100
+        100,
       );
     }
   }
@@ -607,14 +607,14 @@ const mouseMove = (mouseX: number, mouseY: number) => {
             6,
             1,
             [mouseX, mouseY, prevX * currentZoom, prevY * currentZoom, mouseX, mouseY],
-            stretchy
+            stretchy,
           );
         } else if (firstCtrl) {
           svgedit.path.replacePathSeg(
             6,
             1,
             [mouseX, mouseY, firstCtrl[0], firstCtrl[1], mouseX, mouseY],
-            stretchy
+            stretchy,
           );
         } else {
           svgedit.path.replacePathSeg(4, 1, [mouseX, mouseY], stretchy);
@@ -632,14 +632,14 @@ const mouseMove = (mouseX: number, mouseY: number) => {
         x: selectedPath.dragging[0],
         y: selectedPath.dragging[1],
       },
-      selectedPath
+      selectedPath,
     );
     const mpt = svgedit.path.getPointFromGrip(
       {
         x: mouseX,
         y: mouseY,
       },
-      selectedPath
+      selectedPath,
     );
     const diffX = mpt.x - pt.x;
     const diffY = mpt.y - pt.y;
@@ -942,7 +942,7 @@ const zoomChange = (oldZoom: number, newZoom: number) => {
               seg1.x2 * zoomRatio,
               seg1.y2 * zoomRatio,
             ],
-            stretchy
+            stretchy,
           );
         } else {
           svgedit.path.replacePathSeg(4, 1, [seg1.x * zoomRatio, seg1.y * zoomRatio], stretchy);
@@ -1177,7 +1177,7 @@ const pathDSegment = (
   letter: string,
   points: Array<number[]>,
   morePoints?: number[],
-  lastPoint?: number[]
+  lastPoint?: number[],
 ): string => {
   $.each(points, (i, pnt) => {
     points[i] = svgedit.units.shortFloat(pnt);
@@ -1365,7 +1365,7 @@ const convertPathSegToDPath = (segList: ISVGPathSeg[], toRel: boolean) => {
           letter,
           [[seg.r1, seg.r2]],
           [seg.angle, seg.largeArcFlag ? 1 : 0, seg.sweepFlag ? 1 : 0],
-          [x, y]
+          [x, y],
         );
         break;
       case 16: // absolute smooth cubic (S)
@@ -1558,7 +1558,7 @@ const disconnectNode = () => {
   selectedPath.storeD();
   const [selectedIndex] = selection;
   const newSegIndex = selectedPath.disconnectNode(
-    selectedPath.nodePoints[selectedIndex].prevSeg?.index
+    selectedPath.nodePoints[selectedIndex].prevSeg?.index,
   );
   selectedPath.endChanges('Disconnect');
   selectedPath.init();

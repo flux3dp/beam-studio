@@ -1,19 +1,20 @@
-import { IDeviceInfo } from 'interfaces/IDevice';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { axiosFluxId } from './api/flux-id';
 import versionCompare from './version-compare';
 
 export default async function checkFirmware(
   device: IDeviceInfo,
-): Promise<{ needUpdate: boolean, [key: string]: string | boolean }> {
+): Promise<{ needUpdate: boolean; [key: string]: string | boolean }> {
   if (!navigator.onLine) {
     throw new Error('Offline');
   }
   try {
-    const key = {
-      fhexa1: 'hexa-latest',
-      ado1: 'ador-latest',
-    }[device.model.toLowerCase()] || 'firmware-latest';
+    const key =
+      {
+        fhexa1: 'hexa-latest',
+        ado1: 'ador-latest',
+      }[device.model.toLowerCase()] || 'firmware-latest';
     const resp = await axiosFluxId.get(`api/check-update?key=${key}`);
     console.log(resp);
     const { data } = resp;

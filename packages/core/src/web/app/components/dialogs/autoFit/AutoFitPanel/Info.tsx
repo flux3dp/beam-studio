@@ -1,12 +1,12 @@
 import React, { memo, useEffect, useRef } from 'react';
 
-import AlertIcons from 'app/icons/alerts/AlertIcons';
-import browser from 'implementations/browser';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import rotateBBox from 'app/svgedit/utils/rotateBBox';
-import useI18n from 'helpers/useI18n';
-import { getRotationAngle } from 'app/svgedit/transform/rotation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import AlertIcons from '@core/app/icons/alerts/AlertIcons';
+import browser from '@app/implementations/browser';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import rotateBBox from '@core/app/svgedit/utils/rotateBBox';
+import useI18n from '@core/helpers/useI18n';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './Info.module.scss';
 

@@ -1,9 +1,9 @@
-import { CHUCK_ROTARY_DIAMETER, RotaryType, SupportInfo } from 'app/constants/add-on';
+import { CHUCK_ROTARY_DIAMETER, RotaryType, SupportInfo } from '@core/app/constants/add-on';
 
 import getRotaryRatio from './get-rotary-ratio';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
@@ -40,7 +40,7 @@ describe('test getRotaryRatio', () => {
           ...mockSupportInfo.rotary,
           mirror: true,
         },
-      })
+      }),
     ).toBe(-1);
   });
 
@@ -64,7 +64,7 @@ describe('test getRotaryRatio', () => {
           ...mockSupportInfo.rotary,
           mirror: true,
         },
-      })
+      }),
     ).toBeCloseTo(-0.5);
   });
 });

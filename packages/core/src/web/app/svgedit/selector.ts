@@ -7,12 +7,12 @@
  * Copyright(c) 2010 Alexis Deveria
  * Copyright(c) 2010 Jeff Schiller
  */
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import storage from 'implementations/storage';
-import units from 'helpers/units';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { isMobile } from 'helpers/system-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import storage from '@app/implementations/storage';
+import units from '@core/helpers/units';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { isMobile } from '@core/helpers/system-helper';
 
 import workareaManager from './workarea';
 import { getRotationAngle } from './transform/rotation';
@@ -163,7 +163,7 @@ class Selector {
 
     this.rotateGripConnector = document.createElementNS(
       NS.SVG,
-      'line'
+      'line',
     ) as unknown as SVGLineElement;
     this.rotateGripConnector.setAttribute('id', 'selectorGrip_rotateconnector');
     this.rotateGripConnector.setAttribute('stroke', '#0000FF');
@@ -179,7 +179,7 @@ class Selector {
     this.rotateGripTop.setAttribute('stroke-width', '2');
     this.rotateGripTop.setAttribute(
       'style',
-      `cursor:url(${config.imgPath}rotate.png) 12 12, auto;`
+      `cursor:url(${config.imgPath}rotate.png) 12 12, auto;`,
     );
     this.rotateGripTop.setAttribute('class', 'hidden-mobile');
     this.gripsGroup.appendChild(this.rotateGripTop);
@@ -292,7 +292,7 @@ class Selector {
       y * currentZoom,
       width * currentZoom,
       height * currentZoom,
-      m
+      m,
     );
     let { aabox } = transformedBBox;
 
@@ -309,7 +309,7 @@ class Selector {
         y * currentZoom,
         width * currentZoom,
         height * currentZoom,
-        m
+        m,
       );
       aabox = transformedBBox.aabox;
     }
@@ -379,7 +379,7 @@ class Selector {
       const rotY = y + height + 2 * gripRadius;
       this.rotateGripBottom.setAttribute(
         'transform',
-        `translate(${rotX} ${rotY}) rotate(${-angle} ${btnRadius + btnMargin} ${btnRadius})`
+        `translate(${rotX} ${rotY}) rotate(${-angle} ${btnRadius + btnMargin} ${btnRadius})`,
       );
       this.updateDimensionInfo();
     } else {
@@ -531,7 +531,6 @@ export class SelectorManager {
     });
   }
 
-
   resizeSelectors(elems: Element[]): void {
     for (let i = 0; i < elems.length; i += 1) {
       const elem = elems[i];
@@ -591,7 +590,7 @@ export class SelectorManager {
       this.rubberBandBox.setAttribute('display', 'none');
       this.rubberBandBox.setAttribute(
         'style',
-        'pointer-events:none;will-change: transform, x, y, width, height, scroll-position;'
+        'pointer-events:none;will-change: transform, x, y, width, height, scroll-position;',
       );
       this.selectorParentGroup.appendChild(this.rubberBandBox);
     }

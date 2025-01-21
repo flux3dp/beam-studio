@@ -6,16 +6,16 @@ import ConfigPanelContext from './ConfigPanelContext';
 import SaveConfigButton from './SaveConfigButton';
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockPromptDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   promptDialog: (...args) => mockPromptDialog(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -29,7 +29,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeData: (...args) => mockWriteData(...args),
   getConfigKeys: () => [
     'speed',
@@ -45,7 +45,7 @@ jest.mock('helpers/layer/layer-config-helper', () => ({
 
 const mockGetAllPresets = jest.fn();
 const mockSavePreset = jest.fn();
-jest.mock('helpers/presets/preset-helper', () => ({
+jest.mock('@core/helpers/presets/preset-helper', () => ({
   getAllPresets: (...args) => mockGetAllPresets(...args),
   savePreset: (...args) => mockSavePreset(...args),
 }));
@@ -77,7 +77,7 @@ describe('test SaveConfigButton', () => {
         }}
       >
         <SaveConfigButton />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -93,7 +93,7 @@ describe('test SaveConfigButton', () => {
         }}
       >
         <SaveConfigButton />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockPromptDialog).not.toBeCalled();
     const btn = container.querySelector('.container');

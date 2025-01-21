@@ -2,19 +2,22 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { FisheyeCameraParametersV1 } from 'interfaces/FisheyePreview';
+import { FisheyeCameraParametersV1 } from '@core/interfaces/FisheyePreview';
 
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import moduleOffsets from 'app/constants/layer-module/module-offsets';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 
 const mockFisheyePreviewManagerV2 = jest.fn();
-jest.mock('app/actions/camera/preview-helper/FisheyePreviewManagerV2', () => mockFisheyePreviewManagerV2);
+jest.mock(
+  '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2',
+  () => mockFisheyePreviewManagerV2,
+);
 
 import Align from './Align';
 import CalibrationType from './calibrationTypes';
 
 const mockPopUpError = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
@@ -22,7 +25,7 @@ const mockSetFisheyeMatrix = jest.fn();
 const mockTakeOnePicture = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockDisconnectCamera = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   setFisheyeMatrix: (...args) => mockSetFisheyeMatrix(...args),
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
   connectCamera: (...args) => mockConnectCamera(...args),
@@ -36,7 +39,7 @@ jest.mock('helpers/device-master', () => ({
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
@@ -46,15 +49,15 @@ jest.mock(
   './getPerspectiveForAlign',
   () =>
     (...args) =>
-      mockGetPerspectiveForAlign(...args)
+      mockGetPerspectiveForAlign(...args),
 );
 
 const mockSetFisheyeConfig = jest.fn();
-jest.mock('helpers/camera-calibration-helper', () => ({
+jest.mock('@core/helpers/camera-calibration-helper', () => ({
   setFisheyeConfig: (...args) => mockSetFisheyeConfig(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   buttons: {
     back: 'back',
     done: 'done',
@@ -69,7 +72,7 @@ jest.mock('helpers/useI18n', () => () => ({
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
@@ -113,7 +116,7 @@ describe('test Align', () => {
         onClose={mockOnClose}
         onBack={mockOnBack}
         fisheyeParam={mockFishEyeParam}
-      />
+      />,
     );
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
@@ -141,7 +144,7 @@ describe('test Align', () => {
         onClose={mockOnClose}
         onBack={mockOnBack}
         fisheyeParam={mockFishEyeParam}
-      />
+      />,
     );
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
@@ -163,7 +166,7 @@ describe('test Align', () => {
         onClose={mockOnClose}
         onBack={mockOnBack}
         fisheyeParam={mockFishEyeParam}
-      />
+      />,
     );
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
@@ -214,11 +217,11 @@ describe('test Align', () => {
         onClose={mockOnClose}
         onBack={mockOnBack}
         fisheyeParam={mockFishEyeParam}
-      />
+      />,
     );
     expect(baseElement.querySelector('img').src).toBe('');
     await waitFor(() => {
-      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear')
+      expect(baseElement.querySelector('.ant-modal')).not.toHaveClass('ant-zoom-appear');
       expect(baseElement.querySelector('img').src).not.toBe('');
     });
     expect(mockOpenNonstopProgress).toBeCalledTimes(2);
@@ -249,7 +252,10 @@ describe('test Align', () => {
     fireEvent.click(getByText('done'));
     expect(mockWrite).toBeCalledTimes(1);
     expect(mockWrite).toHaveBeenLastCalledWith('module-offsets', {
-      [LayerModule.PRINTER]: [moduleOffsets[LayerModule.PRINTER][0] - 20, moduleOffsets[LayerModule.PRINTER][1] + 20],
+      [LayerModule.PRINTER]: [
+        moduleOffsets[LayerModule.PRINTER][0] - 20,
+        moduleOffsets[LayerModule.PRINTER][1] + 20,
+      ],
     });
   });
 });

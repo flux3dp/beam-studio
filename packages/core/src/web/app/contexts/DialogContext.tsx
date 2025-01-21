@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import isWeb from 'helpers/is-web';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isWeb from '@core/helpers/is-web';
 
 export const DialogContext = React.createContext({
   dialogComponents: [],
@@ -11,8 +11,8 @@ export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
 export class DialogContextProvider extends React.Component<any> {
   private dialogComponents: {
-    id: string,
-    component: JSX.Element
+    id: string;
+    component: JSX.Element;
   }[];
 
   constructor(props) {
@@ -41,9 +41,12 @@ export class DialogContextProvider extends React.Component<any> {
     this.forceUpdate();
   };
 
-  isIdExist = (id: string, response: {
-    isIdExist: boolean,
-  }): void => {
+  isIdExist = (
+    id: string,
+    response: {
+      isIdExist: boolean;
+    },
+  ): void => {
     response.isIdExist = this.dialogComponents.some((dialog) => dialog.id === id);
   };
 

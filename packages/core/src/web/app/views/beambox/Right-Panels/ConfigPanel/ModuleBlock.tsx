@@ -1,30 +1,30 @@
 import React, { memo, useContext, useEffect } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConfig from 'helpers/api/alert-config';
-import alertConstants from 'app/constants/alert-constants';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import moduleBoundaryDrawer from 'app/actions/canvas/module-boundary-drawer';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import presetHelper from 'helpers/presets/preset-helper';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import Select from 'app/widgets/AntdSelect';
-import toggleFullColorLayer from 'helpers/layer/full-color/toggleFullColorLayer';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import moduleBoundaryDrawer from '@core/app/actions/canvas/module-boundary-drawer';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import Select from '@core/app/widgets/AntdSelect';
+import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import {
   applyPreset,
   baseConfig,
   getData,
   writeDataLayer,
-} from 'helpers/layer/layer-config-helper';
-import { getLayerElementByName } from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
+} from '@core/helpers/layer/layer-config-helper';
+import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './ModuleBlock.module.scss';

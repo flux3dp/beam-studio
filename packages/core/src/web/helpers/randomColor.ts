@@ -1,4 +1,4 @@
-import colorConstants from 'app/constants/color-constants';
+import colorConstants from '@core/app/constants/color-constants';
 
 class RandomColorHelper {
   private currentIdx = 0;

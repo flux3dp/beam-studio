@@ -1,6 +1,6 @@
 /* eslint-disable import/first */
 const mockEmit = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit: mockEmit,
   }),

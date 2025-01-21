@@ -5,45 +5,45 @@ import ConfigPanelContext from './ConfigPanelContext';
 import SingleColorBlock from './SingleColorBlock';
 
 const mockBatchCommand = jest.fn();
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: function BatchCommand(...args) {
     return mockBatchCommand(...args);
   },
 }));
 
 const mockUpdateLayerPanel = jest.fn();
-jest.mock('app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
   updateLayerPanel: (...args) => mockUpdateLayerPanel(...args),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
 jest.mock(
-  'helpers/layer/full-color/toggleFullColorLayer',
+  '@core/helpers/layer/full-color/toggleFullColorLayer',
   () =>
     (...args) =>
-      mockToggleFullColorLayer(...args)
+      mockToggleFullColorLayer(...args),
 );
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('app/svgedit/history/undoManager', () => ({
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
   addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 const mockGetData = jest.fn();
 const mockGetMultiSelectData = jest.fn();
 const mockWriteDataLayer = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
   getMultiSelectData: (...args) => mockGetMultiSelectData(...args),
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
 
 const mockGetLayerByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -79,7 +79,7 @@ describe('test SingleColorBlock', () => {
         }}
       >
         <SingleColorBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -107,7 +107,7 @@ describe('test SingleColorBlock', () => {
         }}
       >
         <SingleColorBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const btn = container.querySelector('button#single-color');
     fireEvent.click(btn);

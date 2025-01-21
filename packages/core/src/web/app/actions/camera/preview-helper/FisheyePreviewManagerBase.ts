@@ -1,13 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import deviceMaster from 'helpers/device-master';
-import dialogCaller from 'app/actions/dialog-caller';
-import progressCaller from 'app/actions/progress-caller';
-import i18n from 'helpers/i18n';
-import {
-  FisheyeCameraParameters,
-  FisheyePreviewManager,
-} from 'interfaces/FisheyePreview';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import deviceMaster from '@core/helpers/device-master';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import progressCaller from '@core/app/actions/progress-caller';
+import i18n from '@core/helpers/i18n';
+import { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import getLevelingData from './getLevelingData';
 

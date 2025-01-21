@@ -1,32 +1,32 @@
 /* eslint-disable no-case-declarations */
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import canvasEvents from 'app/actions/canvas/canvasEvents';
-import clipboard, { isValidNativeClipboard } from 'app/svgedit/operations/clipboard';
-import constant from 'app/actions/beambox/constant';
-import createNewText from 'app/svgedit/text/createNewText';
-import curveEngravingModeController from 'app/actions/canvas/curveEngravingModeController';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import isWeb from 'helpers/is-web';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import SymbolMaker from 'helpers/symbol-maker';
-import selector from 'app/svgedit/selector';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import TopBarHintsController from 'app/views/beambox/TopBar/contexts/TopBarHintsController';
-import TutorialConstants from 'app/constants/tutorial-constants';
-import textEdit from 'app/svgedit/text/textedit';
-import touchEvents from 'app/svgedit/touchEvents';
-import updateElementColor from 'helpers/color/updateElementColor';
-import workareaManager from 'app/svgedit/workarea';
-import * as LayerHelper from 'helpers/layer/layer-helper';
-import * as TutorialController from 'app/views/tutorials/tutorialController';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { MouseButtons } from 'app/constants/mouse-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import canvasEvents from '@core/app/actions/canvas/canvasEvents';
+import clipboard, { isValidNativeClipboard } from '@core/app/svgedit/operations/clipboard';
+import constant from '@core/app/actions/beambox/constant';
+import createNewText from '@core/app/svgedit/text/createNewText';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import isWeb from '@core/helpers/is-web';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import selector from '@core/app/svgedit/selector';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarHintsController from '@core/app/views/beambox/TopBar/contexts/TopBarHintsController';
+import TutorialConstants from '@core/app/constants/tutorial-constants';
+import textEdit from '@core/app/svgedit/text/textedit';
+import touchEvents from '@core/app/svgedit/touchEvents';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import workareaManager from '@core/app/svgedit/workarea';
+import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import * as TutorialController from '@core/app/views/tutorials/tutorialController';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { MouseButtons } from '@core/app/constants/mouse-constants';
 
 import wheelEventHandlerGenerator from './wheelEventHandler';
 
@@ -110,7 +110,7 @@ const setRubberBoxStart = () => {
       height: 0,
       display: 'inline',
     },
-    100
+    100,
   );
 };
 
@@ -655,7 +655,7 @@ const mouseDown = async (evt: MouseEvent) => {
       selectedElements,
       ObjectPanelController,
     },
-    true
+    true,
   );
 
   if (selectedElements.length > 0 && selectedElements[0]) {
@@ -872,7 +872,7 @@ const mouseMove = (evt: MouseEvent) => {
       if (currentMode === 'select' && !PreviewModeController.isPreviewMode()) {
         const dist = Math.hypot(
           svgCanvas.sensorAreaInfo.x - mouseX,
-          svgCanvas.sensorAreaInfo.y - mouseY
+          svgCanvas.sensorAreaInfo.y - mouseY,
         );
         if (dist < SENSOR_AREA_RADIUS) {
           $('#workarea').css('cursor', 'move');
@@ -906,7 +906,7 @@ const mouseMove = (evt: MouseEvent) => {
         width: Math.abs(mouseX - startMouseX),
         height: Math.abs(mouseY - startMouseY),
       },
-      100
+      100,
     );
   };
 
@@ -1003,7 +1003,7 @@ const mouseMove = (evt: MouseEvent) => {
           x,
           y,
         },
-        1000
+        1000,
       );
       break;
     case 'line':
@@ -1062,7 +1062,7 @@ const mouseMove = (evt: MouseEvent) => {
           x: newX,
           y: newY,
         },
-        1000
+        1000,
       );
       ObjectPanelController.updateDimensionValues({
         x: newX,
@@ -1114,7 +1114,7 @@ const mouseMove = (evt: MouseEvent) => {
           bSpline = getBsplinePoint(parameter);
           sumDistance += Math.sqrt(
             (nextPos.x - bSpline.x) * (nextPos.x - bSpline.x) +
-              (nextPos.y - bSpline.y) * (nextPos.y - bSpline.y)
+              (nextPos.y - bSpline.y) * (nextPos.y - bSpline.y),
           );
           if (sumDistance > THRESHOLD_DIST) {
             newDPath += `${+bSpline.x},${bSpline.y} `;
@@ -1684,7 +1684,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       mouse_y: mouseY,
       isContinuousDrawing,
     },
-    true
+    true,
   );
 
   let startedFlag = svgCanvas.getStarted();
@@ -1854,7 +1854,7 @@ const registerEvents = () => {
       mouseMove,
       mouseUp,
       dblClick,
-      (zoom, staticPoint) => workareaManager.zoom(zoom, staticPoint)
+      (zoom, staticPoint) => workareaManager.zoom(zoom, staticPoint),
     );
   }
 
@@ -1894,7 +1894,7 @@ const registerEvents = () => {
   const wheelEventHandler = wheelEventHandlerGenerator(
     () => workareaManager.zoomRatio,
     (ratio, center) => workareaManager.zoom(ratio, center),
-    { maxZoom: 20 }
+    { maxZoom: 20 },
   );
   container.addEventListener('wheel', wheelEventHandler);
 };

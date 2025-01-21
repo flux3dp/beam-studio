@@ -1,22 +1,26 @@
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import clipboard from 'app/svgedit/operations/clipboard';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ISVGDrawing from 'interfaces/ISVGDrawing';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import randomColor from 'helpers/randomColor';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import updateLayerColorFilter from 'helpers/color/updateLayerColorFilter';
-import { cloneLayerConfig, getData, initLayerConfig } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { moveSelectedToLayer } from 'helpers/layer/moveToLayer';
-import { IBatchCommand, ICommand } from 'interfaces/IHistory';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ISVGDrawing from '@core/interfaces/ISVGDrawing';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import randomColor from '@core/helpers/randomColor';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
+import {
+  cloneLayerConfig,
+  getData,
+  initLayerConfig,
+} from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { moveSelectedToLayer } from '@core/helpers/layer/moveToLayer';
+import { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 const LANG = i18n.lang.beambox.right_panel.layer_panel;
 
@@ -113,7 +117,7 @@ export const getLayerName = (layer: Element): string => {
 // TODO: add unittest
 export const createLayer = (
   name: string,
-  opts?: { hexCode?: string; isFullColor?: boolean; isSubCmd?: boolean }
+  opts?: { hexCode?: string; isFullColor?: boolean; isSubCmd?: boolean },
 ): { layer: SVGGElement; name: string; cmd: IBatchCommand } => {
   const drawing = svgCanvas.getCurrentDrawing();
   const { hexCode, isFullColor = false, isSubCmd = false } = opts || {};
@@ -166,7 +170,7 @@ export const deleteLayers = (layerNames: string[]): void => {
       LANG.layer1,
       null,
       svgcontent,
-      '#333333'
+      '#333333',
     ).getGroup() as Element;
 
     batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
@@ -186,7 +190,7 @@ export const cloneLayer = (
     isSub?: boolean; // if true, do not add command to history
     name?: string; // if provided, use this name instead of auto generated name
     configOnly?: boolean; // if true, only clone layer config
-  }
+  },
 ): { name: string; cmd: ICommand; elem: SVGGElement } | null => {
   const layer = getLayerElementByName(layerName);
   if (!layer) return null;
@@ -253,7 +257,7 @@ export const cloneLayers = (layerNames: string[]): string[] => {
 export const setLayerLock = (
   layerName: string,
   isLocked: boolean,
-  opts: { parentCmd?: IBatchCommand } = {}
+  opts: { parentCmd?: IBatchCommand } = {},
 ): ICommand => {
   const { parentCmd } = opts;
   const layer = getLayerElementByName(layerName);
@@ -288,11 +292,11 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 
 export const showMergeAlert = async (
   baseLayerName: string,
-  layerNames: string[]
+  layerNames: string[],
 ): Promise<boolean> => {
   const targetModule: LayerModule = getData(getLayerElementByName(baseLayerName), 'module');
   const modules = new Set<LayerModule>(
-    layerNames.map((layerName) => getData(getLayerElementByName(layerName), 'module'))
+    layerNames.map((layerName) => getData(getLayerElementByName(layerName), 'module')),
   );
   modules.add(targetModule);
   if (modules.has(LayerModule.PRINTER) && modules.size > 1) {
@@ -320,13 +324,13 @@ export const showMergeAlert = async (
 const mergeLayer = (
   baseLayerName: string,
   layersToBeMerged: string[],
-  shouldInsertBefore: boolean
+  shouldInsertBefore: boolean,
 ): IBatchCommand | null => {
   const baseLayer = getLayerElementByName(baseLayerName);
   if (!baseLayer) return null;
 
   const firstChildOfBase = Array.from(baseLayer.childNodes).find(
-    (node: Element) => !['title', 'filter'].includes(node.tagName)
+    (node: Element) => !['title', 'filter'].includes(node.tagName),
   );
   const batchCmd: IBatchCommand = new history.BatchCommand(`Merge into ${baseLayer}`);
   for (let i = 0; i < layersToBeMerged.length; i += 1) {
@@ -355,7 +359,7 @@ const mergeLayer = (
 
 export const mergeLayers = async (
   layerNames: string[],
-  baseLayerName?: string
+  baseLayerName?: string,
 ): Promise<string | null> => {
   svgCanvas.clearSelection();
   const batchCmd = new history.BatchCommand('Merge Layer(s)');
@@ -386,7 +390,7 @@ export const mergeLayers = async (
 // use insertBefore node[pos], so moving from i to pos i or i+1 means nothing.
 export const moveLayerToPosition = (
   layerName: string,
-  newPosition: number
+  newPosition: number,
 ): { success: boolean; cmd?: ICommand } => {
   const allLayers = document.querySelectorAll('g.layer');
   let layer = null as Element;
@@ -495,7 +499,7 @@ export const getLayerByName = (layerName: string): SVGGElement => {
 export const moveToOtherLayer = (
   destLayer: string,
   callback: () => void,
-  showAlert = true
+  showAlert = true,
 ): void => {
   const moveToLayer = (ok) => {
     if (!ok) return;

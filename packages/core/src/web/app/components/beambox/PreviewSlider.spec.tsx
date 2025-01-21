@@ -2,12 +2,12 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import PreviewSlider from './PreviewSlider';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   editor: {
     opacity: 'Preview Opacity',
     exposure: 'Preview Exposure',
@@ -22,7 +22,7 @@ const mockGetDeviceSetting = jest.fn().mockResolvedValue({
   status: 'ok',
 });
 const mockGetCurrentDevice = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
   getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
   get currentDevice() {
@@ -31,12 +31,12 @@ jest.mock('helpers/device-master', () => ({
 }));
 
 const mockPreviewFullWorkarea = jest.fn();
-jest.mock('app/actions/beambox/preview-mode-controller', () => ({
+jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
   isPreviewModeOn: true,
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
 }));
 
@@ -103,7 +103,7 @@ describe('test PreviewSlider', () => {
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <PreviewSlider />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(bgImage).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
@@ -117,7 +117,7 @@ describe('test PreviewSlider', () => {
     const { container, getByText } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
         <PreviewSlider />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(bgImage).toHaveStyle({ opacity: 1 });
     await waitFor(() => expect(mockGetDeviceSetting).toBeCalledTimes(1));
@@ -141,7 +141,7 @@ describe('test PreviewSlider', () => {
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
         <PreviewSlider />
-      </CanvasContext.Provider>
+      </CanvasContext.Provider>,
     );
     expect(container).toBeEmptyDOMElement();
   });

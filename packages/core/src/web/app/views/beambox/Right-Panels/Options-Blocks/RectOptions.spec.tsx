@@ -1,13 +1,15 @@
 import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { ObjectPanelContextProvider } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import RectOptions from './RectOptions';
 
-jest.mock('app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () => () => <div>DummyInFillBlock</div>);
+jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () => () => (
+  <div>DummyInFillBlock</div>
+));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       right_panel: {
@@ -22,17 +24,17 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => get(...args),
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
 const changeSelectedAttribute = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -55,7 +57,7 @@ describe('should render correctly', () => {
         elem={document.getElementById('flux')}
         rx={0}
         updateDimensionValues={updateDimensionValues}
-      />
+      />,
     );
 
     expect(container).toMatchSnapshot();
@@ -63,7 +65,9 @@ describe('should render correctly', () => {
     fireEvent.blur(container.querySelector('input'));
 
     expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [document.getElementById('flux')]);
+    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [
+      document.getElementById('flux'),
+    ]);
     expect(updateDimensionValues).toHaveBeenCalledTimes(1);
     expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 254 });
   });
@@ -76,7 +80,7 @@ describe('should render correctly', () => {
         elem={document.getElementById('flux')}
         rx={10}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -98,7 +102,7 @@ describe('should render correctly in mobile', () => {
           rx={0}
           updateDimensionValues={updateDimensionValues}
         />
-      </ObjectPanelContextProvider>
+      </ObjectPanelContextProvider>,
     );
     expect(container).toMatchSnapshot();
 
@@ -106,7 +110,9 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(objectPanelItem);
     fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[1]);
     expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [document.getElementById('flux')]);
+    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [
+      document.getElementById('flux'),
+    ]);
     expect(updateDimensionValues).toHaveBeenCalledTimes(1);
     expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 254 });
   });
@@ -119,7 +125,7 @@ describe('should render correctly in mobile', () => {
         elem={document.getElementById('flux')}
         rx={10}
         updateDimensionValues={jest.fn()}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });

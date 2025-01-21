@@ -1,18 +1,18 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import DeviceConstants from 'app/constants/device-constants';
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import DeviceConstants from '@core/app/constants/device-constants';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import MonitorControl from './MonitorControl';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
@@ -40,7 +40,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -59,7 +59,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
 
@@ -76,7 +76,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
 
@@ -93,7 +93,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -115,7 +115,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -134,7 +134,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
 
@@ -151,7 +151,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
 
@@ -168,7 +168,7 @@ describe('test MonitorControl', () => {
           }
         >
           <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-        </MonitorContext.Provider>
+        </MonitorContext.Provider>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -188,7 +188,7 @@ describe('test MonitorControl', () => {
         }
       >
         <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(onPlay).not.toBeCalled();
     fireEvent.click(getByText('Start'));
@@ -209,7 +209,7 @@ describe('test MonitorControl', () => {
         }
       >
         <MonitorControl isPromark={false} isFraming={false} setEstimateTaskTime={() => {}} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
 
     expect(onPause).not.toBeCalled();

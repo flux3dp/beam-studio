@@ -1,6 +1,6 @@
-import deviceMaster from 'helpers/device-master';
-import i18n from 'helpers/i18n';
-import { CurveMeasurer } from 'interfaces/CurveMeasurer';
+import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
+import { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 
 import BaseCurveMeasurer from './base';
 
@@ -38,7 +38,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
     feedrate: number,
     offset?: [number, number, number],
     objectHeight?: number,
-    lowest?: number
+    lowest?: number,
   ): Promise<number | null> => {
     const target = offset ? [Math.max(x - offset[0], 0), Math.max(y - offset[1], 0)] : [x, y];
     const [targetX, targetY] = target;
@@ -50,7 +50,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
       this.currentPosition = { x: targetX, y: targetY };
     }
     const z = await deviceMaster.rawMeasureHeight(
-      lowest === null ? { relZ: objectHeight } : { baseZ: Math.max(lowest - objectHeight, 0) }
+      lowest === null ? { relZ: objectHeight } : { baseZ: Math.max(lowest - objectHeight, 0) },
     );
     return z;
   };

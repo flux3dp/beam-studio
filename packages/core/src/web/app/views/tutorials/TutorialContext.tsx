@@ -1,28 +1,30 @@
 import React from 'react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import RightPanelController from 'app/views/beambox/Right-Panels/contexts/RightPanelController';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ITutorialDialog } from 'interfaces/ITutorial';
-import { PanelType } from 'app/constants/right-panel-types';
-import { TutorialCallbacks } from 'app/constants/tutorial-constants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ITutorialDialog } from '@core/interfaces/ITutorial';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
 
 let svgCanvas;
-getSVGAsync((globalSVG) => { svgCanvas = globalSVG.Canvas; });
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
 
 export const TutorialContext = React.createContext({});
 
 export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
 interface Props {
-  hasNextButton: boolean,
-  dialogStylesAndContents: ITutorialDialog[],
-  onClose: () => void,
-  children: React.ReactNode,
+  hasNextButton: boolean;
+  dialogStylesAndContents: ITutorialDialog[];
+  onClose: () => void;
+  children: React.ReactNode;
 }
 
 interface States {
-  currentStep: number,
+  currentStep: number;
 }
 
 export class TutorialContextProvider extends React.Component<Props, States> {
@@ -107,9 +109,7 @@ export class TutorialContextProvider extends React.Component<Props, States> {
     }
   };
 
-  getNextStepRequirement = (response: {
-    nextStepRequirement: string,
-  }): void => {
+  getNextStepRequirement = (response: { nextStepRequirement: string }): void => {
     const { currentStep } = this.state;
     const { dialogStylesAndContents } = this.props;
     const { nextStepRequirement } = dialogStylesAndContents[currentStep];
@@ -117,24 +117,17 @@ export class TutorialContextProvider extends React.Component<Props, States> {
   };
 
   render() {
-    const {
-      hasNextButton,
-      dialogStylesAndContents,
-      children,
-    } = this.props;
-    const {
-      currentStep,
-    } = this.state;
-    const {
-      handleNextStep,
-    } = this;
+    const { hasNextButton, dialogStylesAndContents, children } = this.props;
+    const { currentStep } = this.state;
+    const { handleNextStep } = this;
     return (
-      <TutorialContext.Provider value={{
-        hasNextButton,
-        dialogStylesAndContents,
-        currentStep,
-        handleNextStep,
-      }}
+      <TutorialContext.Provider
+        value={{
+          hasNextButton,
+          dialogStylesAndContents,
+          currentStep,
+          handleNextStep,
+        }}
       >
         {children}
       </TutorialContext.Provider>

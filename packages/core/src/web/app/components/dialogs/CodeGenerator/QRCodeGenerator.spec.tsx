@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import QRCodeGenerator from './QRCodeGenerator';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     cancel: 'Cancel',
     confirm: 'Confirm',
@@ -20,14 +20,14 @@ jest.mock('helpers/useI18n', () => () => ({
 
 const mockOpen = jest.fn();
 
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   open: (...args: any) => mockOpen(...args),
 }));
 
 const mockInsertImage = jest.fn();
 
-jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   insertImage: (...props: any) => mockInsertImage(...props),
 }));
@@ -42,7 +42,7 @@ describe('test QRCodeGenerator', () => {
         setIsInvert={setIsInvert}
         text={text}
         setText={setText}
-      />
+      />,
     );
 
     const input = baseElement.querySelector('textarea');

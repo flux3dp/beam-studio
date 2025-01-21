@@ -1,11 +1,11 @@
 import React, { createContext, useEffect, useState, useCallback, useMemo } from 'react';
 
-import doLayersContainsVector from 'helpers/layer/check-vector';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import useForceUpdate from 'helpers/use-force-update';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { getLayerElementByName } from 'helpers/layer/layer-helper';
-import { promarkModels } from 'app/actions/beambox/constant';
+import doLayersContainsVector from '@core/helpers/layer/check-vector';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import useForceUpdate from '@core/helpers/use-force-update';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 interface ILayerPanelContext {
   selectedLayers: string[];
@@ -37,7 +37,7 @@ export const LayerPanelContextProvider = ({ children }: Props): JSX.Element => {
   const forceUpdate = useForceUpdate();
   const forceUpdateSelectedLayers = useCallback(
     () => setSelectedLayers([...selectedLayers]),
-    [selectedLayers]
+    [selectedLayers],
   );
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
@@ -52,7 +52,7 @@ export const LayerPanelContextProvider = ({ children }: Props): JSX.Element => {
       }
       setSelectedLayers(newLayers);
     },
-    [selectedLayers, setSelectedLayers]
+    [selectedLayers, setSelectedLayers],
   );
 
   useEffect(() => {

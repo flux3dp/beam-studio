@@ -1,16 +1,13 @@
 import React from 'react';
 
-import UnitInput from 'app/widgets/Unit-Input-v2';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
 
 interface Props {
   nestOptions: {
-    generations: number,
-    population: number,
-  }
-  updateNestOptions: (options: {
-    generations?: number,
-    population?: number,
-  }) => void,
+    generations: number;
+    population: number;
+  };
+  updateNestOptions: (options: { generations?: number; population?: number }) => void;
 }
 
 function NestGAPanel({ nestOptions, updateNestOptions }: Props): JSX.Element {

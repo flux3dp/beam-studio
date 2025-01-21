@@ -11,7 +11,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   initialize: {
     connect_wired: {
       title: 'Connecting to Wired Network',

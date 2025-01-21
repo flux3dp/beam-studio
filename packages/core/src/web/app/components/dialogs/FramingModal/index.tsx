@@ -2,18 +2,18 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, InputNumber, Modal, Segmented, Spin, Tooltip } from 'antd';
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import FramingIcons from 'app/icons/framing/FramingIcons';
-import FramingTaskManager, { FramingType } from 'helpers/device/framing';
-import getDevice from 'helpers/device/get-device';
-import icons from 'app/icons/icons';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import shortcuts from 'helpers/shortcuts';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { getSupportInfo } from 'app/constants/add-on';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { promarkModels } from 'app/actions/beambox/constant';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import getDevice from '@core/helpers/device/get-device';
+import icons from '@core/app/icons/icons';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import shortcuts from '@core/helpers/shortcuts';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import classNames from 'classnames';
 import styles from './index.module.scss';
@@ -194,6 +194,6 @@ export const showFramingModal = async (): Promise<void> => {
       />
     ) : (
       <FramingModal device={device} onClose={() => popDialogById('framing-modal')} />
-    )
+    ),
   );
 };

@@ -1,12 +1,12 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
-import { DEFAULT_CONTROLLER_MM } from 'app/constants/boxgen-constants';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
 
 import Controller from './Controller';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   boxgen: {
     workarea: 'Workarea',
     max_dimension_tooltip: 'Max width/height/depth setting is %s. ',
@@ -29,7 +29,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/contexts/BoxgenContext', () => ({
+jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext(null),
 }));
 
@@ -51,7 +51,7 @@ describe('test Controller', () => {
         }
       >
         <Controller />
-      </BoxgenContext.Provider>
+      </BoxgenContext.Provider>,
     );
     expect(container).toMatchSnapshot();
 

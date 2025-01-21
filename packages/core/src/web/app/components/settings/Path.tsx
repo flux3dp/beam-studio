@@ -1,12 +1,12 @@
 import React from 'react';
 
-import Controls from 'app/components/settings/Control';
-import i18n from 'helpers/i18n';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { StorageKey } from 'interfaces/IStorage';
+import Controls from '@core/app/components/settings/Control';
+import i18n from '@core/helpers/i18n';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
   selectedModel: WorkAreaModel;
@@ -30,9 +30,11 @@ const Path = ({
 
   const vectorSpeedConstraintOptions = onOffOptionFactory(
     getBeamboxPreferenceEditingValue('vector_speed_contraint') !== false,
-    { lang }
+    { lang },
   );
-  const precutSwitchOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('blade_precut'), { lang });
+  const precutSwitchOptions = onOffOptionFactory(getBeamboxPreferenceEditingValue('blade_precut'), {
+    lang,
+  });
 
   return (
     <>

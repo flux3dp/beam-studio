@@ -1,15 +1,15 @@
-import deviceMaster from 'helpers/device-master';
-import durationFormatter from 'helpers/duration-formatter';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
+import deviceMaster from '@core/helpers/device-master';
+import durationFormatter from '@core/helpers/duration-formatter';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
 import {
   addFisheyeCalibrateImg,
   doFishEyeCalibration,
   startFisheyeCalibrate,
-} from 'helpers/camera-calibration-helper';
-import { FisheyeCameraParametersV2Cali } from 'interfaces/FisheyePreview';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import alertCaller from 'app/actions/alert-caller';
+} from '@core/helpers/camera-calibration-helper';
+import { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import alertCaller from '@core/app/actions/alert-caller';
 
 export const calibrateWithDevicePictures =
   async (): Promise<FisheyeCameraParametersV2Cali | null> => {
@@ -38,7 +38,7 @@ export const calibrateWithDevicePictures =
           }
           return acc;
         },
-        [[], []]
+        [[], []],
       );
       await startFisheyeCalibrate();
       if (canceled) return null;
@@ -61,7 +61,7 @@ export const calibrateWithDevicePictures =
               } ${timeLeft}`,
               percentage: Math.round(100 * totalProgress),
             });
-          }
+          },
         );
         // eslint-disable-next-line no-await-in-loop
         const res = await addFisheyeCalibrateImg(parseFloat(heights[i]), blob);
@@ -114,7 +114,8 @@ export const getMaterialHeight = async (position: 'A' | 'E' = 'E'): Promise<numb
   await deviceMaster.rawStartLineCheckMode();
   const workarea = getWorkarea(device.info.model as WorkAreaModel, 'ado1');
   const { cameraCenter, deep } = workarea;
-  if (cameraCenter && position === 'E') await deviceMaster.rawMove({ x: cameraCenter[0], y: cameraCenter[1], f: 7500 });
+  if (cameraCenter && position === 'E')
+    await deviceMaster.rawMove({ x: cameraCenter[0], y: cameraCenter[1], f: 7500 });
   await deviceMaster.rawEndLineCheckMode();
   await deviceMaster.rawAutoFocus();
   const { didAf, z } = await deviceMaster.rawGetProbePos();

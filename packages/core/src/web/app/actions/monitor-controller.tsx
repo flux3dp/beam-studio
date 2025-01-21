@@ -1,16 +1,16 @@
 import * as React from 'react';
-import Dialog from 'app/actions/dialog-caller';
-import Monitor from 'app/views/monitor/Monitor';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContextProvider } from 'app/contexts/MonitorContext';
+import Dialog from '@core/app/actions/dialog-caller';
+import Monitor from '@core/app/views/monitor/Monitor';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContextProvider } from '@core/app/contexts/MonitorContext';
 
 const monitorController = {
   showMonitor: (
     device: IDeviceInfo,
     mode: Mode = Mode.FILE,
     previewTask?: { fcodeBlob: Blob; taskImageURL: string; taskTime: number; fileName: string },
-    autoStart?: boolean
+    autoStart?: boolean,
   ): void => {
     Dialog.addDialogComponent(
       'monitor',
@@ -22,7 +22,7 @@ const monitorController = {
         onClose={() => Dialog.popDialogById('monitor')}
       >
         <Monitor device={device} />
-      </MonitorContextProvider>
+      </MonitorContextProvider>,
     );
   },
 };

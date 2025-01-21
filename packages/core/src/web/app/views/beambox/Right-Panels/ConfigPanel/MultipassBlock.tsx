@@ -2,16 +2,16 @@ import classNames from 'classnames';
 import React, { memo, useContext, useMemo } from 'react';
 import { Button, Popover } from 'antd-mobile';
 
-import configOptions from 'app/constants/config-options';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import objectPanelItemStyles from 'app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
-import useI18n from 'helpers/useI18n';
-import { CUSTOM_PRESET_CONSTANT, writeData } from 'helpers/layer/layer-config-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import configOptions from '@core/app/constants/config-options';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
+import useI18n from '@core/helpers/useI18n';
+import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
@@ -46,7 +46,7 @@ const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
   const { value, hasMultiValue } = multipass;
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
-    []
+    [],
   );
 
   const handleChange = (val: number) => {
@@ -68,7 +68,7 @@ const MultipassBlock = ({ type = 'default' }: Props): JSX.Element => {
 
   const sliderOptions = useMemo(
     () => (simpleMode ? configOptions.multipassOptions : null),
-    [simpleMode]
+    [simpleMode],
   );
 
   const content = (

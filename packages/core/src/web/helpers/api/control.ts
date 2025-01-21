@@ -2,15 +2,15 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 
-import ErrorConstants from 'app/constants/error-constants';
-import IControlSocket, { Mode } from 'interfaces/IControlSocket';
-import rsaKey from 'helpers/rsa-key';
-import Websocket from 'helpers/websocket';
-import { FisheyeCameraParameters, RotationParameters3D } from 'interfaces/FisheyePreview';
-import { IDeviceDetailInfo, IReport } from 'interfaces/IDevice';
-import { WrappedWebSocket } from 'interfaces/WebSocket';
+import ErrorConstants from '@core/app/constants/error-constants';
+import IControlSocket, { Mode } from '@core/interfaces/IControlSocket';
+import rsaKey from '@core/helpers/rsa-key';
+import Websocket from '@core/helpers/websocket';
+import { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
+import { IDeviceDetailInfo, IReport } from '@core/interfaces/IDevice';
+import { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 const EVENT_COMMAND_MESSAGE = 'command-message';
 const EVENT_COMMAND_ERROR = 'command-error';
@@ -95,7 +95,7 @@ class Control extends EventEmitter implements IControlSocket {
   addTask<T>(taskFunction: (...args) => T, ...args): Promise<T> {
     if (this.taskQueue.length > MAX_TASK_QUEUE) {
       console.error(
-        `Control ${this.uuid} task queue exceeds max queue length. Clear queue and then send task`
+        `Control ${this.uuid} task queue exceeds max queue length. Clear queue and then send task`,
       );
       this.taskQueue = [];
       this.currentTask = null;
@@ -315,10 +315,11 @@ class Control extends EventEmitter implements IControlSocket {
           responseString += response.text;
           let responseStrings = responseString.split(/\r?\n/);
           responseStrings = responseStrings.filter(
-            (s, i) => !s.startsWith('DEBUG:') || i === responseStrings.length - 1
+            (s, i) => !s.startsWith('DEBUG:') || i === responseStrings.length - 1,
           );
           const isCommandCompleted = responseStrings.some(
-            (s) => s.startsWith(`LN${this._lineNumber} 0`) || s.startsWith(`L${this._lineNumber} 0`)
+            (s) =>
+              s.startsWith(`LN${this._lineNumber} 0`) || s.startsWith(`L${this._lineNumber} 0`),
           );
           const hasERL = responseStrings.some((s) => {
             if (s.startsWith('ERL')) {
@@ -622,7 +623,7 @@ class Control extends EventEmitter implements IControlSocket {
 
   select = (path, fileName: string) =>
     this.useWaitAnyResponse(
-      fileName === '' ? `play select ${path.join('/')}` : `play select ${path}/${fileName}`
+      fileName === '' ? `play select ${path.join('/')}` : `play select ${path}/${fileName}`,
     );
 
   deleteFile = (fileNameWithPath: string) =>
@@ -890,7 +891,7 @@ class Control extends EventEmitter implements IControlSocket {
     }
     const command = JSON.stringify({ id: this._cartridgeTaskId, method, params }).replace(
       /"/g,
-      '\\"'
+      '\\"',
     );
     const resp = await this.useWaitAnyResponse(`jsonrpc_req "${command}"`);
     return resp;
@@ -908,7 +909,7 @@ class Control extends EventEmitter implements IControlSocket {
   };
 
   takeReferenceZ = async (
-    args: { X?: number; Y?: number; F?: number; H?: number } = {}
+    args: { X?: number; Y?: number; F?: number; H?: number } = {},
   ): Promise<number> => {
     if (this.mode !== 'red_laser_measure') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
@@ -919,7 +920,7 @@ class Control extends EventEmitter implements IControlSocket {
       .join(',');
     const resp = await this.useWaitAnyResponse(
       `take_reference_z${posCommand ? `(${posCommand})` : ''}`,
-      180000
+      180000,
     );
     const { data } = resp;
     if (data) {
@@ -944,7 +945,7 @@ class Control extends EventEmitter implements IControlSocket {
       .join(',');
     const resp = await this.useWaitAnyResponse(
       `measure_z${posCommand ? `(${posCommand})` : ''}`,
-      60000
+      60000,
     );
     const { data } = resp;
     if (data) {
@@ -1356,7 +1357,7 @@ class Control extends EventEmitter implements IControlSocket {
         const i = resps.findIndex((r) => r === 'ok');
         if (i >= 0) {
           const resIdx = resps.findIndex((r) =>
-            r.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/)
+            r.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/),
           );
           if (resIdx >= 0) {
             const resStr = resps[resIdx];
@@ -1428,7 +1429,7 @@ class Control extends EventEmitter implements IControlSocket {
         if (i < 0) responseString = resps[resps.length - 1] || '';
         if (i >= 0) {
           const resIdx = resps.findIndex((r) =>
-            r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/)
+            r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/),
           );
           if (resIdx >= 0) {
             const resStr = resps[resIdx];

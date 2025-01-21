@@ -1,8 +1,8 @@
-import alertConfig from 'helpers/api/alert-config';
-import browser from 'implementations/browser';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import i18n from 'helpers/i18n';
-import { IAlert } from 'interfaces/IAlert';
+import alertConfig from '@core/helpers/api/alert-config';
+import browser from '@app/implementations/browser';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+import { IAlert } from '@core/interfaces/IAlert';
 
 let isInvitationShowed = false;
 const showFacebookGroupInvitation = (popUp: (args: IAlert) => void) => {
@@ -18,11 +18,7 @@ const showFacebookGroupInvitation = (popUp: (args: IAlert) => void) => {
       message: LANG.message,
       buttonLabels: [LANG.join_now, LANG.later, LANG.already_joined],
       primaryButtonIndex: 0,
-      callbacks: [
-        handleJoinNow,
-        () => {},
-        handleAlreadyJoined,
-      ],
+      callbacks: [handleJoinNow, () => {}, handleAlreadyJoined],
       checkbox: {
         text: LANG.dont_show_again,
         callbacks: [
@@ -30,7 +26,7 @@ const showFacebookGroupInvitation = (popUp: (args: IAlert) => void) => {
           () => alertConfig.write('skip-fb-group-invitation', true),
           handleAlreadyJoined,
         ],
-      }
+      },
     });
     isInvitationShowed = true;
   }

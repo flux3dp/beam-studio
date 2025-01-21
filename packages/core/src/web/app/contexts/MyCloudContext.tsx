@@ -1,7 +1,7 @@
 import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-import cloudFile from 'helpers/api/cloudFile';
-import { IFile } from 'interfaces/IMyCloud';
+import cloudFile from '@core/helpers/api/cloudFile';
+import { IFile } from '@core/interfaces/IMyCloud';
 
 interface MyCloudContextType {
   sortBy: string;

@@ -2,7 +2,7 @@
 /* eslint-disable import/first */
 const storageGet = jest.fn();
 const set = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: storageGet,
   set,
 }));

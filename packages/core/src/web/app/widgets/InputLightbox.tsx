@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Form, Input, InputRef, Modal } from 'antd';
 import { useRef, useState } from 'react';
 
-import Constants from 'app/constants/input-lightbox-constants';
-import i18n from 'helpers/i18n';
+import Constants from '@core/app/constants/input-lightbox-constants';
+import i18n from '@core/helpers/i18n';
 
 interface Props {
   type: string;
@@ -26,10 +26,8 @@ const INPUT_TYPE_MAP = {
 const InputLightBox = (props: Props): JSX.Element => {
   const inputRef = useRef<InputRef>();
   const [allowSubmit, setAllowSubmit] = useState(false);
-  const {
-    onClose, onSubmit,
-    caption, inputHeader, defaultValue, confirmText, type, maxLength,
-  } = props;
+  const { onClose, onSubmit, caption, inputHeader, defaultValue, confirmText, type, maxLength } =
+    props;
 
   const onCancel = (e) => {
     e.preventDefault();

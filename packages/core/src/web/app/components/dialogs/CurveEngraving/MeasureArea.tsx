@@ -4,11 +4,11 @@ import classNames from 'classnames';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Button, Col, Modal, InputNumber, Row, Segmented } from 'antd';
 
-import browser from 'implementations/browser';
-import useI18n from 'helpers/useI18n';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { BBox, MeasureData } from 'interfaces/ICurveEngraving';
-import { CurveMeasurer } from 'interfaces/CurveMeasurer';
+import browser from '@app/implementations/browser';
+import useI18n from '@core/helpers/useI18n';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { BBox, MeasureData } from '@core/interfaces/ICurveEngraving';
+import { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 
 import rangeGenerator from './rangeGenerator';
 import styles from './MeasureArea.module.scss';
@@ -172,7 +172,7 @@ const MeasureArea = ({
                         onChange={(val) =>
                           checkAndUpdate(
                             val,
-                            selectedType === Type.Amount ? setColumn : setColumnGap
+                            selectedType === Type.Amount ? setColumn : setColumnGap,
                           )
                         }
                         step={1}
@@ -224,7 +224,7 @@ export default MeasureArea;
 
 export const showMeasureArea = (
   bbox: BBox,
-  measurer: CurveMeasurer
+  measurer: CurveMeasurer,
 ): Promise<MeasureData | null> => {
   if (isIdExist('measure-area')) popDialogById('measure-area');
   return new Promise<MeasureData | null>((resolve) => {
@@ -241,7 +241,7 @@ export const showMeasureArea = (
           resolve(null);
           popDialogById('measure-area');
         }}
-      />
+      />,
     );
   });
 };

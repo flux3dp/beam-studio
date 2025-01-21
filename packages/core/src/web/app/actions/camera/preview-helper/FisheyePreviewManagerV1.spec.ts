@@ -2,14 +2,14 @@
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
 
 const mockGetWorkarea = jest.fn();
-jest.mock('app/constants/workarea-constants', () => ({
+jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: (...args) => mockGetWorkarea(...args),
 }));
 
 const mockEndRawMode = jest.fn();
 const mockSet3dRotation = jest.fn();
 const mockSetFisheyeMatrix = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   endRawMode: (...args) => mockEndRawMode(...args),
   set3dRotation: (...args) => mockSet3dRotation(...args),
   setFisheyeMatrix: (...args) => mockSetFisheyeMatrix(...args),
@@ -18,7 +18,7 @@ jest.mock('helpers/device-master', () => ({
 const mockOpenNonstopProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
@@ -29,12 +29,12 @@ jest.mock(
   () =>
     class FisheyePreviewManagerBase {
       progressId = 'fisheye-preview-manager';
-    }
+    },
 );
 
 const mockGetPerspectivePointsZ3Regression = jest.fn();
 const mockInterpolatePointsFromHeight = jest.fn();
-jest.mock('helpers/camera-calibration-helper', () => ({
+jest.mock('@core/helpers/camera-calibration-helper', () => ({
   getPerspectivePointsZ3Regression: (...args) => mockGetPerspectivePointsZ3Regression(...args),
   interpolatePointsFromHeight: (...args) => mockInterpolatePointsFromHeight(...args),
 }));
@@ -44,7 +44,7 @@ jest.mock(
   './getAutoFocusPosition',
   () =>
     (...args) =>
-      mockGetAutoFocusPosition(...args)
+      mockGetAutoFocusPosition(...args),
 );
 
 const mockGetLevelingData = jest.fn();
@@ -52,7 +52,7 @@ jest.mock(
   './getLevelingData',
   () =>
     (...args) =>
-      mockGetLevelingData(...args)
+      mockGetLevelingData(...args),
 );
 
 const mockGetHeight = jest.fn();
@@ -60,7 +60,7 @@ jest.mock(
   './getHeight',
   () =>
     (...args) =>
-      mockGetHeight(...args)
+      mockGetHeight(...args),
 );
 
 const mockLoadCamera3dRotation = jest.fn();
@@ -68,7 +68,7 @@ jest.mock(
   './loadCamera3dRotation',
   () =>
     (...args) =>
-      mockLoadCamera3dRotation(...args)
+      mockLoadCamera3dRotation(...args),
 );
 
 const mockRawAndHome = jest.fn();
@@ -76,10 +76,10 @@ jest.mock(
   './rawAndHome',
   () =>
     (...args) =>
-      mockRawAndHome(...args)
+      mockRawAndHome(...args),
 );
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     message: {
       endingRawMode: 'endingRawMode',
@@ -167,7 +167,7 @@ describe('test FisheyePreviewManagerV1', () => {
         center: [[5, 6]],
         points: 'mockPerspectivePoints',
       },
-      true
+      true,
     );
   });
 

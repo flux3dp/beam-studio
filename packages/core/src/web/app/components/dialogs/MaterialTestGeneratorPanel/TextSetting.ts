@@ -1,5 +1,5 @@
-import { promarkModels } from 'app/actions/beambox/constant';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export interface TextSetting {
   select: { value: string; label: string };

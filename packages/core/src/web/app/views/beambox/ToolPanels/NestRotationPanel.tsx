@@ -1,13 +1,13 @@
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import UnitInput from 'app/widgets/Unit-Input-v2';
+import i18n from '@core/helpers/i18n';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  rotations: number,
-  onValueChange: (val: number) => void,
+  rotations: number;
+  onValueChange: (val: number) => void;
 }
 
 function NestRotationPanel({ rotations: rotationsProps, onValueChange }: Props): JSX.Element {

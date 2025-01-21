@@ -2,13 +2,13 @@ import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
 import { Switch } from 'antd';
 
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import useI18n from 'helpers/useI18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { useIsMobile } from 'helpers/system-helper';
-import { writeData } from 'helpers/layer/layer-config-helper';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import useI18n from '@core/helpers/useI18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
+import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './Block.module.scss';
@@ -49,7 +49,9 @@ const UVBlock = (): JSX.Element => {
     />
   ) : (
     <div className={classNames(styles.panel, styles.switch)} onClick={handleToggle}>
-      <label className={styles.title} htmlFor="uv-ink">UV</label>
+      <label className={styles.title} htmlFor="uv-ink">
+        UV
+      </label>
       <Switch
         className={styles.switch}
         id="uv-ink"

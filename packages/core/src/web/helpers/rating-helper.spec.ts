@@ -1,13 +1,13 @@
 /* eslint-disable import/first */
 const showRatingDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showRatingDialog,
 }));
 
 const get = jest.fn();
 const set = jest.fn();
 const isExisting = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
   set,
   isExisting,
@@ -15,7 +15,7 @@ jest.mock('implementations/storage', () => ({
 
 const getInfo = jest.fn();
 const submitRating = jest.fn();
-jest.mock('helpers/api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   getInfo,
   submitRating,
 }));

@@ -5,7 +5,7 @@ const mockEndRawMode = jest.fn();
 const mockSetFisheyeParam = jest.fn();
 const mockSetFisheyeObjectHeight = jest.fn();
 const mockSetFisheyeLevelingData = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   endRawMode: (...args) => mockEndRawMode(...args),
   setFisheyeParam: (...args) => mockSetFisheyeParam(...args),
   setFisheyeObjectHeight: (...args) => mockSetFisheyeObjectHeight(...args),
@@ -15,13 +15,13 @@ jest.mock('helpers/device-master', () => ({
 const mockOpenNonstopProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   update: (...args) => mockUpdate(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     message: {
       getProbePosition: 'getProbePosition',
@@ -35,7 +35,7 @@ jest.mock(
   './getAutoFocusPosition',
   () =>
     (...args) =>
-      mockGetAutoFocusPosition(...args)
+      mockGetAutoFocusPosition(...args),
 );
 
 const mockGetLevelingData = jest.fn();
@@ -43,7 +43,7 @@ jest.mock(
   './getLevelingData',
   () =>
     (...args) =>
-      mockGetLevelingData(...args)
+      mockGetLevelingData(...args),
 );
 
 const mockGetHeight = jest.fn();
@@ -51,7 +51,7 @@ jest.mock(
   './getHeight',
   () =>
     (...args) =>
-      mockGetHeight(...args)
+      mockGetHeight(...args),
 );
 
 const mockRawAndHome = jest.fn();
@@ -59,7 +59,7 @@ jest.mock(
   './rawAndHome',
   () =>
     (...args) =>
-      mockRawAndHome(...args)
+      mockRawAndHome(...args),
 );
 
 jest.mock(
@@ -67,7 +67,7 @@ jest.mock(
   () =>
     class FisheyePreviewManagerBase {
       progressId = 'fisheye-preview-manager';
-    }
+    },
 );
 
 describe('test FisheyePreviewManagerV2', () => {
@@ -81,8 +81,7 @@ describe('test FisheyePreviewManagerV2', () => {
     const mockOnObjectHeightChanged = jest.fn();
     const fisheyePreviewManagerV2 = new FisheyePreviewManagerV2(device, params);
     fisheyePreviewManagerV2.onObjectHeightChanged = mockOnObjectHeightChanged;
-    mockGetLevelingData
-      .mockResolvedValueOnce('mock-offset');
+    mockGetLevelingData.mockResolvedValueOnce('mock-offset');
     mockRawAndHome.mockReturnValue('rawAndHome');
     mockGetHeight.mockReturnValue(7);
     mockGetAutoFocusPosition.mockReturnValue('autoFocusRefKey');
@@ -97,8 +96,12 @@ describe('test FisheyePreviewManagerV2', () => {
       message: 'getProbePosition',
     });
     expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'fisheye-preview-manager', { message: 'Fetching leveling data...' });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'fisheye-preview-manager', { message: 'endingRawMode' });
+    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'fisheye-preview-manager', {
+      message: 'Fetching leveling data...',
+    });
+    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'fisheye-preview-manager', {
+      message: 'endingRawMode',
+    });
     expect(mockGetLevelingData).toBeCalledTimes(1);
     expect(mockGetLevelingData).toHaveBeenNthCalledWith(1, 'offset');
     expect(mockRawAndHome).toHaveBeenCalledTimes(1);
@@ -113,7 +116,10 @@ describe('test FisheyePreviewManagerV2', () => {
   });
 
   test('onObjectHeightChanged', () => {
-    const fisheyePreviewManagerV2 = new FisheyePreviewManagerV2({} as any, { levelingData: { A: 8, E: 9 } } as any);
+    const fisheyePreviewManagerV2 = new FisheyePreviewManagerV2(
+      {} as any,
+      { levelingData: { A: 8, E: 9 } } as any,
+    );
     fisheyePreviewManagerV2.autoFocusRefKey = 'A';
     fisheyePreviewManagerV2.objectHeight = 7;
     fisheyePreviewManagerV2.levelingOffset = { A: 0, E: 2 };

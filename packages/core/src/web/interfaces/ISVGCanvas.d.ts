@@ -1,14 +1,14 @@
-import IShapeStyle from 'interfaces/IShapeStyle';
-import ISVGConfig from 'interfaces/ISVGConfig';
-import ISVGDrawing from 'interfaces/ISVGDrawing';
+import IShapeStyle from '@core/interfaces/IShapeStyle';
+import ISVGConfig from '@core/interfaces/ISVGConfig';
+import ISVGDrawing from '@core/interfaces/ISVGDrawing';
 import { EventEmitter } from 'events';
-import { IBatchCommand, ICommand, IUndoManager } from 'interfaces/IHistory';
-import { ImportType } from 'interfaces/ImportSvg';
-import { IPathActions } from 'app/svgedit/operations/pathActions';
-import { SelectorManager } from 'app/svgedit/selector';
-import { Units } from 'helpers/units';
-import textActions from 'app/svgedit/text/textactions';
-import { BaseHistoryCommand } from 'app/svgedit/history/history';
+import { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
+import { ImportType } from '@core/interfaces/ImportSvg';
+import { IPathActions } from '@core/app/svgedit/operations/pathActions';
+import { SelectorManager } from '@core/app/svgedit/selector';
+import { Units } from '@core/helpers/units';
+import textActions from '@core/app/svgedit/text/textactions';
+import { BaseHistoryCommand } from '@core/app/svgedit/history/history';
 
 export interface IPoint {
   x: number;
@@ -35,7 +35,7 @@ export default interface ISVGCanvas {
   addToSelection: (elemsToAdd: SVGElement[], showGrips?: boolean, noCall?: boolean) => void;
   alignSelectedElements(
     type: 'l' | 'c' | 'r' | 't' | 'm' | 'b',
-    relativeTo: 'selected' | 'largest' | 'smallest' | 'page'
+    relativeTo: 'selected' | 'largest' | 'smallest' | 'page',
   ): void;
   assignAttributes(element: HTMLElement, args: any): void;
   bind: (eventName: string, callback: boolean | ((win: any, elem: any) => void)) => void;
@@ -104,7 +104,7 @@ export default interface ISVGCanvas {
       layerName?: string;
       parentCmd?: IBatchCommand;
       targetModule?: number;
-    }
+    },
   ): Promise<SVGUseElement>;
   isBezierPathAlignToEdge: boolean;
   isUsingLayerColor: boolean;
@@ -146,7 +146,7 @@ export default interface ISVGCanvas {
   setLayerVisibility(
     layerName: string,
     visible: boolean,
-    opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean }
+    opts?: { parentCmd?: IBatchCommand; addToHistory?: boolean },
   ): void;
   setMode: (mode: string) => void;
   setOpacity: (opacity: number) => void;
@@ -158,7 +158,7 @@ export default interface ISVGCanvas {
   setSvgElemSize: (
     type: 'width' | 'height' | 'rx' | 'ry',
     val: number,
-    addToHistory?: boolean
+    addToHistory?: boolean,
   ) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
   setUiStrings(allStrings: Record<string, string>): void;
@@ -187,11 +187,11 @@ export default interface ISVGCanvas {
     elems: Array<SVGElement>,
     skipConfirm?: boolean,
     addToHistory?: boolean,
-    showProgress?: boolean
+    showProgress?: boolean,
   ) => Promise<BaseHistoryCommand>;
   zoomSvgElem: (zoom: number) => void;
   convertToPath: (
     elem: SVGElement,
-    isSubCmd?: boolean
+    isSubCmd?: boolean,
   ) => { path: SVGPathElement; cmd: BaseHistoryCommand };
 }

@@ -1,9 +1,17 @@
-import React, { DragEventHandler, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  DragEventHandler,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import DeviceConstants from 'app/constants/device-constants';
-import DeviceMaster from 'helpers/device-master';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import alertCaller from '@core/app/actions/alert-caller';
+import DeviceConstants from '@core/app/constants/device-constants';
+import DeviceMaster from '@core/helpers/device-master';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import Breadcrumbs from './widgets/Breadcrumbs';
 import DirectoryItem from './widgets/DirectoryItem';
@@ -11,18 +19,26 @@ import FileItem from './widgets/FileItem';
 import styles from './MonitorFilelist.module.scss';
 
 interface Props {
-  path: string,
+  path: string;
 }
 
 const MonitorFilelist = ({ path }: Props): JSX.Element => {
   const containerRef = useRef<HTMLDivElement>(null);
   const doUsbExist = useRef<boolean | undefined>(undefined);
-  const [contents, setContents] = useState<{ path?: string; directories: string[]; files: string[] }>({
-    directories: [], files: []
+  const [contents, setContents] = useState<{
+    path?: string;
+    directories: string[];
+    files: string[];
+  }>({
+    directories: [],
+    files: [],
   });
   const { shouldUpdateFileList, setShouldUpdateFileList, uploadFile } = useContext(MonitorContext);
 
-  const preventDefaultEvent: DragEventHandler<HTMLDivElement> = useCallback((e) => e.preventDefault(), []);
+  const preventDefaultEvent: DragEventHandler<HTMLDivElement> = useCallback(
+    (e) => e.preventDefault(),
+    [],
+  );
 
   const handleContainerDrop: DragEventHandler<HTMLDivElement> = (e) => {
     const [file] = e.dataTransfer.files;
@@ -57,14 +73,14 @@ const MonitorFilelist = ({ path }: Props): JSX.Element => {
 
   useEffect(() => {
     updateContents();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path]);
   useEffect(() => {
     if (shouldUpdateFileList) {
       setShouldUpdateFileList(false);
       updateContents();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldUpdateFileList]);
 
   const { path: contentsPath, directories, files } = contents;
@@ -79,12 +95,16 @@ const MonitorFilelist = ({ path }: Props): JSX.Element => {
         onDragOver={preventDefaultEvent}
         onDrop={handleContainerDrop}
       >
-        {contentsPath === path ? directories.map((folder: string) => (
-          <DirectoryItem key={`${path}/${folder}`} name={folder} />
-        )) : null}
-        {contentsPath === path ? files.map((file: string) => (
-          <FileItem key={`${path}/${file}`} path={path} fileName={file} />
-        )) : null}
+        {contentsPath === path
+          ? directories.map((folder: string) => (
+              <DirectoryItem key={`${path}/${folder}`} name={folder} />
+            ))
+          : null}
+        {contentsPath === path
+          ? files.map((file: string) => (
+              <FileItem key={`${path}/${file}`} path={path} fileName={file} />
+            ))
+          : null}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Modal, Segmented } from 'antd';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './StepElevate.module.scss';
 
@@ -41,17 +41,28 @@ const StepElevate = ({ onNext, onBack, onClose }: Props): JSX.Element => {
       <div className={styles.tab}>
         <Segmented
           block
-          options={[{ value: 0, label: lang.without_prism_lift }, { value: 1, label: lang.with_prism_lift }]}
+          options={[
+            { value: 0, label: lang.without_prism_lift },
+            { value: 1, label: lang.with_prism_lift },
+          ]}
           onChange={(v) => setWithPrismLift(v === 1)}
         />
       </div>
       <ol className={styles.steps}>
-        <li>{withPrismLift ? lang.elevate_and_cut_step_1_prism_lift : lang.elevate_and_cut_step_1}</li>
+        <li>
+          {withPrismLift ? lang.elevate_and_cut_step_1_prism_lift : lang.elevate_and_cut_step_1}
+        </li>
         <li>{lang.put_paper_step3}</li>
       </ol>
       <video className={styles.video} ref={videoRef} autoPlay loop muted>
-      <source  src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.webm`} type="video/webm" />
-      <source  src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.mp4`} type="video/mp4" />
+        <source
+          src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.webm`}
+          type="video/webm"
+        />
+        <source
+          src={`video/ador-calibration-2/${withPrismLift ? 'prism-lift' : 'wood'}.mp4`}
+          type="video/mp4"
+        />
       </video>
     </Modal>
   );

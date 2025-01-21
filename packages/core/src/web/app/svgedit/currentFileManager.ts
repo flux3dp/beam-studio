@@ -1,7 +1,7 @@
-import autoSaveHelper from 'helpers/auto-save-helper';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import { IFile } from 'interfaces/IMyCloud';
+import autoSaveHelper from '@core/helpers/auto-save-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { IFile } from '@core/interfaces/IMyCloud';
 
 class CurrentFileManager {
   isCloudFile = false;
@@ -38,7 +38,7 @@ class CurrentFileManager {
 
   setFileName = (
     fileName: string,
-    opts: { extractFromPath?: boolean; clearPath?: boolean } = {}
+    opts: { extractFromPath?: boolean; clearPath?: boolean } = {},
   ) => {
     const { extractFromPath = false, clearPath = false } = opts;
     const name = extractFromPath ? this.extractFileName(fileName) : fileName;

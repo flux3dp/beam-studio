@@ -1,3 +1,3 @@
-import { INetwork } from 'interfaces/INetwork';
+import type { INetwork } from '@core/interfaces/INetwork';
 
 export default {} as INetwork;

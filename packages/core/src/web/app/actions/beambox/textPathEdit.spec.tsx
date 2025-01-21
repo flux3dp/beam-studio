@@ -10,7 +10,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => ({
   isEmpty: mockIsEmpty,
 }));
 
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   MoveElementCommand: mockMoveElementCommand,
   ChangeElementCommand: mockChangeElementCommand,
   InsertElementCommand: mockInsertElementCommand,
@@ -27,7 +27,7 @@ const mockSelectManager = {
   resizeSelectors: jest.fn(),
 };
 
-jest.mock('app/svgedit/selector', () => ({
+jest.mock('@core/app/svgedit/selector', () => ({
   getSelectorManager: () => mockSelectManager,
 }));
 
@@ -44,10 +44,11 @@ const mockSvgCanvas = {
   },
 };
 
-jest.mock('helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => (callback({
-    Canvas: mockSvgCanvas,
-  })),
+jest.mock('@core/helpers/svg-editor-helper', () => ({
+  getSVGAsync: (callback) =>
+    callback({
+      Canvas: mockSvgCanvas,
+    }),
 }));
 
 const textAndPathHtml = `

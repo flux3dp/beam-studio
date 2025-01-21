@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import type { ICommunicator } from 'interfaces/ICommunicator';
+import type { ICommunicator } from '@core/interfaces/ICommunicator';
 
 const mockCommunicator: ICommunicator = {
   off: jest.fn(),

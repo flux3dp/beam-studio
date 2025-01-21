@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import classNames from 'classnames';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import { HistoryState } from '../../hooks/useHistory';
 
@@ -58,7 +58,7 @@ function TopBar({
         <Button title={lang.reset} shape="circle" icon={<ReloadOutlined />} onClick={handleReset} />
       </div>
     ),
-    [handleReset, handleZoomByScale, zoomScale, lang]
+    [handleReset, handleZoomByScale, zoomScale, lang],
   );
 
   return (

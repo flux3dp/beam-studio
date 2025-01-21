@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import MediaTutorial from './MediaTutorial';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     buttons: {
       next: 'NEXT',

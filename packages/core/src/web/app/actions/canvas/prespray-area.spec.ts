@@ -1,14 +1,14 @@
 import presprayArea from './prespray-area';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (key: string) => mockRead(key),
 }));
 
 const mockGetWidth = jest.fn();
 const mockGetHeight = jest.fn();
 const mockGetExpansion = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   get width() {
     return mockGetWidth();
   },
@@ -21,7 +21,7 @@ jest.mock('app/svgedit/workarea', () => ({
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('app/svgedit/history/undoManager', () => ({
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
   addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
@@ -41,8 +41,8 @@ describe('test canvas/prespray-area', () => {
       .spyOn(document, 'querySelectorAll')
       .mockReturnValue(
         Array.from(document.querySelectorAll('g.layer') ?? []).filter(
-          (g) => g.getAttribute('display') !== 'none'
-        ) as any as NodeListOf<SVGGElement>
+          (g) => g.getAttribute('display') !== 'none',
+        ) as any as NodeListOf<SVGGElement>,
       );
   });
 

@@ -3,16 +3,16 @@
  * API discover
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-discover
  */
-import communicator from 'implementations/communicator';
-import DeviceList from 'helpers/device-list';
-import isWeb from 'helpers/is-web';
-import Logger from 'helpers/logger';
-import network from 'implementations/network';
-import sentryHelper from 'helpers/sentry-helper';
-import SmartUpnp from 'helpers/smart-upnp';
-import storage from 'implementations/storage';
-import Websocket, { readyStates } from 'helpers/websocket';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import communicator from '@app/implementations/communicator';
+import DeviceList from '@core/helpers/device-list';
+import isWeb from '@core/helpers/is-web';
+import Logger from '@core/helpers/logger';
+import network from '@app/implementations/network';
+import sentryHelper from '@core/helpers/sentry-helper';
+import SmartUpnp from '@core/helpers/smart-upnp';
+import storage from '@app/implementations/storage';
+import Websocket, { readyStates } from '@core/helpers/websocket';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 import { swiftrayClient } from './swiftray-client';
 
 const BUFFER = 100;

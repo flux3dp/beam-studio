@@ -1,19 +1,19 @@
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import isWeb from 'helpers/is-web';
-import LayerPanel from 'app/components/beambox/right-panel/LayerPanel';
-import ObjectPanel from 'app/views/beambox/Right-Panels/ObjectPanel';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import PathEditPanel from 'app/views/beambox/Right-Panels/PathEditPanel';
-import Tab from 'app/components/beambox/right-panel/Tab';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { ObjectPanelContextProvider } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { PanelType } from 'app/constants/right-panel-types';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
-import { useIsMobile } from 'helpers/system-helper';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isWeb from '@core/helpers/is-web';
+import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
+import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
+import Tab from '@core/app/components/beambox/right-panel/Tab';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { PanelType } from '@core/app/constants/right-panel-types';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './RightPanel.module.scss';
 
@@ -24,7 +24,9 @@ const RightPanel = (): JSX.Element => {
   const { isPathEditing } = useContext(CanvasContext);
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
-  const [panelType, setPanelType] = useState<PanelType>(isMobile ? PanelType.None : PanelType.Layer);
+  const [panelType, setPanelType] = useState<PanelType>(
+    isMobile ? PanelType.None : PanelType.Layer,
+  );
   const autoSwitchTab = useRef<boolean>(beamboxPreference.read('auto-switch-tab'));
 
   useEffect(() => {
@@ -51,7 +53,7 @@ const RightPanel = (): JSX.Element => {
         return cur;
       });
     };
-     rightPanelEventEmitter.on('DISPLAY_LAYER', handler);
+    rightPanelEventEmitter.on('DISPLAY_LAYER', handler);
     return () => {
       rightPanelEventEmitter.off('DISPLAY_LAYER', handler);
     };
@@ -80,7 +82,7 @@ const RightPanel = (): JSX.Element => {
   const switchPanel = useCallback(() => {
     setPanelType((cur) => {
       if (cur === PanelType.Layer || cur === PanelType.None) {
-        return isPathEditing ? PanelType.PathEdit : PanelType.Object
+        return isPathEditing ? PanelType.PathEdit : PanelType.Object;
       }
       return PanelType.Layer;
     });

@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import Error from './Error';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-jest.mock('app/widgets/Modal', () => ({ className, children }: any) => (
+jest.mock('@core/app/widgets/Modal', () => ({ className, children }: any) => (
   <div className={classNames(className)}>{children}</div>
 ));
 

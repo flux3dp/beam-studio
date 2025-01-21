@@ -1,5 +1,5 @@
-import getRealSymbol from 'helpers/symbol-helper/getRealSymbol';
-import rgbToHex from 'helpers/color/rgbToHex';
+import getRealSymbol from '@core/helpers/symbol-helper/getRealSymbol';
+import rgbToHex from '@core/helpers/color/rgbToHex';
 
 const parseColorString = (color: string): string => {
   if (color.startsWith('rgb(')) return rgbToHex(color);
@@ -10,7 +10,7 @@ const isHex = (color: string): boolean => /^#([0-9A-F]{6}|[0-9A-F]{3})$/.test(co
 
 // TODO: add tests
 const colloectColors = (
-  element: Element
+  element: Element,
 ): {
   [color: string]: { element: Element; attribute: 'fill' | 'stroke'; useElement?: SVGUseElement }[];
 } => {
@@ -50,7 +50,7 @@ const colloectColors = (
         ...Array.from(node.childNodes, (childNode) => ({
           node: childNode as Element,
           useElement,
-        }))
+        })),
       );
     }
   }

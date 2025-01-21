@@ -1,4 +1,4 @@
-import storage from 'implementations/storage';
+import storage from '@app/implementations/storage';
 
 const MIN_ALLOWED_VERSION = 2;
 
@@ -8,7 +8,7 @@ const checkQuestionnaire = async (
   opts: {
     allowOldVersion?: boolean;
     useCache?: boolean;
-  } = {}
+  } = {},
 ): Promise<{ version: number; urls: { [key: string]: string } }> => {
   const { allowOldVersion = false, useCache = true } = opts;
 

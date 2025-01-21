@@ -1,12 +1,12 @@
-import deviceMaster from 'helpers/device-master';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { RotationParameters3DCalibration } from 'interfaces/FisheyePreview';
+import deviceMaster from '@core/helpers/device-master';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { RotationParameters3DCalibration } from '@core/interfaces/FisheyePreview';
 
 const handle3DRotationChanged = async (
   params: RotationParameters3DCalibration,
   height: number,
-  device: IDeviceInfo
+  device: IDeviceInfo,
 ): Promise<void> => {
   console.log('Applying', params);
   const { rx, ry, rz, sh, ch, tx = 0, ty = 0 } = params;

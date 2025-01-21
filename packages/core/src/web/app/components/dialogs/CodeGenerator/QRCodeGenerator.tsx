@@ -2,8 +2,8 @@ import React, { forwardRef } from 'react';
 import { Checkbox, ConfigProvider, Flex, Input, QRCode, QRCodeProps, Radio } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
-import browser from 'implementations/browser';
-import useI18n from 'helpers/useI18n';
+import browser from '@app/implementations/browser';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './QRCodeGenerator.module.scss';
 
@@ -85,5 +85,5 @@ export default forwardRef<HTMLDivElement, Props>(
         </div>
       </div>
     );
-  }
+  },
 );

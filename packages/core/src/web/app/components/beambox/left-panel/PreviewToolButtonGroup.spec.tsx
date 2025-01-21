@@ -2,17 +2,17 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasContext } from 'app/contexts/CanvasContext';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 const emitShowCropper = jest.fn();
-jest.mock('app/stores/beambox-store', () => ({
+jest.mock('@core/app/stores/beambox-store', () => ({
   emitShowCropper,
 }));
 
 const isClean = jest.fn();
 const resetCoordinates = jest.fn();
 const clear = jest.fn();
-jest.mock('app/actions/beambox/preview-mode-background-drawer', () => ({
+jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
   isClean,
   resetCoordinates,
   clear,
@@ -20,14 +20,14 @@ jest.mock('app/actions/beambox/preview-mode-background-drawer', () => ({
 
 const isPreviewMode = jest.fn();
 const mockIsLiveModeOn = jest.fn();
-jest.mock('app/actions/beambox/preview-mode-controller', () => ({
+jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
   isDrawing: false,
   isPreviewMode,
   isLiveModeOn: () => mockIsLiveModeOn(),
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -41,9 +41,9 @@ getSVGAsync.mockImplementation((callback) => {
 });
 
 const useWorkarea = jest.fn();
-jest.mock('helpers/hooks/useWorkarea', () => useWorkarea);
+jest.mock('@core/helpers/hooks/useWorkarea', () => useWorkarea);
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     left_panel: {
       label: {
@@ -60,18 +60,18 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockStartCurveEngraving = jest.fn();
-jest.mock('app/actions/canvas/curveEngravingModeController', () => ({
+jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
   start: mockStartCurveEngraving,
 }));
 
-jest.mock('app/contexts/CanvasContext', () => ({
+jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext(null),
 }));
 
 import PreviewToolButtonGroup from './PreviewToolButtonGroup';
 
 const mockIsNorthAmerica = jest.fn();
-jest.mock('helpers/locale-helper', () => ({
+jest.mock('@core/helpers/locale-helper', () => ({
   get isNorthAmerica() {
     return mockIsNorthAmerica();
   },
@@ -90,10 +90,8 @@ describe('test PreviewToolButtonGroup', () => {
           } as any
         }
       >
-      <PreviewToolButtonGroup
-        className="left-toolbar"
-      />
-      </CanvasContext.Provider>
+        <PreviewToolButtonGroup className="left-toolbar" />
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(endPreviewMode).not.toBeCalled();
@@ -120,10 +118,8 @@ describe('test PreviewToolButtonGroup', () => {
           } as any
         }
       >
-      <PreviewToolButtonGroup
-        className="left-toolbar"
-      />
-      </CanvasContext.Provider>
+        <PreviewToolButtonGroup className="left-toolbar" />
+      </CanvasContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

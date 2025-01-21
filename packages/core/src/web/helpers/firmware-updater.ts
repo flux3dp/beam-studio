@@ -1,15 +1,15 @@
 /**
  * firmware updater
  */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import DeviceMaster from 'helpers/device-master';
-import Dialog from 'app/actions/dialog-caller';
-import i18n from 'helpers/i18n';
-import InputLightboxConstants from 'app/constants/input-lightbox-constants';
-import Progress from 'app/actions/progress-caller';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import DeviceMaster from '@core/helpers/device-master';
+import Dialog from '@core/app/actions/dialog-caller';
+import i18n from '@core/helpers/i18n';
+import InputLightboxConstants from '@core/app/constants/input-lightbox-constants';
+import Progress from '@core/app/actions/progress-caller';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 
 export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
   const { lang } = i18n;
@@ -87,7 +87,10 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     const file = files.item(0);
     const res = await DeviceMaster.select(device);
     if (res.success) {
-      Progress.openSteppingProgress({ id: 'update-firmware', message: `${lang.update.updating} (0%)` });
+      Progress.openSteppingProgress({
+        id: 'update-firmware',
+        message: `${lang.update.updating} (0%)`,
+      });
       try {
         await doUpdate(file, (r) => {
           const percentage = Number(r.percentage || 0).toFixed(2);
@@ -110,7 +113,7 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
       caption: lang.update.firmware.upload_file,
       confirmText: lang.update.firmware.confirm,
       onSubmit,
-      onCancel: () => { },
+      onCancel: () => {},
     });
   };
 

@@ -1,15 +1,15 @@
 import classNames from 'classnames';
 import React, { memo, useContext } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import ConfigPanelIcons from 'app/icons/config-panel/ConfigPanelIcons';
-import dialogCaller from 'app/actions/dialog-caller';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import presetHelper from 'helpers/presets/preset-helper';
-import useI18n from 'helpers/useI18n';
-import { ConfigKey, Preset } from 'interfaces/ILayerConfig';
-import { getConfigKeys, writeData } from 'helpers/layer/layer-config-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import useI18n from '@core/helpers/useI18n';
+import { ConfigKey, Preset } from '@core/interfaces/ILayerConfig';
+import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import styles from './SaveConfigButton.module.scss';

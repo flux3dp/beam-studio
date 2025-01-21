@@ -1,4 +1,4 @@
-import ISVGCanvas from 'interfaces/ISVGCanvas';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 interface ISVGGlobal {
   Canvas: ISVGCanvas;

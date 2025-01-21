@@ -3,17 +3,17 @@ import viewMenu from './view';
 
 const mockRead = jest.fn();
 const mockWrite = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
   write: (...args) => mockWrite(...args),
 }));
 
 const resetView = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   resetView: (...args) => resetView(...args),
 }));
 
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
     callback({
       Canvas: {
@@ -29,15 +29,20 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const updateLayerColor = jest.fn();
-jest.mock('helpers/color/updateLayerColor', () => (...args) => updateLayerColor(...args));
+jest.mock(
+  '@core/helpers/color/updateLayerColor',
+  () =>
+    (...args) =>
+      updateLayerColor(...args),
+);
 
 const mockToggleGrids = jest.fn();
-jest.mock('app/actions/canvas/grid', () => ({
+jest.mock('@core/app/actions/canvas/grid', () => ({
   toggleGrids: () => mockToggleGrids(),
 }));
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEventEmitter = {
@@ -57,7 +62,9 @@ describe('test view', () => {
     test('svg content is existing', () => {
       document.body.innerHTML = '<div id="svgcontent" />';
       viewMenu.updateAntiAliasing(false);
-      expect(document.body.innerHTML).toBe('<div id="svgcontent" style="shape-rendering: optimizeSpeed;"></div>');
+      expect(document.body.innerHTML).toBe(
+        '<div id="svgcontent" style="shape-rendering: optimizeSpeed;"></div>',
+      );
       viewMenu.updateAntiAliasing(true);
       expect(document.body.innerHTML).toBe('<div id="svgcontent" style=""></div>');
     });

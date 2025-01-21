@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import i18n from 'helpers/i18n';
-import { ILang } from 'interfaces/ILang';
+import i18n from '@core/helpers/i18n';
+import { ILang } from '@core/interfaces/ILang';
 
 const useI18n = (): ILang => {
   const activeLang = i18n.getActiveLang();

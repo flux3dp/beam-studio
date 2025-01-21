@@ -1,5 +1,5 @@
-@use 'src/web/app/views/beambox/Right-Panels/_mixins' as mixins;
-@use 'styles/variables' as variables;
+@use '@core/app/views/beambox/Right-Panels/_mixins' as mixins;
+@use '@core/styles/variables' as variables;
 
 $handle-height: 10px;
 $layer-background: white;

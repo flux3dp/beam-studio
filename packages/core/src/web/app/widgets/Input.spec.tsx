@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 import Input from './Input';
 
 const mockSend = jest.fn();
-jest.mock('implementations/communicator', () => ({
+jest.mock('@app/implementations/communicator', () => ({
   send: (...args) => mockSend(...args),
 }));
 

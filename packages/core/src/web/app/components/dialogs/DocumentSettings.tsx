@@ -3,28 +3,31 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Modal, Switch, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import browser from 'implementations/browser';
-import changeWorkarea from 'app/svgedit/operations/changeWorkarea';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import diodeBoundaryDrawer from 'app/actions/canvas/diode-boundary-drawer';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import isDev from 'helpers/is-dev';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import localeHelper from 'helpers/locale-helper';
-import OpenBottomBoundaryDrawer from 'app/actions/beambox/open-bottom-boundary-drawer';
-import presprayArea from 'app/actions/canvas/prespray-area';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import Select from 'app/widgets/AntdSelect';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { getPromarkInfo, setPromarkInfo } from 'helpers/device/promark/promark-info';
-import { getSupportInfo } from 'app/constants/add-on';
-import { LaserType, workareaOptions as pmWorkareaOptions } from 'app/constants/promark-constants';
-import { WorkAreaModel, getWorkarea } from 'app/constants/workarea-constants';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import browser from '@app/implementations/browser';
+import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import diodeBoundaryDrawer from '@core/app/actions/canvas/diode-boundary-drawer';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isDev from '@core/helpers/is-dev';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import localeHelper from '@core/helpers/locale-helper';
+import OpenBottomBoundaryDrawer from '@core/app/actions/beambox/open-bottom-boundary-drawer';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import Select from '@core/app/widgets/AntdSelect';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { getSupportInfo } from '@core/app/constants/add-on';
+import {
+  LaserType,
+  workareaOptions as pmWorkareaOptions,
+} from '@core/app/constants/promark-constants';
+import { WorkAreaModel, getWorkarea } from '@core/app/constants/workarea-constants';
 
 import styles from './DocumentSettings.module.scss';
 
@@ -71,30 +74,32 @@ const DocumentSettings = ({ unmount }: Props): JSX.Element => {
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState<number>(BeamboxPreference.read('rotary_mode') ?? 0);
   const [enableStartButton, setEnableStartButton] = useState(
-    !!BeamboxPreference.read('promark-start-button')
+    !!BeamboxPreference.read('promark-start-button'),
   );
   const [shouldFrame, setShouldFrame] = useState(!!BeamboxPreference.read('frame-before-start'));
   const [enableJobOrigin, setEnableJobOrigin] = useState<number>(
-    BeamboxPreference.read('enable-job-origin') ?? 0
+    BeamboxPreference.read('enable-job-origin') ?? 0,
   );
   const [jobOrigin, setJobOrigin] = useState<number>(BeamboxPreference.read('job-origin') ?? 1);
   const [extendRotaryWorkarea, setExtendRotaryWorkarea] = useState<boolean>(
-    !!BeamboxPreference.read('extend-rotary-workarea')
+    !!BeamboxPreference.read('extend-rotary-workarea'),
   );
   const [mirrorRotary, setMirrorRotary] = useState<boolean>(
-    !!BeamboxPreference.read('rotary-mirror')
+    !!BeamboxPreference.read('rotary-mirror'),
   );
   const [borderless, setBorderless] = useState(!!BeamboxPreference.read('borderless'));
   const [enableDiode, setEnableDiode] = useState(!!BeamboxPreference.read('enable-diode'));
   const [enableAutofocus, setEnableAutofocus] = useState(
-    !!BeamboxPreference.read('enable-autofocus')
+    !!BeamboxPreference.read('enable-autofocus'),
   );
   const [passThrough, setPassThrough] = useState(!!BeamboxPreference.read('pass-through'));
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
-    BeamboxPreference.read('pass-through-height') || workareaObj.displayHeight || workareaObj.height
+    BeamboxPreference.read('pass-through-height') ||
+      workareaObj.displayHeight ||
+      workareaObj.height,
   );
   useEffect(() => {
     if (rotaryMode > 0) {

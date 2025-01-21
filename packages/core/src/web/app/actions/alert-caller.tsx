@@ -1,6 +1,6 @@
-import alertConstants from 'app/constants/alert-constants';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { IAlert } from 'interfaces/IAlert';
+import alertConstants from '@core/app/constants/alert-constants';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { IAlert } from '@core/interfaces/IAlert';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 

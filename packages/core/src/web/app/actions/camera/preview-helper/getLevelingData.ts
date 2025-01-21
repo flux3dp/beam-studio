@@ -1,7 +1,7 @@
-import deviceMaster from 'helpers/device-master';
+import deviceMaster from '@core/helpers/device-master';
 
 const getLevelingData = async (
-  type: 'hexa_platform' | 'bottom_cover' | 'offset'
+  type: 'hexa_platform' | 'bottom_cover' | 'offset',
 ): Promise<{ [key: string]: number }> => {
   try {
     const data = await deviceMaster.fetchAutoLevelingData(type);

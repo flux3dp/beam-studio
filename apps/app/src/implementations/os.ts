@@ -1,6 +1,6 @@
-import childProcess from 'node:child_process';
-import os from 'node:os';
-import util from 'node:util';
+import childProcess from 'child_process';
+import os from 'os';
+import util from 'util';
 
 import type { IOperatingSystem } from '@core/interfaces/IOperatingSystem';
 

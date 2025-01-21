@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { Badge } from 'antd';
 
-import FluxIcons from 'app/icons/flux/FluxIcons';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
 
 import styles from './LeftPanelButton.module.scss';
 

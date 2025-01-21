@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
-import i18n from 'helpers/i18n';
-import SelectControl from 'app/components/settings/SelectControl';
-import { StorageKey } from 'interfaces/IStorage';
+import i18n from '@core/helpers/i18n';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 interface Props {
   isWeb: boolean;
   supportedLangs: { [key: string]: string };
-  notificationOptions: { value: any, label: string, selected: boolean }[];
+  notificationOptions: { value: any; label: string; selected: boolean }[];
   changeActiveLang: (e: React.ChangeEvent) => void;
   updateConfigChange: (id: StorageKey, newVal: any) => void;
 }
@@ -34,17 +34,14 @@ function General({
         }))}
         onChange={changeActiveLang}
       />
-      {
-        isWeb ? null
-          : (
-            <SelectControl
-              label={lang.settings.notifications}
-              id="set-notifications"
-              options={notificationOptions}
-              onChange={(e) => updateConfigChange('notification', e.target.value)}
-            />
-          )
-      }
+      {isWeb ? null : (
+        <SelectControl
+          label={lang.settings.notifications}
+          id="set-notifications"
+          options={notificationOptions}
+          onChange={(e) => updateConfigChange('notification', e.target.value)}
+        />
+      )}
     </>
   );
 }

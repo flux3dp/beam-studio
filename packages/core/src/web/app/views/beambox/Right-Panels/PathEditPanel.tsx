@@ -2,17 +2,17 @@ import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { Button, ConfigProvider, Divider, Space } from 'antd';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import i18n from 'helpers/i18n';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import PathEditIcons from 'app/icons/path-edit-panel/PathEditIcons';
-import useForceUpdate from 'helpers/use-force-update';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ISVGPath } from 'interfaces/ISVGPath';
-import { textButtonTheme } from 'app/constants/antd-config';
-import { TrashIcon } from 'app/icons/icons';
-import { useIsMobile } from 'helpers/system-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import i18n from '@core/helpers/i18n';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import PathEditIcons from '@core/app/icons/path-edit-panel/PathEditIcons';
+import useForceUpdate from '@core/helpers/use-force-update';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ISVGPath } from '@core/interfaces/ISVGPath';
+import { textButtonTheme } from '@core/app/constants/antd-config';
+import { TrashIcon } from '@core/app/icons/icons';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './PathEditPanel.module.scss';
 
@@ -67,8 +67,10 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
     }
   }
 
-  const canConnect = selectedNodes?.length === 2 && selectedNodes.every((point) => !point.prevSeg || !point.nextSeg);
-  const canDisconnect = selectedNodes?.length === 1 && selectedNodes[0].prev && selectedNodes[0].next;
+  const canConnect =
+    selectedNodes?.length === 2 && selectedNodes.every((point) => !point.prevSeg || !point.nextSeg);
+  const canDisconnect =
+    selectedNodes?.length === 1 && selectedNodes[0].prev && selectedNodes[0].next;
   const canDelete = selectedNodes?.length > 0;
   const buttonShape = isMobile ? 'round' : 'default';
 

@@ -6,12 +6,12 @@ import ConfigPanelContext from './ConfigPanelContext';
 import FillSettingModal from './FillSettingModal';
 
 const mockGet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
 
 const mockWriteDataLayer = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getPromarkLimit: () => ({
     pulseWidth: { min: 2, max: 350 },
     frequency: { min: 1, max: 4000 },
@@ -30,12 +30,12 @@ const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
 const mockGetLayerByName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
       (
@@ -55,11 +55,11 @@ jest.mock(
             onChange={(e) => getValue(parseFloat(e.target.value))}
           />
         </div>
-      )
+      ),
 );
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEmit = jest.fn();
@@ -100,7 +100,7 @@ describe('test FillSettingModal', () => {
         }}
       >
         <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(baseElement).toMatchSnapshot();
   });
@@ -116,7 +116,7 @@ describe('test FillSettingModal', () => {
         }}
       >
         <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
 
     changeValue(baseElement);
@@ -162,7 +162,7 @@ describe('test FillSettingModal', () => {
         }}
       >
         <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
 
     changeValue(baseElement);

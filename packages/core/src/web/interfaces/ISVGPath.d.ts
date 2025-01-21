@@ -1,4 +1,4 @@
-import { NodeLinkType } from 'app/constants/link-type-constants';
+import { NodeLinkType } from '@core/app/constants/link-type-constants';
 
 export interface ISVGPathSeg {
   x: number;
@@ -9,11 +9,11 @@ export interface ISVGPathSeg {
   y2: number;
   type: number;
   pathSegType: number;
-  r1?: number,
-  r2?: number,
-  angle?: number,
-  largeArcFlag?: boolean,
-  sweepFlag?: boolean,
+  r1?: number;
+  r2?: number;
+  angle?: number;
+  largeArcFlag?: boolean;
+  sweepFlag?: boolean;
   toString: () => string;
   _asPathString: () => string;
   clone: () => ISVGPathSeg;
@@ -32,9 +32,12 @@ export interface ISegment {
   path: ISVGPath;
   select: (isSelected: boolean) => void;
   update: () => void;
-  getNodePointAndControlPoints: () => {
-    nodePoint: IPathNodePoint, controlPoints: ISegmentControlPoint[]
-  } | Record<string, never>;
+  getNodePointAndControlPoints: () =>
+    | {
+        nodePoint: IPathNodePoint;
+        controlPoints: ISegmentControlPoint[];
+      }
+    | Record<string, never>;
 }
 
 export interface ISegmentControlPoint {
@@ -72,7 +75,7 @@ export interface IPathNodePoint {
   index: number;
   elem: SVGElement;
   setSelected: (isSelected: boolean) => void;
-  getDisplayPosition: () => { x: number, y: number };
+  getDisplayPosition: () => { x: number; y: number };
   isSharp: () => boolean;
   isRound: () => boolean;
   addControlPoint: (point: ISegmentControlPoint) => void;

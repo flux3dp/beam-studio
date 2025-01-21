@@ -2,21 +2,21 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import MonitorTask from './MonitorTask';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
 const formatDuration = jest.fn();
-jest.mock('helpers/duration-formatter', () => (sec: number) => formatDuration(sec));
+jest.mock('@core/helpers/duration-formatter', () => (sec: number) => formatDuration(sec));
 
 jest.mock('./MonitorControl', () => () => <div>Dummy MonitorControl</div>);
 
-jest.mock('helpers/device/framing', () => ({
+jest.mock('@core/helpers/device/framing', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
@@ -29,13 +29,13 @@ jest.mock('helpers/device/framing', () => ({
 }));
 
 // Mock MessageCaller
-jest.mock('app/actions/message-caller', () => ({
+jest.mock('@core/app/actions/message-caller', () => ({
   openMessage: jest.fn(),
   closeMessage: jest.fn(),
 }));
 
 // Mock useI18n
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   monitor: {
     left: 'left',
     task: {
@@ -71,7 +71,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
     expect(formatDuration).toHaveBeenCalledTimes(1);
@@ -96,7 +96,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

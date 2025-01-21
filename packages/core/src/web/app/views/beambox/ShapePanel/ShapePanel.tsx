@@ -2,12 +2,15 @@ import React, { Fragment } from 'react';
 import { CapsuleTabs } from 'antd-mobile';
 import { Modal } from 'antd';
 
-import FloatingPanel from 'app/widgets/FloatingPanel';
-import layoutConstants from 'app/constants/layout-constants';
-import Shapes, { ShapeTabs, generateFileNameArray } from 'app/constants/shape-panel-constants';
-import ShapeIcon from 'app/views/beambox/ShapePanel/ShapeIcon';
-import useI18n from 'helpers/useI18n';
-import { useIsMobile } from 'helpers/system-helper';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import layoutConstants from '@core/app/constants/layout-constants';
+import Shapes, {
+  ShapeTabs,
+  generateFileNameArray,
+} from '@core/app/constants/shape-panel-constants';
+import ShapeIcon from '@core/app/views/beambox/ShapePanel/ShapeIcon';
+import useI18n from '@core/helpers/useI18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './ShapePanel.module.scss';
 
@@ -49,7 +52,7 @@ const ShapePanel = ({ onClose }: { onClose: () => void }): JSX.Element => {
               if (!Shapes[activeTab][subtype].fileNames) {
                 const fileNames = generateFileNameArray(
                   subtype,
-                  Shapes[activeTab][subtype].setting
+                  Shapes[activeTab][subtype].setting,
                 );
                 Shapes[activeTab][subtype].fileNames = fileNames;
               }

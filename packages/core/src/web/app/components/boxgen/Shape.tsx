@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-import Vector2d from 'helpers/boxgen/vector2d';
-import { BOLT_HEX_WIDTH, BOLT_THICK } from 'app/constants/boxgen-constants';
-import { Direction, Plotter, transpose } from 'helpers/boxgen/shapeHelper';
-import { IController, IPlaneShape } from 'interfaces/IBoxgen';
+import Vector2d from '@core/helpers/boxgen/vector2d';
+import { BOLT_HEX_WIDTH, BOLT_THICK } from '@core/app/constants/boxgen-constants';
+import { Direction, Plotter, transpose } from '@core/helpers/boxgen/shapeHelper';
+import { IController, IPlaneShape } from '@core/interfaces/IBoxgen';
 
 const SLOT_BOLT_POS = 1;
 const getTeethData = (params: {
@@ -42,7 +42,7 @@ const drawConvex = (
   shape: THREE.Shape,
   params: IController,
   pos: { x: number; y: number },
-  dir: Vector2d
+  dir: Vector2d,
 ) => {
   const plotter = new Plotter(shape);
   const norm = transpose(dir);
@@ -59,7 +59,7 @@ const drawConvex = (
   }
   plotter.lineToAbs(
     pos.x + norm.x * thickness + dir.x * length,
-    pos.y + norm.y * thickness + dir.y * length
+    pos.y + norm.y * thickness + dir.y * length,
   );
   plotter.vecTo(norm, -thickness);
 };
@@ -68,7 +68,7 @@ const drawConcave = (
   shape: THREE.Shape,
   params: IController,
   pos: { x: number; y: number },
-  dir: Vector2d
+  dir: Vector2d,
 ) => {
   const plotter = new Plotter(shape);
   const norm = transpose(dir);
@@ -104,7 +104,7 @@ const drawConcave = (
   }
   plotter.lineToAbs(
     pos.x + dir.x * length - norm.x * thickness,
-    pos.y + dir.y * length - norm.y * thickness
+    pos.y + dir.y * length - norm.y * thickness,
   );
   plotter.vecTo(norm, thickness);
 };

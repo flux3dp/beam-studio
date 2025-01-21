@@ -1,33 +1,33 @@
-import EventEmitter from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import checkDeviceStatus from 'helpers/check-device-status';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import exportFuncs from 'app/actions/beambox/export-funcs';
-import findDefs from 'app/svgedit/utils/findDef';
-import getJobOrigin from 'helpers/job-origin';
-import getRotaryRatio from 'helpers/device/get-rotary-ratio';
-import getUtilWS from 'helpers/api/utils-ws';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import i18n from 'helpers/i18n';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import NS from 'app/constants/namespaces';
-import rotaryAxis from 'app/actions/canvas/rotary-axis';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
-import symbolMaker from 'helpers/symbol-maker';
-import versionChecker from 'helpers/version-checker';
-import workareaManager from 'app/svgedit/workarea';
-import { getAllLayers } from 'helpers/layer/layer-helper';
-import { getData } from 'helpers/layer/layer-config-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { getSupportInfo, SupportInfo } from 'app/constants/add-on';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import getJobOrigin from '@core/helpers/job-origin';
+import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
+import getUtilWS from '@core/helpers/api/utils-ws';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import i18n from '@core/helpers/i18n';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import NS from '@core/app/constants/namespaces';
+import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import symbolMaker from '@core/helpers/symbol-maker';
+import versionChecker from '@core/helpers/version-checker';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getAllLayers } from '@core/helpers/layer/layer-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportInfo, SupportInfo } from '@core/app/constants/add-on';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import applyRedDot from './promark/apply-red-dot';
 import promarkDataStore from './promark/promark-data-store';
@@ -147,7 +147,7 @@ const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> =>
 
 const getAreaCheckTask = async (
   device?: IDeviceInfo,
-  jobOrigin?: { x: number; y: number }
+  jobOrigin?: { x: number; y: number },
 ): Promise<Array<[number, number]>> => {
   try {
     const metadata = await exportFuncs.getMetadata(device);
@@ -248,7 +248,7 @@ class FramingTaskManager extends EventEmitter {
         const { field: newField, galvoParameters: newGalvo } = applyRedDot(
           redDot,
           field,
-          galvoParameters
+          galvoParameters,
         );
         const { width } = getWorkarea(this.device.model);
         await deviceMaster.setField(width, newField);

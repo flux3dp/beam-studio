@@ -3,38 +3,38 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock(
-  'app/views/beambox/Right-Panels/ActionsPanel',
+  '@core/app/views/beambox/Right-Panels/ActionsPanel',
   () =>
     function DummyActionsPanel() {
       return <div>This is dummy ActionsPanel</div>;
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel',
+  '@core/app/views/beambox/Right-Panels/DimensionPanel/DimensionPanel',
   () =>
     function DummyDimensionPanel() {
       return <div>This is dummy DimensionPanel</div>;
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/OptionsPanel',
+  '@core/app/views/beambox/Right-Panels/OptionsPanel',
   () =>
     function DummyOptionsPanel() {
       return <div>This is dummy OptionsPanel</div>;
-    }
+    },
 );
 
 jest.mock(
-  'app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel',
+  '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel',
   () =>
     function DummyConfigPanel() {
       return <div>This is dummy ConfigPanel</div>;
-    }
+    },
 );
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Item: function DummyObjectPanelItem({ id, label, onClick }: any) {
     return (
       <div id={id}>
@@ -65,7 +65,7 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   },
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -106,7 +106,7 @@ const alignBottom = jest.fn();
 const alignLeft = jest.fn();
 const alignCenter = jest.fn();
 const alignRight = jest.fn();
-jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
+jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   alignTop,
   alignMiddle,
   alignBottom,
@@ -116,12 +116,12 @@ jest.mock('app/actions/beambox/svgeditor-function-wrapper', () => ({
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
@@ -149,12 +149,12 @@ getSVGAsync.mockImplementation((callback) => {
 });
 
 const addDialogComponent = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   addDialogComponent: (...args) => addDialogComponent(...args),
 }));
 
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import { SelectedElementContext } from 'app/contexts/SelectedElementContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
 import ObjectPanel from './ObjectPanel';
 
@@ -184,7 +184,7 @@ describe('should render correctly', () => {
           <ObjectPanel />
         </ObjectPanelContext.Provider>
         ,
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -215,7 +215,7 @@ describe('should render correctly', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -256,7 +256,7 @@ describe('should render correctly', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -292,7 +292,7 @@ describe('should render correctly', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -348,7 +348,7 @@ describe('should render correctly', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -387,7 +387,7 @@ describe('should render correctly in mobile', () => {
         >
           <ObjectPanel />
         </ObjectPanelContext.Provider>
-      </SelectedElementContext.Provider>
+      </SelectedElementContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -419,7 +419,7 @@ describe('should render correctly in mobile', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -461,7 +461,7 @@ describe('should render correctly in mobile', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -499,7 +499,7 @@ describe('should render correctly in mobile', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();
@@ -555,7 +555,7 @@ describe('should render correctly in mobile', () => {
           >
             <ObjectPanel />
           </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>
+        </SelectedElementContext.Provider>,
       );
 
       expect(container).toMatchSnapshot();

@@ -13,17 +13,20 @@ import {
 } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import alertCaller from 'app/actions/alert-caller';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import defaultModuleOffset from 'app/constants/layer-module/module-offsets';
-import deviceMaster from 'helpers/device-master';
-import FisheyePreviewManagerV2 from 'app/actions/camera/preview-helper/FisheyePreviewManagerV2';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { FisheyeCameraParametersV1, FisheyeCameraParametersV2 } from 'interfaces/FisheyePreview';
-import { setFisheyeConfig } from 'helpers/camera-calibration-helper';
-import { WorkAreaModel, getWorkarea } from 'app/constants/workarea-constants';
+import alertCaller from '@core/app/actions/alert-caller';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import defaultModuleOffset from '@core/app/constants/layer-module/module-offsets';
+import deviceMaster from '@core/helpers/device-master';
+import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import {
+  FisheyeCameraParametersV1,
+  FisheyeCameraParametersV2,
+} from '@core/interfaces/FisheyePreview';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
+import { WorkAreaModel, getWorkarea } from '@core/app/constants/workarea-constants';
 
 import CalibrationType from './calibrationTypes';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
@@ -84,7 +87,7 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
         const perspectivePoints = await getPerspectiveForAlign(
           deviceMaster.currentDevice.info,
           fisheyeParam,
-          fisheyeParam.center || [INIT_GUESS_X, INIT_GUESS_Y]
+          fisheyeParam.center || [INIT_GUESS_X, INIT_GUESS_Y],
         );
         const { k, d } = fisheyeParam;
         await deviceMaster.setFisheyeMatrix({ k, d, points: perspectivePoints });
@@ -107,12 +110,15 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
     () => () => {
       if (img?.url) URL.revokeObjectURL(img.url);
     },
-    [img]
+    [img],
   );
 
   const fisheyeCenter = useMemo(() => {
     if ('v' in fisheyeParam) {
-      const { cameraCenter } = getWorkarea(deviceMaster.currentDevice.info.model as WorkAreaModel, 'ado1');
+      const { cameraCenter } = getWorkarea(
+        deviceMaster.currentDevice.info.model as WorkAreaModel,
+        'ado1',
+      );
       return [cameraCenter[0] * PX_PER_MM, cameraCenter[1] * PX_PER_MM];
     }
     return fisheyeParam.center;
@@ -132,7 +138,7 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
       const y = (top - fisheyeCenter[1] + imgContainerRef.current.clientHeight / 2) / PX_PER_MM;
       return { x, y };
     },
-    [fisheyeCenter]
+    [fisheyeCenter],
   );
   const getPxFromOffsetValue = useCallback(
     (x, y) => {
@@ -140,7 +146,7 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
       const top = y * PX_PER_MM + fisheyeCenter[1];
       return { left, top };
     },
-    [fisheyeCenter]
+    [fisheyeCenter],
   );
   const getScrollFromPx = useCallback((left, top) => {
     if (!imgContainerRef.current) return { left, top };
@@ -198,7 +204,7 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
         }
       }
     },
-    [type, getPxFromOffsetValue, getScrollFromPx]
+    [type, getPxFromOffsetValue, getScrollFromPx],
   );
 
   const handleContainerScroll = useCallback(
@@ -211,12 +217,12 @@ const Align = ({ title, fisheyeParam, type, onClose, onBack }: Props): JSX.Eleme
       } else {
         const { x, y } = getOffsetValueFromScroll(
           e.currentTarget.scrollLeft,
-          e.currentTarget.scrollTop
+          e.currentTarget.scrollTop,
         );
         form.setFieldsValue({ x, y });
       }
     },
-    [form, getOffsetValueFromScroll, type]
+    [form, getOffsetValueFromScroll, type],
   );
 
   const handleDone = useCallback(() => {

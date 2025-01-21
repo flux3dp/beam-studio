@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { IAnnouncement } from 'interfaces/IAnnouncement';
+import { IAnnouncement } from '@core/interfaces/IAnnouncement';
 
 import AnnouncementPanel from './AnnouncementPanel';
 
@@ -13,7 +13,7 @@ const mockAnnouncement: IAnnouncement = {
   link_text: 'mock link content',
 };
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   alert: {
     learn_more: 'Learn More',
     close: 'Close',
@@ -27,12 +27,12 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
 const mockSetNotShowing = jest.fn();
-jest.mock('helpers/announcement-helper', () => ({
+jest.mock('@core/helpers/announcement-helper', () => ({
   setNotShowing: (...args) => mockSetNotShowing(...args),
 }));
 
@@ -45,7 +45,7 @@ describe('test AnnouncementPanel', () => {
 
   it('should render correctly', () => {
     const { baseElement, getByText } = render(
-      <AnnouncementPanel announcement={mockAnnouncement} onClose={mockOnClose} />
+      <AnnouncementPanel announcement={mockAnnouncement} onClose={mockOnClose} />,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -69,7 +69,7 @@ describe('test AnnouncementPanel', () => {
 
   it('should render correctly without button link', () => {
     const { baseElement, getByText } = render(
-      <AnnouncementPanel announcement={{ ...mockAnnouncement, link: '' }} onClose={mockOnClose} />
+      <AnnouncementPanel announcement={{ ...mockAnnouncement, link: '' }} onClose={mockOnClose} />,
     );
     expect(baseElement).toMatchSnapshot();
 

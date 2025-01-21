@@ -1,7 +1,7 @@
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import i18n from '@core/helpers/i18n';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './ElementTitle.module.scss';
 

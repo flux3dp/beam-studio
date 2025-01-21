@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
     on: 'On',
     off: 'Off',
@@ -15,7 +15,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/components/settings/SelectControl', () =>
+jest.mock('@core/app/components/settings/SelectControl', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, label, onChange, options, url }: any) => (
     <div>
@@ -25,7 +25,7 @@ jest.mock('app/components/settings/SelectControl', () =>
       options:{JSON.stringify(options)}
       <input className="select-control" onChange={onChange} />
     </div>
-  )
+  ),
 );
 
 // eslint-disable-next-line import/first
@@ -39,7 +39,7 @@ test('should render correctly', () => {
     <Mask
       getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
       updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
-    />
+    />,
   );
   expect(container).toMatchSnapshot();
 

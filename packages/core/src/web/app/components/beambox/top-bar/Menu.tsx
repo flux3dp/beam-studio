@@ -2,17 +2,17 @@
 import React, { useState } from 'react';
 import { Menu as TopBarMenu, MenuItem, MenuDivider, SubMenu } from '@szhsin/react-menu';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import browser from 'implementations/browser';
-import { promarkModels } from 'app/actions/beambox/constant';
-import Discover from 'helpers/api/discover';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { menuItems } from 'app/constants/menuItems';
-import useI18n from 'helpers/useI18n';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import { useIsMobile } from 'helpers/system-helper';
-import isWeb from 'helpers/is-web';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import browser from '@app/implementations/browser';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import Discover from '@core/helpers/api/discover';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { menuItems } from '@core/app/constants/menuItems';
+import useI18n from '@core/helpers/useI18n';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import { useIsMobile } from '@core/helpers/system-helper';
+import isWeb from '@core/helpers/is-web';
 
 interface Props {
   email: string;
@@ -23,24 +23,24 @@ let discover;
 export default function Menu({ email }: Props): JSX.Element {
   const eventEmitter = React.useMemo(
     () => eventEmitterFactory.createEventEmitter('top-bar-menu'),
-    []
+    [],
   );
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
   const [shouldShowRulers, changeShouldShowRulers] = useState(
-    BeamboxPreference.read('show_rulers')
+    BeamboxPreference.read('show_rulers'),
   );
   const [shouldShowGrids, changeShouldShowGrids] = useState(BeamboxPreference.read('show_grids'));
   const [shouldUseLayerColor, changeShouldUseLayerColor] = useState(
-    BeamboxPreference.read('use_layer_color')
+    BeamboxPreference.read('use_layer_color'),
   );
   const [isUsingAntiAliasing, setIsUsingAntiAliasing] = useState(
-    BeamboxPreference.read('anti-aliasing')
+    BeamboxPreference.read('anti-aliasing'),
   );
   const [shouldAlignToEdges, changeShouldAlignToEdges] = useState(
-    BeamboxPreference.read('show_align_lines')
+    BeamboxPreference.read('show_align_lines'),
   );
   const [shouldZoomWithWindow, changeShouldZoomWithWindow] = useState(
-    BeamboxPreference.read('zoom_with_window')
+    BeamboxPreference.read('zoom_with_window'),
   );
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
@@ -221,7 +221,7 @@ export default function Menu({ email }: Props): JSX.Element {
               {menuCms.log.robot}
             </MenuItem>
           </SubMenu>
-        </SubMenu>
+        </SubMenu>,
       );
     }
 

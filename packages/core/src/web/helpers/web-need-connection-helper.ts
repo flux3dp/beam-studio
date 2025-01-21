@@ -1,11 +1,11 @@
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import fileExportHelper from 'helpers/file-export-helper';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 
-import { checkConnection } from 'helpers/api/discover';
+import { checkConnection } from '@core/helpers/api/discover';
 
 const webNeedConnectionWrapper = <T>(callback: () => T | Promise<T>): T | Promise<T> => {
   if (isWeb() && !checkConnection()) {

@@ -5,20 +5,20 @@ import Chessboard from './Chessboard';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
   popById: (...args) => mockPopById(...args),
 }));
 
 const mockCalibrateChessboard = jest.fn();
-jest.mock('helpers/camera-calibration-helper', () => ({
+jest.mock('@core/helpers/camera-calibration-helper', () => ({
   calibrateChessboard: (...args) => mockCalibrateChessboard(...args),
 }));
 
@@ -27,10 +27,10 @@ jest.mock(
   '../common/useCamera',
   () =>
     (...args) =>
-      mockUseCamera(...args)
+      mockUseCamera(...args),
 );
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   calibration: {
     calibrating: 'calibrating',
     failed_to_calibrate_chessboard: 'failed_to_calibrate_chessboard',
@@ -51,7 +51,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockWriteFileDialog = jest.fn();
-jest.mock('implementations/dialog', () => ({
+jest.mock('@app/implementations/dialog', () => ({
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
 
@@ -97,7 +97,7 @@ describe('test Chessboard', () => {
         updateParam={jest.fn()}
         onNext={jest.fn()}
         onClose={jest.fn()}
-      />
+      />,
     );
     expect(baseElement).toMatchSnapshot();
     expect(mockUseCamera).toBeCalledTimes(1);
@@ -115,7 +115,7 @@ describe('test Chessboard', () => {
         updateParam={jest.fn()}
         onNext={jest.fn()}
         onClose={jest.fn()}
-      />
+      />,
     );
     expect(setTimeout).toBeCalled();
     expect(mockHandleTakePicture).not.toBeCalled();
@@ -134,7 +134,7 @@ describe('test Chessboard', () => {
         updateParam={mockUpdateParam}
         onNext={mockOnNext}
         onClose={jest.fn()}
-      />
+      />,
     );
     const mockBlob = new Blob();
     act(() => handleImg(mockBlob));
@@ -187,7 +187,7 @@ describe('test Chessboard', () => {
         updateParam={mockUpdateParam}
         onNext={mockOnNext}
         onClose={jest.fn()}
-      />
+      />,
     );
     const mockBlob = new Blob();
     act(() => handleImg(mockBlob));
@@ -237,7 +237,7 @@ describe('test Chessboard', () => {
         updateParam={mockUpdateParam}
         onNext={mockOnNext}
         onClose={jest.fn()}
-      />
+      />,
     );
     const mockBlob = new Blob();
     act(() => handleImg(mockBlob));
@@ -254,7 +254,7 @@ describe('test Chessboard', () => {
         updateParam={mockUpdateParam}
         onNext={mockOnNext}
         onClose={jest.fn()}
-      />
+      />,
     );
     const mockBlob = new Blob();
     act(() => handleImg(mockBlob));

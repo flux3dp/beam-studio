@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Radio, Space } from 'antd';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props<T = string> {
   title: string;

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
 
-import i18n from 'helpers/i18n';
-import SelectControl from 'app/components/settings/SelectControl';
-import { OptionValues } from 'app/constants/enums';
-import { PreviewSpeedLevel } from 'app/actions/beambox/constant';
+import i18n from '@core/helpers/i18n';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import { OptionValues } from '@core/app/constants/enums';
+import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 
 interface Props {
   enableCustomPreviewHeightOptions: Array<{
@@ -43,7 +43,7 @@ function Camera({
         selected: previewSpeedLevel === PreviewSpeedLevel.FAST,
       },
     ],
-    [lang, previewSpeedLevel]
+    [lang, previewSpeedLevel],
   );
 
   return (
@@ -56,7 +56,7 @@ function Camera({
         onChange={(e) =>
           updateBeamboxPreferenceChange(
             'preview_movement_speed_level',
-            parseInt(e.target.value, 10)
+            parseInt(e.target.value, 10),
           )
         }
       />

@@ -1,3 +1,3 @@
-import { IStorage } from 'interfaces/IStorage';
+import type { IStorage } from '@core/interfaces/IStorage';
 
 export default {} as IStorage;

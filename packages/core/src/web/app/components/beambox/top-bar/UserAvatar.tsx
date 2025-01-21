@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Avatar, Badge } from 'antd';
 
-import dialogCaller from 'app/actions/dialog-caller';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import TopBarIcons from 'app/icons/top-bar/TopBarIcons';
-import { IUser } from 'interfaces/IUser';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './UserAvatar.module.scss';
 
@@ -21,10 +22,10 @@ const UserAvatar = ({ user }: Props): JSX.Element => (
       offset={[-4, 4]}
     >
       <Avatar
-        icon={<TopBarIcons.Account className={styles['default-avatar']} />}
-        src={user?.info?.avatar || undefined}
-        size={28}
         alt="avatar"
+        icon={<TopBarIcons.Account className={styles['default-avatar']} />}
+        size={28}
+        src={user?.info?.avatar || undefined}
       />
     </Badge>
   </div>

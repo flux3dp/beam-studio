@@ -1,5 +1,5 @@
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import { Preset, PresetModel } from 'interfaces/ILayerConfig';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
 export const presets: {
   [key: string]: {

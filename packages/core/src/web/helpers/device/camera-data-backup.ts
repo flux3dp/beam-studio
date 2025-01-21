@@ -1,13 +1,13 @@
 /* eslint-disable no-await-in-loop */
 import JSZip from 'jszip';
 
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import dialog from 'implementations/dialog';
-import formatDuration from 'helpers/duration-formatter';
-import i18n from 'helpers/i18n';
-import progressCaller from 'app/actions/progress-caller';
-import storage from 'implementations/storage';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import dialog from '@app/implementations/dialog';
+import formatDuration from '@core/helpers/duration-formatter';
+import i18n from '@core/helpers/i18n';
+import progressCaller from '@core/app/actions/progress-caller';
+import storage from '@app/implementations/storage';
 
 export const targetDirs = [
   'camera_calib',
@@ -79,7 +79,7 @@ export const downloadCameraData = async (deviceName: string): Promise<void> => {
       () => zip.generateAsync({ type: 'blob' }),
       tBackup.title,
       deviceName,
-      [{ name: window.os === 'MacOS' ? 'zip (*.zip)' : 'zip', extensions: ['zip'] }]
+      [{ name: window.os === 'MacOS' ? 'zip (*.zip)' : 'zip', extensions: ['zip'] }],
     );
     progressCaller.popById(progressId);
     if (path) {

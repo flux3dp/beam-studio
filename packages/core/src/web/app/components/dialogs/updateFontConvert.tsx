@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from 'antd';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import browser from 'implementations/browser';
-import i18n from 'helpers/i18n';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import browser from '@app/implementations/browser';
+import i18n from '@core/helpers/i18n';
 
 import styles from './updateFontConvert.module.scss';
 

@@ -1,10 +1,15 @@
-import findDefs from 'app/svgedit/utils/findDef';
-import svgStringToCanvas from 'helpers/image/svgStringToCanvas';
-import symbolMaker from 'helpers/symbol-maker';
-import workareaManager from 'app/svgedit/workarea';
+import findDefs from '@core/app/svgedit/utils/findDef';
+import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import symbolMaker from '@core/helpers/symbol-maker';
+import workareaManager from '@core/app/svgedit/workarea';
 
 // TODO: Add unit tests
-const getCanvasImage = async (x: number, y: number, width: number, height: number): Promise<ImageBitmap> => {
+const getCanvasImage = async (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+): Promise<ImageBitmap> => {
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = { x, y, width, height };
   if (bbox.width <= 0 || bbox.height <= 0) return null;

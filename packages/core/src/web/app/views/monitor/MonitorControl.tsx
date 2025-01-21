@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, Space } from 'antd';
 import { PauseCircleFilled, PlayCircleFilled, StopFilled } from '@ant-design/icons';
 
-import DeviceConstants from 'app/constants/device-constants';
-import MonitorStatus, { ButtonTypes } from 'helpers/monitor-status';
-import { useIsMobile } from 'helpers/system-helper';
-import { Mode } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
-import useI18n from 'helpers/useI18n';
+import DeviceConstants from '@core/app/constants/device-constants';
+import MonitorStatus, { ButtonTypes } from '@core/helpers/monitor-status';
+import { useIsMobile } from '@core/helpers/system-helper';
+import { Mode } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   isPromark: boolean;

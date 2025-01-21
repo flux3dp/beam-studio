@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox, Modal, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import deviceMaster from 'helpers/device-master';
-import getDevice from 'helpers/device/get-device';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { underlineInputTheme } from 'app/constants/antd-config';
+import deviceMaster from '@core/helpers/device-master';
+import getDevice from '@core/helpers/device/get-device';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { underlineInputTheme } from '@core/app/constants/antd-config';
 
 import styles from './PreviewHeight.module.scss';
 

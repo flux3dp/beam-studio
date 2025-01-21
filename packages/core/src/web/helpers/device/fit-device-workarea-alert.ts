@@ -1,12 +1,12 @@
 import { sprintf } from 'sprintf-js';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import changeWorkarea from 'app/svgedit/operations/changeWorkarea';
-import i18n from 'helpers/i18n';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { allWorkareas, WorkAreaModel } from 'app/constants/workarea-constants';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import i18n from '@core/helpers/i18n';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { allWorkareas, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const LANG = i18n.lang;
 

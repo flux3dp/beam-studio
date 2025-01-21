@@ -1,5 +1,5 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { IMessage } from 'interfaces/IMessage';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { IMessage } from '@core/interfaces/IMessage';
 
 export enum MessageLevel {
   OPEN,
@@ -12,11 +12,16 @@ export enum MessageLevel {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 const MessageCaller = {
-  openMessage: (args: IMessage): Promise<void> => new Promise((resolve) => {
-    eventEmitter.emit('OPEN_MESSAGE', {
-      ...args,
-    }, resolve);
-  }),
+  openMessage: (args: IMessage): Promise<void> =>
+    new Promise((resolve) => {
+      eventEmitter.emit(
+        'OPEN_MESSAGE',
+        {
+          ...args,
+        },
+        resolve,
+      );
+    }),
   closeMessage: (id: string): void => {
     eventEmitter.emit('CLOSE_MESSAGE', id);
   },

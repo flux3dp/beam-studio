@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import alert from 'app/actions/alert-caller';
-import Controls from 'app/components/settings/Control';
-import onOffOptionFactory from 'app/components/settings/onOffOptionFactory';
-import SelectControl from 'app/components/settings/SelectControl';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useI18n from 'helpers/useI18n';
-import { OptionValues } from 'app/constants/enums';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
+import alert from '@core/app/actions/alert-caller';
+import Controls from '@core/app/components/settings/Control';
+import onOffOptionFactory from '@core/app/components/settings/onOffOptionFactory';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useI18n from '@core/helpers/useI18n';
+import { OptionValues } from '@core/app/constants/enums';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 interface Props {
   defaultUnit: string;

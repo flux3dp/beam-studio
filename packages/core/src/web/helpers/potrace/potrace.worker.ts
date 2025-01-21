@@ -1,4 +1,4 @@
-import jimpHelper from 'helpers/jimp-helper';
+import jimpHelper from '@core/helpers/jimp-helper';
 
 import { posterize, trace } from '.';
 

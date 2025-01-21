@@ -1,17 +1,17 @@
-import { IFile } from 'interfaces/IMyCloud';
+import { IFile } from '@core/interfaces/IMyCloud';
 
 import currentFileManager from './currentFileManager';
 
 const mockUpdateTitle = jest.fn();
 const mockTopBarSetUnsavedChange = jest.fn();
 
-jest.mock('app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
   updateTitle: () => mockUpdateTitle(),
   setHasUnsavedChange: (...args) => mockTopBarSetUnsavedChange(...args),
 }));
 
 const mockToggleAutoSave = jest.fn();
-jest.mock('helpers/auto-save-helper', () => ({
+jest.mock('@core/helpers/auto-save-helper', () => ({
   toggleAutoSave: (...args) => mockToggleAutoSave(...args),
 }));
 

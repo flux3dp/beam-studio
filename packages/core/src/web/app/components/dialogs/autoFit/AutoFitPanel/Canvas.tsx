@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
-import EmbeddedCanvas from 'app/widgets/FullWindowPanel/EmbeddedCanvas';
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import OpacitySlider from './OpacitySlider';
 import { AutoFitCanvasManager } from './CanvasManager';

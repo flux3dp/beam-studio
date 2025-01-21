@@ -9,13 +9,13 @@ import React, {
 } from 'react';
 import { Button, Flex } from 'antd';
 
-import constant from 'app/actions/beambox/constant';
-import round from 'helpers/math/round';
-import shortcuts from 'helpers/shortcuts';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { AutoFitContour } from 'interfaces/IAutoFit';
+import constant from '@core/app/actions/beambox/constant';
+import round from '@core/helpers/math/round';
+import shortcuts from '@core/helpers/shortcuts';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import styles from './Controls.module.scss';
 import { calculateDimensionCenter, ImageDimension } from './dimension';
@@ -56,14 +56,14 @@ const Controls = ({
   const rad = (rotation * Math.PI) / 180;
   const { x: centerX, y: centerY } = useMemo(
     () => calculateDimensionCenter(dimension),
-    [dimension]
+    [dimension],
   );
   const getSizeStr = useCallback(
     (w: number, h: number) => {
       const getDisplayValue = (val: number) => round(val / dpmm / (isInch ? 25.4 : 1), 2);
       return `${getDisplayValue(w)} x ${getDisplayValue(h)} ${isInch ? 'in' : 'mm'}`;
     },
-    [dpmm, isInch]
+    [dpmm, isInch],
   );
 
   const step = useMemo(() => (isInch ? 2.54 : 1), [isInch]);

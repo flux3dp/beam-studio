@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import JsBarcode, { Options } from 'jsbarcode';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 import styles from './Barcode.module.scss';
 
 export type Renderer = 'canvas' | 'image' | 'svg';

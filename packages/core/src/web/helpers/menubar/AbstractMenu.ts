@@ -1,17 +1,31 @@
-import customMenuActionProvider from 'implementations/customMenuActionProvider';
-import DeviceMaster from 'helpers/device-master';
-import menuActions from 'app/actions/beambox/menuActions';
-import menuDeviceActions from 'app/actions/beambox/menuDeviceActions';
-import menuEventListenerFactory from 'implementations/menuEventListenerFactory';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import i18n from 'helpers/i18n';
+import customMenuActionProvider from '@app/implementations/customMenuActionProvider';
+import DeviceMaster from '@core/helpers/device-master';
+import menuActions from '@core/app/actions/beambox/menuActions';
+import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
+import menuEventListenerFactory from '@app/implementations/menuEventListenerFactory';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import i18n from '@core/helpers/i18n';
 import { sprintf } from 'sprintf-js';
 
-const MENU_ITEMS = ['IMPORT', 'EXPORT_FLUX_TASK', 'SAVE_SCENE',
-  'UNDO', 'DUPLICATE', 'PHOTO_EDIT', 'DOCUMENT_SETTING', 'CLEAR_SCENE',
-  'ZOOM_IN', 'ZOOM_OUT', 'FITS_TO_WINDOW', 'ZOOM_WITH_WINDOW', 'SHOW_GRIDS', 'SHOW_LAYER_COLOR',
-  'NETWORK_TESTING', 'ABOUT_BEAM_STUDIO'];
+const MENU_ITEMS = [
+  'IMPORT',
+  'EXPORT_FLUX_TASK',
+  'SAVE_SCENE',
+  'UNDO',
+  'DUPLICATE',
+  'PHOTO_EDIT',
+  'DOCUMENT_SETTING',
+  'CLEAR_SCENE',
+  'ZOOM_IN',
+  'ZOOM_OUT',
+  'FITS_TO_WINDOW',
+  'ZOOM_WITH_WINDOW',
+  'SHOW_GRIDS',
+  'SHOW_LAYER_COLOR',
+  'NETWORK_TESTING',
+  'ABOUT_BEAM_STUDIO',
+];
 
 export default abstract class AbstractMenu {
   abstract init(): void;
@@ -30,7 +44,7 @@ export default abstract class AbstractMenu {
       const menuEventListener = menuEventListenerFactory.createMenuEventListener();
 
       menuEventListener.on('MENU_CLICK', (e, menuItem) => {
-        const actions: { [key: string]: ((device?: IDeviceInfo) => void) } = {
+        const actions: { [key: string]: (device?: IDeviceInfo) => void } = {
           ...menuActions,
           ...menuDeviceActions,
           ...customMenuActionProvider.getCustomMenuActions(),
@@ -66,7 +80,8 @@ export default abstract class AbstractMenu {
               level: MessageLevel.LOADING,
               duration: 20,
             });
-            if (menuItem.serial) DeviceMaster.getDiscoveredDevice('serial', menuItem.serial, callback);
+            if (menuItem.serial)
+              DeviceMaster.getDiscoveredDevice('serial', menuItem.serial, callback);
             else DeviceMaster.getDiscoveredDevice('uuid', menuItem.uuid, callback);
           }
         }

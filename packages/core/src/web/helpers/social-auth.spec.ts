@@ -1,6 +1,6 @@
 const mockGet = jest.fn();
 
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: mockGet,
 }));
 
@@ -15,7 +15,7 @@ describe('test social-auth', () => {
   });
 
   describe('result is true', () => {
-    test('opener\'s location is at flux id login page and Beam Studio is not ready', () => {
+    test("opener's location is at flux id login page and Beam Studio is not ready", () => {
       window.opener.location.hash = '#/initialize/connect/flux-id-login';
       window.opener.dispatchEvent = jest.fn();
       window.close = jest.fn();
@@ -28,7 +28,7 @@ describe('test social-auth', () => {
       expect(window.close).toHaveBeenCalledTimes(1);
     });
 
-    test('opener\'s location is at flux id login page and Beam Studio is ready', () => {
+    test("opener's location is at flux id login page and Beam Studio is ready", () => {
       window.opener.location.hash = '#/initialize/connect/flux-id-login';
       window.opener.dispatchEvent = jest.fn();
       window.close = jest.fn();
@@ -41,7 +41,7 @@ describe('test social-auth', () => {
       expect(window.close).toHaveBeenCalledTimes(1);
     });
 
-    test('opener\'s location is at flux id login page and printer is not ready', () => {
+    test("opener's location is at flux id login page and printer is not ready", () => {
       mockGet.mockReturnValueOnce(false);
       window.opener.location.hash = '#/initialize/connect/flux-id-login';
       window.opener.dispatchEvent = jest.fn();
@@ -53,7 +53,7 @@ describe('test social-auth', () => {
       expect(window.close).toHaveBeenCalledTimes(1);
     });
 
-    test('opener\'s location is NOT at flux id login page', () => {
+    test("opener's location is NOT at flux id login page", () => {
       window.opener.location.hash = '#/studio/beambox';
       window.opener.dispatchEvent = jest.fn();
       socialAuth(true);

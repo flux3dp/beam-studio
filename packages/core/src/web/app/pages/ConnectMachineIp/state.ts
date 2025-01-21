@@ -1,5 +1,5 @@
-import TestState from 'app/constants/connection-test';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import TestState from '@core/app/constants/connection-test';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export interface State {
   testState: TestState;

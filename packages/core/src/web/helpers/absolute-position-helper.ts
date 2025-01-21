@@ -1,7 +1,7 @@
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import isDev from 'helpers/is-dev';
-import layoutConstants from 'app/constants/layout-constants';
-import { modelsWithModules } from 'app/constants/layer-module/layer-modules';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import isDev from '@core/helpers/is-dev';
+import layoutConstants from '@core/app/constants/layout-constants';
+import { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
 
 export enum TopRef {
   WINDOW = 0,

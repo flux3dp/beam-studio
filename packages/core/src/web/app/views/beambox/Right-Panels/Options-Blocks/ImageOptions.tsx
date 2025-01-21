@@ -4,22 +4,22 @@ import { ConfigProvider, InputNumber, Slider, Switch } from 'antd';
 import { Popover } from 'antd-mobile';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import browser from 'implementations/browser';
-import history from 'app/svgedit/history/history';
-import ImageData from 'helpers/image-data';
-import i18n from 'helpers/i18n';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { IImageDataResult } from 'interfaces/IImage';
-import { isMobile } from 'helpers/system-helper';
-import { promarkModels } from 'app/actions/beambox/constant';
-import { sliderTheme } from 'app/constants/antd-config';
+import browser from '@app/implementations/browser';
+import history from '@core/app/svgedit/history/history';
+import ImageData from '@core/helpers/image-data';
+import i18n from '@core/helpers/i18n';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { IImageDataResult } from '@core/interfaces/IImage';
+import { isMobile } from '@core/helpers/system-helper';
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { sliderTheme } from '@core/app/constants/antd-config';
 
 import styles from './ImageOptions.module.scss';
 
@@ -70,7 +70,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): JSX.Element => {
         svgCanvas.undoMgr.addCommandToHistory(batchCommand);
       }
     },
-    [elem]
+    [elem],
   );
 
   const generateImageData = useCallback(
@@ -90,7 +90,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): JSX.Element => {
           },
         });
       }),
-    [elem]
+    [elem],
   );
 
   const handleGradientClick = useCallback(async () => {
@@ -136,7 +136,7 @@ const ImageOptions = ({ elem, updateObjectPanel }: Props): JSX.Element => {
         updateObjectPanel();
       }
     },
-    [elem, changeAttribute, generateImageData, updateObjectPanel]
+    [elem, changeAttribute, generateImageData, updateObjectPanel],
   );
 
   const isGradient = elem.getAttribute('data-shading') === 'true';

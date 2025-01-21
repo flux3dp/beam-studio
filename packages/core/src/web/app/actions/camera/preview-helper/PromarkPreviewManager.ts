@@ -1,16 +1,16 @@
-import alertCaller from 'app/actions/alert-caller';
-import CameraTransformAPI from 'helpers/api/camera-transform';
-import i18n from 'helpers/i18n';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import progressCaller from 'app/actions/progress-caller';
-import promarkDataStore from 'helpers/device/promark/promark-data-store';
-import webcamHelper, { WebCamConnection } from 'helpers/webcam-helper';
-import workareaManager from 'app/svgedit/workarea';
-import { FisheyeCameraParameters } from 'interfaces/FisheyePreview';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { PreviewManager } from 'interfaces/PreviewManager';
+import alertCaller from '@core/app/actions/alert-caller';
+import CameraTransformAPI from '@core/helpers/api/camera-transform';
+import i18n from '@core/helpers/i18n';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import progressCaller from '@core/app/actions/progress-caller';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import webcamHelper, { WebCamConnection } from '@core/helpers/webcam-helper';
+import workareaManager from '@core/app/svgedit/workarea';
+import { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -38,7 +38,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
       this.fisheyeParams = promarkDataStore.get(this.device.serial, 'cameraParameters');
       if (!this.fisheyeParams) {
         throw new Error(
-          'Unable to get fisheye parameters, please make sure you have calibrated the camera'
+          'Unable to get fisheye parameters, please make sure you have calibrated the camera',
         );
       }
       await this.setupAPI();

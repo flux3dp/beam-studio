@@ -1,12 +1,12 @@
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import i18n from 'helpers/i18n';
-import moduleBoundary from 'app/constants/layer-module/module-boundary';
-import moduleOffsets from 'app/constants/layer-module/module-offsets';
-import workareaManager from 'app/svgedit/workarea';
-import { getSupportInfo } from 'app/constants/add-on';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import i18n from '@core/helpers/i18n';
+import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
+import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSupportInfo } from '@core/app/constants/add-on';
 
 const { svgedit } = window;
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -66,7 +66,12 @@ const update = (module: LayerModule): void => {
   boundarySvg?.setAttribute('viewBox', viewBox);
   const d1 = `M0,0H${w}V${h}H0V0`;
   const { dpmm } = constant;
-  let { top, left, bottom, right } = moduleBoundary[module] || { top: 0, left: 0, bottom: 0, right: 0 };
+  let { top, left, bottom, right } = moduleBoundary[module] || {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  };
   const offsets = { ...moduleOffsets, ...BeamboxPreference.read('module-offsets') };
   const [offsetX, offsetY] = offsets[module] || [0, 0];
   if (module === LayerModule.PRINTER && offsetY < 0) top = Math.max(top + offsetY, 0);

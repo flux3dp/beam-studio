@@ -1,21 +1,21 @@
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import isDev from 'helpers/is-dev';
-import NS from 'app/constants/namespaces';
-import progressCaller from 'app/actions/progress-caller';
-import symbolMaker from 'helpers/symbol-maker';
-import updateImageDisplay from 'helpers/image/updateImageDisplay';
-import updateLayerColor from 'helpers/color/updateLayerColor';
-import { getData, writeDataLayer } from 'helpers/layer/layer-config-helper';
-import { PrintingColors } from 'app/constants/color-constants';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import isDev from '@core/helpers/is-dev';
+import NS from '@core/app/constants/namespaces';
+import progressCaller from '@core/app/actions/progress-caller';
+import symbolMaker from '@core/helpers/symbol-maker';
+import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
+import updateLayerColor from '@core/helpers/color/updateLayerColor';
+import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { PrintingColors } from '@core/app/constants/color-constants';
 import {
   cloneLayer,
   deleteLayerByName,
   getAllLayerNames,
   getLayerElementByName,
-} from 'helpers/layer/layer-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+} from '@core/helpers/layer/layer-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import layerToImage from '../layerToImage';
 import splitColor from './splitColor';
@@ -30,7 +30,7 @@ const PROGRESS_ID = 'split-full-color';
 // TODO: add unit test
 const splitFullColorLayer = async (
   layerName: string,
-  opts: { addToHistory?: boolean } = {}
+  opts: { addToHistory?: boolean } = {},
 ): Promise<{ cmd: IBatchCommand; newLayers: Element[] } | null> => {
   const { addToHistory = true } = opts;
   const layer = getLayerElementByName(layerName);

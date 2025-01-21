@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { act } from 'react-dom/test-utils';
 import { render } from '@testing-library/react';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { TopBarHintsContext, TopBarHintsContextProvider } from './TopBarHintsContext';
 
@@ -17,7 +17,7 @@ test('should render correctly', () => {
   const { container, unmount } = render(
     <TopBarHintsContextProvider>
       <Children />
-    </TopBarHintsContextProvider>
+    </TopBarHintsContextProvider>,
   );
 
   expect(container).toHaveTextContent('');

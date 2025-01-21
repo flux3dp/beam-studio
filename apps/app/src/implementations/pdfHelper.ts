@@ -3,11 +3,11 @@
  * Using pdf2svg binary: https://github.com/dawbarton/pdf2svg
  * binary for mac is built from makefile with dependencies packed by macpack: https://github.com/chearon/macpack
  */
-import childProcess from 'node:child_process';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import util from 'node:util';
+import childProcess from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import util from 'util';
 
 import i18n from '@core/helpers/i18n';
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';

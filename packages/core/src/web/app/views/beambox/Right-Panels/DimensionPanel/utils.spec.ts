@@ -1,6 +1,6 @@
 import { getValue } from './utils';
 
-jest.mock('app/actions/beambox/constant', () => ({
+jest.mock('@core/app/actions/beambox/constant', () => ({
   dpmm: 10,
 }));
 

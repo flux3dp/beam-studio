@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 import { ConfigProvider } from 'antd';
 
-import Constant from 'app/actions/beambox/constant';
-import HistoryCommandFactory from 'app/svgedit/history/HistoryCommandFactory';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import SymbolMaker from 'helpers/symbol-maker';
-import useForceUpdate from 'helpers/use-force-update';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
-import { iconButtonTheme } from 'app/constants/antd-config';
-import { useIsMobile } from 'helpers/system-helper';
+import Constant from '@core/app/actions/beambox/constant';
+import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import SymbolMaker from '@core/helpers/symbol-maker';
+import useForceUpdate from '@core/helpers/use-force-update';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import { iconButtonTheme } from '@core/app/constants/antd-config';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import PositionInput from './PositionInput';
 import FlipButtons from './FlipButtons';
@@ -92,7 +92,7 @@ const DimensionPanel = ({
       updateDimensionValues({ [type]: posVal });
       forceUpdate();
     },
-    [elem, updateDimensionValues, forceUpdate]
+    [elem, updateDimensionValues, forceUpdate],
   );
 
   const handleRotationChange = useCallback(
@@ -107,7 +107,7 @@ const DimensionPanel = ({
       }
       forceUpdate();
     },
-    [elem, forceUpdate, updateDimensionValues]
+    [elem, forceUpdate, updateDimensionValues],
   );
 
   const changeSize = useCallback(
@@ -134,11 +134,14 @@ const DimensionPanel = ({
           break;
       }
       if (elem?.tagName === 'text') {
-        elem?.setAttribute('stroke-width', elem.getAttribute('stroke-width') === '2' ? '2.01' : '2');
+        elem?.setAttribute(
+          'stroke-width',
+          elem.getAttribute('stroke-width') === '2' ? '2.01' : '2',
+        );
       }
       return cmd;
     },
-    [elem]
+    [elem],
   );
 
   const handleSizeChange = useCallback(
@@ -167,7 +170,7 @@ const DimensionPanel = ({
       if (batchCmd && !batchCmd.isEmpty()) svgCanvas.undoMgr.addCommandToHistory(batchCmd);
       forceUpdate();
     },
-    [changeSize, getDimensionValues, updateDimensionValues, forceUpdate]
+    [changeSize, getDimensionValues, updateDimensionValues, forceUpdate],
   );
 
   const handleFixRatio = useCallback((): void => {

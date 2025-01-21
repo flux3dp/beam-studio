@@ -1,17 +1,13 @@
-import i18n from 'helpers/i18n';
-import { IMediaTutorial } from 'interfaces/ITutorial';
+import i18n from '@core/helpers/i18n';
+import { IMediaTutorial } from '@core/interfaces/ITutorial';
 
 export const gestureIntroduction: IMediaTutorial[] = [
   {
-    mediaSources: [
-      { src: 'img/touch-drag.svg', type: 'image/svg+xml' },
-    ],
+    mediaSources: [{ src: 'img/touch-drag.svg', type: 'image/svg+xml' }],
     description: i18n.lang.tutorial.gesture.pan,
   },
   {
-    mediaSources: [
-      { src: 'img/touch-zoom.svg', type: 'image/svg+xml' },
-    ],
+    mediaSources: [{ src: 'img/touch-zoom.svg', type: 'image/svg+xml' }],
     description: i18n.lang.tutorial.gesture.zoom,
   },
   {

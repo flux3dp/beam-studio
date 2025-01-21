@@ -1,18 +1,18 @@
-import LayerModule from 'app/constants/layer-module/layer-modules';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
 
 const mockPopUp = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
 const mockGetFileFromDialog = jest.fn();
 const mockWriteFileDialog = jest.fn();
-jest.mock('implementations/dialog', () => ({
+jest.mock('@app/implementations/dialog', () => ({
   getFileFromDialog: (...args) => mockGetFileFromDialog(...args),
   writeFileDialog: (...args) => mockWriteFileDialog(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       right_panel: {
@@ -41,7 +41,7 @@ jest.mock('helpers/i18n', () => ({
 const mockGet = jest.fn();
 const mockSet = jest.fn();
 const mockRemoveAt = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
   set: (...args) => mockSet(...args),
   removeAt: (...args) => mockRemoveAt(...args),
@@ -88,7 +88,7 @@ describe('test preset-helper', () => {
       speed: 50,
     });
     expect(presetHelper.getDefaultPreset('pre2', 'ado1', LayerModule.LASER_10W_DIODE)).toEqual(
-      null
+      null,
     );
   });
 

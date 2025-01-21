@@ -1,17 +1,17 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/dot-notation */
-import Dialog from 'app/actions/dialog-caller';
-import isWeb from 'helpers/is-web';
-import storage from 'implementations/storage';
-import { getInfo, submitRating } from 'helpers/api/flux-id';
+import Dialog from '@core/app/actions/dialog-caller';
+import isWeb from '@core/helpers/is-web';
+import storage from '@app/implementations/storage';
+import { getInfo, submitRating } from '@core/helpers/api/flux-id';
 
 interface IRecord {
-  times: number,
-  score: number,
-  version: string,
-  isVoted: boolean,
-  isIgnored: boolean,
-  user?: string,
+  times: number;
+  score: number;
+  version: string;
+  isVoted: boolean;
+  isIgnored: boolean;
+  user?: string;
 }
 
 const getRecord = (): IRecord => storage.get('rating-record') as IRecord;

@@ -8,16 +8,16 @@ enum VerticalAlign {
   TOP = 2,
 }
 
-jest.mock('app/actions/beambox/textPathEdit', () => ({
+jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
   VerticalAlign,
 }));
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       right_panel: {
@@ -40,7 +40,7 @@ describe('test VerticalAlignBlock', () => {
   test('should render correctly', () => {
     const onValueChange = jest.fn();
     const { baseElement, getByRole, getByText } = render(
-      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />
+      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />,
     );
     expect(baseElement).toMatchSnapshot();
 
@@ -56,7 +56,7 @@ describe('test VerticalAlignBlock', () => {
     useIsMobile.mockReturnValue(true);
     const onValueChange = jest.fn();
     const { container } = render(
-      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />
+      <VerticalAlignBlock value={VerticalAlign.BOTTOM} onValueChange={onValueChange} />,
     );
     expect(container).toMatchSnapshot();
   });

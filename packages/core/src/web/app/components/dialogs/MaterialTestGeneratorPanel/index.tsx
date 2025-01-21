@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useMemo, useRef, useState } from 'react';
 
-import useI18n from 'helpers/useI18n';
+import useI18n from '@core/helpers/useI18n';
 
 import { Button, Flex, Radio } from 'antd';
-import { createLayer } from 'helpers/layer/layer-helper';
-import svgEditor from 'app/actions/beambox/svg-editor';
-import { writeDataLayer } from 'helpers/layer/layer-config-helper';
-import constant, { promarkModels } from 'app/actions/beambox/constant';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import updateElementColor from 'helpers/color/updateElementColor';
-import history from 'app/svgedit/history/history';
-import LayerPanelController from 'app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import storage from 'implementations/storage';
-import createNewText from 'app/svgedit/text/createNewText';
-import undoManager from 'app/svgedit/history/undoManager';
-import { IBatchCommand } from 'interfaces/IHistory';
-import workareaManager from 'app/svgedit/workarea';
-import DraggableModal from 'app/widgets/DraggableModal';
-import { getPromarkInfo } from 'helpers/device/promark/promark-info';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import { LaserType } from 'app/constants/promark-constants';
+import { createLayer } from '@core/helpers/layer/layer-helper';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import history from '@core/app/svgedit/history/history';
+import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import storage from '@app/implementations/storage';
+import createNewText from '@core/app/svgedit/text/createNewText';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { IBatchCommand } from '@core/interfaces/IHistory';
+import workareaManager from '@core/app/svgedit/workarea';
+import DraggableModal from '@core/app/widgets/DraggableModal';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import { LaserType } from '@core/app/constants/promark-constants';
 import styles from './index.module.scss';
 import WorkAreaInfo from './WorkAreaInfo';
 import TableSettingForm from './TableSettingForm';
@@ -75,7 +75,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
       isPromark: promarkModels.has(workarea),
       isMopa: laserType === LaserType.MOPA,
     }),
-    [laserType, workarea]
+    [laserType, workarea],
   );
   const [blockOption, setBlockOption] = useState<'cut' | 'engrave'>('cut');
   const [tableSetting, setTableSetting] = useState(getTableSetting(workarea, { laserType }));
@@ -90,7 +90,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
   const generateText = (
     svgInfos: Array<SvgInfo>,
     blockSetting: BlockSetting,
-    batchCmd: IBatchCommand
+    batchCmd: IBatchCommand,
   ) => {
     const { column, row } = blockSetting;
     const [startPadding, endPadding] = [30, 10];
@@ -100,7 +100,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
       (bottom + column.size.value + endPadding * 2) * dpmm,
     ];
     const [colParam, rowParam] = Object.entries(tableSetting).sort(
-      ([, { selected: a }], [, { selected: b }]) => a - b
+      ([, { selected: a }], [, { selected: b }]) => a - b,
     );
 
     const { cmd: tableCmd } = createLayer('Material Test - Frame', {
@@ -150,7 +150,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
         fontSize: 130,
         fill: '#000',
         isDefaultFont: true,
-      }
+      },
     );
 
     const colText = createNewText(
@@ -162,7 +162,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
         fontSize: 130,
         fill: '#000',
         isDefaultFont: true,
-      }
+      },
     );
 
     svgCanvas.setRotationAngle(-90, true, colText);
@@ -181,7 +181,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
           fontSize: 48,
           fill: '#000',
           isDefaultFont: true,
-        }
+        },
       );
 
       svgCanvas.setRotationAngle(90, true, rowText);
@@ -201,7 +201,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
           fontSize: 48,
           fill: '#000',
           isDefaultFont: true,
-        }
+        },
       );
     });
   };
@@ -209,7 +209,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): JSX.Element => {
   const generateBlocks = (
     svgInfos: Array<SvgInfo>,
     blockSetting: BlockSetting,
-    batchCmd: IBatchCommand
+    batchCmd: IBatchCommand,
   ) => {
     const { row, column } = blockSetting;
     const startPadding = 30;

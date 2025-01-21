@@ -1,16 +1,16 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-import Controls from 'app/components/settings/Control';
-import i18n from 'helpers/i18n';
-import PathInput, { InputType } from 'app/widgets/PathInput';
-import SelectControl from 'app/components/settings/SelectControl';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { IConfig } from 'interfaces/IAutosave';
+import Controls from '@core/app/components/settings/Control';
+import i18n from '@core/helpers/i18n';
+import PathInput, { InputType } from '@core/app/widgets/PathInput';
+import SelectControl from '@core/app/components/settings/SelectControl';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { IConfig } from '@core/interfaces/IAutosave';
 
 interface Props {
   isWeb: boolean;
-  autoSaveOptions: { value: any, label: string, selected: boolean }[];
+  autoSaveOptions: { value: any; label: string; selected: boolean }[];
   editingAutosaveConfig: IConfig;
   warnings: { [key: string]: string };
   updateState: (state: any) => void;
@@ -41,10 +41,7 @@ function AutoSave({
           });
         }}
       />
-      <Controls
-        label={lang.settings.autosave_path}
-        warningText={warnings.autosave_directory}
-      >
+      <Controls label={lang.settings.autosave_path} warningText={warnings.autosave_directory}>
         <PathInput
           data-id="location-input"
           buttonTitle={lang.general.choose_folder}

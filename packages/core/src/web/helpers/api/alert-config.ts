@@ -1,4 +1,4 @@
-import storage from 'implementations/storage';
+import storage from '@app/implementations/storage';
 
 export type AlertConfigKey =
   | 'skip-interface-tutorial'

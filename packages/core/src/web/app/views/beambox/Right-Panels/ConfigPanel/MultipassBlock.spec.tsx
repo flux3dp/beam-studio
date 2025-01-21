@@ -2,11 +2,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { ObjectPanelContext } from 'app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -61,14 +61,14 @@ jest.mock(
             MockConfigValueDisplayButton
           </button>
         </div>
-      )
+      ),
 );
 
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Item: ({ id, content, label, onClick }: any) => (
     <div onClick={onClick}>
       MockObjectPanelItem
@@ -80,13 +80,13 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -100,7 +100,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -112,7 +112,7 @@ const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEmit = jest.fn();
@@ -140,7 +140,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
         }}
       >
         <MultipassBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -156,7 +156,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
         }}
       >
         <MultipassBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
@@ -181,7 +181,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'multipass', 7, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(
@@ -189,7 +189,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toBeCalledTimes(1);
@@ -207,7 +207,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
         }}
       >
         <MultipassBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(mockDispatch).not.toBeCalled();
     expect(mockWriteData).not.toBeCalled();
@@ -232,7 +232,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'multipass', 10, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(
@@ -240,7 +240,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toBeCalledTimes(1);
@@ -262,7 +262,7 @@ describe('test MultipassBlock when type is panel-item', () => {
         >
           <MultipassBlock type="panel-item" />
         </ConfigPanelContext.Provider>
-      </ObjectPanelContext.Provider>
+      </ObjectPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });

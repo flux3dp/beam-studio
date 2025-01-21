@@ -1,4 +1,4 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const objectPanelEventEmitter = eventEmitterFactory.createEventEmitter('object-panel');
 

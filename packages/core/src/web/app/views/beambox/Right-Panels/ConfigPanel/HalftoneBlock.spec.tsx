@@ -9,7 +9,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -17,7 +17,7 @@ jest.mock('app/svgedit/history/history', () => ({
 import HalftoneBlock from './HalftoneBlock';
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -27,12 +27,12 @@ jest.mock('helpers/svg-editor-helper', () => ({
 }));
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       laser_panel: {
@@ -44,7 +44,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockOpen = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
@@ -55,13 +55,13 @@ const mockContextState = {
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-jest.mock('app/widgets/AntdSelect', () => {
+jest.mock('@core/app/widgets/AntdSelect', () => {
   const Select = ({ className, children, onChange, value }: any) => (
     <select className={className} onChange={(e) => onChange(Number(e.target.value))} value={value}>
       {children}
     </select>
   );
-  const Option = ({ value, label }: any) => (<option value={value}>{label}</option>);
+  const Option = ({ value, label }: any) => <option value={value}>{label}</option>;
   Select.Option = Option;
   return Select;
 });
@@ -83,7 +83,7 @@ describe('test HalftoneBlock', () => {
         }}
       >
         <HalftoneBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -99,7 +99,7 @@ describe('test HalftoneBlock', () => {
         }}
       >
         <HalftoneBlock type="panel-item" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -115,7 +115,7 @@ describe('test HalftoneBlock', () => {
         }}
       >
         <HalftoneBlock type="modal" />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -131,7 +131,7 @@ describe('test HalftoneBlock', () => {
         }}
       >
         <HalftoneBlock />
-      </ConfigPanelContext.Provider>
+      </ConfigPanelContext.Provider>,
     );
     const select = container.querySelector('select');
     fireEvent.change(select, { target: { value: '2' } });

@@ -1,4 +1,4 @@
-import { getLayerElementByName } from 'helpers/layer/layer-helper';
+import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 
 const doElementContainVector = (elem: Element) => {
   const vectors = elem.querySelectorAll('path, rect, ellipse, polygon, line, text');

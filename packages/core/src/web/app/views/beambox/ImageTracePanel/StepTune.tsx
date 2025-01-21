@@ -2,11 +2,11 @@ import Cropper from 'cropperjs';
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Slider } from 'antd';
 
-import FnWrapper from 'app/actions/beambox/svgeditor-function-wrapper';
-import ImageData from 'helpers/image-data';
-import i18n from 'helpers/i18n';
-import PreviewModeBackgroundDrawer from 'app/actions/beambox/preview-mode-background-drawer';
-import traceAndImportPath from 'helpers/image-trace-panel/trace-and-import-path';
+import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import ImageData from '@core/helpers/image-data';
+import i18n from '@core/helpers/i18n';
+import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import traceAndImportPath from '@core/helpers/image-trace-panel/trace-and-import-path';
 
 import styles from './StepTune.module.scss';
 
@@ -63,7 +63,9 @@ function StepTune({ imageUrl, cropData, onGoBack, onClose }: Props): JSX.Element
     <>
       <Button onClick={onClose}>{LANG.cancel}</Button>
       <Button onClick={onGoBack}>{LANG.back}</Button>
-      <Button type="primary" onClick={handleOk}>{LANG.next}</Button>
+      <Button type="primary" onClick={handleOk}>
+        {LANG.next}
+      </Button>
     </>
   );
 

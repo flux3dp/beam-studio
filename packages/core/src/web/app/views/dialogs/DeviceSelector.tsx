@@ -3,15 +3,15 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import ConnectionTypeIcons from 'app/icons/connection-type/ConnectionTypeIcons';
-import deviceConstants from 'app/constants/device-constants';
-import discover, { SEND_DEVICES_INTERVAL } from 'helpers/api/discover';
-import fileExportHelper from 'helpers/file-export-helper';
-import i18n from 'helpers/i18n';
-import TopBarController from 'app/views/beambox/TopBar/contexts/TopBarController';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
+import deviceConstants from '@core/app/constants/device-constants';
+import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import fileExportHelper from '@core/helpers/file-export-helper';
+import i18n from '@core/helpers/i18n';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './DeviceSelector.module.scss';
 
@@ -35,13 +35,13 @@ const DeviceSelector = ({ onSelect, onClose }: Props): JSX.Element => {
         });
         setDeviceList(filteredDevices);
       }),
-    [selectedKey]
+    [selectedKey],
   );
   useEffect(
     () => () => {
       discoverer.removeListener('device-selector');
     },
-    [discoverer]
+    [discoverer],
   );
 
   const status = i18n.lang.machine_status;
@@ -118,7 +118,7 @@ const DeviceSelector = ({ onSelect, onClose }: Props): JSX.Element => {
       centered
       onCancel={() => {
         onSelect(
-          deviceList.some((device) => device.serial === selectedKey) ? selectedDevice : null
+          deviceList.some((device) => device.serial === selectedKey) ? selectedDevice : null,
         );
         onClose();
       }}

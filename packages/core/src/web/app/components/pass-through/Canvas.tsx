@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 
-import EmbeddedCanvas from 'app/widgets/FullWindowPanel/EmbeddedCanvas';
-import constant from 'app/actions/beambox/constant';
+import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
+import constant from '@core/app/actions/beambox/constant';
 
 import styles from './PassThrough.module.scss';
 import { PassThroughCanvasManager } from './canvasManager';
@@ -20,7 +20,7 @@ const Canvas = (): JSX.Element => {
     canvasManager.setGuideMark(
       guideMark.show,
       guideMark.x * constant.dpmm,
-      guideMark.width * constant.dpmm
+      guideMark.width * constant.dpmm,
     );
   }, [canvasManager, guideMark]);
 

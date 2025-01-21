@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Slider, Space, Tooltip } from 'antd';
 
-import constant from 'app/actions/beambox/constant';
-import deviceMaster from 'helpers/device-master';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import useI18n from 'helpers/useI18n';
-import WorkareaIcons from 'app/icons/workarea/WorkareaIcons';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
-import { IConfigSetting } from 'interfaces/IDevice';
+import constant from '@core/app/actions/beambox/constant';
+import deviceMaster from '@core/helpers/device-master';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import useI18n from '@core/helpers/useI18n';
+import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './PreviewSlider.module.scss';
 

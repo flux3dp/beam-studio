@@ -1,21 +1,21 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Modal, Segmented } from 'antd';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import Browser from 'implementations/browser';
-import CheckDeviceStatus from 'helpers/check-device-status';
-import Constant from 'app/actions/beambox/constant';
-import DeviceErrorHandler from 'helpers/device-error-handler';
-import DeviceMaster from 'helpers/device-master';
-import PreviewModeController from 'app/actions/beambox/preview-mode-controller';
-import Progress from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import VersionChecker from 'helpers/version-checker';
-import { CalibrationContext } from 'app/contexts/CalibrationContext';
-import { CameraConfig } from 'interfaces/Camera';
-import { STEP_BEFORE_ANALYZE_PICTURE } from 'app/constants/camera-calibration-constants';
-import { doGetOffsetFromPicture } from 'helpers/camera-calibration-helper';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import Browser from '@app/implementations/browser';
+import CheckDeviceStatus from '@core/helpers/check-device-status';
+import Constant from '@core/app/actions/beambox/constant';
+import DeviceErrorHandler from '@core/helpers/device-error-handler';
+import DeviceMaster from '@core/helpers/device-master';
+import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import Progress from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import VersionChecker from '@core/helpers/version-checker';
+import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
+import { CameraConfig } from '@core/interfaces/Camera';
+import { STEP_BEFORE_ANALYZE_PICTURE } from '@core/app/constants/camera-calibration-constants';
+import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper';
 
 const StepRefocus = (): JSX.Element => {
   const lang = useI18n();
@@ -54,7 +54,9 @@ const StepRefocus = (): JSX.Element => {
   const doCaptureTask = async () => {
     let blobUrl;
     try {
-      await PreviewModeController.start(device, () => console.log('camera fail. stop preview mode'));
+      await PreviewModeController.start(device, () =>
+        console.log('camera fail. stop preview mode'),
+      );
       setLastConfig(PreviewModeController.getCameraOffsetStandard());
       Progress.openNonstopProgress({
         id: 'taking-picture',
@@ -73,12 +75,9 @@ const StepRefocus = (): JSX.Element => {
   const cutThenCapture = async () => {
     await doCuttingTask();
     const blobUrl = await doCaptureTask();
-    await doGetOffsetFromPicture(
-      blobUrl,
-      (offset: CameraConfig) => {
-        setCurrentOffset(offset);
-      },
-    );
+    await doGetOffsetFromPicture(blobUrl, (offset: CameraConfig) => {
+      setCurrentOffset(offset);
+    });
     setImgBlobUrl(blobUrl);
   };
 
@@ -102,12 +101,20 @@ const StepRefocus = (): JSX.Element => {
           />
         </div>
         <video className="video" ref={videoElem} autoPlay loop muted>
-          <source src={isAutoFocus ? 'video/autofocus.webm' : 'video/bm_focus.webm'} type="video/webm" />
-          <source src={isAutoFocus ? 'video/autofocus.mp4' : 'video/bm_focus.mp4'} type="video/mp4" />
+          <source
+            src={isAutoFocus ? 'video/autofocus.webm' : 'video/bm_focus.webm'}
+            type="video/webm"
+          />
+          <source
+            src={isAutoFocus ? 'video/autofocus.mp4' : 'video/bm_focus.mp4'}
+            type="video/mp4"
+          />
         </video>
       </div>
     );
-    message = isAutoFocus ? langCalibration.please_refocus.beamo_af : langCalibration.please_refocus.beamo;
+    message = isAutoFocus
+      ? langCalibration.please_refocus.beamo_af
+      : langCalibration.please_refocus.beamo;
   } else if (device.model === 'fhexa1') {
     message = langCalibration.please_refocus.hexa;
     child = (
@@ -134,16 +141,14 @@ const StepRefocus = (): JSX.Element => {
       setIsCutButtonDisabled(true);
       await cutThenCapture();
       if (!calibratedMachines.includes(device.uuid)) {
-        setCalibratedMachines(
-          [...calibratedMachines, device.uuid],
-        );
+        setCalibratedMachines([...calibratedMachines, device.uuid]);
       }
       gotoNextStep(STEP_BEFORE_ANALYZE_PICTURE);
     } catch (error) {
       setIsCutButtonDisabled(false);
       console.log(error);
-      const errorMessage = error instanceof Error
-        ? error.message : DeviceErrorHandler.translate(error);
+      const errorMessage =
+        error instanceof Error ? error.message : DeviceErrorHandler.translate(error);
       Alert.popUp({
         id: 'camera-cali-err',
         type: AlertConstants.SHOW_POPUP_ERROR,

@@ -1,6 +1,6 @@
-import deviceMaster from 'helpers/device-master';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import deviceMaster from '@core/helpers/device-master';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const getAutoFocusPosition = async (device: IDeviceInfo): Promise<string> => {
   const workarea = getWorkarea(device.model as WorkAreaModel, 'ado1');

@@ -1,5 +1,5 @@
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 mockRead.mockReturnValue(true);
@@ -9,7 +9,7 @@ import grid from './grid';
 
 const mockGetWidth = jest.fn();
 const mockGetHeight = jest.fn();
-jest.mock('app/svgedit/workarea', () => ({
+jest.mock('@core/app/svgedit/workarea', () => ({
   get width() {
     return mockGetWidth();
   },

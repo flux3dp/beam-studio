@@ -4,11 +4,11 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 const useIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       right_panel: {
@@ -23,7 +23,7 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ min, max, defaultValue, getValue, decimal, className }: any) =>
       (
@@ -35,10 +35,10 @@ jest.mock(
           className:{JSON.stringify(className)}
           <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
         </div>
-      )
+      ),
 );
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Number: ({ id, label, min, max, value, updateValue, decimal }: any) => (
     <div>
       mock-number-item id:{id}

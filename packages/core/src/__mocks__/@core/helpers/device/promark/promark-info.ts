@@ -1,5 +1,5 @@
-import { LaserType } from 'app/constants/promark-constants';
-import type { PromarkInfo } from 'interfaces/Promark';
+import { LaserType } from '@core/app/constants/promark-constants';
+import type { PromarkInfo } from '@core/interfaces/Promark';
 
 let value: PromarkInfo = {
   laserType: LaserType.Desktop,

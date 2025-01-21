@@ -1,21 +1,21 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-import alertCaller from 'app/actions/alert-caller';
-import checkDeviceStatus from 'helpers/check-device-status';
-import deviceMaster from 'helpers/device-master';
-import dialogCaller from 'app/actions/dialog-caller';
-import getLevelingData from 'app/actions/camera/preview-helper/getLevelingData';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
+import alertCaller from '@core/app/actions/alert-caller';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import deviceMaster from '@core/helpers/device-master';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
 import {
   FisheyeCameraParametersV2,
   FisheyeCameraParametersV2Cali,
-} from 'interfaces/FisheyePreview';
+} from '@core/interfaces/FisheyePreview';
 import {
   extrinsicRegression,
   setFisheyeConfig,
   updateData,
-} from 'helpers/camera-calibration-helper';
+} from '@core/helpers/camera-calibration-helper';
 
 import CalibrateChessBoard from './AdorCalibrationV2/CalibrateChessBoard';
 import CheckpointData from './common/CheckpointData';
@@ -327,7 +327,7 @@ export const showAdorCalibrationV2 = async (factoryMode = false): Promise<boolea
           dialogCaller.popDialogById(DIALOG_ID);
           resolve(completed);
         }}
-      />
+      />,
     );
   });
 };

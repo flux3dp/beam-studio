@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   settings: {
     font_substitute: 'Substitute Unsupported Characters',
     font_convert: 'Convert Text to Path',
@@ -15,7 +15,7 @@ jest.mock('helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('app/components/settings/SelectControl', () =>
+jest.mock('@core/app/components/settings/SelectControl', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, label, onChange, options, url }: any) => (
     <div>
@@ -25,7 +25,7 @@ jest.mock('app/components/settings/SelectControl', () =>
       options:{JSON.stringify(options)}
       <input className="select-control" onChange={onChange} />
     </div>
-  )
+  ),
 );
 
 // eslint-disable-next-line import/first
@@ -44,7 +44,7 @@ test('should render correctly', () => {
     <TextToPath
       getBeamboxPreferenceEditingValue={getBeamboxPreferenceEditingValue}
       updateBeamboxPreferenceChange={updateBeamboxPreferenceChange}
-    />
+    />,
   );
   expect(container).toMatchSnapshot();
 

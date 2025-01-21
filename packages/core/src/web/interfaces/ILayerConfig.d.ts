@@ -1,5 +1,5 @@
-import { LaserType, mopaWatts, promarkWatts } from 'app/constants/promark-constants';
-import { WorkAreaModel } from 'app/constants/workarea-constants';
+import { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 export type ConfigKeyTypeMap = {
   // meta configs

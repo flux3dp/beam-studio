@@ -1,53 +1,53 @@
 import * as React from 'react';
 
-import AboutBeamStudio from 'app/components/dialogs/AboutBeamStudio';
-import AnnouncementPanel from 'app/components/dialogs/AnnouncementPanel';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import Boxgen from 'app/components/boxgen/Boxgen';
-import CartridgeSettingPanel from 'app/components/dialogs/CartridgeSettingPanel';
-import ChangeLog from 'app/components/dialogs/ChangeLog';
-import CodeGenerator from 'app/components/dialogs/CodeGenerator';
-import CropPanel from 'app/views/dialogs/image-edit/CropPanel';
-import DeviceSelector from 'app/views/dialogs/DeviceSelector';
-import DialogBox from 'app/widgets/Dialog-Box';
-import DocumentSettings from 'app/components/dialogs/DocumentSettings';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FirmwareUpdate from 'app/components/dialogs/FirmwareUpdate';
-import FluxCredit from 'app/components/dialogs/FluxCredit';
-import FluxIdLogin from 'app/components/dialogs/FluxIdLogin';
-import FluxPlusWarning from 'app/components/dialogs/FluxPlusWarning';
-import i18n from 'helpers/i18n';
-import InputLightBox from 'app/widgets/InputLightbox';
-import isWeb from 'helpers/is-web';
-import LayerColorConfigPanel from 'app/views/beambox/Layer-Color-Config';
-import MaterialTestGeneratorPanel from 'app/components/dialogs/MaterialTestGeneratorPanel';
-import MediaTutorial from 'app/components/dialogs/MediaTutorial';
-import MyCloud from 'app/components/dialogs/myCloud/MyCloud';
-import NetworkTestingPanel from 'app/views/beambox/NetworkTestingPanel';
-import NounProjectPanel from 'app/views/beambox/Noun-Project-Panel';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import PhotoEditPanel, { PhotoEditMode } from 'app/views/beambox/Photo-Edit-Panel';
-import PreviewHeight from 'app/components/dialogs/PreviewHeight';
-import Prompt from 'app/views/dialogs/Prompt';
-import RadioSelectDialog from 'app/components/dialogs/RadioSelectDialog';
-import RatingPanel from 'app/components/dialogs/RatingPanel';
-import SaveFileModal from 'app/components/dialogs/myCloud/SaveFileModal';
-import ShapePanel from 'app/views/beambox/ShapePanel/ShapePanel';
-import shortcuts from 'helpers/shortcuts';
-import SocialMediaModal from 'app/components/dialogs/SocialMediaModal';
-import SvgNestButtons from 'app/views/beambox/SvgNestButtons';
-import Tutorial from 'app/views/tutorials/Tutorial';
-import webNeedConnectionWrapper from 'helpers/web-need-connection-helper';
-import { AlertConfigKey } from 'helpers/api/alert-config';
-import { ChipSettings } from 'interfaces/Cartridge';
-import { eventEmitter } from 'app/contexts/DialogContext';
-import { getCurrentUser, getInfo } from 'helpers/api/flux-id';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IAnnouncement } from 'interfaces/IAnnouncement';
-import { IDeviceInfo } from 'interfaces/IDevice';
-import { IDialogBoxStyle, IInputLightBox, IPrompt } from 'interfaces/IDialog';
-import { IMediaTutorial, ITutorial } from 'interfaces/ITutorial';
-import ImageEditPanel from 'app/components/ImageEditPanel';
+import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
+import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Boxgen from '@core/app/components/boxgen/Boxgen';
+import CartridgeSettingPanel from '@core/app/components/dialogs/CartridgeSettingPanel';
+import ChangeLog from '@core/app/components/dialogs/ChangeLog';
+import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
+import CropPanel from '@core/app/views/dialogs/image-edit/CropPanel';
+import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
+import DialogBox from '@core/app/widgets/Dialog-Box';
+import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FirmwareUpdate from '@core/app/components/dialogs/FirmwareUpdate';
+import FluxCredit from '@core/app/components/dialogs/FluxCredit';
+import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
+import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
+import i18n from '@core/helpers/i18n';
+import InputLightBox from '@core/app/widgets/InputLightbox';
+import isWeb from '@core/helpers/is-web';
+import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
+import MaterialTestGeneratorPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel';
+import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
+import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
+import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
+import NounProjectPanel from '@core/app/views/beambox/Noun-Project-Panel';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import PhotoEditPanel, { PhotoEditMode } from '@core/app/views/beambox/Photo-Edit-Panel';
+import PreviewHeight from '@core/app/components/dialogs/PreviewHeight';
+import Prompt from '@core/app/views/dialogs/Prompt';
+import RadioSelectDialog from '@core/app/components/dialogs/RadioSelectDialog';
+import RatingPanel from '@core/app/components/dialogs/RatingPanel';
+import SaveFileModal from '@core/app/components/dialogs/myCloud/SaveFileModal';
+import ShapePanel from '@core/app/views/beambox/ShapePanel/ShapePanel';
+import shortcuts from '@core/helpers/shortcuts';
+import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
+import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
+import Tutorial from '@core/app/views/tutorials/Tutorial';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
+import { AlertConfigKey } from '@core/helpers/api/alert-config';
+import { ChipSettings } from '@core/interfaces/Cartridge';
+import { eventEmitter } from '@core/app/contexts/DialogContext';
+import { getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IAnnouncement } from '@core/interfaces/IAnnouncement';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
+import { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
+import ImageEditPanel from '@core/app/components/ImageEditPanel';
 
 let svgCanvas;
 getSVGAsync((globalSVG) => {
@@ -96,14 +96,14 @@ const showLoginDialog = (callback?: () => void, silent = false): void => {
         popDialogById('flux-id-login');
         if (callback) callback();
       }}
-    />
+    />,
   );
 };
 
 const forceLoginWrapper = (
   callback: () => void | Promise<void>,
   silent?: boolean,
-  failCallback?: () => void | Promise<void>
+  failCallback?: () => void | Promise<void>,
 ): void => {
   let user = getCurrentUser();
   if (!user) {
@@ -122,7 +122,7 @@ const showFluxPlusWarning = (monotype?: boolean): void => {
   if (isIdExist('flux-plus-warning')) return;
   addDialogComponent(
     'flux-plus-warning',
-    <FluxPlusWarning onClose={() => popDialogById('flux-plus-warning')} monotype={monotype} />
+    <FluxPlusWarning onClose={() => popDialogById('flux-plus-warning')} monotype={monotype} />,
   );
 };
 eventEmitter.on('SHOW_FLUX_PLUS_WARNING', showFluxPlusWarning);
@@ -130,7 +130,7 @@ eventEmitter.on('SHOW_FLUX_PLUS_WARNING', showFluxPlusWarning);
 const showDeviceSelector = (onSelect) => {
   addDialogComponent(
     'device-selector',
-    <DeviceSelector onSelect={onSelect} onClose={() => popDialogById('device-selector')} />
+    <DeviceSelector onSelect={onSelect} onClose={() => popDialogById('device-selector')} />,
   );
 };
 
@@ -146,7 +146,7 @@ const promptDialog = (args: IPrompt): void => {
       onYes={args.onYes}
       onCancel={args.onCancel}
       onClose={() => popDialogById(id)}
-    />
+    />,
   );
 };
 
@@ -157,7 +157,7 @@ export default {
   popDialogById,
   selectDevice: async (): Promise<IDeviceInfo> => {
     const device = await webNeedConnectionWrapper(
-      () => new Promise<IDeviceInfo>((resolve) => showDeviceSelector(resolve))
+      () => new Promise<IDeviceInfo>((resolve) => showDeviceSelector(resolve)),
     );
     return device;
   },
@@ -187,21 +187,21 @@ export default {
             resolve(null);
           }}
           onClose={() => popDialogById('dxf-dpi-select')}
-        />
+        />,
       );
     }),
   showNetworkTestingPanel: (ip?: string): void => {
     if (isIdExist('network-test')) return;
     addDialogComponent(
       'network-test',
-      <NetworkTestingPanel ip={ip} onClose={() => popDialogById('network-test')} />
+      <NetworkTestingPanel ip={ip} onClose={() => popDialogById('network-test')} />,
     );
   },
   showNounProjectPanel: (): void => {
     if (isIdExist('noun-project')) return;
     addDialogComponent(
       'noun-project',
-      <NounProjectPanel onClose={() => popDialogById('noun-project')} />
+      <NounProjectPanel onClose={() => popDialogById('noun-project')} />,
     );
   },
   showCropPanel: (): void => {
@@ -219,7 +219,7 @@ export default {
           popDialogById('image-crop');
           ObjectPanelController.updateActiveKey(null);
         }}
-      />
+      />,
     );
   },
   showPhotoEditPanel: (mode: PhotoEditMode): void => {
@@ -235,21 +235,21 @@ export default {
         element={element}
         src={src}
         unmount={() => popDialogById('photo-edit')}
-      />
+      />,
     );
   },
   showLayerColorConfig: (): void => {
     if (isIdExist('layer-color-config')) return;
     addDialogComponent(
       'layer-color-config',
-      <LayerColorConfigPanel onClose={() => popDialogById('layer-color-config')} />
+      <LayerColorConfigPanel onClose={() => popDialogById('layer-color-config')} />,
     );
   },
   showRatingDialog: (onSubmit: (score: number) => void): void => {
     if (isIdExist('rating-dialog')) return;
     addDialogComponent(
       'rating-dialog',
-      <RatingPanel onSubmit={onSubmit} onClose={() => popDialogById('rating-dialog')} />
+      <RatingPanel onSubmit={onSubmit} onClose={() => popDialogById('rating-dialog')} />,
     );
   },
   showAnnouncementDialog: (announcement: IAnnouncement): void => {
@@ -257,7 +257,7 @@ export default {
     if (isIdExist(id)) return;
     addDialogComponent(
       id,
-      <AnnouncementPanel announcement={announcement} onClose={() => popDialogById(id)} />
+      <AnnouncementPanel announcement={announcement} onClose={() => popDialogById(id)} />,
     );
   },
   showSvgNestButtons: (): void => {
@@ -280,7 +280,7 @@ export default {
           layerPanelEventEmitter.emit('endTutorial');
           callback();
         }}
-      />
+      />,
     );
   },
   promptDialog,
@@ -294,7 +294,7 @@ export default {
           initValue={args.initValue}
           onOk={(val) => resolve(val)}
           onClose={() => popDialogById(id)}
-        />
+        />,
       );
     }),
   getPromptValue: (args: IPrompt): Promise<string | null> =>
@@ -324,7 +324,7 @@ export default {
           alertConfigKey={args.alertConfigKey}
           onCancel={() => resolve(false)}
           onClose={() => popDialogById(id)}
-        />
+        />,
       );
     }),
   showChangLog: (args: { callback?: () => void } = {}): void => {
@@ -337,7 +337,7 @@ export default {
           popDialogById('change-log');
           if (callback) callback();
         }}
-      />
+      />,
     );
   },
   showInputLightbox: (id: string, args: IInputLightBox): void => {
@@ -357,7 +357,7 @@ export default {
           popDialogById(id);
           if (from !== 'submit') args.onCancel();
         }}
-      />
+      />,
     );
   },
   showLoginDialog,
@@ -376,7 +376,7 @@ export default {
         arrowColor={style.arrowColor}
         content={content}
         onClose={() => popDialogById(id)}
-      />
+      />,
     );
   },
   showFirmwareUpdateDialog: (
@@ -387,7 +387,7 @@ export default {
       latestVersion: string;
     },
     onDownload: () => void,
-    onInstall: () => void
+    onInstall: () => void,
   ): void => {
     if (isIdExist('update-dialog')) return;
     const { name, model, version } = device;
@@ -404,7 +404,7 @@ export default {
         onDownload={onDownload}
         onInstall={onInstall}
         onClose={() => popDialogById('update-dialog')}
-      />
+      />,
     );
   },
   showMediaTutorial: (data: IMediaTutorial[]): Promise<void> =>
@@ -417,7 +417,7 @@ export default {
             popDialogById('media-tutorial');
             resolve();
           }}
-        />
+        />,
       );
     }),
   showLoadingWindow: (): void => {
@@ -427,7 +427,7 @@ export default {
       id,
       <div className="loading-background">
         <div className="spinner-roller absolute-center" />
-      </div>
+      </div>,
     );
   },
   showShapePanel: (onClose: () => void): void => {
@@ -439,7 +439,7 @@ export default {
           onClose();
           popDialogById('shape-panel');
         }}
-      />
+      />,
     );
   },
   showCatridgeSettingPanel: (initData: ChipSettings, inkLevel: number): void => {
@@ -450,7 +450,7 @@ export default {
         inkLevel={inkLevel}
         initData={initData}
         onClose={() => popDialogById('catridge-setting')}
-      />
+      />,
     );
   },
   showRadioSelectDialog: <T,>({
@@ -484,7 +484,7 @@ export default {
             popDialogById(id);
             resolve(null);
           }}
-        />
+        />,
       );
     }),
   showCodeGenerator: (onClose: () => void = () => {}): void => {
@@ -497,7 +497,7 @@ export default {
           popDialogById('code-generator');
           onClose();
         }}
-      />
+      />,
     );
   },
   showFluxCreditDialog: (): void => {
@@ -507,7 +507,7 @@ export default {
       if (isIdExist('flux-id-credit')) return;
       addDialogComponent(
         'flux-id-credit',
-        <FluxCredit onClose={() => popDialogById('flux-id-credit')} />
+        <FluxCredit onClose={() => popDialogById('flux-id-credit')} />,
       );
     }, true);
   },
@@ -521,7 +521,7 @@ export default {
           onClose();
           popDialogById('box-gen');
         }}
-      />
+      />,
     );
   },
   showMyCloud: (onClose: () => void): void => {
@@ -535,7 +535,7 @@ export default {
             onClose();
             popDialogById('my-cloud');
           }}
-        />
+        />,
       );
     }, true);
   },
@@ -549,7 +549,7 @@ export default {
             resolve({ fileName, isCancelled });
           }}
           uuid={uuid}
-        />
+        />,
       );
     }),
   showMaterialTestGenerator: (onClose: () => void = () => {}): void => {
@@ -564,7 +564,7 @@ export default {
           popDialogById('material-test-generator');
           onClose();
         }}
-      />
+      />,
     );
   },
   showSocialMedia: (): void => {
@@ -592,7 +592,7 @@ export default {
           ObjectPanelController.updateActiveKey(null);
           popDialogById('image-edit-panel');
         }}
-      />
+      />,
     );
   },
 };

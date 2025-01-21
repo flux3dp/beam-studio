@@ -1,7 +1,7 @@
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import undoManager from 'app/svgedit/history/undoManager';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { IBatchCommand } from 'interfaces/IHistory';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { IBatchCommand } from '@core/interfaces/IHistory';
 
 import transfromlist from './transfromlist';
 
@@ -14,7 +14,7 @@ getSVGAsync(({ Canvas, Edit }) => {
 
 const getRotationAngleFromTransformList = (
   tlist: SVGTransformList | null,
-  toRad = false
+  toRad = false,
 ): number => {
   if (!tlist) return 0;
   for (let i = 0; i < tlist.numberOfItems; i++) {
@@ -34,7 +34,7 @@ export const getRotationAngle = (elem: SVGElement, toRad = false): number => {
 export const setRotationAngle = (
   elem: SVGElement,
   value: number,
-  { parentCmd, addToHistory = false }: { parentCmd?: IBatchCommand; addToHistory?: boolean } = {}
+  { parentCmd, addToHistory = false }: { parentCmd?: IBatchCommand; addToHistory?: boolean } = {},
 ): IBatchCommand => {
   const oldTransform = elem.getAttribute('transform');
   const bbox = svgedit.utilities.getBBox(elem);
@@ -54,7 +54,7 @@ export const setRotationAngle = (
     const center = svgedit.math.transformPoint(
       cx,
       cy,
-      svgedit.math.transformListToTransform(tlist).matrix
+      svgedit.math.transformListToTransform(tlist).matrix,
     );
     const svgroot = document.getElementById('svgroot') as unknown as SVGSVGElement;
     const rotationNc = svgroot.createSVGTransform();

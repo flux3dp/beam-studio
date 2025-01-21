@@ -11,11 +11,11 @@ import {
   EllipsisOutlined,
 } from '@ant-design/icons';
 
-import useI18n from 'helpers/useI18n';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IFile } from 'interfaces/IMyCloud';
-import { MyCloudContext } from 'app/contexts/MyCloudContext';
-import { useIsMobile } from 'helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IFile } from '@core/interfaces/IMyCloud';
+import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './GridFile.module.scss';
 

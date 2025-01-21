@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Modal } from 'antd';
 import { SpinLoading } from 'antd-mobile';
 
-import alertCaller from 'app/actions/alert-caller';
-import deviceMaster from 'helpers/device-master';
-import progressCaller from 'app/actions/progress-caller';
-import useI18n from 'helpers/useI18n';
-import { FisheyeCaliParameters } from 'interfaces/FisheyePreview';
-import { updateData } from 'helpers/camera-calibration-helper';
+import alertCaller from '@core/app/actions/alert-caller';
+import deviceMaster from '@core/helpers/device-master';
+import progressCaller from '@core/app/actions/progress-caller';
+import useI18n from '@core/helpers/useI18n';
+import { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
+import { updateData } from '@core/helpers/camera-calibration-helper';
 
 import styles from './CheckpointData.module.scss';
 import Title from './Title';

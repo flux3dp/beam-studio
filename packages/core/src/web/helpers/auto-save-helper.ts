@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import fs from 'implementations/fileSystem';
-import isWeb from 'helpers/is-web';
-import storage from 'implementations/storage';
-import { generateBeamBuffer } from 'helpers/file-export-helper';
-import { IConfig } from 'interfaces/IAutosave';
+import fs from '@app/implementations/fileSystem';
+import isWeb from '@core/helpers/is-web';
+import storage from '@app/implementations/storage';
+import { generateBeamBuffer } from '@core/helpers/file-export-helper';
+import { IConfig } from '@core/interfaces/IAutosave';
 
 let autoSaveInterval = null;
 
@@ -75,7 +75,8 @@ const startAutoSave = (): void => {
         const files = fs
           .readdirSync(directory)
           .filter(
-            (file) => file.startsWith(AUTO_SAVE_NEW_PREFIX) || file.startsWith(AUTO_SAVE_OLD_PREFIX)
+            (file) =>
+              file.startsWith(AUTO_SAVE_NEW_PREFIX) || file.startsWith(AUTO_SAVE_OLD_PREFIX),
           )
           .sort((a, b) => {
             const aIsOld = a.startsWith(AUTO_SAVE_OLD_PREFIX);

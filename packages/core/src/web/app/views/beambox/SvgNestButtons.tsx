@@ -6,15 +6,15 @@ import classNames from 'classnames';
 import { Button, ConfigProvider } from 'antd';
 import { CaretRightOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
-import Alert from 'app/actions/alert-caller';
-import getClipperLib from 'helpers/clipper/getClipperLib';
-import history from 'app/svgedit/history/history';
-import i18n from 'helpers/i18n';
-import isWeb from 'helpers/is-web';
-import Modal from 'app/widgets/Modal';
-import requirejsHelper from 'helpers/requirejs-helper';
-import workareaManager from 'app/svgedit/workarea';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import Alert from '@core/app/actions/alert-caller';
+import getClipperLib from '@core/helpers/clipper/getClipperLib';
+import history from '@core/app/svgedit/history/history';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
+import Modal from '@core/app/widgets/Modal';
+import requirejsHelper from '@core/helpers/requirejs-helper';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import styles from './SvgNestButtons.module.scss';
 
@@ -291,9 +291,7 @@ class SvgNestButtons extends React.Component<Props, State> {
       </div>
     );
 
-    return isWorking ? (
-      <Modal className={{ 'no-background': true }}>{content}</Modal>
-    ) : content;
+    return isWorking ? <Modal className={{ 'no-background': true }}>{content}</Modal> : content;
   }
 }
 

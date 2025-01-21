@@ -3,28 +3,28 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Button, ConfigProvider, Switch } from 'antd';
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import fontHelper from 'helpers/fonts/fontHelper';
-import FontFuncs from 'app/actions/beambox/font-funcs';
-import history from 'app/svgedit/history/history';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import OptionPanelIcons from 'app/icons/option-panel/OptionPanelIcons';
-import progressCaller from 'app/actions/progress-caller';
-import selector from 'app/svgedit/selector';
-import textEdit from 'app/svgedit/text/textedit';
-import textPathEdit, { VerticalAlign } from 'app/actions/beambox/textPathEdit';
-import i18n from 'helpers/i18n';
-import InFillBlock from 'app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
-import Select from 'app/widgets/AntdSelect';
-import StartOffsetBlock from 'app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
-import VerticalAlignBlock from 'app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
-import UnitInput from 'app/widgets/Unit-Input-v2';
-import { FontDescriptor } from 'interfaces/IFont';
-import { getCurrentUser } from 'helpers/api/flux-id';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { iconButtonTheme, selectTheme } from 'app/constants/antd-config';
-import { isMobile } from 'helpers/system-helper';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import history from '@core/app/svgedit/history/history';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import progressCaller from '@core/app/actions/progress-caller';
+import selector from '@core/app/svgedit/selector';
+import textEdit from '@core/app/svgedit/text/textedit';
+import textPathEdit, { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
+import i18n from '@core/helpers/i18n';
+import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
+import Select from '@core/app/widgets/AntdSelect';
+import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
+import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
+import UnitInput from '@core/app/widgets/Unit-Input-v2';
+import { FontDescriptor } from '@core/interfaces/IFont';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
+import { isMobile } from '@core/helpers/system-helper';
 
 import styles from './TextOptions.module.scss';
 
@@ -127,7 +127,7 @@ const TextOptions = ({
           'Noto Sans',
         ];
         const sanitizedFontFamily = [font.family, ...fontFamilyFallback].find((f) =>
-          availableFontFamilies.includes(f)
+          availableFontFamilies.includes(f),
         );
         return sanitizedFontFamily;
       })();
@@ -202,7 +202,7 @@ const TextOptions = ({
     const newFont = FontFuncs.requestFontsOfTheFontFamily(family)[0];
     const { success, fontLoadedPromise } = await fontHelper.applyMonotypeStyle(
       newFont,
-      getCurrentUser()
+      getCurrentUser(),
     );
     if (!success) return;
     const batchCmd = new history.BatchCommand('Change Font family');
@@ -305,7 +305,7 @@ const TextOptions = ({
     });
     const { success, fontLoadedPromise } = await fontHelper.applyMonotypeStyle(
       font,
-      getCurrentUser()
+      getCurrentUser(),
     );
     if (!success) return;
     const batchCmd = new history.BatchCommand('Change Font Style');

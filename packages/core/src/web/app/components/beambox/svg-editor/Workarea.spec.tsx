@@ -2,18 +2,18 @@
 import React, { act } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('app/svgedit/operations/clipboard', () => ({
+jest.mock('@core/app/svgedit/operations/clipboard', () => ({
   pasteElements: jest.fn(),
 }));
 
-jest.mock('app/actions/beambox/svg-editor', () => ({
+jest.mock('@core/app/actions/beambox/svg-editor', () => ({
   cutSelected: jest.fn(),
   copySelected: jest.fn(),
   deleteSelected: jest.fn(),
 }));
 
 const getSVGAsync = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
@@ -42,7 +42,7 @@ getSVGAsync.mockImplementation((callback) => {
   });
 });
 
-jest.mock('helpers/react-contextmenu', () => ({
+jest.mock('@core/helpers/react-contextmenu', () => ({
   ContextMenu: 'dummy-context-menu',
   ContextMenuTrigger: 'dummy-context-menu-trigger',
   MenuItem: 'dummy-menu-item',
@@ -51,12 +51,12 @@ jest.mock('helpers/react-contextmenu', () => ({
 
 const mockgetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
 const mockMoveToOtherLayer = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
   getObjectLayer: (...args: any[]) => mockgetObjectLayer(...args),
 }));
 
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import Workarea from './Workarea';
 
 describe('test workarea', () => {

@@ -3,7 +3,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { IButton } from 'interfaces/IButton';
+import { IButton } from '@core/interfaces/IButton';
 
 interface Props {
   className?: string;
@@ -12,7 +12,7 @@ interface Props {
 
 function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
   if (buttons.length <= 0) {
-    return (<span />);
+    return <span />;
   }
 
   const buttonsElems = buttons.map((opt: IButton, i: number) => {
@@ -40,17 +40,12 @@ function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
 
     if (type === 'link') {
       return (
-        <a
-          className={btnClassName}
-          key={i}
-          href={opt.href}
-          {...attrs}
-          onClick={opt.onClick}
-        >
+        <a className={btnClassName} key={i} href={opt.href} {...attrs} onClick={opt.onClick}>
           {opt.label}
         </a>
       );
-    } if (type === 'icon') {
+    }
+    if (type === 'icon') {
       return (
         <button
           key={i}
@@ -82,7 +77,7 @@ function ButtonGroup({ buttons = [], className = '' }: Props): JSX.Element {
 
   const hasClassName = typeof className === 'string' && className !== '';
   const groupClassName = classNames('button-group', hasClassName ? className : 'btn-h-group');
-  return (<div className={groupClassName}>{buttonsElems}</div>);
+  return <div className={groupClassName}>{buttonsElems}</div>;
 }
 
 export default ButtonGroup;

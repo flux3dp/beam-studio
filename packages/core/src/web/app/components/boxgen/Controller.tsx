@@ -3,10 +3,10 @@ import { Button, Divider, Form, InputNumber, Radio, Slider, Space, Switch, Toolt
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { sprintf } from 'sprintf-js';
 
-import Select from 'app/widgets/AntdSelect';
-import useI18n from 'helpers/useI18n';
-import { BoxgenContext } from 'app/contexts/BoxgenContext';
-import { IController } from 'interfaces/IBoxgen';
+import Select from '@core/app/widgets/AntdSelect';
+import useI18n from '@core/helpers/useI18n';
+import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { IController } from '@core/interfaces/IBoxgen';
 import {
   SCREW_LENGTH_INCH,
   SCREW_LENGTH_MM,
@@ -14,7 +14,7 @@ import {
   SCREW_SIZE_MM,
   SHEET_THICKNESS_INCH,
   SHEET_THICKNESS_MM,
-} from 'app/constants/boxgen-constants';
+} from '@core/app/constants/boxgen-constants';
 
 import styles from './Controller.module.scss';
 
@@ -76,11 +76,11 @@ const Controller = (): JSX.Element => {
   }, [isMM]);
   const maxTSlotCount = useMemo(
     () => Math.floor(Math.min(boxData.width, boxData.height, boxData.depth) / 30),
-    [boxData]
+    [boxData],
   );
   const maxTeethLength = useMemo(
     () => Math.min(boxData.width, boxData.height, boxData.depth) - boxData.sheetThickness * 2 - 5,
-    [boxData]
+    [boxData],
   );
 
   const [form] = Form.useForm();
@@ -163,7 +163,7 @@ const Controller = (): JSX.Element => {
         <Tooltip
           title={sprintf(
             lang.max_dimension_tooltip,
-            `${(workareaLimit / unitRatio).toFixed(isMM ? 0 : 2)}${unit}`
+            `${(workareaLimit / unitRatio).toFixed(isMM ? 0 : 2)}${unit}`,
           )}
           placement="bottomLeft"
           arrow={{ pointAtCenter: true }}

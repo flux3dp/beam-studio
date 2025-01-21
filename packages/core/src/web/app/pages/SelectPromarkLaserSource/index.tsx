@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import { Divider, Flex, Radio, RadioChangeEvent, Space } from 'antd';
 import classNames from 'classnames';
 
-import useI18n from 'helpers/useI18n';
-import beamboxPreference from 'app/actions/beambox/beambox-preference';
-import { laserSourceWattMap, LaserType, workareaOptions } from 'app/constants/promark-constants';
+import useI18n from '@core/helpers/useI18n';
+import beamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import {
+  laserSourceWattMap,
+  LaserType,
+  workareaOptions,
+} from '@core/app/constants/promark-constants';
 
-import { setPromarkInfo } from 'helpers/device/promark/promark-info';
-import { PromarkInfo } from 'interfaces/Promark';
+import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
 

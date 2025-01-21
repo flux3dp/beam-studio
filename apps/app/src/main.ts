@@ -10,9 +10,10 @@ import globalHelper from '@core/helpers/global-helper';
 import communicator from '@app/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
-import './loader';
+import loaderLoaded from './loader';
 
 globalHelper.setWindowMember();
+console.log('loader loaded', loaderLoaded);
 
 // const allowTracking = false;
 declare global {
@@ -50,7 +51,6 @@ function menuBar() {
     return;
   }
 
-  // @ts-expect-error - jQuery is a global variable
   $('.content').css({ height: 'calc(100% - 30px)' });
 
   const titlebar = new Titlebar({
@@ -96,7 +96,6 @@ export default function main(): void {
   });
 
   globalEvents(() => {
-    // @ts-expect-error - jQuery is a global variable
     router($('section.content')[0]);
   });
 }

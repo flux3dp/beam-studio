@@ -3,16 +3,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Divider, Flex, Modal, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import FramingIcons from 'app/icons/framing/FramingIcons';
-import FramingTaskManager, { FramingType } from 'helpers/device/framing';
-import icons from 'app/icons/icons';
-import MessageCaller, { MessageLevel } from 'app/actions/message-caller';
-import shortcuts from 'helpers/shortcuts';
-import useI18n from 'helpers/useI18n';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import FramingIcons from '@core/app/icons/framing/FramingIcons';
+import FramingTaskManager, { FramingType } from '@core/helpers/device/framing';
+import icons from '@core/app/icons/icons';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import shortcuts from '@core/helpers/shortcuts';
+import useI18n from '@core/helpers/useI18n';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import classNames from 'classnames';
-import { handleExportClick } from 'app/actions/beambox/export/GoButton/handleExportClick';
+import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/handleExportClick';
 import styles from './index.module.scss';
 
 interface Props {
@@ -33,7 +33,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
 
   const handleStart = useCallback(
     (forceType?: FramingType) => manager.current?.startFraming(forceType ?? type, { lowPower: 0 }),
-    [type]
+    [type],
   );
 
   const handleStop = useCallback(() => {
@@ -57,7 +57,7 @@ const PromarkFramingModal = ({ device, onClose, startOnOpen = false }: Props): J
           return null;
       }
     },
-    [isFraming, type]
+    [isFraming, type],
   );
 
   useEffect(() => {

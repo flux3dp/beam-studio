@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 import UserAvatar from './UserAvatar';
 
 const showFluxCreditDialog = jest.fn();
-jest.mock('app/actions/dialog-caller', () => ({
+jest.mock('@core/app/actions/dialog-caller', () => ({
   showFluxCreditDialog: () => showFluxCreditDialog(),
 }));
 
@@ -24,7 +24,7 @@ describe('test UserAvatar', () => {
           email: '123@test.com',
           info: { avatar: 'mock-avatar-src' },
         }}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -36,7 +36,7 @@ describe('test UserAvatar', () => {
           email: '123@test.com',
           info: { subscription: { is_valid: true } },
         }}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
   });

@@ -1,14 +1,14 @@
 /**
  * Apply auto fit result
  */
-import clipboard from 'app/svgedit/operations/clipboard';
-import history from 'app/svgedit/history/history';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import undoManager from 'app/svgedit/history/undoManager';
-import { AutoFitContour } from 'interfaces/IAutoFit';
-import { getRotationAngle, setRotationAngle } from 'app/svgedit/transform/rotation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { moveElements } from 'app/svgedit/operations/move';
+import clipboard from '@core/app/svgedit/operations/clipboard';
+import history from '@core/app/svgedit/history/history';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { moveElements } from '@core/app/svgedit/operations/move';
 
 import { calculateDimensionCenter, ImageDimension } from './AlignModal/dimension';
 
@@ -22,7 +22,7 @@ const apply = async (
   contours: AutoFitContour[],
   mainIdx: number,
   initDimension: ImageDimension,
-  imageDimension: ImageDimension
+  imageDimension: ImageDimension,
 ): Promise<void> => {
   const { width, height, rotation } = imageDimension;
   const batchCmd = new history.BatchCommand('AutoFit');

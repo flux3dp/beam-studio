@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 import FullWindowPanel from './FullWindowPanel';
 
 jest.mock(
-  'app/widgets/FloatingPanel',
+  '@core/app/widgets/FloatingPanel',
   () =>
     ({ title, className, anchors, fixedContent, children, onClose }: any) =>
       (
@@ -17,14 +17,14 @@ jest.mock(
           </button>
           {children}
         </div>
-      )
+      ),
 );
 
 const mockIsWeb = jest.fn();
-jest.mock('helpers/is-web', () => () => mockIsWeb());
+jest.mock('@core/helpers/is-web', () => () => mockIsWeb());
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
@@ -45,7 +45,7 @@ describe('test FullWindowPanel', () => {
         renderMobileFixedContent={() => <div>Mobile Fixed Content</div>}
         renderContents={() => <div>Desktop Contents</div>}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     expect(queryByText('Desktop Contents')).not.toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('test FullWindowPanel', () => {
         renderMobileFixedContent={() => <div>Mobile Fixed Content</div>}
         renderContents={() => <div>Desktop Contents</div>}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     expect(queryByText('Mobile Contents')).not.toBeInTheDocument();

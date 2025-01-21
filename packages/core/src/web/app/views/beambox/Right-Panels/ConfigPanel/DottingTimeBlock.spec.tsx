@@ -2,18 +2,18 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { LayerPanelContext } from 'app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
 const mockWriteData = jest.fn();
-jest.mock('helpers/layer/layer-config-helper', () => ({
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
 }));
 
 const mockAddCommandToHistory = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
@@ -27,7 +27,7 @@ const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { onAfter: undefined, count: batchCmd.count + 1 };
   return batchCmd;
 });
-jest.mock('app/svgedit/history/history', () => ({
+jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: mockBatchCommand,
 }));
 
@@ -36,16 +36,16 @@ const mockContextState = { dottingTime: { value: 140, hasMultiValue: false } };
 const mockDispatch = jest.fn();
 const mockInitState = jest.fn();
 
-jest.mock('app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
-jest.mock('app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
   LayerPanelContext: React.createContext({ hasGradient: false }),
 }));
 
 jest.mock(
-  'app/widgets/Unit-Input-v2',
+  '@core/app/widgets/Unit-Input-v2',
   () =>
     ({ id, min, max, unit, defaultValue, decimal, displayMultiValue, getValue }: any) =>
       (
@@ -65,11 +65,11 @@ jest.mock(
             onChange={(e) => getValue(parseFloat(e.target.value))}
           />
         </div>
-      )
+      ),
 );
 
 const mockCreateEventEmitter = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (...args) => mockCreateEventEmitter(...args),
 }));
 const mockEmit = jest.fn();
@@ -98,7 +98,7 @@ describe('test DottingTimeBlock', () => {
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -116,7 +116,7 @@ describe('test DottingTimeBlock', () => {
         >
           <DottingTimeBlock type="panel-item" />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -134,7 +134,7 @@ describe('test DottingTimeBlock', () => {
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(container).toBeEmptyDOMElement();
   });
@@ -152,7 +152,7 @@ describe('test DottingTimeBlock', () => {
         >
           <DottingTimeBlock />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
@@ -179,7 +179,7 @@ describe('test DottingTimeBlock', () => {
       'layer1',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockWriteData).toHaveBeenNthCalledWith(3, 'layer2', 'dottingTime', 88, { batchCmd });
     expect(mockWriteData).toHaveBeenNthCalledWith(
@@ -187,7 +187,7 @@ describe('test DottingTimeBlock', () => {
       'layer2',
       'configName',
       'CUSTOM_PRESET_CONSTANT',
-      { batchCmd }
+      { batchCmd },
     );
     expect(mockEmit).toBeCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
@@ -209,7 +209,7 @@ describe('test DottingTimeBlock', () => {
         >
           <DottingTimeBlock type="modal" />
         </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>
+      </LayerPanelContext.Provider>,
     );
     expect(mockCreateEventEmitter).toBeCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');

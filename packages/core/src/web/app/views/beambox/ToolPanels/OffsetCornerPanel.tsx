@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import i18n from 'helpers/i18n';
-import SelectView from 'app/widgets/Select';
+import i18n from '@core/helpers/i18n';
+import SelectView from '@core/app/widgets/Select';
 
 const LANG = i18n.lang.beambox.tool_panels;
 
 interface Props {
-  cornerType: string,
-  onValueChange: (val: string) => void,
+  cornerType: string;
+  onValueChange: (val: string) => void;
 }
 
 function OffsetCornerPanel({ cornerType: cornerTypeProps, onValueChange }: Props): JSX.Element {
@@ -20,10 +20,11 @@ function OffsetCornerPanel({ cornerType: cornerTypeProps, onValueChange }: Props
     updateCornerType(val);
   };
 
-  const getOffsetCornerText = () => ({
-    sharp: LANG._offset.sharp,
-    round: LANG._offset.round,
-  }[cornerType]);
+  const getOffsetCornerText = () =>
+    ({
+      sharp: LANG._offset.sharp,
+      round: LANG._offset.round,
+    }[cornerType]);
 
   const options = [
     {

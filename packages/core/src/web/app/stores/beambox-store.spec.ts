@@ -3,7 +3,7 @@ const mockOn = jest.fn();
 const mockEmit = jest.fn();
 const mockRemoveListener = jest.fn();
 const mockRemoveAllListeners = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     on: mockOn,
     emit: mockEmit,

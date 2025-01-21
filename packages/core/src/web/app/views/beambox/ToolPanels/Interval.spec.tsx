@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       tool_panels: {
@@ -15,16 +15,16 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const get = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get,
 }));
 
 const read = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read,
 }));
 
-jest.mock('app/widgets/Unit-Input-v2', () =>
+jest.mock('@core/app/widgets/Unit-Input-v2', () =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ({ id, unit, min, max, defaultValue, getValue }: any) => (
     <div>
@@ -35,7 +35,7 @@ jest.mock('app/widgets/Unit-Input-v2', () =>
       defaultValue:{defaultValue}
       <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
     </div>
-  )
+  ),
 );
 
 import Interval from './Interval';
@@ -50,7 +50,7 @@ describe('should render correctly', () => {
     read.mockReturnValue('fbb1b');
     const onValueChange = jest.fn();
     const { container, rerender } = render(
-      <Interval dx={25.4} dy={25.4} onValueChange={onValueChange} />
+      <Interval dx={25.4} dy={25.4} onValueChange={onValueChange} />,
     );
     expect(container).toMatchSnapshot();
 

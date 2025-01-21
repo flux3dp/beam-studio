@@ -1,4 +1,4 @@
-@use 'styles/variables' as variables;
+@use '@core/styles/variables' as variables;
 @use '../mixins' as rightPanelMixins;
 
 .config-panel {
@@ -71,7 +71,6 @@
     padding-left: 0;
     padding-right: 0;
   }
-
 }
 
 .container {

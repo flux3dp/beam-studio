@@ -2,24 +2,24 @@ import classNames from 'classnames';
 import React, { useCallback } from 'react';
 import { Button, ConfigProvider } from 'antd';
 
-import ActionPanelIcons from 'app/icons/action-panel/ActionPanelIcons';
-import Dialog from 'app/actions/dialog-caller';
-import dialog from 'implementations/dialog';
-import FontFuncs from 'app/actions/beambox/font-funcs';
-import imageEdit from 'helpers/image-edit';
-import ObjectPanelController from 'app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import autoFit from 'app/svgedit/operations/autoFit';
-import textActions from 'app/svgedit/text/textactions';
-import textEdit from 'app/svgedit/text/textedit';
-import textPathEdit from 'app/actions/beambox/textPathEdit';
-import updateElementColor from 'helpers/color/updateElementColor';
-import useI18n from 'helpers/useI18n';
-import webNeedConnectionWrapper from 'helpers/web-need-connection-helper';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { isMobile } from 'helpers/system-helper';
-import { showRotaryWarped } from 'app/views/dialogs/image-edit/RotaryWarped';
-import { textButtonTheme } from 'app/constants/antd-config';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import Dialog from '@core/app/actions/dialog-caller';
+import dialog from '@app/implementations/dialog';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import imageEdit from '@core/helpers/image-edit';
+import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import autoFit from '@core/app/svgedit/operations/autoFit';
+import textActions from '@core/app/svgedit/text/textactions';
+import textEdit from '@core/app/svgedit/text/textedit';
+import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import updateElementColor from '@core/helpers/color/updateElementColor';
+import useI18n from '@core/helpers/useI18n';
+import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { isMobile } from '@core/helpers/system-helper';
+import { showRotaryWarped } from '@core/app/views/dialogs/image-edit/RotaryWarped';
+import { textButtonTheme } from '@core/app/constants/antd-config';
 
 import styles from './ActionsPanel.module.scss';
 
@@ -101,7 +101,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
       onClick: () => void,
       icon: JSX.Element,
       mobileIcon: JSX.Element,
-      opts: ButtonOpts = {}
+      opts: ButtonOpts = {},
     ): JSX.Element => {
       const { isFullLine, isDisabled, autoClose, mobileLabel } = opts;
       return isMobile() ? (
@@ -132,7 +132,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         </div>
       );
     },
-    []
+    [],
   );
 
   const renderAutoFitButon = (opts: ButtonOpts = {}): JSX.Element =>
@@ -142,7 +142,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
       () => autoFit(elem as SVGElement),
       <ActionPanelIcons.AutoFit />,
       <ActionPanelIcons.AutoFit />,
-      { isFullLine: true, autoClose: false, ...opts }
+      { isFullLine: true, autoClose: false, ...opts },
     );
 
   const renderArrayButton = (opts: ButtonOpts = {}): JSX.Element =>
@@ -152,7 +152,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
       () => svgEditor.triggerGridTool(),
       <ActionPanelIcons.Array />,
       <ActionPanelIcons.ArrayMobile />,
-      { autoClose: false, ...opts }
+      { autoClose: false, ...opts },
     );
 
   const renderOffsetButton = (opts: ButtonOpts = {}): JSX.Element =>
@@ -162,7 +162,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
       () => svgEditor.triggerOffsetTool(),
       <ActionPanelIcons.Offset />,
       <ActionPanelIcons.Offset />,
-      { autoClose: false, ...opts }
+      { autoClose: false, ...opts },
     );
 
   const renderSmartNestButton = (opts: ButtonOpts = {}): JSX.Element =>
@@ -172,7 +172,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
       () => Dialog.showSvgNestButtons(),
       <ActionPanelIcons.SmartNest />,
       <ActionPanelIcons.SmartNest />,
-      { isFullLine: true, ...opts }
+      { isFullLine: true, ...opts },
     );
 
   const renderImageActions = (): JSX.Element[] => {
@@ -186,7 +186,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         replaceImage,
         <ActionPanelIcons.Replace />,
         <ActionPanelIcons.ReplaceMobile />,
-        { isFullLine: true, autoClose: false, mobileLabel: lang.replace_with_short }
+        { isFullLine: true, autoClose: false, mobileLabel: lang.replace_with_short },
       ),
       'bg-removal': renderButtons(
         'bg-removal',
@@ -194,7 +194,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => imageEdit.removeBackground(elem as SVGImageElement),
         <ActionPanelIcons.BackgroungRemoval />,
         <ActionPanelIcons.BackgroungRemovalMobile />,
-        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short }
+        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
       ),
       imageEditPanel: renderButtons(
         'imageEditPanel',
@@ -202,7 +202,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => Dialog.showImageEditPanel(),
         <ActionPanelIcons.EditImage />,
         <ActionPanelIcons.EditImage />,
-        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short }
+        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
       ),
       trapezoid: renderButtons(
         'trapezoid',
@@ -210,7 +210,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => showRotaryWarped(elem as SVGImageElement),
         <ActionPanelIcons.RotaryWarped />,
         <ActionPanelIcons.RotaryWarped />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
       trace: renderButtons(
         'trace',
@@ -218,7 +218,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => imageEdit.traceImage(elem as SVGImageElement),
         <ActionPanelIcons.Trace />,
         <ActionPanelIcons.Trace />,
-        { isDisabled: isShading }
+        { isDisabled: isShading },
       ),
       grading: renderButtons(
         'grading',
@@ -226,7 +226,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => Dialog.showPhotoEditPanel('curve'),
         <ActionPanelIcons.Grading />,
         <ActionPanelIcons.Brightness />,
-        { autoClose: false, mobileLabel: lang.brightness }
+        { autoClose: false, mobileLabel: lang.brightness },
       ),
       sharpen: renderButtons(
         'sharpen',
@@ -236,7 +236,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         },
         <ActionPanelIcons.Sharpen />,
         <ActionPanelIcons.SharpenMobile />,
-        { autoClose: false }
+        { autoClose: false },
       ),
       crop: renderButtons(
         'crop',
@@ -244,21 +244,21 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => Dialog.showCropPanel(),
         <ActionPanelIcons.Crop />,
         <ActionPanelIcons.Crop />,
-        { autoClose: false }
+        { autoClose: false },
       ),
       bevel: renderButtons(
         'bevel',
         lang.bevel,
         () => imageEdit.generateStampBevel(elem as SVGImageElement),
         <ActionPanelIcons.Bevel />,
-        <ActionPanelIcons.BevelMobile />
+        <ActionPanelIcons.BevelMobile />,
       ),
       invert: renderButtons(
         'invert',
         lang.invert,
         () => imageEdit.colorInvert(elem as SVGImageElement),
         <ActionPanelIcons.Invert />,
-        <ActionPanelIcons.Invert />
+        <ActionPanelIcons.Invert />,
       ),
       array: renderArrayButton(),
       potrace: renderButtons(
@@ -266,7 +266,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         lang.outline,
         () => imageEdit.potrace(elem as SVGImageElement),
         <ActionPanelIcons.Outline />,
-        <ActionPanelIcons.Outline />
+        <ActionPanelIcons.Outline />,
       ),
     };
     const contentOrder = isMobile()
@@ -317,7 +317,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         {
           isFullLine: true,
           mobileLabel: lang.outline,
-        }
+        },
       ),
       renderButtons(
         'weld',
@@ -327,7 +327,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         <ActionPanelIcons.WeldText />,
         {
           isFullLine: true,
-        }
+        },
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
@@ -344,7 +344,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => textPathEdit.editPath(elem as SVGGElement),
         <ActionPanelIcons.EditPath />,
         <ActionPanelIcons.EditPathMobile />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
       renderButtons(
         'detach_path',
@@ -356,7 +356,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         },
         <ActionPanelIcons.DecomposeTextpath />,
         <ActionPanelIcons.DecomposeTextpath />,
-        { isFullLine: true, mobileLabel: lang.detach_path_short }
+        { isFullLine: true, mobileLabel: lang.detach_path_short },
       ),
       renderButtons(
         'convert_to_path',
@@ -364,7 +364,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         convertTextToPath,
         <ActionPanelIcons.ConvertToPath />,
         <ActionPanelIcons.ConvertToPathMobile />,
-        { isFullLine: true, mobileLabel: lang.outline }
+        { isFullLine: true, mobileLabel: lang.outline },
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
@@ -381,7 +381,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.pathActions.toEditMode(elem),
         <ActionPanelIcons.EditPath />,
         <ActionPanelIcons.EditPathMobile />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
       renderButtons(
         'decompose_path',
@@ -389,7 +389,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.decomposePath(),
         <ActionPanelIcons.Decompose />,
         <ActionPanelIcons.DecomposeMobile />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
       renderSmartNestButton(),
       renderOffsetButton(),
@@ -400,7 +400,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.simplifyPath(),
         <ActionPanelIcons.Simplify />,
         <ActionPanelIcons.SimplifyMobile />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
     ];
     return content;
@@ -415,7 +415,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.convertToPath(elem),
         <ActionPanelIcons.ConvertToPath />,
         <ActionPanelIcons.ConvertToPathMobile />,
-        { isFullLine: true, mobileLabel: lang.outline }
+        { isFullLine: true, mobileLabel: lang.outline },
       ),
       renderSmartNestButton(),
       renderOffsetButton(),
@@ -433,7 +433,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.convertToPath(elem),
         <ActionPanelIcons.ConvertToPath />,
         <ActionPanelIcons.ConvertToPathMobile />,
-        { isFullLine: true, mobileLabel: lang.outline }
+        { isFullLine: true, mobileLabel: lang.outline },
       ),
       renderSmartNestButton(),
       renderOffsetButton(),
@@ -451,7 +451,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.convertToPath(elem),
         <ActionPanelIcons.ConvertToPath />,
         <ActionPanelIcons.ConvertToPathMobile />,
-        { isFullLine: true, mobileLabel: lang.outline }
+        { isFullLine: true, mobileLabel: lang.outline },
       ),
       renderSmartNestButton(),
       renderOffsetButton(),
@@ -469,7 +469,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.convertToPath(elem),
         <ActionPanelIcons.ConvertToPath />,
         <ActionPanelIcons.ConvertToPathMobile />,
-        { isFullLine: true, mobileLabel: lang.outline }
+        { isFullLine: true, mobileLabel: lang.outline },
       ),
       renderSmartNestButton(),
       renderOffsetButton(),
@@ -487,7 +487,7 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
         () => svgCanvas.disassembleUse2Group(),
         <ActionPanelIcons.Disassemble />,
         <ActionPanelIcons.DisassembleMobile />,
-        { isFullLine: true }
+        { isFullLine: true },
       ),
       renderSmartNestButton(),
       renderArrayButton({ isFullLine: true }),
@@ -507,13 +507,13 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
   const renderMultiSelectActions = (): JSX.Element[] => {
     const children = Array.from(elem.childNodes);
     const supportOffset = children.every(
-      (child: ChildNode) => !['g', 'text', 'image', 'use'].includes(child.nodeName)
+      (child: ChildNode) => !['g', 'text', 'image', 'use'].includes(child.nodeName),
     );
 
     const appendOptionalButtons = (buttons: JSX.Element[]) => {
       const text = children.find((child) => child.nodeName === 'text') as Element;
       const pathLike = children.find((child) =>
-        ['path', 'ellipse', 'line', 'polygon', 'rect'].includes(child.nodeName)
+        ['path', 'ellipse', 'line', 'polygon', 'rect'].includes(child.nodeName),
       ) as Element;
       if (children.length === 2 && text && pathLike) {
         buttons.push(
@@ -531,8 +531,8 @@ const ActionsPanel = ({ elem }: Props): JSX.Element => {
             },
             <ActionPanelIcons.CreateTextpath />,
             <ActionPanelIcons.CreateTextpath />,
-            { isFullLine: true, mobileLabel: lang.create_textpath_short }
-          )
+            { isFullLine: true, mobileLabel: lang.create_textpath_short },
+          ),
         );
       }
     };

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Checkbox, Modal } from 'antd';
 
-import AnnouncementHelper from 'helpers/announcement-helper';
-import browser from 'implementations/browser';
-import useI18n from 'helpers/useI18n';
+import AnnouncementHelper from '@core/helpers/announcement-helper';
+import browser from '@app/implementations/browser';
+import useI18n from '@core/helpers/useI18n';
 import { ExportOutlined } from '@ant-design/icons';
-import { IAnnouncement } from 'interfaces/IAnnouncement';
+import { IAnnouncement } from '@core/interfaces/IAnnouncement';
 
 import styles from './AnnouncementPanel.module.scss';
 

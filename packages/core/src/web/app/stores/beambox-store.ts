@@ -1,4 +1,4 @@
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const SHOW_CROPPER = 'SHOW_CROPPER';
 const DRAW_GUIDE_LINES = 'DRAW_GUIDE_LINES';

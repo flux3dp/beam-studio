@@ -1,4 +1,4 @@
-import { getSVGAsync } from "helpers/svg-editor-helper";
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 const { $ } = window;
 
@@ -28,9 +28,11 @@ const fetchThumbnail = async (): Promise<string[]> => {
 
     const image = await new Promise((resolve) => {
       const img = new Image();
+
       img.onload = () => resolve(img);
       img.src = `data:image/svg+xml; charset=utf8, ${encodeURIComponent(svgString)}`;
     });
+
     return image;
   }
 
@@ -42,8 +44,8 @@ const fetchThumbnail = async (): Promise<string[]> => {
     const ratio = img.width / $('#svgroot').width();
     const W = ratio * $('#svgroot').width();
     const H = ratio * $('#svgroot').height();
-    const w = ratio * parseInt($('#canvasBackground').attr('width'), 10);
-    const h = ratio * parseInt($('#canvasBackground').attr('height'), 10);
+    const w = ratio * Number.parseInt($('#canvasBackground').attr('width'), 10);
+    const h = ratio * Number.parseInt($('#canvasBackground').attr('height'), 10);
     const x = -(W - w) / 2;
     const y = -(H - h) / 2;
 
@@ -51,6 +53,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
     canvas.height = h * (canvas.width / w);
 
     ctx.drawImage(img, -x, -y, w, h, 0, 0, canvas.width, canvas.height);
+
     return canvas;
   }
 
@@ -63,6 +66,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
       resolve([canvas.toDataURL(), URL.createObjectURL(blob)]);
     });
   });
+
   return urls;
 };
 
@@ -71,10 +75,12 @@ const generateThumbnail = async (): Promise<{
   thumbnailBlobURL: string;
 }> => {
   svgedit.utilities.moveDefsIntoSvgContent();
+
   const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
+
   svgedit.utilities.moveDefsOutfromSvgContent();
+
   return { thumbnail, thumbnailBlobURL };
 };
-
 
 export default generateThumbnail;

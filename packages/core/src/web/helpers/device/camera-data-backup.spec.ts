@@ -10,7 +10,7 @@ import { downloadCameraData, uploadCameraData, targetDirs } from './camera-data-
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
-jest.mock('app/actions/alert-caller', () => ({
+jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args: any) => mockPopUp(...args),
   popUpError: (...args: any) => mockPopUpError(...args),
 }));
@@ -18,7 +18,7 @@ jest.mock('app/actions/alert-caller', () => ({
 const mockLs = jest.fn();
 const mockDownloadFile = jest.fn();
 const mockUploadToDirectory = jest.fn();
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   ls: (...args: any) => mockLs(...args),
   downloadFile: (...args: any) => mockDownloadFile(...args),
   uploadToDirectory: (...args: any) => mockUploadToDirectory(...args),
@@ -26,18 +26,18 @@ jest.mock('helpers/device-master', () => ({
 
 const mockWriteFileDialog = jest.fn();
 const mockGetFileFromDialog = jest.fn();
-jest.mock('implementations/dialog', () => ({
+jest.mock('@app/implementations/dialog', () => ({
   writeFileDialog: (...args: any) => mockWriteFileDialog(...args),
   getFileFromDialog: (...args: any) => mockGetFileFromDialog(...args),
 }));
 
-jest.mock('helpers/duration-formatter', () => (sec: number) => `${sec.toFixed(2)} seconds`);
+jest.mock('@core/helpers/duration-formatter', () => (sec: number) => `${sec.toFixed(2)} seconds`);
 
 const mockOpenNonstopProgress = jest.fn();
 const mockOpenSteppingProgress = jest.fn();
 const mockUpdate = jest.fn();
 const mockPopById = jest.fn();
-jest.mock('app/actions/progress-caller', () => ({
+jest.mock('@core/app/actions/progress-caller', () => ({
   openNonstopProgress: (...args: any) => mockOpenNonstopProgress(...args),
   openSteppingProgress: (...args: any) => mockOpenSteppingProgress(...args),
   update: (...args: any) => mockUpdate(...args),
@@ -46,12 +46,12 @@ jest.mock('app/actions/progress-caller', () => ({
 
 const mockGet = jest.fn();
 const mockSet = jest.fn();
-jest.mock('implementations/storage', () => ({
+jest.mock('@app/implementations/storage', () => ({
   get: (...args: any) => mockGet(...args),
   set: (...args: any) => mockSet(...args),
 }));
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     camera_data_backup: {
       no_picture_found: 'no_picture_found',
@@ -124,24 +124,24 @@ describe('test camera-data-backup', () => {
         i * 2 + 1,
         targetDirs[i],
         'file1',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockDownloadFile).toHaveBeenNthCalledWith(
         i * 2 + 2,
         targetDirs[i],
         'file2',
-        expect.any(Function)
+        expect.any(Function),
       );
       expect(mockJsZipInstance.folder).toHaveBeenNthCalledWith(i + 1, targetDirs[i]);
       expect(mockJsZipInstance.file).toHaveBeenNthCalledWith(
         i * 2 + 1,
         `${targetDirs[i]}/file1`,
-        `${targetDirs[i]}/file1`
+        `${targetDirs[i]}/file1`,
       );
       expect(mockJsZipInstance.file).toHaveBeenNthCalledWith(
         i * 2 + 2,
         `${targetDirs[i]}/file2`,
-        `${targetDirs[i]}/file2`
+        `${targetDirs[i]}/file2`,
       );
     }
   };
@@ -251,19 +251,19 @@ describe('test camera-data-backup', () => {
       { name: 'file1', size: 1 },
       'camera_calib',
       'file1',
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockUploadToDirectory).toBeCalledWith(
       { name: 'file2', size: 2 },
       'camera_calib',
       'file2',
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockUploadToDirectory).toBeCalledWith(
       { name: 'file1', size: 3 },
       'auto_leveling',
       'file1',
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockUpdate).toBeCalledTimes(3);
     expect(mockUpdate).toBeCalledWith('camera-data-backup', {

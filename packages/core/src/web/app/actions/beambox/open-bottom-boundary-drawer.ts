@@ -1,7 +1,7 @@
-import NS from 'app/constants/namespaces';
+import NS from '@core/app/constants/namespaces';
 
-import workareaManager from 'app/svgedit/workarea';
-import { getSupportInfo } from 'app/constants/add-on';
+import workareaManager from '@core/app/svgedit/workarea';
+import { getSupportInfo } from '@core/app/constants/add-on';
 
 import BeamboxPreference from './beambox-preference';
 import Constant from './constant';
@@ -32,7 +32,7 @@ const createBoundary = async () => {
   openBottomBoundaryRect.setAttribute('y', '0');
   openBottomBoundaryRect.setAttribute(
     'width',
-    `${Constant.borderless.safeDistance.X * Constant.dpmm}`
+    `${Constant.borderless.safeDistance.X * Constant.dpmm}`,
   );
   openBottomBoundaryRect.setAttribute('height', '100%');
 };

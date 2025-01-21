@@ -3,7 +3,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 
 import NetworkTestingPanel from './NetworkTestingPanel';
 
-jest.mock('helpers/i18n', () => ({
+jest.mock('@core/helpers/i18n', () => ({
   lang: {
     beambox: {
       network_testing_panel: {
@@ -41,7 +41,7 @@ jest.mock('helpers/i18n', () => ({
 }));
 
 const mockNetworkTest = jest.fn();
-jest.mock('implementations/network', () => ({
+jest.mock('@app/implementations/network', () => ({
   networkTest: (...args) => mockNetworkTest(...args),
 }));
 
@@ -49,7 +49,7 @@ const mockPoke = jest.fn();
 const mockPokeTcp = jest.fn();
 const mockTestTcp = jest.fn();
 const mockRemoveDiscover = jest.fn();
-jest.mock('helpers/api/discover', () => {
+jest.mock('@core/helpers/api/discover', () => {
   const ins = {
     poke: (ip: string) => mockPoke(ip),
     pokeTcp: (ip: string) => mockPokeTcp(ip),
@@ -59,7 +59,7 @@ jest.mock('helpers/api/discover', () => {
   return () => ins;
 });
 
-jest.mock('implementations/os', () => ({
+jest.mock('@app/implementations/os', () => ({
   networkInterfaces: () => ({
     en0: [
       {
@@ -75,7 +75,7 @@ const mockOnClose = jest.fn();
 describe('test NetworkTestingPanel', () => {
   it('should render correctly', async () => {
     const { baseElement, getByText, unmount } = render(
-      <NetworkTestingPanel onClose={mockOnClose} ip="192.168.68.163" />
+      <NetworkTestingPanel onClose={mockOnClose} ip="192.168.68.163" />,
     );
     expect(baseElement).toMatchSnapshot();
     expect(baseElement.querySelector('input')).toHaveValue('192.168.68.163');

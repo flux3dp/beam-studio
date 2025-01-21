@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef } from 'react';
 
-import DimensionPanelIcons from 'app/icons/dimension-panel/DimensionPanelIcons';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import ObjectPanelItem from 'app/views/beambox/Right-Panels/ObjectPanelItem';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { objectPanelInputTheme } from 'app/constants/antd-config';
-import { useIsMobile } from 'helpers/system-helper';
+import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './DimensionPanel.module.scss';
 
@@ -20,7 +20,7 @@ const Rotation = ({ value, onChange }: Props): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const objectPanelEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('object-panel'),
-    []
+    [],
   );
   const isMobile = useIsMobile();
   const t = useI18n().topbar.menu;

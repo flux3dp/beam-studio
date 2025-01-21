@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React, { SyntheticEvent, useContext, useEffect, useState } from 'react';
 
-import deviceMaster from 'helpers/device-master';
-import { ItemType } from 'app/constants/monitor-constants';
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import deviceMaster from '@core/helpers/device-master';
+import { ItemType } from '@core/app/constants/monitor-constants';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import styles from './FileItem.module.scss';
 
@@ -42,7 +42,7 @@ const FileItem = ({ path, fileName }: Props): JSX.Element => {
           string,
           { [key: string]: string | number },
           Blob,
-          { [key: string]: string | number }
+          { [key: string]: string | number },
         ],
       });
     };

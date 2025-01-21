@@ -1,11 +1,11 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { MonitorContext } from 'app/contexts/MonitorContext';
+import { MonitorContext } from '@core/app/contexts/MonitorContext';
 
 import Breadcrumbs from './Breadcrumbs';
 
-jest.mock('app/contexts/MonitorContext', () => ({
+jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
@@ -14,13 +14,15 @@ describe('test Breadcrumbs', () => {
   it('should render correctly', () => {
     const { container } = render(
       <MonitorContext.Provider
-        value={{
-          onSelectFolder: mockOnSelectFolder,
-          currentPath: ['a', 'b', 'c'],
-        } as any}
+        value={
+          {
+            onSelectFolder: mockOnSelectFolder,
+            currentPath: ['a', 'b', 'c'],
+          } as any
+        }
       >
         <Breadcrumbs />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     expect(container).toMatchSnapshot();
   });
@@ -28,13 +30,15 @@ describe('test Breadcrumbs', () => {
   test('selecting folders should work', () => {
     const { container, getByText } = render(
       <MonitorContext.Provider
-        value={{
-          onSelectFolder: mockOnSelectFolder,
-          currentPath: ['a', 'b', 'c'],
-        } as any}
+        value={
+          {
+            onSelectFolder: mockOnSelectFolder,
+            currentPath: ['a', 'b', 'c'],
+          } as any
+        }
       >
         <Breadcrumbs />
-      </MonitorContext.Provider>
+      </MonitorContext.Provider>,
     );
     const home = container.querySelector('[aria-label="home"]');
     expect(mockOnSelectFolder).not.toBeCalled();

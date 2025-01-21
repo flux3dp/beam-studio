@@ -4,23 +4,27 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Dropdown, Modal } from 'antd';
 import { DownloadOutlined, PlusCircleFilled, UploadOutlined } from '@ant-design/icons';
 
-import alertCaller from 'app/actions/alert-caller';
-import alertConstants from 'app/constants/alert-constants';
-import ConfigPanelIcons from 'app/icons/config-panel/ConfigPanelIcons';
-import dialogCaller from 'app/actions/dialog-caller';
-import LayerModule, { modelsWithModules } from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import presets from 'app/constants/presets';
-import presetHelper from 'helpers/presets/preset-helper';
-import Select from 'app/widgets/AntdSelect';
-import storage from 'implementations/storage';
-import useI18n from 'helpers/useI18n';
-import useWorkarea from 'helpers/hooks/useWorkarea';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { ConfigKey, ConfigKeyTypeMap, Preset } from 'interfaces/ILayerConfig';
-import { baseConfig, getDefaultConfig, postPresetChange } from 'helpers/layer/layer-config-helper';
-import { getWorkarea } from 'app/constants/workarea-constants';
-import { promarkModels } from 'app/actions/beambox/constant';
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import LayerModule, { modelsWithModules } from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import presets from '@core/app/constants/presets';
+import presetHelper from '@core/helpers/presets/preset-helper';
+import Select from '@core/app/widgets/AntdSelect';
+import storage from '@app/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { ConfigKey, ConfigKeyTypeMap, Preset } from '@core/interfaces/ILayerConfig';
+import {
+  baseConfig,
+  getDefaultConfig,
+  postPresetChange,
+} from '@core/helpers/layer/layer-config-helper';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 
 import Footer from './Footer';
 import LaserInputs from './LaserInputs';
@@ -69,16 +73,16 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
         if (!hasPreset) return false;
         if (filter === Filter.ALL || !hasModule) return true;
         const isPrintingPreset = Boolean(
-          presetHelper.getDefaultPreset(c.key, workarea, LayerModule.PRINTER)
+          presetHelper.getDefaultPreset(c.key, workarea, LayerModule.PRINTER),
         );
         return isPrintingPreset ? filter === Filter.PRINT : filter === Filter.LASER;
       }),
-    [workarea, hasModule, editingPresets, filter]
+    [workarea, hasModule, editingPresets, filter],
   );
   const [selectedPreset, setSelectedPreset] = useState<Preset | null>(
     initPreset
       ? displayList.find((p) => initPreset === p.name || initPreset === p.key) ?? displayList[0]
-      : displayList[0]
+      : displayList[0],
   );
   useEffect(() => {
     if (!selectedPreset || !listRef.current) return;
@@ -372,7 +376,7 @@ export const showPresetsManagementPanel = ({
           popDialogById('presets-management-panel');
           onClose?.();
         }}
-      />
+      />,
     );
   }
 };

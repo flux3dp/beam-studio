@@ -1,5 +1,5 @@
-import { FisheyeCameraParametersV3 } from 'interfaces/FisheyePreview';
-import { LaserType, mopaWatts, promarkWatts } from 'app/constants/promark-constants';
+import { FisheyeCameraParametersV3 } from '@core/interfaces/FisheyePreview';
+import { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
 
 export type PromarkInfo =
   | {

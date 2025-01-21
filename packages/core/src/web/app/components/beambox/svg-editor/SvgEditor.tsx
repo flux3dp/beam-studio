@@ -1,16 +1,16 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import constant from 'app/actions/beambox/constant';
-import DpiInfo from 'app/components/beambox/DpiInfo';
-import PathPreview from 'app/components/beambox/path-preview/PathPreview';
-import Ruler from 'app/components/beambox/svg-editor/Ruler';
-import svgEditor from 'app/actions/beambox/svg-editor';
-import Workarea from 'app/components/beambox/svg-editor/Workarea';
-import workareaManager from 'app/svgedit/workarea';
-import ZoomBlock from 'app/components/beambox/ZoomBlock';
-import { CanvasContext } from 'app/contexts/CanvasContext';
-import { CanvasMode } from 'app/constants/canvasMode';
+import constant from '@core/app/actions/beambox/constant';
+import DpiInfo from '@core/app/components/beambox/DpiInfo';
+import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
+import Ruler from '@core/app/components/beambox/svg-editor/Ruler';
+import svgEditor from '@core/app/actions/beambox/svg-editor';
+import Workarea from '@core/app/components/beambox/svg-editor/Workarea';
+import workareaManager from '@core/app/svgedit/workarea';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 import styles from './SvgEditor.module.scss';
 

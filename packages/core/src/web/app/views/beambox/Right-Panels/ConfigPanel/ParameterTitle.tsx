@@ -1,8 +1,8 @@
 import React, { memo, useContext } from 'react';
 
-import ConfigPanelIcons from 'app/icons/config-panel/ConfigPanelIcons';
-import useI18n from 'helpers/useI18n';
-import { showPresetsManagementPanel } from 'app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
+import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import useI18n from '@core/helpers/useI18n';
+import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import SaveConfigButton from './SaveConfigButton';

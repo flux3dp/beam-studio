@@ -3,24 +3,24 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 const read = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read,
 }));
 
 const open = jest.fn();
-jest.mock('implementations/browser', () => ({
+jest.mock('@app/implementations/browser', () => ({
   open,
 }));
 
 const mockDiscoverRemoveListener = jest.fn();
-jest.mock('helpers/api/discover', () => () => ({
+jest.mock('@core/helpers/api/discover', () => () => ({
   removeListener: mockDiscoverRemoveListener,
 }));
 
 const emit = jest.fn();
 const on = jest.fn();
 const removeListener = jest.fn();
-jest.mock('helpers/eventEmitterFactory', () => ({
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: () => ({
     emit,
     on,

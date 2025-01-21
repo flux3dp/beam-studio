@@ -3,14 +3,14 @@ import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
 const mockShowOpenDialog = jest.fn();
-jest.mock('implementations/dialog', () => ({
+jest.mock('@app/implementations/dialog', () => ({
   showOpenDialog: mockShowOpenDialog,
 }));
 
 const mockExists = jest.fn();
 const mockIsFile = jest.fn();
 const mockIsDirectory = jest.fn();
-jest.mock('implementations/fileSystem', () => ({
+jest.mock('@app/implementations/fileSystem', () => ({
   exists: mockExists,
   isFile: mockIsFile,
   isDirectory: mockIsDirectory,
@@ -29,7 +29,7 @@ describe('test PathInput', () => {
         forceValidValue={false}
         getValue={mockGetValue}
         type={1}
-      />
+      />,
     );
     expect(container).toMatchSnapshot();
     mockShowOpenDialog.mockResolvedValue({

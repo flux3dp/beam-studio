@@ -1,13 +1,16 @@
 import React, { createContext, Dispatch, SetStateAction, useMemo, useState } from 'react';
 
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import LayerModule from 'app/constants/layer-module/layer-modules';
-import layerModuleHelper from 'helpers/layer-module/layer-module-helper';
-import moduleBoundary from 'app/constants/layer-module/module-boundary';
-import storage from 'implementations/storage';
-import { DEFAULT_CONTROLLER_INCH, DEFAULT_CONTROLLER_MM } from 'app/constants/boxgen-constants';
-import { getWorkarea, WorkAreaModel } from 'app/constants/workarea-constants';
-import { IController } from 'interfaces/IBoxgen';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import LayerModule from '@core/app/constants/layer-module/layer-modules';
+import layerModuleHelper from '@core/helpers/layer-module/layer-module-helper';
+import moduleBoundary from '@core/app/constants/layer-module/module-boundary';
+import storage from '@app/implementations/storage';
+import {
+  DEFAULT_CONTROLLER_INCH,
+  DEFAULT_CONTROLLER_MM,
+} from '@core/app/constants/boxgen-constants';
+import { getWorkarea, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { IController } from '@core/interfaces/IBoxgen';
 
 interface BoxgenContextType {
   onClose: () => void;
@@ -51,7 +54,7 @@ export function BoxgenProvider({ onClose, children }: BoxgenProviderProps): JSX.
       value: workareaValue,
       label: currentWorkarea.label,
       canvasWidth: width,
-      canvasHeight: (displayHeight ?? height),
+      canvasHeight: displayHeight ?? height,
     };
   }, [workareaValue]);
 

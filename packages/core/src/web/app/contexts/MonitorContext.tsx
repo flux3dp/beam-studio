@@ -3,26 +3,26 @@
 /* eslint-disable react/sort-comp */
 import * as React from 'react';
 
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import BeamboxPreference from 'app/actions/beambox/beambox-preference';
-import Constant, { promarkModels } from 'app/actions/beambox/constant';
-import dialog from 'implementations/dialog';
-import DeviceConstants from 'app/constants/device-constants';
-import DeviceErrorHandler from 'helpers/device-error-handler';
-import DeviceMaster from 'helpers/device-master';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import exportFuncs from 'app/actions/beambox/export-funcs';
-import i18n from 'helpers/i18n';
-import MonitorStatus from 'helpers/monitor-status';
-import OutputError from 'helpers/output-error';
-import Progress from 'app/actions/progress-caller';
-import promarkButtonHandler from 'helpers/device/promark/promark-button-handler';
-import VersionChecker from 'helpers/version-checker';
-import { IDeviceInfo, IReport } from 'interfaces/IDevice';
-import { IProgress } from 'interfaces/IProgress';
-import { ItemType, Mode } from 'app/constants/monitor-constants';
-import { swiftrayClient } from 'helpers/api/swiftray-client';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import BeamboxPreference from '@core/app/actions/beambox/beambox-preference';
+import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import dialog from '@app/implementations/dialog';
+import DeviceConstants from '@core/app/constants/device-constants';
+import DeviceErrorHandler from '@core/helpers/device-error-handler';
+import DeviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import exportFuncs from '@core/app/actions/beambox/export-funcs';
+import i18n from '@core/helpers/i18n';
+import MonitorStatus from '@core/helpers/monitor-status';
+import OutputError from '@core/helpers/output-error';
+import Progress from '@core/app/actions/progress-caller';
+import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
+import VersionChecker from '@core/helpers/version-checker';
+import { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
+import { IProgress } from '@core/interfaces/IProgress';
+import { ItemType, Mode } from '@core/app/constants/monitor-constants';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 
@@ -459,7 +459,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
               Progress.update('get_log', {
                 message: 'downloading',
                 percentage: (progress.completed / progress.size) * 100,
-              })
+              }),
           );
           Progress.popById('get_log');
           this.startReport();
@@ -614,10 +614,10 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
         angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
         scaleRatioX: Number(
-          (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]
+          (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1],
         ),
         scaleRatioY: Number(
-          (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]
+          (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1],
         ),
       };
       console.log(`Got ${configName}`, cameraOffset);

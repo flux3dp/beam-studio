@@ -1,17 +1,17 @@
 import updateLayerColor from './updateLayerColor';
 
 const mockRead = jest.fn();
-jest.mock('app/actions/beambox/beambox-preference', () => ({
+jest.mock('@core/app/actions/beambox/beambox-preference', () => ({
   read: (...args) => mockRead(...args),
 }));
 
 const mockGetLayerName = jest.fn();
-jest.mock('helpers/layer/layer-helper', () => ({
+jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerName: (...args) => mockGetLayerName(...args),
 }));
 
 const mockGetTempGroup = jest.fn();
-jest.mock('helpers/svg-editor-helper', () => ({
+jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
       Canvas: {
@@ -22,14 +22,19 @@ jest.mock('helpers/svg-editor-helper', () => ({
 
 const mockSetElementsColor = jest.fn();
 jest.mock(
-  'helpers/color/setElementsColor',
+  '@core/helpers/color/setElementsColor',
   () =>
     (...args) =>
-      mockSetElementsColor(...args)
+      mockSetElementsColor(...args),
 );
 
 const mockUpdateLayerColorFilter = jest.fn();
-jest.mock('helpers/color/updateLayerColorFilter', () => (...args) => mockUpdateLayerColorFilter(...args));
+jest.mock(
+  '@core/helpers/color/updateLayerColorFilter',
+  () =>
+    (...args) =>
+      mockUpdateLayerColorFilter(...args),
+);
 
 describe('test updateLayerColor', () => {
   it('should update layer color', async () => {

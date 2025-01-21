@@ -4,15 +4,15 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Layer, Path, Stage } from 'react-konva';
 import { Button, Modal } from 'antd';
 
-import constant from 'app/actions/beambox/constant';
-import ISVGCanvas from 'interfaces/ISVGCanvas';
-import useKonvaCanvas from 'helpers/hooks/konva/useKonvaCanvas';
-import useI18n from 'helpers/useI18n';
-import ZoomBlock from 'app/components/beambox/ZoomBlock';
-import { AutoFitContour } from 'interfaces/IAutoFit';
-import { addDialogComponent, isIdExist, popDialogById } from 'app/actions/dialog-controller';
-import { getRotationAngle } from 'app/svgedit/transform/rotation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
+import constant from '@core/app/actions/beambox/constant';
+import ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
+import useI18n from '@core/helpers/useI18n';
+import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import { AutoFitContour } from '@core/interfaces/IAutoFit';
+import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import Controls from './Controls';
 import KonvaImage from './KonvaImage';
@@ -193,7 +193,7 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): JSX.Element 
 export const showAlignModal = (
   element: SVGElement,
   contour: AutoFitContour,
-  onApply: (initDimension: ImageDimension, imageDimension: ImageDimension) => void
+  onApply: (initDimension: ImageDimension, imageDimension: ImageDimension) => void,
 ): void => {
   const dialogId = 'auto-fit-align';
   if (!isIdExist(dialogId)) {
@@ -204,7 +204,7 @@ export const showAlignModal = (
         contour={contour}
         onApply={onApply}
         onClose={() => popDialogById(dialogId)}
-      />
+      />,
     );
   }
 };

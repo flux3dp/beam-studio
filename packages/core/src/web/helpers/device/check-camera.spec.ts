@@ -5,7 +5,7 @@ const mockDisconnectCamera = jest.fn();
 const mockSelect = jest.fn();
 const mockTakeOnePicture = jest.fn();
 
-jest.mock('helpers/device-master', () => ({
+jest.mock('@core/helpers/device-master', () => ({
   connectCamera: (...args) => mockConnectCamera(...args),
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
   select: (...args) => mockSelect(...args),

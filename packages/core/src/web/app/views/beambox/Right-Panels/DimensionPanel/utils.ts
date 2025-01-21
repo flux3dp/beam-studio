@@ -1,9 +1,13 @@
-import constant from 'app/actions/beambox/constant';
+import constant from '@core/app/actions/beambox/constant';
 
-export const getValue = (dimensionValues: { [key: string]: number }, type: string, opts: {
-  unit?: 'mm' | 'px' | 'in',
-  allowUndefined?: boolean,
-} = {}): number => {
+export const getValue = (
+  dimensionValues: { [key: string]: number },
+  type: string,
+  opts: {
+    unit?: 'mm' | 'px' | 'in';
+    allowUndefined?: boolean;
+  } = {},
+): number => {
   const { unit = 'px', allowUndefined = false } = opts;
   let val: number;
   if (type === 'w') val = dimensionValues?.width;

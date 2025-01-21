@@ -1,6 +1,6 @@
-import constant from 'app/actions/beambox/constant';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import storage from 'implementations/storage';
+import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import storage from '@app/implementations/storage';
 
 const DEFAULT_PREFERENCE = {
   should_remind_calibrate_camera: true,

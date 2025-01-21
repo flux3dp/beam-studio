@@ -2,13 +2,13 @@
  * Editing text element attribute
  */
 
-import fontHelper from 'helpers/fonts/fontHelper';
-import selector from 'app/svgedit/selector';
-import storage from 'implementations/storage';
-import textActions from 'app/svgedit/text/textactions';
-import { getRotationAngle } from 'app/svgedit/transform/rotation';
-import { getSVGAsync } from 'helpers/svg-editor-helper';
-import { ICommand } from 'interfaces/IHistory';
+import fontHelper from '@core/helpers/fonts/fontHelper';
+import selector from '@core/app/svgedit/selector';
+import storage from '@app/implementations/storage';
+import textActions from '@core/app/svgedit/text/textactions';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { ICommand } from '@core/interfaces/IHistory';
 
 const { svgedit } = window;
 const { NS } = svgedit;
@@ -156,7 +156,7 @@ const renderTextPath = (text: SVGTextElement, val?: string) => {
 
 const renderTspan = (text: SVGTextElement, val?: string) => {
   const tspans = Array.from(text.childNodes).filter(
-    (child: Element) => child.tagName === 'tspan'
+    (child: Element) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
   const lines =
     typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent);
@@ -194,7 +194,7 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
         tspan.setAttribute('x', text.getAttribute('x'));
         tspan.setAttribute(
           'y',
-          (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2)
+          (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2),
         );
         tspan.textContent = lines[i];
         text.appendChild(tspan);

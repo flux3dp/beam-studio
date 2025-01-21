@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import RatioLock from './RatioLock';
 
-jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
+jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   Item: ({ id, content, onClick }: any) => (
     <div id={id}>
       <div>{content}</div>
@@ -12,7 +12,7 @@ jest.mock('app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   ),
 }));
 
-jest.mock('helpers/useI18n', () => () => ({
+jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
       object_panel: {
@@ -24,7 +24,7 @@ jest.mock('helpers/useI18n', () => () => ({
 }));
 
 const mockUseIsMobile = jest.fn();
-jest.mock('helpers/system-helper', () => ({
+jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 

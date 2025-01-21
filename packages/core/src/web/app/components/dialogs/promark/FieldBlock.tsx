@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Flex, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import { Field } from 'interfaces/Promark';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import { Field } from '@core/interfaces/Promark';
 
 import styles from './Block.module.scss';
 

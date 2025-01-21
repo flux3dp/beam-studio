@@ -1,7 +1,7 @@
 import React from 'react';
 import { SelectProps, Select as AntdSelect } from 'antd';
 
-import isWeb from 'helpers/is-web';
+import isWeb from '@core/helpers/is-web';
 
 // TODO: replace native selects (including widgets/Select.tsx) and rename to Select.tsx
 const Select = (props: SelectProps): JSX.Element => (

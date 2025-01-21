@@ -2,16 +2,16 @@
 /**
  * output error log
  */
-import Alert from 'app/actions/alert-caller';
-import AlertConstants from 'app/constants/alert-constants';
-import dialog from 'implementations/dialog';
-import fs from 'implementations/fileSystem';
-import i18n from 'helpers/i18n';
-import Logger from 'helpers/logger';
-import os from 'implementations/os';
-import Progress from 'app/actions/progress-caller';
-import store from 'implementations/storage';
-import { StorageKey } from 'interfaces/IStorage';
+import Alert from '@core/app/actions/alert-caller';
+import AlertConstants from '@core/app/constants/alert-constants';
+import dialog from '@app/implementations/dialog';
+import fs from '@app/implementations/fileSystem';
+import i18n from '@core/helpers/i18n';
+import Logger from '@core/helpers/logger';
+import os from '@app/implementations/os';
+import Progress from '@core/app/actions/progress-caller';
+import store from '@app/implementations/storage';
+import { StorageKey } from '@core/interfaces/IStorage';
 
 const LANG = i18n.lang.beambox;
 
@@ -63,7 +63,7 @@ const getOutput = (): string[] => {
     if (typeof value === 'string' && value.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')) {
       value = '[hidden]';
     }
-    output.push(`${key}=${typeof (value) === 'object' ? JSON.stringify(value) : value}\n\n`);
+    output.push(`${key}=${typeof value === 'object' ? JSON.stringify(value) : value}\n\n`);
   }
 
   output.push('\n\n======::generic::======\n');
@@ -80,17 +80,24 @@ export default {
     const output = getOutput();
     const fileName = `bugreport_${Math.floor(Date.now() / 1000)}.txt`;
     const getContent = () => output.join('');
-    await dialog.writeFileDialog(getContent, LANG.popup.bug_report, fileName, [{
-      name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
-      extensions: ['txt'],
-    }]);
+    await dialog.writeFileDialog(getContent, LANG.popup.bug_report, fileName, [
+      {
+        name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
+        extensions: ['txt'],
+      },
+    ]);
   },
   uploadBackendErrorLog: async (): Promise<void> => {
-    Progress.openNonstopProgress({ id: 'output-error-log', message: LANG.popup.progress.uploading });
+    Progress.openNonstopProgress({
+      id: 'output-error-log',
+      message: LANG.popup.progress.uploading,
+    });
     const output = getOutput();
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
     // reportFile.lastModifiedDate = new Date();
-    const reportName = `bugreport_${Math.floor(Date.now() / 1000)}_${window.os}_${window.FLUX.version}.log`;
+    const reportName = `bugreport_${Math.floor(Date.now() / 1000)}_${window.os}_${
+      window.FLUX.version
+    }.log`;
     const uploadFormData = new FormData();
     uploadFormData.append('file', reportFile);
     uploadFormData.append('Content-Type', reportFile.type);

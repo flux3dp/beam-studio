@@ -1,6 +1,6 @@
-import BeamboxGlobalInteraction from 'app/actions/beambox/beambox-global-interaction';
-import eventEmitterFactory from 'helpers/eventEmitterFactory';
-import { IDeviceInfo } from 'interfaces/IDevice';
+import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 

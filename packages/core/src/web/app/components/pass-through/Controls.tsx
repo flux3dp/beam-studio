@@ -4,12 +4,12 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 import { sprintf } from 'sprintf-js';
 
-import browser from 'implementations/browser';
-import constant from 'app/actions/beambox/constant';
-import storage from 'implementations/storage';
-import UnitInput from 'app/widgets/UnitInput';
-import useI18n from 'helpers/useI18n';
-import workareaManager from 'app/svgedit/workarea';
+import browser from '@app/implementations/browser';
+import constant from '@core/app/actions/beambox/constant';
+import storage from '@app/implementations/storage';
+import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
+import workareaManager from '@core/app/svgedit/workarea';
 
 import styles from './PassThrough.module.scss';
 import { PassThroughContext } from './PassThroughContext';
@@ -33,13 +33,13 @@ const Controls = (): JSX.Element => {
       max: workareaObj.passThroughMaxHeight ?? workareaObj.height,
       min: 120,
     }),
-    [workareaObj]
+    [workareaObj],
   );
   const handleWorkareaHeightChange = useCallback(
     (val) => {
       setPassThroughHeight(Math.max(min, Math.min(val, max)));
     },
-    [max, min, setPassThroughHeight]
+    [max, min, setPassThroughHeight],
   );
 
   const { show, x: guideMarkX, width: guideMarkWidth } = guideMark;
@@ -49,7 +49,7 @@ const Controls = (): JSX.Element => {
       xMin: guideMarkWidth / 2,
       widthMax: (workareaObj.width - guideMarkX) * 2,
     }),
-    [workareaObj.width, guideMarkX, guideMarkWidth]
+    [workareaObj.width, guideMarkX, guideMarkWidth],
   );
   const setX = useCallback(
     (val) => {
@@ -58,7 +58,7 @@ const Controls = (): JSX.Element => {
         x: Math.max(xMin, Math.min(val, xMax)),
       }));
     },
-    [xMax, xMin, setGuideMark]
+    [xMax, xMin, setGuideMark],
   );
   const setWidth = useCallback(
     (val) => {
@@ -67,7 +67,7 @@ const Controls = (): JSX.Element => {
         width: Math.max(0, Math.min(val, widthMax)),
       }));
     },
-    [widthMax, setGuideMark]
+    [widthMax, setGuideMark],
   );
 
   const isInch = useMemo(() => storage.get('default-units') === 'inches', []);

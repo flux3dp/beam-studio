@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import React from 'react';
 import { Button, Modal } from 'antd';
 
-import browser from 'implementations/browser';
-import FluxIcons from 'app/icons/flux/FluxIcons';
-import isFluxPlusActive from 'helpers/is-flux-plus-active';
-import useI18n from 'helpers/useI18n';
-import { useIsMobile } from 'helpers/system-helper';
+import browser from '@app/implementations/browser';
+import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
+import useI18n from '@core/helpers/useI18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './FluxPlusModal.module.scss';
 
