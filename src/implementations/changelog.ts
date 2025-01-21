@@ -1,29 +1,37 @@
 import { IChangeLog } from 'interfaces/IChangeLog';
 
-// 2.4.8 beta
+// 2.4.9 beta
 const CHANGES_TW = {
   added: [
-    '新增 偏好設定「保留相機預覽結果」選項',
   ],
   fixed: [
-    '修正 Promark 紅光外框預覽在 220mm 及 150mm 場鏡時位置錯誤。',
-    '修正 Promark 雕刻填充路徑時會有異常不出光。',
-    '修正 開啟路徑計算加速時的路徑預覽結果。',
-    '修正 點擊快捷鍵後切換畫面，可能造成快捷鍵失效的問題。',
+    '修正 啟用路徑計算加速時 3D 曲面雕刻動作異常。',
+    '修正 啟用路徑計算加速時 1000 DPI 下未正常出光。',
+    '修正 部分情境中快捷鍵無法反應的問題。',
+    '修正 v2.4.8 版本中無法執行位移複製的問題。',
+    '修正 Promark 雕刻時路徑起點未接合的問題。',
+    '修正 Promark 紅光預覽後立即工作導致的非預期出光。',
   ],
   changed: [
+    '更新 Auto Fit 流程與介面。',
+    '更新 Beambox II 材質測試檔案。',
+    '更新 Promark 外框預覽及工作視窗設計。',
+    '調整 Promark 相機校正時的繪製校正點功率。',
+    '調整 Promark 在中止或結束工作後，紅光位置將回到中心 (0, 0)。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added preference “Keep Preview Result” option.',
   ],
   fixed: [
-    'Fixed path preview result with path calculation acceleration enabled.',
-    'Fixed an issue where switching screens after pressing a shortcut key could cause the shortcut key to become unresponsive.',
+    'Fixed abnormal behavior during 3D curve engraving when enabling path calculation acceleration.',
+    'Fixed Laser did not fire properly at 1000 DPI when enabling path calculation acceleration.',
+    'Fixed shortcut keys not working properly in certain scenarios.',
+    'Fixed the “Offset” function not executing in version 2.4.8.',
   ],
   changed: [
+    'Updated the Auto Fit process and interface.',
   ],
 };
 
