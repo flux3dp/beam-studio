@@ -10,7 +10,7 @@ exports[`test ColorPickerMobile should render correctly 1`] = `
       class="ant-popover-open"
     />
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker mobile-container css-dev-only-do-not-override-hash mobile-container css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big mobile-container css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-color-picker mobile-container ant-popover-placement-bottomLeft"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div
@@ -238,7 +238,7 @@ exports[`test ColorPickerMobile should render correctly 1`] = `
   </div>
   <div>
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash mask-container css-dev-only-do-not-override-hash ant-popover-placement-top"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big mask-container css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-top"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div

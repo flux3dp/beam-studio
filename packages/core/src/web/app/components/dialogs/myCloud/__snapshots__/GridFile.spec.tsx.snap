@@ -748,7 +748,7 @@ exports[`test GridFile should behave correctly 4`] = `
           />
         </div>
         <div
-          class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-popconfirm overlay css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-top"
+          class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popconfirm overlay ant-popover-placement-top"
           style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
         >
           <div

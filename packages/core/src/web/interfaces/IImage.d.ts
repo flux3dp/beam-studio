@@ -1,20 +1,20 @@
-import Jimp from 'jimp';
+import type Jimp from 'jimp';
 
 export interface IImageProcessor {
-  MIME_PNG: string;
-  BLEND_OVERLAY: string;
   AUTO: number;
+  BLEND_OVERLAY: string;
+  MIME_PNG: string;
   read: (data: Buffer) => Promise<Jimp>;
 }
 
 export interface IImageDataResult {
-  canvas: HTMLCanvasElement,
+  blob: Blob;
+  canvas: HTMLCanvasElement;
+  data: ImageData;
+  imageBinary: Uint8ClampedArray;
+  pngBase64: string;
   size: {
-    width: number,
-    height: number,
-  },
-  data: ImageData,
-  imageBinary: Uint8ClampedArray,
-  blob: Blob,
-  pngBase64: string,
+    height: number;
+    width: number;
+  };
 }

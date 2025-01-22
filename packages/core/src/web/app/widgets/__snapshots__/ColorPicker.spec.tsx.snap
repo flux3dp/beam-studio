@@ -33,7 +33,7 @@ exports[`test ColorPicker should render correctly 2`] = `
   </div>
   <div>
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-color-picker ant-popover-placement-bottomLeft"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div
@@ -354,7 +354,7 @@ exports[`test ColorPicker should render correctly when initColor is none 2`] = `
   </div>
   <div>
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-color-picker ant-popover-placement-bottomLeft"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div
@@ -675,7 +675,7 @@ exports[`test ColorPicker should render correctly when is for printing colors 2`
   </div>
   <div>
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker no-panel css-dev-only-do-not-override-hash no-panel css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big no-panel css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-color-picker no-panel ant-popover-placement-bottomLeft"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div
@@ -808,7 +808,7 @@ exports[`test ColorPicker should render correctly when is small 2`] = `
   </div>
   <div>
     <div
-      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big ant-color-picker css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-popover-placement-bottomLeft"
+      class="ant-popover ant-zoom-big-appear ant-zoom-big-appear-prepare ant-zoom-big css-dev-only-do-not-override-hash css-dev-only-do-not-override-hash ant-color-picker ant-popover-placement-bottomLeft"
       style="--arrow-x: 0px; --arrow-y: 0px; left: -1000vw; top: -1000vh; box-sizing: border-box;"
     >
       <div

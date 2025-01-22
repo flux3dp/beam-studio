@@ -83,6 +83,7 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
                   <input
                     checked=""
                     class="ant-radio-input"
+                    name="test-id"
                     type="radio"
                     value="L"
                   />
@@ -102,6 +103,7 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
                 >
                   <input
                     class="ant-radio-input"
+                    name="test-id"
                     type="radio"
                     value="M"
                   />
@@ -121,6 +123,7 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
                 >
                   <input
                     class="ant-radio-input"
+                    name="test-id"
                     type="radio"
                     value="Q"
                   />
@@ -140,6 +143,7 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
                 >
                   <input
                     class="ant-radio-input"
+                    name="test-id"
                     type="radio"
                     value="H"
                   />

@@ -90,6 +90,7 @@ exports[`test Controller should behave correctly 1`] = `
                       <input
                         checked=""
                         class="ant-radio-button-input"
+                        name="test-id"
                         type="radio"
                         value="outer"
                       />
@@ -109,6 +110,7 @@ exports[`test Controller should behave correctly 1`] = `
                     >
                       <input
                         class="ant-radio-button-input"
+                        name="test-id"
                         type="radio"
                         value="inner"
                       />
