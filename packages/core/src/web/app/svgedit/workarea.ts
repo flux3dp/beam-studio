@@ -12,20 +12,13 @@ const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 const zoomBlockEventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
 
 class WorkareaManager {
-  model: WorkAreaModel;
-
-  rotaryExtended: boolean;
-
-  width: number; // px
-
-  height: number; // px
-
+  model: WorkAreaModel = 'fbm1';
+  rotaryExtended = false;
+  width = 3000; // px
+  height = 2100; // px
   zoomRatio = 1;
-
   canvasExpansion = 3; // extra space
-
   expansion: number[] = [0, 0]; // [top, bottom] in pixel
-
   lastZoomIn = 0;
 
   init(model: WorkAreaModel): void {
@@ -41,7 +34,6 @@ class WorkareaManager {
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 
-    this.model = model;
     this.rotaryExtended = rotaryExtended;
     this.width = workarea.pxWidth;
     this.height = workarea.pxDisplayHeight ?? workarea.pxHeight;
@@ -54,7 +46,9 @@ class WorkareaManager {
       const [lowerBound, upperBound] = boundary ? [boundary[0] * dpmm, boundary[1] * dpmm] : [0, this.height];
       const pxMaxHeight = maxHeight * dpmm;
 
-      this.expansion = [pxMaxHeight - lowerBound, pxMaxHeight - (this.height - upperBound)];
+      // currently only extend in positive direction
+      // this.expansion = [pxMaxHeight - lowerBound, pxMaxHeight - (this.height - upperBound)];
+      this.expansion = [0, pxMaxHeight - (this.height - upperBound)];
       this.height += this.expansion[1];
     } else if (passThroughMode) {
       const passThroughHeight = beamboxPreference.read('pass-through-height');
@@ -103,8 +97,10 @@ class WorkareaManager {
     const svgCanvas = document.getElementById('svgcanvas');
     const workareaElem = document.getElementById('workarea');
 
-    svgCanvas.style.width = `${Math.max(workareaElem.clientWidth, rootW)}px`;
-    svgCanvas.style.height = `${Math.max(workareaElem.clientHeight, rootH)}px`;
+    if (svgCanvas && workareaElem) {
+      svgCanvas.style.width = `${Math.max(workareaElem.clientWidth, rootW)}px`;
+      svgCanvas.style.height = `${Math.max(workareaElem.clientHeight, rootH)}px`;
+    }
 
     const canvasBackground = document.getElementById('canvasBackground');
 
@@ -120,16 +116,18 @@ class WorkareaManager {
     svgcontent?.setAttribute('width', w.toString());
     svgcontent?.setAttribute('height', h.toString());
 
-    staticPoint = staticPoint ?? {
-      x: workareaElem.clientWidth / 2,
-      y: workareaElem.clientHeight / 2,
-    };
+    if (workareaElem) {
+      staticPoint = staticPoint ?? {
+        x: workareaElem.clientWidth / 2,
+        y: workareaElem.clientHeight / 2,
+      };
 
-    const oldScroll = { x: workareaElem.scrollLeft, y: workareaElem.scrollTop };
-    const zoomChanged = targetZoom / oldZoomRatio;
+      const oldScroll = { x: workareaElem.scrollLeft, y: workareaElem.scrollTop };
+      const zoomChanged = targetZoom / oldZoomRatio;
 
-    workareaElem.scrollLeft = (oldScroll.x + staticPoint.x) * zoomChanged - staticPoint.x;
-    workareaElem.scrollTop = (oldScroll.y + staticPoint.y) * zoomChanged - staticPoint.y;
+      workareaElem.scrollLeft = (oldScroll.x + staticPoint.x) * zoomChanged - staticPoint.x;
+      workareaElem.scrollTop = (oldScroll.y + staticPoint.y) * zoomChanged - staticPoint.y;
+    }
 
     canvasEvents.emit('zoom-changed', targetZoom, oldZoomRatio);
     zoomBlockEventEmitter.emit('UPDATE_ZOOM_BLOCK');
@@ -177,16 +175,19 @@ class WorkareaManager {
 
     this.zoom(zoomLevel);
 
-    const x = Number.parseFloat(background.getAttribute('x'));
-    const y = Number.parseFloat(background.getAttribute('y'));
-    const defaultScroll = {
-      x: (x - offsetX) / zoomLevel,
-      y: (y - offsetY) / zoomLevel,
-    };
     const workArea = document.getElementById('workarea');
 
-    workArea.scrollLeft = defaultScroll.x * zoomLevel;
-    workArea.scrollTop = defaultScroll.y * zoomLevel;
+    if (background && workArea) {
+      const x = Number.parseFloat(background.getAttribute('x') ?? '0');
+      const y = Number.parseFloat(background.getAttribute('y') ?? '0');
+      const defaultScroll = {
+        x: (x - offsetX) / zoomLevel,
+        y: (y - offsetY) / zoomLevel,
+      };
+
+      workArea.scrollLeft = defaultScroll.x * zoomLevel;
+      workArea.scrollTop = defaultScroll.y * zoomLevel;
+    }
   };
 }
 

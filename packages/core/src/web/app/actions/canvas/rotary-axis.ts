@@ -21,7 +21,7 @@ const round = (num: number, decimal: number): number => {
   return Math.round(num * factor) / factor;
 };
 
-const getPosition = (mm = false): number => {
+const getPosition = (mm = false): null | number => {
   if (!rotaryLine) {
     return null;
   }
@@ -74,9 +74,10 @@ const checkBoundary = () => {
 
 const updateBoundary = () => {
   const model: WorkAreaModel = beamboxPreference.read('workarea');
+  const enableJobOrigin = beamboxPreference.read('enable-job-origin');
   const { height } = workareaManager;
 
-  if (rotaryConstants[model]?.boundary) {
+  if (rotaryConstants[model]?.boundary && !enableJobOrigin) {
     boundary = rotaryConstants[model].boundary.map((v) => v * constant.dpmm);
   } else {
     boundary = [0, height];
@@ -86,6 +87,8 @@ const updateBoundary = () => {
 };
 
 canvasEventEmitter.on('canvas-change', updateBoundary);
+// for enable job origin change
+canvasEventEmitter.on('document-settings-saved', updateBoundary);
 
 const toggleDisplay = (): void => {
   const rotaryMode = beamboxPreference.read('rotary_mode');
@@ -158,7 +161,7 @@ const checkMouseTarget = (elem: Element): boolean => !!elem.closest('#rotaryAxis
 
 let startY = 0;
 const mouseDown = (): void => {
-  startY = getPosition();
+  startY = getPosition() ?? 0;
 };
 
 const mouseMove = (y: number): void => {
@@ -169,7 +172,7 @@ const mouseMove = (y: number): void => {
 const mouseUp = (): void => {
   checkBoundary();
 
-  const val = getPosition(false);
+  const val = getPosition(false) ?? 0;
 
   setPosition(val, { write: true });
 
