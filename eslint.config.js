@@ -67,14 +67,6 @@ module.exports = [
       'format/prettier': [
         'error',
         {
-          overrides: [
-            {
-              files: '**/lang/*.ts',
-              options: {
-                printWidth: 100000,
-              },
-            },
-          ],
           parser: 'typescript',
           printWidth: 120,
           semi: true,
@@ -148,6 +140,21 @@ module.exports = [
       'unusedImport/no-unused-imports': 'error',
       ...perfectionistRules,
       ...unicornRules,
+    },
+  },
+  {
+    files: ['**/lang/*.ts'],
+    rules: {
+      'format/prettier': [
+        'error',
+        {
+          parser: 'typescript',
+          printWidth: 10000,
+          semi: true,
+          singleQuote: true,
+          tabWidth: 2,
+        },
+      ],
     },
   },
   {

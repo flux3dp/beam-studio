@@ -32,8 +32,6 @@ const IGNORES = [
   '**/public/**/*',
   '**/svgedit',
   '**/svg-editor',
-  // ignore for now, to prevent eslint overloading
-  '**/lang/*.ts',
 ];
 
 function addPrefix(prefix, globs) {
